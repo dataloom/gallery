@@ -1,6 +1,7 @@
 import React from 'react';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
+import { describe, beforeEach, it, expect } from 'karma';
+
 import App from './App';
 
 describe('<App />', () => {
@@ -12,15 +13,13 @@ describe('<App />', () => {
   });
 
   it('has a Router component', () => {
-    expect(wrapper.find('Router'))
-      .to.have.length(1);
+    expect(length(wrapper.find('Router'))).toBe(1);
   });
 
   it('passes a history prop', () => {
     const props = wrapper.find('Router').props();
 
-    expect(props.history)
-      .to.be.defined;
+    expect(props.history).toBeDefined();
   });
 
 });

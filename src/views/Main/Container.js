@@ -7,14 +7,23 @@ export class Container extends React.Component {
     router: T.object
   }
 
-  render() {
+  static propTypes = {
+    children: T.element,
+    route: T.object
+  }
+
+  getChildren() {
     let children = null;
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
         auth: this.props.route.auth // sends auth instance to children
       });
     }
+    return children;
+  }
 
+  render() {
+    const children = this.getChildren();
     return (
       <Jumbotron>
         <h2 className={styles.mainTitle}>
