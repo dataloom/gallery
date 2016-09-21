@@ -13,6 +13,7 @@ export default class AuthService extends EventEmitter {
     this.lock.on('authorization_error', this.authorizationError.bind(this));
     // binds login functions to keep this context
     this.login = this.login.bind(this);
+    this.storage = localStorage;
   }
 
   doAuthentication(authResult) {
@@ -21,7 +22,7 @@ export default class AuthService extends EventEmitter {
     // Async loads the user profile data
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
-        console.log('Error loading the Profile', error);
+        this.emit('profileError');
       }
       else {
         this.setProfile(profile);
@@ -31,7 +32,7 @@ export default class AuthService extends EventEmitter {
 
   authorizationError(error) {
     // Unexpected authentication error
-    console.log('Authentication Error', error);
+    this.emit(error);
   }
 
   login() {
@@ -54,23 +55,23 @@ export default class AuthService extends EventEmitter {
 
   getProfile() {
     // Retrieves the profile data from localStorage
-    const profile = localStorage.getItem('profile');
-    return profile ? JSON.parse(localStorage.profile) : {};
+    const profile = this.storage.getItem('profile');
+    return profile ? JSON.parse(this.storage.profile) : {};
   }
 
   setToken(idToken) {
     // Saves user token to localStorage
-    localStorage.setItem('id_token', idToken);
+    this.storage.setItem('id_token', idToken);
   }
 
   getToken() {
     // Retrieves the user token from localStorage
-    return localStorage.getItem('id_token');
+    return this.storage.getItem('id_token');
   }
 
   logout() {
     // Clear user token and profile data from localStorage
-    localStorage.removeItem('id_token');
-    localStorage.removeItem('profile');
+    this.storage.removeItem('id_token');
+    this.storage.removeItem('profile');
   }
 }
