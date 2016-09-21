@@ -2,7 +2,7 @@ import React from 'react'
 import {Route, IndexRedirect} from 'react-router'
 import AuthService from 'utils/AuthService'
 import Container from './Container'
-import Home from './Home/Home'
+import Catalog from './Catalog/Catalog'
 import Login from './Login/Login'
 
 const CONSTS = require('../../../config/consts');
@@ -18,8 +18,8 @@ const requireAuth = (nextState, replace) => {
 export const makeMainRoutes = () => {
   return (
     <Route path="/" component={Container} auth={auth}>
-      <IndexRedirect to="/home" />
-      <Route path="home" component={Home} onEnter={requireAuth} />
+      <IndexRedirect to="/catalog" />
+      <Route path="catalog" component={Catalog} onEnter={requireAuth} />
       <Route path="login" component={Login} />
       <Route path="access_token=:token" component={Login} /> //to prevent router errors
     </Route>

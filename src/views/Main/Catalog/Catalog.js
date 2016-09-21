@@ -3,7 +3,7 @@ import {Button} from 'react-bootstrap'
 import AuthService from 'utils/AuthService'
 import styles from './styles.module.css'
 
-export class Home extends React.Component {
+export class Catalog extends React.Component {
   static contextTypes = {
     router: T.object
   }
@@ -31,7 +31,7 @@ export class Home extends React.Component {
     const { profile } = this.state
     return (
       <div className={styles.root}>
-        <h2>Home</h2>
+        <h2>Catalog</h2>
         <p>Welcome {profile.name}!</p>
         <Button onClick={this.logout.bind(this)}>Logout</Button>
       </div>
@@ -39,4 +39,4 @@ export class Home extends React.Component {
   }
 }
 
-export default Home;
+export default Catalog;
