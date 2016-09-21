@@ -5,11 +5,18 @@
 /* eslint-disable import/no-extraneous-dependencies, react/require-extension */
 
 const webpack = require('webpack');
+const path    = require('path'),
+      join    = path.join,
+      resolve = path.resolve;
+const getConfig = require('hjs-webpack');
 
 const CONSTS = require('./consts');
 const ENV = require('./env.js');
 const PATHS = require('./paths.js');
 const PACKAGE = require('../package.json');
+const root    = resolve(__dirname);
+const src     = join(root, '../src');
+const dest    = join(root, '../dist');
 
 const APP_GLOBALS = {
   __VERSION__: `v${PACKAGE.version}`
@@ -62,6 +69,11 @@ const MEDIA_URL_LOADER = {
   }
 };
 
+const CSS_LOADER = {
+  loader: 'css',
+  test: /\.css$/
+};
+
 /*
  * plugins
  */
@@ -93,7 +105,8 @@ module.exports = {
       BABEL_LOADER,
       JSON_LOADER,
       MEDIA_FILE_LOADER,
-      MEDIA_URL_LOADER
+      MEDIA_URL_LOADER,
+      CSS_LOADER
     ],
     noParse: []
   },
