@@ -15,17 +15,18 @@ class App extends React.Component {
     return (
       <Router
         routes={this.props.routes}
-        history={this.props.history} />
-    )
+        history={this.props.history}
+      />
+    );
   }
 
-  render () {
-     return (
-       <div style={{ height: '100%' }}>
-         {this.content}
-       </div>
-     )
-   }
+  render() {
+    return (
+      <div style={{ height: '100%' }}>
+        {this.content}
+      </div>
+    );
+  }
 }
 
 export default App;

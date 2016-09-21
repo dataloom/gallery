@@ -1,19 +1,17 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-import 'bootstrap/dist/css/bootstrap.css'
-import './app.css'
+import 'react-bootstrap/dist/react-bootstrap.js';
+import { hashHistory } from 'react-router';
+import './app.css';
+import App from './containers/App/App';
+import { makeRoutes } from './routes';
 
-import App from 'containers/App/App'
-
-import {hashHistory} from 'react-router'
-import makeRoutes from './routes'
-
-const routes = makeRoutes()
+const routes = makeRoutes();
 
 const mountNode = document.querySelector('#app');
 
 ReactDOM.render(
-  <App history={hashHistory}
-        routes={routes} />,
-mountNode);
+  <App history={hashHistory} routes={routes} />,
+  mountNode
+);
