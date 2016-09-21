@@ -17,6 +17,7 @@ export class Catalog extends React.Component {
     this.state = {
       profile: props.auth.getProfile()
     };
+    this.logout = this.logout.bind(this);
     props.auth.on('profile_updated', (newProfile) => {
       this.setState({ profile: newProfile });
     });
@@ -33,7 +34,7 @@ export class Catalog extends React.Component {
       <div className={styles.root}>
         <h2>Catalog</h2>
         <p>Welcome {profile.name}!</p>
-        <Button onClick={this.logout.bind(this)}>Logout</Button>
+        <Button onClick={this.logout}>Logout</Button>
       </div>
     );
   }

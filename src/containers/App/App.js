@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Router } from 'react-router';
+import { Router, hashHistory } from 'react-router';
 
 class App extends React.Component {
   static contextTypes = {
@@ -7,7 +7,6 @@ class App extends React.Component {
   }
 
   static propTypes = {
-    history: PropTypes.object.isRequired,
     routes: PropTypes.element.isRequired
   };
 
@@ -15,7 +14,7 @@ class App extends React.Component {
     return (
       <Router
         routes={this.props.routes}
-        history={this.props.history}
+        history={hashHistory}
       />
     );
   }

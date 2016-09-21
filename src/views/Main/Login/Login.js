@@ -8,13 +8,22 @@ export class Login extends React.Component {
     auth: T.instanceOf(AuthService)
   }
 
-  render() {
+  constructor() {
+    super();
+    this.login = this.login.bind(this);
+  }
+
+  login() {
     const { auth } = this.props;
+    auth.login();
+  }
+
+  render() {
     return (
       <div className={styles.root}>
         <h2>Login</h2>
         <ButtonToolbar className={styles.toolbar}>
-          <Button bsStyle="primary" onClick={auth.login.bind(this)}>Login</Button>
+          <Button bsStyle="primary" onClick={this.login}>Login</Button>
         </ButtonToolbar>
       </div>
     );
