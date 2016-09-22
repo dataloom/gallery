@@ -10,7 +10,7 @@ class App extends React.Component {
     routes: PropTypes.element.isRequired
   };
 
-  get content() {
+  renderContent() {
     return (
       <Router
         routes={this.props.routes}
@@ -22,7 +22,7 @@ class App extends React.Component {
   render() {
     return (
       <div style={{ height: '100%' }}>
-        {this.content}
+        {this.renderContent()}
       </div>
     );
   }

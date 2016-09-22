@@ -1,15 +1,15 @@
-import React, { PropTypes as T } from 'react';
+import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import styles from './styles.module.css';
 
 export class Catalog extends React.Component {
   static contextTypes = {
-    router: T.object
+    router: PropTypes.object
   }
 
   static propTypes = {
-    auth: T.instanceOf(AuthService)
+    auth: PropTypes.instanceOf(AuthService)
   }
 
   constructor(props, context) {
