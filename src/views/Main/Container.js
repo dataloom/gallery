@@ -8,7 +8,7 @@ export class Container extends React.Component {
   }
 
   static propTypes = {
-    children: T.element,
+    children: PropTypes.element,
     route: PropTypes.object
   }
 
