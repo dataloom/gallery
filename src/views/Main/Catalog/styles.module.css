@@ -1,3 +1,15 @@
 .root{
   text-align: center;
 }
+
+table {
+  color:red;
+}
+
+.schemaName {
+  color: "blue";
+}
+
+schemaName {
+  color: "green";
+}

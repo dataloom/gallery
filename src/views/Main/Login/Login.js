@@ -20,9 +20,9 @@ export class Login extends React.Component {
 
   render() {
     return (
-      <div className={styles.root}>
+      <div className={styles.root} style={{ textAlign: 'center' }}>
         <h2>Login</h2>
-        <ButtonToolbar className={styles.toolbar}>
+        <ButtonToolbar className={styles.toolbar} style={{ display: 'inline-block' }}>
           <Button bsStyle="primary" onClick={this.login}>Login</Button>
         </ButtonToolbar>
       </div>

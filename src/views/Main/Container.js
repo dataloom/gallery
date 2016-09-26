@@ -26,7 +26,7 @@ export class Container extends React.Component {
     const children = this.getChildren();
     return (
       <Jumbotron>
-        <h2 className={styles.mainTitle}>
+        <h2 className={styles.mainTitle} style={{ textAlign: 'center' }}>
           <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" role="presentation" />
         </h2>
         {children}
