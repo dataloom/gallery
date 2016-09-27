@@ -13,7 +13,8 @@ export class EntityType extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     namespace: PropTypes.string,
-    properties: PropTypes.string
+    properties: PropTypes.string,
+    primaryKey: PropTypes.string
   }
 
   constructor() {
@@ -26,7 +27,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { name, namespace, properties } = this.props;
+    const { name, namespace, properties, primaryKey } = this.props;
     return (
       <div className="entityType" style={{ left: '20', margin: '50', background: '#f6f6f6', padding: '20' }}>
         <div style={{ display: 'inline', fontWeight: 'bold', fontSize: '18' }} className={styles.schemaName}>{name}</div>
@@ -37,7 +38,7 @@ export class EntityType extends React.Component {
         <br />
         <div style={{ height: '20' }} />
         <div style={{ color: 'gray' }}className="propertiesLabel">Properties:</div>
-        <PropertyList properties={properties} />
+        <PropertyList properties={properties} primaryKey={primaryKey} />
         <br />
         <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
         <Button onClick={() => this.downloadFile(Consts.CSV)} style={{ marginLeft: '10' }}>Download {name} as CSV</Button>

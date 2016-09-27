@@ -7,7 +7,8 @@ export class PropertyList extends React.Component {
   }
 
   static propTypes = {
-    properties: React.PropTypes.string
+    properties: PropTypes.string,
+    primaryKey: PropTypes.string
   }
 
   keyProperties(props) {
@@ -26,9 +27,11 @@ export class PropertyList extends React.Component {
 
   render() {
     const propArray = this.keyProperties(JSON.parse(this.props.properties));
+    const pKeyJson = JSON.parse(this.props.primaryKey);
     const propertyList = propArray.map((prop) => {
+      const primaryKey = (pKeyJson[0].name === prop.name && pKeyJson[0].namespace === prop.namespace);
       return (
-        <Property key={prop.key} property={prop} />
+        <Property key={prop.key} property={prop} primaryKey={primaryKey} />
       );
     });
     return (

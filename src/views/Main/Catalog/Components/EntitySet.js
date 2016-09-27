@@ -17,10 +17,10 @@ export class EntitySet extends React.Component {
 
   constructor() {
     super();
-    this.downloadJson = this.downloadJson.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
   }
 
-  downloadJson() {
+  downloadFile(datatype) {
   //  CatalogApi.downloadEntitySetJson(this.props.namespace, this.props.name);
     return null;
   }
@@ -38,7 +38,7 @@ export class EntitySet extends React.Component {
         <div style={{ display: 'inline', fontSize: '16px' }}className="entitySetTypename">{typename}</div>
         <div style={{ display: 'inline', color: 'gray' }} className="entitySetTypenameLabel"> (typename)</div>
         <div style={{ height: '15px' }} />
-        <Button onClick={this.downloadJson}>Download {name} as JSON</Button>
+        <Button onClick={this.downloadFile}>Download {name} as JSON</Button>
       </div>
     );
   }

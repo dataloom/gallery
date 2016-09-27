@@ -34,6 +34,7 @@ export class EntityTypeList extends React.Component {
           name={entityType.name}
           namespace={entityType.namespace}
           properties={JSON.stringify(entityType.properties)}
+          primaryKey={JSON.stringify(entityType.primaryKey)}
         />
       );
     });
