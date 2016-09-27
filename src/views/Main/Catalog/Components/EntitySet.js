@@ -3,6 +3,7 @@ import { PropertyTypeList } from './PropertyTypeList';
 import { Button } from 'react-bootstrap';
 import styles from '../styles.module.css';
 import CatalogApi from '../../../../utils/CatalogApi';
+import Consts from '../../../../utils/AppConsts';
 
 export class EntitySet extends React.Component {
   static contextTypes = {
@@ -38,7 +39,8 @@ export class EntitySet extends React.Component {
         <div style={{ display: 'inline', fontSize: '16px' }}className="entitySetTypename">{typename}</div>
         <div style={{ display: 'inline', color: 'gray' }} className="entitySetTypenameLabel"> (typename)</div>
         <div style={{ height: '15px' }} />
-        <Button onClick={this.downloadFile}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.JSON)} style={{ marginLeft: '10' }}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.CSV)} style={{ marginLeft: '10' }}>Download {name} as CSV</Button>
       </div>
     );
   }
