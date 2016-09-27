@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { PropertyType } from './PropertyType';
+import '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
   static contextTypes = {
@@ -20,10 +21,6 @@ export class PropertyTypeList extends React.Component {
     return propertyTypes;
   }
 
-  tdStyle() {
-    return { paddingTop: '5', paddingBottom: '5', paddingLeft: '10', paddingRight: '10' };
-  }
-
   render() {
     const propArray = this.keyPropertyTypes(JSON.parse(this.props.propertyTypes));
     const propertyTypeList = propArray.map((prop) => {
@@ -35,10 +32,10 @@ export class PropertyTypeList extends React.Component {
       <table>
         <tbody>
           <tr>
-            <th style={this.tdStyle()}>Name</th>
-            <th style={this.tdStyle()}>Namespace</th>
-            <th style={this.tdStyle()}>Datatype</th>
-            <th style={this.tdStyle()}>Multiplicity</th>
+            <th className={'tableCell'}>Name</th>
+            <th className={'tableCell'}>Namespace</th>
+            <th className={'tableCell'}>Datatype</th>
+            <th className={'tableCell'}>Multiplicity</th>
           </tr>
           {propertyTypeList}
         </tbody>

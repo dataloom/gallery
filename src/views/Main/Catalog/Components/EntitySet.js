@@ -1,8 +1,6 @@
 import React, { PropTypes } from 'react';
-import { PropertyTypeList } from './PropertyTypeList';
 import { Button } from 'react-bootstrap';
-import styles from '../styles.module.css';
-import CatalogApi from '../../../../utils/CatalogApi';
+import '../styles.module.css';
 import Consts from '../../../../utils/AppConsts';
 
 export class EntitySet extends React.Component {
@@ -29,18 +27,18 @@ export class EntitySet extends React.Component {
   render() {
     const { name, title, typename } = this.props;
     return (
-      <div className="entitySet" style={{ left: '20px', margin: '50px', background: '#f6f6f6', padding: '20px' }}>
-        <div style={{ display: 'inline', fontWeight: 'bold', fontSize: '18px' }} className={styles.schemaName}>{name}</div>
-        <div style={{ display: 'inline', color: 'gray' }} className="entitySetNameLabel"> (name)</div>
+      <div className={'edmContainer'}>
+        <div className={'name'}>{name}</div>
+        <div className={'descriptionLabel'}> (name)</div>
         <br />
-        <div style={{ display: 'inline', fontSize: '16px' }}className="entitySetTitle">{title}</div>
-        <div style={{ display: 'inline', color: 'gray' }} className="entitySetTitleLabel"> (title)</div>
+        <div className={'subtitle'}>{title}</div>
+        <div className={'descriptionLabel'}> (title)</div>
         <br />
-        <div style={{ display: 'inline', fontSize: '16px' }}className="entitySetTypename">{typename}</div>
-        <div style={{ display: 'inline', color: 'gray' }} className="entitySetTypenameLabel"> (typename)</div>
-        <div style={{ height: '15px' }} />
-        <Button onClick={() => this.downloadFile(Consts.JSON)} style={{ marginLeft: '10' }}>Download {name} as JSON</Button>
-        <Button onClick={() => this.downloadFile(Consts.CSV)} style={{ marginLeft: '10' }}>Download {name} as CSV</Button>
+        <div className={'subtitle'}>{typename}</div>
+        <div className={'descriptionLabel'}> (typename)</div>
+        <div className={'spacerSmall'} />
+        <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.CSV)} className={'spacerMargin'}>Download {name} as CSV</Button>
       </div>
     );
   }

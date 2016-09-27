@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
+import '../styles.module.css';
 
 export class EntityTypeList extends React.Component {
   static contextTypes = {

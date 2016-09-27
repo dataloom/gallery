@@ -62,7 +62,7 @@ const MEDIA_URL_LOADER = {
 };
 
 const CSS_LOADER = {
-  loader: 'css',
+  loader: 'style!css',
   test: /\.css$/
 };
 

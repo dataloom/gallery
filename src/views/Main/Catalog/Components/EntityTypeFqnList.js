@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityTypeFqn } from './EntityTypeFqn';
+import '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
   static contextTypes = {
@@ -10,7 +11,8 @@ export class EntityTypeFqnList extends React.Component {
     entityTypeFqns: React.PropTypes.string
   }
 
-  keyPropertyTypes(entityTypeFqns) {
+  keyPropertyTypes() {
+    const entityTypeFqns = JSON.parse(this.props.entityTypeFqns)
     const fqns = entityTypeFqns;
     fqns.map((fqn) => {
       const newFqnObj = fqn;
@@ -20,23 +22,19 @@ export class EntityTypeFqnList extends React.Component {
     return fqns;
   }
 
-  tdStyle() {
-    return { paddingTop: '5', paddingBottom: '5', paddingLeft: '10', paddingRight: '10' };
-  }
-
   render() {
-    const fqnArray = this.keyPropertyTypes(JSON.parse(this.props.entityTypeFqns));
+    const fqnArray = this.keyPropertyTypes();
     const entityTypeFqnList = fqnArray.map((fqn) => {
       return (
-        <EntityTypeFqn entityTypeFqn={fqn} />
+        <EntityTypeFqn key={fqn.key} entityTypeFqn={fqn} />
       );
     });
     return (
       <table>
         <tbody>
           <tr>
-            <th style={this.tdStyle()}>Name</th>
-            <th style={this.tdStyle()}>Namespace</th>
+            <th className={'tableCell'}>Name</th>
+            <th className={'tableCell'}>Namespace</th>
           </tr>
           {entityTypeFqnList}
         </tbody>

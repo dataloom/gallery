@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
-import styles from './styles.module.css';
+import './styles.module.css';
 
 export class Login extends React.Component {
   static propTypes = {
@@ -20,9 +20,9 @@ export class Login extends React.Component {
 
   render() {
     return (
-      <div className={styles.root} style={{ textAlign: 'center' }}>
+      <div className={'root'}>
         <h2>Login</h2>
-        <ButtonToolbar className={styles.toolbar} style={{ display: 'inline-block' }}>
+        <ButtonToolbar className={'toolbar'}>
           <Button bsStyle="primary" onClick={this.login}>Login</Button>
         </ButtonToolbar>
       </div>

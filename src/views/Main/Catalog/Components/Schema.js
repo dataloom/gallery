@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
-import { PropertyTypeList } from './PropertyTypeList';
 import { Button } from 'react-bootstrap';
-import styles from '../styles.module.css';
+import '../styles.module.css';
+import { PropertyTypeList } from './PropertyTypeList';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
@@ -30,23 +30,23 @@ export class Schema extends React.Component {
   render() {
     const { name, namespace, propertyTypes, entityTypeFqns } = this.props;
     return (
-      <div className="schema" style={{ left: '20', margin: '50', background: '#f6f6f6', padding: '20' }}>
-        <div style={{ display: 'inline', fontWeight: 'bold', fontSize: '18' }} className={styles.schemaName}>{name}</div>
-        <div style={{ display: 'inline', color: 'gray' }} className="schemaNameLabel"> (name)</div>
+      <div className={'edmContainer'}>
+        <div className={'name'}>{name}</div>
+        <div className={'descriptionLabel'}> (name)</div>
         <br />
-        <div style={{ display: 'inline', fontSize: '16' }}className="schemaNamespace">{namespace}</div>
-        <div style={{ display: 'inline', color: 'gray' }} className="schemaNamespaceLabel"> (namespace)</div>
+        <div className={'subtitle'}>{namespace}</div>
+        <div className={'descriptionLabel'}> (namespace)</div>
         <br />
-        <div style={{ height: '20' }} />
-        <div style={{ color: 'gray' }}className="entityTypeFqns">Entity Types:</div>
+        <div className={'spacerMed'} />
+        <div className={'tableDescriptionLabel'}>Entity Types:</div>
         <EntityTypeFqnList entityTypeFqns={entityTypeFqns} />
         <br />
-        <div style={{ height: '20' }} />
-        <div style={{ color: 'gray' }}className="propertyTypesLabel">Property Types:</div>
+        <div className={'spacerMed'} />
+        <div className={'tableDescriptionLabel'}>Property Types:</div>
         <PropertyTypeList propertyTypes={propertyTypes} />
         <br />
         <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
-        <Button onClick={() => this.downloadFile(Consts.CSV)} style={{ marginLeft: '10' }}>Download {name} as CSV</Button>
+        <Button onClick={() => this.downloadFile(Consts.CSV)} className={'spacerMargin'}>Download {name} as CSV</Button>
       </div>
     );
   }

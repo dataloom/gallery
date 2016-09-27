@@ -35,3 +35,29 @@
 .mainTitle {
   text-align: center;
 }
+
+.topSpacer {
+  height: 50px;
+}
+
+.navbarContainer {
+  height: 50px;
+  background: gray;
+  width: 100%;
+  top: 0;
+  position: absolute;
+}
+
+.logo {
+  max-width: 90%;
+  max-height: 90%;
+  padding-left: 15px;
+}
+
+.loom {
+  display: inline-block;
+  color: #f6f6f6;
+  font-size: 30px;
+  vertical-align: middle;
+  padding-left: 15px;
+}

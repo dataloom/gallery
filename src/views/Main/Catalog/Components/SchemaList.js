@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
+import '../styles.module.css';
 
 export class SchemaList extends React.Component {
   static contextTypes = {

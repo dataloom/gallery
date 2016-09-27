@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Consts from '../../../../utils/AppConsts';
+import '../styles.module.css';
 
 export class DataModelToolbar extends React.Component {
   static contextTypes = {
@@ -19,30 +20,15 @@ export class DataModelToolbar extends React.Component {
 
   dataModelLabels =
     [
-      { label: 'Schemas', type: Consts.SCHEMAS },
-      { label: 'Entity Sets', type: Consts.ENTITY_SET },
-      { label: 'Entity Types', type: Consts.ENTITY_TYPE }
+      { label: 'Schemas', type: Consts.SCHEMAS, key: 0 },
+      { label: 'Entity Sets', type: Consts.ENTITY_SET, key: 1 },
+      { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 }
     ]
 
-  buttonStyle =
-    {
-      display: 'table-cell',
-      margin: '0',
-      verticalAlign: 'middle',
-      padding: '10',
-      border: 'none'
-    }
-
-  selectedStyle =
-    {
-      display: 'table-cell',
-      margin: '0',
-      verticalAlign: 'middle',
-      padding: '10',
-      border: 'none',
-      background: 'gray',
-      fontWeight: 'bold'
-    }
+  buttonStyles = {
+    unselected: 'buttonStyle',
+    selected: 'selectedButtonStyle'
+  }
 
   updateViewAndToolbar(type) {
     this.props.changeView(type);
@@ -50,21 +36,21 @@ export class DataModelToolbar extends React.Component {
   }
 
   render() {
-    const navButtons = this.dataModelLabels.map((labelPair) => {
-      const label = labelPair.label;
-      const type = labelPair.type;
-      let style = this.buttonStyle;
+    const navButtons = this.dataModelLabels.map((labels) => {
+      const label = labels.label;
+      const type = labels.type;
+      let className = this.buttonStyles.unselected;
       if (type === this.state.dataModelView) {
-        style = this.selectedStyle;
+        className = this.buttonStyles.selected;
       }
       return (
-        <button onClick={() => this.updateViewAndToolbar(type)} style={style}>{label}</button>
+        <button onClick={() => this.updateViewAndToolbar(type)} className={className} key={labels.key}>{label}</button>
       );
     });
 
     return (
-      <div style={{ textAlign: 'center', paddingTop: '15' }}>
-        <div style={{ height: '30', background: '#f6f6f6', display: 'inline-block', margin: '0 auto', textAlign: 'center' }}>
+      <div className={'edmNavbarContainer'}>
+        <div className={'edmNavbar'}>
           {navButtons}
         </div>
       </div>

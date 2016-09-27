@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Jumbotron } from 'react-bootstrap';
-import styles from './styles.module.css';
+import './styles.module.css';
 import { Navbar } from './components/Navbar';
 
 export class Container extends React.Component {
@@ -28,7 +28,7 @@ export class Container extends React.Component {
     return (
       <Jumbotron>
         <Navbar />
-        <div style={{ height: '50' }} />
+        <div className={'topSpacer'} />
         {children}
       </Jumbotron>
     );

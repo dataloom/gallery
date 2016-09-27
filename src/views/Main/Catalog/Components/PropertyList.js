@@ -11,8 +11,8 @@ export class PropertyList extends React.Component {
     primaryKey: PropTypes.string
   }
 
-  keyProperties(props) {
-    const properties = props;
+  keyProperties() {
+    const properties = JSON.parse(this.props.properties);
     properties.map((prop) => {
       const newProp = prop;
       newProp.key = properties.indexOf(prop);
@@ -21,12 +21,8 @@ export class PropertyList extends React.Component {
     return properties;
   }
 
-  tdStyle() {
-    return { paddingTop: '5', paddingBottom: '5', paddingLeft: '10', paddingRight: '10' };
-  }
-
   render() {
-    const propArray = this.keyProperties(JSON.parse(this.props.properties));
+    const propArray = this.keyProperties();
     const pKeyJson = JSON.parse(this.props.primaryKey);
     const propertyList = propArray.map((prop) => {
       const primaryKey = (pKeyJson[0].name === prop.name && pKeyJson[0].namespace === prop.namespace);
@@ -38,8 +34,8 @@ export class PropertyList extends React.Component {
       <table>
         <tbody>
           <tr>
-            <th style={this.tdStyle()}>Name</th>
-            <th style={this.tdStyle()}>Namespace</th>
+            <th className={'tableCell'}>Name</th>
+            <th className={'tableCell'}>Namespace</th>
           </tr>
           {propertyList}
         </tbody>

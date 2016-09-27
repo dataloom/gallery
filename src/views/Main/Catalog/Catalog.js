@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
-import styles from './styles.module.css';
+import './styles.module.css';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
 import { EntitySetList } from './Components/EntitySetList';
@@ -51,11 +51,11 @@ export class Catalog extends React.Component {
 
   render() {
     return (
-      <div className={styles.root}>
-        <h2 style={{ textAlign: 'center' }}>Catalog</h2>
+      <div>
+        <h2 className={'center'}>Catalog</h2>
         <DataModelToolbar changeView={this.changeDataModelView} />
         {this.getDataModelView()}
-        <Button onClick={this.logout} style={{ marginLeft: '50px' }}>Logout</Button>
+        <Button onClick={this.logout} className={'logoutButton'}>Logout</Button>
       </div>
     );
   }

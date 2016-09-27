@@ -25,13 +25,13 @@ export default class CatalogApi {
   static getDownloadRequestBody(data, datatype, url, name) {
     const type = (datatype === Consts.JSON) ? 'application/json' : 'text/csv';
     const req = {
-      url: url,
+      url,
       type: 'PUT',
       contentType: 'application/json',
-      data: data,
-      success: (data) => {
-        const dataString = JSON.stringify(data);
-        const blob = new Blob([dataString], { type: type });
+      data,
+      success: (entityData) => {
+        const dataString = JSON.stringify(entityData);
+        const blob = new Blob([dataString], { type });
         FileSaver.saveAs(blob, name.concat(
           (datatype === Consts.JSON) ? '.json' : '.csv'
         ));
@@ -54,8 +54,8 @@ export default class CatalogApi {
 
   static downloadEntityType(namespace, name, datatype) {
     const data = JSON.stringify({
-      namespace: namespace,
-      name: name
+      namespace,
+      name
     });
     return $.ajax(this.getDownloadRequestBody(data, datatype, Consts.ENTITY_TYPE_DATA_URL, name));
   }

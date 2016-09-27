@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import '../styles.module.css';
 
 export class EntityTypeFqn extends React.Component {
   static contextTypes = {
@@ -9,19 +10,12 @@ export class EntityTypeFqn extends React.Component {
     entityTypeFqn: PropTypes.object
   }
 
-  tdStyle(row) {
-    if (row % 2 === 0) {
-      return { paddingTop: '5', paddingBottom: '5', paddingLeft: '10', paddingRight: '10', backgroundColor: '#e3e3e3' };
-    }
-    return { paddingTop: '5', paddingBottom: '5', paddingLeft: '10', paddingRight: '10', backgroundColor: '#f1f1f1' };
-  }
-
   render() {
     const fqn = this.props.entityTypeFqn;
     return (
-      <tr>
-        <td style={this.tdStyle(fqn.key)}>{fqn.name}</td>
-        <td style={this.tdStyle(fqn.key)}>{fqn.namespace}</td>
+      <tr className={'tableRows'}>
+        <td className={'tableCell'}>{fqn.name}</td>
+        <td className={'tableCell'}>{fqn.namespace}</td>
       </tr>
     );
   }
