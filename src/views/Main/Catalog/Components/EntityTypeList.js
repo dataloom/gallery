@@ -15,38 +15,29 @@ export class EntityTypeList extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      schemas: [
-        { key: '11', name: 'name1', namespace: 'namespace1', propertyTypes: [] },
-        { key: '22', name: 'schema2', namespace: 'namespace2', propertyTypes: [] }
-      ]
+      entityTypes: []
     };
   }
 
   componentDidMount() {
     CatalogApi.getCatalogEntityTypeData()
-      .then((schemas) => {
-        const newSchemas = this.state.schemas;
-        schemas.forEach((schema) => {
-          const newSchema = schema;
-          newSchema.key = Utils.getFqn(schema.namespace, schema.name);
-          newSchemas.push(newSchema);
-        });
-        this.setState({ schemas: newSchemas });
+      .then((entityTypes) => {
+        this.setState({ entityTypes: Utils.addKeysToArray(entityTypes) });
       });
   }
 
   render() {
-    const schemaList = this.state.schemas.map((schema) => {
+    const entityTypeList = this.state.entityTypes.map((entityType) => {
       return (
-        <Schema
-          key={schema.key}
-          name={schema.name}
-          namespace={schema.namespace}
-          propertyTypes={JSON.stringify(schema.propertyTypes)}
+        <EntityType
+          key={entityType.key}
+          name={entityType.name}
+          namespace={entityType.namespace}
+          properties={JSON.stringify(entityType.properties)}
         />
       );
     });
-    return (<div>{schemaList}</div>);
+    return (<div>{entityTypeList}</div>);
   }
 }
 

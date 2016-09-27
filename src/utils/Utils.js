@@ -8,7 +8,7 @@ export default class Utils {
     const newArray = [];
     oldArray.forEach((item) => {
       const newItem = item;
-      newArray.key = oldArray.indexOf(item);
+      newItem.key = oldArray.indexOf(item);
       newArray.push(newItem);
     });
     return newArray;

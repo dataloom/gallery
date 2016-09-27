@@ -32,7 +32,7 @@ export class PropertyTypeList extends React.Component {
       );
     });
     return (
-      <table style={{ }}>
+      <table>
         <tbody>
           <tr>
             <th style={this.tdStyle()}>Name</th>

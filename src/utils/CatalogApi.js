@@ -10,7 +10,9 @@ export default class CatalogApi {
   }
 
   static getCatalogEntityTypeData() {
-    return null;
+    return $.get(Consts.ENTITY_TYPES_BASE_PATH, (result) => {
+      return result;
+    });
   }
 
   static getCatalogEntitySetData() {

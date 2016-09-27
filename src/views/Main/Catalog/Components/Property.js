@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 
-export class PropertyType extends React.Component {
+export class Property extends React.Component {
   static contextTypes = {
     router: PropTypes.object
   }
 
   static propTypes = {
-    propertyType: PropTypes.object
+    property: PropTypes.object
   }
 
   tdStyle(row) {
@@ -17,16 +17,14 @@ export class PropertyType extends React.Component {
   }
 
   render() {
-    const prop = this.props.propertyType;
+    const prop = this.props.property;
     return (
       <tr>
         <td style={this.tdStyle(prop.key)}>{prop.name}</td>
         <td style={this.tdStyle(prop.key)}>{prop.namespace}</td>
-        <td style={this.tdStyle(prop.key)}>{prop.datatype}</td>
-        <td style={this.tdStyle(prop.key)}>{prop.multiplicity}</td>
       </tr>
     );
   }
 }
 
-export default PropertyType;
+export default Property;

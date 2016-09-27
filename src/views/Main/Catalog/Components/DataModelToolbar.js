@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import Consts from '../../../../utils/AppConsts';
 
 export class DataModelToolbar extends React.Component {
