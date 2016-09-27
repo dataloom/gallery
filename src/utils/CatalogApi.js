@@ -57,7 +57,7 @@ export default class CatalogApi {
       namespace: namespace,
       name: name
     });
-    return $.ajax(this.getDownloadRequestBody(data, datatype, Consts.ENTITY_TYPE_DATA_URL));
+    return $.ajax(this.getDownloadRequestBody(data, datatype, Consts.ENTITY_TYPE_DATA_URL, name));
   }
 
   static downloadEntitySetJson() {
