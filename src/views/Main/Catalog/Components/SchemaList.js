@@ -14,12 +14,7 @@ export class SchemaList extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      schemas: [
-        { key: '11', name: 'name1', namespace: 'namespace1', propertyTypes: [] },
-        { key: '22', name: 'schema2', namespace: 'namespace2', propertyTypes: [] }
-      ]
-    };
+    this.state = { schemas: [] };
   }
 
   componentDidMount() {
@@ -37,6 +32,7 @@ export class SchemaList extends React.Component {
           name={schema.name}
           namespace={schema.namespace}
           propertyTypes={JSON.stringify(schema.propertyTypes)}
+          entityTypeFqns={JSON.stringify(schema.entityTypeFqns)}
         />
       );
     });

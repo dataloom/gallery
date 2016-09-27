@@ -3,6 +3,7 @@ import { PropertyTypeList } from './PropertyTypeList';
 import { Button } from 'react-bootstrap';
 import styles from '../styles.module.css';
 import CatalogApi from '../../../../utils/CatalogApi';
+import Consts from '../../../../utils/AppConsts';
 
 export class Schema extends React.Component {
   static contextTypes = {
@@ -12,16 +13,17 @@ export class Schema extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     namespace: PropTypes.string,
-    propertyTypes: PropTypes.string
+    propertyTypes: PropTypes.string,
+    entityTypeFqns: PropTypes.string
   }
 
   constructor() {
     super();
-    this.downloadJson = this.downloadJson.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
   }
 
-  downloadJson() {
-    CatalogApi.downloadSchemaJson(this.props.namespace, this.props.name);
+  downloadFile(datatype) {
+    CatalogApi.downloadSchema(this.props.name, datatype, this.props.entityTypeFqns);
   }
 
   render() {
@@ -38,7 +40,8 @@ export class Schema extends React.Component {
         <div style={{ color: 'gray' }}className="propertyTypesLabel">Property Types:</div>
         <PropertyTypeList propertyTypes={propertyTypes} />
         <br />
-        <Button onClick={this.downloadJson}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.CSV)} style={{ marginLeft: '10' }}>Download {name} as CSV</Button>
       </div>
     );
   }
