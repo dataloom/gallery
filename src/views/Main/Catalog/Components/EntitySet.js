@@ -28,16 +28,16 @@ export class EntitySet extends React.Component {
   render() {
     const { name, title, typename } = this.props;
     return (
-      <div className="entitySet" style={{ left: '20', margin: '50', background: '#f6f6f6', padding: '20' }}>
-        <div style={{ display: 'inline', fontWeight: 'bold', fontSize: '18' }} className={styles.schemaName}>{name}</div>
+      <div className="entitySet" style={{ left: '20px', margin: '50px', background: '#f6f6f6', padding: '20px' }}>
+        <div style={{ display: 'inline', fontWeight: 'bold', fontSize: '18px' }} className={styles.schemaName}>{name}</div>
         <div style={{ display: 'inline', color: 'gray' }} className="entitySetNameLabel"> (name)</div>
         <br />
-        <div style={{ display: 'inline', fontSize: '16' }}className="entitySetTitle">{title}</div>
+        <div style={{ display: 'inline', fontSize: '16px' }}className="entitySetTitle">{title}</div>
         <div style={{ display: 'inline', color: 'gray' }} className="entitySetTitleLabel"> (title)</div>
         <br />
-        <div style={{ display: 'inline', fontSize: '16' }}className="entitySetTypename">{typename}</div>
+        <div style={{ display: 'inline', fontSize: '16px' }}className="entitySetTypename">{typename}</div>
         <div style={{ display: 'inline', color: 'gray' }} className="entitySetTypenameLabel"> (typename)</div>
-        <div style={{ height: '15' }} />
+        <div style={{ height: '15px' }} />
         <Button onClick={this.downloadJson}>Download {name} as JSON</Button>
       </div>
     );

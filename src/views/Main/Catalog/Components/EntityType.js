@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { PropertyList } from './PropertyList';
 import styles from '../styles.module.css';
 import CatalogApi from '../../../../utils/CatalogApi';
+import Consts from '../../../../utils/AppConsts';
 
 export class EntityType extends React.Component {
   static contextTypes = {
@@ -17,11 +18,11 @@ export class EntityType extends React.Component {
 
   constructor() {
     super();
-    this.downloadJson = this.downloadJson.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
   }
 
-  downloadJson() {
-    CatalogApi.downloadEntityTypeJson(this.props.namespace, this.props.name);
+  downloadFile(datatype) {
+    CatalogApi.downloadEntityType(this.props.namespace, this.props.name, datatype);
   }
 
   render() {
@@ -38,7 +39,8 @@ export class EntityType extends React.Component {
         <div style={{ color: 'gray' }}className="propertiesLabel">Properties:</div>
         <PropertyList properties={properties} />
         <br />
-        <Button onClick={this.downloadJson}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
+        <Button onClick={() => this.downloadFile(Consts.CSV)} style={{ marginLeft: '10' }}>Download {name} as CSV</Button>
       </div>
     );
   }

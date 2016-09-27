@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import FileSaver from 'file-saver';
 import Consts from './AppConsts';
 
 export default class CatalogApi {
@@ -22,9 +23,6 @@ export default class CatalogApi {
   }
 
   static downloadSchemaJson(namespace, name) {
-    console.log('hi from the api');
-    console.log(namespace);
-    console.log(name);
     return $.get(Consts.SCHEMA_BASE_PATH);
     // return $.ajax({
     //   url: Consts.SCHEMA_BASE_PATH,
@@ -53,8 +51,37 @@ export default class CatalogApi {
     // });
   }
 
-  static downloadEntityTypeJson() {
-    return null;
+  static getDownloadRequestBody(namespace, name, datatype, url) {
+    const type = (datatype === Consts.JSON) ? 'application/json' : 'text/csv';
+    const req = {
+      url: url,
+      type: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        namespace: namespace,
+        name: name
+      }),
+      success: (data) => {
+        const dataString = JSON.stringify(data);
+        const blob = new Blob([dataString], { type: type });
+        FileSaver.saveAs(blob, name.concat(
+          (datatype === Consts.JSON) ? '.json' : '.csv'
+        ));
+      },
+      error: (e) => {
+        console.error(e);
+      }
+    };
+    if (datatype === Consts.CSV) {
+      req.headers = {
+        Accept: type
+      };
+    }
+    return req;
+  }
+
+  static downloadEntityType(namespace, name, datatype) {
+    return $.ajax(this.getDownloadRequestBody(namespace, name, datatype, Consts.ENTITY_TYPE_DATA_URL));
   }
 
   static downloadEntitySetJson() {
