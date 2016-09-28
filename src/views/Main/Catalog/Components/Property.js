@@ -1,10 +1,6 @@
 import React, { PropTypes } from 'react';
 
 export class Property extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
     property: PropTypes.object,
     primaryKey: PropTypes.bool

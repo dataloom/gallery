@@ -3,12 +3,8 @@ import { PropertyType } from './PropertyType';
 import '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
-    propertyTypes: React.PropTypes.string
+    propertyTypes: PropTypes.string
   }
 
   keyPropertyTypes() {

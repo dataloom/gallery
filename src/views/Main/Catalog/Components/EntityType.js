@@ -6,10 +6,6 @@ import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
 
 export class EntityType extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
     name: PropTypes.string,
     namespace: PropTypes.string,

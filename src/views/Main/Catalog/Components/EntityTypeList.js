@@ -5,12 +5,8 @@ import { EntityType } from './EntityType';
 import '../styles.module.css';
 
 export class EntityTypeList extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
-    schemas: React.PropTypes.array
+    schemas: PropTypes.array
   }
 
   constructor(props, context) {

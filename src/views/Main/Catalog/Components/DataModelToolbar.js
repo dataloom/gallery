@@ -3,10 +3,6 @@ import Consts from '../../../../utils/AppConsts';
 import '../styles.module.css';
 
 export class DataModelToolbar extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
     changeView: PropTypes.func
   }

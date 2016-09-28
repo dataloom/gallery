@@ -5,12 +5,8 @@ import { EntitySet } from './EntitySet';
 import '../styles.module.css';
 
 export class EntitySetList extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
-    entitySets: React.PropTypes.array
+    entitySets: PropTypes.array
   }
 
   constructor(props, context) {

@@ -3,12 +3,8 @@ import { EntityTypeFqn } from './EntityTypeFqn';
 import '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
-    entityTypeFqns: React.PropTypes.string
+    entityTypeFqns: PropTypes.string
   }
 
   keyPropertyTypes() {

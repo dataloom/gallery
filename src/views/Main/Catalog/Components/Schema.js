@@ -7,10 +7,6 @@ import Consts from '../../../../utils/AppConsts';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
 
 export class Schema extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
     name: PropTypes.string,
     namespace: PropTypes.string,

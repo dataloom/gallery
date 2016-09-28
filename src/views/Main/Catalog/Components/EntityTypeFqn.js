@@ -2,10 +2,6 @@ import React, { PropTypes } from 'react';
 import '../styles.module.css';
 
 export class EntityTypeFqn extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
   static propTypes = {
     entityTypeFqn: PropTypes.object
   }

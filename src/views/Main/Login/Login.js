@@ -21,6 +21,7 @@ export class Login extends React.Component {
   render() {
     return (
       <div className={'root'}>
+        <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" role="presentation" />
         <h2>Login</h2>
         <ButtonToolbar className={'toolbar'}>
           <Button bsStyle="primary" onClick={this.login}>Login</Button>
