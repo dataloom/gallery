@@ -26,17 +26,15 @@ export class SchemaList extends React.Component {
   }
 
   render() {
-    const schemaList = this.state.schemas.map((schema) => {
-      return (
-        <Schema
-          key={schema.key}
-          name={schema.name}
-          namespace={schema.namespace}
-          propertyTypes={JSON.stringify(schema.propertyTypes)}
-          entityTypeFqns={JSON.stringify(schema.entityTypeFqns)}
-        />
-      );
-    });
+    const schemaList = this.state.schemas.map(schema =>
+      <Schema
+        key={schema.key}
+        name={schema.name}
+        namespace={schema.namespace}
+        propertyTypes={JSON.stringify(schema.propertyTypes)}
+        entityTypeFqns={JSON.stringify(schema.entityTypeFqns)}
+      />
+    );
     return (<div>{schemaList}</div>);
   }
 }

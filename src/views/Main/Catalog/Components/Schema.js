@@ -46,7 +46,6 @@ export class Schema extends React.Component {
         <PropertyTypeList propertyTypes={propertyTypes} />
         <br />
         <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
-        <Button onClick={() => this.downloadFile(Consts.CSV)} className={'spacerMargin'}>Download {name} as CSV</Button>
       </div>
     );
   }

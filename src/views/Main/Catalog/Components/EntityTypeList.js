@@ -28,17 +28,15 @@ export class EntityTypeList extends React.Component {
   }
 
   render() {
-    const entityTypeList = this.state.entityTypes.map((entityType) => {
-      return (
-        <EntityType
-          key={entityType.key}
-          name={entityType.name}
-          namespace={entityType.namespace}
-          properties={JSON.stringify(entityType.properties)}
-          primaryKey={JSON.stringify(entityType.primaryKey)}
-        />
-      );
-    });
+    const entityTypeList = this.state.entityTypes.map(entityType =>
+      <EntityType
+        key={entityType.key}
+        name={entityType.name}
+        namespace={entityType.namespace}
+        properties={JSON.stringify(entityType.properties)}
+        primaryKey={JSON.stringify(entityType.primaryKey)}
+      />
+    );
     return (<div>{entityTypeList}</div>);
   }
 }

@@ -11,8 +11,8 @@ export class PropertyTypeList extends React.Component {
     propertyTypes: React.PropTypes.string
   }
 
-  keyPropertyTypes(types) {
-    const propertyTypes = types;
+  keyPropertyTypes() {
+    const propertyTypes = JSON.parse(this.props.propertyTypes);
     propertyTypes.map((type) => {
       const newType = type;
       newType.key = propertyTypes.indexOf(type);
@@ -22,12 +22,10 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const propArray = this.keyPropertyTypes(JSON.parse(this.props.propertyTypes));
-    const propertyTypeList = propArray.map((prop) => {
-      return (
-        <PropertyType key={prop.key} propertyType={prop} />
-      );
-    });
+    const propArray = this.keyPropertyTypes();
+    const propertyTypeList = propArray.map(prop =>
+      <PropertyType key={prop.key} propertyType={prop} />
+    );
     return (
       <table>
         <tbody>

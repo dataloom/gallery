@@ -31,16 +31,14 @@ export class EntitySetList extends React.Component {
   }
 
   render() {
-    const entitySetList = this.state.entitySets.map((entitySet) => {
-      return (
-        <EntitySet
-          key={entitySet.key}
-          name={entitySet.name}
-          title={entitySet.title}
-          typename={entitySet.typename}
-        />
-      );
-    });
+    const entitySetList = this.state.entitySets.map(entitySet => (
+      <EntitySet
+        key={entitySet.key}
+        name={entitySet.name}
+        title={entitySet.title}
+        typename={entitySet.typename}
+      />
+    ));
     return (<div>{entitySetList}</div>);
   }
 }

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import '../styles.module.css';
+import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
 
 export class EntitySet extends React.Component {
@@ -20,8 +21,7 @@ export class EntitySet extends React.Component {
   }
 
   downloadFile(datatype) {
-  //  CatalogApi.downloadEntitySetJson(this.props.namespace, this.props.name);
-    return null;
+    CatalogApi.downloadEntitySet(this.props.name, this.props.typename, datatype);
   }
 
   render() {

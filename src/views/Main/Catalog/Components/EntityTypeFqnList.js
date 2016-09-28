@@ -12,7 +12,7 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   keyPropertyTypes() {
-    const entityTypeFqns = JSON.parse(this.props.entityTypeFqns)
+    const entityTypeFqns = JSON.parse(this.props.entityTypeFqns);
     const fqns = entityTypeFqns;
     fqns.map((fqn) => {
       const newFqnObj = fqn;
@@ -24,11 +24,9 @@ export class EntityTypeFqnList extends React.Component {
 
   render() {
     const fqnArray = this.keyPropertyTypes();
-    const entityTypeFqnList = fqnArray.map((fqn) => {
-      return (
-        <EntityTypeFqn key={fqn.key} entityTypeFqn={fqn} />
-      );
-    });
+    const entityTypeFqnList = fqnArray.map(fqn =>
+      <EntityTypeFqn key={fqn.key} entityTypeFqn={fqn} />
+    );
     return (
       <table>
         <tbody>
