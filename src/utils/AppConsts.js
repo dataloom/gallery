@@ -11,7 +11,7 @@ const CSV = 'CSV';
 const PUT = 'PUT';
 const GET = 'GET';
 
-const DATASTORE_CATALOG_URL = 'http://localhost:8095/v1';
+const DATASTORE_CATALOG_URL = 'http://localhost:8095/ontology';
 const SCHEMAS = '/schema';
 const ENTITY_SET = '/entity/set';
 const ENTITYSET = '/entityset';
