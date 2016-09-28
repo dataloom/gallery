@@ -11,12 +11,7 @@ export class EntitySetList extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      entitySets: [
-        { key: '11', name: 'name1', title: 'title1', typename: 'typename1' },
-        { key: '22', name: 'name2', title: 'title2', typename: 'typename2' }
-      ]
-    };
+    this.state = { entitySets: [] };
   }
 
   componentDidMount() {
