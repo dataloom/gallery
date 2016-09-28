@@ -94,3 +94,12 @@
 .center {
   text-align: center;
 }
+
+.errorMsg {
+  color: red;
+  padding-top: 10px;
+}
+
+.hiddenErrorMsg {
+  display: none;
+}

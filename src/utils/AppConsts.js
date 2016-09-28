@@ -28,6 +28,11 @@ const ENTITY_TYPE_DATA_URL = DATASTORE_CATALOG_URL.concat(DATA).concat(ENTITY_DA
 const SCHEMA_DATA_URL = ENTITY_TYPE_DATA_URL.concat(MULTIPLE);
 const ENTITY_SET_DATA_BASE_URL = DATASTORE_CATALOG_URL.concat(DATA).concat(ENTITYSET);
 
+const ERROR_STATE = {
+  hide: 'hiddenErrorMsg',
+  show: 'errorMsg'
+};
+
 export default {
   AUTH0_CLIENT_ID,
   AUTH0_DOMAIN,
@@ -45,5 +50,6 @@ export default {
   ENTITY_TYPE_DATA_URL,
   SCHEMA_DATA_URL,
   ENTITY_SET_DATA_BASE_URL,
-  ENTITYDATA
+  ENTITYDATA,
+  ERROR_STATE
 };

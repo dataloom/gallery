@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Property } from './Property';
+import '../styles.module.css';
 
 export class PropertyList extends React.Component {
   static contextTypes = {

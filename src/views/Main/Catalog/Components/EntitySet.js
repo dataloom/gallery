@@ -18,10 +18,18 @@ export class EntitySet extends React.Component {
   constructor() {
     super();
     this.downloadFile = this.downloadFile.bind(this);
+    this.displayError = this.displayError.bind(this);
+    this.state = {
+      error: Consts.ERROR_STATE.hide
+    };
   }
 
   downloadFile(datatype) {
-    CatalogApi.downloadEntitySet(this.props.name, this.props.typename, datatype);
+    CatalogApi.downloadEntitySet(this.props.name, this.props.typename, datatype, this.displayError);
+  }
+
+  displayError() {
+    this.setState({ error: Consts.ERROR_STATE.show });
   }
 
   render() {
@@ -39,6 +47,7 @@ export class EntitySet extends React.Component {
         <div className={'spacerSmall'} />
         <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
         <Button onClick={() => this.downloadFile(Consts.CSV)} className={'spacerMargin'}>Download {name} as CSV</Button>
+        <div className={this.state.error}>Unable to download {name}</div>
       </div>
     );
   }

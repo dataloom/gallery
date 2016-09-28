@@ -16,7 +16,7 @@ export default class CatalogApi {
     return $.get(Consts.ENTITY_SETS_BASE_PATH);
   }
 
-  static getDownloadRequestBody(data, method, datatype, url, name) {
+  static getDownloadRequestBody(data, method, datatype, url, name, err) {
     const type = (datatype === Consts.JSON) ? 'application/json' : 'text/csv';
     const req = {
       url,
@@ -29,8 +29,8 @@ export default class CatalogApi {
           (datatype === Consts.JSON) ? '.json' : '.csv'
         ));
       },
-      error: (e) => {
-        console.error(e);
+      error: () => {
+        err();
       }
     };
     if (method === Consts.PUT) {
@@ -44,24 +44,24 @@ export default class CatalogApi {
     return req;
   }
 
-  static downloadSchema(name, datatype, entityTypeFqns) {
-    return $.ajax(this.getDownloadRequestBody(entityTypeFqns, Consts.PUT, datatype, Consts.SCHEMA_DATA_URL, name));
+  static downloadSchema(name, datatype, entityTypeFqns, err) {
+    return $.ajax(this.getDownloadRequestBody(entityTypeFqns, Consts.PUT, datatype, Consts.SCHEMA_DATA_URL, name, err));
   }
 
-  static downloadEntityType(namespace, name, datatype) {
+  static downloadEntityType(namespace, name, datatype, err) {
     const data = JSON.stringify({
       namespace,
       name
     });
-    return $.ajax(this.getDownloadRequestBody(data, Consts.PUT, datatype, Consts.ENTITY_TYPE_DATA_URL, name));
+    return $.ajax(this.getDownloadRequestBody(data, Consts.PUT, datatype, Consts.ENTITY_TYPE_DATA_URL, name, err));
   }
 
-  static downloadEntitySet(name, typename, datatype) {
+  static downloadEntitySet(name, typename, datatype, err) {
     const url = Consts.ENTITY_SET_DATA_BASE_URL
       .concat('/')
       .concat(name).concat('/')
       .concat(typename)
       .concat(Consts.ENTITYDATA);
-    return $.ajax(this.getDownloadRequestBody(null, Consts.GET, datatype, url, name));
+    return $.ajax(this.getDownloadRequestBody(null, Consts.GET, datatype, url, name, err));
   }
 }

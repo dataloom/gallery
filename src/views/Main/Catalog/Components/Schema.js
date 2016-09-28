@@ -18,13 +18,26 @@ export class Schema extends React.Component {
     entityTypeFqns: PropTypes.string
   }
 
+  errorState = {
+    hide: 'hiddenErrorMsg',
+    show: 'errorMsg'
+  }
+
   constructor() {
     super();
     this.downloadFile = this.downloadFile.bind(this);
+    this.displayError = this.displayError.bind(this);
+    this.state = {
+      error: this.errorState.hide
+    };
   }
 
   downloadFile(datatype) {
-    CatalogApi.downloadSchema(this.props.name, datatype, this.props.entityTypeFqns);
+    CatalogApi.downloadSchema(this.props.name, datatype, this.props.entityTypeFqns, this.displayError);
+  }
+
+  displayError() {
+    this.setState({ error: this.errorState.show });
   }
 
   render() {
@@ -46,6 +59,7 @@ export class Schema extends React.Component {
         <PropertyTypeList propertyTypes={propertyTypes} />
         <br />
         <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
+        <div className={this.state.error}>Unable to download {name}</div>
       </div>
     );
   }
