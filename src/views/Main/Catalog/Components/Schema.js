@@ -18,26 +18,42 @@ export class Schema extends React.Component {
     entityTypeFqns: PropTypes.string
   }
 
-  errorState = {
-    hide: 'hiddenErrorMsg',
-    show: 'errorMsg'
-  }
-
   constructor() {
     super();
+    this.handleClick = this.handleClick.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
     this.displayError = this.displayError.bind(this);
+    this.enableButton = this.enableButton.bind(this);
     this.state = {
-      error: this.errorState.hide
+      error: Consts.ERROR_STATE.hide,
+      disableJson: false
     };
   }
 
+  handleClick() {
+    this.downloadFile(Consts.JSON);
+    this.setState({ disableJson: true });
+  }
+
   downloadFile(datatype) {
-    CatalogApi.downloadSchema(this.props.name, datatype, this.props.entityTypeFqns, this.displayError);
+    CatalogApi.downloadSchema(
+      this.props.name,
+      datatype,
+      this.props.entityTypeFqns,
+      this.displayError,
+      this.enableButton
+    );
   }
 
   displayError() {
-    this.setState({ error: this.errorState.show });
+    this.setState({
+      error: Consts.ERROR_STATE.show,
+      disableJson: false
+    });
+  }
+
+  enableButton() {
+    this.setState({ disableJson: false });
   }
 
   render() {
@@ -58,7 +74,7 @@ export class Schema extends React.Component {
         <div className={'tableDescriptionLabel'}>Property Types:</div>
         <PropertyTypeList propertyTypes={propertyTypes} />
         <br />
-        <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
+        <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>
         <div className={this.state.error}>Unable to download {name}</div>
       </div>
     );

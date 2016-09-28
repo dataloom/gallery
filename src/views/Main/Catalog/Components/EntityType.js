@@ -19,19 +19,49 @@ export class EntityType extends React.Component {
 
   constructor() {
     super();
+    this.handleClick = this.handleClick.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
     this.displayError = this.displayError.bind(this);
+    this.enableButton = this.enableButton.bind(this);
     this.state = {
-      error: Consts.ERROR_STATE.hide
+      error: Consts.ERROR_STATE.hide,
+      disableJson: false,
+      disableCsv: false
     };
   }
 
-  downloadFile(datatype) {
-    CatalogApi.downloadEntityType(this.props.namespace, this.props.name, datatype, this.displayError);
+  handleClick(datatype) {
+    this.downloadFile(datatype);
+    if (datatype === Consts.JSON) {
+      this.setState({ disableJson: true });
+    }
+    else {
+      this.setState({ disableCsv: true });
+    }
   }
 
-  displayError() {
+  downloadFile(datatype) {
+    CatalogApi.downloadEntityType(
+      this.props.namespace,
+      this.props.name,
+      datatype,
+      this.displayError,
+      this.enableButton
+    );
+  }
+
+  displayError(datatype) {
     this.setState({ error: Consts.ERROR_STATE.show });
+    this.enableButton(datatype);
+  }
+
+  enableButton(datatype) {
+    if (datatype === Consts.JSON) {
+      this.setState({ disableJson: false });
+    }
+    else {
+      this.setState({ disableCsv: false });
+    }
   }
 
   render() {
@@ -48,8 +78,19 @@ export class EntityType extends React.Component {
         <div className={'tableDescriptionLabel'}>Properties:</div>
         <PropertyList properties={properties} primaryKey={primaryKey} />
         <br />
-        <Button onClick={() => this.downloadFile(Consts.JSON)}>Download {name} as JSON</Button>
-        <Button onClick={() => this.downloadFile(Consts.CSV)} className={'spacerMargin'}>Download {name} as CSV</Button>
+        <Button
+          onClick={() => this.handleClick(Consts.JSON)}
+          disabled={this.state.disableJson}
+        >
+          Download {name} as JSON
+        </Button>
+        <Button
+          onClick={() => this.handleClick(Consts.CSV)}
+          disabled={this.state.disableCsv}
+          className={'spacerMargin'}
+        >
+          Download {name} as CSV
+        </Button>
         <div className={this.state.error}>Unable to download {name}</div>
       </div>
     );
