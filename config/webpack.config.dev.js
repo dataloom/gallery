@@ -36,7 +36,7 @@ const plugins = []
   .concat(
     new HtmlWebpackPlugin({
       inject: true,
-      template: `${PATHS.ABS.SOURCE}/${CONSTS.APP_INDEX_HTML}`
+      template: `${PATHS.ABS.SOURCE}/${CONSTS.APP_HTML}`
     })
   );
 

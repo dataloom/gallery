@@ -5,7 +5,6 @@
 /* eslint-disable import/no-extraneous-dependencies, react/require-extension */
 
 const webpack = require('webpack');
-
 const CONSTS = require('./consts');
 const ENV = require('./env.js');
 const PATHS = require('./paths.js');
@@ -62,6 +61,11 @@ const MEDIA_URL_LOADER = {
   }
 };
 
+const CSS_LOADER = {
+  loader: 'css',
+  test: /\.css$/
+};
+
 /*
  * plugins
  */
@@ -93,7 +97,8 @@ module.exports = {
       BABEL_LOADER,
       JSON_LOADER,
       MEDIA_FILE_LOADER,
-      MEDIA_URL_LOADER
+      MEDIA_URL_LOADER,
+      CSS_LOADER
     ],
     noParse: []
   },
