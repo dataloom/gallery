@@ -12,8 +12,7 @@
 
 body {
   color: var(--dark);
-  font-weight: lighter;
-  font: 400 15px/22px 'Open Sans', 'Helvetica Neue', Sans-serif;
+  font: 400 15px/22px 'Lato', 'Helvetica Neue', 'Open Sans', Sans-serif;
   font-smoothing: antialiased;
   padding: 0;
   margin: 0;

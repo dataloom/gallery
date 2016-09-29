@@ -1,3 +1,7 @@
+th {
+  font-size: 14px;
+}
+
 .edmContainer {
   left: 20px;
   margin: 50px;
@@ -8,7 +12,7 @@
 .name {
   display: inline;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .descriptionLabel {
