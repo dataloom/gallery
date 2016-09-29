@@ -27,7 +27,7 @@ export class Container extends React.Component {
     const children = this.getChildren();
     return (
       <Jumbotron>
-        <Navbar />
+        <Navbar auth={this.props.route.auth} />
         <div className={'topSpacer'} />
         {children}
       </Jumbotron>

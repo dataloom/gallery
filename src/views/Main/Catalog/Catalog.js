@@ -1,6 +1,4 @@
-import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
-import AuthService from '../../../utils/AuthService';
+import React from 'react';
 import './styles.module.css';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
@@ -9,20 +7,12 @@ import { DataModelToolbar } from './Components/DataModelToolbar';
 import Consts from '../../../utils//AppConsts';
 
 export class Catalog extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object
-  }
-
-  static propTypes = {
-    auth: PropTypes.instanceOf(AuthService)
-  }
 
   constructor(props, context) {
     super(props, context);
     this.state = {
       dataModelView: Consts.SCHEMA
     };
-    this.logout = this.logout.bind(this);
     this.changeDataModelView = this.changeDataModelView.bind(this);
   }
 
@@ -44,18 +34,12 @@ export class Catalog extends React.Component {
     this.setState({ dataModelView: newView });
   }
 
-  logout() {
-    this.props.auth.logout();
-    this.context.router.push('/login');
-  }
-
   render() {
     return (
       <div>
         <h2 className={'center'}>Catalog</h2>
         <DataModelToolbar changeView={this.changeDataModelView} />
         {this.getDataModelView()}
-        <Button onClick={this.logout} className={'logoutButton'}>Logout</Button>
       </div>
     );
   }

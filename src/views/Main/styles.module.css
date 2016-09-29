@@ -23,3 +23,11 @@
   vertical-align: middle;
   padding-left: 15px;
 }
+
+.logoutButton {
+  position: relative;
+  float: right;
+  margin-right: 10px;
+  height: 70%;
+  top: 15%;
+}
