@@ -8,8 +8,8 @@ export class EntityType extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     namespace: PropTypes.string,
-    properties: PropTypes.string,
-    primaryKey: PropTypes.string
+    properties: PropTypes.array,
+    primaryKey: PropTypes.array
   }
 
   constructor() {

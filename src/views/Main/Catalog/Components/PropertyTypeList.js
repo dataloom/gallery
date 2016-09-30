@@ -8,11 +8,10 @@ export class PropertyTypeList extends React.Component {
 
   keyPropertyTypes() {
     const propertyTypes = JSON.parse(this.props.propertyTypes);
-    propertyTypes.map((type) => {
+    for (const type of propertyTypes) {
       const newType = type;
       newType.key = propertyTypes.indexOf(type);
-      return newType;
-    });
+    }
     return propertyTypes;
   }
 

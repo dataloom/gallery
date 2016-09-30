@@ -28,8 +28,8 @@ export class EntityTypeList extends React.Component {
         key={entityType.key}
         name={entityType.name}
         namespace={entityType.namespace}
-        properties={JSON.stringify(entityType.properties)}
-        primaryKey={JSON.stringify(entityType.primaryKey)}
+        properties={entityType.properties}
+        primaryKey={entityType.primaryKey}
       />
     );
     return (<div>{entityTypeList}</div>);

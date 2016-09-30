@@ -3,23 +3,22 @@ import { Property } from './Property';
 
 export class PropertyList extends React.Component {
   static propTypes = {
-    properties: PropTypes.string,
-    primaryKey: PropTypes.string
+    properties: PropTypes.array,
+    primaryKey: PropTypes.array
   }
 
   keyProperties() {
-    const properties = JSON.parse(this.props.properties);
-    properties.map((prop) => {
+    const properties = this.props.properties;
+    for (const prop of properties) {
       const newProp = prop;
       newProp.key = properties.indexOf(prop);
-      return newProp;
-    });
+    }
     return properties;
   }
 
   render() {
     const propArray = this.keyProperties();
-    const pKeyJson = JSON.parse(this.props.primaryKey);
+    const pKeyJson = this.props.primaryKey;
     const propertyList = propArray.map((prop) => {
       const primaryKey = (pKeyJson[0].name === prop.name && pKeyJson[0].namespace === prop.namespace);
       return (
