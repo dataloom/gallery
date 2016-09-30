@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import '../styles.module.css';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
 
@@ -13,10 +12,6 @@ export class EntitySet extends React.Component {
 
   constructor() {
     super();
-    this.handleClick = this.handleClick.bind(this);
-    this.downloadFile = this.downloadFile.bind(this);
-    this.displayError = this.displayError.bind(this);
-    this.enableButton = this.enableButton.bind(this);
     this.state = {
       error: Consts.ERROR_STATE.hide,
       disableJson: false,
@@ -24,7 +19,7 @@ export class EntitySet extends React.Component {
     };
   }
 
-  handleClick(datatype) {
+  handleClick = (datatype) => {
     this.downloadFile(datatype);
     if (datatype === Consts.JSON) {
       this.setState({ disableJson: true });
@@ -34,16 +29,16 @@ export class EntitySet extends React.Component {
     }
   }
 
-  downloadFile(datatype) {
+  downloadFile = (datatype) => {
     CatalogApi.downloadEntitySet(this.props.name, this.props.typename, datatype, this.displayError, this.enableButton);
   }
 
-  displayError(datatype) {
+  displayError = (datatype) => {
     this.setState({ error: Consts.ERROR_STATE.show });
     this.enableButton(datatype);
   }
 
-  enableButton(datatype) {
+  enableButton = (datatype) => {
     if (datatype === Consts.JSON) {
       this.setState({ disableJson: false });
     }

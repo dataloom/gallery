@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { PropertyType } from './PropertyType';
-import '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
   static propTypes = {

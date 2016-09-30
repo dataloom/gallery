@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import '../styles.module.css';
 
 export class PropertyType extends React.Component {
   static propTypes = {

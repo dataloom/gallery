@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { PropertyList } from './PropertyList';
-import '../styles.module.css';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
 
@@ -15,10 +14,6 @@ export class EntityType extends React.Component {
 
   constructor() {
     super();
-    this.handleClick = this.handleClick.bind(this);
-    this.downloadFile = this.downloadFile.bind(this);
-    this.displayError = this.displayError.bind(this);
-    this.enableButton = this.enableButton.bind(this);
     this.state = {
       error: Consts.ERROR_STATE.hide,
       disableJson: false,
@@ -26,7 +21,7 @@ export class EntityType extends React.Component {
     };
   }
 
-  handleClick(datatype) {
+  handleClick = (datatype) => {
     this.downloadFile(datatype);
     if (datatype === Consts.JSON) {
       this.setState({ disableJson: true });
@@ -36,7 +31,7 @@ export class EntityType extends React.Component {
     }
   }
 
-  downloadFile(datatype) {
+  downloadFile = (datatype) => {
     CatalogApi.downloadEntityType(
       this.props.namespace,
       this.props.name,
@@ -46,12 +41,12 @@ export class EntityType extends React.Component {
     );
   }
 
-  displayError(datatype) {
+  displayError = (datatype) => {
     this.setState({ error: Consts.ERROR_STATE.show });
     this.enableButton(datatype);
   }
 
-  enableButton(datatype) {
+  enableButton = (datatype) => {
     if (datatype === Consts.JSON) {
       this.setState({ disableJson: false });
     }

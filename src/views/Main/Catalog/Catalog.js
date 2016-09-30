@@ -4,7 +4,7 @@ import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
 import { EntitySetList } from './Components/EntitySetList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
-import Consts from '../../../utils//AppConsts';
+import Consts from '../../../utils/AppConsts';
 
 export class Catalog extends React.Component {
 

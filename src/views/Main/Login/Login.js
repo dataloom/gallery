@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import './styles.module.css';
+import Consts from '../../../utils/AppConsts';
 
 export class Login extends React.Component {
   static propTypes = {
@@ -21,7 +22,7 @@ export class Login extends React.Component {
   render() {
     return (
       <div className={'root'}>
-        <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" role="presentation" />
+        <img src={Consts.LOGO_URL} role="presentation" />
         <h2>Login</h2>
         <ButtonToolbar className={'toolbar'}>
           <Button bsStyle="primary" onClick={this.login}>Login</Button>

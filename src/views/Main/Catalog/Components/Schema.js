@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import '../styles.module.css';
 import { PropertyTypeList } from './PropertyTypeList';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
@@ -16,22 +15,18 @@ export class Schema extends React.Component {
 
   constructor() {
     super();
-    this.handleClick = this.handleClick.bind(this);
-    this.downloadFile = this.downloadFile.bind(this);
-    this.displayError = this.displayError.bind(this);
-    this.enableButton = this.enableButton.bind(this);
     this.state = {
       error: Consts.ERROR_STATE.hide,
       disableJson: false
     };
   }
 
-  handleClick() {
+  handleClick = () => {
     this.downloadFile(Consts.JSON);
     this.setState({ disableJson: true });
   }
 
-  downloadFile(datatype) {
+  downloadFile = (datatype) => {
     CatalogApi.downloadSchema(
       this.props.name,
       datatype,
@@ -41,14 +36,14 @@ export class Schema extends React.Component {
     );
   }
 
-  displayError() {
+  displayError = () => {
     this.setState({
       error: Consts.ERROR_STATE.show,
       disableJson: false
     });
   }
 
-  enableButton() {
+  enableButton = () => {
     this.setState({ disableJson: false });
   }
 

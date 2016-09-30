@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Consts from '../../../../utils/AppConsts';
-import '../styles.module.css';
 
 export class DataModelToolbar extends React.Component {
   static propTypes = {

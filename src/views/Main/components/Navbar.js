@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import '../styles.module.css';
 import AuthService from '../../../utils/AuthService';
+import Consts from '../../../utils/AppConsts';
 
 export class Navbar extends React.Component {
   static contextTypes = {
@@ -32,7 +32,7 @@ export class Navbar extends React.Component {
   render() {
     return (
       <div className={'navbarContainer'}>
-        <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" role="presentation" className={'logo'} />
+        <img src={Consts.LOGO_URL} role="presentation" className={'logo'} />
         <div className={'loom'}>Loom</div>
         {this.showLogoutButton()}
       </div>

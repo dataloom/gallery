@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { EntityTypeFqn } from './EntityTypeFqn';
-import '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
