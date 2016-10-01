@@ -111,11 +111,6 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],
-    alias: {
-      components: `${PATHS.ABS.SOURCE}/components`,
-      config: `${PATHS.ABS.SOURCE}/config`,
-      css: `${PATHS.ABS.SOURCE}/css`
-    },
     modules: [
       PATHS.ABS.SOURCE,
       PATHS.ABS.NODE_MODULES

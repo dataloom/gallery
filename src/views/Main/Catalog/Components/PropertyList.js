@@ -8,11 +8,11 @@ export class PropertyList extends React.Component {
   }
 
   keyProperties() {
-    const properties = this.props.properties;
-    for (const prop of properties) {
+    const properties = this.props.properties.map((prop) => {
       const newProp = prop;
-      newProp.key = properties.indexOf(prop);
-    }
+      newProp.key = this.props.properties.indexOf(prop);
+      return newProp;
+    });
     return properties;
   }
 

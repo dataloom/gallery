@@ -3,15 +3,15 @@ import { PropertyType } from './PropertyType';
 
 export class PropertyTypeList extends React.Component {
   static propTypes = {
-    propertyTypes: PropTypes.string
+    propertyTypes: PropTypes.array
   }
 
   keyPropertyTypes() {
-    const propertyTypes = JSON.parse(this.props.propertyTypes);
-    for (const type of propertyTypes) {
+    const propertyTypes = this.props.propertyTypes.map((type) => {
       const newType = type;
-      newType.key = propertyTypes.indexOf(type);
-    }
+      newType.key = this.props.propertyTypes.indexOf(type);
+      return newType;
+    });
     return propertyTypes;
   }
 

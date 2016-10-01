@@ -9,8 +9,8 @@ export class Schema extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     namespace: PropTypes.string,
-    propertyTypes: PropTypes.string,
-    entityTypeFqns: PropTypes.string
+    propertyTypes: PropTypes.array,
+    entityTypeFqns: PropTypes.array
   }
 
   constructor() {

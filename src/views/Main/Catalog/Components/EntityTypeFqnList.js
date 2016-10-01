@@ -3,18 +3,16 @@ import { EntityTypeFqn } from './EntityTypeFqn';
 
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
-    entityTypeFqns: PropTypes.string
+    entityTypeFqns: PropTypes.array
   }
 
   keyPropertyTypes() {
-    const entityTypeFqns = JSON.parse(this.props.entityTypeFqns);
-    const fqns = entityTypeFqns;
-    fqns.map((fqn) => {
-      const newFqnObj = fqn;
-      newFqnObj.key = entityTypeFqns.indexOf(fqn);
-      return newFqnObj;
+    const entityTypeFqns = this.props.entityTypeFqns.map((fqn) => {
+      const newFqn = fqn;
+      newFqn.key = this.props.entityTypeFqns.indexOf(fqn);
+      return newFqn;
     });
-    return fqns;
+    return entityTypeFqns;
   }
 
   render() {
