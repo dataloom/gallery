@@ -83,9 +83,12 @@ const definePluginProperties = Object.keys(APP_GLOBALS).reduce((previous, key) =
 module.exports = {
   bail: true,
   entry: {
-    app: PATHS.ABS.APP_ENTRY,
-    vendor: [
-      'react'
+    app: [
+      PATHS.ABS.APP_ENTRY
+    ],
+    react: [
+      'react',
+      'react-dom'
     ]
   },
   output: {
