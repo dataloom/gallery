@@ -5,6 +5,7 @@
 /* eslint-disable import/no-extraneous-dependencies, react/require-extension */
 
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const PATHS = require('./paths');
 
@@ -20,16 +21,20 @@ const plugins = []
   .concat(new webpack.optimize.DedupePlugin())
   .concat(new webpack.optimize.OccurrenceOrderPlugin())
   .concat(
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        screw_ie8: true,
-        unused: false,
-        warnings: false
-      },
-      comments: false,
-      mangle: false,
-      sourceMap: false
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: `${PATHS.ABS.SOURCE}/index.html`
     })
+  )
+  .concat(
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'react',
+      filename: `${PATHS.REL.STATIC_JS}/react.js`,
+      minChunks: Infinity
+    })
+  )
+  .concat(
+    new webpack.optimize.UglifyJsPlugin()
   );
 
 module.exports = Object.assign({}, baseWebpackConfig, {
