@@ -22,8 +22,8 @@ RUN \
 
 WORKDIR /usr/src/app
 COPY . /usr/src/app
-#RUN npm install \
-#  && npm run build:prod
+RUN npm install \
+  && npm run build:prod
 
 COPY build/* /etc/nginx/web/gallery
 COPY nginx.conf /etc/nginx/
