@@ -1,0 +1,6 @@
+*
+!package.json
+!src
+!config
+!.babelrc
+!nginx.conf

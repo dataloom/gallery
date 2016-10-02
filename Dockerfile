@@ -4,11 +4,15 @@ FROM ubuntu:16.04
 # Install Python.
 RUN \
   apt-get update && \
-  apt-get install -y software-properties-common python-software-properties curl && \
+  apt-get install -y software-properties-common python-software-properties curl
+
+RUN \
   add-apt-repository -y ppa:nginx/stable && \
   apt-get update && \
-  apt-get install -y nginx && \
-  rm -rf /var/lib/apt/lists/*
+  apt-get install -y nginx
+
+RUN \
+  apt-get install -y git
 
 RUN \
   curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
@@ -16,16 +20,19 @@ RUN \
   npm install -g npm && \
   printf '\n# Node.js\nexport PATH="node_modules/.bin:$PATH"' >> /root/.bashrc && \
   rm -rf /var/lib/apt/lists/* && \
-  echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
-  chown -R www-data:www-data /var/lib/nginx && \
-  mkdir -p /etc/nginx/web/gallery
+  chown -R www-data:www-data /var/lib/nginx
+
+RUN mkdir -p /etc/nginx/web/gallery
 
 WORKDIR /usr/src/app
-COPY . /usr/src/app
-RUN npm install \
-  && npm run build:prod
 
-COPY build/* /etc/nginx/web/gallery
+COPY . /usr/src/app
+RUN rm -rf node_modules build/* && \
+  npm install
+
+RUN npm run build:prod \
+  && mv build/* /etc/nginx/web/gallery/
+
 COPY nginx.conf /etc/nginx/
 
 CMD ["nginx"]
