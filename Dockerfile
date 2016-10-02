@@ -6,4 +6,4 @@ COPY . /usr/src/app
 RUN npm install
 EXPOSE 9000
 
-CMD ["npm", "run", "webpack:prodServer"]
+CMD ["npm", "run", "webpack:prod:server"]

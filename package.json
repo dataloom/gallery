@@ -16,7 +16,7 @@
     "webpack:dev": "NODE_ENV=development webpack --config config/webpack.config.babel.js",
     "webpack:prod": "NODE_ENV=production webpack --config config/webpack.config.babel.js",
     "webpack:server": "NODE_ENV=development webpack-dev-server --config config/webpack.config.babel.js --port 9000",
-    "webpack:prodServer": "NODE_ENV=production webpack-dev-server --config config/webpack.config.babel.js --port 9000 --host 0.0.0.0"
+    "webpack:prod:server": "NODE_ENV=production webpack-dev-server --config config/webpack.config.babel.js --port 9000 --host 0.0.0.0"
   },
   "author": "Hristo Oskov",
   "license": "Apache-2.0",
