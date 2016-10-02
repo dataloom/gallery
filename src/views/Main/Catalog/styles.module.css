@@ -1,3 +1,105 @@
-.root{
+th {
+  font-size: 14px;
+}
+
+.edmContainer {
+  left: 20px;
+  margin: 50px;
+  background: #f6f6f6;
+  padding: 20px;
+}
+
+.name {
+  display: inline;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.descriptionLabel {
+  display: inline;
+  color: gray;
+}
+
+.subtitle {
+  display: inline;
+  font-size: 16px;
+}
+
+.tableDescriptionLabel {
+  color: gray;
+}
+
+.spacerSmall {
+  height: 15px;
+}
+
+.spacerMed {
+  height: 20px;
+}
+
+.spacerMargin {
+  margin: 10px;
+}
+
+.tableCell {
+  padding: 5px 10px;
+}
+
+.tableRows:nth-child(even) {
+  padding: 5px 10px;
+  background-color: #e3e3e3;
+}
+
+.tableRows:nth-child(odd) {
+  padding: 5px 10px;
+  background-color: #f1f1f1;
+}
+
+.primaryKey {
+  color: gray;
+  padding-left: 6px;
+}
+
+.buttonStyle {
+  display: table-cell;
+  margin: 0;
+  vertical-align: middle;
+  padding: 10px;
+  border: none;
+}
+
+.selectedButtonStyle {
+  display: table-cell;
+  margin: 0;
+  vertical-align: middle;
+  padding: 10px;
+  border: none;
+  background: gray;
+  font-weight: bold;
+}
+
+.edmNavbarContainer {
   text-align: center;
+  padding-top: 15px;
+}
+
+.edmNavbar {
+  height: 30px;
+  background: #f6f6f6;
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+}
+
+.errorMsg {
+  color: red;
+  padding-top: 10px;
+}
+
+.hiddenErrorMsg {
+  display: none;
 }

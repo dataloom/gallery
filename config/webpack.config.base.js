@@ -62,7 +62,7 @@ const MEDIA_URL_LOADER = {
 };
 
 const CSS_LOADER = {
-  loader: 'css',
+  loader: 'style!css',
   test: /\.css$/
 };
 
@@ -110,11 +110,7 @@ module.exports = {
     })
   ],
   resolve: {
-    extensions: ['.js', '.jsx'],
-    alias: {
-      components: `${PATHS.ABS.SOURCE}/components`,
-      config: `${PATHS.ABS.SOURCE}/config`
-    },
+    extensions: ['.js', '.jsx', '.css'],
     modules: [
       PATHS.ABS.SOURCE,
       PATHS.ABS.NODE_MODULES

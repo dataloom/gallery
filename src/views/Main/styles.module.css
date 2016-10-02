@@ -1,37 +1,40 @@
-@import url("../../styles/base.css");
-@import url("../../styles/queries.css");
-
-.wrapper {
-  overflow-y: scroll;
-  display: flex;
-  margin: 0;
-
-  height: 100vh;
-  -webkit-box-orient: horizontal;
-  -o-box-orient: horizontal;
-
-  flex-direction: column;
-
-  @media (--screen-phone-lg) {
-    flex-direction: row;
-  }
-
+* {
+  font-family: 'Lato', 'Helvetica Neue', 'Open Sans', sans-serif;
+	font-size: 13px;
+	font-style: normal;
+	font-variant: normal;
+	line-height: 18px;
 }
 
-.content {
+.topSpacer {
+  height: 50px;
+}
+
+.navbarContainer {
+  height: 50px;
+  background: gray;
+  width: 100%;
+  top: 0;
+  position: absolute;
+}
+
+.logo {
+  max-width: 80%;
+  max-height: 80%;
+  padding-left: 15px;
+}
+
+.loom {
+  display: inline-block;
+  color: #f6f6f6;
+  font-size: 30px;
+  vertical-align: middle;
+}
+
+.logoutButton {
   position: relative;
-  top: var(--topbar-height);
-  left: 0;
-
-  flex: 1;
-  order: 1;
-
-  @media (--screen-phone-lg) {
-    flex: 2;
-    order: 2;
-  }
-}
-
-.mainTitle {
-  text-align: center;
+  float: right;
+  margin-right: 10px;
+  height: 70%;
+  top: 15%;
 }
