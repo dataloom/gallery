@@ -19,8 +19,8 @@
 }
 
 .logo {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 80%;
+  max-height: 80%;
   padding-left: 15px;
 }
 
@@ -29,7 +29,6 @@
   color: #f6f6f6;
   font-size: 30px;
   vertical-align: middle;
-  padding-left: 15px;
 }
 
 .logoutButton {

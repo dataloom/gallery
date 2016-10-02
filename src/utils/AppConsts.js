@@ -4,7 +4,6 @@
 
 const AUTH0_CLIENT_ID = 'KvwsETaUxuXVjW2cmz2LbdqXQBdYs6wH';
 const AUTH0_DOMAIN = 'loom.auth0.com';
-const LOGO_URL = 'https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg';
 
 const JSON = 'JSON';
 const CSV = 'CSV';
@@ -34,7 +33,6 @@ const ERROR_STATE = {
 export default {
   AUTH0_CLIENT_ID,
   AUTH0_DOMAIN,
-  LOGO_URL,
   JSON,
   CSV,
   PUT,
