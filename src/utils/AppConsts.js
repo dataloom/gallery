@@ -12,7 +12,7 @@ const CSV = 'CSV';
 const PUT = 'PUT';
 const GET = 'GET';
 
-const DATASTORE_CATALOG_URL = 'http://localhost:8095/ontology';
+const DATASTORE_CATALOG_URL = '/ontology';
 const SCHEMAS = '/schema';
 const ENTITY_SET = '/entity/set';
 const ENTITYSET = '/entityset';
@@ -22,12 +22,9 @@ const ENTITYDATA = '/entitydata';
 const ENTITY_DATA = '/entitydata';
 const MULTIPLE = '/multiple';
 
-const SCHEMA_BASE_PATH = DATASTORE_CATALOG_URL.concat(SCHEMAS);
-const ENTITY_SETS_BASE_PATH = DATASTORE_CATALOG_URL.concat(ENTITY_SET);
-const ENTITY_TYPES_BASE_PATH = DATASTORE_CATALOG_URL.concat(ENTITY_TYPE);
-const ENTITY_TYPE_DATA_URL = DATASTORE_CATALOG_URL.concat(DATA).concat(ENTITY_DATA);
+const ENTITY_TYPE_DATA_URL = DATA.concat(ENTITY_DATA);
 const SCHEMA_DATA_URL = ENTITY_TYPE_DATA_URL.concat(MULTIPLE);
-const ENTITY_SET_DATA_BASE_URL = DATASTORE_CATALOG_URL.concat(DATA).concat(ENTITYSET);
+const ENTITY_SET_DATA_BASE_URL = DATA.concat(ENTITYSET);
 
 const ERROR_STATE = {
   hide: 'hiddenErrorMsg',
@@ -46,9 +43,6 @@ export default {
   SCHEMAS,
   ENTITY_SET,
   ENTITY_TYPE,
-  SCHEMA_BASE_PATH,
-  ENTITY_SETS_BASE_PATH,
-  ENTITY_TYPES_BASE_PATH,
   ENTITY_TYPE_DATA_URL,
   SCHEMA_DATA_URL,
   ENTITY_SET_DATA_BASE_URL,

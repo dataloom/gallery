@@ -1,19 +1,23 @@
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import Consts from './AppConsts';
+import EnvironmentService from './EnvironmentService';
 
 export default class CatalogApi {
 
   static getCatalogSchemaData() {
-    return axios.get(Consts.SCHEMA_BASE_PATH).then(response => response.data);
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.SCHEMAS);
+    return axios.get(url).then(response => response.data);
   }
 
   static getCatalogEntityTypeData() {
-    return axios.get(Consts.ENTITY_TYPES_BASE_PATH).then(response => response.data);
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_TYPE);
+    return axios.get(url).then(response => response.data);
   }
 
   static getCatalogEntitySetData() {
-    return axios.get(Consts.ENTITY_SETS_BASE_PATH).then(response => response.data);
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_SET);
+    return axios.get(url).then(response => response.data);
   }
 
   static getDownloadRequestBody(data, method, datatype, url) {
@@ -45,7 +49,8 @@ export default class CatalogApi {
   }
 
   static downloadSchema(name, datatype, entityTypeFqns, err, success) {
-    return axios(this.getDownloadRequestBody(entityTypeFqns, Consts.PUT, datatype, Consts.SCHEMA_DATA_URL)
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.SCHEMA_DATA_URL);
+    return axios(this.getDownloadRequestBody(entityTypeFqns, Consts.PUT, datatype, url)
       ).then((resp) => {
         this.saveFile(resp.data, datatype, success);
       }).catch(() => {
@@ -58,7 +63,8 @@ export default class CatalogApi {
       namespace,
       name
     });
-    return axios(this.getDownloadRequestBody(data, Consts.PUT, datatype, Consts.ENTITY_TYPE_DATA_URL)
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_TYPE_DATA_URL);
+    return axios(this.getDownloadRequestBody(data, Consts.PUT, datatype, url)
       ).then((resp) => {
         this.saveFile(resp.data, datatype, success);
       }).catch(() => {
@@ -67,9 +73,10 @@ export default class CatalogApi {
   }
 
   static downloadEntitySet(name, typename, datatype, err, success) {
-    const url = Consts.ENTITY_SET_DATA_BASE_URL
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_SET_DATA_BASE_URL)
       .concat('/')
-      .concat(name).concat('/')
+      .concat(name)
+      .concat('/')
       .concat(typename)
       .concat(Consts.ENTITYDATA);
     return axios(this.getDownloadRequestBody(null, Consts.GET, datatype, url)
