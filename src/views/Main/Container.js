@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Jumbotron } from 'react-bootstrap';
-import styles from './styles.module.css';
+import './styles.module.css';
+import { Navbar } from './components/Navbar';
 
 export class Container extends React.Component {
   static contextTypes = {
@@ -26,9 +27,8 @@ export class Container extends React.Component {
     const children = this.getChildren();
     return (
       <Jumbotron>
-        <h2 className={styles.mainTitle}>
-          <img src="https://cdn.auth0.com/styleguide/1.0.0/img/badge.svg" role="presentation" />
-        </h2>
+        <Navbar auth={this.props.route.auth} />
+        <div className={'topSpacer'} />
         {children}
       </Jumbotron>
     );
