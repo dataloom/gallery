@@ -11,6 +11,7 @@ const CSV = 'CSV';
 const PUT = 'PUT';
 const GET = 'GET';
 
+const DATASTORE = '/datastore';
 const DATASTORE_CATALOG_URL = '/ontology';
 const SCHEMAS = '/schema';
 const ENTITY_SET = '/entity/set';
@@ -37,6 +38,7 @@ export default {
   CSV,
   PUT,
   GET,
+  DATASTORE,
   DATASTORE_CATALOG_URL,
   SCHEMAS,
   ENTITY_SET,

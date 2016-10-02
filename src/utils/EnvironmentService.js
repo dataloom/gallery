@@ -15,16 +15,21 @@ export default class EnvironmentService {
 
   static getEnvironment() {
     const windowUrl = window.location.origin;
-    const env = this.addresses[windowUrl];
-    const envUrl = this.environments[env];
+    return this.addresses[windowUrl];
+  }
 
-    if (env !== undefined) {
+  static getEnvironmentUrl() {
+    const envUrl = this.environments[this.getEnvironment()];
+    if (envUrl !== undefined) {
       return envUrl;
     }
     throw new Error('environment not found for '.concat(windowUrl));
   }
 
   static getDatastoreUrl() {
-    return this.getEnvironment().concat(Consts.DATASTORE_CATALOG_URL);
+    if (this.getEnvironment() === 'LOCALHOST') {
+      return this.getEnvironmentUrl().concat(Consts.DATASTORE_CATALOG_URL);
+    }
+    return this.getEnvironmentUrl().concat(Consts.DATASTORE).concat(Consts.DATASTORE_CATALOG_URL)
   }
 }
