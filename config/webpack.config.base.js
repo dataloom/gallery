@@ -93,7 +93,7 @@ module.exports = {
   },
   output: {
     path: PATHS.ABS.BUILD,
-    publicPath: '/'
+    publicPath: '/gallery'
   },
   module: {
     rules: [
