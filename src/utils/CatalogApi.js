@@ -38,7 +38,7 @@ export default class CatalogApi {
     return req;
   }
 
-  static saveFile(entityData, datatype, success) {
+  static saveFile(entityData, name, datatype, success) {
     const type = (datatype === Consts.JSON) ? 'application/json' : 'text/csv';
     const dataString = JSON.stringify(entityData);
     const blob = new Blob([dataString], { type });
@@ -48,14 +48,8 @@ export default class CatalogApi {
     success(datatype);
   }
 
-  static downloadSchema(name, datatype, entityTypeFqns, err, success) {
-    const url = EnvironmentService.getDatastoreUrl().concat(Consts.SCHEMA_DATA_URL);
-    return axios(this.getDownloadRequestBody(entityTypeFqns, Consts.PUT, datatype, url)
-      ).then((resp) => {
-        this.saveFile(resp.data, datatype, success);
-      }).catch(() => {
-        err(datatype);
-      });
+  static downloadSchema(data, name, datatype, success) {
+    this.saveFile(data, name, datatype, success);
   }
 
   static downloadEntityType(namespace, name, datatype, err, success) {
@@ -66,7 +60,7 @@ export default class CatalogApi {
     const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_TYPE_DATA_URL);
     return axios(this.getDownloadRequestBody(data, Consts.PUT, datatype, url)
       ).then((resp) => {
-        this.saveFile(resp.data, datatype, success);
+        this.saveFile(resp.data, name, datatype, success);
       }).catch(() => {
         err(datatype);
       });
@@ -81,7 +75,7 @@ export default class CatalogApi {
       .concat(Consts.ENTITYDATA);
     return axios(this.getDownloadRequestBody(null, Consts.GET, datatype, url)
       ).then((resp) => {
-        this.saveFile(resp.data, datatype, success);
+        this.saveFile(resp.data, name, datatype, success);
       }).catch(() => {
         err(datatype);
       });

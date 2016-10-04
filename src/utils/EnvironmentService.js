@@ -23,13 +23,13 @@ export default class EnvironmentService {
     if (envUrl !== undefined) {
       return envUrl;
     }
-    throw new Error('environment not found for '.concat(windowUrl));
+    throw new Error('environment not found for '.concat(window.location.origin));
   }
 
   static getDatastoreUrl() {
     if (this.getEnvironment() === 'LOCALHOST') {
       return this.getEnvironmentUrl().concat(Consts.DATASTORE_CATALOG_URL);
     }
-    return this.getEnvironmentUrl().concat(Consts.DATASTORE).concat(Consts.DATASTORE_CATALOG_URL)
+    return this.getEnvironmentUrl().concat(Consts.DATASTORE).concat(Consts.DATASTORE_CATALOG_URL);
   }
 }
