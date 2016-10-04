@@ -10,7 +10,8 @@ export class Schema extends React.Component {
     name: PropTypes.string,
     namespace: PropTypes.string,
     propertyTypes: PropTypes.array,
-    entityTypeFqns: PropTypes.array
+    entityTypeFqns: PropTypes.array,
+    jsonContents: PropTypes.object
   }
 
   constructor() {
@@ -22,16 +23,15 @@ export class Schema extends React.Component {
   }
 
   handleClick = () => {
-    this.downloadFile(Consts.JSON);
     this.setState({ disableJson: true });
+    this.downloadFile(Consts.JSON);
   }
 
   downloadFile = (datatype) => {
     CatalogApi.downloadSchema(
+      this.props.jsonContents,
       this.props.name,
       datatype,
-      this.props.entityTypeFqns,
-      this.displayError,
       this.enableButton
     );
   }
@@ -43,8 +43,10 @@ export class Schema extends React.Component {
     });
   }
 
-  enableButton = () => {
-    this.setState({ disableJson: false });
+  enableButton = (datatype) => {
+    if (datatype === Consts.JSON) {
+      this.setState({ disableJson: false });
+    }
   }
 
   render() {

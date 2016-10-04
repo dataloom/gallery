@@ -28,6 +28,7 @@ export class SchemaList extends React.Component {
         namespace={schema.namespace}
         propertyTypes={schema.propertyTypes}
         entityTypeFqns={schema.entityTypeFqns}
+        jsonContents={schema}
       />
     );
     return (<div>{schemaList}</div>);
