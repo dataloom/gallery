@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import CatalogApi from '../../../../utils/CatalogApi';
-import Utils from '../../../../utils/Utils';
 
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
@@ -21,13 +20,13 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addRowClassName = {
-    true: 'showAddEntityType',
-    false: 'hideAddEntityType'
+    true: 'showAddRow',
+    false: 'hidden'
   }
 
   showErrorMsgClass = {
     true: 'errorMsg',
-    false: 'hiddenErrorMsg'
+    false: 'hidden'
   }
 
   keyPropertyTypes() {
@@ -68,18 +67,26 @@ export class EntityTypeFqnList extends React.Component {
   render() {
     const fqnArray = this.keyPropertyTypes();
     const entityTypeFqnList = fqnArray.map(fqn =>
-      <EntityTypeFqn key={fqn.key} entityTypeFqn={fqn} />
+      <EntityTypeFqn
+        key={fqn.key}
+        entityTypeFqn={fqn}
+        schemaName={this.props.schemaName}
+        schemaNamespace={this.props.schemaNamespace}
+        updateFn={this.props.updateFn}
+      />
     );
     return (
       <div>
         <table>
           <tbody>
             <tr>
+              <th />
               <th className={'tableCell'}>Name</th>
               <th className={'tableCell'}>Namespace</th>
             </tr>
             {entityTypeFqnList}
             <tr className={this.addRowClassName[this.state.newEntityTypeRow]}>
+              <td />
               <td><input type="text" id="nameField" placeholder="name" className={'tableCell'} /></td>
               <td><input type="text" id="namespaceField" placeholder="namespace" className={'tableCell'} /></td>
               <td><Button onClick={this.addEntityTypeToSchema}>Save</Button></td>

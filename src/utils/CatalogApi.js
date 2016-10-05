@@ -99,4 +99,21 @@ export default class CatalogApi {
     }).then(() => success()
     ).catch(() => err());
   }
+
+  static deleteTypeFromSchema(schemaNamespace, schemaName, fqnSet, success) {
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.SCHEMAS)
+      .concat('/')
+      .concat(schemaNamespace)
+      .concat('/')
+      .concat(schemaName);
+    return axios({
+      method: 'DELETE',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success());
+  }
 }

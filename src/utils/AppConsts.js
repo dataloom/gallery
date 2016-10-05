@@ -27,7 +27,7 @@ const SCHEMA_DATA_URL = ENTITY_TYPE_DATA_URL.concat(MULTIPLE);
 const ENTITY_SET_DATA_BASE_URL = DATA.concat(ENTITYSET);
 
 const ERROR_STATE = {
-  hide: 'hiddenErrorMsg',
+  hide: 'hidden',
   show: 'errorMsg'
 };
 

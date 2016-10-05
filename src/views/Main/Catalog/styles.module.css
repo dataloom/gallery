@@ -100,10 +100,6 @@ th {
   padding-top: 10px;
 }
 
-.hiddenErrorMsg {
-  display: none;
-}
-
-.hideAddEntityType {
+.hidden {
   display: none;
 }
