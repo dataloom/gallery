@@ -78,6 +78,25 @@ export default class CatalogApi {
         this.saveFile(resp.data, name, datatype, success);
       }).catch(() => {
         err(datatype);
-      });
+      }
+    );
+  }
+
+  static addEntityTypeToSchema(namespace, name, fqnSet, success, err) {
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.SCHEMAS)
+      .concat('/')
+      .concat(namespace)
+      .concat('/')
+      .concat(name);
+    return axios({
+      method: 'PUT',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success()
+    ).catch(() => err());
   }
 }

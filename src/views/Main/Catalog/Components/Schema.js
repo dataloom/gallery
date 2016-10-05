@@ -11,7 +11,8 @@ export class Schema extends React.Component {
     namespace: PropTypes.string,
     propertyTypes: PropTypes.array,
     entityTypeFqns: PropTypes.array,
-    jsonContents: PropTypes.object
+    jsonContents: PropTypes.object,
+    updateFn: PropTypes.func
   }
 
   constructor() {
@@ -50,7 +51,7 @@ export class Schema extends React.Component {
   }
 
   render() {
-    const { name, namespace, propertyTypes, entityTypeFqns } = this.props;
+    const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
     return (
       <div className={'edmContainer'}>
         <div className={'name'}>{name}</div>
@@ -61,7 +62,12 @@ export class Schema extends React.Component {
         <br />
         <div className={'spacerMed'} />
         <div className={'tableDescriptionLabel'}>Entity Types:</div>
-        <EntityTypeFqnList entityTypeFqns={entityTypeFqns} />
+        <EntityTypeFqnList
+          entityTypeFqns={entityTypeFqns}
+          schemaName={name}
+          schemaNamespace={namespace}
+          updateFn={updateFn}
+        />
         <br />
         <div className={'spacerMed'} />
         <div className={'tableDescriptionLabel'}>Property Types:</div>

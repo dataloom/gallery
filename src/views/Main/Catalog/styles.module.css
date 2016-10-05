@@ -103,3 +103,7 @@ th {
 .hiddenErrorMsg {
   display: none;
 }
+
+.hideAddEntityType {
+  display: none;
+}

@@ -14,6 +14,10 @@ export class SchemaList extends React.Component {
   }
 
   componentDidMount() {
+    this.updateFn();
+  }
+
+  updateFn = () => {
     CatalogApi.getCatalogSchemaData()
       .then((schemas) => {
         this.setState({ schemas: Utils.addKeysToArray(schemas) });
@@ -29,6 +33,7 @@ export class SchemaList extends React.Component {
         propertyTypes={schema.propertyTypes}
         entityTypeFqns={schema.entityTypeFqns}
         jsonContents={schema}
+        updateFn={this.updateFn}
       />
     );
     return (<div>{schemaList}</div>);
