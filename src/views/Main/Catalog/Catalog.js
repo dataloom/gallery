@@ -3,6 +3,7 @@ import './styles.module.css';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
 import { EntitySetList } from './Components/EntitySetList';
+import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import Consts from '../../../utils/AppConsts';
 
@@ -25,6 +26,8 @@ export class Catalog extends React.Component {
         return (<EntitySetList />);
       case Consts.ENTITY_TYPE:
         return (<EntityTypeList />);
+      case Consts.PROPERTY_TYPE:
+        return (<PropertyTypeList />);
       default:
         return (<SchemaList />);
     }

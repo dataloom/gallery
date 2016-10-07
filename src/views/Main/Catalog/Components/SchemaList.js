@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import CatalogApi from '../../../../utils/CatalogApi';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
@@ -10,11 +11,25 @@ export class SchemaList extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = { schemas: [] };
+    this.state = {
+      schemas: [],
+      newSchema: false,
+      error: false
+    };
   }
 
   componentDidMount() {
     this.updateFn();
+  }
+
+  showNewSchema = {
+    true: 'newSchema',
+    false: 'hidden'
+  }
+
+  errorClass = {
+    false: 'hidden',
+    true: 'errorMsg'
   }
 
   updateFn = () => {
@@ -22,6 +37,32 @@ export class SchemaList extends React.Component {
       .then((schemas) => {
         this.setState({ schemas: Utils.addKeysToArray(schemas) });
       });
+  }
+
+  newSchema = () => {
+    this.setState({ newSchema: true });
+  }
+
+  newSchemaSuccess = () => {
+    document.getElementById('newSchemaName').value = '';
+    document.getElementById('newSchemaNamespace').value = '';
+    CatalogApi.getCatalogSchemaData()
+      .then((schemas) => {
+        this.setState({
+          schemas: Utils.addKeysToArray(schemas),
+          newSchema: false
+        });
+      });
+  }
+
+  showError = () => {
+    this.setState({ error: true });
+  }
+
+  createNewSchema = () => {
+    const name = document.getElementById('newSchemaName').value;
+    const namespace = document.getElementById('newSchemaNamespace').value;
+    CatalogApi.createNewSchema(name, namespace, this.newSchemaSuccess, this.showError);
   }
 
   render() {
@@ -36,7 +77,26 @@ export class SchemaList extends React.Component {
         updateFn={this.updateFn}
       />
     );
-    return (<div>{schemaList}</div>);
+    return (
+      <div>
+        <div className={'edmContainer'}>
+          <Button
+            onClick={this.newSchema}
+            className={this.showNewSchema[!this.state.newSchema]}
+          >Create a new schema
+          </Button>
+          <div className={this.showNewSchema[this.state.newSchema]}>
+            <input id="newSchemaName" style={{ height: '30px' }} type="text" placeholder="schema name" />
+            <div className={'spacerSmall'} />
+            <input id="newSchemaNamespace" style={{ height: '30px' }} type="text" placeholder="schema namespace" />
+            <div className={'spacerSmall'} />
+            <Button onClick={this.createNewSchema}>Create</Button>
+          </div>
+          <div className={this.errorClass[this.state.error]}>Unable to create schema.</div>
+        </div>
+        {schemaList}
+      </div>
+    );
   }
 }
 

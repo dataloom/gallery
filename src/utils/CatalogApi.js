@@ -100,6 +100,26 @@ export default class CatalogApi {
     ).catch(() => err());
   }
 
+  // TODO
+  static addPropertyToEntityType(namespace, name, fqnSet, success, err) {
+    console.log('adding property to entity type....');
+    // const url = EnvironmentService.getDatastoreUrl()
+    //   .concat(Consts.SCHEMAS)
+    //   .concat('/')
+    //   .concat(namespace)
+    //   .concat('/')
+    //   .concat(name);
+    // return axios({
+    //   method: 'PUT',
+    //   url,
+    //   data: JSON.stringify(fqnSet),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // }).then(() => success()
+    // ).catch(() => err());
+  }
+
   static deleteTypeFromSchema(schemaNamespace, schemaName, fqnSet, success) {
     const url = EnvironmentService.getDatastoreUrl()
       .concat(Consts.SCHEMAS)
@@ -115,5 +135,80 @@ export default class CatalogApi {
         'Content-Type': 'application/json'
       }
     }).then(() => success());
+  }
+
+  // TODO
+  static deletePropFromType(namespace, name, fqnSet, success) {
+    console.log('deleting prop from type.....');
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.SCHEMAS)
+      .concat('/')
+      .concat(namespace)
+      .concat('/')
+      .concat(name);
+    return axios({
+      method: 'DELETE',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success());
+  }
+
+  static createNewSchema(name, namespace, success, err) {
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.SCHEMAS);
+    return axios({
+      method: 'PUT',
+      url,
+      data: JSON.stringify({ namespace, name }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success())
+    .catch(() => err());
+  }
+
+  static createNewEntityType(name, namespace, success, err) {
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_TYPE);
+    return axios({
+      method: 'PUT',
+      url,
+      data: JSON.stringify({
+        namespace,
+        name,
+        properties: [],
+        key: []
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success())
+    .catch(() => err());
+  }
+
+  // TODO
+  static deletePropFromSchema(name, namespace, success, err) {
+    console.log('deleting...');
+  }
+
+  // TODO
+  static addPropertyToSchema(namespace, name, fqnSet, success, err) {
+  //   const url = EnvironmentService.getDatastoreUrl()
+  //     .concat(Consts.SCHEMAS)
+  //     .concat('/')
+  //     .concat(namespace)
+  //     .concat('/')
+  //     .concat(name);
+  //   return axios({
+  //     method: 'PUT',
+  //     url,
+  //     data: JSON.stringify(fqnSet),
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   }).then(() => success()
+  //   ).catch(() => err());
+    console.log('adding property to schema...');
   }
 }

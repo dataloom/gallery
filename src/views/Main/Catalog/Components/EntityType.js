@@ -9,7 +9,8 @@ export class EntityType extends React.Component {
     name: PropTypes.string,
     namespace: PropTypes.string,
     properties: PropTypes.array,
-    primaryKey: PropTypes.array
+    primaryKey: PropTypes.array,
+    updateFn: PropTypes.func
   }
 
   constructor() {
@@ -56,7 +57,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { name, namespace, properties, primaryKey } = this.props;
+    const { name, namespace, properties, primaryKey, updateFn } = this.props;
     return (
       <div className={'edmContainer'}>
         <div className={'name'}>{name}</div>
@@ -67,7 +68,13 @@ export class EntityType extends React.Component {
         <br />
         <div className={'spacerMed'} />
         <div className={'tableDescriptionLabel'}>Properties:</div>
-        <PropertyList properties={properties} primaryKey={primaryKey} />
+        <PropertyList
+          properties={properties}
+          primaryKey={primaryKey}
+          entityTypeName={name}
+          entityTypeNamespace={namespace}
+          updateFn={updateFn}
+        />
         <br />
         <Button
           onClick={() => this.handleClick(Consts.JSON)}

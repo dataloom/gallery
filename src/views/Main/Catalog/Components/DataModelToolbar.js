@@ -17,7 +17,8 @@ export class DataModelToolbar extends React.Component {
     [
       { label: 'Schemas', type: Consts.SCHEMAS, key: 0 },
       { label: 'Entity Sets', type: Consts.ENTITY_SET, key: 1 },
-      { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 }
+      { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 },
+      { label: 'Property Types', type: Consts.PROPERTY_TYPE, key: 3 }
     ]
 
   buttonStyles = {
