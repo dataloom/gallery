@@ -48,7 +48,10 @@ export default class CatalogApi {
       data = JSON.stringify(entityData);
     }
 
-    const blob = new Blob([data], { contentType });
+    const blob = new Blob([data], {
+      type: contentType
+    });
+
     FileSaver.saveAs(blob, name.concat(
       (datatype === Consts.JSON) ? '.json' : '.csv'
     ));
