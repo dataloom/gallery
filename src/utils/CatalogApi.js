@@ -39,9 +39,16 @@ export default class CatalogApi {
   }
 
   static saveFile(entityData, name, datatype, success) {
-    const type = (datatype === Consts.JSON) ? 'application/json' : 'text/csv';
-    const dataString = JSON.stringify(entityData);
-    const blob = new Blob([dataString], { type });
+
+    let contentType = 'application/json';
+    let data = entityData;
+
+    if (datatype === Consts.JSON) {
+      contentType = 'text/csv';
+      data = JSON.stringify(entityData);
+    }
+
+    const blob = new Blob([data], { contentType });
     FileSaver.saveAs(blob, name.concat(
       (datatype === Consts.JSON) ? '.json' : '.csv'
     ));
