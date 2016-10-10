@@ -87,9 +87,11 @@ export class SchemaList extends React.Component {
           >Create a new schema
           </Button>
           <div className={this.showNewSchema[this.state.newSchema]}>
-            <input id="newSchemaName" style={{ height: '30px' }} type="text" placeholder="schema name" />
+            <div>Schema Name:</div>
+            <input id="newSchemaName" style={{ height: '30px' }} type="text" placeholder="name" />
             <div className={'spacerSmall'} />
-            <input id="newSchemaNamespace" style={{ height: '30px' }} type="text" placeholder="schema namespace" />
+            <div>Schema Namespace:</div>
+            <input id="newSchemaNamespace" style={{ height: '30px' }} type="text" placeholder="namespace" />
             <div className={'spacerSmall'} />
             <Button onClick={this.createNewSchema}>Create</Button>
           </div>
