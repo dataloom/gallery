@@ -113,7 +113,7 @@ export default class CatalogApi {
     .catch(() => err());
   }
 
-  static createNewEntityType(name, namespace, success, err) {
+  static createNewEntityType(name, namespace, pKey, success, err) {
     const url = EnvironmentService.getDatastoreUrl().concat(Consts.ENTITY_TYPE);
     return axios({
       method: 'PUT',
@@ -121,8 +121,8 @@ export default class CatalogApi {
       data: JSON.stringify({
         namespace,
         name,
-        properties: [],
-        key: []
+        properties: pKey,
+        key: pKey
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -181,7 +181,6 @@ export default class CatalogApi {
   }
 
   static addPropertyToEntityType(namespace, name, fqnSet, success, err) {
-    console.log('adding property to entity type....');
     const url = EnvironmentService.getDatastoreUrl()
       .concat(Consts.ENTITY_TYPE)
       .concat('/')

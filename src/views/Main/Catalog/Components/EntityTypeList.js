@@ -55,7 +55,11 @@ export class EntityTypeList extends React.Component {
   createNewEntityType = () => {
     const name = document.getElementById('newEntityTypeName').value;
     const namespace = document.getElementById('newEntityTypeNamespace').value;
-    CatalogApi.createNewEntityType(name, namespace, this.newEntityTypeSuccess, this.showError);
+    const pKey = [{
+      name: document.getElementById('pKeyName').value,
+      namespace: document.getElementById('pKeyNamespace').value
+    }]
+    CatalogApi.createNewEntityType(name, namespace, pKey, this.newEntityTypeSuccess, this.showError);
   }
 
   updateFn = () => {
@@ -86,19 +90,43 @@ export class EntityTypeList extends React.Component {
           >Create a new entity type
           </Button>
           <div className={this.showNewEntityType[this.state.newEntityType]}>
+            <div>Entity Type Name:</div>
             <input
               id="newEntityTypeName"
               style={{ height: '30px' }}
               type="text"
-              placeholder="entity type name"
+              placeholder="name"
             />
             <div className={'spacerSmall'} />
+            <div>Entity Type Namespace:</div>
             <input
               id="newEntityTypeNamespace"
               style={{ height: '30px' }}
               type="text"
-              placeholder="entity type namespace"
+              placeholder="namespace"
             />
+            <div className={'spacerSmall'} />
+            <div>Primary Key:</div>
+            <table>
+              <tbody>
+                <tr>
+                  <td>
+                    <input
+                      id="pKeyName"
+                      style={{ height: '30px' }}
+                      type="text"
+                      placeholder="property name"
+                    />
+                    <input
+                      id="pKeyNamespace"
+                      style={{ height: '30px' }}
+                      type="text"
+                      placeholder="property namespace"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <div className={'spacerSmall'} />
             <Button onClick={this.createNewEntityType}>Create</Button>
           </div>
