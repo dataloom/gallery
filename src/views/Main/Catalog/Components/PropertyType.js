@@ -7,7 +7,8 @@ export class PropertyType extends React.Component {
     propertyType: PropTypes.object,
     name: PropTypes.string,
     namespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    navBar: PropTypes.bool
   }
 
   deleteProp = () => {
@@ -23,11 +24,17 @@ export class PropertyType extends React.Component {
     );
   }
 
+  shouldShowDeleteButton = () => {
+    return (this.props.navBar) ? 'hidden' : '';
+  }
+
   render() {
     const prop = this.props.propertyType;
     return (
       <tr className={'tableRows'}>
-        <td><Button bsSize="xsmall" bsStyle="danger" onClick={this.deleteProp}>-</Button></td>
+        <td className={this.shouldShowDeleteButton()}>
+          <Button bsSize="xsmall" bsStyle="danger" onClick={this.deleteProp}>-</Button>
+        </td>
         <td className={'tableCell'}>{prop.name}</td>
         <td className={'tableCell'}>{prop.namespace}</td>
         <td className={'tableCell'}>{prop.datatype}</td>

@@ -107,17 +107,21 @@ export class PropertyTypeList extends React.Component {
     return (this.props.navBar) ? 'tableCell' : 'hidden';
   }
 
+  shouldAddExtraCell = () => {
+    return (this.props.navBar) ? 'hidden' : '';
+  }
+
   render() {
     const propArray = this.state.propertyTypes;
     const propertyTypeList = propArray.map(prop =>
-      <PropertyType key={prop.key} propertyType={prop} />
+      <PropertyType key={prop.key} propertyType={prop} navBar={this.props.navBar} />
     );
     return (
       <div className={this.shouldDisplayContainer()}>
         <table>
           <tbody>
             <tr>
-              <th />
+              <th className={this.shouldAddExtraCell()} />
               <th className={'tableCell'}>Name</th>
               <th className={'tableCell'}>Namespace</th>
               <th className={'tableCell'}>Datatype</th>
@@ -125,7 +129,7 @@ export class PropertyTypeList extends React.Component {
             </tr>
             {propertyTypeList}
             <tr className={this.addRowClassName[this.state.newPropertyRow]}>
-              <td />
+              <td className={this.shouldAddExtraCell()}/>
               <td><input type="text" id="propNameField" placeholder="name" className={'tableCell'} /></td>
               <td><input type="text" id="propNamespaceField" placeholder="namespace" className={'tableCell'} /></td>
               <td><input type="text" id="propDatatypeField" placeholder="datatype" className={this.extraCells()} /></td>
