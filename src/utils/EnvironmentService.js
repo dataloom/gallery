@@ -3,13 +3,13 @@ import Consts from './AppConsts';
 export default class EnvironmentService {
   static addresses = {
     'http://localhost:9000': 'LOCALHOST',
-    'http://demo.loom.digital': 'DEMO',
+    'http://test.loom.digital': 'STAGING',
     'http://loom.digital': 'PRODUCTION'
   };
 
   static environments = {
     LOCALHOST: 'http://localhost:8095',
-    DEMO: 'http://demo.loom.digital',
+    STAGING: 'http://test.loom.digital',
     PRODUCTION: 'http://loom.digital'
   }
 
