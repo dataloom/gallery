@@ -21,7 +21,7 @@ const DATA = '/data';
 const ENTITYDATA = '/entitydata';
 const ENTITY_DATA = '/entitydata';
 const MULTIPLE = '/multiple';
-const PROPERTY_TYPE = 'propertyType';
+const PROPERTY_TYPE = '/property/type';
 
 const ENTITY_TYPE_DATA_URL = DATA.concat(ENTITY_DATA);
 const SCHEMA_DATA_URL = ENTITY_TYPE_DATA_URL.concat(MULTIPLE);

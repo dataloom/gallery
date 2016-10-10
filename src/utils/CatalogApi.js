@@ -5,6 +5,7 @@ import EnvironmentService from './EnvironmentService';
 
 export default class CatalogApi {
 
+  // loading EDM data
   static getCatalogSchemaData() {
     const url = EnvironmentService.getDatastoreUrl().concat(Consts.SCHEMAS);
     return axios.get(url).then(response => response.data);
@@ -20,6 +21,12 @@ export default class CatalogApi {
     return axios.get(url).then(response => response.data);
   }
 
+  static getCatalogPropertyTypeData() {
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.PROPERTY_TYPE);
+    return axios.get(url).then(response => response.data);
+  }
+
+  // downloading data
   static getDownloadRequestBody(data, method, datatype, url) {
     const type = (datatype === Consts.JSON) ? 'application/json' : 'text/csv';
     const req = {
@@ -92,80 +99,7 @@ export default class CatalogApi {
     );
   }
 
-  static addEntityTypeToSchema(namespace, name, fqnSet, success, err) {
-    const url = EnvironmentService.getDatastoreUrl()
-      .concat(Consts.SCHEMAS)
-      .concat('/')
-      .concat(namespace)
-      .concat('/')
-      .concat(name);
-    return axios({
-      method: 'PUT',
-      url,
-      data: JSON.stringify(fqnSet),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(() => success()
-    ).catch(() => err());
-  }
-
-  // TODO
-  static addPropertyToEntityType(namespace, name, fqnSet, success, err) {
-    console.log('adding property to entity type....');
-    // const url = EnvironmentService.getDatastoreUrl()
-    //   .concat(Consts.SCHEMAS)
-    //   .concat('/')
-    //   .concat(namespace)
-    //   .concat('/')
-    //   .concat(name);
-    // return axios({
-    //   method: 'PUT',
-    //   url,
-    //   data: JSON.stringify(fqnSet),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(() => success()
-    // ).catch(() => err());
-  }
-
-  static deleteTypeFromSchema(schemaNamespace, schemaName, fqnSet, success) {
-    const url = EnvironmentService.getDatastoreUrl()
-      .concat(Consts.SCHEMAS)
-      .concat('/')
-      .concat(schemaNamespace)
-      .concat('/')
-      .concat(schemaName);
-    return axios({
-      method: 'DELETE',
-      url,
-      data: JSON.stringify(fqnSet),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(() => success());
-  }
-
-  // TODO
-  static deletePropFromType(namespace, name, fqnSet, success) {
-    console.log('deleting prop from type.....');
-    const url = EnvironmentService.getDatastoreUrl()
-      .concat(Consts.SCHEMAS)
-      .concat('/')
-      .concat(namespace)
-      .concat('/')
-      .concat(name);
-    return axios({
-      method: 'DELETE',
-      url,
-      data: JSON.stringify(fqnSet),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(() => success());
-  }
-
+  // creating EDM
   static createNewSchema(name, namespace, success, err) {
     const url = EnvironmentService.getDatastoreUrl().concat(Consts.SCHEMAS);
     return axios({
@@ -195,6 +129,94 @@ export default class CatalogApi {
       }
     }).then(() => success())
     .catch(() => err());
+  }
+
+  static createNewPropertyType(name, namespace, datatype, multiplicity, success, err) {
+    const url = EnvironmentService.getDatastoreUrl().concat(Consts.PROPERTY_TYPE);
+    return axios({
+      method: 'POST',
+      url,
+      data: JSON.stringify({ namespace, name, datatype, multiplicity }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success())
+    .catch(() => err());
+  }
+
+  // modifying EDM
+  static addEntityTypeToSchema(namespace, name, fqnSet, success, err) {
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.SCHEMAS)
+      .concat('/')
+      .concat(namespace)
+      .concat('/')
+      .concat(name);
+    return axios({
+      method: 'PUT',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success()
+    ).catch(() => err());
+  }
+
+  static deleteTypeFromSchema(schemaNamespace, schemaName, fqnSet, success) {
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.SCHEMAS)
+      .concat('/')
+      .concat(schemaNamespace)
+      .concat('/')
+      .concat(schemaName);
+    return axios({
+      method: 'DELETE',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success());
+  }
+
+  // TODO
+  static addPropertyToEntityType(namespace, name, fqnSet, success, err) {
+    console.log('adding property to entity type....');
+    // const url = EnvironmentService.getDatastoreUrl()
+    //   .concat(Consts.SCHEMAS)
+    //   .concat('/')
+    //   .concat(namespace)
+    //   .concat('/')
+    //   .concat(name);
+    // return axios({
+    //   method: 'PUT',
+    //   url,
+    //   data: JSON.stringify(fqnSet),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // }).then(() => success()
+    // ).catch(() => err());
+  }
+
+  // TODO
+  static deletePropFromType(namespace, name, fqnSet, success) {
+    console.log('deleting prop from type.....');
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.SCHEMAS)
+      .concat('/')
+      .concat(namespace)
+      .concat('/')
+      .concat(name);
+    return axios({
+      method: 'DELETE',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success());
   }
 
   // TODO

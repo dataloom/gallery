@@ -71,7 +71,7 @@ export class Schema extends React.Component {
         <br />
         <div className={'spacerMed'} />
         <div className={'tableDescriptionLabel'}>Property Types:</div>
-        <PropertyTypeList propertyTypes={propertyTypes} />
+        <PropertyTypeList propertyTypes={propertyTypes} navBar={false} />
         <br />
         <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>
         <div className={this.state.error}>Unable to download {name}</div>

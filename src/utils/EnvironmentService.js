@@ -8,7 +8,7 @@ export default class EnvironmentService {
   };
 
   static environments = {
-    LOCALHOST: 'http://localhost:8095',
+    LOCALHOST: 'http://localhost:8080',
     STAGING: 'http://test.loom.digital',
     PRODUCTION: 'http://loom.digital'
   }

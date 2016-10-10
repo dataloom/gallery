@@ -2,21 +2,28 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { PropertyType } from './PropertyType';
 import CatalogApi from '../../../../utils/CatalogApi';
+import Utils from '../../../../utils/Utils';
 
 export class PropertyTypeList extends React.Component {
   static propTypes = {
     propertyTypes: PropTypes.array,
     name: PropTypes.string,
     namespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    navBar: PropTypes.bool
   }
 
   constructor() {
     super();
     this.state = {
+      propertyTypes: [],
       newPropertyRow: false,
       error: false
     };
+  }
+
+  componentDidMount() {
+    return (this.props.navBar) ? this.updateFn() : this.keyPropertyTypes();
   }
 
   addRowClassName = {
@@ -29,13 +36,27 @@ export class PropertyTypeList extends React.Component {
     false: 'hidden'
   }
 
+  updateFn = () => {
+    document.getElementById('propNameField').value = '';
+    document.getElementById('propNamespaceField').value = '';
+    document.getElementById('propDatatypeField').value = '';
+    document.getElementById('propMultField').value = '';
+    CatalogApi.getCatalogPropertyTypeData()
+      .then((propertyTypes) => {
+        this.setState({
+          propertyTypes: Utils.addKeysToArray(propertyTypes),
+          newPropertyRow: false
+        });
+      });
+  }
+
   keyPropertyTypes() {
     const propertyTypes = this.props.propertyTypes.map((type) => {
       const newType = type;
       newType.key = this.props.propertyTypes.indexOf(type);
       return newType;
     });
-    return propertyTypes;
+    this.setState({ propertyTypes });
   }
 
   newProperty = () => {
@@ -44,6 +65,25 @@ export class PropertyTypeList extends React.Component {
 
   updateError = () => {
     this.setState({ error: true });
+  }
+
+  addProperty = () => {
+    return (this.props.navBar) ? this.createNewPropertyType() : this.addPropertyToSchema();
+  }
+
+  createNewPropertyType = () => {
+    const name = document.getElementById('propNameField').value;
+    const namespace = document.getElementById('propNamespaceField').value;
+    const datatype = document.getElementById('propDatatypeField').value;
+    const multiplicity = document.getElementById('propMultField').value;
+    CatalogApi.createNewPropertyType(
+      name,
+      namespace,
+      datatype,
+      multiplicity,
+      this.updateFn,
+      this.updateError
+    )
   }
 
   addPropertyToSchema = () => {
@@ -59,13 +99,21 @@ export class PropertyTypeList extends React.Component {
     );
   }
 
+  shouldDisplayContainer = () => {
+    return (this.props.navBar) ? 'edmContainer' : '';
+  }
+
+  extraCells = () => {
+    return (this.props.navBar) ? 'tableCell' : 'hidden';
+  }
+
   render() {
-    const propArray = this.keyPropertyTypes();
+    const propArray = this.state.propertyTypes;
     const propertyTypeList = propArray.map(prop =>
       <PropertyType key={prop.key} propertyType={prop} />
     );
     return (
-      <div>
+      <div className={this.shouldDisplayContainer()}>
         <table>
           <tbody>
             <tr>
@@ -80,12 +128,14 @@ export class PropertyTypeList extends React.Component {
               <td />
               <td><input type="text" id="propNameField" placeholder="name" className={'tableCell'} /></td>
               <td><input type="text" id="propNamespaceField" placeholder="namespace" className={'tableCell'} /></td>
-              <td><Button onClick={this.addPropertyToSchema}>Save</Button></td>
+              <td><input type="text" id="propDatatypeField" placeholder="datatype" className={this.extraCells()} /></td>
+              <td><input type="text" id="propMultField" placeholder="multiplicity" className={this.extraCells()} /></td>
+              <td><Button onClick={this.addProperty}>Save</Button></td>
             </tr>
           </tbody>
         </table>
         <Button onClick={this.newProperty} className={this.addRowClassName[!this.state.newPropertyRow]}>+</Button>
-        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add entity type.</div>
+        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add property type.</div>
       </div>
     );
   }
