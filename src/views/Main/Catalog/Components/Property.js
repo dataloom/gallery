@@ -32,11 +32,20 @@ export class Property extends React.Component {
     );
   }
 
+  shouldShowDeleteButton = () => {
+    return (this.props.primaryKey) ? 'hidden' : '';
+  }
+
   render() {
     const prop = this.props.property;
     return (
       <tr className={'tableRows'}>
-        <td><Button bsSize="xsmall" bsStyle="danger" onClick={this.deleteProp}>-</Button></td>
+        <td><Button
+          bsSize="xsmall"
+          bsStyle="danger"
+          onClick={this.deleteProp}
+          className={this.shouldShowDeleteButton()}
+        >-</Button></td>
         <td className={'tableCell'}>{prop.name}</td>
         <td className={'tableCell'}>{prop.namespace}</td>
         {this.isPrimaryKey()}

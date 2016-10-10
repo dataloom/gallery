@@ -86,7 +86,7 @@ export class PropertyTypeList extends React.Component {
       multiplicity,
       this.updateFn,
       this.updateError
-    )
+    );
   }
 
   addPropertyToSchema = () => {

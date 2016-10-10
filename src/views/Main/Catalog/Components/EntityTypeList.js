@@ -58,7 +58,7 @@ export class EntityTypeList extends React.Component {
     const pKey = [{
       name: document.getElementById('pKeyName').value,
       namespace: document.getElementById('pKeyNamespace').value
-    }]
+    }];
     CatalogApi.createNewEntityType(name, namespace, pKey, this.newEntityTypeSuccess, this.showError);
   }
 
