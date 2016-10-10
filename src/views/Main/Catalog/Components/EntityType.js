@@ -10,7 +10,8 @@ export class EntityType extends React.Component {
     namespace: PropTypes.string,
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    id: PropTypes.number
   }
 
   constructor() {
@@ -57,7 +58,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { name, namespace, properties, primaryKey, updateFn } = this.props;
+    const { name, namespace, properties, primaryKey, updateFn, id } = this.props;
     return (
       <div className={'edmContainer'}>
         <div className={'name'}>{name}</div>
@@ -74,6 +75,7 @@ export class EntityType extends React.Component {
           entityTypeName={name}
           entityTypeNamespace={namespace}
           updateFn={updateFn}
+          id={id}
         />
         <br />
         <Button

@@ -69,6 +69,7 @@ export class EntityTypeList extends React.Component {
     const entityTypeList = this.state.entityTypes.map(entityType =>
       <EntityType
         key={entityType.key}
+        id={entityType.key}
         name={entityType.name}
         namespace={entityType.namespace}
         properties={entityType.properties}

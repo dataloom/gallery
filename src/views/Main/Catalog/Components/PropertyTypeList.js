@@ -10,7 +10,8 @@ export class PropertyTypeList extends React.Component {
     name: PropTypes.string,
     namespace: PropTypes.string,
     updateFn: PropTypes.func,
-    navBar: PropTypes.bool
+    navBar: PropTypes.bool,
+    id: PropTypes.number
   }
 
   constructor() {
@@ -37,10 +38,11 @@ export class PropertyTypeList extends React.Component {
   }
 
   updateFn = () => {
-    document.getElementById('propNameField').value = '';
-    document.getElementById('propNamespaceField').value = '';
-    document.getElementById('propDatatypeField').value = '';
-    document.getElementById('propMultField').value = '';
+    const id = this.props.id;
+    document.getElementById('pName'.concat(id)).value = '';
+    document.getElementById('pNamespace'.concat(id)).value = '';
+    document.getElementById('pDatatype'.concat(id)).value = '';
+    document.getElementById('pMultiplicity'.concat(id)).value = '';
     CatalogApi.getCatalogPropertyTypeData()
       .then((propertyTypes) => {
         this.setState({
@@ -72,10 +74,11 @@ export class PropertyTypeList extends React.Component {
   }
 
   createNewPropertyType = () => {
-    const name = document.getElementById('propNameField').value;
-    const namespace = document.getElementById('propNamespaceField').value;
-    const datatype = document.getElementById('propDatatypeField').value;
-    const multiplicity = document.getElementById('propMultField').value;
+    const id = this.props.id;
+    const name = document.getElementById('pName'.concat(id)).value;
+    const namespace = document.getElementById('pNamespace'.concat(id)).value;
+    const datatype = document.getElementById('pDatatype'.concat(id)).value;
+    const multiplicity = document.getElementById('pMultiplicity'.concat(id)).value;
     CatalogApi.createNewPropertyType(
       name,
       namespace,
@@ -87,8 +90,8 @@ export class PropertyTypeList extends React.Component {
   }
 
   addPropertyToSchema = () => {
-    const name = document.getElementById('propNameField').value;
-    const namespace = document.getElementById('propNamespaceField').value;
+    const name = document.getElementById('pName'.concat(this.props.id)).value;
+    const namespace = document.getElementById('pNamespace'.concat(this.props.id)).value;
     const fqnSet = [{ name, namespace }];
     CatalogApi.addPropertyToSchema(
       this.props.name,
@@ -103,7 +106,7 @@ export class PropertyTypeList extends React.Component {
     return (this.props.navBar) ? 'edmContainer' : '';
   }
 
-  extraCells = () => {
+  shouldShowExtraCells = () => {
     return (this.props.navBar) ? 'tableCell' : 'hidden';
   }
 
@@ -116,6 +119,7 @@ export class PropertyTypeList extends React.Component {
     const propertyTypeList = propArray.map(prop =>
       <PropertyType key={prop.key} propertyType={prop} navBar={this.props.navBar} />
     );
+    const id = this.props.id;
     return (
       <div className={this.shouldDisplayContainer()}>
         <table>
@@ -129,11 +133,31 @@ export class PropertyTypeList extends React.Component {
             </tr>
             {propertyTypeList}
             <tr className={this.addRowClassName[this.state.newPropertyRow]}>
-              <td className={this.shouldAddExtraCell()}/>
-              <td><input type="text" id="propNameField" placeholder="name" className={'tableCell'} /></td>
-              <td><input type="text" id="propNamespaceField" placeholder="namespace" className={'tableCell'} /></td>
-              <td><input type="text" id="propDatatypeField" placeholder="datatype" className={this.extraCells()} /></td>
-              <td><input type="text" id="propMultField" placeholder="multiplicity" className={this.extraCells()} /></td>
+              <td className={this.shouldAddExtraCell()} />
+              <td><input
+                type="text"
+                id={'pName'.concat(id)}
+                placeholder="name"
+                className={'tableCell'}
+              /></td>
+              <td><input
+                type="text"
+                id={'pNamespace'.concat(id)}
+                placeholder="namespace"
+                className={'tableCell'}
+              /></td>
+              <td><input
+                type="text"
+                id={'pDatatype'.concat(id)}
+                placeholder="datatype"
+                className={this.shouldShowExtraCells()}
+              /></td>
+              <td><input
+                type="text"
+                id={'pMultiplicity'.concat(id)}
+                placeholder="multiplicity"
+                className={this.shouldShowExtraCells()}
+              /></td>
               <td><Button onClick={this.addProperty}>Save</Button></td>
             </tr>
           </tbody>

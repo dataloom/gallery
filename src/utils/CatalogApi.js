@@ -180,24 +180,24 @@ export default class CatalogApi {
     }).then(() => success());
   }
 
-  // TODO
   static addPropertyToEntityType(namespace, name, fqnSet, success, err) {
     console.log('adding property to entity type....');
-    // const url = EnvironmentService.getDatastoreUrl()
-    //   .concat(Consts.SCHEMAS)
-    //   .concat('/')
-    //   .concat(namespace)
-    //   .concat('/')
-    //   .concat(name);
-    // return axios({
-    //   method: 'PUT',
-    //   url,
-    //   data: JSON.stringify(fqnSet),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(() => success()
-    // ).catch(() => err());
+    const url = EnvironmentService.getDatastoreUrl()
+      .concat(Consts.ENTITY_TYPE)
+      .concat('/')
+      .concat(namespace)
+      .concat('/')
+      .concat(name)
+      .concat(Consts.ADD_PROPERTY);
+    return axios({
+      method: 'PUT',
+      url,
+      data: JSON.stringify(fqnSet),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => success()
+    ).catch(() => err());
   }
 
   // TODO

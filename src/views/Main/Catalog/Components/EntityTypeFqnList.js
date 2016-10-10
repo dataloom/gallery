@@ -8,7 +8,8 @@ export class EntityTypeFqnList extends React.Component {
     entityTypeFqns: PropTypes.array,
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    id: PropTypes.number
   }
 
   constructor() {
@@ -52,8 +53,8 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addEntityTypeToSchema = () => {
-    const name = document.getElementById('nameField').value;
-    const namespace = document.getElementById('namespaceField').value;
+    const name = document.getElementById('eName'.concat(this.props.id)).value;
+    const namespace = document.getElementById('eSpace'.concat(this.props.id)).value;
     const fqnSet = [{ name, namespace }];
     CatalogApi.addEntityTypeToSchema(
       this.props.schemaNamespace,
@@ -75,6 +76,7 @@ export class EntityTypeFqnList extends React.Component {
         updateFn={this.props.updateFn}
       />
     );
+    const id = this.props.id;
     return (
       <div>
         <table>
@@ -87,8 +89,8 @@ export class EntityTypeFqnList extends React.Component {
             {entityTypeFqnList}
             <tr className={this.addRowClassName[this.state.newEntityTypeRow]}>
               <td />
-              <td><input type="text" id="nameField" placeholder="name" className={'tableCell'} /></td>
-              <td><input type="text" id="namespaceField" placeholder="namespace" className={'tableCell'} /></td>
+              <td><input type="text" id={'eName'.concat(id)} placeholder="name" className={'tableCell'} /></td>
+              <td><input type="text" id={'eSpace'.concat(id)} placeholder="namespace" className={'tableCell'} /></td>
               <td><Button onClick={this.addEntityTypeToSchema}>Save</Button></td>
             </tr>
           </tbody>

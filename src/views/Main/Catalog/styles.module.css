@@ -58,6 +58,7 @@ th {
 .primaryKey {
   color: gray;
   padding-left: 6px;
+  background: #f6f6f6;
 }
 
 .buttonStyle {

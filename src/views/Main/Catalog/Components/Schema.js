@@ -12,7 +12,8 @@ export class Schema extends React.Component {
     propertyTypes: PropTypes.array,
     entityTypeFqns: PropTypes.array,
     jsonContents: PropTypes.object,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    id: PropTypes.number
   }
 
   constructor() {
@@ -51,7 +52,7 @@ export class Schema extends React.Component {
   }
 
   render() {
-    const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
+    const { name, namespace, propertyTypes, entityTypeFqns, updateFn, id } = this.props;
     return (
       <div className={'edmContainer'}>
         <div className={'name'}>{name}</div>
@@ -67,11 +68,19 @@ export class Schema extends React.Component {
           schemaName={name}
           schemaNamespace={namespace}
           updateFn={updateFn}
+          id={id}
         />
         <br />
         <div className={'spacerMed'} />
         <div className={'tableDescriptionLabel'}>Property Types:</div>
-        <PropertyTypeList propertyTypes={propertyTypes} navBar={false} />
+        <PropertyTypeList
+          propertyTypes={propertyTypes}
+          name={name}
+          namespace={namespace}
+          updateFn={updateFn}
+          navBar={false}
+          id={id}
+        />
         <br />
         <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>
         <div className={this.state.error}>Unable to download {name}</div>

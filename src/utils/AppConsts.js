@@ -22,6 +22,7 @@ const ENTITYDATA = '/entitydata';
 const ENTITY_DATA = '/entitydata';
 const MULTIPLE = '/multiple';
 const PROPERTY_TYPE = '/property/type';
+const ADD_PROPERTY = '/addProperty';
 
 const ENTITY_TYPE_DATA_URL = DATA.concat(ENTITY_DATA);
 const SCHEMA_DATA_URL = ENTITY_TYPE_DATA_URL.concat(MULTIPLE);
@@ -49,5 +50,6 @@ export default {
   ENTITY_SET_DATA_BASE_URL,
   ENTITYDATA,
   ERROR_STATE,
-  PROPERTY_TYPE
+  PROPERTY_TYPE,
+  ADD_PROPERTY
 };

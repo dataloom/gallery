@@ -9,7 +9,8 @@ export class PropertyList extends React.Component {
     primaryKey: PropTypes.array,
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    id: PropTypes.number
   }
 
   constructor() {
@@ -53,12 +54,12 @@ export class PropertyList extends React.Component {
   }
 
   addPropertyToEntityType = () => {
-    const name = document.getElementById('nameField').value;
-    const namespace = document.getElementById('namespaceField').value;
+    const name = document.getElementById('propertyName'.concat(this.props.id)).value;
+    const namespace = document.getElementById('propertyNamespace'.concat(this.props.id)).value;
     const fqnSet = [{ name, namespace }];
     CatalogApi.addPropertyToEntityType(
-      this.props.entityTypeName,
       this.props.entityTypeNamespace,
+      this.props.entityTypeName,
       fqnSet,
       this.updateFqns,
       this.updateError
@@ -66,19 +67,19 @@ export class PropertyList extends React.Component {
   }
 
   render() {
-    const propArray = (this.props.properties !== null && this.props.properties.length > 0) ?
+    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn, id } = this.props;
+    const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
-    const pKeyJson = this.props.primaryKey;
     const propertyList = propArray.map((prop) => {
-      const primaryKey = (pKeyJson[0].name === prop.name && pKeyJson[0].namespace === prop.namespace);
+      const pKey = (primaryKey[0].name === prop.name && primaryKey[0].namespace === prop.namespace);
       return (
         <Property
           key={prop.key}
           property={prop}
-          primaryKey={primaryKey}
-          entityTypeName={this.props.entityTypeName}
-          entityTypeNamespace={this.props.entityTypeNamespace}
-          updateFn={this.props.updateFn}
+          primaryKey={pKey}
+          entityTypeName={entityTypeName}
+          entityTypeNamespace={entityTypeNamespace}
+          updateFn={updateFn}
         />
       );
     });
@@ -94,8 +95,18 @@ export class PropertyList extends React.Component {
             {propertyList}
             <tr className={this.addRowClassName[this.state.newPropertyRow]}>
               <td />
-              <td><input type="text" id="nameField" placeholder="name" className={'tableCell'} /></td>
-              <td><input type="text" id="namespaceField" placeholder="namespace" className={'tableCell'} /></td>
+              <td><input
+                type="text"
+                id={'propertyName'.concat(id)}
+                placeholder="name"
+                className={'tableCell'}
+              /></td>
+              <td><input
+                type="text"
+                id={'propertyNamespace'.concat(id)}
+                placeholder="namespace"
+                className={'tableCell'}
+              /></td>
               <td><Button onClick={this.addPropertyToEntityType}>Save</Button></td>
             </tr>
           </tbody>
