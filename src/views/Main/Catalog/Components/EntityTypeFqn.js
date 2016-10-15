@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { EntityDataModelApi } from 'loom-data';
 
 export class EntityTypeFqn extends React.Component {
   static propTypes = {
@@ -11,16 +11,16 @@ export class EntityTypeFqn extends React.Component {
   }
 
   deleteProp = () => {
-    const fqnSet = [{
-      name: this.props.entityTypeFqn.name,
-      namespace: this.props.entityTypeFqn.namespace
-    }];
-    CatalogApi.deleteTypeFromSchema(
-      this.props.schemaNamespace,
-      this.props.schemaName,
-      fqnSet,
-      this.props.updateFn
-    );
+    EntityDataModelApi.removeEntityTypesFromSchema(
+      {
+        namespace: this.props.schemaNamespace,
+        name: this.props.schemaName
+      },
+      [{
+        namespace: this.props.entityTypeFqn.namespace,
+        name: this.props.entityTypeFqn.name
+      }]
+    ).then(() => this.props.updateFn());
   }
 
   render() {

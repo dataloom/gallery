@@ -1,19 +1,20 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { DataApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
+import FileService from '../../../../utils/FileService';
 
 export class EntitySet extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     title: PropTypes.string,
-    typename: PropTypes.string
+    type: PropTypes.object
   }
 
   constructor() {
     super();
     this.state = {
-      error: Consts.ERROR_STATE.hide,
+      error: Consts.HIDDEN,
       disableJson: false,
       disableCsv: false
     };
@@ -30,11 +31,13 @@ export class EntitySet extends React.Component {
   }
 
   downloadFile = (datatype) => {
-    CatalogApi.downloadEntitySet(this.props.name, this.props.typename, datatype, this.displayError, this.enableButton);
+    DataApi.getAllEntitiesOfTypeInSet(this.props.type, this.props.name)
+    .then(data => FileService.saveFile(data, this.props.name, datatype, this.enableButton))
+    .catch(() => this.displayError());
   }
 
   displayError = (datatype) => {
-    this.setState({ error: Consts.ERROR_STATE.show });
+    this.setState({ error: Consts.ERROR });
     this.enableButton(datatype);
   }
 
@@ -48,7 +51,7 @@ export class EntitySet extends React.Component {
   }
 
   render() {
-    const { name, title, typename } = this.props;
+    const { name, title, type } = this.props;
     return (
       <div className={'edmContainer'}>
         <div className={'name'}>{name}</div>
@@ -56,9 +59,22 @@ export class EntitySet extends React.Component {
         <br />
         <div className={'subtitle'}>{title}</div>
         <div className={'descriptionLabel'}> (title)</div>
-        <br />
-        <div className={'subtitle'}>{typename}</div>
-        <div className={'descriptionLabel'}> (typename)</div>
+        <div className={'spacerSmall'} />
+        <div className={'tableDescriptionLabel'}>Type:</div>
+        <div>
+          <table>
+            <tbody>
+              <tr>
+                <th className={'tableCell'}>Name</th>
+                <th className={'tableCell'}>Namespace</th>
+              </tr>
+              <tr className={'tableRows'}>
+                <td className={'tableCell'}>{type.name}</td>
+                <td className={'tableCell'}>{type.namespace}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div className={'spacerSmall'} />
         <Button
           onClick={() => this.handleClick(Consts.JSON)}
@@ -69,7 +85,7 @@ export class EntitySet extends React.Component {
         <Button
           onClick={() => this.handleClick(Consts.CSV)}
           disabled={this.state.disableCsv}
-          className={'spacerMargin'}
+          className={'hidden'}
         >
           Download {name} as CSV
         </Button>

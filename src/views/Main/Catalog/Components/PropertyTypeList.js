@@ -1,15 +1,16 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
-import CatalogApi from '../../../../utils/CatalogApi';
 import Utils from '../../../../utils/Utils';
+import Consts from '../../../../utils/AppConsts';
 
 export class PropertyTypeList extends React.Component {
   static propTypes = {
     propertyTypes: PropTypes.array,
     name: PropTypes.string,
     namespace: PropTypes.string,
-    updateFn: PropTypes.func,
+    updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
     id: PropTypes.number
   }
@@ -19,31 +20,32 @@ export class PropertyTypeList extends React.Component {
     this.state = {
       propertyTypes: [],
       newPropertyRow: false,
-      error: false
+      addError: false,
+      deleteError: false
     };
+  }
+
+  addRowClassName = {
+    true: Consts.EMPTY,
+    false: Consts.HIDDEN
+  }
+
+  showErrorMsgClass = {
+    true: Consts.ERROR,
+    false: Consts.HIDDEN
   }
 
   componentDidMount() {
     return (this.props.navBar) ? this.updateFn() : this.keyPropertyTypes();
   }
 
-  addRowClassName = {
-    false: 'hidden',
-    true: 'showAddRow'
-  }
-
-  showErrorMsgClass = {
-    true: 'errorMsg',
-    false: 'hidden'
-  }
-
   updateFn = () => {
     const id = this.props.id;
-    document.getElementById('pName'.concat(id)).value = '';
-    document.getElementById('pNamespace'.concat(id)).value = '';
-    document.getElementById('pDatatype'.concat(id)).value = '';
-    document.getElementById('pMultiplicity'.concat(id)).value = '';
-    CatalogApi.getCatalogPropertyTypeData()
+    document.getElementById('pName'.concat(id)).value = Consts.EMPTY;
+    document.getElementById('pNamespace'.concat(id)).value = Consts.EMPTY;
+    document.getElementById('pDatatype'.concat(id)).value = Consts.EMPTY;
+    document.getElementById('pMultiplicity'.concat(id)).value = Consts.EMPTY;
+    EntityDataModelApi.getPropertyTypes()
       .then((propertyTypes) => {
         this.setState({
           propertyTypes: Utils.addKeysToArray(propertyTypes),
@@ -58,20 +60,28 @@ export class PropertyTypeList extends React.Component {
       newType.key = this.props.propertyTypes.indexOf(type);
       return newType;
     });
-    this.setState({ propertyTypes });
+    return propertyTypes;
   }
 
   newProperty = () => {
     this.setState({ newPropertyRow: true });
   }
 
-  updateError = () => {
-    this.setState({ error: true });
+  updateAddError = () => {
+    this.setState({
+      addError: true,
+      deleteError: false
+    });
   }
 
-  addProperty = () => {
-    return (this.props.navBar) ? this.createNewPropertyType() : this.addPropertyToSchema();
+  updateDeleteError = () => {
+    this.setState({
+      deleteError: true,
+      addError: false
+    });
   }
+
+  addProperty = () => (this.props.navBar ? this.createNewPropertyType() : this.addPropertyToSchema());
 
   createNewPropertyType = () => {
     const id = this.props.id;
@@ -79,45 +89,47 @@ export class PropertyTypeList extends React.Component {
     const namespace = document.getElementById('pNamespace'.concat(id)).value;
     const datatype = document.getElementById('pDatatype'.concat(id)).value;
     const multiplicity = document.getElementById('pMultiplicity'.concat(id)).value;
-    CatalogApi.createNewPropertyType(
-      name,
-      namespace,
-      datatype,
-      multiplicity,
-      this.updateFn,
-      this.updateError
-    );
+    EntityDataModelApi.createPropertyType({ name, namespace, datatype, multiplicity })
+    .then(() => this.updateFn())
+    .catch(() => this.updateAddError());
+  }
+
+  successfullyAddedProperty = () => {
+    this.setState({ newPropertyRow: false });
+    this.props.updateSchemaFn();
   }
 
   addPropertyToSchema = () => {
     const name = document.getElementById('pName'.concat(this.props.id)).value;
     const namespace = document.getElementById('pNamespace'.concat(this.props.id)).value;
-    const fqnSet = [{ name, namespace }];
-    CatalogApi.addPropertyToSchema(
-      this.props.name,
-      this.props.namespace,
-      fqnSet,
-      this.props.updateFn,
-      this.updateError
-    );
+    EntityDataModelApi.addPropertyTypesToSchema(
+      {
+        namespace: this.props.namespace,
+        name: this.props.name
+      },
+      [{ namespace, name }]
+    ).then(() => this.successfullyAddedProperty())
+    .catch(() => this.updateAddError());
   }
 
-  shouldDisplayContainer = () => {
-    return (this.props.navBar) ? 'edmContainer' : '';
-  }
+  shouldDisplayContainer = () => (this.props.navBar ? 'edmContainer' : Consts.EMPTY);
 
-  shouldShowExtraCells = () => {
-    return (this.props.navBar) ? 'tableCell' : 'hidden';
-  }
+  shouldAddExtraCell = () => (this.props.navBar ? Consts.HIDDEN : Consts.EMPTY);
 
-  shouldAddExtraCell = () => {
-    return (this.props.navBar) ? 'hidden' : '';
-  }
+  shouldAddExtraFieldOptions = () => (this.props.navBar ? Consts.EMPTY : Consts.HIDDEN);
 
   render() {
-    const propArray = this.state.propertyTypes;
+    const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map(prop =>
-      <PropertyType key={prop.key} propertyType={prop} navBar={this.props.navBar} />
+      <PropertyType
+        key={prop.key}
+        propertyType={prop}
+        navBar={this.props.navBar}
+        error={this.updateDeleteError}
+        updateFn={this.props.updateSchemaFn}
+        schemaName={this.props.name}
+        schemaNamespace={this.props.namespace}
+      />
     );
     const id = this.props.id;
     return (
@@ -146,24 +158,25 @@ export class PropertyTypeList extends React.Component {
                 placeholder="namespace"
                 className={'tableCell'}
               /></td>
-              <td><input
+              <td className={this.shouldAddExtraFieldOptions()}><input
                 type="text"
                 id={'pDatatype'.concat(id)}
                 placeholder="datatype"
-                className={this.shouldShowExtraCells()}
+                className={'tableCell'}
               /></td>
-              <td><input
+              <td className={this.shouldAddExtraFieldOptions()}><input
                 type="text"
                 id={'pMultiplicity'.concat(id)}
                 placeholder="multiplicity"
-                className={this.shouldShowExtraCells()}
+                className={'tableCell'}
               /></td>
               <td><Button onClick={this.addProperty}>Save</Button></td>
             </tr>
           </tbody>
         </table>
         <Button onClick={this.newProperty} className={this.addRowClassName[!this.state.newPropertyRow]}>+</Button>
-        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add property type.</div>
+        <div className={this.showErrorMsgClass[this.state.addError]}>Unable to add property type.</div>
+        <div className={this.showErrorMsgClass[this.state.deleteError]}>Unable to delete property type.</div>
       </div>
     );
   }

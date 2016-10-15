@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { EntityDataModelApi } from 'loom-data';
+import Consts from '../../../../utils/AppConsts';
 
 export class Property extends React.Component {
   static propTypes = {
@@ -20,32 +21,32 @@ export class Property extends React.Component {
   }
 
   deleteProp = () => {
-    const fqnSet = [{
-      name: this.props.entityTypeName,
-      namespace: this.props.entityTypeNamespace
-    }];
-    CatalogApi.deletePropFromType(
-      fqnSet.namespace,
-      fqnSet.name,
-      fqnSet,
-      this.props.updateFn
-    );
+    EntityDataModelApi.removePropertyTypesFromEntityType(
+      {
+        namespace: this.props.entityTypeNamespace,
+        name: this.props.entityTypeName
+      },
+      [{
+        namespace: this.props.property.namespace,
+        name: this.props.property.name
+      }]
+    ).then(() => this.props.updateFn());
   }
 
-  shouldShowDeleteButton = () => {
-    return (this.props.primaryKey) ? 'hidden' : '';
-  }
+  shouldShowDeleteButton = () => (this.props.primaryKey ? Consts.HIDDEN : Consts.EMPTY);
 
   render() {
     const prop = this.props.property;
     return (
       <tr className={'tableRows'}>
-        <td><Button
-          bsSize="xsmall"
-          bsStyle="danger"
-          onClick={this.deleteProp}
-          className={this.shouldShowDeleteButton()}
-        >-</Button></td>
+        <td>
+          <Button
+            bsSize="xsmall"
+            bsStyle="danger"
+            onClick={this.deleteProp}
+            className={this.shouldShowDeleteButton()}
+          >-</Button>
+        </td>
         <td className={'tableCell'}>{prop.name}</td>
         <td className={'tableCell'}>{prop.namespace}</td>
         {this.isPrimaryKey()}

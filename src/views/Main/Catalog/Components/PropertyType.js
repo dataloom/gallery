@@ -1,32 +1,33 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { EntityDataModelApi } from 'loom-data';
+import Consts from '../../../../utils/AppConsts';
 
 export class PropertyType extends React.Component {
   static propTypes = {
     propertyType: PropTypes.object,
-    name: PropTypes.string,
-    namespace: PropTypes.string,
+    navBar: PropTypes.bool,
+    error: PropTypes.func,
     updateFn: PropTypes.func,
-    navBar: PropTypes.bool
+    schemaName: PropTypes.string,
+    schemaNamespace: PropTypes.string
   }
 
   deleteProp = () => {
-    const fqnSet = [{
-      name: this.props.name,
-      namespace: this.props.namespace
-    }];
-    CatalogApi.deletePropFromSchema(
-      fqnSet.namespace,
-      fqnSet.name,
-      fqnSet,
-      this.props.updateFn
-    );
+    EntityDataModelApi.removePropertyTypesFromSchema(
+      {
+        namespace: this.props.schemaNamespace,
+        name: this.props.schemaName
+      },
+      [{
+        namespace: this.props.propertyType.namespace,
+        name: this.props.propertyType.name
+      }]
+    ).then(() => this.props.updateFn())
+    .catch(() => this.props.error());
   }
 
-  shouldShowDeleteButton = () => {
-    return (this.props.navBar) ? 'hidden' : '';
-  }
+  shouldShowDeleteButton = () => (this.props.navBar ? Consts.HIDDEN : Consts.EMPTY);
 
   render() {
     const prop = this.props.propertyType;

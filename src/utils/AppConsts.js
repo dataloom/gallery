@@ -8,48 +8,25 @@ const AUTH0_DOMAIN = 'loom.auth0.com';
 const JSON = 'JSON';
 const CSV = 'CSV';
 
-const PUT = 'PUT';
-const GET = 'GET';
+const SCHEMA = 'schema';
+const ENTITY_SET = 'entitySet';
+const ENTITY_TYPE = 'entityType';
+const PROPERTY_TYPE = 'propertyType';
 
-const DATASTORE = '/datastore';
-const DATASTORE_CATALOG_URL = '/ontology';
-const SCHEMAS = '/schema';
-const ENTITY_SET = '/entity/set';
-const ENTITYSET = '/entityset';
-const ENTITY_TYPE = '/entity/type';
-const DATA = '/data';
-const ENTITYDATA = '/entitydata';
-const ENTITY_DATA = '/entitydata';
-const MULTIPLE = '/multiple';
-const PROPERTY_TYPE = '/property/type';
-const ADD_PROPERTY = '/addProperty';
-
-const ENTITY_TYPE_DATA_URL = DATA.concat(ENTITY_DATA);
-const SCHEMA_DATA_URL = ENTITY_TYPE_DATA_URL.concat(MULTIPLE);
-const ENTITY_SET_DATA_BASE_URL = DATA.concat(ENTITYSET);
-
-const ERROR_STATE = {
-  hide: 'hidden',
-  show: 'errorMsg'
-};
+const HIDDEN = 'hidden';
+const ERROR = 'errorMsg';
+const EMPTY = '';
 
 export default {
   AUTH0_CLIENT_ID,
   AUTH0_DOMAIN,
   JSON,
   CSV,
-  PUT,
-  GET,
-  DATASTORE,
-  DATASTORE_CATALOG_URL,
-  SCHEMAS,
+  SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
-  ENTITY_TYPE_DATA_URL,
-  SCHEMA_DATA_URL,
-  ENTITY_SET_DATA_BASE_URL,
-  ENTITYDATA,
-  ERROR_STATE,
-  PROPERTY_TYPE,
-  ADD_PROPERTY
+  HIDDEN,
+  ERROR,
+  EMPTY,
+  PROPERTY_TYPE
 };

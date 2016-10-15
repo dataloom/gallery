@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
-import CatalogApi from '../../../../utils/CatalogApi';
+import Consts from '../../../../utils/AppConsts';
 
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
@@ -21,13 +22,13 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addRowClassName = {
-    true: 'showAddRow',
-    false: 'hidden'
+    true: Consts.EMPTY,
+    false: Consts.HIDDEN
   }
 
   showErrorMsgClass = {
-    true: 'errorMsg',
-    false: 'hidden'
+    true: Consts.ERROR,
+    false: Consts.HIDDEN
   }
 
   keyPropertyTypes() {
@@ -44,8 +45,10 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   updateFqns = () => {
-    this.setState({ newEntityTypeRow: false });
+    document.getElementById('eName'.concat(this.props.id)).value = Consts.EMPTY;
+    document.getElementById('eSpace'.concat(this.props.id)).value = Consts.EMPTY;
     this.props.updateFn();
+    this.setState({ newEntityTypeRow: false });
   }
 
   updateError = () => {
@@ -55,14 +58,14 @@ export class EntityTypeFqnList extends React.Component {
   addEntityTypeToSchema = () => {
     const name = document.getElementById('eName'.concat(this.props.id)).value;
     const namespace = document.getElementById('eSpace'.concat(this.props.id)).value;
-    const fqnSet = [{ name, namespace }];
-    CatalogApi.addEntityTypeToSchema(
-      this.props.schemaNamespace,
-      this.props.schemaName,
-      fqnSet,
-      this.updateFqns,
-      this.updateError
-    );
+    EntityDataModelApi.addEntityTypesToSchema(
+      {
+        namespace: this.props.schemaNamespace,
+        name: this.props.schemaName
+      },
+      [{ namespace, name }]
+    ).then(() => this.updateFqns())
+    .catch(() => this.updateError());
   }
 
   render() {

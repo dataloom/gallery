@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { PropertyTypeList } from './PropertyTypeList';
-import CatalogApi from '../../../../utils/CatalogApi';
 import Consts from '../../../../utils/AppConsts';
+import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
 
 export class Schema extends React.Component {
@@ -19,7 +19,7 @@ export class Schema extends React.Component {
   constructor() {
     super();
     this.state = {
-      error: Consts.ERROR_STATE.hide,
+      error: Consts.HIDDEN,
       disableJson: false
     };
   }
@@ -30,17 +30,12 @@ export class Schema extends React.Component {
   }
 
   downloadFile = (datatype) => {
-    CatalogApi.downloadSchema(
-      this.props.jsonContents,
-      this.props.name,
-      datatype,
-      this.enableButton
-    );
+    FileService.saveFile(this.props.jsonContents, this.props.name, datatype, this.enableButton);
   }
 
   displayError = () => {
     this.setState({
-      error: Consts.ERROR_STATE.show,
+      error: Consts.ERROR,
       disableJson: false
     });
   }
@@ -77,7 +72,7 @@ export class Schema extends React.Component {
           propertyTypes={propertyTypes}
           name={name}
           namespace={namespace}
-          updateFn={updateFn}
+          updateSchemaFn={updateFn}
           navBar={false}
           id={id}
         />

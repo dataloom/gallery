@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Jumbotron } from 'react-bootstrap';
+import Loom from 'loom-data';
 import './styles.module.css';
 import { Navbar } from './components/Navbar';
 
@@ -11,6 +12,11 @@ export class Container extends React.Component {
   static propTypes = {
     children: PropTypes.element,
     route: PropTypes.object
+  }
+
+  constructor() {
+    super();
+    Loom.configure({ baseUrl: 'localhost' });
   }
 
   getChildren() {

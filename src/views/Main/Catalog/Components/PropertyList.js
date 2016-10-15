@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
-import CatalogApi from '../../../../utils/CatalogApi';
+import Consts from '../../../../utils/AppConsts';
 
 export class PropertyList extends React.Component {
   static propTypes = {
@@ -22,13 +23,13 @@ export class PropertyList extends React.Component {
   }
 
   addRowClassName = {
-    true: 'showAddRow',
-    false: 'hidden'
+    true: Consts.EMPTY,
+    false: Consts.HIDDEN
   }
 
   showErrorMsgClass = {
-    true: 'errorMsg',
-    false: 'hidden'
+    true: Consts.ERROR,
+    false: Consts.HIDDEN
   }
 
   keyProperties() {
@@ -45,6 +46,8 @@ export class PropertyList extends React.Component {
   }
 
   updateFqns = () => {
+    document.getElementById('propertyName'.concat(this.props.id)).value = Consts.EMPTY;
+    document.getElementById('propertyNamespace'.concat(this.props.id)).value = Consts.EMPTY;
     this.setState({ newPropertyRow: false });
     this.props.updateFn();
   }
@@ -56,14 +59,14 @@ export class PropertyList extends React.Component {
   addPropertyToEntityType = () => {
     const name = document.getElementById('propertyName'.concat(this.props.id)).value;
     const namespace = document.getElementById('propertyNamespace'.concat(this.props.id)).value;
-    const fqnSet = [{ name, namespace }];
-    CatalogApi.addPropertyToEntityType(
-      this.props.entityTypeNamespace,
-      this.props.entityTypeName,
-      fqnSet,
-      this.updateFqns,
-      this.updateError
-    );
+    EntityDataModelApi.addPropertyTypesToEntityType(
+      {
+        namespace: this.props.entityTypeNamespace,
+        name: this.props.entityTypeName
+      },
+      [{ namespace, name }]
+    ).then(() => this.updateFqns())
+    .catch(() => this.updateError());
   }
 
   render() {
@@ -81,7 +84,7 @@ export class PropertyList extends React.Component {
           entityTypeNamespace={entityTypeNamespace}
           updateFn={updateFn}
         />
-      );
+    );
     });
     return (
       <div>

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntitySet } from './EntitySet';
 
@@ -14,7 +14,7 @@ export class EntitySetList extends React.Component {
   }
 
   componentDidMount() {
-    CatalogApi.getCatalogEntitySetData()
+    EntityDataModelApi.getEntitySets()
       .then((entitySets) => {
         this.setState({ entitySets: Utils.addKeysToArray(entitySets) });
       });
@@ -26,7 +26,7 @@ export class EntitySetList extends React.Component {
         key={entitySet.key}
         name={entitySet.name}
         title={entitySet.title}
-        typename={entitySet.typename}
+        type={entitySet.type}
       />
     ));
     return (<div>{entitySetList}</div>);

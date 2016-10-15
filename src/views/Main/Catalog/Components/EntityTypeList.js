@@ -1,14 +1,11 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
+import Consts from '../../../../utils/AppConsts';
 
 export class EntityTypeList extends React.Component {
-  static propTypes = {
-    schemas: PropTypes.array
-  }
-
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -23,13 +20,13 @@ export class EntityTypeList extends React.Component {
   }
 
   showNewEntityType = {
-    true: 'newEntityType',
-    false: 'hidden'
+    true: Consts.EMPTY,
+    false: Consts.HIDDEN
   }
 
   errorClass = {
-    false: 'hidden',
-    true: 'errorMsg'
+    true: Consts.ERROR,
+    false: Consts.HIDDEN
   }
 
   newEntityType = () => {
@@ -37,9 +34,9 @@ export class EntityTypeList extends React.Component {
   }
 
   newEntityTypeSuccess = () => {
-    document.getElementById('newEntityTypeName').value = '';
-    document.getElementById('newEntityTypeNamespace').value = '';
-    CatalogApi.getCatalogEntityTypeData()
+    document.getElementById('newEntityTypeName').value = Consts.EMPTY;
+    document.getElementById('newEntityTypeNamespace').value = Consts.EMPTY;
+    EntityDataModelApi.getEntityTypes()
       .then((entityTypes) => {
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
@@ -59,11 +56,13 @@ export class EntityTypeList extends React.Component {
       name: document.getElementById('pKeyName').value,
       namespace: document.getElementById('pKeyNamespace').value
     }];
-    CatalogApi.createNewEntityType(name, namespace, pKey, this.newEntityTypeSuccess, this.showError);
+    EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
+    .then(() => this.newEntityTypeSuccess())
+    .catch(() => this.showError());
   }
 
   updateFn = () => {
-    CatalogApi.getCatalogEntityTypeData()
+    EntityDataModelApi.getEntityTypes()
       .then((entityTypes) => {
         this.setState({ entityTypes: Utils.addKeysToArray(entityTypes) });
       });
@@ -93,7 +92,7 @@ export class EntityTypeList extends React.Component {
             <div>Entity Type Name:</div>
             <input
               id="newEntityTypeName"
-              style={{ height: '30px' }}
+              className={'inputBox'}
               type="text"
               placeholder="name"
             />
@@ -101,7 +100,7 @@ export class EntityTypeList extends React.Component {
             <div>Entity Type Namespace:</div>
             <input
               id="newEntityTypeNamespace"
-              style={{ height: '30px' }}
+              className={'inputBox'}
               type="text"
               placeholder="namespace"
             />
@@ -113,13 +112,13 @@ export class EntityTypeList extends React.Component {
                   <td>
                     <input
                       id="pKeyName"
-                      style={{ height: '30px' }}
+                      className={'inputBox'}
                       type="text"
                       placeholder="property name"
                     />
                     <input
                       id="pKeyNamespace"
-                      style={{ height: '30px' }}
+                      className={'inputBox'}
                       type="text"
                       placeholder="property namespace"
                     />

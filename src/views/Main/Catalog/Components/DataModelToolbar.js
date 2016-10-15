@@ -9,13 +9,13 @@ export class DataModelToolbar extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      dataModelView: Consts.SCHEMAS
+      dataModelView: Consts.SCHEMA
     };
   }
 
   dataModelLabels =
     [
-      { label: 'Schemas', type: Consts.SCHEMAS, key: 0 },
+      { label: 'Schemas', type: Consts.SCHEMA, key: 0 },
       { label: 'Entity Sets', type: Consts.ENTITY_SET, key: 1 },
       { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 },
       { label: 'Property Types', type: Consts.PROPERTY_TYPE, key: 3 }

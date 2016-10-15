@@ -1,14 +1,11 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import CatalogApi from '../../../../utils/CatalogApi';
+import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
+import Consts from '../../../../utils/AppConsts';
 
 export class SchemaList extends React.Component {
-  static propTypes = {
-    schemas: React.PropTypes.array
-  }
-
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -23,20 +20,13 @@ export class SchemaList extends React.Component {
   }
 
   showNewSchema = {
-    true: 'newSchema',
-    false: 'hidden'
+    true: Consts.EMPTY,
+    false: Consts.HIDDEN
   }
 
   errorClass = {
-    false: 'hidden',
-    true: 'errorMsg'
-  }
-
-  updateFn = () => {
-    CatalogApi.getCatalogSchemaData()
-      .then((schemas) => {
-        this.setState({ schemas: Utils.addKeysToArray(schemas) });
-      });
+    true: Consts.ERROR,
+    false: Consts.HIDDEN
   }
 
   newSchema = () => {
@@ -44,9 +34,9 @@ export class SchemaList extends React.Component {
   }
 
   newSchemaSuccess = () => {
-    document.getElementById('newSchemaName').value = '';
-    document.getElementById('newSchemaNamespace').value = '';
-    CatalogApi.getCatalogSchemaData()
+    document.getElementById('newSchemaName').value = Consts.EMPTY;
+    document.getElementById('newSchemaNamespace').value = Consts.EMPTY;
+    EntityDataModelApi.getAllSchemas()
       .then((schemas) => {
         this.setState({
           schemas: Utils.addKeysToArray(schemas),
@@ -62,7 +52,16 @@ export class SchemaList extends React.Component {
   createNewSchema = () => {
     const name = document.getElementById('newSchemaName').value;
     const namespace = document.getElementById('newSchemaNamespace').value;
-    CatalogApi.createNewSchema(name, namespace, this.newSchemaSuccess, this.showError);
+    EntityDataModelApi.createSchema({ namespace, name })
+    .then(() => this.newSchemaSuccess())
+    .catch(() => this.showError());
+  }
+
+  updateFn = () => {
+    EntityDataModelApi.getAllSchemas()
+      .then((schemas) => {
+        this.setState({ schemas: Utils.addKeysToArray(schemas) });
+      });
   }
 
   render() {
@@ -88,10 +87,10 @@ export class SchemaList extends React.Component {
           </Button>
           <div className={this.showNewSchema[this.state.newSchema]}>
             <div>Schema Name:</div>
-            <input id="newSchemaName" style={{ height: '30px' }} type="text" placeholder="name" />
+            <input id="newSchemaName" className={'inputBox'} type="text" placeholder="name" />
             <div className={'spacerSmall'} />
             <div>Schema Namespace:</div>
-            <input id="newSchemaNamespace" style={{ height: '30px' }} type="text" placeholder="namespace" />
+            <input id="newSchemaNamespace" className={'inputBox'} type="text" placeholder="namespace" />
             <div className={'spacerSmall'} />
             <Button onClick={this.createNewSchema}>Create</Button>
           </div>

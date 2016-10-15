@@ -104,3 +104,7 @@ th {
 .hidden {
   display: none;
 }
+
+.inputBox {
+  height: 30px;
+}

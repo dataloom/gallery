@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
-import CatalogApi from '../../../../utils/CatalogApi';
+import FileService from '../../../../utils/FileService';
 import Consts from '../../../../utils/AppConsts';
 
 export class EntityType extends React.Component {
@@ -17,7 +18,7 @@ export class EntityType extends React.Component {
   constructor() {
     super();
     this.state = {
-      error: Consts.ERROR_STATE.hide,
+      error: Consts.HIDDEN,
       disableJson: false,
       disableCsv: false
     };
@@ -34,17 +35,13 @@ export class EntityType extends React.Component {
   }
 
   downloadFile = (datatype) => {
-    CatalogApi.downloadEntityType(
-      this.props.namespace,
-      this.props.name,
-      datatype,
-      this.displayError,
-      this.enableButton
-    );
+    DataApi.getAllEntitiesOfType({ namespace: this.props.namespace, name: this.props.name })
+    .then(data => FileService.saveFile(data, this.props.name, datatype, this.enableButton))
+    .catch(() => this.displayError());
   }
 
   displayError = (datatype) => {
-    this.setState({ error: Consts.ERROR_STATE.show });
+    this.setState({ error: Consts.ERROR });
     this.enableButton(datatype);
   }
 
@@ -87,7 +84,7 @@ export class EntityType extends React.Component {
         <Button
           onClick={() => this.handleClick(Consts.CSV)}
           disabled={this.state.disableCsv}
-          className={'spacerMargin'}
+          className={'hidden'}
         >
           Download {name} as CSV
         </Button>
