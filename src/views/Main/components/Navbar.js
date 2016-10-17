@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import img from '../../../images/kryptnostic-logo-big.png';
+import styles from '../styles.module.css';
 
 export class Navbar extends React.Component {
   static contextTypes = {
@@ -19,7 +20,7 @@ export class Navbar extends React.Component {
 
   showLogoutButton() {
     if (this.props.auth.loggedIn()) {
-      return <Button onClick={this.logout} className={'logoutButton'}>Logout</Button>;
+      return <Button onClick={this.logout} className={styles.logoutButton}>Logout</Button>;
     }
     return null;
   }
@@ -31,9 +32,9 @@ export class Navbar extends React.Component {
 
   render() {
     return (
-      <div className={'navbarContainer'}>
-        <img src={img} role="presentation" className={'logo'} />
-        <div className={'loom'}>Loom</div>
+      <div className={styles.navbarContainer}>
+        <img src={img} role="presentation" className={styles.logo} />
+        <div className={styles.loom}>Loom</div>
         {this.showLogoutButton()}
       </div>
     );

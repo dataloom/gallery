@@ -5,6 +5,7 @@
 /* eslint-disable import/no-extraneous-dependencies, react/require-extension */
 
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CONSTS = require('./consts');
 const ENV = require('./env.js');
 const PATHS = require('./paths.js');
@@ -62,7 +63,7 @@ const MEDIA_URL_LOADER = {
 };
 
 const CSS_LOADER = {
-  loader: 'style!css',
+  loader: ExtractTextPlugin.extract('css?modules'),
   test: /\.css$/
 };
 
@@ -110,7 +111,8 @@ module.exports = {
     new webpack.LoaderOptionsPlugin({
       minimize: true,
       debug: true
-    })
+    }),
+    new ExtractTextPlugin(`${PATHS.REL.STATIC_CSS}/app.css`)
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],

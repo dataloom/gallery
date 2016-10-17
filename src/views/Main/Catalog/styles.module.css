@@ -58,6 +58,7 @@ th {
 .primaryKey {
   color: gray;
   padding-left: 6px;
+  background: #f6f6f6;
 }
 
 .buttonStyle {
@@ -100,6 +101,10 @@ th {
   padding-top: 10px;
 }
 
-.hiddenErrorMsg {
+.hidden {
   display: none;
+}
+
+.inputBox {
+  height: 30px;
 }

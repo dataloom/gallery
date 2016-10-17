@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class DataModelToolbar extends React.Component {
   static propTypes = {
@@ -9,21 +10,17 @@ export class DataModelToolbar extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      dataModelView: Consts.SCHEMAS
+      dataModelView: Consts.SCHEMA
     };
   }
 
   dataModelLabels =
     [
-      { label: 'Schemas', type: Consts.SCHEMAS, key: 0 },
+      { label: 'Schemas', type: Consts.SCHEMA, key: 0 },
       { label: 'Entity Sets', type: Consts.ENTITY_SET, key: 1 },
-      { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 }
+      { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 },
+      { label: 'Property Types', type: Consts.PROPERTY_TYPE, key: 3 }
     ]
-
-  buttonStyles = {
-    unselected: 'buttonStyle',
-    selected: 'selectedButtonStyle'
-  }
 
   updateViewAndToolbar(type) {
     this.props.changeView(type);
@@ -34,9 +31,9 @@ export class DataModelToolbar extends React.Component {
     const navButtons = this.dataModelLabels.map((labels) => {
       const label = labels.label;
       const type = labels.type;
-      let className = this.buttonStyles.unselected;
+      let className = styles.buttonStyle;
       if (type === this.state.dataModelView) {
-        className = this.buttonStyles.selected;
+        className = styles.selectedButtonStyle;
       }
       return (
         <button onClick={() => this.updateViewAndToolbar(type)} className={className} key={labels.key}>{label}</button>
@@ -44,8 +41,8 @@ export class DataModelToolbar extends React.Component {
     });
 
     return (
-      <div className={'edmNavbarContainer'}>
-        <div className={'edmNavbar'}>
+      <div className={styles.edmNavbarContainer}>
+        <div className={styles.edmNavbar}>
           {navButtons}
         </div>
       </div>
