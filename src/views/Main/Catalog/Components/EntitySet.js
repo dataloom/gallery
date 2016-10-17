@@ -15,7 +15,7 @@ export class EntitySet extends React.Component {
   constructor() {
     super();
     this.state = {
-      error: Consts.HIDDEN,
+      error: styles.hidden,
       disableJson: false,
       disableCsv: false
     };
@@ -38,7 +38,7 @@ export class EntitySet extends React.Component {
   }
 
   displayError = (datatype) => {
-    this.setState({ error: Consts.ERROR });
+    this.setState({ error: styles.errorMsg });
     this.enableButton(datatype);
   }
 
@@ -54,29 +54,29 @@ export class EntitySet extends React.Component {
   render() {
     const { name, title, type } = this.props;
     return (
-      <div className={'edmContainer'}>
-        <div className={'name'}>{name}</div>
-        <div className={'descriptionLabel'}> (name)</div>
+      <div className={styles.edmContainer}>
+        <div className={styles.name}>{name}</div>
+        <div className={styles.descriptionLabel}> (name)</div>
         <br />
-        <div className={'subtitle'}>{title}</div>
-        <div className={'descriptionLabel'}> (title)</div>
-        <div className={'spacerSmall'} />
-        <div className={'tableDescriptionLabel'}>Type:</div>
+        <div className={styles.subtitle}>{title}</div>
+        <div className={styles.descriptionLabel}> (title)</div>
+        <div className={styles.spacerSmall} />
+        <div className={styles.tableDescriptionLabel}>Type:</div>
         <div>
           <table>
             <tbody>
               <tr>
-                <th className={'tableCell'}>Name</th>
-                <th className={'tableCell'}>Namespace</th>
+                <th className={styles.tableCell}>Name</th>
+                <th className={styles.tableCell}>Namespace</th>
               </tr>
-              <tr className={'tableRows'}>
-                <td className={'tableCell'}>{type.name}</td>
-                <td className={'tableCell'}>{type.namespace}</td>
+              <tr className={styles.tableRows}>
+                <td className={styles.tableCell}>{type.name}</td>
+                <td className={styles.tableCell}>{type.namespace}</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className={'spacerSmall'} />
+        <div className={styles.spacerSmall} />
         <Button
           onClick={() => this.handleClick(Consts.JSON)}
           disabled={this.state.disableJson}
@@ -86,7 +86,7 @@ export class EntitySet extends React.Component {
         <Button
           onClick={() => this.handleClick(Consts.CSV)}
           disabled={this.state.disableCsv}
-          className={'hidden'}
+          className={styles.hidden}
         >
           Download {name} as CSV
         </Button>

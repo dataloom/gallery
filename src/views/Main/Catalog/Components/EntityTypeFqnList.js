@@ -24,12 +24,12 @@ export class EntityTypeFqnList extends React.Component {
 
   addRowClassName = {
     true: Consts.EMPTY,
-    false: Consts.HIDDEN
+    false: styles.hidden
   }
 
   showErrorMsgClass = {
-    true: Consts.ERROR,
-    false: Consts.HIDDEN
+    true: styles.errorMsg,
+    false: styles.hidden
   }
 
   keyPropertyTypes() {
@@ -87,14 +87,14 @@ export class EntityTypeFqnList extends React.Component {
           <tbody>
             <tr>
               <th />
-              <th className={'tableCell'}>Name</th>
-              <th className={'tableCell'}>Namespace</th>
+              <th className={styles.tableCell}>Name</th>
+              <th className={styles.tableCell}>Namespace</th>
             </tr>
             {entityTypeFqnList}
             <tr className={this.addRowClassName[this.state.newEntityTypeRow]}>
               <td />
-              <td><input type="text" id={'eName'.concat(id)} placeholder="name" className={'tableCell'} /></td>
-              <td><input type="text" id={'eSpace'.concat(id)} placeholder="namespace" className={'tableCell'} /></td>
+              <td><input type="text" id={'eName'.concat(id)} placeholder="name" className={styles.tableCell} /></td>
+              <td><input type="text" id={'eSpace'.concat(id)} placeholder="namespace" className={styles.tableCell} /></td>
               <td><Button onClick={this.addEntityTypeToSchema}>Save</Button></td>
             </tr>
           </tbody>

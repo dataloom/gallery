@@ -112,7 +112,7 @@ module.exports = {
       minimize: true,
       debug: true
     }),
-    new ExtractTextPlugin("styles.module.css")
+    new ExtractTextPlugin('styles.module.css')
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],

@@ -27,10 +27,10 @@ export class EntityTypeFqn extends React.Component {
   render() {
     const fqn = this.props.entityTypeFqn;
     return (
-      <tr className={'tableRows'}>
+      <tr className={styles.tableRows}>
         <td><Button bsSize="xsmall" bsStyle="danger" onClick={this.deleteProp}>-</Button></td>
-        <td className={'tableCell'}>{fqn.name}</td>
-        <td className={'tableCell'}>{fqn.namespace}</td>
+        <td className={styles.tableCell}>{fqn.name}</td>
+        <td className={styles.tableCell}>{fqn.namespace}</td>
       </tr>
     );
   }

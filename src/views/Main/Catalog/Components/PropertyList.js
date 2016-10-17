@@ -25,12 +25,12 @@ export class PropertyList extends React.Component {
 
   addRowClassName = {
     true: Consts.EMPTY,
-    false: Consts.HIDDEN
+    false: styles.hidden
   }
 
   showErrorMsgClass = {
-    true: Consts.ERROR,
-    false: Consts.HIDDEN
+    true: styles.errorMsg,
+    false: styles.hidden
   }
 
   keyProperties() {
@@ -93,8 +93,8 @@ export class PropertyList extends React.Component {
           <tbody>
             <tr>
               <th />
-              <th className={'tableCell'}>Name</th>
-              <th className={'tableCell'}>Namespace</th>
+              <th className={styles.tableCell}>Name</th>
+              <th className={styles.tableCell}>Namespace</th>
             </tr>
             {propertyList}
             <tr className={this.addRowClassName[this.state.newPropertyRow]}>
@@ -103,13 +103,13 @@ export class PropertyList extends React.Component {
                 type="text"
                 id={'propertyName'.concat(id)}
                 placeholder="name"
-                className={'tableCell'}
+                className={styles.tableCell}
               /></td>
               <td><input
                 type="text"
                 id={'propertyNamespace'.concat(id)}
                 placeholder="namespace"
-                className={'tableCell'}
+                className={styles.tableCell}
               /></td>
               <td><Button onClick={this.addPropertyToEntityType}>Save</Button></td>
             </tr>

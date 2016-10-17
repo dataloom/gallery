@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Router, hashHistory } from 'react-router';
-import './styles.module.css';
+import styles from './styles.module.css';
 
 class App extends React.Component {
   static contextTypes = {
@@ -22,7 +22,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className={'full'}>
+      <div className={styles.full}>
         {this.renderContent()}
       </div>
     );

@@ -13,8 +13,6 @@ const ENTITY_SET = 'entitySet';
 const ENTITY_TYPE = 'entityType';
 const PROPERTY_TYPE = 'propertyType';
 
-const HIDDEN = 'hidden';
-const ERROR = 'errorMsg';
 const EMPTY = '';
 
 export default {
@@ -25,8 +23,6 @@ export default {
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
-  HIDDEN,
-  ERROR,
   EMPTY,
   PROPERTY_TYPE
 };

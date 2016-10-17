@@ -28,12 +28,12 @@ export class PropertyTypeList extends React.Component {
 
   addRowClassName = {
     true: Consts.EMPTY,
-    false: Consts.HIDDEN
+    false: styles.hidden
   }
 
   showErrorMsgClass = {
-    true: Consts.ERROR,
-    false: Consts.HIDDEN
+    true: styles.errorMsg,
+    false: styles.hidden
   }
 
   componentDidMount() {
@@ -113,11 +113,11 @@ export class PropertyTypeList extends React.Component {
     .catch(() => this.updateAddError());
   }
 
-  shouldDisplayContainer = () => (this.props.navBar ? 'edmContainer' : Consts.EMPTY);
+  shouldDisplayContainer = () => (this.props.navBar ? styles.edmContainer : Consts.EMPTY);
 
-  shouldAddExtraCell = () => (this.props.navBar ? Consts.HIDDEN : Consts.EMPTY);
+  shouldAddExtraCell = () => (this.props.navBar ? styles.hidden : Consts.EMPTY);
 
-  shouldAddExtraFieldOptions = () => (this.props.navBar ? Consts.EMPTY : Consts.HIDDEN);
+  shouldAddExtraFieldOptions = () => (this.props.navBar ? Consts.EMPTY : styles.hidden);
 
   render() {
     const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
@@ -139,10 +139,10 @@ export class PropertyTypeList extends React.Component {
           <tbody>
             <tr>
               <th className={this.shouldAddExtraCell()} />
-              <th className={'tableCell'}>Name</th>
-              <th className={'tableCell'}>Namespace</th>
-              <th className={'tableCell'}>Datatype</th>
-              <th className={'tableCell'}>Multiplicity</th>
+              <th className={styles.tableCell}>Name</th>
+              <th className={styles.tableCell}>Namespace</th>
+              <th className={styles.tableCell}>Datatype</th>
+              <th className={styles.tableCell}>Multiplicity</th>
             </tr>
             {propertyTypeList}
             <tr className={this.addRowClassName[this.state.newPropertyRow]}>
@@ -151,25 +151,25 @@ export class PropertyTypeList extends React.Component {
                 type="text"
                 id={'pName'.concat(id)}
                 placeholder="name"
-                className={'tableCell'}
+                className={styles.tableCell}
               /></td>
               <td><input
                 type="text"
                 id={'pNamespace'.concat(id)}
                 placeholder="namespace"
-                className={'tableCell'}
+                className={styles.tableCell}
               /></td>
               <td className={this.shouldAddExtraFieldOptions()}><input
                 type="text"
                 id={'pDatatype'.concat(id)}
                 placeholder="datatype"
-                className={'tableCell'}
+                className={styles.tableCell}
               /></td>
               <td className={this.shouldAddExtraFieldOptions()}><input
                 type="text"
                 id={'pMultiplicity'.concat(id)}
                 placeholder="multiplicity"
-                className={'tableCell'}
+                className={styles.tableCell}
               /></td>
               <td><Button onClick={this.addProperty}>Save</Button></td>
             </tr>

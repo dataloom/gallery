@@ -22,12 +22,12 @@ export class SchemaList extends React.Component {
 
   showNewSchema = {
     true: Consts.EMPTY,
-    false: Consts.HIDDEN
+    false: styles.hidden
   }
 
   errorClass = {
-    true: Consts.ERROR,
-    false: Consts.HIDDEN
+    true: styles.errorMsg,
+    false: styles.hidden
   }
 
   newSchema = () => {
@@ -80,7 +80,7 @@ export class SchemaList extends React.Component {
     );
     return (
       <div>
-        <div className={'edmContainer'}>
+        <div className={styles.edmContainer}>
           <Button
             onClick={this.newSchema}
             className={this.showNewSchema[!this.state.newSchema]}
@@ -88,11 +88,11 @@ export class SchemaList extends React.Component {
           </Button>
           <div className={this.showNewSchema[this.state.newSchema]}>
             <div>Schema Name:</div>
-            <input id="newSchemaName" className={'inputBox'} type="text" placeholder="name" />
-            <div className={'spacerSmall'} />
+            <input id="newSchemaName" className={styles.inputBox} type="text" placeholder="name" />
+            <div className={styles.spacerSmall} />
             <div>Schema Namespace:</div>
-            <input id="newSchemaNamespace" className={'inputBox'} type="text" placeholder="namespace" />
-            <div className={'spacerSmall'} />
+            <input id="newSchemaNamespace" className={styles.inputBox} type="text" placeholder="namespace" />
+            <div className={styles.spacerSmall} />
             <Button onClick={this.createNewSchema}>Create</Button>
           </div>
           <div className={this.errorClass[this.state.error]}>Unable to create schema.</div>

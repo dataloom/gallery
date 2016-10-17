@@ -28,19 +28,19 @@ export class PropertyType extends React.Component {
     .catch(() => this.props.error());
   }
 
-  shouldShowDeleteButton = () => (this.props.navBar ? Consts.HIDDEN : Consts.EMPTY);
+  shouldShowDeleteButton = () => (this.props.navBar ? styles.hidden : Consts.EMPTY);
 
   render() {
     const prop = this.props.propertyType;
     return (
-      <tr className={'tableRows'}>
+      <tr className={styles.tableRows}>
         <td className={this.shouldShowDeleteButton()}>
           <Button bsSize="xsmall" bsStyle="danger" onClick={this.deleteProp}>-</Button>
         </td>
-        <td className={'tableCell'}>{prop.name}</td>
-        <td className={'tableCell'}>{prop.namespace}</td>
-        <td className={'tableCell'}>{prop.datatype}</td>
-        <td className={'tableCell'}>{prop.multiplicity}</td>
+        <td className={styles.tableCell}>{prop.name}</td>
+        <td className={styles.tableCell}>{prop.namespace}</td>
+        <td className={styles.tableCell}>{prop.datatype}</td>
+        <td className={styles.tableCell}>{prop.multiplicity}</td>
       </tr>
     );
   }

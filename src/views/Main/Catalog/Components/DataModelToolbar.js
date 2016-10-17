@@ -22,11 +22,6 @@ export class DataModelToolbar extends React.Component {
       { label: 'Property Types', type: Consts.PROPERTY_TYPE, key: 3 }
     ]
 
-  buttonStyles = {
-    unselected: 'buttonStyle',
-    selected: 'selectedButtonStyle'
-  }
-
   updateViewAndToolbar(type) {
     this.props.changeView(type);
     this.setState({ dataModelView: type });
@@ -36,9 +31,9 @@ export class DataModelToolbar extends React.Component {
     const navButtons = this.dataModelLabels.map((labels) => {
       const label = labels.label;
       const type = labels.type;
-      let className = this.buttonStyles.unselected;
+      let className = styles.buttonStyle;
       if (type === this.state.dataModelView) {
-        className = this.buttonStyles.selected;
+        className = styles.selectedButtonStyle;
       }
       return (
         <button onClick={() => this.updateViewAndToolbar(type)} className={className} key={labels.key}>{label}</button>
@@ -46,8 +41,8 @@ export class DataModelToolbar extends React.Component {
     });
 
     return (
-      <div className={'edmNavbarContainer'}>
-        <div className={'edmNavbar'}>
+      <div className={styles.edmNavbarContainer}>
+        <div className={styles.edmNavbar}>
           {navButtons}
         </div>
       </div>

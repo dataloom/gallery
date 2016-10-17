@@ -19,7 +19,7 @@ export class EntityType extends React.Component {
   constructor() {
     super();
     this.state = {
-      error: Consts.HIDDEN,
+      error: styles.hidden,
       disableJson: false,
       disableCsv: false
     };
@@ -42,7 +42,7 @@ export class EntityType extends React.Component {
   }
 
   displayError = (datatype) => {
-    this.setState({ error: Consts.ERROR });
+    this.setState({ error: styles.errorMsg });
     this.enableButton(datatype);
   }
 
@@ -58,15 +58,15 @@ export class EntityType extends React.Component {
   render() {
     const { name, namespace, properties, primaryKey, updateFn, id } = this.props;
     return (
-      <div className={'edmContainer'}>
-        <div className={'name'}>{name}</div>
-        <div className={'descriptionLabel'}> (name)</div>
+      <div className={styles.edmContainer}>
+        <div className={styles.name}>{name}</div>
+        <div className={styles.descriptionLabel}> (name)</div>
         <br />
-        <div className={'subtitle'}>{namespace}</div>
-        <div className={'descriptionLabel'}> (namespace)</div>
+        <div className={styles.subtitle}>{namespace}</div>
+        <div className={styles.descriptionLabel}> (namespace)</div>
         <br />
-        <div className={'spacerMed'} />
-        <div className={'tableDescriptionLabel'}>Properties:</div>
+        <div className={styles.spacerMed} />
+        <div className={styles.tableDescriptionLabel}>Properties:</div>
         <PropertyList
           properties={properties}
           primaryKey={primaryKey}
@@ -85,7 +85,7 @@ export class EntityType extends React.Component {
         <Button
           onClick={() => this.handleClick(Consts.CSV)}
           disabled={this.state.disableCsv}
-          className={'hidden'}
+          className={styles.hidden}
         >
           Download {name} as CSV
         </Button>

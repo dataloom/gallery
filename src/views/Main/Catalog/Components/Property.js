@@ -16,7 +16,7 @@ export class Property extends React.Component {
   isPrimaryKey() {
     const pKey = this.props.primaryKey;
     if (pKey) {
-      return (<td className={'primaryKey'}>(primary key)</td>);
+      return (<td className={styles.primaryKey}>(primary key)</td>);
     }
     return null;
   }
@@ -34,12 +34,12 @@ export class Property extends React.Component {
     ).then(() => this.props.updateFn());
   }
 
-  shouldShowDeleteButton = () => (this.props.primaryKey ? Consts.HIDDEN : Consts.EMPTY);
+  shouldShowDeleteButton = () => (this.props.primaryKey ? styles.hidden : Consts.EMPTY);
 
   render() {
     const prop = this.props.property;
     return (
-      <tr className={'tableRows'}>
+      <tr className={styles.tableRows}>
         <td>
           <Button
             bsSize="xsmall"
@@ -48,8 +48,8 @@ export class Property extends React.Component {
             className={this.shouldShowDeleteButton()}
           >-</Button>
         </td>
-        <td className={'tableCell'}>{prop.name}</td>
-        <td className={'tableCell'}>{prop.namespace}</td>
+        <td className={styles.tableCell}>{prop.name}</td>
+        <td className={styles.tableCell}>{prop.namespace}</td>
         {this.isPrimaryKey()}
       </tr>
     );
