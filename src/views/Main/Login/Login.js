@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
-import './styles.module.css';
+import styles from './styles.module.css';
 import img from '../../../images/kryptnostic-logo-big.png';
 
 export class Login extends React.Component {
@@ -21,10 +21,10 @@ export class Login extends React.Component {
 
   render() {
     return (
-      <div className={'root'}>
+      <div className={styles.root}>
         <img src={img} role="presentation" />
         <h2>Login</h2>
-        <ButtonToolbar className={'toolbar'}>
+        <ButtonToolbar className={styles.toolbar}>
           <Button bsStyle="primary" onClick={this.login}>Login</Button>
         </ButtonToolbar>
       </div>

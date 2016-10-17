@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { DataApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
 import FileService from '../../../../utils/FileService';
+import styles from '../styles.module.css';
 
 export class EntitySet extends React.Component {
   static propTypes = {

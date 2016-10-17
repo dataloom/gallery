@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class PropertyList extends React.Component {
   static propTypes = {

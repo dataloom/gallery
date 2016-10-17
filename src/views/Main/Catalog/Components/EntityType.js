@@ -4,6 +4,7 @@ import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import FileService from '../../../../utils/FileService';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
   static propTypes = {

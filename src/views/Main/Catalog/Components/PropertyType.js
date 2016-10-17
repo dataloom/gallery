@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
   static propTypes = {

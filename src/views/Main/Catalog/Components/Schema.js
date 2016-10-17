@@ -4,6 +4,7 @@ import { PropertyTypeList } from './PropertyTypeList';
 import Consts from '../../../../utils/AppConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
+import styles from '../styles.module.css';
 
 export class Schema extends React.Component {
   static propTypes = {

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Jumbotron } from 'react-bootstrap';
 import Loom from 'loom-data';
-import './styles.module.css';
+import styles from './styles.module.css';
 import { Navbar } from './components/Navbar';
 
 export class Container extends React.Component {
@@ -34,7 +34,7 @@ export class Container extends React.Component {
     return (
       <Jumbotron>
         <Navbar auth={this.props.route.auth} />
-        <div className={'topSpacer'} />
+        <div className={styles.topSpacer} />
         {children}
       </Jumbotron>
     );

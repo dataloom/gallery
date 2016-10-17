@@ -4,6 +4,7 @@ import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
   constructor(props, context) {

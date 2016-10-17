@@ -4,6 +4,7 @@ import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
   static propTypes = {

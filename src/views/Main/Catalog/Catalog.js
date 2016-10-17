@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles.module.css';
+import styles from './styles.module.css';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
 import { EntitySetList } from './Components/EntitySetList';
@@ -40,7 +40,7 @@ export class Catalog extends React.Component {
   render() {
     return (
       <div>
-        <h2 className={'center'}>Catalog</h2>
+        <h2 className={styles.center}>Catalog</h2>
         <DataModelToolbar changeView={this.changeDataModelView} />
         {this.getDataModelView()}
       </div>

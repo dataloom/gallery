@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import Consts from '../../../../utils/AppConsts';
+import styles from '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {

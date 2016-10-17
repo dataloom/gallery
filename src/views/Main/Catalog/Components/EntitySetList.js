@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntitySet } from './EntitySet';
+import styles from '../styles.module.css';
 
 export class EntitySetList extends React.Component {
   static propTypes = {
