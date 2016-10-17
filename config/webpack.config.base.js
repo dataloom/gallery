@@ -63,7 +63,7 @@ const MEDIA_URL_LOADER = {
 };
 
 const CSS_LOADER = {
-  loader: ExtractTextPlugin.extract('css?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]'),
+  loader: ExtractTextPlugin.extract('css?modules'),
   test: /\.css$/
 };
 
@@ -112,7 +112,7 @@ module.exports = {
       minimize: true,
       debug: true
     }),
-    new ExtractTextPlugin('styles.module.css')
+    new ExtractTextPlugin(`${PATHS.REL.STATIC_CSS}/app.css`)
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],
