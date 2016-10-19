@@ -46,7 +46,7 @@ export class PropertyTypeList extends React.Component {
     document.getElementById('pNamespace'.concat(id)).value = Consts.EMPTY;
     document.getElementById('pDatatype'.concat(id)).value = Consts.EMPTY;
     document.getElementById('pMultiplicity'.concat(id)).value = Consts.EMPTY;
-    EntityDataModelApi.getPropertyTypes()
+    EntityDataModelApi.getAllPropertyTypes()
       .then((propertyTypes) => {
         this.setState({
           propertyTypes: Utils.addKeysToArray(propertyTypes),

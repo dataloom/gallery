@@ -32,8 +32,8 @@ export class EntitySet extends React.Component {
   }
 
   downloadFile = (datatype) => {
-    DataApi.getAllEntitiesOfTypeInSet(this.props.type, this.props.name)
-    .then(data => FileService.saveFile(data, this.props.name, datatype, this.enableButton))
+    DataApi.downloadAllEntitiesOfTypeInSet(this.props.type, this.props.name, datatype)
+    .then(data => FileService.saveFile(data, this.props.name, datatype, () => this.enableButton(datatype)))
     .catch(() => this.displayError());
   }
 
@@ -86,7 +86,7 @@ export class EntitySet extends React.Component {
         <Button
           onClick={() => this.handleClick(Consts.CSV)}
           disabled={this.state.disableCsv}
-          className={styles.hidden}
+          className={styles.spacerMargin}
         >
           Download {name} as CSV
         </Button>

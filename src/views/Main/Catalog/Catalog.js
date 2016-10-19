@@ -14,7 +14,6 @@ export class Catalog extends React.Component {
     this.state = {
       dataModelView: Consts.SCHEMA
     };
-    this.changeDataModelView = this.changeDataModelView.bind(this);
   }
 
   getDataModelView() {
@@ -33,7 +32,7 @@ export class Catalog extends React.Component {
     }
   }
 
-  changeDataModelView(newView) {
+  changeDataModelView = (newView) => {
     this.setState({ dataModelView: newView });
   }
 

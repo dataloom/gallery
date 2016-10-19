@@ -37,7 +37,7 @@ export class EntityTypeList extends React.Component {
   newEntityTypeSuccess = () => {
     document.getElementById('newEntityTypeName').value = Consts.EMPTY;
     document.getElementById('newEntityTypeNamespace').value = Consts.EMPTY;
-    EntityDataModelApi.getEntityTypes()
+    EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
@@ -63,7 +63,7 @@ export class EntityTypeList extends React.Component {
   }
 
   updateFn = () => {
-    EntityDataModelApi.getEntityTypes()
+    EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
         this.setState({ entityTypes: Utils.addKeysToArray(entityTypes) });
       });
