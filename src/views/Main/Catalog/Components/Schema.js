@@ -14,7 +14,9 @@ export class Schema extends React.Component {
     entityTypeFqns: PropTypes.array,
     jsonContents: PropTypes.object,
     updateFn: PropTypes.func,
-    id: PropTypes.number
+    id: PropTypes.number,
+    allPropNames: PropTypes.array,
+    allPropNamespaces: PropTypes.array
   }
 
   constructor() {
@@ -76,6 +78,8 @@ export class Schema extends React.Component {
           updateSchemaFn={updateFn}
           navBar={false}
           id={id}
+          allPropNames={this.props.allPropNames}
+          allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />
         <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>

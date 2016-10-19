@@ -12,7 +12,9 @@ export class SchemaList extends React.Component {
     this.state = {
       schemas: [],
       newSchema: false,
-      error: false
+      error: false,
+      allPropNames: [],
+      allPropNamespaces: []
     };
   }
 
@@ -61,7 +63,16 @@ export class SchemaList extends React.Component {
   updateFn = () => {
     EntityDataModelApi.getAllSchemas()
       .then((schemas) => {
-        this.setState({ schemas: Utils.addKeysToArray(schemas) });
+        EntityDataModelApi.getPropertyTypes()
+        .then((propertyTypes) => {
+          const allPropNames = propertyTypes.map(prop => prop.name);
+          const allPropNamespaces = propertyTypes.map(prop => prop.namespace);
+          this.setState({
+            schemas: Utils.addKeysToArray(schemas),
+            allPropNames,
+            allPropNamespaces
+          });
+        });
       });
   }
 
@@ -76,6 +87,8 @@ export class SchemaList extends React.Component {
         entityTypeFqns={schema.entityTypeFqns}
         jsonContents={schema}
         updateFn={this.updateFn}
+        allPropNames={this.state.allPropNames}
+        allPropNamespaces={this.state.allPropNamespaces}
       />
     );
     return (

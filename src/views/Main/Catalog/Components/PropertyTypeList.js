@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
+import Autosuggest from 'react-autosuggest';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
@@ -13,7 +14,9 @@ export class PropertyTypeList extends React.Component {
     namespace: PropTypes.string,
     updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
-    id: PropTypes.number
+    id: PropTypes.number,
+    allPropNames: PropTypes.array,
+    allPropNamespaces: PropTypes.array
   }
 
   constructor() {
