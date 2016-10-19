@@ -15,8 +15,9 @@ export class Schema extends React.Component {
     jsonContents: PropTypes.object,
     updateFn: PropTypes.func,
     id: PropTypes.number,
-    allPropNames: PropTypes.array,
-    allPropNamespaces: PropTypes.array
+    allProps: PropTypes.array,
+    allPropNames: PropTypes.object,
+    allPropNamespaces: PropTypes.object
   }
 
   constructor() {
@@ -78,6 +79,7 @@ export class Schema extends React.Component {
           updateSchemaFn={updateFn}
           navBar={false}
           id={id}
+          allProps={this.props.allProps}
           allPropNames={this.props.allPropNames}
           allPropNamespaces={this.props.allPropNamespaces}
         />

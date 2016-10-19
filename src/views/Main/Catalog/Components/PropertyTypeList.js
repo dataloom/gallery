@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
-import Autosuggest from 'react-autosuggest';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
@@ -15,8 +15,9 @@ export class PropertyTypeList extends React.Component {
     updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
     id: PropTypes.number,
-    allPropNames: PropTypes.array,
-    allPropNamespaces: PropTypes.array
+    allProps: PropTypes.array,
+    allPropNames: PropTypes.object,
+    allPropNamespaces: PropTypes.object
   }
 
   constructor() {
@@ -29,7 +30,7 @@ export class PropertyTypeList extends React.Component {
     };
   }
 
-  addRowClassName = {
+  shouldShow = {
     true: Consts.EMPTY,
     false: styles.hidden
   }
@@ -85,8 +86,6 @@ export class PropertyTypeList extends React.Component {
     });
   }
 
-  addProperty = () => (this.props.navBar ? this.createNewPropertyType() : this.addPropertyToSchema());
-
   createNewPropertyType = () => {
     const id = this.props.id;
     const name = document.getElementById('pName'.concat(id)).value;
@@ -103,9 +102,7 @@ export class PropertyTypeList extends React.Component {
     this.props.updateSchemaFn();
   }
 
-  addPropertyToSchema = () => {
-    const name = document.getElementById('pName'.concat(this.props.id)).value;
-    const namespace = document.getElementById('pNamespace'.concat(this.props.id)).value;
+  addPropertyToSchema = (namespace, name) => {
     EntityDataModelApi.addPropertyTypesToSchema(
       {
         namespace: this.props.namespace,
@@ -117,10 +114,6 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldDisplayContainer = () => (this.props.navBar ? styles.edmContainer : Consts.EMPTY);
-
-  shouldAddExtraCell = () => (this.props.navBar ? styles.hidden : Consts.EMPTY);
-
-  shouldAddExtraFieldOptions = () => (this.props.navBar ? Consts.EMPTY : styles.hidden);
 
   render() {
     const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
@@ -141,15 +134,14 @@ export class PropertyTypeList extends React.Component {
         <table>
           <tbody>
             <tr>
-              <th className={this.shouldAddExtraCell()} />
+              <th className={this.shouldShow[!this.props.navBar]} />
               <th className={styles.tableCell}>Name</th>
               <th className={styles.tableCell}>Namespace</th>
               <th className={styles.tableCell}>Datatype</th>
               <th className={styles.tableCell}>Multiplicity</th>
             </tr>
             {propertyTypeList}
-            <tr className={this.addRowClassName[this.state.newPropertyRow]}>
-              <td className={this.shouldAddExtraCell()} />
+            <tr className={this.shouldShow[this.state.newPropertyRow && this.props.navBar]}>
               <td><input
                 type="text"
                 id={'pName'.concat(id)}
@@ -162,23 +154,30 @@ export class PropertyTypeList extends React.Component {
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-              <td className={this.shouldAddExtraFieldOptions()}><input
+              <td><input
                 type="text"
                 id={'pDatatype'.concat(id)}
                 placeholder="datatype"
                 className={styles.tableCell}
               /></td>
-              <td className={this.shouldAddExtraFieldOptions()}><input
+              <td><input
                 type="text"
                 id={'pMultiplicity'.concat(id)}
                 placeholder="multiplicity"
                 className={styles.tableCell}
               /></td>
-              <td><Button onClick={this.addProperty}>Save</Button></td>
+            <td><Button onClick={this.createNewPropertyType}>Save</Button></td>
             </tr>
+            <NameNamespaceAutosuggest
+              className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
+              id={id}
+              names={this.props.allPropNames}
+              namespaces={this.props.allPropNamespaces}
+              addProperty={this.addPropertyToSchema}
+            />
           </tbody>
         </table>
-        <Button onClick={this.newProperty} className={this.addRowClassName[!this.state.newPropertyRow]}>+</Button>
+        <Button onClick={this.newProperty} className={this.shouldShow[!this.state.newPropertyRow]}>+</Button>
         <div className={this.showErrorMsgClass[this.state.addError]}>Unable to add property type.</div>
         <div className={this.showErrorMsgClass[this.state.deleteError]}>Unable to delete property type.</div>
       </div>

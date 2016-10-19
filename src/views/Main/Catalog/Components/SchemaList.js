@@ -65,10 +65,26 @@ export class SchemaList extends React.Component {
       .then((schemas) => {
         EntityDataModelApi.getPropertyTypes()
         .then((propertyTypes) => {
-          const allPropNames = propertyTypes.map(prop => prop.name);
-          const allPropNamespaces = propertyTypes.map(prop => prop.namespace);
+          const allPropNames = {};
+          const allPropNamespaces = {};
+          propertyTypes.forEach((prop) => {
+            if (allPropNames[prop.name] === undefined) {
+              allPropNames[prop.name] = [prop.namespace];
+            }
+            else {
+              allPropNames[prop.name].push(prop.namespace);
+            }
+
+            if (allPropNamespaces[prop.namespace] === undefined) {
+              allPropNamespaces[prop.namespace] = [prop.name];
+            }
+            else {
+              allPropNamespaces[prop.namespace].push(prop.name);
+            }
+          });
           this.setState({
             schemas: Utils.addKeysToArray(schemas),
+            allProps: propertyTypes,
             allPropNames,
             allPropNamespaces
           });
@@ -87,6 +103,7 @@ export class SchemaList extends React.Component {
         entityTypeFqns={schema.entityTypeFqns}
         jsonContents={schema}
         updateFn={this.updateFn}
+        allProps={this.state.allProps}
         allPropNames={this.state.allPropNames}
         allPropNamespaces={this.state.allPropNamespaces}
       />
