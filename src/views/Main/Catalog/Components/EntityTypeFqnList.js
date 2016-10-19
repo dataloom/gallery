@@ -93,8 +93,12 @@ export class EntityTypeFqnList extends React.Component {
             {entityTypeFqnList}
             <tr className={this.addRowClassName[this.state.newEntityTypeRow]}>
               <td />
-              <td><input type="text" id={'eName'.concat(id)} placeholder="name" className={styles.tableCell} /></td>
-              <td><input type="text" id={'eSpace'.concat(id)} placeholder="namespace" className={styles.tableCell} /></td>
+              <td>
+                <input type="text" id={'eName'.concat(id)} placeholder="name" className={styles.tableCell} />
+              </td>
+              <td>
+                <input type="text" id={'eSpace'.concat(id)} placeholder="namespace" className={styles.tableCell} />
+              </td>
               <td><Button onClick={this.addEntityTypeToSchema}>Save</Button></td>
             </tr>
           </tbody>
