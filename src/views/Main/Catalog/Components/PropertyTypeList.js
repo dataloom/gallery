@@ -166,7 +166,7 @@ export class PropertyTypeList extends React.Component {
                 placeholder="multiplicity"
                 className={styles.tableCell}
               /></td>
-            <td><Button onClick={this.createNewPropertyType}>Save</Button></td>
+              <td><Button onClick={this.createNewPropertyType}>Save</Button></td>
             </tr>
             <NameNamespaceAutosuggest
               className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
