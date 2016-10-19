@@ -15,7 +15,6 @@ export class PropertyTypeList extends React.Component {
     updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
     id: PropTypes.number,
-    allProps: PropTypes.array,
     allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
@@ -174,6 +173,7 @@ export class PropertyTypeList extends React.Component {
               names={this.props.allPropNames}
               namespaces={this.props.allPropNamespaces}
               addProperty={this.addPropertyToSchema}
+              type={Consts.PROPERTY_TYPE}
             />
           </tbody>
         </table>

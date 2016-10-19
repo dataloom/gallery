@@ -18,7 +18,8 @@ export class NameNamespaceAutosuggest extends React.Component {
     names: PropTypes.object,
     namespaces: PropTypes.object,
     className: PropTypes.string,
-    addProperty: PropTypes.func
+    addProperty: PropTypes.func,
+    type: PropTypes.string
   }
 
   constructor() {
@@ -31,9 +32,21 @@ export class NameNamespaceAutosuggest extends React.Component {
     };
   }
 
-  getNamespaceVal = () => document.getElementById('newPropNamespace'.concat(this.props.id)).firstChild.firstChild.value;
+  getNamespaceVal = () => document
+    .getElementById('newNamespace'
+      .concat(this.props.type)
+      .concat(this.props.id)
+    ).firstChild
+    .firstChild
+    .value;
 
-  getNameVal = () => document.getElementById('newPropName'.concat(this.props.id)).firstChild.firstChild.value;
+  getNameVal = () => document
+    .getElementById('newName'
+      .concat(this.props.type)
+      .concat(this.props.id)
+    ).firstChild
+    .firstChild
+    .value;
 
   getSuggestions(focused, unfocused, focusedList, unfocusedList) {
     const suggestions = [];
@@ -57,11 +70,12 @@ export class NameNamespaceAutosuggest extends React.Component {
 
   handleSubmit = () => {
     const id = this.props.id;
-    const namespace = document.getElementById('newPropNamespace'.concat(id)).value;
-    const name = document.getElementById('newPropName'.concat(id)).value;
-    this.props.addProperty(namespace, name)
-    document.getElementById('newPropNamespace'.concat(id)).value = Consts.EMPTY;
-    document.getElementById('newPropName'.concat(id)).value = Consts.EMPTY;
+    const type = this.props.type;
+    const namespace = this.getNamespaceVal();
+    const name = this.getNameVal();
+    this.props.addProperty(namespace, name);
+    document.getElementById('newNamespace'.concat(type).concat(id)).firstChild.firstChild.value = Consts.EMPTY;
+    document.getElementById('newName'.concat(type).concat(id)).firstChild.firstChild.value = Consts.EMPTY;
   }
 
   onNameSuggestionsFetchRequested = ({ value }) => {
@@ -121,7 +135,7 @@ export class NameNamespaceAutosuggest extends React.Component {
     return (
       <tr className={this.props.className}>
         <td />
-        <td id={'newPropName'.concat(this.props.id)}><Autosuggest
+        <td id={'newName'.concat(this.props.type).concat(this.props.id)}><Autosuggest
           suggestions={nameSuggestions}
           onSuggestionsFetchRequested={this.onNameSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onNameSuggestionsClearRequested}
@@ -130,7 +144,7 @@ export class NameNamespaceAutosuggest extends React.Component {
           inputProps={inputProps.name}
           shouldRenderSuggestions={this.shouldRenderSuggestions}
         /></td>
-        <td id={'newPropNamespace'.concat(this.props.id)}><Autosuggest
+        <td id={'newNamespace'.concat(this.props.type).concat(this.props.id)}><Autosuggest
           suggestions={namespaceSuggestions}
           onSuggestionsFetchRequested={this.onNamespaceSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onNamespaceSuggestionsClearRequested}

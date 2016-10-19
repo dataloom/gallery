@@ -13,8 +13,10 @@ export class SchemaList extends React.Component {
       schemas: [],
       newSchema: false,
       error: false,
-      allPropNames: [],
-      allPropNamespaces: []
+      allPropNames: {},
+      allPropNamespaces: {},
+      allEntityTypeNames: {},
+      allEntityTypeNamespaces: {}
     };
   }
 
@@ -82,11 +84,33 @@ export class SchemaList extends React.Component {
               allPropNamespaces[prop.namespace].push(prop.name);
             }
           });
-          this.setState({
-            schemas: Utils.addKeysToArray(schemas),
-            allProps: propertyTypes,
-            allPropNames,
-            allPropNamespaces
+
+          EntityDataModelApi.getEntityTypes()
+          .then((entityTypes) => {
+            const allEntityTypeNames = {};
+            const allEntityTypeNamespaces = {};
+            entityTypes.forEach((entityType) => {
+              if (allEntityTypeNames[entityType.name] === undefined) {
+                allEntityTypeNames[entityType.name] = [entityType.namespace];
+              }
+              else {
+                allEntityTypeNames[entityType.name].push(entityType.namespace);
+              }
+
+              if (allEntityTypeNamespaces[entityType.namespace] === undefined) {
+                allEntityTypeNamespaces[entityType.namespace] = [entityType.name];
+              }
+              else {
+                allEntityTypeNamespaces[entityType.namespace].push(entityType.name);
+              }
+            });
+            this.setState({
+              schemas: Utils.addKeysToArray(schemas),
+              allPropNames,
+              allPropNamespaces,
+              allEntityTypeNames,
+              allEntityTypeNamespaces
+            });
           });
         });
       });
@@ -103,9 +127,10 @@ export class SchemaList extends React.Component {
         entityTypeFqns={schema.entityTypeFqns}
         jsonContents={schema}
         updateFn={this.updateFn}
-        allProps={this.state.allProps}
         allPropNames={this.state.allPropNames}
         allPropNamespaces={this.state.allPropNamespaces}
+        allEntityTypeNames={this.state.allEntityTypeNames}
+        allEntityTypeNamespaces={this.state.allEntityTypeNamespaces}
       />
     );
     return (
