@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { Button } from 'react-bootstrap';
 import Consts from '../../../../utils/AppConsts';
-import styles from '../styles.module.css';
+import '../../../../styles/autosuggest.css';
 
 const getSuggestionValue = suggestion => suggestion;
 
