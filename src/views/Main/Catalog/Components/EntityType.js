@@ -17,8 +17,9 @@ export class EntityType extends React.Component {
     allPropNamespaces: PropTypes.object
   }
 
-  getUrl = datatype =>
-    DataApi.getAllEntitiesOfTypeUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
+  getUrl = (datatype) => {
+    return DataApi.getAllEntitiesOfTypeUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
+  }
 
   render() {
     const { name, namespace, properties, primaryKey, updateFn, id } = this.props;

@@ -1,24 +1,30 @@
 import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { Button } from 'react-bootstrap';
+import Consts from '../../../../utils/AppConsts';
 import '../../../../styles/autosuggest.css';
+import styles from '../styles.module.css';
 
-const getSuggestionValue = suggestion => suggestion;
+const getSuggestionValue = (suggestion) => {
+  return suggestion;
+};
 
-const renderSuggestion = suggestion => (
-  <div>
-    {suggestion}
-  </div>
-);
+const renderSuggestion = (suggestion) => {
+  return (
+    <div>
+      {suggestion}
+    </div>
+  );
+};
 
 export class NameNamespaceAutosuggest extends React.Component {
   static propTypes = {
     id: PropTypes.number,
-    names: PropTypes.object,
     namespaces: PropTypes.object,
     className: PropTypes.string,
     addProperty: PropTypes.func,
-    type: PropTypes.string
+    type: PropTypes.string,
+    saveOption: PropTypes.bool
   }
 
   constructor() {
@@ -31,35 +37,23 @@ export class NameNamespaceAutosuggest extends React.Component {
     };
   }
 
-  getNamespaceVal = () => document
-    .getElementById('newNamespace'
-      .concat(this.props.type)
-      .concat(this.props.id)
-    ).firstChild
-    .firstChild
-    .value;
+  showSave = {
+    true: Consts.EMPTY,
+    false: styles.hidden
+  };
 
-  getNameVal = () => document
-    .getElementById('newName'
-      .concat(this.props.type)
-      .concat(this.props.id)
-    ).firstChild
-    .firstChild
-    .value;
-
-  getSuggestions(focused, unfocused, focusedList, unfocusedList) {
+  getSuggestions = (getNames, newValue) => {
     const suggestions = [];
-    const focusedVal = focused.trim().toLowerCase();
-    const focusedLength = focusedVal.length;
-    const unfocusedVal = unfocused.trim().toLowerCase();
-    const unfocusedLength = unfocusedVal.length;
-    const allUnfocusedListKeys = Object.keys(unfocusedList);
-    allUnfocusedListKeys.forEach((unfocusedKey) => {
-      if (unfocusedKey.trim().toLowerCase().slice(0, unfocusedLength) === unfocusedVal) {
-        const possibleSuggestions = unfocusedList[unfocusedKey];
-        possibleSuggestions.forEach((focusedKey) => {
-          if (focusedKey.trim().toLowerCase().slice(0, focusedLength) === focusedVal) {
-            if (!suggestions.includes(focusedKey)) suggestions.push(focusedKey);
+    const inputName = (getNames) ? newValue.trim().toLowerCase() : this.state.nameVal.trim().toLowerCase();
+    const inputNamespace = (getNames) ? this.state.namespaceVal.trim().toLowerCase() : newValue.trim().toLowerCase();
+    const allNamespaces = Object.keys(this.props.namespaces);
+    allNamespaces.forEach((namespace) => {
+      if (namespace.trim().toLowerCase().slice(0, inputNamespace.length) === inputNamespace) {
+        const possibleNames = this.props.namespaces[namespace];
+        possibleNames.forEach((name) => {
+          if (name.trim().toLowerCase().slice(0, inputName.length) === inputName) {
+            const valueToAdd = (getNames) ? name : namespace;
+            if (!suggestions.includes(valueToAdd)) suggestions.push(valueToAdd);
           }
         });
       }
@@ -68,8 +62,8 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   handleSubmit = () => {
-    const namespace = this.getNamespaceVal();
-    const name = this.getNameVal();
+    const namespace = this.state.namespaceVal;
+    const name = this.state.nameVal;
     this.props.addProperty(namespace, name);
     this.setState({
       nameVal: '',
@@ -79,13 +73,13 @@ export class NameNamespaceAutosuggest extends React.Component {
 
   onNameSuggestionsFetchRequested = ({ value }) => {
     this.setState({
-      nameSuggestions: this.getSuggestions(value, this.getNamespaceVal(), this.props.names, this.props.namespaces)
+      nameSuggestions: this.getSuggestions(true, value)
     });
   }
 
   onNamespaceSuggestionsFetchRequested = ({ value }) => {
     this.setState({
-      namespaceSuggestions: this.getSuggestions(value, this.getNameVal(), this.props.namespaces, this.props.names)
+      namespaceSuggestions: this.getSuggestions(false, value)
     });
   }
 
@@ -134,25 +128,29 @@ export class NameNamespaceAutosuggest extends React.Component {
     return (
       <tr className={this.props.className}>
         <td />
-        <td id={'newName'.concat(this.props.type).concat(this.props.id)}><Autosuggest
-          suggestions={nameSuggestions}
-          onSuggestionsFetchRequested={this.onNameSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onNameSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
-          renderSuggestion={renderSuggestion}
-          inputProps={inputProps.name}
-          shouldRenderSuggestions={this.shouldRenderSuggestions}
-        /></td>
-        <td id={'newNamespace'.concat(this.props.type).concat(this.props.id)}><Autosuggest
-          suggestions={namespaceSuggestions}
-          onSuggestionsFetchRequested={this.onNamespaceSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onNamespaceSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
-          renderSuggestion={renderSuggestion}
-          inputProps={inputProps.namespace}
-          shouldRenderSuggestions={this.shouldRenderSuggestions}
-        /></td>
-        <td><Button onClick={this.handleSubmit}>Save</Button></td>
+        <td id={`newName${this.props.type}${this.props.id}`}>
+          <Autosuggest
+            suggestions={nameSuggestions}
+            onSuggestionsFetchRequested={this.onNameSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onNameSuggestionsClearRequested}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps.name}
+            shouldRenderSuggestions={this.shouldRenderSuggestions}
+          />
+        </td>
+        <td id={`newNamespace${this.props.type}${this.props.id}`}>
+          <Autosuggest
+            suggestions={namespaceSuggestions}
+            onSuggestionsFetchRequested={this.onNamespaceSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onNamespaceSuggestionsClearRequested}
+            getSuggestionValue={getSuggestionValue}
+            renderSuggestion={renderSuggestion}
+            inputProps={inputProps.namespace}
+            shouldRenderSuggestions={this.shouldRenderSuggestions}
+          />
+        </td>
+        <td className={this.showSave[this.props.saveOption]}><Button onClick={this.handleSubmit}>Save</Button></td>
       </tr>
     );
   }

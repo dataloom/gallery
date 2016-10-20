@@ -15,9 +15,7 @@ export class Schema extends React.Component {
     jsonContents: PropTypes.object,
     updateFn: PropTypes.func,
     id: PropTypes.number,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object,
-    allEntityTypeNames: PropTypes.object,
     allEntityTypeNamespaces: PropTypes.object
   }
 
@@ -69,7 +67,6 @@ export class Schema extends React.Component {
           schemaNamespace={namespace}
           updateFn={updateFn}
           id={id}
-          allEntityTypeNames={this.props.allEntityTypeNames}
           allEntityTypeNamespaces={this.props.allEntityTypeNamespaces}
         />
         <br />
@@ -82,7 +79,6 @@ export class Schema extends React.Component {
           updateSchemaFn={updateFn}
           navBar={false}
           id={id}
-          allPropNames={this.props.allPropNames}
           allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />

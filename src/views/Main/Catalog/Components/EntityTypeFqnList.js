@@ -13,7 +13,6 @@ export class EntityTypeFqnList extends React.Component {
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
     id: PropTypes.number,
-    allEntityTypeNames: PropTypes.object,
     allEntityTypeNamespaces: PropTypes.object
   }
 
@@ -64,21 +63,24 @@ export class EntityTypeFqnList extends React.Component {
         name: this.props.schemaName
       },
       [{ namespace, name }]
-    ).then(() => this.updateFqns())
-    .catch(() => this.updateError());
+    ).then(() => {
+      this.updateFqns();
+    }).catch(() => {
+      this.updateError();
+    });
   }
 
   render() {
     const fqnArray = this.keyPropertyTypes();
-    const entityTypeFqnList = fqnArray.map(fqn =>
-      <EntityTypeFqn
+    const entityTypeFqnList = fqnArray.map((fqn) => {
+      return (<EntityTypeFqn
         key={fqn.key}
         entityTypeFqn={fqn}
         schemaName={this.props.schemaName}
         schemaNamespace={this.props.schemaNamespace}
         updateFn={this.props.updateFn}
-      />
-    );
+      />);
+    });
     const id = this.props.id;
     return (
       <div>
@@ -93,7 +95,6 @@ export class EntityTypeFqnList extends React.Component {
             <NameNamespaceAutosuggest
               className={this.addRowClassName[this.state.newEntityTypeRow]}
               id={id}
-              names={this.props.allEntityTypeNames}
               namespaces={this.props.allEntityTypeNamespaces}
               addProperty={this.addEntityTypeToSchema}
               type={Consts.ENTITY_TYPE}

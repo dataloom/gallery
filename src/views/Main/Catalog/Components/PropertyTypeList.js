@@ -16,7 +16,6 @@ export class PropertyTypeList extends React.Component {
     updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
     id: PropTypes.number,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
 
@@ -46,10 +45,10 @@ export class PropertyTypeList extends React.Component {
 
   updateFn = () => {
     const id = this.props.id;
-    document.getElementById('pName'.concat(id)).value = Consts.EMPTY;
-    document.getElementById('pNamespace'.concat(id)).value = Consts.EMPTY;
-    document.getElementById('pDatatype'.concat(id)).value = Consts.EMPTY;
-    document.getElementById('pMultiplicity'.concat(id)).value = Consts.EMPTY;
+    document.getElementById(`pName${id}`).value = Consts.EMPTY;
+    document.getElementById(`pNamespace${id}`).value = Consts.EMPTY;
+    document.getElementById(`pDatatype${id}`).value = Consts.EMPTY;
+    document.getElementById(`pMultiplicity${id}`).value = Consts.EMPTY;
     EntityDataModelApi.getAllPropertyTypes()
       .then((propertyTypes) => {
         this.setState({
@@ -88,13 +87,16 @@ export class PropertyTypeList extends React.Component {
 
   createNewPropertyType = () => {
     const id = this.props.id;
-    const name = document.getElementById('pName'.concat(id)).value;
-    const namespace = document.getElementById('pNamespace'.concat(id)).value;
-    const datatype = document.getElementById('pDatatype'.concat(id)).firstChild.firstChild.value;
-    const multiplicity = document.getElementById('pMultiplicity'.concat(id)).value;
+    const name = document.getElementById(`pName${id}`).value;
+    const namespace = document.getElementById(`pNamespace${id}`).value;
+    const datatype = document.getElementById(`pDatatype${id}`).firstChild.firstChild.value
+    const multiplicity = document.getElementById(`pMultiplicity${id}`).value;
     EntityDataModelApi.createPropertyType({ name, namespace, datatype, multiplicity })
-    .then(() => this.updateFn())
-    .catch(() => this.updateAddError());
+    .then(() => {
+      this.updateFn();
+    }).catch(() => {
+      this.updateAddError();
+    });
   }
 
   successfullyAddedProperty = () => {
@@ -109,16 +111,21 @@ export class PropertyTypeList extends React.Component {
         name: this.props.name
       },
       [{ namespace, name }]
-    ).then(() => this.successfullyAddedProperty())
-    .catch(() => this.updateAddError());
+    ).then(() => {
+      this.successfullyAddedProperty();
+    }).catch(() => {
+      this.updateAddError();
+    });
   }
 
-  shouldDisplayContainer = () => (this.props.navBar ? styles.edmContainer : Consts.EMPTY);
+  shouldDisplayContainer = () => {
+    return (this.props.navBar) ? styles.edmContainer : Consts.EMPTY;
+  }
 
   render() {
     const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
-    const propertyTypeList = propArray.map(prop =>
-      <PropertyType
+    const propertyTypeList = propArray.map((prop) => {
+      return (<PropertyType
         key={prop.key}
         propertyType={prop}
         navBar={this.props.navBar}
@@ -126,8 +133,8 @@ export class PropertyTypeList extends React.Component {
         updateFn={this.props.updateSchemaFn}
         schemaName={this.props.name}
         schemaNamespace={this.props.namespace}
-      />
-    );
+      />);
+    });
     const id = this.props.id;
     return (
       <div className={this.shouldDisplayContainer()}>
@@ -144,20 +151,20 @@ export class PropertyTypeList extends React.Component {
             <tr className={this.shouldShow[this.state.newPropertyRow && this.props.navBar]}>
               <td><input
                 type="text"
-                id={'pName'.concat(id)}
+                id={`pName${id}`}
                 placeholder="name"
                 className={styles.tableCell}
               /></td>
               <td><input
                 type="text"
-                id={'pNamespace'.concat(id)}
+                id={`pNamespace${id}`}
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-            <td id={'pDatatype'.concat(id)}><EdmDatatypeAutosuggest /></td>
+              <td id={`pDatatype${id}`}><EdmDatatypeAutosuggest /></td>
               <td><input
                 type="text"
-                id={'pMultiplicity'.concat(id)}
+                id={`pMultiplicity${id}`}
                 placeholder="multiplicity"
                 className={styles.tableCell}
               /></td>
@@ -166,7 +173,6 @@ export class PropertyTypeList extends React.Component {
             <NameNamespaceAutosuggest
               className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
               id={id}
-              names={this.props.allPropNames}
               namespaces={this.props.allPropNamespaces}
               addProperty={this.addPropertyToSchema}
               type={Consts.PROPERTY_TYPE}

@@ -3,13 +3,17 @@ import Autosuggest from 'react-autosuggest';
 import Utils from '../../../../utils/Utils';
 import '../../../../styles/autosuggest.css';
 
-const getSuggestionValue = suggestion => suggestion;
+const getSuggestionValue = (suggestion) => {
+  return suggestion;
+};
 
-const renderSuggestion = suggestion => (
-  <div>
-    {suggestion}
-  </div>
-);
+const renderSuggestion = (suggestion) => {
+  return (
+    <div>
+      {suggestion}
+    </div>
+  );
+};
 
 export class EdmDatatypeAutosuggest extends React.Component {
   constructor() {
@@ -23,8 +27,9 @@ export class EdmDatatypeAutosuggest extends React.Component {
   getSuggestions(value) {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
-    return inputLength === 0 ? [] : Utils.getAllEdmPrimitiveTypes().filter(type =>
-      type.toLowerCase().slice(0, inputLength) === inputValue);
+    return inputLength === 0 ? [] : Utils.getAllEdmPrimitiveTypes().filter((type) => {
+      return type.toLowerCase().slice(0, inputLength) === inputValue;
+    });
   }
 
   onSuggestionsFetchRequested = ({ value }) => {
