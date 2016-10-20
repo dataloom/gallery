@@ -89,7 +89,7 @@ export class PropertyTypeList extends React.Component {
     const id = this.props.id;
     const name = document.getElementById(`pName${id}`).value;
     const namespace = document.getElementById(`pNamespace${id}`).value;
-    const datatype = document.getElementById(`pDatatype${id}`).firstChild.firstChild.value
+    const datatype = document.getElementById(`pDatatype${id}`).firstChild.firstChild.value;
     const multiplicity = document.getElementById(`pMultiplicity${id}`).value;
     EntityDataModelApi.createPropertyType({ name, namespace, datatype, multiplicity })
     .then(() => {
