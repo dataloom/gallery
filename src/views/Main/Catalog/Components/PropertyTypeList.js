@@ -5,6 +5,7 @@ import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import { EdmDatatypeAutosuggest } from './EdmDatatypeAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
@@ -89,7 +90,7 @@ export class PropertyTypeList extends React.Component {
     const id = this.props.id;
     const name = document.getElementById('pName'.concat(id)).value;
     const namespace = document.getElementById('pNamespace'.concat(id)).value;
-    const datatype = document.getElementById('pDatatype'.concat(id)).value;
+    const datatype = document.getElementById('pDatatype'.concat(id)).firstChild.firstChild.value;
     const multiplicity = document.getElementById('pMultiplicity'.concat(id)).value;
     EntityDataModelApi.createPropertyType({ name, namespace, datatype, multiplicity })
     .then(() => this.updateFn())
@@ -153,12 +154,7 @@ export class PropertyTypeList extends React.Component {
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-              <td><input
-                type="text"
-                id={'pDatatype'.concat(id)}
-                placeholder="datatype"
-                className={styles.tableCell}
-              /></td>
+            <td id={'pDatatype'.concat(id)}><EdmDatatypeAutosuggest /></td>
               <td><input
                 type="text"
                 id={'pMultiplicity'.concat(id)}
