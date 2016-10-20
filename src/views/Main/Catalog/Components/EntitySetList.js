@@ -14,7 +14,7 @@ export class EntitySetList extends React.Component {
   }
 
   componentDidMount() {
-    EntityDataModelApi.getEntitySets()
+    EntityDataModelApi.getAllEntitySets()
       .then((entitySets) => {
         this.setState({ entitySets: Utils.addKeysToArray(entitySets) });
       });

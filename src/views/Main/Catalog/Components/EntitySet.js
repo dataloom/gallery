@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { DataApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
-import FileService from '../../../../utils/FileService';
 import styles from '../styles.module.css';
 
 export class EntitySet extends React.Component {
@@ -12,44 +11,8 @@ export class EntitySet extends React.Component {
     type: PropTypes.object
   }
 
-  constructor() {
-    super();
-    this.state = {
-      error: styles.hidden,
-      disableJson: false,
-      disableCsv: false
-    };
-  }
-
-  handleClick = (datatype) => {
-    this.downloadFile(datatype);
-    if (datatype === Consts.JSON) {
-      this.setState({ disableJson: true });
-    }
-    else {
-      this.setState({ disableCsv: true });
-    }
-  }
-
-  downloadFile = (datatype) => {
-    DataApi.getAllEntitiesOfTypeInSet(this.props.type, this.props.name)
-    .then(data => FileService.saveFile(data, this.props.name, datatype, this.enableButton))
-    .catch(() => this.displayError());
-  }
-
-  displayError = (datatype) => {
-    this.setState({ error: styles.errorMsg });
-    this.enableButton(datatype);
-  }
-
-  enableButton = (datatype) => {
-    if (datatype === Consts.JSON) {
-      this.setState({ disableJson: false });
-    }
-    else {
-      this.setState({ disableCsv: false });
-    }
-  }
+  getUrl = datatype =>
+    DataApi.getAllEntitiesOfTypeInSetUrl(this.props.type, this.props.name, datatype);
 
   render() {
     const { name, title, type } = this.props;
@@ -77,20 +40,12 @@ export class EntitySet extends React.Component {
           </table>
         </div>
         <div className={styles.spacerSmall} />
-        <Button
-          onClick={() => this.handleClick(Consts.JSON)}
-          disabled={this.state.disableJson}
-        >
+        <Button href={this.getUrl(Consts.JSON)}>
           Download {name} as JSON
         </Button>
-        <Button
-          onClick={() => this.handleClick(Consts.CSV)}
-          disabled={this.state.disableCsv}
-          className={styles.hidden}
-        >
+        <Button href={this.getUrl(Consts.CSV)} className={styles.spacerMargin}>
           Download {name} as CSV
         </Button>
-        <div className={this.state.error}>Unable to download {name}</div>
       </div>
     );
   }

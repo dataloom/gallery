@@ -12,7 +12,9 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       newEntityType: false,
-      error: false
+      error: false,
+      allPropNames: {},
+      allPropNamespaces: {}
     };
   }
 
@@ -37,7 +39,7 @@ export class EntityTypeList extends React.Component {
   newEntityTypeSuccess = () => {
     document.getElementById('newEntityTypeName').value = Consts.EMPTY;
     document.getElementById('newEntityTypeNamespace').value = Consts.EMPTY;
-    EntityDataModelApi.getEntityTypes()
+    EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
@@ -63,9 +65,33 @@ export class EntityTypeList extends React.Component {
   }
 
   updateFn = () => {
-    EntityDataModelApi.getEntityTypes()
+    EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
-        this.setState({ entityTypes: Utils.addKeysToArray(entityTypes) });
+        EntityDataModelApi.getAllPropertyTypes()
+        .then((propertyTypes) => {
+          const allPropNames = {};
+          const allPropNamespaces = {};
+          propertyTypes.forEach((prop) => {
+            if (allPropNames[prop.name] === undefined) {
+              allPropNames[prop.name] = [prop.namespace];
+            }
+            else {
+              allPropNames[prop.name].push(prop.namespace);
+            }
+
+            if (allPropNamespaces[prop.namespace] === undefined) {
+              allPropNamespaces[prop.namespace] = [prop.name];
+            }
+            else {
+              allPropNamespaces[prop.namespace].push(prop.name);
+            }
+          });
+          this.setState({
+            entityTypes: Utils.addKeysToArray(entityTypes),
+            allPropNames,
+            allPropNamespaces
+          });
+        });
       });
   }
 
@@ -79,6 +105,8 @@ export class EntityTypeList extends React.Component {
         properties={entityType.properties}
         primaryKey={entityType.primaryKey}
         updateFn={this.updateFn}
+        allPropNames={this.state.allPropNames}
+        allPropNamespaces={this.state.allPropNamespaces}
       />
     );
     return (

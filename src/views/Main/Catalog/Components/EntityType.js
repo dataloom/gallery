@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
-import FileService from '../../../../utils/FileService';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
 
@@ -13,47 +12,13 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    id: PropTypes.number
+    id: PropTypes.number,
+    allPropNames: PropTypes.object,
+    allPropNamespaces: PropTypes.object
   }
 
-  constructor() {
-    super();
-    this.state = {
-      error: styles.hidden,
-      disableJson: false,
-      disableCsv: false
-    };
-  }
-
-  handleClick = (datatype) => {
-    this.downloadFile(datatype);
-    if (datatype === Consts.JSON) {
-      this.setState({ disableJson: true });
-    }
-    else {
-      this.setState({ disableCsv: true });
-    }
-  }
-
-  downloadFile = (datatype) => {
-    DataApi.getAllEntitiesOfType({ namespace: this.props.namespace, name: this.props.name })
-    .then(data => FileService.saveFile(data, this.props.name, datatype, this.enableButton))
-    .catch(() => this.displayError());
-  }
-
-  displayError = (datatype) => {
-    this.setState({ error: styles.errorMsg });
-    this.enableButton(datatype);
-  }
-
-  enableButton = (datatype) => {
-    if (datatype === Consts.JSON) {
-      this.setState({ disableJson: false });
-    }
-    else {
-      this.setState({ disableCsv: false });
-    }
-  }
+  getUrl = datatype =>
+    DataApi.getAllEntitiesOfTypeUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
 
   render() {
     const { name, namespace, properties, primaryKey, updateFn, id } = this.props;
@@ -74,22 +39,16 @@ export class EntityType extends React.Component {
           entityTypeNamespace={namespace}
           updateFn={updateFn}
           id={id}
+          allPropNames={this.props.allPropNames}
+          allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />
-        <Button
-          onClick={() => this.handleClick(Consts.JSON)}
-          disabled={this.state.disableJson}
-        >
+        <Button href={this.getUrl(Consts.JSON)}>
           Download {name} as JSON
         </Button>
-        <Button
-          onClick={() => this.handleClick(Consts.CSV)}
-          disabled={this.state.disableCsv}
-          className={styles.hidden}
-        >
+        <Button href={this.getUrl(Consts.CSV)} className={styles.spacerMargin}>
           Download {name} as CSV
         </Button>
-        <div className={this.state.error}>Unable to download {name}</div>
       </div>
     );
   }

@@ -5,8 +5,8 @@
 const AUTH0_CLIENT_ID = 'KvwsETaUxuXVjW2cmz2LbdqXQBdYs6wH';
 const AUTH0_DOMAIN = 'loom.auth0.com';
 
-const JSON = 'JSON';
-const CSV = 'CSV';
+const JSON = 'json';
+const CSV = 'csv';
 
 const SCHEMA = 'schema';
 const ENTITY_SET = 'entitySet';

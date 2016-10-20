@@ -65,7 +65,7 @@ export class SchemaList extends React.Component {
   updateFn = () => {
     EntityDataModelApi.getAllSchemas()
       .then((schemas) => {
-        EntityDataModelApi.getPropertyTypes()
+        EntityDataModelApi.getAllPropertyTypes()
         .then((propertyTypes) => {
           const allPropNames = {};
           const allPropNamespaces = {};
@@ -85,7 +85,7 @@ export class SchemaList extends React.Component {
             }
           });
 
-          EntityDataModelApi.getEntityTypes()
+          EntityDataModelApi.getAllEntityTypes()
           .then((entityTypes) => {
             const allEntityTypeNames = {};
             const allEntityTypeNamespaces = {};

@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
 import { Button } from 'react-bootstrap';
-import Consts from '../../../../utils/AppConsts';
 import '../../../../styles/autosuggest.css';
 
 const getSuggestionValue = suggestion => suggestion;
@@ -69,13 +68,13 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   handleSubmit = () => {
-    const id = this.props.id;
-    const type = this.props.type;
     const namespace = this.getNamespaceVal();
     const name = this.getNameVal();
     this.props.addProperty(namespace, name);
-    document.getElementById('newNamespace'.concat(type).concat(id)).firstChild.firstChild.value = Consts.EMPTY;
-    document.getElementById('newName'.concat(type).concat(id)).firstChild.firstChild.value = Consts.EMPTY;
+    this.setState({
+      nameVal: '',
+      namespaceVal: ''
+    });
   }
 
   onNameSuggestionsFetchRequested = ({ value }) => {
