@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { DataApi, EntityDataModelApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
 import { PropertyList } from './PropertyList';
+import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
 
 export class EntitySet extends React.Component {
@@ -16,7 +17,8 @@ export class EntitySet extends React.Component {
     super();
     this.state = {
       editing: false,
-      properties: []
+      properties: [],
+      showPanel: false
     };
   }
 
@@ -40,8 +42,14 @@ export class EntitySet extends React.Component {
     });
   }
 
+  exitPanel = () => {
+    this.setState({
+      showPanel: false
+    });
+  }
+
   editEntitySetPermissions = () => {
-    console.log('editing.....');
+    this.setState({ showPanel: true });
   }
 
   getUrl = datatype =>
@@ -66,6 +74,9 @@ export class EntitySet extends React.Component {
         <div className={styles.subtitle}>{title}</div>
         <div className={styles.descriptionLabel}> (title)</div>
         <div className={styles.spacerSmall} />
+        <div className={this.shouldShow[this.state.showPanel]}>
+          <PermissionsPanel entitySetName={name} entityType={type} exitPanel={this.exitPanel} />
+        </div>
         <div className={styles.tableDescriptionLabel}>Type:</div>
         <div>
           <table>
@@ -90,6 +101,7 @@ export class EntitySet extends React.Component {
             entityTypeNamespace={type.namespace}
             allowEdit={false}
             editingPermissions
+            entitySetName={name}
           />
         </div>
         <div className={styles.spacerSmall} />

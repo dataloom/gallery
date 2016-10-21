@@ -15,8 +15,7 @@ export class PropertyList extends React.Component {
     id: PropTypes.number,
     allowEdit: PropTypes.bool,
     editingPermissions: PropTypes.bool,
-    schemaName: PropTypes.string,
-    schemaNamespace: PropTypes.string
+    entitySetName: PropTypes.string
   }
 
   constructor() {
@@ -88,8 +87,7 @@ export class PropertyList extends React.Component {
       updateFn,
       id,
       editingPermissions,
-      schemaName,
-      schemaNamespace
+      entitySetName
     } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
@@ -104,8 +102,7 @@ export class PropertyList extends React.Component {
           entityTypeNamespace={entityTypeNamespace}
           updateFn={updateFn}
           editingPermissions={editingPermissions}
-          schemaName={schemaName}
-          schemaNamespace={schemaNamespace}
+          entitySetName={entitySetName}
         />
     );
     });

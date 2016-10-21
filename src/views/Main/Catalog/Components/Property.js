@@ -12,8 +12,7 @@ export class Property extends React.Component {
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
     editingPermissions: PropTypes.bool,
-    schemaName: PropTypes.string,
-    schemaNamespace: PropTypes.string
+    entitySetName: PropTypes.string
   }
 
   isPrimaryKey() {
@@ -31,7 +30,7 @@ export class Property extends React.Component {
   }
 
   editPermissions() {
-    console.log('hi');
+    console.log('editing permissions');
   }
 
   deleteProp = () => {
