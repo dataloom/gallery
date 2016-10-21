@@ -37,6 +37,8 @@ export class EntityType extends React.Component {
           entityTypeNamespace={namespace}
           updateFn={updateFn}
           id={id}
+          allowEdit
+          editingPermissions={false}
         />
         <br />
         <Button href={this.getUrl(Consts.JSON)}>

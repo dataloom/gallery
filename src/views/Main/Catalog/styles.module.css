@@ -41,6 +41,11 @@ th {
   margin: 10px;
 }
 
+.spacerLeft {
+  padding-left: 7px;
+  display: inline;
+}
+
 .tableCell {
   padding: 5px 10px;
 }

@@ -10,15 +10,28 @@ export class Property extends React.Component {
     primaryKey: PropTypes.bool,
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    editingPermissions: PropTypes.bool,
+    schemaName: PropTypes.string,
+    schemaNamespace: PropTypes.string
   }
 
   isPrimaryKey() {
-    const pKey = this.props.primaryKey;
-    if (pKey) {
+    if (this.props.primaryKey) {
       return (<td className={styles.primaryKey}>(primary key)</td>);
     }
     return null;
+  }
+
+  editPermissionsButton() {
+    if (this.props.editingPermissions) {
+      return (<td><Button onClick={this.editPermissions}>Change permissions</Button></td>);
+    }
+    return null;
+  }
+
+  editPermissions() {
+    console.log('hi');
   }
 
   deleteProp = () => {
@@ -51,6 +64,7 @@ export class Property extends React.Component {
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>
         {this.isPrimaryKey()}
+        {this.editPermissionsButton()}
       </tr>
     );
   }

@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import { DataApi } from 'loom-data';
+import { DataApi, EntityDataModelApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
+import { PropertyList } from './PropertyList';
 import styles from '../styles.module.css';
 
 export class EntitySet extends React.Component {
@@ -11,6 +12,38 @@ export class EntitySet extends React.Component {
     type: PropTypes.object
   }
 
+  constructor() {
+    super();
+    this.state = {
+      editing: false,
+      properties: []
+    };
+  }
+
+  componentDidMount() {
+    EntityDataModelApi.getEntityType(this.props.type)
+    .then((type) => {
+      this.setState({
+        properties: type.properties
+      });
+    });
+  }
+
+  shouldShow = {
+    true: Consts.EMPTY,
+    false: styles.hidden
+  };
+
+  changeEditingState = () => {
+    this.setState({
+      editing: !this.state.editing
+    });
+  }
+
+  editEntitySetPermissions = () => {
+    console.log('editing.....');
+  }
+
   getUrl = datatype =>
     DataApi.getAllEntitiesOfTypeInSetUrl(this.props.type, this.props.name, datatype);
 
@@ -18,8 +51,17 @@ export class EntitySet extends React.Component {
     const { name, title, type } = this.props;
     return (
       <div className={styles.edmContainer}>
+        <Button onClick={this.changeEditingState}>
+          {(this.state.editing) ? 'Stop editing' : 'Edit permissions'}
+        </Button>
+        <div className={styles.spacerSmall} />
         <div className={styles.name}>{name}</div>
         <div className={styles.descriptionLabel}> (name)</div>
+        <div className={styles.spacerLeft} />
+        <Button
+          className={this.shouldShow[this.state.editing]}
+          onClick={this.editEntitySetPermissions}
+        >Change permissions</Button>
         <br />
         <div className={styles.subtitle}>{title}</div>
         <div className={styles.descriptionLabel}> (title)</div>
@@ -38,6 +80,17 @@ export class EntitySet extends React.Component {
               </tr>
             </tbody>
           </table>
+        </div>
+        <div className={this.shouldShow[this.state.editing]}>
+          <div className={styles.spacerMed} />
+          <div className={styles.tableDescriptionLabel}>Properties:</div>
+          <PropertyList
+            properties={this.state.properties}
+            entityTypeName={type.name}
+            entityTypeNamespace={type.namespace}
+            allowEdit={false}
+            editingPermissions
+          />
         </div>
         <div className={styles.spacerSmall} />
         <Button href={this.getUrl(Consts.JSON)}>
