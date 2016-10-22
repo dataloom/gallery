@@ -35,6 +35,13 @@ export class PermissionsPanel extends React.Component {
     };
   }
 
+  getTitleText = () => {
+    if (this.props.propertyTypeName) {
+      return `property type: ${this.props.propertyTypeNamespace}.${this.props.propertyTypeName}`;
+    }
+    return `entity set: ${this.props.entitySetName}`;
+  }
+
   switchView = (view) => {
     this.setState({ view });
   }
@@ -113,13 +120,25 @@ export class PermissionsPanel extends React.Component {
   render() {
     return (
       <div className={styles.panelContainer}>
-        <div className={styles.panelTitle}>Set permissions for {this.props.entitySetName}</div>
+        <div className={styles.panelTitle}>Set permissions for {this.getTitleText()}</div>
         <div className={styles.edmNavbarContainer}>
           <div className={styles.edmNavbar}>
-            <button onClick={() => this.switchView(views.GLOBAL)} className={this.getClassName(views.GLOBAL)}>Global</button>
-            <button onClick={() => this.switchView(views.ROLES)} className={this.getClassName(views.ROLES)}>Roles</button>
-            <button onClick={() => this.switchView(views.DOMAIN)} className={this.getClassName(views.DOMAIN)}>My Domain</button>
-            <button onClick={() => this.switchView(views.EMAILS)} className={this.getClassName(views.EMAILS)}>Emails</button>
+            <button
+              onClick={() => this.switchView(views.GLOBAL)}
+              className={this.getClassName(views.GLOBAL)}
+            >Global</button>
+            <button
+              onClick={() => this.switchView(views.ROLES)}
+              className={this.getClassName(views.ROLES)}
+            >Roles</button>
+            <button
+              onClick={() => this.switchView(views.DOMAIN)}
+              className={this.getClassName(views.DOMAIN)}
+            >My Domain</button>
+            <button
+              onClick={() => this.switchView(views.EMAILS)}
+              className={this.getClassName(views.EMAILS)}
+            >Emails</button>
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>
