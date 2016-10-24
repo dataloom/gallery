@@ -130,12 +130,15 @@ th {
   text-align: center;
   background: #f6f6f6;
   border: 1px solid #e3e3e3;
+  text-align: center;
 }
 
 .cancelButton {
   position: absolute;
+  left: 50%;
+  margin-left: -40px;
+  width: 80px;
   bottom: 15px;
-  text-align: center;
 }
 
 .panelTitle {

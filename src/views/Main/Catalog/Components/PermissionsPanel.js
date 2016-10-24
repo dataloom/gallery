@@ -158,10 +158,12 @@ export class PermissionsPanel extends React.Component {
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>
-        <div id="updateSuccess" className={this.shouldShowSuccess[this.state.updateSuccess]}
-        >Your changes have been saved.</div>
-        <div id="updateError" className={this.shouldShowError[this.state.updateError]}
-        >Unable to save changes.</div>
+        <div id="updateSuccess" className={this.shouldShowSuccess[this.state.updateSuccess]}>
+          Your changes have been saved.
+        </div>
+        <div id="updateError" className={this.shouldShowError[this.state.updateError]}>
+          Unable to save changes.
+        </div>
         <Button className={styles.cancelButton} onClick={this.props.exitPanel}>Cancel</Button>
       </div>
     );
