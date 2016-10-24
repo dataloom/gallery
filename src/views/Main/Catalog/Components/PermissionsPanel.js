@@ -31,8 +31,20 @@ export class PermissionsPanel extends React.Component {
   constructor() {
     super();
     this.state = {
-      view: views.GLOBAL
+      view: views.GLOBAL,
+      updateSuccess: false,
+      updateError: false
     };
+  }
+
+  shouldShowSuccess = {
+    true: styles.updateSuccess,
+    false: styles.hidden
+  }
+
+  shouldShowError = {
+    true: styles.errorMsg,
+    false: styles.hidden
   }
 
   getTitleText = () => {
@@ -43,7 +55,11 @@ export class PermissionsPanel extends React.Component {
   }
 
   switchView = (view) => {
-    this.setState({ view });
+    this.setState({
+      view,
+      updateSuccess: false,
+      updateError: false
+    });
   }
 
   getClassName = (view) => {
@@ -66,7 +82,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   updatePermissions = (view) => {
-    console.log('your changes are saved.');
+    this.setState({ updateSuccess: true });
   }
 
   getGlobalView = () => {
@@ -77,7 +93,7 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.dropdownWrapper}>
           <Dropdown
             options={accessOptions}
-            onChange={this._onSelect}
+            onChange={this.onSelect}
             value={accessOptions[0]}
           />
         </div>
@@ -142,6 +158,10 @@ export class PermissionsPanel extends React.Component {
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>
+        <div id="updateSuccess" className={this.shouldShowSuccess[this.state.updateSuccess]}
+        >Your changes have been saved.</div>
+        <div id="updateError" className={this.shouldShowError[this.state.updateError]}
+        >Unable to save changes.</div>
         <Button className={styles.cancelButton} onClick={this.props.exitPanel}>Cancel</Button>
       </div>
     );
