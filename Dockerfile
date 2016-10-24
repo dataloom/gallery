@@ -4,15 +4,10 @@ FROM ubuntu:16.04
 # Install Python.
 RUN \
   apt-get update && \
-  apt-get install -y software-properties-common python-software-properties curl
-
-RUN \
+  apt-get install -y software-properties-common python-software-properties curl && \
   add-apt-repository -y ppa:nginx/stable && \
   apt-get update && \
-  apt-get install -y nginx
-
-RUN \
-  apt-get install -y git
+  apt-get install -y nginx git
 
 RUN \
   curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
