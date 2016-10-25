@@ -1,5 +1,5 @@
 # Pull base image.
-FROM centos
+FROM centos:7
 
 WORKDIR /usr/src/app
 
