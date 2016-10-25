@@ -12,8 +12,6 @@ RUN \
   mkdir -p /etc/nginx/web/gallery && \
   mv nginx.conf /etc/nginx/nginx.conf
 
-#COPY nginx.conf /etc/nginx/
-
 RUN \
   rm -rf node_modules build/* && \
   npm install
