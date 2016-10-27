@@ -19,12 +19,12 @@ const renderSuggestion = (suggestion) => {
 
 export class NameNamespaceAutosuggest extends React.Component {
   static propTypes = {
-    id: PropTypes.number,
     namespaces: PropTypes.object,
     className: PropTypes.string,
     addProperty: PropTypes.func,
-    type: PropTypes.string,
-    saveOption: PropTypes.bool
+    saveOption: PropTypes.bool,
+    onNameChange: PropTypes.func,
+    onNamespaceChange: PropTypes.func
   }
 
   constructor() {
@@ -40,6 +40,18 @@ export class NameNamespaceAutosuggest extends React.Component {
   showSave = {
     true: Consts.EMPTY,
     false: styles.hidden
+  };
+
+  onNameSuggestionSelected = ({ suggestion }) => {
+    if (this.props.onNameChange !== undefined && suggestion !== undefined) {
+      this.props.onNameChange(suggestion);
+    }
+  };
+
+  onNamespaceSuggestionSelected = ({ suggestion }) => {
+    if (this.props.onNamespaceChange !== undefined && suggestion !== undefined) {
+      this.props.onNamespaceChange(suggestion);
+    }
   };
 
   getSuggestions = (getNames, newValue) => {
@@ -96,12 +108,18 @@ export class NameNamespaceAutosuggest extends React.Component {
   };
 
   onNameChange = (event, { newValue }) => {
+    if (this.props.onNameChange !== undefined && newValue !== undefined) {
+      this.props.onNameChange(newValue);
+    }
     this.setState({
       nameVal: newValue
     });
   }
 
   onNamespaceChange = (event, { newValue }) => {
+    if (this.props.onNamespaceChange !== undefined && newValue !== undefined) {
+      this.props.onNamespaceChange(newValue);
+    }
     this.setState({
       namespaceVal: newValue
     });
@@ -128,23 +146,25 @@ export class NameNamespaceAutosuggest extends React.Component {
     return (
       <tr className={this.props.className}>
         <td />
-        <td id={`newName${this.props.type}${this.props.id}`}>
+        <td>
           <Autosuggest
             suggestions={nameSuggestions}
             onSuggestionsFetchRequested={this.onNameSuggestionsFetchRequested}
             onSuggestionsClearRequested={this.onNameSuggestionsClearRequested}
             getSuggestionValue={getSuggestionValue}
+            onSuggestionSelected={this.onNameSuggestionSelected}
             renderSuggestion={renderSuggestion}
             inputProps={inputProps.name}
             shouldRenderSuggestions={this.shouldRenderSuggestions}
           />
         </td>
-        <td id={`newNamespace${this.props.type}${this.props.id}`}>
+        <td>
           <Autosuggest
             suggestions={namespaceSuggestions}
             onSuggestionsFetchRequested={this.onNamespaceSuggestionsFetchRequested}
             onSuggestionsClearRequested={this.onNamespaceSuggestionsClearRequested}
             getSuggestionValue={getSuggestionValue}
+            onSuggestionSelected={this.onNamespaceSuggestionSelected}
             renderSuggestion={renderSuggestion}
             inputProps={inputProps.namespace}
             shouldRenderSuggestions={this.shouldRenderSuggestions}

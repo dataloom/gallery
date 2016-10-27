@@ -65,8 +65,11 @@ export class PropertyList extends React.Component {
         name: this.props.entityTypeName
       },
       [{ namespace, name }]
-    ).then(() => this.updateFqns())
-    .catch(() => this.updateError());
+    ).then(() => {
+      this.updateFqns();
+    }).catch(() => {
+      this.updateError();
+    });
   }
 
   render() {

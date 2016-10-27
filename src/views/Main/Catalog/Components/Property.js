@@ -31,10 +31,14 @@ export class Property extends React.Component {
         namespace: this.props.property.namespace,
         name: this.props.property.name
       }]
-    ).then(() => this.props.updateFn());
+    ).then(() => {
+      return this.props.updateFn();
+    });
   }
 
-  shouldShowDeleteButton = () => (this.props.primaryKey ? styles.hidden : Consts.EMPTY);
+  shouldShowDeleteButton = () => {
+    return (this.props.primaryKey) ? styles.hidden : Consts.EMPTY;
+  }
 
   render() {
     const prop = this.props.property;
