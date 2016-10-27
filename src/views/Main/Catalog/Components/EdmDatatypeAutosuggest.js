@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
 import Utils from '../../../../utils/Utils';
 import '../../../../styles/autosuggest.css';
@@ -16,6 +16,10 @@ const renderSuggestion = (suggestion) => {
 };
 
 export class EdmDatatypeAutosuggest extends React.Component {
+  static propTypes = {
+    onChangeFn: PropTypes.func
+  }
+
   constructor() {
     super();
     this.state = {
@@ -45,6 +49,7 @@ export class EdmDatatypeAutosuggest extends React.Component {
   };
 
   onChange = (event, { newValue }) => {
+    this.props.onChangeFn(event);
     this.setState({
       value: newValue
     });

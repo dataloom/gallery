@@ -11,8 +11,9 @@ export class EntitySet extends React.Component {
     type: PropTypes.object
   }
 
-  getUrl = datatype =>
-    DataApi.getAllEntitiesOfTypeInSetUrl(this.props.type, this.props.name, datatype);
+  getUrl = (datatype) => {
+    return DataApi.getAllEntitiesOfTypeInSetUrl(this.props.type, this.props.name, datatype);
+  }
 
   render() {
     const { name, title, type } = this.props;

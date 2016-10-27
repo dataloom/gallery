@@ -25,7 +25,11 @@ export class PropertyTypeList extends React.Component {
       propertyTypes: [],
       newPropertyRow: false,
       addError: false,
-      deleteError: false
+      deleteError: false,
+      newPropName: '',
+      newPropNamespace: '',
+      newPropDatatype: '',
+      newPropMultiplicity: ''
     };
   }
 
@@ -44,16 +48,15 @@ export class PropertyTypeList extends React.Component {
   }
 
   updateFn = () => {
-    const id = this.props.id;
-    document.getElementById(`pName${id}`).value = Consts.EMPTY;
-    document.getElementById(`pNamespace${id}`).value = Consts.EMPTY;
-    document.getElementById(`pDatatype${id}`).value = Consts.EMPTY;
-    document.getElementById(`pMultiplicity${id}`).value = Consts.EMPTY;
     EntityDataModelApi.getAllPropertyTypes()
       .then((propertyTypes) => {
         this.setState({
           propertyTypes: Utils.addKeysToArray(propertyTypes),
-          newPropertyRow: false
+          newPropertyRow: false,
+          newPropName: '',
+          newPropNamespace: '',
+          newPropMultiplicity: '',
+          newPropDatatype: ''
         });
       });
   }
@@ -86,11 +89,10 @@ export class PropertyTypeList extends React.Component {
   }
 
   createNewPropertyType = () => {
-    const id = this.props.id;
-    const name = document.getElementById(`pName${id}`).value;
-    const namespace = document.getElementById(`pNamespace${id}`).value;
-    const datatype = document.getElementById(`pDatatype${id}`).firstChild.firstChild.value;
-    const multiplicity = document.getElementById(`pMultiplicity${id}`).value;
+    const name = this.state.newPropName;
+    const namespace = this.state.newPropNamespace;
+    const datatype = this.state.newPropDatatype;
+    const multiplicity = this.state.newPropMultiplicity;
     EntityDataModelApi.createPropertyType({ name, namespace, datatype, multiplicity })
     .then(() => {
       this.updateFn();
@@ -122,6 +124,22 @@ export class PropertyTypeList extends React.Component {
     return (this.props.navBar) ? styles.edmContainer : Consts.EMPTY;
   }
 
+  handleNameChange = (e) => {
+    this.setState({ newPropName: e.target.value });
+  }
+
+  handleNamespaceChange = (e) => {
+    this.setState({ newPropNamespace: e.target.value });
+  }
+
+  handleDatatypeChange = (e) => {
+    this.setState({ newPropDatatype: e.target.value });
+  }
+
+  handleMultiplicityChange = (e) => {
+    this.setState({ newPropMultiplicity: e.target.value });
+  }
+
   render() {
     const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
@@ -151,20 +169,23 @@ export class PropertyTypeList extends React.Component {
             <tr className={this.shouldShow[this.state.newPropertyRow && this.props.navBar]}>
               <td><input
                 type="text"
-                id={`pName${id}`}
+                value={this.state.newPropName}
+                onChange={this.handleNameChange}
                 placeholder="name"
                 className={styles.tableCell}
               /></td>
               <td><input
                 type="text"
-                id={`pNamespace${id}`}
+                value={this.state.newPropNamespace}
+                onChange={this.handleNamespaceChange}
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-              <td id={`pDatatype${id}`}><EdmDatatypeAutosuggest /></td>
+              <td><EdmDatatypeAutosuggest onChangeFn={this.handleDatatypeChange} /></td>
               <td><input
                 type="text"
-                id={`pMultiplicity${id}`}
+                value={this.state.newPropMultiplicity}
+                onChange={this.handleMultiplicityChange}
                 placeholder="multiplicity"
                 className={styles.tableCell}
               /></td>
