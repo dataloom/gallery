@@ -48,8 +48,16 @@ export class EdmDatatypeAutosuggest extends React.Component {
     });
   };
 
+  onSuggestionSelected = ({ suggestion }) => {
+    if (suggestion !== undefined) {
+      this.props.onChangeFn(suggestion);
+    }
+  }
+
   onChange = (event, { newValue }) => {
-    this.props.onChangeFn(event);
+    if (newValue !== undefined) {
+      this.props.onChangeFn(newValue);
+    }
     this.setState({
       value: newValue
     });
@@ -72,6 +80,7 @@ export class EdmDatatypeAutosuggest extends React.Component {
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={getSuggestionValue}
+        onSuggestionSelected={this.onSuggestionSelected}
         renderSuggestion={renderSuggestion}
         inputProps={inputProps}
         shouldRenderSuggestions={this.shouldRenderSuggestions}

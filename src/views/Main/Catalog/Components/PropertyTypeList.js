@@ -132,8 +132,8 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropNamespace: e.target.value });
   }
 
-  handleDatatypeChange = (e) => {
-    this.setState({ newPropDatatype: e.target.value });
+  handleDatatypeChange = (newValue) => {
+    this.setState({ newPropDatatype: newValue });
   }
 
   handleMultiplicityChange = (e) => {
