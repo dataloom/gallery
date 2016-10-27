@@ -15,7 +15,6 @@ export class PropertyTypeList extends React.Component {
     namespace: PropTypes.string,
     updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
-    id: PropTypes.number,
     allPropNamespaces: PropTypes.object
   }
 
@@ -153,7 +152,6 @@ export class PropertyTypeList extends React.Component {
         schemaNamespace={this.props.namespace}
       />);
     });
-    const id = this.props.id;
     return (
       <div className={this.shouldDisplayContainer()}>
         <table>

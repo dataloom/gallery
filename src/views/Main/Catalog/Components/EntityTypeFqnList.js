@@ -12,7 +12,6 @@ export class EntityTypeFqnList extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    id: PropTypes.number,
     allEntityTypeNamespaces: PropTypes.object
   }
 
@@ -81,7 +80,6 @@ export class EntityTypeFqnList extends React.Component {
         updateFn={this.props.updateFn}
       />);
     });
-    const id = this.props.id;
     return (
       <div>
         <table>

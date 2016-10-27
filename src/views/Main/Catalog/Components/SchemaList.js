@@ -111,7 +111,6 @@ export class SchemaList extends React.Component {
     const schemaList = this.state.schemas.map((schema) => {
       return (<Schema
         key={schema.key}
-        id={schema.key}
         name={schema.name}
         namespace={schema.namespace}
         propertyTypes={schema.propertyTypes}

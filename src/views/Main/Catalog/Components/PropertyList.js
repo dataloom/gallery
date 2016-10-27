@@ -13,7 +13,6 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    id: PropTypes.number,
     allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
@@ -73,7 +72,7 @@ export class PropertyList extends React.Component {
   }
 
   render() {
-    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn, id } = this.props;
+    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
