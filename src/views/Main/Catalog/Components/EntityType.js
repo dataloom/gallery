@@ -12,11 +12,14 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    id: PropTypes.number
+    id: PropTypes.number,
+    allPropNames: PropTypes.object,
+    allPropNamespaces: PropTypes.object
   }
 
-  getUrl = datatype =>
-    DataApi.getAllEntitiesOfTypeUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
+  getUrl = (datatype) => {
+    return DataApi.getAllEntitiesOfTypeUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
+  }
 
   render() {
     const { name, namespace, properties, primaryKey, updateFn, id } = this.props;
@@ -37,6 +40,8 @@ export class EntityType extends React.Component {
           entityTypeNamespace={namespace}
           updateFn={updateFn}
           id={id}
+          allPropNames={this.props.allPropNames}
+          allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />
         <Button href={this.getUrl(Consts.JSON)}>

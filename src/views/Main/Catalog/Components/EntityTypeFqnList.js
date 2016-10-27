@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import Consts from '../../../../utils/AppConsts';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
@@ -11,7 +12,8 @@ export class EntityTypeFqnList extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    id: PropTypes.number
+    id: PropTypes.number,
+    allEntityTypeNamespaces: PropTypes.object
   }
 
   constructor() {
@@ -46,8 +48,6 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   updateFqns = () => {
-    document.getElementById('eName'.concat(this.props.id)).value = Consts.EMPTY;
-    document.getElementById('eSpace'.concat(this.props.id)).value = Consts.EMPTY;
     this.props.updateFn();
     this.setState({ newEntityTypeRow: false });
   }
@@ -56,30 +56,31 @@ export class EntityTypeFqnList extends React.Component {
     this.setState({ error: true });
   }
 
-  addEntityTypeToSchema = () => {
-    const name = document.getElementById('eName'.concat(this.props.id)).value;
-    const namespace = document.getElementById('eSpace'.concat(this.props.id)).value;
+  addEntityTypeToSchema = (namespace, name) => {
     EntityDataModelApi.addEntityTypesToSchema(
       {
         namespace: this.props.schemaNamespace,
         name: this.props.schemaName
       },
       [{ namespace, name }]
-    ).then(() => this.updateFqns())
-    .catch(() => this.updateError());
+    ).then(() => {
+      this.updateFqns();
+    }).catch(() => {
+      this.updateError();
+    });
   }
 
   render() {
     const fqnArray = this.keyPropertyTypes();
-    const entityTypeFqnList = fqnArray.map(fqn =>
-      <EntityTypeFqn
+    const entityTypeFqnList = fqnArray.map((fqn) => {
+      return (<EntityTypeFqn
         key={fqn.key}
         entityTypeFqn={fqn}
         schemaName={this.props.schemaName}
         schemaNamespace={this.props.schemaNamespace}
         updateFn={this.props.updateFn}
-      />
-    );
+      />);
+    });
     const id = this.props.id;
     return (
       <div>
@@ -91,16 +92,13 @@ export class EntityTypeFqnList extends React.Component {
               <th className={styles.tableCell}>Namespace</th>
             </tr>
             {entityTypeFqnList}
-            <tr className={this.addRowClassName[this.state.newEntityTypeRow]}>
-              <td />
-              <td>
-                <input type="text" id={'eName'.concat(id)} placeholder="name" className={styles.tableCell} />
-              </td>
-              <td>
-                <input type="text" id={'eSpace'.concat(id)} placeholder="namespace" className={styles.tableCell} />
-              </td>
-              <td><Button onClick={this.addEntityTypeToSchema}>Save</Button></td>
-            </tr>
+            <NameNamespaceAutosuggest
+              className={this.addRowClassName[this.state.newEntityTypeRow]}
+              id={id}
+              namespaces={this.props.allEntityTypeNamespaces}
+              addProperty={this.addEntityTypeToSchema}
+              type={Consts.ENTITY_TYPE}
+            />
           </tbody>
         </table>
         <Button onClick={this.newEntityType} className={this.addRowClassName[!this.state.newEntityTypeRow]}>+</Button>

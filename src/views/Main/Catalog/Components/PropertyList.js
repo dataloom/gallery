@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import Consts from '../../../../utils/AppConsts';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyList extends React.Component {
@@ -12,7 +13,9 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    id: PropTypes.number
+    id: PropTypes.number,
+    allPropNames: PropTypes.object,
+    allPropNamespaces: PropTypes.object
   }
 
   constructor() {
@@ -47,8 +50,6 @@ export class PropertyList extends React.Component {
   }
 
   updateFqns = () => {
-    document.getElementById('propertyName'.concat(this.props.id)).value = Consts.EMPTY;
-    document.getElementById('propertyNamespace'.concat(this.props.id)).value = Consts.EMPTY;
     this.setState({ newPropertyRow: false });
     this.props.updateFn();
   }
@@ -57,9 +58,7 @@ export class PropertyList extends React.Component {
     this.setState({ error: true });
   }
 
-  addPropertyToEntityType = () => {
-    const name = document.getElementById('propertyName'.concat(this.props.id)).value;
-    const namespace = document.getElementById('propertyNamespace'.concat(this.props.id)).value;
+  addPropertyToEntityType = (namespace, name) => {
     EntityDataModelApi.addPropertyTypesToEntityType(
       {
         namespace: this.props.entityTypeNamespace,
@@ -97,22 +96,14 @@ export class PropertyList extends React.Component {
               <th className={styles.tableCell}>Namespace</th>
             </tr>
             {propertyList}
-            <tr className={this.addRowClassName[this.state.newPropertyRow]}>
-              <td />
-              <td><input
-                type="text"
-                id={'propertyName'.concat(id)}
-                placeholder="name"
-                className={styles.tableCell}
-              /></td>
-              <td><input
-                type="text"
-                id={'propertyNamespace'.concat(id)}
-                placeholder="namespace"
-                className={styles.tableCell}
-              /></td>
-              <td><Button onClick={this.addPropertyToEntityType}>Save</Button></td>
-            </tr>
+            <NameNamespaceAutosuggest
+              className={this.addRowClassName[this.state.newPropertyRow]}
+              id={id}
+              names={this.props.allPropNames}
+              namespaces={this.props.allPropNamespaces}
+              addProperty={this.addPropertyToEntityType}
+              type={Consts.ENTITY_TYPE}
+            />
           </tbody>
         </table>
         <Button onClick={this.newProperty} className={this.addRowClassName[!this.state.newPropertyRow]}>+</Button>

@@ -15,13 +15,15 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
-export const makeMainRoutes = () => (
-  <Route path={'/'} component={Container} auth={auth}>
-    <IndexRedirect to={'/catalog'} />
-    <Route path={'catalog'} component={Catalog} onEnter={requireAuth} />
-    <Route path={'login'} component={Login} />
-    <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
-  </Route>
-);
+export const makeMainRoutes = () => {
+  return (
+    <Route path={'/'} component={Container} auth={auth}>
+      <IndexRedirect to={'/catalog'} />
+      <Route path={'catalog'} component={Catalog} onEnter={requireAuth} />
+      <Route path={'login'} component={Login} />
+      <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
+    </Route>
+  );
+};
 
 export default makeMainRoutes;

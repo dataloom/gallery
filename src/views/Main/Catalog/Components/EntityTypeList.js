@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
+import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
 import Consts from '../../../../utils/AppConsts';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class EntityTypeList extends React.Component {
@@ -12,7 +14,8 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       newEntityType: false,
-      error: false
+      error: false,
+      allPropNamespaces: {}
     };
   }
 
@@ -54,24 +57,42 @@ export class EntityTypeList extends React.Component {
     const name = document.getElementById('newEntityTypeName').value;
     const namespace = document.getElementById('newEntityTypeNamespace').value;
     const pKey = [{
-      name: document.getElementById('pKeyName').value,
-      namespace: document.getElementById('pKeyNamespace').value
+      name: document.getElementById(`newName${Consts.PROPERTY_TYPE}0`).firstChild.firstChild.value,
+      namespace: document.getElementById(`newNamespace${Consts.PROPERTY_TYPE}0`).firstChild.firstChild.value
     }];
     EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
-    .then(() => this.newEntityTypeSuccess())
-    .catch(() => this.showError());
+    .then(() => {
+      this.newEntityTypeSuccess();
+    }).catch(() => {
+      this.showError();
+    });
   }
 
   updateFn = () => {
-    EntityDataModelApi.getAllEntityTypes()
-      .then((entityTypes) => {
-        this.setState({ entityTypes: Utils.addKeysToArray(entityTypes) });
-      });
+    Promise.join(
+      EntityDataModelApi.getAllEntityTypes(),
+      EntityDataModelApi.getAllPropertyTypes(),
+      (entityTypes, propertyTypes) => {
+        const allPropNamespaces = {};
+        propertyTypes.forEach((prop) => {
+          if (allPropNamespaces[prop.namespace] === undefined) {
+            allPropNamespaces[prop.namespace] = [prop.name];
+          }
+          else {
+            allPropNamespaces[prop.namespace].push(prop.name);
+          }
+        });
+        this.setState({
+          entityTypes: Utils.addKeysToArray(entityTypes),
+          allPropNamespaces
+        });
+      }
+    );
   }
 
   render() {
-    const entityTypeList = this.state.entityTypes.map(entityType =>
-      <EntityType
+    const entityTypeList = this.state.entityTypes.map((entityType) => {
+      return (<EntityType
         key={entityType.key}
         id={entityType.key}
         name={entityType.name}
@@ -79,8 +100,9 @@ export class EntityTypeList extends React.Component {
         properties={entityType.properties}
         primaryKey={entityType.primaryKey}
         updateFn={this.updateFn}
-      />
-    );
+        allPropNamespaces={this.state.allPropNamespaces}
+      />);
+    });
     return (
       <div>
         <div className={styles.edmContainer}>
@@ -109,22 +131,13 @@ export class EntityTypeList extends React.Component {
             <div>Primary Key:</div>
             <table>
               <tbody>
-                <tr>
-                  <td>
-                    <input
-                      id="pKeyName"
-                      className={styles.inputBox}
-                      type="text"
-                      placeholder="property name"
-                    />
-                    <input
-                      id="pKeyNamespace"
-                      className={styles.inputBox}
-                      type="text"
-                      placeholder="property namespace"
-                    />
-                  </td>
-                </tr>
+                <NameNamespaceAutosuggest
+                  id={0}
+                  namespaces={this.state.allPropNamespaces}
+                  addProperty={this.createNewEntityType}
+                  type={Consts.PROPERTY_TYPE}
+                  saveOption={false}
+                />
               </tbody>
             </table>
             <div className={styles.spacerSmall} />
