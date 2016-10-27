@@ -94,10 +94,8 @@ export class EntityTypeFqnList extends React.Component {
             {entityTypeFqnList}
             <NameNamespaceAutosuggest
               className={this.addRowClassName[this.state.newEntityTypeRow]}
-              id={id}
               namespaces={this.props.allEntityTypeNamespaces}
               addProperty={this.addEntityTypeToSchema}
-              type={Consts.ENTITY_TYPE}
             />
           </tbody>
         </table>

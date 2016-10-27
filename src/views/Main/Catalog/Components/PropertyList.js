@@ -101,11 +101,9 @@ export class PropertyList extends React.Component {
             {propertyList}
             <NameNamespaceAutosuggest
               className={this.addRowClassName[this.state.newPropertyRow]}
-              id={id}
               names={this.props.allPropNames}
               namespaces={this.props.allPropNamespaces}
               addProperty={this.addPropertyToEntityType}
-              type={Consts.ENTITY_TYPE}
             />
           </tbody>
         </table>

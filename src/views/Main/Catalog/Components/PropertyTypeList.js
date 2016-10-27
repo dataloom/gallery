@@ -193,10 +193,8 @@ export class PropertyTypeList extends React.Component {
             </tr>
             <NameNamespaceAutosuggest
               className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
-              id={id}
               namespaces={this.props.allPropNamespaces}
               addProperty={this.addPropertyToSchema}
-              type={Consts.PROPERTY_TYPE}
             />
           </tbody>
         </table>

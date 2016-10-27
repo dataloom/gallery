@@ -158,7 +158,6 @@ export class EntityTypeList extends React.Component {
                 <NameNamespaceAutosuggest
                   namespaces={this.state.allPropNamespaces}
                   addProperty={this.createNewEntityType}
-                  type={Consts.PROPERTY_TYPE}
                   saveOption={false}
                   onNameChange={this.handlePKeyNameChange}
                   onNamespaceChange={this.handlePKeyNamespaceChange}
