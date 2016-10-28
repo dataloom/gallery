@@ -11,7 +11,7 @@ const prodWebpackConfig = require('./webpack.config.prod.js');
 
 const appWebpackConfig = {};
 
-if (ENV.__DEV__) {
+if (ENV.__LOCAL__) {
   Object.assign(appWebpackConfig, devWebpackConfig);
 }
 else if (ENV.__PROD__) {
