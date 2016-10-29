@@ -12,17 +12,17 @@ const auth = new AuthService(Consts.AUTH0_CLIENT_ID, Consts.AUTH0_DOMAIN);
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
   if (!auth.loggedIn()) {
-    replace({ pathname: '/login' });
+    replace({ pathname: `/${Consts.LOGIN}` });
   }
 };
 
 export const makeMainRoutes = () => {
   return (
     <Route path={'/'} component={Container} auth={auth}>
-      <IndexRedirect to={'/home'} />
-      <Route path={'home'} component={Home} onEnter={requireAuth} />
-      <Route path={'catalog'} component={Catalog} onEnter={requireAuth} />
-      <Route path={'login'} component={Login} />
+      <IndexRedirect to={`/${Consts.HOME}`} />
+      <Route path={Consts.HOME} component={Home} onEnter={requireAuth} />
+      <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
+      <Route path={Consts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
     </Route>
   );

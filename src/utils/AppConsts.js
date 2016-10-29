@@ -8,6 +8,10 @@ const AUTH0_DOMAIN = 'loom.auth0.com';
 const JSON = 'json';
 const CSV = 'csv';
 
+const HOME = 'home';
+const CATALOG = 'catalog';
+const LOGIN = 'login';
+
 const SCHEMA = 'schema';
 const ENTITY_SET = 'entitySet';
 const ENTITY_TYPE = 'entityType';
@@ -20,6 +24,9 @@ export default {
   AUTH0_DOMAIN,
   JSON,
   CSV,
+  HOME,
+  CATALOG,
+  LOGIN,
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
