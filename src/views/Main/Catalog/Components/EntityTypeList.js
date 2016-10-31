@@ -15,7 +15,11 @@ export class EntityTypeList extends React.Component {
       entityTypes: [],
       newEntityType: false,
       error: false,
-      allPropNamespaces: {}
+      allPropNamespaces: {},
+      newEntityTypeName: '',
+      newEntityTypeNamespace: '',
+      newPKeyName: '',
+      newPKeyNamespace: ''
     };
   }
 
@@ -38,13 +42,15 @@ export class EntityTypeList extends React.Component {
   }
 
   newEntityTypeSuccess = () => {
-    document.getElementById('newEntityTypeName').value = Consts.EMPTY;
-    document.getElementById('newEntityTypeNamespace').value = Consts.EMPTY;
     EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
-          newEntityType: false
+          newEntityType: false,
+          newEntityTypeName: '',
+          newEntityTypeNamespace: '',
+          newPKeyName: '',
+          newPKeyNamespace: ''
         });
       });
   }
@@ -54,13 +60,13 @@ export class EntityTypeList extends React.Component {
   }
 
   createNewEntityType = () => {
-    const type = document.getElementById('newEntityTypeName').value;
-    const namespace = document.getElementById('newEntityTypeNamespace').value;
+    const name = this.state.newEntityTypeName;
+    const namespace = this.state.newEntityTypeNamespace;
     const pKey = [{
-      name: document.getElementById(`newName${Consts.PROPERTY_TYPE}0`).firstChild.firstChild.value,
-      namespace: document.getElementById(`newNamespace${Consts.PROPERTY_TYPE}0`).firstChild.firstChild.value
+      name: this.state.newPKeyName,
+      namespace: this.state.newPKeyNamespace
     }];
-    EntityDataModelApi.createEntityType({ namespace, type, properties: pKey, key: pKey })
+    EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
     .then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
@@ -90,11 +96,26 @@ export class EntityTypeList extends React.Component {
     );
   }
 
+  handleNameChange = (e) => {
+    this.setState({ newEntityTypeName: e.target.value });
+  }
+
+  handleNamespaceChange = (e) => {
+    this.setState({ newEntityTypeNamespace: e.target.value });
+  }
+
+  handlePKeyNameChange = (newValue) => {
+    this.setState({ newPKeyName: newValue });
+  }
+
+  handlePKeyNamespaceChange = (newValue) => {
+    this.setState({ newPKeyNamespace: newValue });
+  }
+
   render() {
     const entityTypeList = this.state.entityTypes.map((entityType) => {
       return (<EntityType
         key={entityType.key}
-        id={entityType.key}
         name={entityType.name}
         namespace={entityType.namespace}
         properties={entityType.properties}
@@ -114,7 +135,8 @@ export class EntityTypeList extends React.Component {
           <div className={this.showNewEntityType[this.state.newEntityType]}>
             <div>Entity Type Name:</div>
             <input
-              id="newEntityTypeName"
+              value={this.state.newEntityTypeName}
+              onChange={this.handleNameChange}
               className={styles.inputBox}
               type="text"
               placeholder="name"
@@ -122,7 +144,8 @@ export class EntityTypeList extends React.Component {
             <div className={styles.spacerSmall} />
             <div>Entity Type Namespace:</div>
             <input
-              id="newEntityTypeNamespace"
+              value={this.state.newEntityTypeNamespace}
+              onChange={this.handleNamespaceChange}
               className={styles.inputBox}
               type="text"
               placeholder="namespace"
@@ -132,11 +155,11 @@ export class EntityTypeList extends React.Component {
             <table>
               <tbody>
                 <NameNamespaceAutosuggest
-                  id={0}
                   namespaces={this.state.allPropNamespaces}
                   addProperty={this.createNewEntityType}
-                  type={Consts.PROPERTY_TYPE}
                   saveOption={false}
+                  onNameChange={this.handlePKeyNameChange}
+                  onNamespaceChange={this.handlePKeyNamespaceChange}
                 />
               </tbody>
             </table>

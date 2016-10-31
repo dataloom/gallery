@@ -13,7 +13,6 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    id: PropTypes.number,
     allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
@@ -65,12 +64,15 @@ export class PropertyList extends React.Component {
         name: this.props.entityTypeName
       },
       [{ namespace, name }]
-    ).then(() => this.updateFqns())
-    .catch(() => this.updateError());
+    ).then(() => {
+      this.updateFqns();
+    }).catch(() => {
+      this.updateError();
+    });
   }
 
   render() {
-    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn, id } = this.props;
+    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
@@ -98,11 +100,9 @@ export class PropertyList extends React.Component {
             {propertyList}
             <NameNamespaceAutosuggest
               className={this.addRowClassName[this.state.newPropertyRow]}
-              id={id}
               names={this.props.allPropNames}
               namespaces={this.props.allPropNamespaces}
               addProperty={this.addPropertyToEntityType}
-              type={Consts.ENTITY_TYPE}
             />
           </tbody>
         </table>

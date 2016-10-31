@@ -15,7 +15,9 @@ export class SchemaList extends React.Component {
       newSchema: false,
       error: false,
       allPropNamespaces: {},
-      allEntityTypeNamespaces: {}
+      allEntityTypeNamespaces: {},
+      newSchemaName: '',
+      newSchemaNamespace: ''
     };
   }
 
@@ -38,13 +40,13 @@ export class SchemaList extends React.Component {
   }
 
   newSchemaSuccess = () => {
-    document.getElementById('newSchemaName').value = Consts.EMPTY;
-    document.getElementById('newSchemaNamespace').value = Consts.EMPTY;
     EntityDataModelApi.getAllSchemas()
       .then((schemas) => {
         this.setState({
           schemas: Utils.addKeysToArray(schemas),
-          newSchema: false
+          newSchema: false,
+          newSchemaName: '',
+          newSchemaNamespace: ''
         });
       });
   }
@@ -54,8 +56,8 @@ export class SchemaList extends React.Component {
   }
 
   createNewSchema = () => {
-    const name = document.getElementById('newSchemaName').value;
-    const namespace = document.getElementById('newSchemaNamespace').value;
+    const name = this.state.newSchemaName;
+    const namespace = this.state.newSchemaNamespace;
     EntityDataModelApi.createSchema({ namespace, name })
     .then(() => {
       this.newSchemaSuccess();
@@ -97,11 +99,18 @@ export class SchemaList extends React.Component {
       });
   }
 
+  handleNameChange = (e) => {
+    this.setState({ newSchemaName: e.target.value });
+  }
+
+  handleNamespaceChange = (e) => {
+    this.setState({ newSchemaNamespace: e.target.value });
+  }
+
   render() {
     const schemaList = this.state.schemas.map((schema) => {
       return (<Schema
         key={schema.key}
-        id={schema.key}
         name={schema.name}
         namespace={schema.namespace}
         propertyTypes={schema.propertyTypes}
@@ -122,10 +131,22 @@ export class SchemaList extends React.Component {
           </Button>
           <div className={this.showNewSchema[this.state.newSchema]}>
             <div>Schema Name:</div>
-            <input id="newSchemaName" className={styles.inputBox} type="text" placeholder="name" />
+            <input
+              className={styles.inputBox}
+              type="text"
+              placeholder="name"
+              value={this.state.newSchemaName}
+              onChange={this.handleNameChange}
+            />
             <div className={styles.spacerSmall} />
             <div>Schema Namespace:</div>
-            <input id="newSchemaNamespace" className={styles.inputBox} type="text" placeholder="namespace" />
+            <input
+              className={styles.inputBox}
+              type="text"
+              placeholder="namespace"
+              value={this.state.newSchemaNamespace}
+              onChange={this.handleNamespaceChange}
+            />
             <div className={styles.spacerSmall} />
             <Button onClick={this.createNewSchema}>Create</Button>
           </div>

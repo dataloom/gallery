@@ -12,7 +12,6 @@ export class EntityTypeFqnList extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    id: PropTypes.number,
     allEntityTypeNamespaces: PropTypes.object
   }
 
@@ -81,7 +80,6 @@ export class EntityTypeFqnList extends React.Component {
         updateFn={this.props.updateFn}
       />);
     });
-    const id = this.props.id;
     return (
       <div>
         <table>
@@ -94,10 +92,8 @@ export class EntityTypeFqnList extends React.Component {
             {entityTypeFqnList}
             <NameNamespaceAutosuggest
               className={this.addRowClassName[this.state.newEntityTypeRow]}
-              id={id}
               namespaces={this.props.allEntityTypeNamespaces}
               addProperty={this.addEntityTypeToSchema}
-              type={Consts.ENTITY_TYPE}
             />
           </tbody>
         </table>
