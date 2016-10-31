@@ -5,6 +5,10 @@
 const AUTH0_CLIENT_ID = 'KvwsETaUxuXVjW2cmz2LbdqXQBdYs6wH';
 const AUTH0_DOMAIN = 'loom.auth0.com';
 
+const LOCAL = 'http://localhost:8080';
+const STG = 'http://staging.loom.digital';
+const PROD = 'http://api.loom.digital';
+
 const JSON = 'json';
 const CSV = 'csv';
 
@@ -22,6 +26,9 @@ const EMPTY = '';
 export default {
   AUTH0_CLIENT_ID,
   AUTH0_DOMAIN,
+  LOCAL,
+  STG,
+  PROD,
   JSON,
   CSV,
   HOME,
