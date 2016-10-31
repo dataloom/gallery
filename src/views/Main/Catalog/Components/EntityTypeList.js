@@ -60,13 +60,13 @@ export class EntityTypeList extends React.Component {
   }
 
   createNewEntityType = () => {
-    const type = this.state.newEntityTypeName;
+    const name = this.state.newEntityTypeName;
     const namespace = this.state.newEntityTypeNamespace;
     const pKey = [{
       name: this.state.newPKeyName,
       namespace: this.state.newPKeyNamespace
     }];
-    EntityDataModelApi.createEntityType({ namespace, type, properties: pKey, key: pKey })
+    EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
     .then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
