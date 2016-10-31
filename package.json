@@ -5,7 +5,6 @@
   "main": "app.js",
   "scripts": {
     "app": "npm run webpack:server",
-    "build:dev": "npm run webpack:dev",
     "build:prod": "npm run webpack:prod",
     "clean": "rimraf build/*",
     "flow": "echo \"Error: flow task not implemented\" && exit 1",
@@ -13,9 +12,9 @@
     "lint:js": "echo \"Error: lint:js task not implemented\" && exit 1",
     "lint:css": "echo \"Error: lint:css task not implemented\" && exit 1",
     "test": "echo \"Error: test task not implemented\" && exit 1",
-    "webpack:dev": "NODE_ENV=development webpack --config config/webpack.config.babel.js",
+    "webpack:local": "NODE_ENV=local webpack --config config/webpack.config.babel.js",
     "webpack:prod": "NODE_ENV=production webpack --config config/webpack.config.babel.js",
-    "webpack:server": "NODE_ENV=development webpack-dev-server --config config/webpack.config.babel.js --port 9000",
+    "webpack:server": "NODE_ENV=local webpack-dev-server --config config/webpack.config.babel.js --port 9000",
     "webpack:prod:server": "NODE_ENV=production webpack-dev-server --config config/webpack.config.babel.js --port 9000 --host 0.0.0.0"
   },
   "author": "Hristo Oskov",
@@ -27,7 +26,7 @@
     "enzyme": "^2.4.1",
     "file-saver": "^1.3.2",
     "jwt-decode": "^2.0.1",
-    "loom-data": "^0.5.0",
+    "loom-data": "^0.6.0",
     "react": "^15.3.2",
     "react-autosuggest": "^7.0.0",
     "react-bootstrap": "^0.30.0-rc.1",

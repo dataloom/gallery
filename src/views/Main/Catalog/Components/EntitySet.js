@@ -12,7 +12,7 @@ export class EntitySet extends React.Component {
   }
 
   getUrl = datatype =>
-    DataApi.getAllEntitiesOfTypeInSetUrl(this.props.type, this.props.name, datatype);
+    DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
 
   render() {
     const { name, title, type } = this.props;
