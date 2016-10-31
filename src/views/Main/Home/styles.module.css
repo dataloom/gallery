@@ -1,9 +1,31 @@
 .sectionHeader {
-  font-size: 20px;
   text-align: center;
-  padding: 20px;
 }
 
 .spacer {
   height: 30px;
+}
+
+.spacerSmall {
+  height: 15px;
+}
+
+.objContainer {
+  left: 20px;
+  margin: 50px;
+  background: #f6f6f6;
+  padding: 20px;
+}
+
+.important {
+  font-weight: bold;
+  display: inline;
+}
+
+.inline {
+  display: inline;
+}
+
+.hidden {
+  display: none;
 }

@@ -36,7 +36,14 @@ export class DataModelToolbar extends React.Component {
         className = styles.selectedButtonStyle;
       }
       return (
-        <button onClick={() => this.updateViewAndToolbar(type)} className={className} key={labels.key}>{label}</button>
+        <button
+          className={className}
+          key={labels.key}
+          onClick={() => {
+            return this.updateViewAndToolbar(type);
+          }}
+        >{label}
+        </button>
       );
     });
 

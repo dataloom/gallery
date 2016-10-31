@@ -64,13 +64,13 @@ export class Navbar extends React.Component {
           <button
             className={this.getButtonClass(Consts.HOME)}
             onClick={() => {
-              this.updateState(Consts.HOME)
+              this.updateState(Consts.HOME);
             }}
           >Home</button>
           <button
             className={this.getButtonClass(Consts.CATALOG)}
             onClick={() => {
-              this.updateState(Consts.CATALOG)
+              this.updateState(Consts.CATALOG);
             }}
           >Catalog</button>
         </div>
