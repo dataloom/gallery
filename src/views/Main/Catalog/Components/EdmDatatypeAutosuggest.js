@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
 import Utils from '../../../../utils/Utils';
 import '../../../../styles/autosuggest.css';
@@ -16,6 +16,10 @@ const renderSuggestion = (suggestion) => {
 };
 
 export class EdmDatatypeAutosuggest extends React.Component {
+  static propTypes = {
+    onChangeFn: PropTypes.func
+  }
+
   constructor() {
     super();
     this.state = {
@@ -44,7 +48,16 @@ export class EdmDatatypeAutosuggest extends React.Component {
     });
   };
 
+  onSuggestionSelected = ({ suggestion }) => {
+    if (suggestion !== undefined) {
+      this.props.onChangeFn(suggestion);
+    }
+  }
+
   onChange = (event, { newValue }) => {
+    if (newValue !== undefined) {
+      this.props.onChangeFn(newValue);
+    }
     this.setState({
       value: newValue
     });
@@ -67,6 +80,7 @@ export class EdmDatatypeAutosuggest extends React.Component {
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
         getSuggestionValue={getSuggestionValue}
+        onSuggestionSelected={this.onSuggestionSelected}
         renderSuggestion={renderSuggestion}
         inputProps={inputProps}
         shouldRenderSuggestions={this.shouldRenderSuggestions}

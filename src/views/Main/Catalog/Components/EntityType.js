@@ -12,7 +12,6 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    id: PropTypes.number,
     allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
@@ -22,7 +21,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { name, namespace, properties, primaryKey, updateFn, id } = this.props;
+    const { name, namespace, properties, primaryKey, updateFn } = this.props;
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
@@ -39,7 +38,6 @@ export class EntityType extends React.Component {
           entityTypeName={name}
           entityTypeNamespace={namespace}
           updateFn={updateFn}
-          id={id}
           allPropNames={this.props.allPropNames}
           allPropNamespaces={this.props.allPropNamespaces}
         />

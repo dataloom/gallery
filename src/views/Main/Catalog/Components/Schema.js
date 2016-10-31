@@ -14,7 +14,6 @@ export class Schema extends React.Component {
     entityTypeFqns: PropTypes.array,
     jsonContents: PropTypes.object,
     updateFn: PropTypes.func,
-    id: PropTypes.number,
     allPropNamespaces: PropTypes.object,
     allEntityTypeNamespaces: PropTypes.object
   }
@@ -50,7 +49,7 @@ export class Schema extends React.Component {
   }
 
   render() {
-    const { name, namespace, propertyTypes, entityTypeFqns, updateFn, id } = this.props;
+    const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
@@ -66,7 +65,6 @@ export class Schema extends React.Component {
           schemaName={name}
           schemaNamespace={namespace}
           updateFn={updateFn}
-          id={id}
           allEntityTypeNamespaces={this.props.allEntityTypeNamespaces}
         />
         <br />
@@ -78,7 +76,6 @@ export class Schema extends React.Component {
           namespace={namespace}
           updateSchemaFn={updateFn}
           navBar={false}
-          id={id}
           allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />

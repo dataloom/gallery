@@ -21,7 +21,9 @@ export class EntityTypeFqn extends React.Component {
         namespace: this.props.entityTypeFqn.namespace,
         name: this.props.entityTypeFqn.name
       }]
-    ).then(() => this.props.updateFn());
+    ).then(() => {
+      return this.props.updateFn();
+    });
   }
 
   render() {
