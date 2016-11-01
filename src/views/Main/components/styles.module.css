@@ -1,0 +1,97 @@
+
+.topbarContainer {
+  height: 50px;
+  background: white;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  vertical-align: middle;
+  box-shadow: 1px 1px 20px #eeeeee;
+  z-index: 1;
+}
+
+.navbarContainer {
+  width: 80px;
+  background: #f1f5f8;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  vertical-align: middle;
+  z-index: 0;
+  margin-top: 40px;
+}
+
+.logo {
+  max-width: 80%;
+  max-height: 80%;
+  padding-left: 15px;
+}
+
+.loom {
+  display: inline-block;
+  position: relative;
+  margin-left: 20px;
+  height: 60%;
+  top: 30%;
+  color: #525557;
+  font-size: 30px;
+}
+
+.logoutButton {
+  position: relative;
+  float: right;
+  margin-right: 10px;
+  height: 70%;
+  top: 15%;
+}
+
+.navButton {
+  text-align: center;
+  background: none;
+  border: none;
+  height: 80px;
+  width: 80px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  color: #404446;
+  border-bottom: 1px solid #D1D6DA;
+}
+
+.navButton:hover {
+  text-align: center;
+  background: none;
+  border: none;
+  height: 80px;
+  width: 80px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  color: #404446;
+  border-bottom: 1px solid #D1D6DA;
+}
+
+.navButtonSelected {
+  text-align: center;
+  border: none;
+  height: 80px;
+  width: 80px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  color: #404446;
+  border-bottom: 1px solid #D1D6DA;
+}
+
+.navButtonSelected:hover {
+  text-align: center;
+  border: none;
+  height: 80px;
+  width: 80px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 16px;
+  color: #404446;
+  border-bottom: 1px solid #D1D6DA;
+}

@@ -4,33 +4,13 @@ import AuthService from '../../../utils/AuthService';
 import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
 
-export class Navbar extends React.Component {
+export class Topbar extends React.Component {
   static contextTypes = {
     router: PropTypes.object
   }
 
   static propTypes = {
     auth: PropTypes.instanceOf(AuthService)
-  }
-
-  constructor() {
-    super();
-    this.state = {
-      selected: this.getCurrentState()
-    };
-  }
-
-  getCurrentState = () => {
-    const hashRegex = /#\/([a-zA-Z]+)(?!\?.*)?/;
-    const route = window.location.hash.match(hashRegex)[1];
-    switch (route) {
-      case (Consts.HOME):
-        return Consts.HOME;
-      case (Consts.CATALOG):
-        return Consts.CATALOG;
-      default:
-        return Consts.HOME;
-    }
   }
 
   showLogoutButton() {
@@ -56,22 +36,12 @@ export class Navbar extends React.Component {
 
   render() {
     return (
-      <div className={styles.navbarContainer}>
-        <button
-          className={this.getButtonClass(Consts.HOME)}
-          onClick={() => {
-            this.updateState(Consts.HOME);
-          }}
-        >Home</button>
-        <button
-          className={this.getButtonClass(Consts.CATALOG)}
-          onClick={() => {
-            this.updateState(Consts.CATALOG);
-          }}
-        >Catalog</button>
+      <div className={styles.topbarContainer}>
+        <div className={styles.loom}>Loom</div>
+        {this.showLogoutButton()}
       </div>
     );
   }
 }
 
-export default Navbar;
+export default Topbar;

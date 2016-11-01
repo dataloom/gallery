@@ -10,86 +10,12 @@
   height: 50px;
 }
 
-.navbarContainer {
-  height: 50px;
-  background: gray;
-  width: 100%;
-  top: 0;
-  position: absolute;
+.bodyContainer {
+  background: white;
+  margin-left: 80px;
 }
 
-.logo {
-  max-width: 80%;
-  max-height: 80%;
-  padding-left: 15px;
-}
-
-.loom {
-  display: inline-block;
-  color: #f6f6f6;
-  font-size: 30px;
-  vertical-align: middle;
-}
-
-.logoutButton {
-  position: relative;
-  float: right;
-  margin-right: 10px;
-  height: 70%;
-  top: 15%;
-}
-
-.navButtonsContainer {
-  display: inline-block;
-  vertical-align: middle;
-  height: 100%;
-  margin-left: 30px;
-}
-
-.navButton {
-  display: inline-block;
-  vertical-align: middle;
-  background: none;
-  border: none;
-  height: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-size: 16px;
-  color: #f6f6f6;
-}
-
-.navButton:hover {
-  display: inline-block;
-  vertical-align: middle;
-  background: #656565;
-  border: none;
-  height: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-size: 16px;
-  color: #b6b6b6;
-}
-
-.navButtonSelected {
-  display: inline-block;
-  vertical-align: middle;
-  background: #505050;
-  border: none;
-  height: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-size: 16px;
-  color: #f6f6f6;
-}
-
-.navButtonSelected:hover {
-  display: inline-block;
-  vertical-align: middle;
-  background: #505050;
-  border: none;
-  height: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-size: 16px;
-  color: #b6b6b6;
+h1, h2 {
+  font-size: 20px;
+  font-weight: bold;
 }

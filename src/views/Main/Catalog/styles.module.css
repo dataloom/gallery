@@ -2,10 +2,18 @@ th {
   font-size: 14px;
 }
 
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
 .edmContainer {
   left: 20px;
-  margin: 50px;
-  background: #f6f6f6;
+  margin-left: 50px;
   padding: 20px;
 }
 
@@ -35,6 +43,10 @@ th {
 
 .spacerMed {
   height: 20px;
+}
+
+.spacerBig {
+  height: 40px;
 }
 
 .spacerMargin {

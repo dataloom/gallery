@@ -47,6 +47,8 @@ export class EntitySet extends React.Component {
         <Button href={this.getUrl(Consts.CSV)} className={styles.spacerMargin}>
           Download {name} as CSV
         </Button>
+        <div className={styles.spacerBig} />
+        <hr />
       </div>
     );
   }

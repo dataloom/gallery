@@ -126,7 +126,7 @@ export class Home extends React.Component {
             </div>
           </div>
           <div className={this.shouldShow[(reqStatus !== 0)]}>
-            You have {authConsts[reqStatus]} {request.email} access to {request.dataset}
+            You have {authConsts[reqStatus]} {request.email} access to {request.dataset}.
           </div>
         </div>
       );

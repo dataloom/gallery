@@ -13,8 +13,9 @@
 .objContainer {
   left: 20px;
   margin: 50px;
-  background: #f6f6f6;
+  background: #f1f5f8;
   padding: 20px;
+  border-left: 7px solid #5a5e65;
 }
 
 .important {

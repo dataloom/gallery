@@ -81,6 +81,8 @@ export class Schema extends React.Component {
         <br />
         <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>
         <div className={this.state.error}>Unable to download {name}</div>
+        <div className={styles.spacerBig} />
+        <hr />
       </div>
     );
   }
