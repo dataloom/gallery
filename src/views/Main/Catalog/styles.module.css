@@ -69,6 +69,15 @@ th {
   border: none;
 }
 
+.buttonStyle:hover {
+  display: table-cell;
+  margin: 0;
+  vertical-align: middle;
+  padding: 10px;
+  border: none;
+  background: #aaaaaa;
+}
+
 .selectedButtonStyle {
   display: table-cell;
   margin: 0;

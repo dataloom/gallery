@@ -59,7 +59,10 @@ export class Home extends React.Component {
     this.state = {
       resolved: {}
     };
-    this.loadThings();
+  }
+
+  componentDidMount() {
+    this.loadRequestStatuses();
   }
 
   shouldShow = {
@@ -67,7 +70,7 @@ export class Home extends React.Component {
     false: styles.hidden
   }
 
-  loadThings = () => {
+  loadRequestStatuses = () => {
     const map = this.state.resolved;
     requests.forEach((request) => {
       map[request.key] = 0;
