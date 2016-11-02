@@ -1,0 +1,85 @@
+.hidden {
+  display: none;
+}
+
+.dropdownContainer {
+  position: relative;
+}
+
+.buttonContainer {
+  height: 30px;
+}
+
+.downloadButton {
+  background: #d1d6da;
+  color: #404446;
+  height: 100%;
+  vertical-align: middle;
+  border: none;
+  width: 115px;
+  text-align: left;
+  padding-left: 10px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  display: inline-block;
+}
+
+.downloadButtonSingle {
+  background: #d1d6da;
+  color: #404446;
+  height: 100%;
+  vertical-align: middle;
+  border: none;
+  width: 115px;
+  text-align: center;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.dropdownButton {
+  display: inline-block;
+  background: #7d8082;
+  color: white;
+  font-size: 8px;
+  vertical-align: middle;
+  text-align: center;
+  height: 100%;
+  width: 20px;
+  border: none;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.menuContainer {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: -1px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  width: 115px;
+  right: 20px;
+  z-index: 1000;
+  -webkit-overflow-scrolling: touch;
+  text-align: left;
+}
+
+.menuOption {
+  box-sizing: border-box;
+  color: rgba(51, 51, 51, 0.8);
+  display: block;
+}
+
+.menuOption:hover {
+  background-color: #f2f9fc;
+  color: #333;
+}
+
+.menuOptionButton {
+  border: none;
+  background: none;
+  padding: 8px 10px;
+}

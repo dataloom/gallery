@@ -1,11 +1,9 @@
 import React, { PropTypes } from 'react';
-import Dropdown from 'react-dropdown';
 import { DataApi, EntityDataModelApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
+import { DropdownButton } from './DropdownButton';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
-
-const downloadOptions = [`Download .${Consts.CSV}`, `Download .${Consts.JSON}`];
 
 export class EntitySet extends React.Component {
   static propTypes = {
@@ -37,18 +35,15 @@ export class EntitySet extends React.Component {
 
   render() {
     const { name, title, type } = this.props;
+    const downloadOptions = [Consts.CSV, Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
         <div className={styles.spacerMed} />
         <div className={styles.subtitle}>{title}</div>
         <div className={styles.spacerMed} />
-        <div className={styles.downloadOptionSelect}>
-          <Dropdown
-            options={downloadOptions}
-            onChange={this.onSelect}
-            value={downloadOptions[0]}
-          />
+        <div className={styles.dropdownButtonContainer}>
+          <DropdownButton downloadUrlFn={this.getUrl} downloadOptions={downloadOptions} />
         </div>
         <div>
           <table>

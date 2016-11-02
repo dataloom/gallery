@@ -175,3 +175,7 @@ tr:first-child .tableCell {
   background: -webkit-linear-gradient(#dddddd, #d1d6da);
   margin: 10px;
 }
+
+.dropdownButtonContainer {
+  text-align: right;
+}

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
+import { DropdownButton } from './DropdownButton';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
 
@@ -21,11 +22,15 @@ export class EntityType extends React.Component {
 
   render() {
     const { name, namespace, properties, primaryKey, updateFn } = this.props;
+    const downloadOptions = [Consts.CSV, Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
         <div className={styles.spacerSmall} />
         <div className={styles.subtitle}>{namespace}</div>
+        <div className={styles.dropdownButtonContainer}>
+          <DropdownButton downloadUrlFn={this.getUrl} downloadOptions={downloadOptions} />
+        </div>
         <div className={styles.spacerMed} />
         <PropertyList
           properties={properties}
@@ -36,13 +41,6 @@ export class EntityType extends React.Component {
           allPropNames={this.props.allPropNames}
           allPropNamespaces={this.props.allPropNamespaces}
         />
-        <br />
-        <button href={this.getUrl(Consts.JSON)} className={styles.genericButton}>
-          Download {name} as JSON
-        </button>
-        <button href={this.getUrl(Consts.CSV)} className={styles.genericButtonMargin}>
-          Download {name} as CSV
-        </button>
         <div className={styles.spacerBig} />
         <hr />
       </div>

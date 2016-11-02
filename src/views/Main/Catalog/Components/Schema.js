@@ -3,6 +3,7 @@ import { PropertyTypeList } from './PropertyTypeList';
 import Consts from '../../../../utils/AppConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
+import { DropdownButton } from './DropdownButton';
 import styles from '../styles.module.css';
 
 export class Schema extends React.Component {
@@ -49,12 +50,16 @@ export class Schema extends React.Component {
 
   render() {
     const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
+    const downloadOptions = [Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
         <div className={styles.spacerSmall} />
         <div className={styles.subtitle}>{namespace}</div>
         <div className={styles.spacerMed} />
+        <div className={styles.dropdownButtonContainer}>
+          <DropdownButton downloadFn={this.downloadFile} downloadOptions={downloadOptions} />
+        </div>
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
           entityTypeFqns={entityTypeFqns}
@@ -73,12 +78,6 @@ export class Schema extends React.Component {
           navBar={false}
           allPropNamespaces={this.props.allPropNamespaces}
         />
-        <br />
-        <button
-          onClick={this.handleClick}
-          disabled={this.state.disableJson}
-          className={styles.genericButton}
-        >Download {name} as JSON</button>
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />
         <hr />

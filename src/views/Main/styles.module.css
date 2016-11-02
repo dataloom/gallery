@@ -13,9 +13,15 @@
 .bodyContainer {
   background: white;
   margin-left: 80px;
+  margin-right: 80px;
 }
 
 h1, h2 {
-  font-size: 20px;
+  font-size: 26px;
+  color: #404446;
   font-weight: bold;
+}
+
+button {
+  cursor: pointer;
 }
