@@ -73,10 +73,9 @@ export class DropdownButton extends React.Component {
         this.updateDatatype(datatype);
       };
       return (
-        <div className={styles.menuOption}>
+        <div className={styles.menuOption} key={datatype}>
           <button
             className={styles.menuOptionButton}
-            key={datatype}
             onMouseDown={fn}
             onClick={fn}
           >{`Download .${datatype}`}</button>
