@@ -44,6 +44,11 @@
   margin-right: 10px;
   height: 70%;
   top: 15%;
+  background: #d1d6da;
+  color: #404446;
+  border-radius: 3px;
+  border: 0;
+  padding: 0 10px;
 }
 
 .navButton {

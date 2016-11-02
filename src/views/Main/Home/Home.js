@@ -22,11 +22,13 @@ const requests = [
 const activity = [
   {
     time: Date.now(),
-    activity: 'Something tremendously exciting happened.'
+    activity: 'Something tremendously exciting happened.',
+    key: '0'
   },
   {
     time: Date.now(),
-    activity: 'This one is a bit less important.'
+    activity: 'This one is a bit less important.',
+    key: '1'
   }
 ];
 
@@ -100,7 +102,7 @@ export class Home extends React.Component {
     return requests.map((request) => {
       const reqStatus = this.state.resolved[request.key];
       return (
-        <div className={styles.objContainer}>
+        <div className={styles.objContainer} key={request.key}>
           <div className={this.shouldShow[(reqStatus === 0)]}>
             <div>{this.getDateTimeFormatted(request.time)}</div>
             <div>
@@ -137,7 +139,7 @@ export class Home extends React.Component {
   renderActivity = () => {
     return activity.map((event) => {
       return (
-        <div className={styles.objContainer}>
+        <div className={styles.objContainer} key={event.key}>
           <div>{this.getDateTimeFormatted(event.time)}</div>
           <div>{event.activity}</div>
         </div>

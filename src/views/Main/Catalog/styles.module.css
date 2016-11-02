@@ -179,3 +179,17 @@ tr:first-child .tableCell {
 .dropdownButtonContainer {
   text-align: right;
 }
+
+.requestPermissionWrapper {
+  vertical-align: middle;
+  text-align: right;
+}
+
+.requestPermission {
+  border: none;
+  background: #5b5f66;
+  color: white;
+  border-radius: 3px;
+  padding: 8px 15px;
+  vertical-align: middle;
+}

@@ -19,6 +19,11 @@ export class EntitySet extends React.Component {
     };
   }
 
+  requestPermissionClass = {
+    true: styles.requestPermission,
+    false: styles.hidden
+  }
+
   componentDidMount() {
     EntityDataModelApi.getEntityType(this.props.type)
     .then((type) => {
@@ -33,6 +38,10 @@ export class EntitySet extends React.Component {
     return DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
   }
 
+  requestPermission = () => {
+    console.log('give me permsision pls');
+  }
+
   render() {
     const { name, title, type } = this.props;
     const downloadOptions = [Consts.CSV, Consts.JSON];
@@ -44,6 +53,9 @@ export class EntitySet extends React.Component {
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
           <DropdownButton downloadUrlFn={this.getUrl} downloadOptions={downloadOptions} />
+        </div>
+        <div className={this.requestPermissionClass[this.state.requestPermission !== undefined]}>
+          <button className={styles.requestPermission} onClick={this.requestPermission}>Request permission</button>
         </div>
         <div>
           <table>
