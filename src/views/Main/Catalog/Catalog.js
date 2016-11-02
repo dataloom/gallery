@@ -6,6 +6,7 @@ import { EntitySetList } from './Components/EntitySetList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import Consts from '../../../utils/AppConsts';
+import '../../../styles/dropdown.css';
 
 export class Catalog extends React.Component {
 

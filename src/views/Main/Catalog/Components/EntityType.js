@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import Consts from '../../../../utils/AppConsts';
@@ -25,13 +24,9 @@ export class EntityType extends React.Component {
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
-        <div className={styles.descriptionLabel}> (name)</div>
-        <br />
+        <div className={styles.spacerSmall} />
         <div className={styles.subtitle}>{namespace}</div>
-        <div className={styles.descriptionLabel}> (namespace)</div>
-        <br />
         <div className={styles.spacerMed} />
-        <div className={styles.tableDescriptionLabel}>Properties:</div>
         <PropertyList
           properties={properties}
           primaryKey={primaryKey}
@@ -42,12 +37,12 @@ export class EntityType extends React.Component {
           allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />
-        <Button href={this.getUrl(Consts.JSON)}>
+        <button href={this.getUrl(Consts.JSON)} className={styles.genericButton}>
           Download {name} as JSON
-        </Button>
-        <Button href={this.getUrl(Consts.CSV)} className={styles.spacerMargin}>
+        </button>
+        <button href={this.getUrl(Consts.CSV)} className={styles.genericButtonMargin}>
           Download {name} as CSV
-        </Button>
+        </button>
         <div className={styles.spacerBig} />
         <hr />
       </div>

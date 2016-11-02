@@ -1,5 +1,5 @@
 th {
-  font-size: 14px;
+  font-weight: bold;
 }
 
 hr {
@@ -11,6 +11,10 @@ hr {
   padding: 0;
 }
 
+table {
+  border-collapse: collapse;
+}
+
 .edmContainer {
   left: 20px;
   margin-left: 50px;
@@ -18,9 +22,8 @@ hr {
 }
 
 .name {
-  display: inline;
-  font-weight: bold;
-  font-size: 20px;
+  font-size: 24px;
+  color: #404446;
 }
 
 .descriptionLabel {
@@ -30,7 +33,8 @@ hr {
 
 .subtitle {
   display: inline;
-  font-size: 16px;
+  font-size: 14px;
+  color: #404446;
 }
 
 .tableDescriptionLabel {
@@ -55,22 +59,21 @@ hr {
 
 .tableCell {
   padding: 5px 10px;
+  color: #767a7c;
+  border: 1px solid #d1d6da;
 }
 
-.tableRows:nth-child(even) {
-  padding: 5px 10px;
-  background-color: #e3e3e3;
+tr:first-child .tableCell {
+  border: none;
 }
 
-.tableRows:nth-child(odd) {
+.tableRows {
   padding: 5px 10px;
-  background-color: #f1f1f1;
 }
 
 .primaryKey {
   color: gray;
   padding-left: 6px;
-  background: #f6f6f6;
 }
 
 .buttonStyle {
@@ -128,4 +131,47 @@ hr {
 
 .inputBox {
   height: 30px;
+  padding: 0 10px 0 10px;
+}
+
+.downloadOptionSelect {
+  position: absolute;
+  right: 50px;
+  max-width: 200px;
+}
+
+.deleteButton {
+  background: #d30c17;
+  border: 0;
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+.addButton {
+  background: #09a34d;
+  border: 0;
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  color: white;
+  margin-top: 5px;
+}
+
+.genericButton {
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px #767a7c;
+  background: -webkit-linear-gradient(#dddddd, #d1d6da);
+}
+
+.genericButtonMargin {
+  padding: 10px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px #767a7c;
+  background: -webkit-linear-gradient(#dddddd, #d1d6da);
+  margin: 10px;
 }

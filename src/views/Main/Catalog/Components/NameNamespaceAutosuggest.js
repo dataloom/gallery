@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
-import { Button } from 'react-bootstrap';
 import Consts from '../../../../utils/AppConsts';
 import '../../../../styles/autosuggest.css';
 import styles from '../styles.module.css';
@@ -170,7 +169,8 @@ export class NameNamespaceAutosuggest extends React.Component {
             shouldRenderSuggestions={this.shouldRenderSuggestions}
           />
         </td>
-        <td className={this.showSave[this.props.saveOption]}><Button onClick={this.handleSubmit}>Save</Button></td>
+        <td className={this.showSave[this.props.saveOption]}>
+          <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button></td>
       </tr>
     );
   }

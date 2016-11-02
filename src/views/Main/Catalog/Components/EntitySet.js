@@ -1,8 +1,11 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
-import { DataApi } from 'loom-data';
+import Dropdown from 'react-dropdown';
+import { DataApi, EntityDataModelApi } from 'loom-data';
+import { PropertyList } from './PropertyList';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
+
+const downloadOptions = [`Download .${Consts.CSV}`, `Download .${Consts.JSON}`];
 
 export class EntitySet extends React.Component {
   static propTypes = {
@@ -10,6 +13,23 @@ export class EntitySet extends React.Component {
     title: PropTypes.string,
     type: PropTypes.object
   }
+
+  constructor() {
+    super();
+    this.state = {
+      properties: []
+    };
+  }
+
+  componentDidMount() {
+    EntityDataModelApi.getEntityType(this.props.type)
+    .then((type) => {
+      this.setState({
+        properties: type.properties
+      });
+    });
+  }
+
 
   getUrl = (datatype) => {
     return DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
@@ -20,18 +40,22 @@ export class EntitySet extends React.Component {
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
-        <div className={styles.descriptionLabel}> (name)</div>
-        <br />
+        <div className={styles.spacerMed} />
         <div className={styles.subtitle}>{title}</div>
-        <div className={styles.descriptionLabel}> (title)</div>
-        <div className={styles.spacerSmall} />
-        <div className={styles.tableDescriptionLabel}>Type:</div>
+        <div className={styles.spacerMed} />
+        <div className={styles.downloadOptionSelect}>
+          <Dropdown
+            options={downloadOptions}
+            onChange={this.onSelect}
+            value={downloadOptions[0]}
+          />
+        </div>
         <div>
           <table>
             <tbody>
               <tr>
-                <th className={styles.tableCell}>Name</th>
-                <th className={styles.tableCell}>Namespace</th>
+                <th className={styles.tableCell}>Entity Type Name</th>
+                <th className={styles.tableCell}>Entity Type Namespace</th>
               </tr>
               <tr className={styles.tableRows}>
                 <td className={styles.tableCell}>{type.name}</td>
@@ -40,13 +64,14 @@ export class EntitySet extends React.Component {
             </tbody>
           </table>
         </div>
-        <div className={styles.spacerSmall} />
-        <Button href={this.getUrl(Consts.JSON)}>
-          Download {name} as JSON
-        </Button>
-        <Button href={this.getUrl(Consts.CSV)} className={styles.spacerMargin}>
-          Download {name} as CSV
-        </Button>
+        <div className={styles.spacerBig} />
+        <PropertyList
+          properties={this.state.properties}
+          entityTypeName={type.name}
+          entityTypeNamespace={type.namespace}
+          allowEdit={false}
+          entitySetName={name}
+        />
         <div className={styles.spacerBig} />
         <hr />
       </div>

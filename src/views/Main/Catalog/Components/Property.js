@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
-import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
 
 export class Property extends React.Component {
@@ -10,7 +8,8 @@ export class Property extends React.Component {
     primaryKey: PropTypes.bool,
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    entitySetName: PropTypes.string
   }
 
   isPrimaryKey() {
@@ -37,7 +36,7 @@ export class Property extends React.Component {
   }
 
   shouldShowDeleteButton = () => {
-    return (this.props.primaryKey) ? styles.hidden : Consts.EMPTY;
+    return (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
   }
 
   render() {
@@ -45,12 +44,10 @@ export class Property extends React.Component {
     return (
       <tr className={styles.tableRows}>
         <td>
-          <Button
-            bsSize="xsmall"
-            bsStyle="danger"
+          <button
             onClick={this.deleteProp}
             className={this.shouldShowDeleteButton()}
-          >-</Button>
+          >-</button>
         </td>
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>

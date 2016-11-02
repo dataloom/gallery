@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
 
@@ -113,16 +112,18 @@ export class Home extends React.Component {
             <div>{request.msg}</div>
             <div className={styles.spacerSmall} />
             <div>
-              <Button
+              <button
+                className={styles.genericButton}
                 onClick={() => {
                   this.respondToRequest(true, request.email, request.dataset, request.key);
                 }}
-              >Approve</Button>
-              <Button
+              >Approve</button>
+              <button
+                className={styles.genericButtonMargin}
                 onClick={() => {
                   this.respondToRequest(false, request.email, request.dataset, request.key);
                 }}
-              >Deny</Button>
+              >Deny</button>
             </div>
           </div>
           <div className={this.shouldShow[(reqStatus !== 0)]}>

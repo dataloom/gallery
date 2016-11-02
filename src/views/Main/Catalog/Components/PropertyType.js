@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
@@ -24,18 +23,23 @@ export class PropertyType extends React.Component {
         namespace: this.props.propertyType.namespace,
         name: this.props.propertyType.name
       }]
-    ).then(() => this.props.updateFn())
-    .catch(() => this.props.error());
+    ).then(() => {
+      return this.props.updateFn();
+    }).catch(() => {
+      return this.props.error();
+    });
   }
 
-  shouldShowDeleteButton = () => (this.props.navBar ? styles.hidden : Consts.EMPTY);
+  shouldShowDeleteButton = () => {
+    return (this.props.navBar ? styles.hidden : Consts.EMPTY);
+  }
 
   render() {
     const prop = this.props.propertyType;
     return (
       <tr className={styles.tableRows}>
         <td className={this.shouldShowDeleteButton()}>
-          <Button bsSize="xsmall" bsStyle="danger" onClick={this.deleteProp}>-</Button>
+          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
         </td>
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>

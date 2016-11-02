@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
@@ -15,7 +14,7 @@ export class Topbar extends React.Component {
 
   showLogoutButton() {
     if (this.props.auth.loggedIn()) {
-      return <Button onClick={this.logout} className={styles.logoutButton}>Logout</Button>;
+      return <button onClick={this.logout} className={styles.logoutButton}>Logout</button>;
     }
     return null;
   }

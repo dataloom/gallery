@@ -5,3 +5,12 @@
 .toolbar {
   display: inline-block;
 }
+
+.loginButton {
+  padding: 10px;
+  width: 80px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px #767a7c;
+  background: -webkit-linear-gradient(#dddddd, #d1d6da);
+}

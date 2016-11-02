@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { ButtonToolbar, Button } from 'react-bootstrap';
+import { ButtonToolbar } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import styles from './styles.module.css';
 import img from '../../../images/kryptnostic-logo-big.png';
@@ -25,7 +25,7 @@ export class Login extends React.Component {
         <img src={img} role="presentation" />
         <h2>Login</h2>
         <ButtonToolbar className={styles.toolbar}>
-          <Button bsStyle="primary" onClick={this.login}>Login</Button>
+          <button className={styles.loginButton} onClick={this.login}>Login</button>
         </ButtonToolbar>
       </div>
     );

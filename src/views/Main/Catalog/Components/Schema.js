@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { PropertyTypeList } from './PropertyTypeList';
 import Consts from '../../../../utils/AppConsts';
 import FileService from '../../../../utils/FileService';
@@ -53,13 +52,10 @@ export class Schema extends React.Component {
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
-        <div className={styles.descriptionLabel}> (name)</div>
-        <br />
+        <div className={styles.spacerSmall} />
         <div className={styles.subtitle}>{namespace}</div>
-        <div className={styles.descriptionLabel}> (namespace)</div>
-        <br />
         <div className={styles.spacerMed} />
-        <div className={styles.tableDescriptionLabel}>Entity Types:</div>
+        <div className={styles.spacerMed} />
         <EntityTypeFqnList
           entityTypeFqns={entityTypeFqns}
           schemaName={name}
@@ -69,7 +65,6 @@ export class Schema extends React.Component {
         />
         <br />
         <div className={styles.spacerMed} />
-        <div className={styles.tableDescriptionLabel}>Property Types:</div>
         <PropertyTypeList
           propertyTypes={propertyTypes}
           name={name}
@@ -79,7 +74,11 @@ export class Schema extends React.Component {
           allPropNamespaces={this.props.allPropNamespaces}
         />
         <br />
-        <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>
+        <button
+          onClick={this.handleClick}
+          disabled={this.state.disableJson}
+          className={styles.genericButton}
+        >Download {name} as JSON</button>
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />
         <hr />
