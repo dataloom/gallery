@@ -14,3 +14,7 @@
   box-shadow: 1px 1px 1px #767a7c;
   background: -webkit-linear-gradient(#dddddd, #d1d6da);
 }
+
+.loginButton:hover {
+  background: #d8dcdf;
+}

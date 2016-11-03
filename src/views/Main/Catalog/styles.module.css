@@ -15,20 +15,42 @@ table {
   border-collapse: collapse;
 }
 
+
+/* navbar */
+
+.edmNavbarContainer {
+  text-align: center;
+  padding-top: 15px;
+}
+
+.edmNavbar {
+  height: 30px;
+  background: #f6f6f6;
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+
+/*  page sectioning */
+
 .edmContainer {
   left: 20px;
   margin-left: 50px;
   padding: 20px;
 }
 
+.inputBox {
+  height: 40px;
+  padding: 0 10px;
+}
+
+
+/* text styling */
+
 .name {
   font-size: 24px;
   color: #404446;
-}
-
-.descriptionLabel {
-  display: inline;
-  color: gray;
 }
 
 .subtitle {
@@ -37,8 +59,16 @@ table {
   color: #404446;
 }
 
-.tableDescriptionLabel {
-  color: gray;
+.errorMsg {
+  color: red;
+  padding-top: 10px;
+}
+
+
+/* spacers */
+
+.spacerMini {
+  height: 5px;
 }
 
 .spacerSmall {
@@ -57,10 +87,14 @@ table {
   margin: 10px;
 }
 
+
+/* table styling */
+
 .tableCell {
   padding: 5px 10px;
   color: #767a7c;
   border: 1px solid #d1d6da;
+  height: 30px;
 }
 
 tr:first-child .tableCell {
@@ -76,21 +110,20 @@ tr:first-child .tableCell {
   padding-left: 6px;
 }
 
+
+/* button styling */
+
 .buttonStyle {
   display: table-cell;
   margin: 0;
   vertical-align: middle;
   padding: 10px;
   border: none;
+  background: #d1d6da;
 }
 
 .buttonStyle:hover {
-  display: table-cell;
-  margin: 0;
-  vertical-align: middle;
-  padding: 10px;
-  border: none;
-  background: #aaaaaa;
+  background: #c7cbcf;
 }
 
 .selectedButtonStyle {
@@ -99,64 +132,42 @@ tr:first-child .tableCell {
   vertical-align: middle;
   padding: 10px;
   border: none;
-  background: gray;
+  background: #b9bdc0;
   font-weight: bold;
 }
 
-.edmNavbarContainer {
-  text-align: center;
-  padding-top: 15px;
-}
-
-.edmNavbar {
-  height: 30px;
-  background: #f6f6f6;
-  display: inline-block;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.center {
-  text-align: center;
-}
-
-.errorMsg {
-  color: red;
-  padding-top: 10px;
-}
-
-.hidden {
-  display: none;
-}
-
-.inputBox {
-  height: 30px;
-  padding: 0 10px 0 10px;
-}
-
-.downloadOptionSelect {
-  position: absolute;
-  right: 50px;
-  max-width: 200px;
+.selectedButtonStyle:hover {
+  background: #a0a4a6;
 }
 
 .deleteButton {
-  background: #d30c17;
+  background: -webkit-linear-gradient(#e00d18, #d30c17);
   border: 0;
-  border-radius: 5px;
-  width: 20px;
-  height: 20px;
+  border-radius: 4px;
+  width: 25px;
+  height: 25px;
   color: white;
+  box-shadow: 1px 1px 1px #767a7c;
+  margin: 3px;
+}
+
+.deleteButton:hover {
+  background: #b90b14
 }
 
 .addButton {
-  background: #09a34d;
+  background: -webkit-linear-gradient(#0ab053, #09a34d);
   border: 0;
-  border-radius: 5px;
-  width: 20px;
-  height: 20px;
+  border-radius: 4px;
+  width: 25px;
+  height: 25px;
   color: white;
-  margin-top: 5px;
+  box-shadow: 1px 1px 1px #767a7c;
+  margin: 5px 3px 3px 3px;
+}
+
+.addButton:hover {
+  background: #088941;
 }
 
 .genericButton {
@@ -167,22 +178,8 @@ tr:first-child .tableCell {
   background: -webkit-linear-gradient(#dddddd, #d1d6da);
 }
 
-.genericButtonMargin {
-  padding: 10px;
-  border: none;
-  border-radius: 3px;
-  box-shadow: 1px 1px 1px #767a7c;
-  background: -webkit-linear-gradient(#dddddd, #d1d6da);
-  margin: 10px;
-}
-
-.dropdownButtonContainer {
-  text-align: right;
-}
-
-.requestPermissionWrapper {
-  vertical-align: middle;
-  text-align: right;
+.genericButton:hover {
+  background: #d8dcdf;
 }
 
 .requestPermission {
@@ -192,4 +189,24 @@ tr:first-child .tableCell {
   border-radius: 3px;
   padding: 8px 15px;
   vertical-align: middle;
+}
+
+.requestPermissionWrapper {
+  vertical-align: middle;
+  text-align: right;
+}
+
+.dropdownButtonContainer {
+  text-align: right;
+}
+
+
+/* utils */
+
+.center {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
 }

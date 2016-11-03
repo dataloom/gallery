@@ -4,9 +4,10 @@
 
 :global .react-autosuggest__input {
   width: auto;
-  height: 30px;
+  height: 40px;
   padding: 0 10px 0 10px;
   margin: 0;
+  border: 1px solid #d1d6da;
 }
 
 :global .react-autosuggest__input:focus {

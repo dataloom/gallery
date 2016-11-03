@@ -135,6 +135,7 @@ export class SchemaList extends React.Component {
           </button>
           <div className={this.showNewSchema[this.state.newSchema]}>
             <div>Schema Name:</div>
+            <div className={styles.spacerMini} />
             <input
               className={styles.inputBox}
               type="text"
@@ -144,6 +145,7 @@ export class SchemaList extends React.Component {
             />
             <div className={styles.spacerSmall} />
             <div>Schema Namespace:</div>
+            <div className={styles.spacerMini} />
             <input
               className={styles.inputBox}
               type="text"

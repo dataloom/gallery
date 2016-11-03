@@ -1,4 +1,6 @@
 
+/* topbar */
+
 .topbarContainer {
   height: 50px;
   background: white;
@@ -9,17 +11,6 @@
   vertical-align: middle;
   box-shadow: 1px 1px 20px #eeeeee;
   z-index: 1;
-}
-
-.navbarContainer {
-  width: 80px;
-  background: #f1f5f8;
-  height: 100%;
-  left: 0;
-  position: fixed;
-  vertical-align: middle;
-  z-index: 0;
-  margin-top: 40px;
 }
 
 .logo {
@@ -51,6 +42,24 @@
   padding: 0 10px;
 }
 
+.logoutButton:hover {
+  background: #d8dcdf;
+}
+
+
+/* navbar */
+
+.navbarContainer {
+  width: 80px;
+  background: #f1f5f8;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  vertical-align: middle;
+  z-index: 0;
+  margin-top: 40px;
+}
+
 .navButton {
   text-align: center;
   background: none;
@@ -61,20 +70,7 @@
   padding-right: 10px;
   font-size: 16px;
   color: #404446;
-  border-bottom: 1px solid #D1D6DA;
-}
-
-.navButton:hover {
-  text-align: center;
-  background: none;
-  border: none;
-  height: 80px;
-  width: 80px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 16px;
-  color: #404446;
-  border-bottom: 1px solid #D1D6DA;
+  border-bottom: 1px solid #d1d6da;
 }
 
 .navButtonSelected {
@@ -86,17 +82,14 @@
   padding-right: 10px;
   font-size: 16px;
   color: #404446;
-  border-bottom: 1px solid #D1D6DA;
+  border-bottom: 1px solid #d1d6da;
+  background: #b9bdc0;
+}
+
+.navButton:hover {
+  background: #c7cbcf;
 }
 
 .navButtonSelected:hover {
-  text-align: center;
-  border: none;
-  height: 80px;
-  width: 80px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 16px;
-  color: #404446;
-  border-bottom: 1px solid #D1D6DA;
+  background: #a8abad;
 }

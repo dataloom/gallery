@@ -120,12 +120,14 @@ export class Home extends React.Component {
                   this.respondToRequest(true, request.email, request.dataset, request.key);
                 }}
               >Approve</button>
-              <button
-                className={styles.genericButtonMargin}
-                onClick={() => {
-                  this.respondToRequest(false, request.email, request.dataset, request.key);
-                }}
-              >Deny</button>
+              <div className={styles.extraMargin}>
+                <button
+                  className={styles.genericButton}
+                  onClick={() => {
+                    this.respondToRequest(false, request.email, request.dataset, request.key);
+                  }}
+                >Deny</button>
+              </div>
             </div>
           </div>
           <div className={this.shouldShow[(reqStatus !== 0)]}>

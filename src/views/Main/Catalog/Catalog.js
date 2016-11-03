@@ -42,6 +42,7 @@ export class Catalog extends React.Component {
       <div>
         <h2 className={styles.center}>Catalog</h2>
         <DataModelToolbar changeView={this.changeDataModelView} />
+        <div className={styles.spacerBig} />
         {this.getDataModelView()}
       </div>
     );

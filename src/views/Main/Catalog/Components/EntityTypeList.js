@@ -138,6 +138,7 @@ export class EntityTypeList extends React.Component {
           </button>
           <div className={this.showNewEntityType[this.state.newEntityType]}>
             <div>Entity Type Name:</div>
+            <div className={styles.spacerMini} />
             <input
               value={this.state.newEntityTypeName}
               onChange={this.handleNameChange}
@@ -147,6 +148,7 @@ export class EntityTypeList extends React.Component {
             />
             <div className={styles.spacerSmall} />
             <div>Entity Type Namespace:</div>
+            <div className={styles.spacerMini} />
             <input
               value={this.state.newEntityTypeNamespace}
               onChange={this.handleNamespaceChange}
@@ -156,6 +158,7 @@ export class EntityTypeList extends React.Component {
             />
             <div className={styles.spacerSmall} />
             <div>Primary Key:</div>
+            <div className={styles.spacerMini} />
             <table>
               <tbody>
                 <NameNamespaceAutosuggest

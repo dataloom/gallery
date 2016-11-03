@@ -1,14 +1,17 @@
+
+/* text styling */
+
 .sectionHeader {
   text-align: center;
 }
 
-.spacer {
-  height: 30px;
+.important {
+  font-weight: bold;
+  display: inline;
 }
 
-.spacerSmall {
-  height: 15px;
-}
+
+/* page sections */
 
 .objContainer {
   left: 20px;
@@ -18,10 +21,19 @@
   border-left: 7px solid #5a5e65;
 }
 
-.important {
-  font-weight: bold;
-  display: inline;
+
+/* spacers */
+
+.spacer {
+  height: 30px;
 }
+
+.spacerSmall {
+  height: 15px;
+}
+
+
+/* utils */
 
 .inline {
   display: inline;
@@ -30,6 +42,9 @@
 .hidden {
   display: none;
 }
+
+
+/* button styling */
 
 .genericButton {
   padding: 10px;
@@ -40,12 +55,11 @@
   background: -webkit-linear-gradient(#dddddd, #d1d6da);
 }
 
-.genericButtonMargin {
-  padding: 10px;
-  width: 80px;
-  border: none;
-  border-radius: 3px;
-  box-shadow: 1px 1px 1px #767a7c;
-  background: -webkit-linear-gradient(#dddddd, #d1d6da);
+.genericButton:hover {
+  background: #dddcdf;
+}
+
+.extraMargin {
   margin: 10px;
+  display: inline;
 }

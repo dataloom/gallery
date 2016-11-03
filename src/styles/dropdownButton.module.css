@@ -35,6 +35,10 @@
   display: inline-block;
 }
 
+.downloadButton:hover, .downloadButtonSingle:hover {
+  background: #c7cbcf;
+}
+
 .dropdownButton {
   display: inline-block;
   background: #7d8082;
@@ -47,6 +51,10 @@
   border: none;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
+}
+
+.dropdownButton:hover {
+  background: #6b6e70;
 }
 
 .menuContainer {
