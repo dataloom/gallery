@@ -25,7 +25,7 @@ table {
 
 .edmNavbar {
   height: 30px;
-  background: #f6f6f6;
+  background: #d1d6da;
   display: inline-block;
   margin: 0 auto;
   text-align: center;
@@ -290,14 +290,14 @@ tr:first-child .tableCell {
   overflow: scroll;
   text-align: left;
   padding-top: 5px;
+  border: 1px solid #d1d6da;
 }
 
 .cancelButton {
   position: absolute;
-  left: 50%;
-  margin-left: -40px;
+  right: 15px;
+  top: 15px;
   width: 80px;
-  bottom: 15px;
   height: 35px;
   background: #d1d6da;
   border-radius: 3px;

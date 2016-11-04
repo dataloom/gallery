@@ -23,19 +23,22 @@ const viewLabels = {
 const accessOptions = {
   Hidden: 'Hidden',
   Discoverable: 'Discoverable',
-  Public: 'Public'
+  Read: 'Read',
+  Write: 'Write'
 };
 
 const emails = {
   Hidden: ['first@hidden.com', 'second@hidden.com', 'third@hidden.com', 'fourth@hidden.com', 'fifth@hidden.com', 'sixth@hidden.com', 'seventh@hidden.com', 'eighth@hidden.com', 'ninth@hidden.com', 'tenth@hidden.com', 'eleventh@hidden.com'],
   Discoverable: ['one@discoverable.com', 'two@discoverable.com', 'three@discoverable.com'],
-  Public: ['heresAnEmail@public.com']
+  Read: ['heresAnEmail@public.com'],
+  Write: ['writer@writer.com', 'anotehrWriter@writer.com']
 };
 
 const roles = {
-  Hidden: ['role1', 'role2', 'role3'],
+  Hidden: ['Software engineer', 'Product manager', 'BD', 'some job'],
   Discoverable: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-  Public: ['Software engineer', 'Product manager', 'BD', 'some job']
+  Read: ['reader1'],
+  Write: ['role1', 'role2', 'role3']
 };
 
 export class PermissionsPanel extends React.Component {
@@ -53,8 +56,8 @@ export class PermissionsPanel extends React.Component {
       view: views.GLOBAL,
       updateSuccess: false,
       updateError: false,
-      rolesView: accessOptions.Public,
-      emailsView: accessOptions.Public,
+      rolesView: accessOptions.Write,
+      emailsView: accessOptions.Write,
       newRoleValue: '',
       newEmailValue: ''
     };
@@ -115,7 +118,7 @@ export class PermissionsPanel extends React.Component {
   getGlobalView = () => {
     return (
       <div className={styles.viewWrapper}>
-        <div>Choose a default global level of access:</div>
+        <div>Choose the default permissions for everybody:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Dropdown
@@ -176,14 +179,20 @@ export class PermissionsPanel extends React.Component {
     });
     return (
       <div>
-        <div>Choose levels of access for specific roles.</div>
+        <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
           <button
             onClick={() => {
-              this.changeRolesView(accessOptions.Public);
+              this.changeRolesView(accessOptions.Write);
             }}
-            className={this.buttonStyle(accessOptions.Public, this.state.rolesView)}
-          >{accessOptions.Public}</button>
+            className={this.buttonStyle(accessOptions.Write, this.state.rolesView)}
+          >{accessOptions.Write}</button>
+          <button
+            onClick={() => {
+              this.changeRolesView(accessOptions.Read);
+            }}
+            className={this.buttonStyle(accessOptions.Read, this.state.rolesView)}
+          >{accessOptions.Read}</button>
           <button
             onClick={() => {
               this.changeRolesView(accessOptions.Discoverable);
@@ -217,7 +226,7 @@ export class PermissionsPanel extends React.Component {
   getDomainView = () => {
     return (
       <div className={styles.viewWrapper}>
-        <div>Choose a default level of access for all users in your domain:</div>
+        <div>Choose the default permissions for all users in your domain:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Dropdown
@@ -279,14 +288,20 @@ export class PermissionsPanel extends React.Component {
 
     return (
       <div>
-        <div>Choose levels of access for specific email addresses.</div>
+        <div>Choose permissions for specific email addresses.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
           <button
             onClick={() => {
-              this.changeEmailsView(accessOptions.Public);
+              this.changeEmailsView(accessOptions.Write);
             }}
-            className={this.buttonStyle(accessOptions.Public, this.state.emailsView)}
-          >{accessOptions.Public}</button>
+            className={this.buttonStyle(accessOptions.Write, this.state.emailsView)}
+          >{accessOptions.Write}</button>
+          <button
+            onClick={() => {
+              this.changeEmailsView(accessOptions.Read);
+            }}
+            className={this.buttonStyle(accessOptions.Read, this.state.emailsView)}
+          >{accessOptions.Read}</button>
           <button
             onClick={() => {
               this.changeEmailsView(accessOptions.Discoverable);
