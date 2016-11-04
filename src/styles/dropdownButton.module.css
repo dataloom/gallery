@@ -24,15 +24,9 @@
   display: inline-block;
 }
 
-.downloadButtonSingle {
-  background: #d1d6da;
-  height: 100%;
-  vertical-align: middle;
-  border: none;
-  width: 115px;
+.singleOption {
   text-align: center;
   border-radius: 3px;
-  display: inline-block;
 }
 
 .downloadButton:hover, .downloadButtonSingle:hover {

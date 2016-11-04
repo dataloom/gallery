@@ -46,7 +46,7 @@ export class Navbar extends React.Component {
   }
 
   getButtonClass = (state) => {
-    return (state === this.state.selected) ? styles.navButtonSelected : styles.navButton;
+    return (state === this.state.selected) ? `${styles.navButton} ${styles.navButtonSelected}` : `${styles.navButton}`;
   }
 
   updateState = (newState) => {

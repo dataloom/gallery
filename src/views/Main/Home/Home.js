@@ -157,10 +157,6 @@ export class Home extends React.Component {
           {this.renderAllRequests()}
         </div>
         <div className={styles.spacer} />
-        <div>
-          <h2 className={styles.sectionHeader}>Activity</h2>
-          {this.renderActivity()}
-        </div>
       </div>
     );
   }

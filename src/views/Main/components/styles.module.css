@@ -22,21 +22,37 @@
 .loom {
   display: inline-block;
   position: relative;
-  margin-left: 20px;
+  margin-left: 10px;
   height: 60%;
   top: 30%;
   color: #525557;
-  font-size: 30px;
+  font-size: 20px;
+}
+
+.loggedInItemsContainer {
+  display: inline-block;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  color: #404446;
+}
+
+.greeting {
+  position: relative;
+  display: inline-block;
+  font-size: 14px;
+  height: 70%;
+  top: 15%;
+  margin: 10px;
 }
 
 .logoutButton {
   position: relative;
-  float: right;
+  display: inline-block;
   margin-right: 10px;
   height: 70%;
   top: 15%;
   background: #d1d6da;
-  color: #404446;
   border-radius: 3px;
   border: 0;
   padding: 0 10px;
@@ -74,15 +90,6 @@
 }
 
 .navButtonSelected {
-  text-align: center;
-  border: none;
-  height: 80px;
-  width: 80px;
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 16px;
-  color: #404446;
-  border-bottom: 1px solid #d1d6da;
   background: #b9bdc0;
 }
 

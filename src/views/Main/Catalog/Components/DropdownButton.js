@@ -54,7 +54,10 @@ export class DropdownButton extends React.Component {
   }
 
   renderDownloadButton = (text) => {
-    const className = (this.props.downloadOptions.length > 1) ? styles.downloadButton : styles.downloadButtonSingle;
+    let className = styles.downloadButton;
+    if (this.props.downloadOptions.length <= 1) {
+      className = `${className} ${styles.singleOption}`;
+    }
     return (this.props.downloadUrlFn) ?
       <a href={this.props.downloadUrlFn(this.state.selected)}>
         <button className={className}>{text}</button>

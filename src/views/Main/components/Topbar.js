@@ -12,12 +12,30 @@ export class Topbar extends React.Component {
     auth: PropTypes.instanceOf(AuthService)
   }
 
-  showLogoutButton() {
+  constructor(props) {
+    super(props);
+    this.state = ({ user: this.props.auth.getProfile().given_name });
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ user: this.props.auth.getProfile().given_name });
+    }, 200);
+  }
+
+  showGreetingAndLogoutButton() {
     if (this.props.auth.loggedIn()) {
-      return <button onClick={this.logout} className={styles.logoutButton}>Logout</button>;
+      const greeting = (this.state.user !== undefined && this.state.user.length) ? `Hi, ${this.state.user}!` : 'Hi!';
+      return (
+        <div className={styles.loggedInItemsContainer}>
+          <div className={styles.greeting}>{greeting}</div>
+          <button onClick={this.logout} className={styles.logoutButton}>Logout</button>
+        </div>
+      );
     }
     return null;
   }
+
 
   logout = () => {
     this.props.auth.logout();
@@ -28,16 +46,11 @@ export class Topbar extends React.Component {
     return (state === this.state.selected) ? styles.navButtonSelected : styles.navButton;
   }
 
-  updateState = (newState) => {
-    this.setState({ selected: newState });
-    this.context.router.push(`/${newState}`);
-  }
-
   render() {
     return (
       <div className={styles.topbarContainer}>
-        <div className={styles.loom}>Loom</div>
-        {this.showLogoutButton()}
+        <div className={styles.loom}>LOOM</div>
+        {this.showGreetingAndLogoutButton()}
       </div>
     );
   }
