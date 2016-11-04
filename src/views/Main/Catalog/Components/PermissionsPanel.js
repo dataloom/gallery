@@ -14,7 +14,7 @@ const views = {
 };
 
 const viewLabels = {
-  0: 'Global',
+  0: 'Everyone',
   1: 'Roles',
   2: 'My Domain',
   3: 'Emails'
@@ -27,8 +27,14 @@ const accessOptions = {
   Write: 'Write'
 };
 
+const propertyAccessOptions = {
+  Discoverable: 'Discoverable',
+  Read: 'Read',
+  Write: 'Write'
+};
+
 const emails = {
-  Hidden: ['first@hidden.com', 'second@hidden.com', 'third@hidden.com', 'fourth@hidden.com', 'fifth@hidden.com', 'sixth@hidden.com', 'seventh@hidden.com', 'eighth@hidden.com', 'ninth@hidden.com', 'tenth@hidden.com', 'eleventh@hidden.com'],
+  Hidden: ['asfkadlskfnlaskdfjlskadjfalskjfalksjflskdjfalksjfaslkdfjlaksdfj', 'first@hidden.com', 'second@hidden.com', 'third@hidden.com', 'fourth@hidden.com', 'fifth@hidden.com', 'sixth@hidden.com', 'seventh@hidden.com', 'eighth@hidden.com', 'ninth@hidden.com', 'tenth@hidden.com', 'eleventh@hidden.com'],
   Discoverable: ['one@discoverable.com', 'two@discoverable.com', 'three@discoverable.com'],
   Read: ['heresAnEmail@public.com'],
   Write: ['writer@writer.com', 'anotehrWriter@writer.com']
@@ -116,15 +122,17 @@ export class PermissionsPanel extends React.Component {
   }
 
   getGlobalView = () => {
+    const options = (this.props.propertyTypeName === undefined) ?
+      Object.keys(accessOptions) : Object.keys(propertyAccessOptions);
     return (
       <div className={styles.viewWrapper}>
-        <div>Choose the default permissions for everybody:</div>
+        <div>Choose the default permissions for everyone:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Dropdown
-            options={Object.keys(accessOptions)}
+            options={options}
             onChange={this.onSelect}
-            value={Object.keys(accessOptions)[0]}
+            value={options[0]}
           />
         </div>
         <div className={styles.spacerSmall} />
@@ -161,6 +169,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   viewPermissionTypeButton = (permission, fn, currView) => {
+    if (permission === accessOptions.Hidden && this.props.propertyTypeName !== undefined) return null;
     return (
       <button
         onClick={() => {
@@ -215,15 +224,17 @@ export class PermissionsPanel extends React.Component {
   }
 
   getDomainView = () => {
+    const options = (this.props.propertyTypeName === undefined) ?
+      Object.keys(accessOptions) : Object.keys(propertyAccessOptions);
     return (
       <div className={styles.viewWrapper}>
         <div>Choose the default permissions for all users in your domain:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Dropdown
-            options={Object.keys(accessOptions)}
+            options={options}
             onChange={this.onSelect}
-            value={Object.keys(accessOptions)[0]}
+            value={options[0]}
           />
         </div>
         <div className={styles.spacerSmall} />
@@ -322,7 +333,6 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.edmNavbar}>
             {this.renderViewButton(views.GLOBAL)}
             {this.renderViewButton(views.ROLES)}
-            {this.renderViewButton(views.DOMAIN)}
             {this.renderViewButton(views.EMAILS)}
           </div>
         </div>
