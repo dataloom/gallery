@@ -51,6 +51,7 @@ table {
 .name {
   font-size: 24px;
   color: #404446;
+  display: inline;
 }
 
 .subtitle {
@@ -85,6 +86,11 @@ table {
 
 .spacerMargin {
   margin: 10px;
+}
+
+.spacerLeft {
+  padding-left: 7px;
+  display: inline;
 }
 
 
@@ -187,13 +193,34 @@ tr:first-child .tableCell {
   background: #d8dcdf;
 }
 
-.requestPermission {
+.simpleButton {
+  margin-left: 5px;
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+  height: 35px;
+  top: 15%;
+  background: #d1d6da;
+  border-radius: 3px;
+  border: 0;
+  padding: 0 10px;
+}
+
+.simpleButton:hover, .cancelButton:hover {
+  background: #d8dcdf;
+}
+
+.permissionButton {
   border: none;
   background: #5b5f66;
   color: white;
   border-radius: 3px;
   padding: 8px 15px;
   vertical-align: middle;
+}
+
+.permissionButton:hover {
+  background: #494c52;
 }
 
 .requestPermissionWrapper {
@@ -214,4 +241,87 @@ tr:first-child .tableCell {
 
 .hidden {
   display: none;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.permissionInputWidth {
+  width: 200px;
+}
+
+.padTop {
+  padding-top: 10px;
+}
+
+.padLeft {
+  padding-left: 10px;
+}
+
+
+/* permissions panel */
+
+.updateSuccess {
+  color: green;
+  padding-top: 10px;
+}
+
+.panelContainer {
+  position: fixed;
+  left: 100px;
+  right: 100px;
+  top: 80px;
+  bottom: 40px;
+  text-align: center;
+  background: #fff;
+  -webkit-box-shadow: 0 0 5px 2px #eee;
+  -moz-box-shadow: 0 0 5px 2px #eee;
+  box-shadow: 0 0 5px 2px #eee;
+  border: 1px solid #e3e3e3;
+  text-align: center;
+  z-index: 1;
+}
+
+.permissionsBodyContainer {
+  margin: 0 auto;
+  height: 200px;
+  width: 300px;
+  overflow: scroll;
+  text-align: left;
+  padding-top: 5px;
+}
+
+.cancelButton {
+  position: absolute;
+  left: 50%;
+  margin-left: -40px;
+  width: 80px;
+  bottom: 15px;
+  height: 35px;
+  background: #d1d6da;
+  border-radius: 3px;
+  border: 0;
+  padding: 0 10px;
+}
+
+.panelTitle {
+  margin-top: 25px;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center
+}
+
+.panelContents {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.viewWrapper {
+  text-align: center;
+}
+
+.dropdownWrapper {
+  width: 150px;
+  margin: 0 auto;
 }

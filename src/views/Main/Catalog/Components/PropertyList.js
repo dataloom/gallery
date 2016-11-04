@@ -14,6 +14,8 @@ export class PropertyList extends React.Component {
     updateFn: PropTypes.func,
     allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object,
+    allowEdit: PropTypes.bool,
+    editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string
   }
 
@@ -23,6 +25,11 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: false
     };
+  }
+
+  shouldShow = {
+    true: Consts.EMPTY,
+    false: styles.hidden
   }
 
   shouldShow = {
@@ -76,7 +83,15 @@ export class PropertyList extends React.Component {
   }
 
   render() {
-    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn, entitySetName } = this.props;
+    const {
+      properties,
+      primaryKey,
+      entityTypeName,
+      entityTypeNamespace,
+      updateFn,
+      entitySetName,
+      editingPermissions
+    } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
@@ -89,6 +104,7 @@ export class PropertyList extends React.Component {
           entityTypeName={entityTypeName}
           entityTypeNamespace={entityTypeNamespace}
           updateFn={updateFn}
+          editingPermissions={editingPermissions}
           entitySetName={entitySetName}
         />
     );

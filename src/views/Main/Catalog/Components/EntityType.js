@@ -40,6 +40,8 @@ export class EntityType extends React.Component {
           updateFn={updateFn}
           allPropNames={this.props.allPropNames}
           allPropNamespaces={this.props.allPropNamespaces}
+          allowEdit
+          editingPermissions={false}
         />
         <div className={styles.spacerBig} />
         <hr />
