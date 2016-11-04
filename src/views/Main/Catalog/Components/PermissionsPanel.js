@@ -160,6 +160,17 @@ export class PermissionsPanel extends React.Component {
     this.setState({ newRoleValue: e.target.value });
   }
 
+  viewPermissionTypeButton = (permission, fn, currView) => {
+    return (
+      <button
+        onClick={() => {
+          fn(permission);
+        }}
+        className={this.buttonStyle(permission, currView)}
+      >{permission}</button>
+    );
+  }
+
   getRolesView = () => {
     const roleList = roles[this.state.rolesView];
     const hiddenBody = roleList.map((role) => {
@@ -181,30 +192,10 @@ export class PermissionsPanel extends React.Component {
       <div>
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
-          <button
-            onClick={() => {
-              this.changeRolesView(accessOptions.Write);
-            }}
-            className={this.buttonStyle(accessOptions.Write, this.state.rolesView)}
-          >{accessOptions.Write}</button>
-          <button
-            onClick={() => {
-              this.changeRolesView(accessOptions.Read);
-            }}
-            className={this.buttonStyle(accessOptions.Read, this.state.rolesView)}
-          >{accessOptions.Read}</button>
-          <button
-            onClick={() => {
-              this.changeRolesView(accessOptions.Discoverable);
-            }}
-            className={this.buttonStyle(accessOptions.Discoverable, this.state.rolesView)}
-          >{accessOptions.Discoverable}</button>
-          <button
-            onClick={() => {
-              this.changeRolesView(accessOptions.Hidden);
-            }}
-            className={this.buttonStyle(accessOptions.Hidden, this.state.rolesView)}
-          >{accessOptions.Hidden}</button>
+          {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, this.state.rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, this.state.rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Discoverable, this.changeRolesView, this.state.rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Hidden, this.changeRolesView, this.state.rolesView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {hiddenBody}
@@ -288,32 +279,12 @@ export class PermissionsPanel extends React.Component {
 
     return (
       <div>
-        <div>Choose permissions for specific email addresses.</div>
+        <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
-          <button
-            onClick={() => {
-              this.changeEmailsView(accessOptions.Write);
-            }}
-            className={this.buttonStyle(accessOptions.Write, this.state.emailsView)}
-          >{accessOptions.Write}</button>
-          <button
-            onClick={() => {
-              this.changeEmailsView(accessOptions.Read);
-            }}
-            className={this.buttonStyle(accessOptions.Read, this.state.emailsView)}
-          >{accessOptions.Read}</button>
-          <button
-            onClick={() => {
-              this.changeEmailsView(accessOptions.Discoverable);
-            }}
-            className={this.buttonStyle(accessOptions.Discoverable, this.state.emailsView)}
-          >{accessOptions.Discoverable}</button>
-          <button
-            onClick={() => {
-              this.changeEmailsView(accessOptions.Hidden);
-            }}
-            className={this.buttonStyle(accessOptions.Hidden, this.state.emailsView)}
-          >{accessOptions.Hidden}</button>
+          {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, this.state.emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, this.state.emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Discoverable, this.changeEmailsView, this.state.emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Hidden, this.changeEmailsView, this.state.emailsView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {hiddenBody}
