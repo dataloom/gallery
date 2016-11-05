@@ -3,6 +3,8 @@ import { Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
+import homeIcon from '../../../../src/images/home-icon.png';
+import catalogIcon from '../../../../src/images/catalog-icon.png';
 
 export class Navbar extends React.Component {
   static contextTypes = {
@@ -62,13 +64,19 @@ export class Navbar extends React.Component {
           onClick={() => {
             this.updateState(Consts.HOME);
           }}
-        >Home</button>
+        >
+          <img src={homeIcon} role="presentation" className={styles.navButtonIcon} />
+          <div className={styles.navButtonText}>Home</div>
+        </button>
         <button
           className={this.getButtonClass(Consts.CATALOG)}
           onClick={() => {
             this.updateState(Consts.CATALOG);
           }}
-        >Catalog</button>
+        >
+          <img src={catalogIcon} role="presentation" className={styles.navButtonIcon} />
+          <div className={styles.navButtonText}>Catalog</div>
+        </button>
       </div>
     );
   }
