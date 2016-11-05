@@ -50,7 +50,7 @@ export class Schema extends React.Component {
 
   render() {
     const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
-    const downloadOptions = [Consts.JSON];
+    const options = [Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
@@ -58,7 +58,7 @@ export class Schema extends React.Component {
         <div className={styles.subtitle}>{namespace}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
-          <DropdownButton downloadFn={this.downloadFile} downloadOptions={downloadOptions} />
+          <DropdownButton downloadFn={this.downloadFile} options={options} />
         </div>
         <div className={styles.spacerMed} />
         <EntityTypeFqnList

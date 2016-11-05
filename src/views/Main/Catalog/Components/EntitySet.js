@@ -23,7 +23,7 @@ export class EntitySet extends React.Component {
   }
 
   requestPermissionClass = {
-    true: styles.requestPermission,
+    true: styles.requestPermissionWrapper,
     false: styles.hidden
   }
 
@@ -45,8 +45,8 @@ export class EntitySet extends React.Component {
     return DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
   }
 
-  requestPermission = () => {
-    console.log('give me permsision pls');
+  requestPermission = (type) => {
+    console.log(`give me ${type} access pls`);
   }
 
   shouldShow = {
@@ -70,9 +70,18 @@ export class EntitySet extends React.Component {
     this.setState({ showPanel: true });
   }
 
+  renderRequestPermissionButton = () => {
+    const options = [Consts.READ, Consts.WRITE];
+    return (
+      <div className={this.requestPermissionClass[this.state.requestPermission !== undefined]}>
+        <DropdownButton options={options} requestFn={this.requestPermission} />
+      </div>
+    );
+  }
+
   render() {
     const { name, title, type } = this.props;
-    const downloadOptions = [Consts.CSV, Consts.JSON];
+    const options = [Consts.CSV, Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <button onClick={this.changeEditingState} className={styles.permissionButton}>
@@ -89,11 +98,9 @@ export class EntitySet extends React.Component {
         <div className={styles.subtitle}>{title}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
-          <DropdownButton downloadUrlFn={this.getUrl} downloadOptions={downloadOptions} />
+          <DropdownButton downloadUrlFn={this.getUrl} options={options} />
         </div>
-        <div className={this.requestPermissionClass[this.state.requestPermission !== undefined]}>
-          <button className={styles.permissionButton} onClick={this.requestPermission}>Request permission</button>
-        </div>
+        {this.renderRequestPermissionButton()}
         <br />
         <div className={styles.spacerSmall} />
         <div className={this.shouldShow[this.state.showPanel]}>

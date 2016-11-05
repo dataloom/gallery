@@ -12,6 +12,9 @@ const PROD = 'http://api.loom.digital';
 const JSON = 'json';
 const CSV = 'csv';
 
+const READ = 'read';
+const WRITE = 'write';
+
 const HOME = 'home';
 const CATALOG = 'catalog';
 const LOGIN = 'login';
@@ -31,6 +34,8 @@ export default {
   PROD,
   JSON,
   CSV,
+  READ,
+  WRITE,
   HOME,
   CATALOG,
   LOGIN,

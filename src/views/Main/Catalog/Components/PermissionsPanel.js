@@ -343,7 +343,7 @@ export class PermissionsPanel extends React.Component {
         <div id="updateError" className={this.shouldShowError[this.state.updateError]}>
           Unable to save changes.
         </div>
-        <button className={styles.cancelButton} onClick={this.props.exitPanel}>Cancel</button>
+        <button className={styles.cancelButton} onClick={this.props.exitPanel}>x</button>
       </div>
     );
   }

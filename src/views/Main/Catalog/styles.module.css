@@ -296,14 +296,16 @@ tr:first-child .tableCell {
 
 .cancelButton {
   position: absolute;
+  vertical-align: middle;
+  font-size: 20px;
   right: 15px;
   top: 15px;
-  width: 80px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   background: #d1d6da;
   border-radius: 3px;
   border: 0;
-  padding: 0 10px;
+  padding-bottom: 15px;
 }
 
 .panelTitle {

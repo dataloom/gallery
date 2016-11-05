@@ -22,14 +22,14 @@ export class EntityType extends React.Component {
 
   render() {
     const { name, namespace, properties, primaryKey, updateFn } = this.props;
-    const downloadOptions = [Consts.CSV, Consts.JSON];
+    const options = [Consts.CSV, Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
         <div className={styles.spacerSmall} />
         <div className={styles.subtitle}>{namespace}</div>
         <div className={styles.dropdownButtonContainer}>
-          <DropdownButton downloadUrlFn={this.getUrl} downloadOptions={downloadOptions} />
+          <DropdownButton downloadUrlFn={this.getUrl} options={options} />
         </div>
         <div className={styles.spacerMed} />
         <PropertyList

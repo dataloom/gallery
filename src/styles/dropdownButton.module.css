@@ -68,6 +68,10 @@
   text-align: left;
 }
 
+.requestingPermission {
+  width: 150px;
+}
+
 .menuOption {
   box-sizing: border-box;
   display: block;
