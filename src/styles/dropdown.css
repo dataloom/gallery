@@ -14,6 +14,7 @@
   outline: none;
   padding: 8px 52px 8px 10px;
   transition: all 200ms ease;
+  text-align: left;
 }
 
 :global .Dropdown-control:hover {
@@ -52,6 +53,7 @@
   width: 100%;
   z-index: 1000;
   -webkit-overflow-scrolling: touch;
+  text-align: left;
 }
 
 :global .Dropdown-menu .Dropdown-group > .Dropdown-title{
