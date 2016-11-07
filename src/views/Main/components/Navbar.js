@@ -31,7 +31,7 @@ export class Navbar extends React.Component {
       case (Consts.CATALOG):
         return Consts.CATALOG;
       default:
-        return Consts.HOME;
+        return Consts.EMPTY;
     }
   }
 

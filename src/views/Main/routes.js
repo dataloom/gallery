@@ -6,6 +6,7 @@ import { Container } from './Container.js';
 import { Catalog } from './Catalog/Catalog';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
+import { Settings } from './Settings/Settings';
 import Consts from '../../utils/AppConsts';
 
 declare var __LOCAL__;
@@ -39,6 +40,7 @@ export const makeMainRoutes = () => {
       <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
       <Route path={Consts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
+      <Route path={Consts.SETTINGS} component={Settings} />
     </Route>
   );
 };

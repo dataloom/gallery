@@ -42,8 +42,8 @@
   display: inline-block;
   font-size: 14px;
   height: 70%;
-  top: 15%;
   margin: 10px;
+  padding: 0;
 }
 
 .logoutButton {
@@ -51,7 +51,6 @@
   display: inline-block;
   margin-right: 10px;
   height: 70%;
-  top: 15%;
   background: #d1d6da;
   border-radius: 3px;
   border: 0;
@@ -60,6 +59,23 @@
 
 .logoutButton:hover {
   background: #d8dcdf;
+}
+
+.settingsIcon {
+  position: relative;
+  height: 60%;
+  display: inline;
+  border: 0;
+  background: none;
+  top: 20%;
+  padding: 0;
+  margin: 0 10px 0 15px;
+}
+
+.settingsIconImg {
+  position: relative;
+  display: inline;
+  height: 100%;
 }
 
 
