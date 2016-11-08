@@ -1,0 +1,6 @@
+*
+!package.json.docker
+!src
+!config
+!.babelrc
+!nginx.conf
