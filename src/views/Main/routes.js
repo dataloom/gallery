@@ -19,12 +19,9 @@ const requireAuth = (nextState, replace) => {
   }
   else {
     const authToken = auth.getToken();
-    let baseUrl = Consts.PROD;
+    let baseUrl = window.location.origin;
     if (__LOCAL__) {
       baseUrl = Consts.LOCAL;
-    }
-    else if (__STG__) {
-      baseUrl = Consts.STG;
     }
     Loom.configure({ baseUrl, authToken });
   }
