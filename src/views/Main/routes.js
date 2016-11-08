@@ -8,7 +8,6 @@ import { Login } from './Login/Login';
 import Consts from '../../utils/AppConsts';
 
 declare var __LOCAL__;
-declare var __STG__;
 
 const auth = new AuthService(Consts.AUTH0_CLIENT_ID, Consts.AUTH0_DOMAIN);
 
