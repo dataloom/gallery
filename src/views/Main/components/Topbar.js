@@ -28,6 +28,11 @@ export class Topbar extends React.Component {
     this.context.router.push(`/${Consts.SETTINGS}`);
   }
 
+  logout = () => {
+    this.props.auth.logout();
+    this.context.router.push(`/${Consts.LOGIN}`);
+  }
+
   showGreetingAndLogoutButton() {
     if (this.props.auth.loggedIn()) {
       const greeting = (this.state.user !== undefined && this.state.user.length) ? `Hi, ${this.state.user}!` : 'Hi!';

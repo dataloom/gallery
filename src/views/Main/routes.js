@@ -20,7 +20,7 @@ const requireAuth = (nextState, replace) => {
     replace({ pathname: `/${Consts.LOGIN}` });
   }
   else {
-    const authToken = auth.getToken();
+    const authToken = `Bearer ${auth.getToken()}`;
     let baseUrl = Consts.PROD;
     if (__LOCAL__) {
       baseUrl = Consts.LOCAL;
