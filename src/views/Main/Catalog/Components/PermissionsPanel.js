@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import Dropdown from 'react-dropdown';
-import { EntityDataModelApi } from 'loom-data';
+import { PermissionsApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
@@ -13,6 +13,13 @@ const views = {
   EMAILS: 3
 };
 
+const permissionLevels = {
+  hidden: [],
+  discover: [Consts.DISCOVER],
+  read: [Consts.DISCOVER, Consts.READ],
+  write: [Consts.DISCOVER, Consts.READ, Consts.WRITE]
+};
+
 const viewLabels = {
   0: 'Everyone',
   1: 'Roles',
@@ -22,29 +29,29 @@ const viewLabels = {
 
 const accessOptions = {
   Hidden: 'Hidden',
-  Discoverable: 'Discoverable',
+  Discover: 'Discover',
   Read: 'Read',
   Write: 'Write'
 };
 
 const propertyAccessOptions = {
-  Discoverable: 'Discoverable',
+  Discover: 'Discover',
   Read: 'Read',
   Write: 'Write'
 };
 
 const emails = {
   Hidden: ['asfkadlskfnlaskdfjlskadjfalskjfalksjflskdjfalksjfaslkdfjlaksdfj', 'first@hidden.com', 'second@hidden.com', 'third@hidden.com', 'fourth@hidden.com', 'fifth@hidden.com', 'sixth@hidden.com', 'seventh@hidden.com', 'eighth@hidden.com', 'ninth@hidden.com', 'tenth@hidden.com', 'eleventh@hidden.com'],
-  Discoverable: ['one@discoverable.com', 'two@discoverable.com', 'three@discoverable.com'],
+  Discover: ['one@discoverable.com', 'two@discoverable.com', 'three@discoverable.com'],
   Read: ['heresAnEmail@public.com'],
   Write: ['writer@writer.com', 'anotehrWriter@writer.com']
 };
 
 const roles = {
   Hidden: ['Software engineer', 'Product manager', 'BD', 'some job'],
-  Discoverable: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+  Discover: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
   Read: ['reader1'],
-  Write: ['role1', 'role2', 'role3']
+  Write: ['role1', 'role2', 'role3', 'user']
 };
 
 export class PermissionsPanel extends React.Component {
@@ -150,17 +157,28 @@ export class PermissionsPanel extends React.Component {
     this.setState({ rolesView: newView });
   }
 
-  removeRole = (role) => {
-    console.log(`removing ${role} from ${this.state.rolesView} list`);
-  }
-
-  addRole = () => {
-    const role = this.state.newRoleValue;
-    const view = this.state.rolesView;
-    console.log(`adding ${role} to ${view} role list`);
-    this.setState({
-      updateSuccess: true,
-      newRoleValue: ''
+  updateRoles = (action, roleToRemove) => {
+    const role = (action === Consts.REMOVE) ? roleToRemove : this.state.newRoleValue;
+    const view = (action === Consts.REMOVE) ? Consts.HIDDEN : this.state.rolesView;
+    const updateFn = (this.props.propertyTypeName) ?
+      PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
+    const req = {
+      role,
+      action: Consts.SET,
+      name: this.props.entitySetName,
+      permissions: permissionLevels[view.toLowerCase()]
+    };
+    if (this.props.propertyTypeName) {
+      req.property = {
+        namespace: this.props.propertyTypeNamespace,
+        name: this.props.propertyTypeName
+      };
+    }
+    updateFn([req]).then(() => {
+      this.setState({
+        updateSuccess: true,
+        newRoleValue: ''
+      });
     });
   }
 
@@ -188,7 +206,7 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.removeRole(role);
+                this.updateRoles(Consts.REMOVE, role);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -203,7 +221,7 @@ export class PermissionsPanel extends React.Component {
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, this.state.rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, this.state.rolesView)}
-          {this.viewPermissionTypeButton(accessOptions.Discoverable, this.changeRolesView, this.state.rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, this.state.rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Hidden, this.changeRolesView, this.state.rolesView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
@@ -217,7 +235,12 @@ export class PermissionsPanel extends React.Component {
             placeholder={'Enter a new role'}
             className={`${styles.inputBox} ${styles.permissionInputWidth}`}
           />
-          <button className={`${styles.simpleButton} ${styles.spacerMargin}`} onClick={this.addRole}>Save</button>
+        <button
+          className={`${styles.simpleButton} ${styles.spacerMargin}`}
+          onClick={() => {
+            this.updateRoles(Consts.SET)
+          }}
+        >Save</button>
         </div>
       </div>
     );
@@ -294,7 +317,7 @@ export class PermissionsPanel extends React.Component {
         <div className={`${styles.padTop} ${styles.inline}`}>
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, this.state.emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, this.state.emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Discoverable, this.changeEmailsView, this.state.emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, this.state.emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Hidden, this.changeEmailsView, this.state.emailsView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
@@ -322,7 +345,7 @@ export class PermissionsPanel extends React.Component {
         }}
         className={this.getClassName(view)}
       >{viewLabels[view]}</button>
-  );
+    );
   }
 
   render() {
