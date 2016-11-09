@@ -6,35 +6,22 @@
 	line-height: 18px;
 }
 
+h1, h2 {
+  font-size: 26px;
+  color: #404446;
+  font-weight: bold;
+}
+
+button {
+  cursor: pointer;
+}
+
 .topSpacer {
   height: 50px;
 }
 
-.navbarContainer {
-  height: 50px;
-  background: gray;
-  width: 100%;
-  top: 0;
-  position: absolute;
-}
-
-.logo {
-  max-width: 80%;
-  max-height: 80%;
-  padding-left: 15px;
-}
-
-.loom {
-  display: inline-block;
-  color: #f6f6f6;
-  font-size: 30px;
-  vertical-align: middle;
-}
-
-.logoutButton {
-  position: relative;
-  float: right;
-  margin-right: 10px;
-  height: 70%;
-  top: 15%;
+.bodyContainer {
+  background: white;
+  margin-left: 80px;
+  margin-right: 80px;
 }

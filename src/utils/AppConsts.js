@@ -12,6 +12,14 @@ const PROD = 'http://api.loom.digital';
 const JSON = 'json';
 const CSV = 'csv';
 
+const READ = 'read';
+const WRITE = 'write';
+
+const HOME = 'home';
+const CATALOG = 'catalog';
+const LOGIN = 'login';
+const SETTINGS = 'settings';
+
 const SCHEMA = 'schema';
 const ENTITY_SET = 'entitySet';
 const ENTITY_TYPE = 'entityType';
@@ -27,6 +35,12 @@ export default {
   PROD,
   JSON,
   CSV,
+  READ,
+  WRITE,
+  HOME,
+  CATALOG,
+  LOGIN,
+  SETTINGS,
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,

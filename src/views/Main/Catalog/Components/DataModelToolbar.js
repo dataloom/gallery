@@ -33,10 +33,23 @@ export class DataModelToolbar extends React.Component {
       const type = labels.type;
       let className = styles.buttonStyle;
       if (type === this.state.dataModelView) {
-        className = styles.selectedButtonStyle;
+        className = `${styles.buttonStyle} ${styles.selectedButtonStyle}`;
+      }
+      if (this.dataModelLabels[0] === labels) {
+        className = `${className} ${styles.firstEdmButton}`;
+      }
+      if (this.dataModelLabels[this.dataModelLabels.length - 1] === labels) {
+        className = `${className} ${styles.lastEdmButton}`;
       }
       return (
-        <button onClick={() => this.updateViewAndToolbar(type)} className={className} key={labels.key}>{label}</button>
+        <button
+          className={className}
+          key={labels.key}
+          onClick={() => {
+            return this.updateViewAndToolbar(type);
+          }}
+        >{label}
+        </button>
       );
     });
 

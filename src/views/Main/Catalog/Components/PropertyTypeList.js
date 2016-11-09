@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
@@ -139,6 +138,10 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropMultiplicity: e.target.value });
   }
 
+  newPropertyRowClass = () => {
+    return (this.state.newPropertyRow) ? styles.hidden : styles.addButton;
+  }
+
   render() {
     const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
@@ -158,10 +161,10 @@ export class PropertyTypeList extends React.Component {
           <tbody>
             <tr>
               <th className={this.shouldShow[!this.props.navBar]} />
-              <th className={styles.tableCell}>Name</th>
-              <th className={styles.tableCell}>Namespace</th>
-              <th className={styles.tableCell}>Datatype</th>
-              <th className={styles.tableCell}>Multiplicity</th>
+              <th className={styles.tableCell}>Property Type Name</th>
+              <th className={styles.tableCell}>Property Type Namespace</th>
+              <th className={styles.tableCell}>Property Type Datatype</th>
+              <th className={styles.tableCell}>Property Type Multiplicity</th>
             </tr>
             {propertyTypeList}
             <tr className={this.shouldShow[this.state.newPropertyRow && this.props.navBar]}>
@@ -187,7 +190,7 @@ export class PropertyTypeList extends React.Component {
                 placeholder="multiplicity"
                 className={styles.tableCell}
               /></td>
-              <td><Button onClick={this.createNewPropertyType}>Save</Button></td>
+              <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
             </tr>
             <NameNamespaceAutosuggest
               className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
@@ -196,7 +199,7 @@ export class PropertyTypeList extends React.Component {
             />
           </tbody>
         </table>
-        <Button onClick={this.newProperty} className={this.shouldShow[!this.state.newPropertyRow]}>+</Button>
+        <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
         <div className={this.showErrorMsgClass[this.state.addError]}>Unable to add property type.</div>
         <div className={this.showErrorMsgClass[this.state.deleteError]}>Unable to delete property type.</div>
       </div>
