@@ -13,12 +13,6 @@ declare var __LOCAL__;
 
 const auth = new AuthService(Consts.AUTH0_CLIENT_ID, Consts.AUTH0_DOMAIN);
 
-const getBaseUrl = () => {
-  const host = window.location.host;
-  const domainRegex = /(?:[^\.]+\.)*([^\.]+\.[^\.]+)(?:\:\d+)?/;
-  return `https://api.${host.match(domainRegex)[1]}`;
-};
-
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
   if (!auth.loggedIn()) {
@@ -26,7 +20,7 @@ const requireAuth = (nextState, replace) => {
   }
   else {
     const authToken = auth.getToken();
-    const baseUrl = (__LOCAL__) ? Consts.LOCAL : getBaseUrl();
+    const baseUrl = (__LOCAL__) ? Consts.LOCAL : `https://api.${window.location.host}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
