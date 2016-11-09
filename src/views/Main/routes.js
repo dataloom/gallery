@@ -10,7 +10,6 @@ import { Settings } from './Settings/Settings';
 import Consts from '../../utils/AppConsts';
 
 declare var __LOCAL__;
-declare var __STG__;
 
 const auth = new AuthService(Consts.AUTH0_CLIENT_ID, Consts.AUTH0_DOMAIN);
 
@@ -20,13 +19,10 @@ const requireAuth = (nextState, replace) => {
     replace({ pathname: `/${Consts.LOGIN}` });
   }
   else {
-    const authToken = `Bearer ${auth.getToken()}`;
-    let baseUrl = Consts.PROD;
+    const authToken = auth.getToken();
+    let baseUrl = window.location.origin;
     if (__LOCAL__) {
       baseUrl = Consts.LOCAL;
-    }
-    else if (__STG__) {
-      baseUrl = Consts.STG;
     }
     Loom.configure({ baseUrl, authToken });
   }
