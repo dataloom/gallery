@@ -63,12 +63,15 @@ export class PermissionsPanel extends React.Component {
     exitPanel: PropTypes.func
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    const options = (this.props.propertyTypeName === undefined) ?
+      Object.keys(accessOptions) : Object.keys(propertyAccessOptions);
     this.state = {
       view: views.GLOBAL,
       updateSuccess: false,
       updateError: false,
+      globalValue: options[0],
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
       newRoleValue: '',
@@ -121,7 +124,11 @@ export class PermissionsPanel extends React.Component {
   }
 
   updatePermissions = (view) => {
-    this.setState({ updateSuccess: true });
+    if (view === views.GLOBAL) this.updateRoles(Consts.SET, Consts.DEFAULT_USER_ROLE, this.state.globalValue);
+  }
+
+  updateDropdownValue = (e) => {
+    this.setState({ globalValue: e.value });
   }
 
   buttonStyle = (view, viewState) => {
@@ -138,8 +145,8 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.dropdownWrapper}>
           <Dropdown
             options={options}
-            onChange={this.onSelect}
-            value={options[0]}
+            onChange={this.updateDropdownValue}
+            value={this.state.globalValue}
           />
         </div>
         <div className={styles.spacerSmall} />
@@ -157,17 +164,12 @@ export class PermissionsPanel extends React.Component {
     this.setState({ rolesView: newView });
   }
 
-  updateRoles = (action, roleToRemove) => {
-    const role = (action === Consts.REMOVE) ? roleToRemove : this.state.newRoleValue;
-    const view = (action === Consts.REMOVE) ? Consts.HIDDEN : this.state.rolesView;
+  updateRoles = (action, role, view) => {
+    const name = this.props.entitySetName;
+    const permissions = (action === Consts.REMOVE) ? [view.toLowerCase()] : permissionLevels[view.toLowerCase()];
     const updateFn = (this.props.propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
-    const req = {
-      role,
-      action: Consts.SET,
-      name: this.props.entitySetName,
-      permissions: permissionLevels[view.toLowerCase()]
-    };
+    const req = { role, action, name, permissions };
     if (this.props.propertyTypeName) {
       req.property = {
         namespace: this.props.propertyTypeNamespace,
@@ -206,7 +208,7 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.updateRoles(Consts.REMOVE, role);
+                this.updateRoles(Consts.REMOVE, role, this.state.rolesView);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -235,12 +237,12 @@ export class PermissionsPanel extends React.Component {
             placeholder={'Enter a new role'}
             className={`${styles.inputBox} ${styles.permissionInputWidth}`}
           />
-        <button
-          className={`${styles.simpleButton} ${styles.spacerMargin}`}
-          onClick={() => {
-            this.updateRoles(Consts.SET)
-          }}
-        >Save</button>
+          <button
+            className={`${styles.simpleButton} ${styles.spacerMargin}`}
+            onClick={() => {
+              this.updateRoles(Consts.SET, this.state.newRoleValue, this.state.rolesView);
+            }}
+          >Save</button>
         </div>
       </div>
     );

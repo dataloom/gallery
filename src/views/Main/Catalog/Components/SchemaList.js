@@ -134,16 +134,6 @@ export class SchemaList extends React.Component {
           >Create a new schema
           </button>
           <div className={this.showNewSchema[this.state.newSchema]}>
-            <div>Schema Name:</div>
-            <div className={styles.spacerMini} />
-            <input
-              className={styles.inputBox}
-              type="text"
-              placeholder="name"
-              value={this.state.newSchemaName}
-              onChange={this.handleNameChange}
-            />
-            <div className={styles.spacerSmall} />
             <div>Schema Namespace:</div>
             <div className={styles.spacerMini} />
             <input
@@ -152,6 +142,16 @@ export class SchemaList extends React.Component {
               placeholder="namespace"
               value={this.state.newSchemaNamespace}
               onChange={this.handleNamespaceChange}
+            />
+            <div className={styles.spacerSmall} />
+            <div>Schema Name:</div>
+            <div className={styles.spacerMini} />
+            <input
+              className={styles.inputBox}
+              type="text"
+              placeholder="name"
+              value={this.state.newSchemaName}
+              onChange={this.handleNameChange}
             />
             <div className={styles.spacerSmall} />
             <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>

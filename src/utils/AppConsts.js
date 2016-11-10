@@ -18,6 +18,8 @@ const READ = 'read';
 const WRITE = 'write';
 const OWNER = 'owner';
 
+const DEFAULT_USER_ROLE = 'user';
+
 const ADD = 'add';
 const REMOVE = 'remove';
 const SET = 'set';
@@ -50,6 +52,8 @@ export default {
   READ,
   WRITE,
   OWNER,
+
+  DEFAULT_USER_ROLE,
 
   ADD,
   REMOVE,

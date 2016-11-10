@@ -15,7 +15,7 @@ const roles = {
   five: [],
   six: [],
   seven: []
-}
+};
 
 export class Settings extends React.Component {
 
@@ -25,7 +25,7 @@ export class Settings extends React.Component {
       selectedRole: Object.keys(roles)[0],
       newRoleValue: '',
       newEmailValue: ''
-    }
+    };
   }
 
   deleteRole = (role) => {
