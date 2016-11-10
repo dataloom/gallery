@@ -17,6 +17,7 @@ export class EntitySetList extends React.Component {
   componentDidMount() {
     EntityDataModelApi.getAllEntitySets()
       .then((entitySets) => {
+        console.log(entitySets);
         this.setState({ entitySets: Utils.addKeysToArray(entitySets) });
       });
   }
@@ -28,6 +29,7 @@ export class EntitySetList extends React.Component {
         name={entitySet.name}
         title={entitySet.title}
         type={entitySet.type}
+        permissions={entitySet.permissions}
       />);
     });
     return (

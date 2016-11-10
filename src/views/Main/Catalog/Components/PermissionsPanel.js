@@ -123,8 +123,28 @@ export class PermissionsPanel extends React.Component {
     }
   }
 
-  updatePermissions = (view) => {
-    if (view === views.GLOBAL) this.updateRoles(Consts.SET, Consts.DEFAULT_USER_ROLE, this.state.globalValue);
+  updatePermissions(action, principal, view) {
+    const name = this.props.entitySetName;
+    const permissions = (action === Consts.REMOVE) ? [view.toLowerCase()] : permissionLevels[view.toLowerCase()];
+    const updateFn = (this.props.propertyTypeName) ?
+      PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
+    const req = { principal, action, name, permissions };
+    if (this.props.propertyTypeName) {
+      req.property = {
+        namespace: this.props.propertyTypeNamespace,
+        name: this.props.propertyTypeName
+      };
+    }
+    updateFn([req]).then(() => {
+      this.setState({
+        updateSuccess: true,
+        newRoleValue: ''
+      });
+    });
+  }
+
+  updateGlobalPermissions = () => {
+    this.updateRoles(Consts.SET, Consts.DEFAULT_USER_ROLE, this.state.globalValue);
   }
 
   updateDropdownValue = (e) => {
@@ -152,7 +172,7 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.spacerSmall} />
         <button
           onClick={() => {
-            this.updatePermissions(views.GLOBAL);
+            this.updateGlobalPermissions();
           }}
           className={styles.simpleButton}
         >Save changes</button>
@@ -165,23 +185,11 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateRoles = (action, role, view) => {
-    const name = this.props.entitySetName;
-    const permissions = (action === Consts.REMOVE) ? [view.toLowerCase()] : permissionLevels[view.toLowerCase()];
-    const updateFn = (this.props.propertyTypeName) ?
-      PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
-    const req = { role, action, name, permissions };
-    if (this.props.propertyTypeName) {
-      req.property = {
-        namespace: this.props.propertyTypeNamespace,
-        name: this.props.propertyTypeName
-      };
-    }
-    updateFn([req]).then(() => {
-      this.setState({
-        updateSuccess: true,
-        newRoleValue: ''
-      });
-    });
+    const principal = {
+      type: Consts.ROLE,
+      name: role
+    };
+    this.updatePermissions(action, principal, view);
   }
 
   handleNewRoleChange = (e) => {
@@ -265,7 +273,7 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.spacerSmall} />
         <button
           onClick={() => {
-            this.updatePermissions(views.DOMAIN);
+            this.updateGlobalPermissions(views.DOMAIN);
           }}
           className={styles.simpleButton}
         >Save changes</button>

@@ -19,6 +19,7 @@ const WRITE = 'write';
 const OWNER = 'owner';
 
 const DEFAULT_USER_ROLE = 'user';
+const ROLE = 'role';
 
 const ADD = 'add';
 const REMOVE = 'remove';
@@ -54,6 +55,7 @@ export default {
   OWNER,
 
   DEFAULT_USER_ROLE,
+  ROLE,
 
   ADD,
   REMOVE,

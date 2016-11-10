@@ -10,7 +10,8 @@ export class EntitySet extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     title: PropTypes.string,
-    type: PropTypes.object
+    type: PropTypes.object,
+    permissions: PropTypes.array
   }
 
   constructor() {
@@ -70,18 +71,53 @@ export class EntitySet extends React.Component {
     this.setState({ showPanel: true });
   }
 
-  renderRequestPermissionButton = () => {
-    const options = [Consts.READ, Consts.WRITE];
+  renderDownloadButton = (options) => {
+    if (options !== undefined) {
+      return (
+        <div className={styles.dropdownButtonContainer}>
+          <DropdownButton downloadUrlFn={this.getUrl} options={options} />
+        </div>
+      );
+    }
+    return null;
+  }
+
+  renderRequestPermissionButton = (options) => {
+    if (options !== undefined) {
+      return (
+        <div className={styles.requestPermissionWrapper}>
+          <DropdownButton options={options} requestFn={this.requestPermission} />
+        </div>
+      );
+    }
+    return null;
+  }
+
+  renderDownloadOrRequestDropdowns = () => {
+    let downloadOptions;
+    let requestOptions;
+    const permissions = this.props.permissions;
+    if (permissions.includes(Consts.WRITE.toUpperCase())) {
+      downloadOptions = [Consts.CSV, Consts.JSON];
+    }
+    else if (permissions.includes(Consts.READ.toUpperCase())) {
+      downloadOptions = [Consts.CSV, Consts.JSON];
+      requestOptions = [Consts.WRITE];
+    }
+    else {
+      requestOptions = [Consts.READ, Consts.WRITE];
+    }
     return (
-      <div className={this.requestPermissionClass[this.state.requestPermission !== undefined]}>
-        <DropdownButton options={options} requestFn={this.requestPermission} />
+      <div>
+        {this.renderRequestPermissionButton(requestOptions)}
+        <div className={styles.spacerSmall} />
+        {this.renderDownloadButton(downloadOptions)}
       </div>
     );
   }
 
   render() {
     const { name, title, type } = this.props;
-    const options = [Consts.CSV, Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <button onClick={this.changeEditingState} className={styles.permissionButton}>
@@ -97,10 +133,7 @@ export class EntitySet extends React.Component {
         <div className={styles.spacerMed} />
         <div className={styles.subtitle}>{title}</div>
         <div className={styles.spacerMed} />
-        <div className={styles.dropdownButtonContainer}>
-          <DropdownButton downloadUrlFn={this.getUrl} options={options} />
-        </div>
-        {this.renderRequestPermissionButton()}
+        {this.renderDownloadOrRequestDropdowns()}
         <br />
         <div className={styles.spacerSmall} />
         <div className={this.shouldShow[this.state.showPanel]}>
