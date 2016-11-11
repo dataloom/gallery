@@ -39,9 +39,9 @@ export class Topbar extends React.Component {
       return (
         <div className={styles.loggedInItemsContainer}>
           <div className={styles.greeting}>{greeting}</div>
-          <button onClick={this.navigateToSettings} className={styles.settingsIcon}>
+          {/* <button onClick={this.navigateToSettings} className={styles.settingsIcon}>
             <img src={settingsIcon} role="presentation" className={styles.settingsIconImg} />
-          </button>
+          </button> */}
           <button onClick={this.logout} className={styles.logoutButton}>Logout</button>
         </div>
       );
