@@ -60,7 +60,13 @@ export class EntityTypeList extends React.Component {
   }
 
   showError = () => {
-    this.setState({ error: true });
+    this.setState({
+      error: true,
+      newPKeyName: '',
+      newPKeyNamespace: '',
+      newEntityTypeName: '',
+      newEntityTypeNamespace: ''
+    });
   }
 
   createNewEntityType = () => {
@@ -167,6 +173,8 @@ export class EntityTypeList extends React.Component {
                   saveOption={false}
                   onNameChange={this.handlePKeyNameChange}
                   onNamespaceChange={this.handlePKeyNamespaceChange}
+                  initialName={this.state.newPKeyName}
+                  initialNamespace={this.state.newPKeyNamespace}
                 />
               </tbody>
             </table>

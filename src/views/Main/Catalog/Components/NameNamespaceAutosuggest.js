@@ -23,17 +23,30 @@ export class NameNamespaceAutosuggest extends React.Component {
     addProperty: PropTypes.func,
     saveOption: PropTypes.bool,
     onNameChange: PropTypes.func,
-    onNamespaceChange: PropTypes.func
+    onNamespaceChange: PropTypes.func,
+    initialName: PropTypes.string,
+    initialNamespace: PropTypes.string
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    const nameVal = (props.initialName) ? props.initialName : '';
+    const namespaceVal = (props.initialNamespace) ? props.initialNamespace : '';
     this.state = {
-      nameVal: '',
+      nameVal,
       nameSuggestions: [],
-      namespaceVal: '',
+      namespaceVal,
       namespaceSuggestions: []
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.initialName !== undefined && nextProps.initialNamespace !== undefined) {
+      this.setState({
+        nameVal: nextProps.initialName,
+        namespaceVal: nextProps.initialNamespace
+      });
+    }
   }
 
   showSave = {
