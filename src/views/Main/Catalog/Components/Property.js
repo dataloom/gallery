@@ -79,7 +79,6 @@ export class Property extends React.Component {
         <td className={this.shouldShow[this.state.showPanel]}>
           <PermissionsPanel
             entitySetName={this.props.entitySetName}
-            entityType={{ name: this.props.entityTypeName, namespace: this.props.entityTypeNamespace }}
             propertyTypeName={prop.name}
             propertyTypeNamespace={prop.namespace}
             exitPanel={this.exitPanel}

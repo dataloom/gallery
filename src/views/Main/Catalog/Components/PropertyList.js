@@ -109,7 +109,7 @@ export class PropertyList extends React.Component {
           entitySetName={entitySetName}
           isOwner={isOwner}
         />
-    );
+      );
     });
     return (
       <div>

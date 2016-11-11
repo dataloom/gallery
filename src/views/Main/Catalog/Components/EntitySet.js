@@ -64,14 +64,13 @@ export class EntitySet extends React.Component {
   requestPermission = (type) => {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
-        type: Consts.DEFAULT_USER_ROLE,
+        type: Consts.USER,
         name: this.props.auth.getProfile().email
       },
       action: Consts.REQUEST,
       name: this.props.name,
       permissions: permissionLevels[type]
     }]);
-    console.log(`give me ${type} access pls`);
   }
 
   shouldShow = {
@@ -140,11 +139,11 @@ export class EntitySet extends React.Component {
     );
   }
 
-  renderPermissionsPanel = (name, type) => {
+  renderPermissionsPanel = (name) => {
     if (this.props.isOwner) {
       return (
         <div className={this.shouldShow[this.state.showPanel]}>
-          <PermissionsPanel entitySetName={name} entityType={type} exitPanel={this.exitPanel} />
+          <PermissionsPanel entitySetName={name} exitPanel={this.exitPanel} />
         </div>
       );
     }
@@ -171,7 +170,7 @@ export class EntitySet extends React.Component {
         {this.renderDownloadOrRequestDropdowns()}
         <br />
         <div className={styles.spacerSmall} />
-        {this.renderPermissionsPanel(name, type)}
+        {this.renderPermissionsPanel(name)}
         <div>
           <table>
             <tbody>

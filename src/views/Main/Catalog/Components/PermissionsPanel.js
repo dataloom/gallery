@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import Dropdown from 'react-dropdown';
 import { PermissionsApi } from 'loom-data';
-import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
 import '../../../../styles/dropdown.css';
@@ -40,17 +39,9 @@ const permissionOptions = {
   Write: 'Write'
 };
 
-const emails = {
-  Hidden: ['asfkadlskfnlaskdfjlskadjfalskjfalksjflskdjfalksjfaslkdfjlaksdfj', 'first@hidden.com', 'second@hidden.com', 'third@hidden.com', 'fourth@hidden.com', 'fifth@hidden.com', 'sixth@hidden.com', 'seventh@hidden.com', 'eighth@hidden.com', 'ninth@hidden.com', 'tenth@hidden.com', 'eleventh@hidden.com'],
-  Discover: ['one@discoverable.com', 'two@discoverable.com', 'three@discoverable.com'],
-  Read: ['heresAnEmail@public.com'],
-  Write: ['writer@writer.com', 'anotehrWriter@writer.com']
-};
-
 export class PermissionsPanel extends React.Component {
   static propTypes = {
     entitySetName: PropTypes.string,
-    entityType: PropTypes.object,
     propertyTypeName: PropTypes.string,
     propertyTypeNamespace: PropTypes.string,
     exitPanel: PropTypes.func
@@ -325,18 +316,12 @@ export class PermissionsPanel extends React.Component {
     this.setState({ emailsView: newView });
   }
 
-  removeEmail = (email) => {
-    console.log(`removing ${email} from ${this.state.emailsView} list`);
-  }
-
-  addEmail = () => {
-    const email = this.state.newEmailValue;
-    const view = this.state.emailsView;
-    console.log(`adding ${email} to ${view} email list`);
-    this.setState({
-      updateSuccess: true,
-      newEmailValue: ''
-    });
+  updateEmails = (action, email, view) => {
+    const principal = {
+      type: Consts.USER,
+      name: email
+    };
+    this.updatePermissions(action, principal, view);
   }
 
   handleNewEmailChange = (e) => {
@@ -344,14 +329,14 @@ export class PermissionsPanel extends React.Component {
   }
 
   getEmailsView = () => {
-    const emailList = emails[this.state.emailsView];
+    const emailList = this.state.userAcls[this.state.emailsView];
     const hiddenBody = emailList.map((email) => {
       return (
         <div className={styles.tableRows} key={emailList.indexOf(email)}>
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.removeEmail(email);
+                this.updateEmails(Consts.REMOVE, email, this.state.emailsView);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -368,7 +353,6 @@ export class PermissionsPanel extends React.Component {
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, this.state.emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, this.state.emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, this.state.emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Hidden, this.changeEmailsView, this.state.emailsView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {hiddenBody}
@@ -381,7 +365,12 @@ export class PermissionsPanel extends React.Component {
             placeholder={'Enter a new email address'}
             className={`${styles.inputBox} ${styles.permissionInputWidth}`}
           />
-          <button className={`${styles.simpleButton} ${styles.spacerMargin}`} onClick={this.addEmail}>Save</button>
+          <button
+            className={`${styles.simpleButton} ${styles.spacerMargin}`}
+            onClick={() => {
+              this.updateEmails(Consts.SET, this.state.newEmailValue, this.state.emailsView);
+            }}
+          >Save</button>
         </div>
       </div>
     );
