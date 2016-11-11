@@ -7,7 +7,7 @@ export default class AuthService extends EventEmitter {
     super();
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
-      atuh: {
+      auth: {
         scope: 'openid email user_metadata app_metadata nickname roles'
       }
     });
