@@ -67,7 +67,9 @@ export default class AuthService extends EventEmitter {
     // Saves user token to localStorage
     this.storage.setItem('id_token', idToken);
 
-    Cookies.set('authorization', `Bearer ${idToken}`);
+    Cookies.set('authorization', `Bearer ${idToken}`, {
+      domain: `.${window.location.hostname}`
+    });
   }
 
   getToken() {
