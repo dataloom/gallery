@@ -20,10 +20,7 @@ const requireAuth = (nextState, replace) => {
   }
   else {
     const authToken = auth.getToken();
-    let baseUrl = window.location.origin;
-    if (__LOCAL__) {
-      baseUrl = Consts.LOCAL;
-    }
+    const baseUrl = (__LOCAL__) ? Consts.LOCAL : `https://api.${window.location.host}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
