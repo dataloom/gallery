@@ -34,7 +34,7 @@ const accessOptions = {
   Write: 'Write'
 };
 
-const propertyAccessOptions = {
+const permissionOptions = {
   Discover: 'Discover',
   Read: 'Read',
   Write: 'Write'
@@ -45,13 +45,6 @@ const emails = {
   Discover: ['one@discoverable.com', 'two@discoverable.com', 'three@discoverable.com'],
   Read: ['heresAnEmail@public.com'],
   Write: ['writer@writer.com', 'anotehrWriter@writer.com']
-};
-
-const roles = {
-  Hidden: ['Software engineer', 'Product manager', 'BD', 'some job'],
-  Discover: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-  Read: ['reader1'],
-  Write: ['role1', 'role2', 'role3', 'user']
 };
 
 export class PermissionsPanel extends React.Component {
@@ -66,17 +59,68 @@ export class PermissionsPanel extends React.Component {
   constructor(props) {
     super(props);
     const options = (this.props.propertyTypeName === undefined) ?
-      Object.keys(accessOptions) : Object.keys(propertyAccessOptions);
+      Object.keys(accessOptions) : Object.keys(permissionOptions);
     this.state = {
       view: views.GLOBAL,
       updateSuccess: false,
       updateError: false,
       globalValue: options[0],
+      roleAcls: { Discover: [], Read: [], Write: [] },
+      userAcls: { Discover: [], Read: [], Write: [] },
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
       newRoleValue: '',
       newEmailValue: ''
     };
+    this.loadAcls();
+  }
+
+  getPermission(permissions) {
+    if (permissions.includes(permissionOptions.Write.toUpperCase())) return permissionOptions.Write;
+    if (permissions.includes(permissionOptions.Read.toUpperCase())) return permissionOptions.Read;
+    return permissionOptions.Discover;
+  }
+
+  updateStateAcls = (acls, updateSuccess) => {
+    let globalValue = accessOptions[0];
+    const roleAcls = { Discover: [], Read: [], Write: [] };
+    const userAcls = { Discover: [], Read: [], Write: [] };
+    acls.forEach((acl) => {
+      if (acl.principal.type.toLowerCase() === Consts.ROLE) {
+        if (acl.principal.name === Consts.DEFAULT_USER_ROLE) {
+          globalValue = this.getPermission(acl.permissions);
+        }
+        else {
+          roleAcls[this.getPermission(acl.permissions)].push(acl.principal.name);
+        }
+      }
+      else {
+        userAcls[this.getPermission(acl.permissions)].push(acl.principal.name);
+      }
+    });
+    this.setState({
+      globalValue,
+      roleAcls,
+      userAcls,
+      updateSuccess,
+      newRoleValue: '',
+      newEmailValue: ''
+    });
+  }
+
+  loadAcls = (updateSuccess) => {
+    if (this.props.propertyTypeName) {
+      // PermissionsApi.getOwnerAclsForPropertyTypesInEntitySet(this.props.entitySetName)
+      // .then((acls) => {
+      //   console.log(acls);
+      // })
+    }
+    else {
+      PermissionsApi.getOwnerAclsForEntitySet(this.props.entitySetName)
+      .then((acls) => {
+        this.updateStateAcls(acls, updateSuccess);
+      });
+    }
   }
 
   shouldShowSuccess = {
@@ -136,10 +180,7 @@ export class PermissionsPanel extends React.Component {
       };
     }
     updateFn([req]).then(() => {
-      this.setState({
-        updateSuccess: true,
-        newRoleValue: ''
-      });
+      this.loadAcls(true);
     });
   }
 
@@ -157,7 +198,7 @@ export class PermissionsPanel extends React.Component {
 
   getGlobalView = () => {
     const options = (this.props.propertyTypeName === undefined) ?
-      Object.keys(accessOptions) : Object.keys(propertyAccessOptions);
+      Object.keys(accessOptions) : Object.keys(permissionOptions);
     return (
       <div className={styles.viewWrapper}>
         <div>Choose the default permissions for everyone:</div>
@@ -209,7 +250,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   getRolesView = () => {
-    const roleList = roles[this.state.rolesView];
+    const roleList = this.state.roleAcls[this.state.rolesView];
     const hiddenBody = roleList.map((role) => {
       return (
         <div className={styles.tableRows} key={roleList.indexOf(role)}>
@@ -232,7 +273,6 @@ export class PermissionsPanel extends React.Component {
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, this.state.rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, this.state.rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, this.state.rolesView)}
-          {this.viewPermissionTypeButton(accessOptions.Hidden, this.changeRolesView, this.state.rolesView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {hiddenBody}
@@ -258,7 +298,7 @@ export class PermissionsPanel extends React.Component {
 
   getDomainView = () => {
     const options = (this.props.propertyTypeName === undefined) ?
-      Object.keys(accessOptions) : Object.keys(propertyAccessOptions);
+      Object.keys(accessOptions) : Object.keys(permissionOptions);
     return (
       <div className={styles.viewWrapper}>
         <div>Choose the default permissions for all users in your domain:</div>

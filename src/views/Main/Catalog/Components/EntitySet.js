@@ -1,17 +1,27 @@
 import React, { PropTypes } from 'react';
-import { DataApi, EntityDataModelApi } from 'loom-data';
+import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
 import Consts from '../../../../utils/AppConsts';
+import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
+
+const permissionLevels = {
+  hidden: [],
+  discover: [Consts.DISCOVER],
+  read: [Consts.DISCOVER, Consts.READ],
+  write: [Consts.DISCOVER, Consts.READ, Consts.WRITE]
+};
 
 export class EntitySet extends React.Component {
   static propTypes = {
     name: PropTypes.string,
     title: PropTypes.string,
     type: PropTypes.object,
-    permissions: PropTypes.array
+    permissions: PropTypes.array,
+    isOwner: PropTypes.bool,
+    auth: PropTypes.instanceOf(AuthService)
   }
 
   constructor() {
@@ -33,6 +43,11 @@ export class EntitySet extends React.Component {
     false: styles.hidden
   }
 
+  shouldAllowEditPermissions = {
+    true: styles.permissionButton,
+    false: styles.hidden
+  }
+
   componentDidMount() {
     EntityDataModelApi.getEntityType(this.props.type)
     .then((type) => {
@@ -47,6 +62,15 @@ export class EntitySet extends React.Component {
   }
 
   requestPermission = (type) => {
+    PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
+      principal: {
+        type: Consts.DEFAULT_USER_ROLE,
+        name: this.props.auth.getProfile().email
+      },
+      action: Consts.REQUEST,
+      name: this.props.name,
+      permissions: permissionLevels[type]
+    }]);
     console.log(`give me ${type} access pls`);
   }
 
@@ -116,11 +140,22 @@ export class EntitySet extends React.Component {
     );
   }
 
+  renderPermissionsPanel = (name, type) => {
+    if (this.props.isOwner) {
+      return (
+        <div className={this.shouldShow[this.state.showPanel]}>
+          <PermissionsPanel entitySetName={name} entityType={type} exitPanel={this.exitPanel} />
+        </div>
+      );
+    }
+    return null;
+  }
+
   render() {
-    const { name, title, type } = this.props;
+    const { name, title, type, isOwner } = this.props;
     return (
       <div className={styles.edmContainer}>
-        <button onClick={this.changeEditingState} className={styles.permissionButton}>
+        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[this.props.isOwner]}>
           {(this.state.editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
         <div className={styles.spacerSmall} />
@@ -136,9 +171,7 @@ export class EntitySet extends React.Component {
         {this.renderDownloadOrRequestDropdowns()}
         <br />
         <div className={styles.spacerSmall} />
-        <div className={this.shouldShow[this.state.showPanel]}>
-          <PermissionsPanel entitySetName={name} entityType={type} exitPanel={this.exitPanel} />
-        </div>
+        {this.renderPermissionsPanel(name, type)}
         <div>
           <table>
             <tbody>
@@ -161,6 +194,7 @@ export class EntitySet extends React.Component {
           allowEdit={false}
           entitySetName={name}
           editingPermissions={this.state.editing}
+          isOwner={isOwner}
         />
         <div className={styles.spacerBig} />
         <hr />

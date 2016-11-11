@@ -24,6 +24,7 @@ const ROLE = 'role';
 const ADD = 'add';
 const REMOVE = 'remove';
 const SET = 'set';
+const REQUEST = 'request';
 
 const HOME = 'home';
 const CATALOG = 'catalog';
@@ -60,6 +61,7 @@ export default {
   ADD,
   REMOVE,
   SET,
+  REQUEST,
 
   HOME,
   CATALOG,

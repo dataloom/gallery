@@ -12,7 +12,8 @@ export class Property extends React.Component {
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
     editingPermissions: PropTypes.bool,
-    entitySetName: PropTypes.string
+    entitySetName: PropTypes.string,
+    isOwner: PropTypes.bool
   }
 
   shouldShow = {
@@ -35,7 +36,7 @@ export class Property extends React.Component {
   }
 
   editPermissionsButton = () => {
-    if (this.props.editingPermissions) {
+    if (this.props.editingPermissions && this.props.isOwner) {
       return (
         <td>
           <button onClick={this.editPermissions} className={styles.simpleButton}>Change permissions</button>
@@ -72,6 +73,23 @@ export class Property extends React.Component {
     return (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
   }
 
+  renderEditPermissions = (prop) => {
+    if (this.props.isOwner) {
+      return (
+        <td className={this.shouldShow[this.state.showPanel]}>
+          <PermissionsPanel
+            entitySetName={this.props.entitySetName}
+            entityType={{ name: this.props.entityTypeName, namespace: this.props.entityTypeNamespace }}
+            propertyTypeName={prop.name}
+            propertyTypeNamespace={prop.namespace}
+            exitPanel={this.exitPanel}
+          />
+        </td>
+      );
+    }
+    return null;
+  }
+
   render() {
     const prop = this.props.property;
     return (
@@ -86,15 +104,7 @@ export class Property extends React.Component {
         <td className={styles.tableCell}>{prop.namespace}</td>
         {this.isPrimaryKey()}
         {this.editPermissionsButton()}
-        <td className={this.shouldShow[this.state.showPanel]}>
-          <PermissionsPanel
-            entitySetName={this.props.entitySetName}
-            entityType={{ name: this.props.entityTypeName, namespace: this.props.entityTypeNamespace }}
-            propertyTypeName={prop.name}
-            propertyTypeNamespace={prop.namespace}
-            exitPanel={this.exitPanel}
-          />
-        </td>
+        {this.renderEditPermissions(prop)}
       </tr>
     );
   }
