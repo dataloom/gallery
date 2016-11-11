@@ -17,15 +17,20 @@ const renderSuggestion = (suggestion) => {
 
 export class EdmDatatypeAutosuggest extends React.Component {
   static propTypes = {
-    onChangeFn: PropTypes.func
+    onChangeFn: PropTypes.func,
+    initialValue: PropTypes.string
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      value: '',
+      value: props.initialValue,
       suggestions: []
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ value: nextProps.initialValue });
   }
 
   getSuggestions(value) {

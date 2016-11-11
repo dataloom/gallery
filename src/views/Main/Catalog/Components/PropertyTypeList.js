@@ -182,7 +182,12 @@ export class PropertyTypeList extends React.Component {
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-              <td><EdmDatatypeAutosuggest onChangeFn={this.handleDatatypeChange} /></td>
+              <td>
+                <EdmDatatypeAutosuggest
+                  onChangeFn={this.handleDatatypeChange}
+                  initialValue={this.state.newPropDatatype}
+                />
+              </td>
               <td><input
                 type="text"
                 value={this.state.newPropMultiplicity}
