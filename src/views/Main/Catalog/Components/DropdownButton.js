@@ -63,7 +63,7 @@ export class DropdownButton extends React.Component {
         <button className={className}>{text}</button>
       </a>
       :
-        <button onClick={this.handleClick} className={className}>{text}</button>;
+      <button onClick={this.handleClick} className={className}>{text}</button>;
   }
 
   updateDatatype = (datatype) => {

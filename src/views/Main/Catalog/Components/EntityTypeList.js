@@ -137,16 +137,6 @@ export class EntityTypeList extends React.Component {
           >Create a new entity type
           </button>
           <div className={this.showNewEntityType[this.state.newEntityType]}>
-            <div>Entity Type Name:</div>
-            <div className={styles.spacerMini} />
-            <input
-              value={this.state.newEntityTypeName}
-              onChange={this.handleNameChange}
-              className={styles.inputBox}
-              type="text"
-              placeholder="name"
-            />
-            <div className={styles.spacerSmall} />
             <div>Entity Type Namespace:</div>
             <div className={styles.spacerMini} />
             <input
@@ -155,6 +145,16 @@ export class EntityTypeList extends React.Component {
               className={styles.inputBox}
               type="text"
               placeholder="namespace"
+            />
+            <div className={styles.spacerSmall} />
+            <div>Entity Type Name:</div>
+            <div className={styles.spacerMini} />
+            <input
+              value={this.state.newEntityTypeName}
+              onChange={this.handleNameChange}
+              className={styles.inputBox}
+              type="text"
+              placeholder="name"
             />
             <div className={styles.spacerSmall} />
             <div>Primary Key:</div>

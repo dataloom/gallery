@@ -12,8 +12,20 @@ const PROD = 'http://api.loom.digital';
 const JSON = 'json';
 const CSV = 'csv';
 
+const HIDDEN = 'hidden';
+const DISCOVER = 'discover';
 const READ = 'read';
 const WRITE = 'write';
+const OWNER = 'owner';
+
+const DEFAULT_USER_ROLE = 'user';
+const USER = 'user';
+const ROLE = 'role';
+
+const ADD = 'add';
+const REMOVE = 'remove';
+const SET = 'set';
+const REQUEST = 'request';
 
 const HOME = 'home';
 const CATALOG = 'catalog';
@@ -30,20 +42,38 @@ const EMPTY = '';
 export default {
   AUTH0_CLIENT_ID,
   AUTH0_DOMAIN,
+
   LOCAL,
   STG,
   PROD,
+
   JSON,
   CSV,
+
+  HIDDEN,
+  DISCOVER,
   READ,
   WRITE,
+  OWNER,
+
+  DEFAULT_USER_ROLE,
+  USER,
+  ROLE,
+
+  ADD,
+  REMOVE,
+  SET,
+  REQUEST,
+
   HOME,
   CATALOG,
   LOGIN,
   SETTINGS,
+
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
-  EMPTY,
-  PROPERTY_TYPE
+  PROPERTY_TYPE,
+
+  EMPTY
 };

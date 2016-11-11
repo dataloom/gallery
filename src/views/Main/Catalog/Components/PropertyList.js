@@ -14,9 +14,9 @@ export class PropertyList extends React.Component {
     updateFn: PropTypes.func,
     allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object,
-    allowEdit: PropTypes.bool,
     editingPermissions: PropTypes.bool,
-    entitySetName: PropTypes.string
+    entitySetName: PropTypes.string,
+    isOwner: PropTypes.bool
   }
 
   constructor() {
@@ -90,7 +90,8 @@ export class PropertyList extends React.Component {
       entityTypeNamespace,
       updateFn,
       entitySetName,
-      editingPermissions
+      editingPermissions,
+      isOwner
     } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
@@ -106,8 +107,9 @@ export class PropertyList extends React.Component {
           updateFn={updateFn}
           editingPermissions={editingPermissions}
           entitySetName={entitySetName}
+          isOwner={isOwner}
         />
-    );
+      );
     });
     return (
       <div>

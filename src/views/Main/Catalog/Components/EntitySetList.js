@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
+import AuthService from '../../../../utils/AuthService';
 import { EntitySet } from './EntitySet';
 import styles from '../styles.module.css';
 
 export class EntitySetList extends React.Component {
   static propTypes = {
-    entitySets: PropTypes.array
+    auth: PropTypes.instanceOf(AuthService)
   }
 
   constructor(props, context) {
@@ -28,6 +29,9 @@ export class EntitySetList extends React.Component {
         name={entitySet.name}
         title={entitySet.title}
         type={entitySet.type}
+        permissions={entitySet.permissions}
+        isOwner={entitySet.isOwner}
+        auth={this.props.auth}
       />);
     });
     return (

@@ -1,51 +1,8 @@
 import React from 'react';
+import { PermissionsApi } from 'loom-data';
+import { Promise } from 'bluebird';
 import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
-
-const requests = [
-  {
-    email: 'givemeaccesspls@gmail.com',
-    dataset: 'MHS Data',
-    msg: 'Hi! I would like to have access to your dataset please. It would be very helpful to me to have access to this thing for a variety of interesting and convincing reasons! Give it to me please.',
-    time: Date.now(),
-    key: '0'
-  },
-  {
-    email: 'katherine@kryptnostic.com',
-    dataset: 'Kryptnostic',
-    msg: 'please let me see the data :)',
-    time: Date.now(),
-    key: '1'
-  }
-];
-
-const activity = [
-  {
-    time: Date.now(),
-    activity: 'Something tremendously exciting happened.',
-    key: '0'
-  },
-  {
-    time: Date.now(),
-    activity: 'This one is a bit less important.',
-    key: '1'
-  }
-];
-
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
 
 const authConsts = {
   0: '',
@@ -58,7 +15,8 @@ export class Home extends React.Component {
   constructor() {
     super();
     this.state = {
-      resolved: {}
+      resolved: {},
+      requests: []
     };
   }
 
@@ -72,66 +30,94 @@ export class Home extends React.Component {
   }
 
   loadRequestStatuses = () => {
-    const map = this.state.resolved;
-    requests.forEach((request) => {
-      map[request.key] = 0;
+    PermissionsApi.getAllReceivedRequestsForPermissions()
+    .then((requests) => {
+      const map = this.state.resolved;
+      requests.forEach((request) => {
+        map[request.requestId] = 0;
+      });
+      this.setState({ resolved: map, requests });
     });
-    this.setState({ resolved: map });
   }
 
-  getDateTimeFormatted(datetimeStr) {
-    const datetime = new Date(datetimeStr);
-    const month = months[datetime.getMonth()];
-    const date = datetime.getDate().toString();
-    const year = datetime.getFullYear().toString();
-    const hour = datetime.getHours();
-    const ampm = (hour < 12) ? 'am' : 'pm';
-    const minutes = datetime.getMinutes();
-    const minuteStr = (minutes.toString().length < 2) ? `0${minutes.toString()}` : minutes.toString();
-    const hourStr = (hour % 12 === 0) ? '12' : (hour % 12).toString();
-    return `${month} ${date}, ${year} at ${hourStr}:${minuteStr}${ampm}`;
-  }
-
-  respondToRequest = (approvalGranted, email, dataset, key) => {
+  respondToRequest = (approvalGranted, email, entitySet, requestId, permissions) => {
     const map = this.state.resolved;
-    map[key] = (approvalGranted) ? 1 : 2;
+    map[requestId] = (approvalGranted) ? 1 : 2;
+    if (approvalGranted) {
+      Promise.join(
+        PermissionsApi.updateAclsForEntitySets([{
+          principal: {
+            type: Consts.USER,
+            name: email
+          },
+          action: Consts.SET,
+          name: entitySet,
+          permissions
+        }]),
+        PermissionsApi.removePermissionsRequestForEntitySet(requestId),
+        () => {
+          this.setState({ resolved: map });
+        }
+      );
+    }
+    else {
+      PermissionsApi.removePermissionsRequestForEntitySet(requestId)
+      .then(() => {
+        this.setState({ resolved: map });
+      });
+    }
     this.setState({ resolved: map });
+  }
+
+  getPermissionType(permissions) {
+    if (permissions.includes(Consts.WRITE.toUpperCase())) return Consts.WRITE;
+    return Consts.READ;
   }
 
   renderAllRequests = () => {
-    return requests.map((request) => {
-      const reqStatus = this.state.resolved[request.key];
+    if (this.state.requests.length === 0) {
       return (
-        <div className={styles.objContainer} key={request.key}>
+        <div className={styles.objContainer}>
+          <div className={styles.noRequests}>You have no action items.</div>
+        </div>
+      );
+    }
+    return this.state.requests.map((request) => {
+      const reqStatus = this.state.resolved[request.requestId];
+      const email = request.principal.name;
+      const entitySet = request.name;
+      const permissions = request.permissions;
+      const requestId = request.requestId;
+
+      return (
+        <div className={styles.objContainer} key={requestId}>
           <div className={this.shouldShow[(reqStatus === 0)]}>
-            <div>{this.getDateTimeFormatted(request.time)}</div>
+            <div>{(request.timestamp)}</div>
             <div>
-              <div className={styles.important}>{request.email}</div>
-              <div className={styles.inline}> requests access to </div>
-              <div className={styles.important}>{request.dataset}</div>
+              <div className={styles.important}>{email}</div>
+              <div className={styles.inline}> requests {this.getPermissionType(permissions)} access to </div>
+              <div className={styles.important}>{entitySet}</div>
             </div>
-            <div className={styles.spacerSmall} />
-            <div>{request.msg}</div>
             <div className={styles.spacerSmall} />
             <div>
               <button
                 className={styles.genericButton}
                 onClick={() => {
-                  this.respondToRequest(true, request.email, request.dataset, request.key);
+                  this.respondToRequest(true, email, entitySet, requestId, permissions);
                 }}
               >Approve</button>
               <div className={styles.extraMargin}>
                 <button
                   className={styles.genericButton}
                   onClick={() => {
-                    this.respondToRequest(false, request.email, request.dataset, request.key);
+                    this.respondToRequest(false, email, entitySet, requestId, permissions);
                   }}
                 >Deny</button>
               </div>
             </div>
           </div>
           <div className={this.shouldShow[(reqStatus !== 0)]}>
-            You have {authConsts[reqStatus]} {request.email} access to {request.dataset}.
+            You have {authConsts[reqStatus]} {email} {this.getPermissionType(permissions)} access to {entitySet}.
           </div>
         </div>
       );
@@ -139,6 +125,7 @@ export class Home extends React.Component {
   }
 
   renderActivity = () => {
+    const activity = [{}];
     return activity.map((event) => {
       return (
         <div className={styles.objContainer} key={event.key}>

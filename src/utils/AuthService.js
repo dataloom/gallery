@@ -10,7 +10,11 @@ export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
     super();
     // Configure Auth0
-    this.lock = new Auth0Lock(clientId, domain, {});
+    this.lock = new Auth0Lock(clientId, domain, {
+      auth: {
+        scope: 'openid email user_metadata app_metadata nickname roles'
+      }
+    });
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this.doAuthentication.bind(this));
     // Add callback for lock `authorization_error` event

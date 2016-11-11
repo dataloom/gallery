@@ -10,6 +10,11 @@
   display: inline;
 }
 
+.noRequests {
+  font-weight: 400i;
+  text-align: center;
+}
+
 
 /* page sections */
 
