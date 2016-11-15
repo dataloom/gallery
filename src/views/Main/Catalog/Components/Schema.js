@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { PropertyTypeList } from './PropertyTypeList';
 import Consts from '../../../../utils/AppConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
+import { DropdownButton } from './DropdownButton';
 import styles from '../styles.module.css';
 
 export class Schema extends React.Component {
@@ -50,16 +50,17 @@ export class Schema extends React.Component {
 
   render() {
     const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
+    const options = [Consts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
-        <div className={styles.descriptionLabel}> (name)</div>
-        <br />
+        <div className={styles.spacerSmall} />
         <div className={styles.subtitle}>{namespace}</div>
-        <div className={styles.descriptionLabel}> (namespace)</div>
-        <br />
         <div className={styles.spacerMed} />
-        <div className={styles.tableDescriptionLabel}>Entity Types:</div>
+        <div className={styles.dropdownButtonContainer}>
+          <DropdownButton downloadFn={this.downloadFile} options={options} />
+        </div>
+        <div className={styles.spacerMed} />
         <EntityTypeFqnList
           entityTypeFqns={entityTypeFqns}
           schemaName={name}
@@ -69,7 +70,6 @@ export class Schema extends React.Component {
         />
         <br />
         <div className={styles.spacerMed} />
-        <div className={styles.tableDescriptionLabel}>Property Types:</div>
         <PropertyTypeList
           propertyTypes={propertyTypes}
           name={name}
@@ -78,9 +78,9 @@ export class Schema extends React.Component {
           navBar={false}
           allPropNamespaces={this.props.allPropNamespaces}
         />
-        <br />
-        <Button onClick={this.handleClick} disabled={this.state.disableJson}>Download {name} as JSON</Button>
         <div className={this.state.error}>Unable to download {name}</div>
+        <div className={styles.spacerBig} />
+        <hr />
       </div>
     );
   }

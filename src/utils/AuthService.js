@@ -1,12 +1,20 @@
-import { EventEmitter } from 'events';
 import Auth0Lock from 'auth0-lock';
+
+import * as Cookies from 'js-cookie';
+
+import { EventEmitter } from 'events';
+
 import { isTokenExpired } from './jwtHelper';
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
     super();
     // Configure Auth0
-    this.lock = new Auth0Lock(clientId, domain, {});
+    this.lock = new Auth0Lock(clientId, domain, {
+      auth: {
+        scope: 'openid email user_metadata app_metadata nickname roles'
+      }
+    });
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this.doAuthentication.bind(this));
     // Add callback for lock `authorization_error` event
@@ -62,6 +70,10 @@ export default class AuthService extends EventEmitter {
   setToken(idToken) {
     // Saves user token to localStorage
     this.storage.setItem('id_token', idToken);
+
+    Cookies.set('authorization', `Bearer ${idToken}`, {
+      domain: `.${window.location.hostname}`
+    });
   }
 
   getToken() {
@@ -73,5 +85,7 @@ export default class AuthService extends EventEmitter {
     // Clear user token and profile data from localStorage
     this.storage.removeItem('id_token');
     this.storage.removeItem('profile');
+
+    Cookies.remove('authorization');
   }
 }

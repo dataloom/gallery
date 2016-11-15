@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
+import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
 
 export class Property extends React.Component {
@@ -10,15 +10,48 @@ export class Property extends React.Component {
     primaryKey: PropTypes.bool,
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    editingPermissions: PropTypes.bool,
+    entitySetName: PropTypes.string,
+    isOwner: PropTypes.bool
+  }
+
+  shouldShow = {
+    true: Consts.EMPTY,
+    false: styles.hidden
+  }
+
+  constructor() {
+    super();
+    this.state = {
+      showPanel: false
+    };
   }
 
   isPrimaryKey() {
-    const pKey = this.props.primaryKey;
-    if (pKey) {
+    if (this.props.primaryKey) {
       return (<td className={styles.primaryKey}>(primary key)</td>);
     }
     return null;
+  }
+
+  editPermissionsButton = () => {
+    if (this.props.editingPermissions && this.props.isOwner) {
+      return (
+        <td>
+          <button onClick={this.editPermissions} className={styles.simpleButton}>Change permissions</button>
+        </td>
+      );
+    }
+    return null;
+  }
+
+  editPermissions = () => {
+    this.setState({ showPanel: true });
+  }
+
+  exitPanel = () => {
+    this.setState({ showPanel: false });
   }
 
   deleteProp = () => {
@@ -37,7 +70,23 @@ export class Property extends React.Component {
   }
 
   shouldShowDeleteButton = () => {
-    return (this.props.primaryKey) ? styles.hidden : Consts.EMPTY;
+    return (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
+  }
+
+  renderEditPermissions = (prop) => {
+    if (this.props.isOwner) {
+      return (
+        <td className={this.shouldShow[this.state.showPanel]}>
+          <PermissionsPanel
+            entitySetName={this.props.entitySetName}
+            propertyTypeName={prop.name}
+            propertyTypeNamespace={prop.namespace}
+            exitPanel={this.exitPanel}
+          />
+        </td>
+      );
+    }
+    return null;
   }
 
   render() {
@@ -45,16 +94,16 @@ export class Property extends React.Component {
     return (
       <tr className={styles.tableRows}>
         <td>
-          <Button
-            bsSize="xsmall"
-            bsStyle="danger"
+          <button
             onClick={this.deleteProp}
             className={this.shouldShowDeleteButton()}
-          >-</Button>
+          >-</button>
         </td>
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>
         {this.isPrimaryKey()}
+        {/* {this.editPermissionsButton()} */}
+        {/* {this.renderEditPermissions(prop)} */}
       </tr>
     );
   }

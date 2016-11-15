@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Utils from '../../../../utils/Utils';
@@ -27,6 +26,11 @@ export class SchemaList extends React.Component {
 
   showNewSchema = {
     true: Consts.EMPTY,
+    false: styles.hidden
+  }
+
+  showNewSchemaButton = {
+    true: styles.genericButton,
     false: styles.hidden
   }
 
@@ -124,22 +128,14 @@ export class SchemaList extends React.Component {
     return (
       <div>
         <div className={styles.edmContainer}>
-          <Button
+          <button
             onClick={this.newSchema}
-            className={this.showNewSchema[!this.state.newSchema]}
+            className={this.showNewSchemaButton[!this.state.newSchema]}
           >Create a new schema
-          </Button>
+          </button>
           <div className={this.showNewSchema[this.state.newSchema]}>
-            <div>Schema Name:</div>
-            <input
-              className={styles.inputBox}
-              type="text"
-              placeholder="name"
-              value={this.state.newSchemaName}
-              onChange={this.handleNameChange}
-            />
-            <div className={styles.spacerSmall} />
             <div>Schema Namespace:</div>
+            <div className={styles.spacerMini} />
             <input
               className={styles.inputBox}
               type="text"
@@ -148,7 +144,17 @@ export class SchemaList extends React.Component {
               onChange={this.handleNamespaceChange}
             />
             <div className={styles.spacerSmall} />
-            <Button onClick={this.createNewSchema}>Create</Button>
+            <div>Schema Name:</div>
+            <div className={styles.spacerMini} />
+            <input
+              className={styles.inputBox}
+              type="text"
+              placeholder="name"
+              value={this.state.newSchemaName}
+              onChange={this.handleNameChange}
+            />
+            <div className={styles.spacerSmall} />
+            <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>
           </div>
           <div className={this.errorClass[this.state.error]}>Unable to create schema.</div>
         </div>

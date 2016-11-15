@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
@@ -25,6 +24,11 @@ export class EntityTypeList extends React.Component {
 
   componentDidMount() {
     this.updateFn();
+  }
+
+  showNewEntityTypeButton = {
+    true: styles.genericButton,
+    false: styles.hidden
   }
 
   showNewEntityType = {
@@ -127,22 +131,14 @@ export class EntityTypeList extends React.Component {
     return (
       <div>
         <div className={styles.edmContainer}>
-          <Button
+          <button
             onClick={this.newEntityType}
-            className={this.showNewEntityType[!this.state.newEntityType]}
+            className={this.showNewEntityTypeButton[!this.state.newEntityType]}
           >Create a new entity type
-          </Button>
+          </button>
           <div className={this.showNewEntityType[this.state.newEntityType]}>
-            <div>Entity Type Name:</div>
-            <input
-              value={this.state.newEntityTypeName}
-              onChange={this.handleNameChange}
-              className={styles.inputBox}
-              type="text"
-              placeholder="name"
-            />
-            <div className={styles.spacerSmall} />
             <div>Entity Type Namespace:</div>
+            <div className={styles.spacerMini} />
             <input
               value={this.state.newEntityTypeNamespace}
               onChange={this.handleNamespaceChange}
@@ -151,7 +147,18 @@ export class EntityTypeList extends React.Component {
               placeholder="namespace"
             />
             <div className={styles.spacerSmall} />
+            <div>Entity Type Name:</div>
+            <div className={styles.spacerMini} />
+            <input
+              value={this.state.newEntityTypeName}
+              onChange={this.handleNameChange}
+              className={styles.inputBox}
+              type="text"
+              placeholder="name"
+            />
+            <div className={styles.spacerSmall} />
             <div>Primary Key:</div>
+            <div className={styles.spacerMini} />
             <table>
               <tbody>
                 <NameNamespaceAutosuggest
@@ -164,7 +171,7 @@ export class EntityTypeList extends React.Component {
               </tbody>
             </table>
             <div className={styles.spacerSmall} />
-            <Button onClick={this.createNewEntityType}>Create</Button>
+            <button className={styles.genericButton} onClick={this.createNewEntityType}>Create</button>
           </div>
           <div className={this.errorClass[this.state.error]}>Unable to create entity type.</div>
         </div>

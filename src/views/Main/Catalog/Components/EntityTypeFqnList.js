@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import Consts from '../../../../utils/AppConsts';
@@ -23,8 +22,13 @@ export class EntityTypeFqnList extends React.Component {
     };
   }
 
-  addRowClassName = {
+  addRowClass = {
     true: Consts.EMPTY,
+    false: styles.hidden
+  }
+
+  addButtonClass = {
+    true: styles.addButton,
     false: styles.hidden
   }
 
@@ -86,18 +90,18 @@ export class EntityTypeFqnList extends React.Component {
           <tbody>
             <tr>
               <th />
-              <th className={styles.tableCell}>Name</th>
-              <th className={styles.tableCell}>Namespace</th>
+              <th className={styles.tableCell}>Entity Type Name</th>
+              <th className={styles.tableCell}>Entity Type Namespace</th>
             </tr>
             {entityTypeFqnList}
             <NameNamespaceAutosuggest
-              className={this.addRowClassName[this.state.newEntityTypeRow]}
+              className={this.addRowClass[this.state.newEntityTypeRow]}
               namespaces={this.props.allEntityTypeNamespaces}
               addProperty={this.addEntityTypeToSchema}
             />
           </tbody>
         </table>
-        <Button onClick={this.newEntityType} className={this.addRowClassName[!this.state.newEntityTypeRow]}>+</Button>
+        <button onClick={this.newEntityType} className={this.addButtonClass[!this.state.newEntityTypeRow]}>+</button>
         <div className={this.showErrorMsgClass[this.state.error]}>Unable to add entity type.</div>
       </div>
     );

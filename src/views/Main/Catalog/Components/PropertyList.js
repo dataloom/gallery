@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import Consts from '../../../../utils/AppConsts';
@@ -14,7 +13,10 @@ export class PropertyList extends React.Component {
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
     allPropNames: PropTypes.object,
-    allPropNamespaces: PropTypes.object
+    allPropNamespaces: PropTypes.object,
+    editingPermissions: PropTypes.bool,
+    entitySetName: PropTypes.string,
+    isOwner: PropTypes.bool
   }
 
   constructor() {
@@ -25,7 +27,12 @@ export class PropertyList extends React.Component {
     };
   }
 
-  addRowClassName = {
+  shouldShow = {
+    true: Consts.EMPTY,
+    false: styles.hidden
+  }
+
+  shouldShow = {
     true: Consts.EMPTY,
     false: styles.hidden
   }
@@ -71,12 +78,25 @@ export class PropertyList extends React.Component {
     });
   }
 
+  newPropertyRowClass = () => {
+    return (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
+  }
+
   render() {
-    const { properties, primaryKey, entityTypeName, entityTypeNamespace, updateFn } = this.props;
+    const {
+      properties,
+      primaryKey,
+      entityTypeName,
+      entityTypeNamespace,
+      updateFn,
+      entitySetName,
+      editingPermissions,
+      isOwner
+    } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
-      const pKey = (primaryKey[0].name === prop.name && primaryKey[0].namespace === prop.namespace);
+      const pKey = (primaryKey && primaryKey[0].name === prop.name && primaryKey[0].namespace === prop.namespace);
       return (
         <Property
           key={prop.key}
@@ -85,8 +105,11 @@ export class PropertyList extends React.Component {
           entityTypeName={entityTypeName}
           entityTypeNamespace={entityTypeNamespace}
           updateFn={updateFn}
+          editingPermissions={editingPermissions}
+          entitySetName={entitySetName}
+          isOwner={isOwner}
         />
-    );
+      );
     });
     return (
       <div>
@@ -94,19 +117,19 @@ export class PropertyList extends React.Component {
           <tbody>
             <tr>
               <th />
-              <th className={styles.tableCell}>Name</th>
-              <th className={styles.tableCell}>Namespace</th>
+              <th className={styles.tableCell}>Property Type Name</th>
+              <th className={styles.tableCell}>Property Type Namespace</th>
             </tr>
             {propertyList}
             <NameNamespaceAutosuggest
-              className={this.addRowClassName[this.state.newPropertyRow]}
+              className={this.shouldShow[this.state.newPropertyRow]}
               names={this.props.allPropNames}
               namespaces={this.props.allPropNamespaces}
               addProperty={this.addPropertyToEntityType}
             />
           </tbody>
         </table>
-        <Button onClick={this.newProperty} className={this.addRowClassName[!this.state.newPropertyRow]}>+</Button>
+        <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
         <div className={this.showErrorMsgClass[this.state.error]}>Unable to add property.</div>
       </div>
     );
