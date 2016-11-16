@@ -14,11 +14,25 @@ export class Container extends React.Component {
     route: PropTypes.object
   }
 
+  constructor(props) {
+    super(props);
+    this.state = props.route.profileFn();
+  }
+
+  componentDidMount() {
+    this.updateState();
+  }
+
+  updateState = () => {
+    this.setState(this.props.route.profileFn());
+  }
+
   getChildren() {
     let children = null;
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
-        auth: this.props.route.auth // sends auth instance to children
+        auth: this.props.route.auth,
+        updateTopbarFn: this.updateState
       });
     }
     return children;
@@ -28,8 +42,8 @@ export class Container extends React.Component {
     const children = this.getChildren();
     return (
       <Jumbotron>
-        <Topbar auth={this.props.route.auth} isAdmin={this.props.route.isAdmin} name={this.props.route.name} />
-        <Navbar auth={this.props.route.auth} />
+        <Topbar auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
+        <Navbar auth={this.props.route.auth} updateTopbarFn={this.props.route.profileFn} />
         <div className={styles.bodyContainer}>
           <div className={styles.topSpacer} />
           {children}

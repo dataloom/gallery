@@ -12,7 +12,8 @@ import '../../../styles/dropdown.css';
 export class Catalog extends React.Component {
 
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService)
+    auth: PropTypes.instanceOf(AuthService),
+    updateTopbarFn: PropTypes.func
   }
 
   constructor(props, context) {
@@ -20,6 +21,10 @@ export class Catalog extends React.Component {
     this.state = {
       dataModelView: Consts.SCHEMA
     };
+  }
+
+  componentDidMount() {
+    this.props.updateTopbarFn();
   }
 
   getDataModelView() {
@@ -39,6 +44,7 @@ export class Catalog extends React.Component {
   }
 
   changeDataModelView = (newView) => {
+    this.props.updateTopbarFn();
     this.setState({ dataModelView: newView });
   }
 

@@ -40,10 +40,17 @@ const getName = () => {
   return (auth.loggedIn()) ? auth.getProfile().given_name : Consts.EMPTY;
 };
 
+const getProfileStatus = () => {
+  return {
+    isAdmin: isAdmin(),
+    name: getName()
+  };
+};
+
 export const makeMainRoutes = () => {
   isAdmin();
   return (
-    <Route path={'/'} component={Container} auth={auth} isAdmin={isAdmin()} name={getName()}>
+    <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
       <IndexRedirect to={`/${Consts.HOME}`} />
       <Route path={Consts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
