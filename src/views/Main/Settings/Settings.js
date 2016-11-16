@@ -1,5 +1,6 @@
 import React from 'react';
 import { UsersApi } from 'loom-data';
+import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
 
 export class Settings extends React.Component {
@@ -7,68 +8,41 @@ export class Settings extends React.Component {
   constructor() {
     super();
     this.state = {
-      roleData: {},
       userData: {},
-      selectedRole: '',
       newRoleValue: '',
-      newEmailValue: '',
       selectedUser: ''
     };
   }
 
   componentDidMount() {
-  //  this.loadRoles();
     this.loadUsers();
   }
 
-  loadRoles = () => {
-    UsersApi.getAllUsersForAllRoles()
-    .then((roleData) => {
-      this.setState({
-        roleData,
-        selectedRole: Object.keys(roleData)[0]
-      });
-    });
-  }
-
-  loadUsers = (userId) => {
+  loadUsers = (userId, shouldClear) => {
+    console.log('load users');
     UsersApi.getAllUsers()
     .then((userData) => {
       const selectedUser = (userId && userId !== undefined) ? userId : Object.keys(userData)[0];
-      this.setState({ userData, selectedUser });
+      const newRoleValue = (shouldClear) ? Consts.EMPTY : this.state.newRoleValue;
+      console.log(userData[selectedUser]);
+      this.setState({ userData, selectedUser, newRoleValue });
     });
   }
 
-  deleteRole = (role) => {
-    console.log(`deleting ${role}`);
-  }
-
-  deleteEmail = (email) => {
-    console.log(`deleting ${email} from ${this.state.selectedRole}`);
-  }
-
-  removeRole = (role) => {
-    console.log(`removing ${role} from ${this.state.selectedUser.email}`);
-  }
-
-  addRole = () => {
-    const role = this.state.newRoleValue;
+  updateRoles = (action, role) => {
     const userId = this.state.selectedUser;
-    const newRoleList = this.state.userData[userId].roles;
-    let roleAlreadyInList = false;
-    newRoleList.forEach((oldRole) => {
-      if (role.trim().toLowerCase() === oldRole.trim().toLowerCase()) roleAlreadyInList = true;
+    const newRoleList = [];
+    this.state.userData[userId].roles.forEach((oldRole) => {
+      if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
     });
-    if (!roleAlreadyInList) newRoleList.push(role.trim());
+    if (action === Consts.ADD) newRoleList.push(role);
     UsersApi.resetUserRoles(userId, newRoleList)
     .then(() => {
-      this.loadUsers(userId);
+      setTimeout(() => {
+        this.loadUsers(userId, action === Consts.ADD);
+      }, 500);
     });
   }
-
-  // updateSelectedRole = (role) => {
-  //   this.setState({ selectedRole: role });
-  // }
 
   updateSelectedUser = (user) => {
     this.setState({ selectedUser: user });
@@ -113,7 +87,7 @@ export class Settings extends React.Component {
             <div className={styles.inline}>
               <button
                 onClick={() => {
-                  this.removeRole(role);
+                  this.updateRoles(Consts.REMOVE, role);
                 }}
                 className={styles.deleteButton}
               >-</button>
@@ -149,7 +123,12 @@ export class Settings extends React.Component {
                 value={this.state.newRoleValue}
                 onChange={this.updateNewRoleValue}
               />
-              <button className={styles.simpleButton} onClick={this.addRole}>Add</button>
+              <button
+                className={styles.simpleButton}
+                onClick={() => {
+                  this.updateRoles(Consts.ADD, this.state.newRoleValue);
+                }}
+              >Add</button>
             </div>
           </div>
         </div>

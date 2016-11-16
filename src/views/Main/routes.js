@@ -25,6 +25,13 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
+const requireAdmin = (nextState, replace) => {
+  requireAuth(nextState, replace);
+  if (!auth.getProfile().roles.includes(Consts.ADMIN)) {
+    replace({ pathname: `/${Consts.HOME}` });
+  }
+};
+
 const isAdmin = () => {
   return (auth.loggedIn() && auth.getProfile().roles.includes(Consts.ADMIN));
 };
@@ -40,9 +47,9 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${Consts.HOME}`} />
       <Route path={Consts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
+      <Route path={Consts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={Consts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
-      <Route path={Consts.SETTINGS} component={Settings} />
     </Route>
   );
 };
