@@ -18,7 +18,6 @@ const output = Object.assign({}, baseWebpackConfig.output, {
 
 const plugins = []
   .concat(baseWebpackConfig.plugins)
-  .concat(new webpack.optimize.DedupePlugin())
   .concat(new webpack.optimize.OccurrenceOrderPlugin())
   .concat(
     new HtmlWebpackPlugin({
