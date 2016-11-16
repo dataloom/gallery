@@ -3,6 +3,13 @@ import { UsersApi } from 'loom-data';
 import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
 
+const hiddenRoles = [Consts.USER, Consts.ADMIN];
+
+const emptyErrorObj = {
+  display: styles.hidden,
+  value: Consts.EMPTY
+}
+
 export class Settings extends React.Component {
 
   constructor() {
@@ -10,7 +17,8 @@ export class Settings extends React.Component {
     this.state = {
       userData: {},
       newRoleValue: '',
-      selectedUser: ''
+      selectedUser: '',
+      reservedRoleError: emptyErrorObj
     };
   }
 
@@ -19,33 +27,41 @@ export class Settings extends React.Component {
   }
 
   loadUsers = (userId, shouldClear) => {
-    console.log('load users');
     UsersApi.getAllUsers()
     .then((userData) => {
       const selectedUser = (userId && userId !== undefined) ? userId : Object.keys(userData)[0];
       const newRoleValue = (shouldClear) ? Consts.EMPTY : this.state.newRoleValue;
-      console.log(userData[selectedUser]);
       this.setState({ userData, selectedUser, newRoleValue });
     });
   }
 
+  roleIsReserved = (role) => {
+    if (hiddenRoles.includes(role.trim().toLowerCase())) {
+      const reservedRoleError = { display: styles.error, value: role };
+      this.setState({ reservedRoleError });
+      return true;
+    }
+    return false;
+  }
+
   updateRoles = (action, role) => {
+    if (this.roleIsReserved(role)) return;
     const userId = this.state.selectedUser;
     const newRoleList = [];
     this.state.userData[userId].roles.forEach((oldRole) => {
       if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
     });
     if (action === Consts.ADD) newRoleList.push(role);
-    UsersApi.resetUserRoles(userId, newRoleList)
-    .then(() => {
-      setTimeout(() => {
-        this.loadUsers(userId, action === Consts.ADD);
-      }, 500);
-    });
+    UsersApi.resetUserRoles(userId, newRoleList);
+    const userData = this.state.userData;
+    userData[userId].roles = newRoleList;
+    const newRoleValue = (action === Consts.ADD) ? Consts.EMPTY : this.state.newRoleValue;
+    const reservedRoleError = emptyErrorObj;
+    this.setState({ userData, newRoleValue, reservedRoleError });
   }
 
   updateSelectedUser = (user) => {
-    this.setState({ selectedUser: user });
+    this.setState({ selectedUser: user, reservedRoleError: emptyErrorObj });
   }
 
   updateNewRoleValue = (e) => {
@@ -82,6 +98,7 @@ export class Settings extends React.Component {
     if (Object.keys(this.state.userData).length) {
       const roles = this.state.userData[this.state.selectedUser].roles;
       return roles.map((role) => {
+        if (hiddenRoles.includes(role.trim().toLowerCase())) return null;
         return (
           <div className={styles.listItem} key={roles.indexOf(role)}>
             <div className={styles.inline}>
@@ -107,6 +124,9 @@ export class Settings extends React.Component {
         <div className={styles.spacer} />
         <div className={styles.setRolesContainer}>
           <div className={styles.headerText}>Manage roles in your domain.</div>
+          <div className={this.state.reservedRoleError.display}>
+            Error: {this.state.reservedRoleError.value} is a reserved role.
+          </div>
           <div className={styles.roleManagementContainer}>
             <div className={styles.divider} />
             <div className={styles.userListContainer}>

@@ -9,6 +9,12 @@
   font-size: 16px;
 }
 
+.error {
+  text-align: center;
+  color: red;
+  padding-top: 10px;
+}
+
 /* spacers */
 
 .spacer {
@@ -27,6 +33,10 @@
 
 .inline {
   display: inline;
+}
+
+.hidden {
+  display: none;
 }
 
 /* button styling */
