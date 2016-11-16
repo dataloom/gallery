@@ -8,7 +8,7 @@ const hiddenRoles = [Consts.USER, Consts.ADMIN];
 const emptyErrorObj = {
   display: styles.hidden,
   value: Consts.EMPTY
-}
+};
 
 export class Settings extends React.Component {
 
@@ -62,8 +62,17 @@ export class Settings extends React.Component {
     this.setState({ userData, newRoleValue, reservedRoleError });
   }
 
-  updateSelectedUser = (user) => {
-    this.setState({ selectedUser: user, reservedRoleError: emptyErrorObj });
+  updateSelectedUser = (userId) => {
+    UsersApi.getUser(userId)
+    .then((user) => {
+      const userData = this.state.userData;
+      userData[userId] = user;
+      this.setState({
+        userData,
+        selectedUser: userId,
+        reservedRoleError: emptyErrorObj
+      });
+    });
   }
 
   updateNewRoleValue = (e) => {
