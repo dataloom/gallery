@@ -48,10 +48,12 @@ export class Settings extends React.Component {
     if (this.roleIsReserved(role)) return;
     const userId = this.state.selectedUser;
     const newRoleList = [];
+    let newRole = role.trim();
     this.state.userData[userId].roles.forEach((oldRole) => {
       if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
+      else newRole = oldRole.trim();
     });
-    if (action === Consts.ADD) newRoleList.push(role);
+    if (action === Consts.ADD) newRoleList.push(newRole);
     UsersApi.resetUserRoles(userId, newRoleList);
     const userData = this.state.userData;
     userData[userId].roles = newRoleList;

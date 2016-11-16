@@ -2,7 +2,7 @@
  * @flow
  */
 
-const AUTH0_CLIENT_ID = 'PTmyExdBckHAiyOjh4w2MqSIUGWWEdf8';
+const AUTH0_CLIENT_ID = 'KvwsETaUxuXVjW2cmz2LbdqXQBdYs6wH';
 const AUTH0_DOMAIN = 'loom.auth0.com';
 
 const LOCAL = 'http://localhost:8080';
