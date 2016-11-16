@@ -43,7 +43,7 @@
   font-size: 14px;
   height: 70%;
   margin: 10px;
-  top: 15%;
+  padding: 0;
 }
 
 .logoutButton {
@@ -55,7 +55,6 @@
   border-radius: 3px;
   border: 0;
   padding: 0 10px;
-  top: 15%;
 }
 
 .logoutButton:hover {

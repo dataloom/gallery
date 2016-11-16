@@ -27,7 +27,7 @@
     "file-saver": "^1.3.2",
     "js-cookie": "^2.1.3",
     "jwt-decode": "^2.0.1",
-    "loom-data": "^0.8.0",
+    "loom-data": "^0.9.1",
     "react": "^15.3.2",
     "react-autosuggest": "^7.0.0",
     "react-bootstrap": "^0.30.0-rc.1",

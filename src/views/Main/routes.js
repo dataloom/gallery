@@ -25,9 +25,18 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
+const isAdmin = () => {
+  return (auth.loggedIn() && auth.getProfile().roles.includes(Consts.ADMIN));
+};
+
+const getName = () => {
+  return (auth.loggedIn()) ? auth.getProfile().given_name : Consts.EMPTY;
+};
+
 export const makeMainRoutes = () => {
+  isAdmin();
   return (
-    <Route path={'/'} component={Container} auth={auth}>
+    <Route path={'/'} component={Container} auth={auth} isAdmin={isAdmin()} name={getName()}>
       <IndexRedirect to={`/${Consts.HOME}`} />
       <Route path={Consts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
