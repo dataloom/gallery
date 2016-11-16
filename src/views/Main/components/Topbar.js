@@ -6,7 +6,7 @@ import settingsIcon from '../../../../src/images/settings-icon.png';
 
 export class Topbar extends React.Component {
   static contextTypes = {
-    router: PropTypes.object,
+    router: PropTypes.object
   }
 
   static propTypes = {
