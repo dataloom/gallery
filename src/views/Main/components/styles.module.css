@@ -66,6 +66,10 @@
   background: #d8dcdf;
 }
 
+.noAdminButtonFormatting {
+  top: 15%;
+}
+
 .settingsIcon {
   position: relative;
   height: 60%;

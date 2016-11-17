@@ -28,17 +28,21 @@ export class Topbar extends React.Component {
     return (this.props.isAdmin) ? styles.settingsIcon : styles.hidden;
   }
 
+  extraAdminClass = () => {
+    return (this.props.isAdmin) ? Consts.EMPTY : styles.noAdminButtonFormatting;
+  }
+
   showButtons() {
     if (this.props.auth.loggedIn()) {
       const greeting = (this.props.name !== undefined && this.props.name.length) ?
         `Hi, ${this.props.name}!` : 'Hi!';
       return (
         <div className={styles.loggedInItemsContainer}>
-          <div className={styles.greeting}>{greeting}</div>
+          <div className={`${styles.greeting} ${this.extraAdminClass()}`}>{greeting}</div>
           <button onClick={this.navigateToSettings} className={this.settingsButtonClass()}>
             <img src={settingsIcon} role="presentation" className={styles.settingsIconImg} />
           </button>
-          <button onClick={this.logout} className={styles.logoutButton}>Logout</button>
+          <button onClick={this.logout} className={`${styles.logoutButton} ${this.extraAdminClass()}`}>Logout</button>
         </div>
       );
     }
