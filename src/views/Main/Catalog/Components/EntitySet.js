@@ -140,7 +140,7 @@ export class EntitySet extends React.Component {
   }
 
   renderPermissionsPanel = (name) => {
-    if (true) {
+    if (this.props.isOwner) {
       return (
         <div className={this.shouldShow[this.state.showPanel]}>
           <PermissionsPanel entitySetName={name} exitPanel={this.exitPanel} />
@@ -154,7 +154,7 @@ export class EntitySet extends React.Component {
     const { name, title, type, isOwner } = this.props;
     return (
       <div className={styles.edmContainer}>
-        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[true]}>
+        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[this.props.isOwner]}>
           {(this.state.editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
         <div className={styles.spacerSmall} />

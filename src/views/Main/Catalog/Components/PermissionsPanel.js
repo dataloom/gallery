@@ -164,7 +164,6 @@ export class PermissionsPanel extends React.Component {
     const updateFn = (this.props.propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
     const req = { principal, action, name, permissions };
-    console.log(req);
     if (this.props.propertyTypeName) {
       req.property = {
         namespace: this.props.propertyTypeNamespace,
