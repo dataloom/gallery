@@ -12,20 +12,20 @@ const PROD = 'http://api.loom.digital';
 const JSON = 'json';
 const CSV = 'csv';
 
-const HIDDEN = 'hidden';
-const DISCOVER = 'discover';
-const READ = 'read';
-const WRITE = 'write';
-const OWNER = 'owner';
+const HIDDEN = 'HIDDEN';
+const DISCOVER = 'DISCOVER';
+const READ = 'READ';
+const WRITE = 'WRITE';
+const OWNER = 'OWNER';
 
 const DEFAULT_USER_ROLE = 'user';
-const USER = 'user';
-const ROLE = 'role';
+const USER = 'USER';
+const ROLE = 'ROLE';
 
-const ADD = 'add';
-const REMOVE = 'remove';
-const SET = 'set';
-const REQUEST = 'request';
+const ADD = 'ADD';
+const REMOVE = 'REMOVE';
+const SET = 'SET';
+const REQUEST = 'REQUEST';
 
 const HOME = 'home';
 const CATALOG = 'catalog';

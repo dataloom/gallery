@@ -120,15 +120,15 @@ export class EntitySet extends React.Component {
     let downloadOptions;
     let requestOptions;
     const permissions = this.props.permissions;
-    if (permissions.includes(Consts.WRITE.toUpperCase())) {
+    if (permissions.includes(Consts.WRITE)) {
       downloadOptions = [Consts.CSV, Consts.JSON];
     }
-    else if (permissions.includes(Consts.READ.toUpperCase())) {
+    else if (permissions.includes(Consts.READ)) {
       downloadOptions = [Consts.CSV, Consts.JSON];
-      requestOptions = [Consts.WRITE];
+      requestOptions = [Consts.WRITE.toLowerCase()];
     }
     else {
-      requestOptions = [Consts.READ, Consts.WRITE];
+      requestOptions = [Consts.READ.toLowerCase(), Consts.WRITE.toLowerCase()];
     }
     return (
       <div>
@@ -140,7 +140,7 @@ export class EntitySet extends React.Component {
   }
 
   renderPermissionsPanel = (name) => {
-    if (this.props.isOwner) {
+    if (true) {
       return (
         <div className={this.shouldShow[this.state.showPanel]}>
           <PermissionsPanel entitySetName={name} exitPanel={this.exitPanel} />
@@ -154,7 +154,7 @@ export class EntitySet extends React.Component {
     const { name, title, type, isOwner } = this.props;
     return (
       <div className={styles.edmContainer}>
-        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[this.props.isOwner]}>
+        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[true]}>
           {(this.state.editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
         <div className={styles.spacerSmall} />

@@ -77,7 +77,7 @@ export class PermissionsPanel extends React.Component {
     const roleAcls = { Discover: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Read: [], Write: [] };
     acls.forEach((acl) => {
-      if (acl.principal.type.toLowerCase() === Consts.ROLE) {
+      if (acl.principal.type === Consts.ROLE) {
         if (acl.principal.name === Consts.DEFAULT_USER_ROLE) {
           globalValue = this.getPermission(acl.permissions);
         }
@@ -164,6 +164,7 @@ export class PermissionsPanel extends React.Component {
     const updateFn = (this.props.propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
     const req = { principal, action, name, permissions };
+    console.log(req);
     if (this.props.propertyTypeName) {
       req.property = {
         namespace: this.props.propertyTypeNamespace,
