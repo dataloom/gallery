@@ -357,11 +357,27 @@ export class PermissionsPanel extends React.Component {
   }
 
   handleNewEmailChange = (e) => {
-    this.setState({ newEmailValue: e.target.value });
+    this.setState({ newEmailValue: e.value });
+  }
+
+  getEmailOptions = (emailList) => {
+    const emailOptions = [];
+    const emailOptionList = Object.keys(this.state.allUsersList);
+    emailList.forEach((email) => {
+      if (emailOptionList.includes(email)) {
+        const index = emailOptionList.indexOf(email);
+        emailOptionList.splice(index, 1);
+      }
+    });
+    emailOptionList.forEach((email) => {
+      emailOptions.push({ value: email, label: email });
+    });
+    return emailOptions;
   }
 
   getEmailsView = () => {
     const emailList = this.state.userAcls[this.state.emailsView];
+    const emailOptions = this.getEmailOptions(emailList);
     const hiddenBody = emailList.map((email) => {
       return (
         <div className={styles.tableRows} key={emailList.indexOf(email)}>
@@ -390,11 +406,10 @@ export class PermissionsPanel extends React.Component {
           {hiddenBody}
         </div>
         <div className={styles.inline}>
-          <input
-            type="text"
+          <Select
             value={this.state.newEmailValue}
+            options={emailOptions}
             onChange={this.handleNewEmailChange}
-            placeholder={'Enter a new email address'}
             className={`${styles.inputBox} ${styles.permissionInputWidth}`}
           />
           <button
