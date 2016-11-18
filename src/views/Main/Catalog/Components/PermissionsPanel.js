@@ -245,7 +245,8 @@ export class PermissionsPanel extends React.Component {
   }
 
   handleNewRoleChange = (e) => {
-    this.setState({ newRoleValue: e.value });
+    const newRoleValue = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    this.setState({ newRoleValue });
   }
 
   viewPermissionTypeButton = (permission, fn, currView) => {
@@ -357,7 +358,8 @@ export class PermissionsPanel extends React.Component {
   }
 
   handleNewEmailChange = (e) => {
-    this.setState({ newEmailValue: e.value });
+    const newEmailValue = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    this.setState({ newEmailValue });
   }
 
   getEmailOptions = (emailList) => {
