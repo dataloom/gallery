@@ -351,7 +351,7 @@ export class PermissionsPanel extends React.Component {
   updateEmails = (action, email, view) => {
     const principal = {
       type: Consts.USER,
-      name: email
+      name: this.state.allUsersList[email]
     };
     this.updatePermissions(action, principal, view);
   }
