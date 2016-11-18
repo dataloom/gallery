@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
+import Select from 'react-select';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import Consts from '../../../../utils/AppConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
-import { EdmDatatypeAutosuggest } from './EdmDatatypeAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
@@ -130,8 +130,9 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropNamespace: e.target.value });
   }
 
-  handleDatatypeChange = (newValue) => {
-    this.setState({ newPropDatatype: newValue });
+  handleDatatypeChange = (e) => {
+    const newPropDatatype = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    this.setState({ newPropDatatype });
   }
 
   handleMultiplicityChange = (e) => {
@@ -182,7 +183,14 @@ export class PropertyTypeList extends React.Component {
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-              <td><EdmDatatypeAutosuggest onChangeFn={this.handleDatatypeChange} /></td>
+              <td>
+                <Select
+                  value={this.state.newPropDatatype}
+                  onChange={this.handleDatatypeChange}
+                  options={Utils.getAllEdmPrimitiveTypes()}
+                  placeholder="datatype"
+                />
+              </td>
               <td><input
                 type="text"
                 value={this.state.newPropMultiplicity}
