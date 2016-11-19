@@ -12,24 +12,18 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
     isOwner: PropTypes.bool
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       newPropertyRow: false,
       error: false
     };
-  }
-
-  shouldShow = {
-    true: Consts.EMPTY,
-    false: styles.hidden
   }
 
   shouldShow = {
@@ -123,8 +117,8 @@ export class PropertyList extends React.Component {
             {propertyList}
             <NameNamespaceAutosuggest
               className={this.shouldShow[this.state.newPropertyRow]}
-              names={this.props.allPropNames}
               namespaces={this.props.allPropNamespaces}
+              usedProperties={this.props.properties}
               addProperty={this.addPropertyToEntityType}
             />
           </tbody>

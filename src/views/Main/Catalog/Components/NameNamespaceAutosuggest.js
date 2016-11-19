@@ -1,12 +1,13 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
 import Consts from '../../../../utils/AppConsts';
-import '../../../../styles/autosuggest.css';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class NameNamespaceAutosuggest extends React.Component {
   static propTypes = {
     namespaces: PropTypes.object,
+    usedProperties: PropTypes.array,
     className: PropTypes.string,
     addProperty: PropTypes.func,
     saveOption: PropTypes.bool,
@@ -14,18 +15,25 @@ export class NameNamespaceAutosuggest extends React.Component {
     onNamespaceChange: PropTypes.func
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       nameVal: Consts.EMPTY,
       nameSuggestions: [],
       namespaceVal: Consts.EMPTY,
-      namespaceSuggestions: []
+      namespaceSuggestions: [],
+      unusedProperties: Utils.loadUnusedPairs(props.namespaces, props.usedProperties)
     };
   }
 
   componentDidMount() {
     this.loadInitialSuggestionValues();
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.namespaces !== undefined && newProps.usedProperties !== undefined) {
+      this.setState({ unusedProperties: Utils.loadUnusedPairs(newProps.namespaces, newProps.usedProperties) });
+    }
   }
 
   showSave = {
@@ -34,14 +42,14 @@ export class NameNamespaceAutosuggest extends React.Component {
   };
 
   loadInitialSuggestionValues() {
-    const suggestions = this.loadSuggestionValues(true, Consts.EMPTY);
-    if (suggestions) this.setState(this.loadSuggestionValues(true, Consts.EMPTY));
+    const suggestions = this.loadSuggestionValues(true, this.state.nameVal);
+    if (suggestions) this.setState(this.loadSuggestionValues(false, this.state.namespaceVal));
   }
 
   loadSuggestionValues(isNameUpdate, newValue) {
     const nameValue = (isNameUpdate) ? newValue : this.state.nameVal;
     const namespaceValue = (isNameUpdate) ? this.state.namespaceVal : newValue;
-    if (!this.props || this.props === undefined || this.props.namespaces === undefined) return null;
+    if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
     return ({
       nameSuggestions: this.getSuggestions(true, nameValue, namespaceValue),
       namespaceSuggestions: this.getSuggestions(false, nameValue, namespaceValue)
@@ -54,10 +62,10 @@ export class NameNamespaceAutosuggest extends React.Component {
     const suggestionSet = new Set();
     const inputName = ((nameVal === undefined) ? Consts.EMPTY : nameVal).trim().toLowerCase();
     const inputNamespace = ((namespaceVal === undefined) ? Consts.EMPTY : namespaceVal).trim().toLowerCase();
-    const allNamespaces = Object.keys(this.props.namespaces);
+    const allNamespaces = Object.keys(this.state.unusedProperties);
     allNamespaces.forEach((namespace) => {
       if (namespace.trim().toLowerCase().slice(0, inputNamespace.length) === inputNamespace) {
-        const possibleNames = this.props.namespaces[namespace];
+        const possibleNames = this.state.unusedProperties[namespace];
         possibleNames.forEach((name) => {
           if (name.trim().toLowerCase().slice(0, inputName.length) === inputName) {
             const valueToAdd = (getNames) ? name : namespace;
@@ -116,8 +124,12 @@ export class NameNamespaceAutosuggest extends React.Component {
     this.onNamespaceInputChange(namespaceVal);
   }
 
+  onFocus = () => {
+    this.loadInitialSuggestionValues();
+  }
+
   render() {
-    if (!this.props || this.props === undefined || this.props.namespaces === undefined) return null;
+    if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
     const { nameVal, nameSuggestions, namespaceVal, namespaceSuggestions } = this.state;
     return (
       <tr className={this.props.className}>
@@ -128,11 +140,16 @@ export class NameNamespaceAutosuggest extends React.Component {
             value={nameVal}
             onChange={this.onNameChange}
             onInputChange={this.onNameInputChange}
+            onFocus={this.onFocus}
           />
+        </td>
+        <td>
           <Select
             options={namespaceSuggestions}
             value={namespaceVal}
             onChange={this.onNamespaceChange}
+            onInputChange={this.onNamespaceInputChange}
+            onFocus={this.onFocus}
           />
         </td>
         <td className={this.showSave[this.props.saveOption]}>

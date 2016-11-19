@@ -12,7 +12,6 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
 
@@ -38,7 +37,6 @@ export class EntityType extends React.Component {
           entityTypeName={name}
           entityTypeNamespace={namespace}
           updateFn={updateFn}
-          allPropNames={this.props.allPropNames}
           allPropNamespaces={this.props.allPropNamespaces}
           allowEdit
           editingPermissions={false}
