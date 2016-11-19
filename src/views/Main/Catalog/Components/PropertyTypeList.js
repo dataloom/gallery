@@ -203,6 +203,7 @@ export class PropertyTypeList extends React.Component {
             <NameNamespaceAutosuggest
               className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
               namespaces={this.props.allPropNamespaces}
+              usedProperties={this.props.propertyTypes}
               addProperty={this.addPropertyToSchema}
             />
           </tbody>

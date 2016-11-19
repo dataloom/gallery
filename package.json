@@ -29,7 +29,6 @@
     "jwt-decode": "^2.0.1",
     "loom-data": "^0.8.0",
     "react": "^15.3.2",
-    "react-autosuggest": "^7.0.0",
     "react-bootstrap": "^0.30.0-rc.1",
     "react-dom": "^15.3.2",
     "react-dropdown": "^1.1.0",

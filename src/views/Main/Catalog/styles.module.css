@@ -46,6 +46,11 @@ table {
   padding: 0 10px;
 }
 
+.primaryKeyInput {
+  height: 40px;
+  width: 200px;
+}
+
 
 /* text styling */
 

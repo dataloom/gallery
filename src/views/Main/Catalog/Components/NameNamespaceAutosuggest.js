@@ -128,13 +128,17 @@ export class NameNamespaceAutosuggest extends React.Component {
     this.loadInitialSuggestionValues();
   }
 
+  getClassName = () => {
+    return (this.props.saveOption) ? styles.tableCell : styles.primaryKeyInput;
+  }
+
   render() {
     if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
     const { nameVal, nameSuggestions, namespaceVal, namespaceSuggestions } = this.state;
     return (
       <tr className={this.props.className}>
         <td />
-        <td>
+        <td className={this.getClassName()}>
           <Select
             options={nameSuggestions}
             value={nameVal}
@@ -143,7 +147,7 @@ export class NameNamespaceAutosuggest extends React.Component {
             onFocus={this.onFocus}
           />
         </td>
-        <td>
+        <td className={this.getClassName()}>
           <Select
             options={namespaceSuggestions}
             value={namespaceVal}
