@@ -101,9 +101,13 @@ export class PermissionsPanel extends React.Component {
 
   loadAcls = (updateSuccess) => {
     if (this.props.propertyTypeName) {
-      PermissionsApi.getOwnerAclsForPropertyTypesInEntitySet(this.props.entitySetName)
+      const fqn = {
+        name: this.props.propertyTypeName,
+        namespace: this.props.propertyTypeNamespace
+      };
+      PermissionsApi.getOwnerAclsForPropertyTypeInEntitySet(this.props.entitySetName, fqn)
       .then((acls) => {
-        console.log(acls);
+        this.updateStateAcls(acls, updateSuccess);
       });
     }
     else {
