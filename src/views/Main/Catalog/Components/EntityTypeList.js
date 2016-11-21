@@ -55,15 +55,13 @@ export class EntityTypeList extends React.Component {
           newEntityTypeName: '',
           newEntityTypeNamespace: '',
           newPKeyName: '',
-          newPKeyNamespace: ''
+          newPKeyNamespace: '',
+          loadTypesError: false,
+          createTypeError: false
         });
       }).catch(() => {
         this.setState({ loadTypesError: true });
       });
-  }
-
-  showCreateTypeError = () => {
-    this.setState({ createTypeError: true });
   }
 
   createNewEntityType = () => {
@@ -77,7 +75,7 @@ export class EntityTypeList extends React.Component {
     .then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
-      this.showCreateTypeError();
+      this.setState({ createTypeError: true });
     });
   }
 
@@ -97,7 +95,8 @@ export class EntityTypeList extends React.Component {
         });
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
-          allPropNamespaces
+          allPropNamespaces,
+          loadTypesError: false
         });
       }
     ).catch(() => {

@@ -82,7 +82,11 @@ export class PermissionsPanel extends React.Component {
           if (role !== Consts.DEFAULT_USER_ROLE) allRolesList.add(role);
         });
       });
-      this.setState({ allUsersList, allRolesList });
+      this.setState({
+        allUsersList,
+        allRolesList,
+        loadUsersError: false
+      });
     }).catch(() => {
       this.setState({ loadUsersError: true });
     });
@@ -117,7 +121,8 @@ export class PermissionsPanel extends React.Component {
       userAcls,
       updateSuccess,
       newRoleValue: '',
-      newEmailValue: ''
+      newEmailValue: '',
+      updateError: false
     });
   }
 

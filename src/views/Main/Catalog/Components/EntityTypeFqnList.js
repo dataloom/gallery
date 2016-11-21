@@ -50,7 +50,13 @@ export class EntityTypeFqnList extends React.Component {
 
   updateFqns = () => {
     this.props.updateFn();
-    this.setState({ newEntityTypeRow: false });
+    this.setState({
+      newEntityTypeRow: false,
+      error: {
+        display: styles.hidden,
+        action: Consts.ADD
+      }
+    });
   }
 
   updateError = (action) => {

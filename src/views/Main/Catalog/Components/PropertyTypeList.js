@@ -55,7 +55,9 @@ export class PropertyTypeList extends React.Component {
         newPropName: '',
         newPropNamespace: '',
         newPropMultiplicity: '',
-        newPropDatatype: ''
+        newPropDatatype: '',
+        addError: false,
+        deleteError: false
       });
     }).catch(() => {
       this.setState({ loadTypesError: true });
@@ -103,7 +105,11 @@ export class PropertyTypeList extends React.Component {
   }
 
   successfullyAddedProperty = () => {
-    this.setState({ newPropertyRow: false });
+    this.setState({
+      newPropertyRow: false,
+      addError: false,
+      deleteError: false
+    });
     this.props.updateSchemaFn();
   }
 

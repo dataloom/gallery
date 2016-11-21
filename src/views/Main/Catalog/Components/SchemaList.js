@@ -51,7 +51,8 @@ export class SchemaList extends React.Component {
         schemas: Utils.addKeysToArray(schemas),
         newSchema: false,
         newSchemaName: '',
-        newSchemaNamespace: ''
+        newSchemaNamespace: '',
+        loadSchemasError: false
       });
     }).catch(() => {
       this.setState({ loadSchemasError: true });
@@ -97,7 +98,8 @@ export class SchemaList extends React.Component {
         this.setState({
           schemas: Utils.addKeysToArray(schemas),
           allPropNamespaces,
-          allEntityTypeNamespaces
+          allEntityTypeNamespaces,
+          loadSchemasError: false
         });
       }).catch(() => {
         this.setState({ loadSchemasError: true });
