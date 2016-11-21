@@ -23,7 +23,10 @@ export class PropertyList extends React.Component {
     super();
     this.state = {
       newPropertyRow: false,
-      error: false,
+      error: {
+        display: styles.hidden,
+        action: Consts.ADD
+      },
       verifyingDelete: false,
       propertyToDelete: undefined
     };
@@ -36,11 +39,6 @@ export class PropertyList extends React.Component {
 
   shouldShow = {
     true: Consts.EMPTY,
-    false: styles.hidden
-  }
-
-  showErrorMsgClass = {
-    true: styles.errorMsg,
     false: styles.hidden
   }
 
@@ -58,12 +56,24 @@ export class PropertyList extends React.Component {
   }
 
   updateFqns = () => {
-    this.setState({ newPropertyRow: false });
+    this.setState({
+      newPropertyRow: false,
+      error: {
+        display: styles.hidden,
+        action: Consts.ADD
+      }
+    });
     this.props.updateFn();
   }
 
-  updateError = () => {
-    this.setState({ error: true });
+  updateError = (action) => {
+    this.setState({
+      error: {
+        display: styles.errorMsg,
+        action
+      },
+      verifyingDelete: false
+    });
   }
 
   addPropertyToEntityType = (namespace, name) => {
@@ -76,7 +86,7 @@ export class PropertyList extends React.Component {
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
-      this.updateError();
+      this.updateError(Consts.ADD);
     });
   }
 
@@ -97,9 +107,15 @@ export class PropertyList extends React.Component {
     ).then(() => {
       this.setState({
         verifyingDelete: false,
-        propertyToDelete: undefined
+        propertyToDelete: undefined,
+        error: {
+          display: styles.hidden,
+          action: Consts.REMOVE
+        }
       });
       return this.props.updateFn();
+    }).catch(() => {
+      this.updateError(Consts.REMOVE);
     });
   }
 
@@ -179,7 +195,7 @@ export class PropertyList extends React.Component {
           </tbody>
         </table>
         <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add property.</div>
+        <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
         {this.renderVerifyDeletePropertyBox()}
       </div>
     );
