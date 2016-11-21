@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
+import Consts from '../../../../utils/AppConsts';
 import styles from '../styles.module.css';
 
 export class EntityTypeFqn extends React.Component {
@@ -7,7 +8,8 @@ export class EntityTypeFqn extends React.Component {
     entityTypeFqn: PropTypes.object,
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
-    updateFn: PropTypes.func
+    updateFn: PropTypes.func,
+    errorFn: PropTypes.func
   }
 
   deleteProp = () => {
@@ -22,6 +24,8 @@ export class EntityTypeFqn extends React.Component {
       }]
     ).then(() => {
       return this.props.updateFn();
+    }).catch(() => {
+      return this.props.errorFn(Consts.REMOVE);
     });
   }
 

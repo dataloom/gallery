@@ -18,7 +18,10 @@ export class EntityTypeFqnList extends React.Component {
     super();
     this.state = {
       newEntityTypeRow: false,
-      error: false
+      error: {
+        display: styles.hidden,
+        action: Consts.ADD
+      }
     };
   }
 
@@ -29,11 +32,6 @@ export class EntityTypeFqnList extends React.Component {
 
   addButtonClass = {
     true: styles.addButton,
-    false: styles.hidden
-  }
-
-  showErrorMsgClass = {
-    true: styles.errorMsg,
     false: styles.hidden
   }
 
@@ -55,8 +53,13 @@ export class EntityTypeFqnList extends React.Component {
     this.setState({ newEntityTypeRow: false });
   }
 
-  updateError = () => {
-    this.setState({ error: true });
+  updateError = (action) => {
+    this.setState({
+      error: {
+        display: styles.errorMsg,
+        action
+      }
+    });
   }
 
   addEntityTypeToSchema = (namespace, name) => {
@@ -69,7 +72,7 @@ export class EntityTypeFqnList extends React.Component {
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
-      this.updateError();
+      this.updateError(Consts.ADD);
     });
   }
 
@@ -82,6 +85,7 @@ export class EntityTypeFqnList extends React.Component {
         schemaName={this.props.schemaName}
         schemaNamespace={this.props.schemaNamespace}
         updateFn={this.props.updateFn}
+        errorFn={this.updateError}
       />);
     });
     return (
@@ -102,7 +106,7 @@ export class EntityTypeFqnList extends React.Component {
           </tbody>
         </table>
         <button onClick={this.newEntityType} className={this.addButtonClass[!this.state.newEntityTypeRow]}>+</button>
-        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add entity type.</div>
+        <div className={this.state.error.display}>Unable to {this.state.error.action} entity type.</div>
       </div>
     );
   }
