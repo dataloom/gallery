@@ -25,15 +25,38 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
+const requireAdmin = (nextState, replace) => {
+  requireAuth(nextState, replace);
+  if (!auth.getProfile().roles.includes(Consts.ADMIN)) {
+    replace({ pathname: `/${Consts.HOME}` });
+  }
+};
+
+const isAdmin = () => {
+  return (auth.loggedIn() && auth.getProfile().roles.includes(Consts.ADMIN));
+};
+
+const getName = () => {
+  return (auth.loggedIn()) ? auth.getProfile().given_name : Consts.EMPTY;
+};
+
+const getProfileStatus = () => {
+  return {
+    isAdmin: isAdmin(),
+    name: getName()
+  };
+};
+
 export const makeMainRoutes = () => {
+  isAdmin();
   return (
-    <Route path={'/'} component={Container} auth={auth}>
+    <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
       <IndexRedirect to={`/${Consts.HOME}`} />
       <Route path={Consts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
+      <Route path={Consts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={Consts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
-      <Route path={Consts.SETTINGS} component={Settings} />
     </Route>
   );
 };
