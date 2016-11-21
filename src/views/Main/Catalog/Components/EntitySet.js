@@ -29,7 +29,12 @@ export class EntitySet extends React.Component {
     this.state = {
       properties: [],
       editing: false,
-      showPanel: false
+      showPanel: false,
+      loadEntityTypeError: false,
+      permissionRequestStatus: {
+        display: styles.hidden,
+        msg: ''
+      }
     };
   }
 
@@ -48,12 +53,20 @@ export class EntitySet extends React.Component {
     false: styles.hidden
   }
 
+  errorClass = {
+    true: styles.errorMsg,
+    false: styles.hidden
+  }
+
   componentDidMount() {
     EntityDataModelApi.getEntityType(this.props.type)
     .then((type) => {
       this.setState({
-        properties: type.properties
+        properties: type.properties,
+        loadEntityTypeError: false
       });
+    }).catch(() => {
+      this.setState({ loadEntityTypeError: true });
     });
   }
 
@@ -70,11 +83,30 @@ export class EntitySet extends React.Component {
       action: Consts.REQUEST,
       name: this.props.name,
       permissions: permissionLevels[type]
-    }]);
+    }]).then(() => {
+      this.setState({
+        permissionRequestStatus: {
+          display: styles.updateSuccess,
+          msg: `You have requested ${type.toLowerCase()} permissions.`
+        }
+      });
+    }).catch(() => {
+      this.setState({
+        permissionRequestStatus: {
+          display: styles.errorMsg,
+          msg: `Error: unable to request ${type.toLowerCase()} permissions.`
+        }
+      });
+    });
   }
 
   shouldShow = {
     true: Consts.EMPTY,
+    false: styles.hidden
+  };
+
+  errorClass = {
+    true: styles.errorMsg,
     false: styles.hidden
   };
 
@@ -119,6 +151,7 @@ export class EntitySet extends React.Component {
   renderDownloadOrRequestDropdowns = () => {
     let downloadOptions;
     let requestOptions;
+    const reqStatus = this.state.permissionRequestStatus;
     const permissions = this.props.permissions;
     if (permissions.includes(Consts.WRITE.toUpperCase())) {
       downloadOptions = [Consts.CSV, Consts.JSON];
@@ -132,6 +165,7 @@ export class EntitySet extends React.Component {
     }
     return (
       <div>
+        <div className={`${reqStatus.display} ${styles.permissionRequestStatusMsg}`}>{reqStatus.msg}</div>
         {this.renderRequestPermissionButton(requestOptions)}
         <div className={styles.spacerSmall} />
         {this.renderDownloadButton(downloadOptions)}
@@ -171,6 +205,9 @@ export class EntitySet extends React.Component {
         <br />
         <div className={styles.spacerSmall} />
         {this.renderPermissionsPanel(name)}
+        <div className={this.errorClass[this.state.loadEntityTypeError]}>
+          Unable to load entity type details for {name}.
+        </div>
         <div>
           <table>
             <tbody>
