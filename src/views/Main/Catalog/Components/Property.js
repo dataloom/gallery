@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
 import Consts from '../../../../utils/AppConsts';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
@@ -8,12 +7,10 @@ export class Property extends React.Component {
   static propTypes = {
     property: PropTypes.object,
     primaryKey: PropTypes.bool,
-    entityTypeName: PropTypes.string,
-    entityTypeNamespace: PropTypes.string,
-    updateFn: PropTypes.func,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
-    isOwner: PropTypes.bool
+    isOwner: PropTypes.bool,
+    verifyDeleteFn: PropTypes.func
   }
 
   shouldShow = {
@@ -54,21 +51,6 @@ export class Property extends React.Component {
     this.setState({ showPanel: false });
   }
 
-  deleteProp = () => {
-    EntityDataModelApi.removePropertyTypesFromEntityType(
-      {
-        namespace: this.props.entityTypeNamespace,
-        name: this.props.entityTypeName
-      },
-      [{
-        namespace: this.props.property.namespace,
-        name: this.props.property.name
-      }]
-    ).then(() => {
-      return this.props.updateFn();
-    });
-  }
-
   shouldShowDeleteButton = () => {
     return (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
   }
@@ -95,7 +77,9 @@ export class Property extends React.Component {
       <tr className={styles.tableRows}>
         <td>
           <button
-            onClick={this.deleteProp}
+            onClick={() => {
+              this.props.verifyDeleteFn(prop);
+            }}
             className={this.shouldShowDeleteButton()}
           >-</button>
         </td>
