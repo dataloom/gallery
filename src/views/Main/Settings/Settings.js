@@ -1,20 +1,13 @@
 import React from 'react';
+import { UsersApi } from 'loom-data';
+import Consts from '../../../utils/AppConsts';
 import styles from './styles.module.css';
 
-const roles = {
-  baseRole: ['user1@base.com', 'user2@base.com', 'user3@base.com'],
-  middleRole: ['middle1@middle.com', 'middle2@middle.com', 'middle3@middle.com', 'mid4@middle.com', 'mid5@middle.com'],
-  anotherRole: [],
-  topRole: ['top@top.com', 'anotherTop@top.com'],
-  something: [],
-  anotherOne: [],
-  one: [],
-  two: [],
-  three: [],
-  four: [],
-  five: [],
-  six: [],
-  seven: []
+const hiddenRoles = [Consts.USER, Consts.ADMIN];
+
+const emptyErrorObj = {
+  display: styles.hidden,
+  value: Consts.EMPTY
 };
 
 export class Settings extends React.Component {
@@ -22,66 +15,63 @@ export class Settings extends React.Component {
   constructor() {
     super();
     this.state = {
-      selectedRole: Object.keys(roles)[0],
+      userData: {},
       newRoleValue: '',
-      newEmailValue: ''
+      selectedUser: '',
+      reservedRoleError: emptyErrorObj
     };
   }
 
-  deleteRole = (role) => {
-    console.log(`deleting ${role}`);
+  componentDidMount() {
+    this.loadUsers();
   }
 
-  deleteEmail = (email) => {
-    console.log(`deleting ${email} from ${this.state.selectedRole}`);
-  }
-
-  updateSelectedRole = (role) => {
-    this.setState({ selectedRole: role });
-  }
-
-  renderRoles() {
-    return Object.keys(roles).map((role) => {
-      const className = (role === this.state.selectedRole) ? `${styles.listItem} ${styles.selected}` : styles.listItem;
-      return (
-        <div className={className} key={Object.keys(roles).indexOf(role)}>
-          <div className={styles.inline}>
-            <button
-              onClick={() => {
-                this.deleteRole(role);
-              }}
-              className={styles.deleteButton}
-            >-</button>
-          </div>
-          <button
-            className={styles.roleRowButton}
-            onClick={() => {
-              this.updateSelectedRole(role);
-            }}
-          >
-            <div className={`${styles.inline} ${styles.padLeft}`}>{role}</div>
-          </button>
-        </div>
-      );
+  loadUsers = (userId, shouldClear) => {
+    UsersApi.getAllUsers()
+    .then((userData) => {
+      const selectedUser = (userId && userId !== undefined) ? userId : Object.keys(userData)[0];
+      const newRoleValue = (shouldClear) ? Consts.EMPTY : this.state.newRoleValue;
+      this.setState({ userData, selectedUser, newRoleValue });
     });
   }
 
-  renderEmails = () => {
-    const emails = roles[this.state.selectedRole];
-    return emails.map((email) => {
-      return (
-        <div className={styles.listItem} key={emails.indexOf(email)}>
-          <div className={styles.inline}>
-            <button
-              onClick={() => {
-                this.deleteEmail(email);
-              }}
-              className={styles.deleteButton}
-            >-</button>
-          </div>
-          <div className={`${styles.inline} ${styles.padLeft}`}>{email}</div>
-        </div>
-      );
+  roleIsReserved = (role) => {
+    if (hiddenRoles.includes(role.trim().toLowerCase())) {
+      const reservedRoleError = { display: styles.error, value: role };
+      this.setState({ reservedRoleError });
+      return true;
+    }
+    return false;
+  }
+
+  updateRoles = (action, role) => {
+    if (this.roleIsReserved(role)) return;
+    const userId = this.state.selectedUser;
+    const newRoleList = [];
+    let newRole = role.trim();
+    this.state.userData[userId].roles.forEach((oldRole) => {
+      if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
+      else newRole = oldRole.trim();
+    });
+    if (action === Consts.ADD) newRoleList.push(newRole);
+    UsersApi.resetUserRoles(userId, newRoleList);
+    const userData = this.state.userData;
+    userData[userId].roles = newRoleList;
+    const newRoleValue = (action === Consts.ADD) ? Consts.EMPTY : this.state.newRoleValue;
+    const reservedRoleError = emptyErrorObj;
+    this.setState({ userData, newRoleValue, reservedRoleError });
+  }
+
+  updateSelectedUser = (userId) => {
+    UsersApi.getUser(userId)
+    .then((user) => {
+      const userData = this.state.userData;
+      userData[userId] = user;
+      this.setState({
+        userData,
+        selectedUser: userId,
+        reservedRoleError: emptyErrorObj
+      });
     });
   }
 
@@ -89,18 +79,53 @@ export class Settings extends React.Component {
     this.setState({ newRoleValue: e.target.value });
   }
 
-  updateNewEmailValue = (e) => {
-    this.setState({ newEmailValue: e.target.value });
+  renderUsers() {
+    if (Object.keys(this.state.userData).length) {
+      return Object.keys(this.state.userData).map((userId) => {
+        const user = this.state.userData[userId];
+        const className = (userId === this.state.selectedUser) ?
+          `${styles.listItem} ${styles.selected}` : styles.listItem;
+        if (user.email && user.email !== undefined) {
+          return (
+            <div className={className} key={Object.keys(this.state.userData).indexOf(userId)}>
+              <button
+                className={styles.roleRowButton}
+                onClick={() => {
+                  this.updateSelectedUser(userId);
+                }}
+              >
+                <div className={`${styles.inline} ${styles.padLeft}`}>{user.email}</div>
+              </button>
+            </div>
+          );
+        }
+        return null;
+      });
+    }
+    return null;
   }
 
-  createRole = () => {
-    console.log(`creating new role: ${this.state.newRoleValue}`);
-    this.setState({ newRoleValue: '' });
-  }
-
-  addEmail = () => {
-    console.log(`setting user with email ${this.state.newEmailValue} as role ${this.state.selectedRole}`);
-    this.setState({ newEmailValue: '' });
+  renderRolesForUser() {
+    if (Object.keys(this.state.userData).length) {
+      const roles = this.state.userData[this.state.selectedUser].roles;
+      return roles.map((role) => {
+        if (hiddenRoles.includes(role.trim().toLowerCase())) return null;
+        return (
+          <div className={styles.listItem} key={roles.indexOf(role)}>
+            <div className={styles.inline}>
+              <button
+                onClick={() => {
+                  this.updateRoles(Consts.REMOVE, role);
+                }}
+                className={styles.deleteButton}
+              >-</button>
+            </div>
+            <div className={`${styles.inline} ${styles.padLeft}`}>{role}</div>
+          </div>
+        );
+      });
+    }
+    return null;
   }
 
   render() {
@@ -110,33 +135,31 @@ export class Settings extends React.Component {
         <div className={styles.spacer} />
         <div className={styles.setRolesContainer}>
           <div className={styles.headerText}>Manage roles in your domain.</div>
+          <div className={this.state.reservedRoleError.display}>
+            Error: {this.state.reservedRoleError.value} is a reserved role.
+          </div>
           <div className={styles.roleManagementContainer}>
             <div className={styles.divider} />
+            <div className={styles.userListContainer}>
+              {this.renderUsers()}
+            </div>
             <div className={styles.roleListContainer}>
-              {this.renderRoles()}
-            </div>
-            <div className={styles.addRoleContainer}>
-              <input
-                type="text"
-                className={styles.addInput}
-                placeholder={'Add role'}
-                value={this.state.newRoleValue}
-                onChange={this.updateNewRoleValue}
-              />
-              <button className={styles.simpleButton} onClick={this.createRole}>Create role</button>
-            </div>
-            <div className={styles.emailListContainer}>
-              {this.renderEmails()}
+              {this.renderRolesForUser()}
             </div>
             <div className={styles.addEmailContainer}>
               <input
                 type="text"
                 className={styles.addInput}
-                placeholder={'Add an email for the selected role'}
-                value={this.state.newEmailValue}
-                onChange={this.updateNewEmailValue}
+                placeholder={'Add a role to the selected user'}
+                value={this.state.newRoleValue}
+                onChange={this.updateNewRoleValue}
               />
-              <button className={styles.simpleButton} onClick={this.addEmail}>Add</button>
+              <button
+                className={styles.simpleButton}
+                onClick={() => {
+                  this.updateRoles(Consts.ADD, this.state.newRoleValue);
+                }}
+              >Add</button>
             </div>
           </div>
         </div>

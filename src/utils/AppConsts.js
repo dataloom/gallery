@@ -18,9 +18,10 @@ const READ = 'READ';
 const WRITE = 'WRITE';
 const OWNER = 'OWNER';
 
-const DEFAULT_USER_ROLE = 'user';
 const USER = 'USER';
 const ROLE = 'ROLE';
+const DEFAULT_USER_ROLE = 'user';
+const ADMIN = 'admin';
 
 const ADD = 'ADD';
 const REMOVE = 'REMOVE';
@@ -57,6 +58,7 @@ export default {
   OWNER,
 
   DEFAULT_USER_ROLE,
+  ADMIN,
   USER,
   ROLE,
 

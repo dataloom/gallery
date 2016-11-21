@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Consts from '../../../utils/AppConsts';
@@ -11,6 +11,9 @@ const authConsts = {
 };
 
 export class Home extends React.Component {
+  static propTypes = {
+    updateTopbarFn: PropTypes.func
+  }
 
   constructor() {
     super();
@@ -21,6 +24,7 @@ export class Home extends React.Component {
   }
 
   componentDidMount() {
+    setTimeout(this.props.updateTopbarFn, 300);
     this.loadRequestStatuses();
   }
 
