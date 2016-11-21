@@ -12,7 +12,8 @@ export class Navbar extends React.Component {
   }
 
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService)
+    auth: PropTypes.instanceOf(AuthService),
+    updateTopbarFn: PropTypes.func
   }
 
   constructor() {
@@ -20,6 +21,10 @@ export class Navbar extends React.Component {
     this.state = {
       selected: this.getCurrentState()
     };
+  }
+
+  componentDidMount() {
+    this.props.updateTopbarFn();
   }
 
   getCurrentState = () => {
@@ -52,6 +57,7 @@ export class Navbar extends React.Component {
   }
 
   updateState = (newState) => {
+    this.props.updateTopbarFn();
     this.setState({ selected: newState });
     this.context.router.push(`/${newState}`);
   }

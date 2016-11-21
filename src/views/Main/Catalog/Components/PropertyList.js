@@ -22,17 +22,17 @@ export class PropertyList extends React.Component {
     super(props);
     this.state = {
       newPropertyRow: false,
-      error: false
+      error: {
+        display: styles.hidden,
+        action: Consts.ADD
+      },
+      verifyingDelete: false,
+      propertyToDelete: undefined
     };
   }
 
   shouldShow = {
     true: Consts.EMPTY,
-    false: styles.hidden
-  }
-
-  showErrorMsgClass = {
-    true: styles.errorMsg,
     false: styles.hidden
   }
 
@@ -50,12 +50,24 @@ export class PropertyList extends React.Component {
   }
 
   updateFqns = () => {
-    this.setState({ newPropertyRow: false });
+    this.setState({
+      newPropertyRow: false,
+      error: {
+        display: styles.hidden,
+        action: Consts.ADD
+      }
+    });
     this.props.updateFn();
   }
 
-  updateError = () => {
-    this.setState({ error: true });
+  updateError = (action) => {
+    this.setState({
+      error: {
+        display: styles.errorMsg,
+        action
+      },
+      verifyingDelete: false
+    });
   }
 
   addPropertyToEntityType = (namespace, name) => {
@@ -68,7 +80,7 @@ export class PropertyList extends React.Component {
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
-      this.updateError();
+      this.updateError(Consts.ADD);
     });
   }
 
@@ -76,13 +88,68 @@ export class PropertyList extends React.Component {
     return (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
   }
 
+  deleteProp = () => {
+    EntityDataModelApi.removePropertyTypesFromEntityType(
+      {
+        namespace: this.props.entityTypeNamespace,
+        name: this.props.entityTypeName
+      },
+      [{
+        namespace: this.state.propertyToDelete.namespace,
+        name: this.state.propertyToDelete.name
+      }]
+    ).then(() => {
+      this.setState({
+        verifyingDelete: false,
+        propertyToDelete: undefined,
+        error: {
+          display: styles.hidden,
+          action: Consts.REMOVE
+        }
+      });
+      return this.props.updateFn();
+    }).catch(() => {
+      this.updateError(Consts.REMOVE);
+    });
+  }
+
+  cancelDelete = () => {
+    this.setState({
+      verifyingDelete: false,
+      propertyToDelete: undefined
+    });
+  }
+
+  verifyDelete = (property) => {
+    this.setState({
+      verifyingDelete: true,
+      propertyToDelete: property
+    });
+  }
+
+  renderVerifyDeletePropertyBox = () => {
+    if (this.state.verifyingDelete) {
+      const prop = `${this.state.propertyToDelete.namespace}.${this.state.propertyToDelete.name}`;
+      const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
+      return (
+        <div className={styles.verifyDeleteContainer}>
+          <div className={styles.verifyDeleteText}>
+            Are you sure you want to delete property type {prop} and all associated data from entity type {entityType}?
+          </div>
+          <div className={styles.buttonContainer}>
+            <button onClick={this.deleteProp} className={styles.simpleButton}>Delete</button>
+            <button onClick={this.cancelDelete} className={styles.simpleButton}>Cancel</button>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
+
   render() {
     const {
       properties,
       primaryKey,
-      entityTypeName,
-      entityTypeNamespace,
-      updateFn,
       entitySetName,
       editingPermissions,
       isOwner
@@ -96,12 +163,10 @@ export class PropertyList extends React.Component {
           key={prop.key}
           property={prop}
           primaryKey={pKey}
-          entityTypeName={entityTypeName}
-          entityTypeNamespace={entityTypeNamespace}
-          updateFn={updateFn}
           editingPermissions={editingPermissions}
           entitySetName={entitySetName}
           isOwner={isOwner}
+          verifyDeleteFn={this.verifyDelete}
         />
       );
     });
@@ -124,7 +189,8 @@ export class PropertyList extends React.Component {
           </tbody>
         </table>
         <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add property.</div>
+        <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
+        {this.renderVerifyDeletePropertyBox()}
       </div>
     );
   }
