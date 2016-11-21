@@ -13,7 +13,8 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       newEntityType: false,
-      error: false,
+      loadTypesError: false,
+      createTypeError: false,
       allPropNamespaces: {},
       newEntityTypeName: '',
       newEntityTypeNamespace: '',
@@ -56,11 +57,13 @@ export class EntityTypeList extends React.Component {
           newPKeyName: '',
           newPKeyNamespace: ''
         });
+      }).catch(() => {
+        this.setState({ loadTypesError: true });
       });
   }
 
-  showError = () => {
-    this.setState({ error: true });
+  showCreateTypeError = () => {
+    this.setState({ createTypeError: true });
   }
 
   createNewEntityType = () => {
@@ -74,7 +77,7 @@ export class EntityTypeList extends React.Component {
     .then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
-      this.showError();
+      this.showCreateTypeError();
     });
   }
 
@@ -97,7 +100,9 @@ export class EntityTypeList extends React.Component {
           allPropNamespaces
         });
       }
-    );
+    ).catch(() => {
+      this.setState({ loadTypesError: true });
+    });
   }
 
   handleNameChange = (e) => {
@@ -173,8 +178,9 @@ export class EntityTypeList extends React.Component {
             <div className={styles.spacerSmall} />
             <button className={styles.genericButton} onClick={this.createNewEntityType}>Create</button>
           </div>
-          <div className={this.errorClass[this.state.error]}>Unable to create entity type.</div>
+          <div className={this.errorClass[this.state.createTypeError]}>Unable to create entity type.</div>
         </div>
+        <div className={this.errorClass[this.state.loadTypesError]}>Unable to load entity types.</div>
         {entityTypeList}
       </div>
     );
