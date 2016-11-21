@@ -5,6 +5,7 @@ import { DropdownButton } from './DropdownButton';
 import Consts from '../../../../utils/AppConsts';
 import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
+import { Visualization } from '../../Visualizations/Visualization';
 import styles from '../styles.module.css';
 
 const permissionLevels = {
@@ -171,6 +172,7 @@ export class EntitySet extends React.Component {
         <br />
         <div className={styles.spacerSmall} />
         {this.renderPermissionsPanel(name)}
+        <Visualization entitySetName={name} />
         <div>
           <table>
             <tbody>
