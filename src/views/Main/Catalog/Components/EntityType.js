@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
-import Consts from '../../../../utils/AppConsts';
+import FileConsts from '../../../../utils/Consts/FileConsts';
 import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
@@ -22,7 +22,7 @@ export class EntityType extends React.Component {
 
   render() {
     const { name, namespace, properties, primaryKey, updateFn } = this.props;
-    const options = [Consts.CSV, Consts.JSON];
+    const options = [FileConsts.CSV, FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>

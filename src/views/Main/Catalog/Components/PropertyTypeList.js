@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import { EdmDatatypeAutosuggest } from './EdmDatatypeAutosuggest';
 import styles from '../styles.module.css';
@@ -32,7 +32,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -119,7 +119,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldDisplayContainer = () => {
-    return (this.props.navBar) ? styles.edmContainer : Consts.EMPTY;
+    return (this.props.navBar) ? styles.edmContainer : StringConsts.EMPTY;
   }
 
   handleNameChange = (e) => {

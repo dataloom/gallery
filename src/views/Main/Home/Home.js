@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import { PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
-import Consts from '../../../utils/AppConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
+import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
 import styles from './styles.module.css';
 
 const authConsts = {
@@ -29,7 +31,7 @@ export class Home extends React.Component {
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -51,10 +53,10 @@ export class Home extends React.Component {
       Promise.join(
         PermissionsApi.updateAclsForEntitySets([{
           principal: {
-            type: Consts.USER,
+            type: UserRoleConsts.USER,
             name: email
           },
-          action: Consts.SET,
+          action: PermissionsConsts.SET,
           name: entitySet,
           permissions
         }]),
@@ -74,8 +76,8 @@ export class Home extends React.Component {
   }
 
   getPermissionType(permissions) {
-    if (permissions.includes(Consts.WRITE.toUpperCase())) return Consts.WRITE;
-    return Consts.READ;
+    if (permissions.includes(PermissionsConsts.WRITE.toUpperCase())) return PermissionsConsts.WRITE;
+    return PermissionsConsts.READ;
   }
 
   renderAllRequests = () => {

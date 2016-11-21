@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import AuthService from '../../../utils/AuthService';
-import Consts from '../../../utils/AppConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import PageConsts from '../../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
 import settingsIcon from '../../../../src/images/settings-icon.png';
 
@@ -16,12 +17,12 @@ export class Topbar extends React.Component {
   }
 
   navigateToSettings = () => {
-    this.context.router.push(`/${Consts.SETTINGS}`);
+    this.context.router.push(`/${PageConsts.SETTINGS}`);
   }
 
   logout = () => {
     this.props.auth.logout();
-    this.context.router.push(`/${Consts.LOGIN}`);
+    this.context.router.push(`/${PageConsts.LOGIN}`);
   }
 
   settingsButtonClass = () => {
@@ -29,7 +30,7 @@ export class Topbar extends React.Component {
   }
 
   extraAdminClass = () => {
-    return (this.props.isAdmin) ? Consts.EMPTY : styles.noAdminButtonFormatting;
+    return (this.props.isAdmin) ? StringConsts.EMPTY : styles.noAdminButtonFormatting;
   }
 
   showButtons() {

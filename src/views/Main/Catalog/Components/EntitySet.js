@@ -2,16 +2,19 @@ import React, { PropTypes } from 'react';
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
-import Consts from '../../../../utils/AppConsts';
+import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import FileConsts from '../../../../utils/Consts/FileConsts';
 import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
 
 const permissionLevels = {
   hidden: [],
-  discover: [Consts.DISCOVER],
-  read: [Consts.DISCOVER, Consts.READ],
-  write: [Consts.DISCOVER, Consts.READ, Consts.WRITE]
+  discover: [PermissionsConsts.DISCOVER],
+  read: [PermissionsConsts.DISCOVER, PermissionsConsts.READ],
+  write: [PermissionsConsts.DISCOVER, PermissionsConsts.READ, PermissionsConsts.WRITE]
 };
 
 export class EntitySet extends React.Component {
@@ -64,17 +67,17 @@ export class EntitySet extends React.Component {
   requestPermission = (type) => {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
-        type: Consts.USER,
+        type: UserRoleConsts.USER,
         name: this.props.auth.getProfile().email
       },
-      action: Consts.REQUEST,
+      action: PermissionsConsts.REQUEST,
       name: this.props.name,
       permissions: permissionLevels[type]
     }]);
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   };
 
@@ -120,15 +123,15 @@ export class EntitySet extends React.Component {
     let downloadOptions;
     let requestOptions;
     const permissions = this.props.permissions;
-    if (permissions.includes(Consts.WRITE.toUpperCase())) {
-      downloadOptions = [Consts.CSV, Consts.JSON];
+    if (permissions.includes(PermissionsConsts.WRITE.toUpperCase())) {
+      downloadOptions = [FileConsts.CSV, FileConsts.JSON];
     }
-    else if (permissions.includes(Consts.READ.toUpperCase())) {
-      downloadOptions = [Consts.CSV, Consts.JSON];
-      requestOptions = [Consts.WRITE];
+    else if (permissions.includes(PermissionsConsts.READ.toUpperCase())) {
+      downloadOptions = [FileConsts.CSV, FileConsts.JSON];
+      requestOptions = [PermissionsConsts.WRITE];
     }
     else {
-      requestOptions = [Consts.READ, Consts.WRITE];
+      requestOptions = [PermissionsConsts.READ, PermissionsConsts.WRITE];
     }
     return (
       <div>

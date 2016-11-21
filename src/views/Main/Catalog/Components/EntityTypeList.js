@@ -3,7 +3,7 @@ import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
@@ -32,7 +32,7 @@ export class EntityTypeList extends React.Component {
   }
 
   showNewEntityType = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 

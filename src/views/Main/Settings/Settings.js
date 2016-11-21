@@ -1,13 +1,16 @@
 import React from 'react';
 import { UsersApi } from 'loom-data';
-import Consts from '../../../utils/AppConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
+
 import styles from './styles.module.css';
 
-const hiddenRoles = [Consts.USER, Consts.ADMIN];
+const hiddenRoles = [UserRoleConsts.USER, UserRoleConsts.ADMIN];
 
 const emptyErrorObj = {
   display: styles.hidden,
-  value: Consts.EMPTY
+  value: StringConsts.EMPTY
 };
 
 export class Settings extends React.Component {
@@ -30,7 +33,7 @@ export class Settings extends React.Component {
     UsersApi.getAllUsers()
     .then((userData) => {
       const selectedUser = (userId && userId !== undefined) ? userId : Object.keys(userData)[0];
-      const newRoleValue = (shouldClear) ? Consts.EMPTY : this.state.newRoleValue;
+      const newRoleValue = (shouldClear) ? StringConsts.EMPTY : this.state.newRoleValue;
       this.setState({ userData, selectedUser, newRoleValue });
     });
   }
@@ -53,11 +56,11 @@ export class Settings extends React.Component {
       if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
       else newRole = oldRole.trim();
     });
-    if (action === Consts.ADD) newRoleList.push(newRole);
+    if (action === PermissionsConsts.ADD) newRoleList.push(newRole);
     UsersApi.resetUserRoles(userId, newRoleList);
     const userData = this.state.userData;
     userData[userId].roles = newRoleList;
-    const newRoleValue = (action === Consts.ADD) ? Consts.EMPTY : this.state.newRoleValue;
+    const newRoleValue = (action === PermissionsConsts.ADD) ? StringConsts.EMPTY : this.state.newRoleValue;
     const reservedRoleError = emptyErrorObj;
     this.setState({ userData, newRoleValue, reservedRoleError });
   }
@@ -115,7 +118,7 @@ export class Settings extends React.Component {
             <div className={styles.inline}>
               <button
                 onClick={() => {
-                  this.updateRoles(Consts.REMOVE, role);
+                  this.updateRoles(PermissionsConsts.REMOVE, role);
                 }}
                 className={styles.deleteButton}
               >-</button>
@@ -157,7 +160,7 @@ export class Settings extends React.Component {
               <button
                 className={styles.simpleButton}
                 onClick={() => {
-                  this.updateRoles(Consts.ADD, this.state.newRoleValue);
+                  this.updateRoles(PermissionsConsts.ADD, this.state.newRoleValue);
                 }}
               >Add</button>
             </div>

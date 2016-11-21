@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
-import Utils from '../../../../utils/Utils';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import '../../../../styles/autosuggest.css';
 
 const getSuggestionValue = (suggestion) => {
@@ -31,7 +31,7 @@ export class EdmDatatypeAutosuggest extends React.Component {
   getSuggestions(value) {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
-    return inputLength === 0 ? [] : Utils.getAllEdmPrimitiveTypes().filter((type) => {
+    return inputLength === 0 ? [] : EdmConsts.EDM_PRIMITIVE_TYPES.filter((type) => {
       return type.toLowerCase().slice(0, inputLength) === inputValue;
     });
   }

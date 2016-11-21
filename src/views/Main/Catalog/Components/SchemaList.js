@@ -3,7 +3,7 @@ import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
@@ -25,7 +25,7 @@ export class SchemaList extends React.Component {
   }
 
   showNewSchema = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 

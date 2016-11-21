@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
@@ -25,7 +26,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: Consts.ADD
+        action: PermissionsConsts.ADD
       },
       verifyingDelete: false,
       propertyToDelete: undefined
@@ -33,12 +34,7 @@ export class PropertyList extends React.Component {
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
-    false: styles.hidden
-  }
-
-  shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -60,7 +56,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: Consts.ADD
+        action: PermissionsConsts.ADD
       }
     });
     this.props.updateFn();
@@ -86,7 +82,7 @@ export class PropertyList extends React.Component {
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
-      this.updateError(Consts.ADD);
+      this.updateError(PermissionsConsts.ADD);
     });
   }
 
@@ -110,12 +106,12 @@ export class PropertyList extends React.Component {
         propertyToDelete: undefined,
         error: {
           display: styles.hidden,
-          action: Consts.REMOVE
+          action: PermissionsConsts.REMOVE
         }
       });
       return this.props.updateFn();
     }).catch(() => {
-      this.updateError(Consts.REMOVE);
+      this.updateError(PermissionsConsts.REMOVE);
     });
   }
 

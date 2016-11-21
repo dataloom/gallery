@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import Dropdown from 'react-dropdown';
 import Select from 'react-select';
 import { PermissionsApi, UsersApi } from 'loom-data';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
 import styles from '../styles.module.css';
 import '../../../../styles/dropdown.css';
 
@@ -15,9 +17,9 @@ const views = {
 
 const permissionLevels = {
   hidden: [],
-  discover: [Consts.DISCOVER],
-  read: [Consts.DISCOVER, Consts.READ],
-  write: [Consts.DISCOVER, Consts.READ, Consts.WRITE]
+  discover: [PermissionsConsts.DISCOVER],
+  read: [PermissionsConsts.DISCOVER, PermissionsConsts.READ],
+  write: [PermissionsConsts.DISCOVER, PermissionsConsts.READ, PermissionsConsts.WRITE]
 };
 
 const viewLabels = {
@@ -78,7 +80,7 @@ export class PermissionsPanel extends React.Component {
         const user = users[userId];
         if (user.email && user.email !== undefined) allUsersList[user.email] = userId;
         user.roles.forEach((role) => {
-          if (role !== Consts.DEFAULT_USER_ROLE) allRolesList.add(role);
+          if (role !== UserRoleConsts.DEFAULT_USER_ROLE) allRolesList.add(role);
         });
       });
       this.setState({ allUsersList, allRolesList });
@@ -96,8 +98,8 @@ export class PermissionsPanel extends React.Component {
     const roleAcls = { Discover: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Read: [], Write: [] };
     acls.forEach((acl) => {
-      if (acl.principal.type.toLowerCase() === Consts.ROLE) {
-        if (acl.principal.name === Consts.DEFAULT_USER_ROLE) {
+      if (acl.principal.type.toLowerCase() === UserRoleConsts.ROLE) {
+        if (acl.principal.name === UserRoleConsts.DEFAULT_USER_ROLE) {
           globalValue = this.getPermission(acl.permissions);
         }
         else {
@@ -184,7 +186,8 @@ export class PermissionsPanel extends React.Component {
 
   updatePermissions(action, principal, view) {
     const name = this.props.entitySetName;
-    const permissions = (action === Consts.REMOVE) ? [view.toLowerCase()] : permissionLevels[view.toLowerCase()];
+    const permissions = (action === PermissionsConsts.REMOVE) ?
+      [view.toLowerCase()] : permissionLevels[view.toLowerCase()];
     const updateFn = (this.props.propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
     const req = { principal, action, name, permissions };
@@ -200,7 +203,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissions = () => {
-    this.updateRoles(Consts.SET, Consts.DEFAULT_USER_ROLE, this.state.globalValue);
+    this.updateRoles(PermissionsConsts.SET, UserRoleConsts.DEFAULT_USER_ROLE, this.state.globalValue);
   }
 
   updateDropdownValue = (e) => {
@@ -242,14 +245,14 @@ export class PermissionsPanel extends React.Component {
 
   updateRoles = (action, role, view) => {
     const principal = {
-      type: Consts.ROLE,
+      type: UserRoleConsts.ROLE,
       name: role
     };
     this.updatePermissions(action, principal, view);
   }
 
   handleNewRoleChange = (e) => {
-    const newRoleValue = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    const newRoleValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
     this.setState({ newRoleValue });
   }
 
@@ -286,7 +289,7 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.updateRoles(Consts.REMOVE, role, this.state.rolesView);
+                this.updateRoles(PermissionsConsts.REMOVE, role, this.state.rolesView);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -316,7 +319,7 @@ export class PermissionsPanel extends React.Component {
           <button
             className={`${styles.simpleButton} ${styles.spacerMargin}`}
             onClick={() => {
-              this.updateRoles(Consts.SET, this.state.newRoleValue, this.state.rolesView);
+              this.updateRoles(PermissionsConsts.SET, this.state.newRoleValue, this.state.rolesView);
             }}
           >Save</button>
         </div>
@@ -355,14 +358,14 @@ export class PermissionsPanel extends React.Component {
 
   updateEmails = (action, email, view) => {
     const principal = {
-      type: Consts.USER,
+      type: UserRoleConsts.USER,
       name: this.state.allUsersList[email]
     };
     this.updatePermissions(action, principal, view);
   }
 
   handleNewEmailChange = (e) => {
-    const newEmailValue = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    const newEmailValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
     this.setState({ newEmailValue });
   }
 
@@ -390,7 +393,7 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.updateEmails(Consts.REMOVE, email, this.state.emailsView);
+                this.updateEmails(PermissionsConsts.REMOVE, email, this.state.emailsView);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -421,7 +424,7 @@ export class PermissionsPanel extends React.Component {
           <button
             className={`${styles.simpleButton} ${styles.spacerMargin}`}
             onClick={() => {
-              this.updateEmails(Consts.SET, this.state.newEmailValue, this.state.emailsView);
+              this.updateEmails(PermissionsConsts.SET, this.state.newEmailValue, this.state.emailsView);
             }}
           >Save</button>
         </div>

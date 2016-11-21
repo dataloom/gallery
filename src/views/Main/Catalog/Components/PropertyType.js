@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
@@ -31,7 +31,7 @@ export class PropertyType extends React.Component {
   }
 
   shouldShowDeleteButton = () => {
-    return (this.props.navBar ? styles.hidden : Consts.EMPTY);
+    return (this.props.navBar ? styles.hidden : StringConsts.EMPTY);
   }
 
   render() {
