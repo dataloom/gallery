@@ -13,7 +13,6 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
@@ -154,8 +153,10 @@ export class PropertyList extends React.Component {
       primaryKey,
       entitySetName,
       editingPermissions,
-      isOwner
+      isOwner,
+      allPropNamespaces
     } = this.props;
+    const { newPropertyRow, error } = this.state;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
@@ -183,15 +184,14 @@ export class PropertyList extends React.Component {
             </tr>
             {propertyList}
             <NameNamespaceAutosuggest
-              className={this.shouldShow[this.state.newPropertyRow]}
-              names={this.props.allPropNames}
-              namespaces={this.props.allPropNamespaces}
+              className={this.shouldShow[newPropertyRow]}
+              namespaces={allPropNamespaces}
               addProperty={this.addPropertyToEntityType}
             />
           </tbody>
         </table>
         <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
+        <div className={error.display}>Unable to {error.action} property.</div>
         {this.renderVerifyDeletePropertyBox()}
       </div>
     );

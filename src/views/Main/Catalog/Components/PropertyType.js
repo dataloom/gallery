@@ -14,19 +14,20 @@ export class PropertyType extends React.Component {
   }
 
   deleteProp = () => {
+    const { schemaName, schemaNamespace, propertyType, updateFn, error } = this.props;
     EntityDataModelApi.removePropertyTypesFromSchema(
       {
-        namespace: this.props.schemaNamespace,
-        name: this.props.schemaName
+        namespace: schemaNamespace,
+        name: schemaName
       },
       [{
-        namespace: this.props.propertyType.namespace,
-        name: this.props.propertyType.name
+        namespace: propertyType.namespace,
+        name: propertyType.name
       }]
     ).then(() => {
-      return this.props.updateFn();
+      return updateFn();
     }).catch(() => {
-      return this.props.error();
+      return error();
     });
   }
 

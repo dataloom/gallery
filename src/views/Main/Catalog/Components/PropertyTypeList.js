@@ -143,16 +143,26 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
+    const { navBar, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
+    const {
+      propertyTypes,
+      newPropertyRow,
+      newPropName,
+      newPropNamespace,
+      newPropMultiplicity,
+      addError,
+      deleteError
+    } = this.state;
+    const propArray = (navBar) ? propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
         key={prop.key}
         propertyType={prop}
-        navBar={this.props.navBar}
+        navBar={navBar}
         error={this.updateDeleteError}
-        updateFn={this.props.updateSchemaFn}
-        schemaName={this.props.name}
-        schemaNamespace={this.props.namespace}
+        updateFn={updateSchemaFn}
+        schemaName={name}
+        schemaNamespace={namespace}
       />);
     });
     return (
@@ -160,24 +170,24 @@ export class PropertyTypeList extends React.Component {
         <table>
           <tbody>
             <tr>
-              <th className={this.shouldShow[!this.props.navBar]} />
+              <th className={this.shouldShow[!navBar]} />
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
               <th className={styles.tableCell}>Property Type Datatype</th>
               <th className={styles.tableCell}>Property Type Multiplicity</th>
             </tr>
             {propertyTypeList}
-            <tr className={this.shouldShow[this.state.newPropertyRow && this.props.navBar]}>
+            <tr className={this.shouldShow[newPropertyRow && navBar]}>
               <td><input
                 type="text"
-                value={this.state.newPropName}
+                value={newPropName}
                 onChange={this.handleNameChange}
                 placeholder="name"
                 className={styles.tableCell}
               /></td>
               <td><input
                 type="text"
-                value={this.state.newPropNamespace}
+                value={newPropNamespace}
                 onChange={this.handleNamespaceChange}
                 placeholder="namespace"
                 className={styles.tableCell}
@@ -185,7 +195,7 @@ export class PropertyTypeList extends React.Component {
               <td><EdmDatatypeAutosuggest onChangeFn={this.handleDatatypeChange} /></td>
               <td><input
                 type="text"
-                value={this.state.newPropMultiplicity}
+                value={newPropMultiplicity}
                 onChange={this.handleMultiplicityChange}
                 placeholder="multiplicity"
                 className={styles.tableCell}
@@ -193,15 +203,15 @@ export class PropertyTypeList extends React.Component {
               <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
             </tr>
             <NameNamespaceAutosuggest
-              className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
-              namespaces={this.props.allPropNamespaces}
+              className={this.shouldShow[newPropertyRow && !navBar]}
+              namespaces={allPropNamespaces}
               addProperty={this.addPropertyToSchema}
             />
           </tbody>
         </table>
         <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={this.showErrorMsgClass[this.state.addError]}>Unable to add property type.</div>
-        <div className={this.showErrorMsgClass[this.state.deleteError]}>Unable to delete property type.</div>
+        <div className={this.showErrorMsgClass[addError]}>Unable to add property type.</div>
+        <div className={this.showErrorMsgClass[deleteError]}>Unable to delete property type.</div>
       </div>
     );
   }

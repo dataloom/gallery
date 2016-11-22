@@ -12,7 +12,6 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
 
@@ -21,7 +20,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { name, namespace, properties, primaryKey, updateFn } = this.props;
+    const { name, namespace, properties, primaryKey, updateFn, allPropNamespaces } = this.props;
     const options = [FileConsts.CSV, FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
@@ -38,8 +37,7 @@ export class EntityType extends React.Component {
           entityTypeName={name}
           entityTypeNamespace={namespace}
           updateFn={updateFn}
-          allPropNames={this.props.allPropNames}
-          allPropNamespaces={this.props.allPropNamespaces}
+          allPropNamespaces={allPropNamespaces}
           allowEdit
           editingPermissions={false}
         />

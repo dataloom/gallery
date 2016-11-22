@@ -48,17 +48,17 @@ export class Settings extends React.Component {
   }
 
   updateRoles = (action, role) => {
+    const { userData, selectedUser } = this.state;
     if (this.roleIsReserved(role)) return;
-    const userId = this.state.selectedUser;
+    const userId = selectedUser;
     const newRoleList = [];
     let newRole = role.trim();
-    this.state.userData[userId].roles.forEach((oldRole) => {
+    userData[userId].roles.forEach((oldRole) => {
       if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
       else newRole = oldRole.trim();
     });
     if (action === PermissionsConsts.ADD) newRoleList.push(newRole);
     UsersApi.resetUserRoles(userId, newRoleList);
-    const userData = this.state.userData;
     userData[userId].roles = newRoleList;
     const newRoleValue = (action === PermissionsConsts.ADD) ? StringConsts.EMPTY : this.state.newRoleValue;
     const reservedRoleError = emptyErrorObj;
@@ -83,14 +83,15 @@ export class Settings extends React.Component {
   }
 
   renderUsers() {
-    if (Object.keys(this.state.userData).length) {
-      return Object.keys(this.state.userData).map((userId) => {
-        const user = this.state.userData[userId];
-        const className = (userId === this.state.selectedUser) ?
+    const { userData, selectedUser } = this.state;
+    if (Object.keys(userData).length) {
+      return Object.keys(userData).map((userId) => {
+        const user = userData[userId];
+        const className = (userId === selectedUser) ?
           `${styles.listItem} ${styles.selected}` : styles.listItem;
         if (user.email && user.email !== undefined) {
           return (
-            <div className={className} key={Object.keys(this.state.userData).indexOf(userId)}>
+            <div className={className} key={Object.keys(userData).indexOf(userId)}>
               <button
                 className={styles.roleRowButton}
                 onClick={() => {
@@ -109,8 +110,9 @@ export class Settings extends React.Component {
   }
 
   renderRolesForUser() {
-    if (Object.keys(this.state.userData).length) {
-      const roles = this.state.userData[this.state.selectedUser].roles;
+    const { userData, selectedUser } = this.state;
+    if (Object.keys(userData).length) {
+      const roles = userData[selectedUser].roles;
       return roles.map((role) => {
         if (hiddenRoles.includes(role.trim().toLowerCase())) return null;
         return (
@@ -132,14 +134,15 @@ export class Settings extends React.Component {
   }
 
   render() {
+    const { reservedRoleError, newRoleValue } = this.state;
     return (
       <div>
         <h2 className={styles.title}>Settings</h2>
         <div className={styles.spacer} />
         <div className={styles.setRolesContainer}>
           <div className={styles.headerText}>Manage roles in your domain.</div>
-          <div className={this.state.reservedRoleError.display}>
-            Error: {this.state.reservedRoleError.value} is a reserved role.
+          <div className={reservedRoleError.display}>
+            Error: {reservedRoleError.value} is a reserved role.
           </div>
           <div className={styles.roleManagementContainer}>
             <div className={styles.divider} />
@@ -154,13 +157,13 @@ export class Settings extends React.Component {
                 type="text"
                 className={styles.addInput}
                 placeholder={'Add a role to the selected user'}
-                value={this.state.newRoleValue}
+                value={newRoleValue}
                 onChange={this.updateNewRoleValue}
               />
               <button
                 className={styles.simpleButton}
                 onClick={() => {
-                  this.updateRoles(PermissionsConsts.ADD, this.state.newRoleValue);
+                  this.updateRoles(PermissionsConsts.ADD, newRoleValue);
                 }}
               >Add</button>
             </div>

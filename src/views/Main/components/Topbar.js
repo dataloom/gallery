@@ -34,9 +34,10 @@ export class Topbar extends React.Component {
   }
 
   showButtons() {
-    if (this.props.auth.loggedIn()) {
-      const greeting = (this.props.name !== undefined && this.props.name.length) ?
-        `Hi, ${this.props.name}!` : 'Hi!';
+    const { auth, name } = this.props;
+    if (auth.loggedIn()) {
+      const greeting = (name !== undefined && name.length) ?
+        `Hi, ${name}!` : 'Hi!';
       return (
         <div className={styles.loggedInItemsContainer}>
           <div className={`${styles.greeting} ${this.extraAdminClass()}`}>{greeting}</div>

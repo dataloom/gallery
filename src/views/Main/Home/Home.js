@@ -81,15 +81,16 @@ export class Home extends React.Component {
   }
 
   renderAllRequests = () => {
-    if (this.state.requests.length === 0) {
+    const { requests, resolved } = this.state;
+    if (requests.length === 0) {
       return (
         <div className={styles.objContainer}>
           <div className={styles.noRequests}>You have no action items.</div>
         </div>
       );
     }
-    return this.state.requests.map((request) => {
-      const reqStatus = this.state.resolved[request.requestId];
+    return requests.map((request) => {
+      const reqStatus = resolved[request.requestId];
       const email = request.principal.name;
       const entitySet = request.name;
       const permissions = request.permissions;

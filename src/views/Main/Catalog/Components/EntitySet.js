@@ -155,16 +155,17 @@ export class EntitySet extends React.Component {
 
   render() {
     const { name, title, type, isOwner } = this.props;
+    const { properties, editing } = this.state;
     return (
       <div className={styles.edmContainer}>
-        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[this.props.isOwner]}>
-          {(this.state.editing) ? 'Stop editing' : 'Edit permissions'}
+        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[isOwner]}>
+          {(editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
         <div className={styles.spacerSmall} />
         <div className={styles.name}>{name}</div>
         <div className={styles.spacerLeft} />
         <button
-          className={this.shouldShowPermissionButton[this.state.editing]}
+          className={this.shouldShowPermissionButton[editing]}
           onClick={this.editEntitySetPermissions}
         >Change permissions</button>
         <div className={styles.spacerMed} />
@@ -190,12 +191,12 @@ export class EntitySet extends React.Component {
         </div>
         <div className={styles.spacerBig} />
         <PropertyList
-          properties={this.state.properties}
+          properties={properties}
           entityTypeName={type.name}
           entityTypeNamespace={type.namespace}
           allowEdit={false}
           entitySetName={name}
-          editingPermissions={this.state.editing}
+          editingPermissions={editing}
           isOwner={isOwner}
         />
         <div className={styles.spacerBig} />
