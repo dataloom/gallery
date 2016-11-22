@@ -120,15 +120,15 @@ export class EntitySet extends React.Component {
     let downloadOptions;
     let requestOptions;
     const permissions = this.props.permissions;
-    if (permissions.includes(Consts.WRITE.toUpperCase())) {
+    if (permissions.includes(Consts.WRITE)) {
       downloadOptions = [Consts.CSV, Consts.JSON];
     }
-    else if (permissions.includes(Consts.READ.toUpperCase())) {
+    else if (permissions.includes(Consts.READ)) {
       downloadOptions = [Consts.CSV, Consts.JSON];
-      requestOptions = [Consts.WRITE];
+      requestOptions = [Consts.WRITE.toLowerCase()];
     }
     else {
-      requestOptions = [Consts.READ, Consts.WRITE];
+      requestOptions = [Consts.READ.toLowerCase(), Consts.WRITE.toLowerCase()];
     }
     return (
       <div>

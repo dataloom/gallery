@@ -96,7 +96,7 @@ export class PermissionsPanel extends React.Component {
     const roleAcls = { Discover: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Read: [], Write: [] };
     acls.forEach((acl) => {
-      if (acl.principal.type.toLowerCase() === Consts.ROLE) {
+      if (acl.principal.type === Consts.ROLE) {
         if (acl.principal.name === Consts.DEFAULT_USER_ROLE) {
           globalValue = this.getPermission(acl.permissions);
         }
