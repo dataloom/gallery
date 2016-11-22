@@ -3,6 +3,7 @@ import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
 import FileConsts from '../../../../utils/Consts/FileConsts';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
@@ -16,7 +17,7 @@ export class EntityType extends React.Component {
   }
 
   getUrl = (datatype) => {
-    return DataApi.getAllEntitiesOfTypeFileUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
+    return DataApi.getAllEntitiesOfTypeFileUrl(Utils.getFqnObj(this.props.namespace, this.props.name), datatype);
   }
 
   render() {

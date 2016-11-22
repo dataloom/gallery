@@ -6,6 +6,7 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
 import styles from '../styles.module.css';
+import Utils from '../../../../utils/Utils';
 import '../../../../styles/dropdown.css';
 
 const views = {
@@ -124,10 +125,7 @@ export class PermissionsPanel extends React.Component {
     const { propertyTypeName, propertyTypeNamespace, entitySetName } = this.props;
     this.loadAllUsersAndRoles();
     if (propertyTypeName) {
-      const fqn = {
-        name: propertyTypeName,
-        namespace: propertyTypeNamespace
-      };
+      const fqn = Utils.getFqnObj(propertyTypeNamespace, propertyTypeName);
       PermissionsApi.getOwnerAclsForPropertyTypeInEntitySet(entitySetName, fqn)
       .then((acls) => {
         this.updateStateAcls(acls, updateSuccess);
@@ -194,12 +192,7 @@ export class PermissionsPanel extends React.Component {
     const updateFn = (propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
     const req = { principal, action, name, permissions };
-    if (propertyTypeName) {
-      req.property = {
-        namespace: propertyTypeNamespace,
-        name: propertyTypeName
-      };
-    }
+    if (propertyTypeName) req.property = Utils.getFqnObj(propertyTypeNamespace, propertyTypeName);
     updateFn([req]).then(() => {
       this.loadAcls(true);
     });

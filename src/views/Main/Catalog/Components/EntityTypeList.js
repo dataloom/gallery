@@ -64,12 +64,10 @@ export class EntityTypeList extends React.Component {
   }
 
   createNewEntityType = () => {
-    const name = this.state.newEntityTypeName;
-    const namespace = this.state.newEntityTypeNamespace;
-    const pKey = [{
-      name: this.state.newPKeyName,
-      namespace: this.state.newPKeyNamespace
-    }];
+    const { newEntityTypeName, newEntityTypeNamespace, newPKeyName, newPKeyNamespace } = this.state;
+    const name = newEntityTypeName;
+    const namespace = newEntityTypeNamespace;
+    const pKey = [Utils.getFqnObj(newPKeyNamespace, newPKeyName)];
     EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
     .then(() => {
       this.newEntityTypeSuccess();

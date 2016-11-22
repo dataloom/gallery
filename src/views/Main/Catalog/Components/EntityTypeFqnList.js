@@ -3,6 +3,7 @@ import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
@@ -61,11 +62,8 @@ export class EntityTypeFqnList extends React.Component {
 
   addEntityTypeToSchema = (namespace, name) => {
     EntityDataModelApi.addEntityTypesToSchema(
-      {
-        namespace: this.props.schemaNamespace,
-        name: this.props.schemaName
-      },
-      [{ namespace, name }]
+      Utils.getFqnObj(this.props.schemaNamespace, this.props.schemaName),
+      [Utils.getFqnObj(namespace, name)]
     ).then(() => {
       this.updateFqns();
     }).catch(() => {

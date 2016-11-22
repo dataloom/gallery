@@ -4,6 +4,7 @@ import { Property } from './Property';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyList extends React.Component {
@@ -73,11 +74,8 @@ export class PropertyList extends React.Component {
 
   addPropertyToEntityType = (namespace, name) => {
     EntityDataModelApi.addPropertyTypesToEntityType(
-      {
-        namespace: this.props.entityTypeNamespace,
-        name: this.props.entityTypeName
-      },
-      [{ namespace, name }]
+      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
+      [Utils.getFqnObj(namespace, name)]
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
@@ -91,14 +89,8 @@ export class PropertyList extends React.Component {
 
   deleteProp = () => {
     EntityDataModelApi.removePropertyTypesFromEntityType(
-      {
-        namespace: this.props.entityTypeNamespace,
-        name: this.props.entityTypeName
-      },
-      [{
-        namespace: this.state.propertyToDelete.namespace,
-        name: this.state.propertyToDelete.name
-      }]
+      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
+      [this.state.propertyToDelete]
     ).then(() => {
       this.setState({
         verifyingDelete: false,
@@ -129,8 +121,9 @@ export class PropertyList extends React.Component {
   }
 
   renderVerifyDeletePropertyBox = () => {
-    if (this.state.verifyingDelete) {
-      const prop = `${this.state.propertyToDelete.namespace}.${this.state.propertyToDelete.name}`;
+    const { verifyingDelete, propertyToDelete } = this.state;
+    if (verifyingDelete) {
+      const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
       const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
       return (
         <div className={styles.verifyDeleteContainer}>

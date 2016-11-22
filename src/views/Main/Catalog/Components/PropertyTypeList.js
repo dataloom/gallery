@@ -106,11 +106,8 @@ export class PropertyTypeList extends React.Component {
 
   addPropertyToSchema = (namespace, name) => {
     EntityDataModelApi.addPropertyTypesToSchema(
-      {
-        namespace: this.props.namespace,
-        name: this.props.name
-      },
-      [{ namespace, name }]
+      Utils.getFqnObj(this.props.namespace, this.props.name),
+      [Utils.getFqnObj(namespace, name)]
     ).then(() => {
       this.successfullyAddedProperty();
     }).catch(() => {

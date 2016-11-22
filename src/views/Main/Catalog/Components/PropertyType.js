@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
@@ -15,16 +16,8 @@ export class PropertyType extends React.Component {
 
   deleteProp = () => {
     const { schemaName, schemaNamespace, propertyType, updateFn, error } = this.props;
-    EntityDataModelApi.removePropertyTypesFromSchema(
-      {
-        namespace: schemaNamespace,
-        name: schemaName
-      },
-      [{
-        namespace: propertyType.namespace,
-        name: propertyType.name
-      }]
-    ).then(() => {
+    EntityDataModelApi.removePropertyTypesFromSchema(Utils.getFqnObj(schemaNamespace, schemaName), [propertyType])
+    .then(() => {
       return updateFn();
     }).catch(() => {
       return error();
