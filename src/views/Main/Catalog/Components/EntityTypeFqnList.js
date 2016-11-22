@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
@@ -23,7 +24,7 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addRowClass = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -61,11 +62,8 @@ export class EntityTypeFqnList extends React.Component {
 
   addEntityTypeToSchema = (namespace, name) => {
     EntityDataModelApi.addEntityTypesToSchema(
-      {
-        namespace: this.props.schemaNamespace,
-        name: this.props.schemaName
-      },
-      [{ namespace, name }]
+      Utils.getFqnObj(this.props.schemaNamespace, this.props.schemaName),
+      [Utils.getFqnObj(namespace, name)]
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
@@ -74,14 +72,16 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   render() {
+    const { schemaName, schemaNamespace, updateFn, allEntityTypeNamespaces } = this.props;
+    const { newEntityTypeRow, error } = this.state;
     const fqnArray = this.keyPropertyTypes();
     const entityTypeFqnList = fqnArray.map((fqn) => {
       return (<EntityTypeFqn
         key={fqn.key}
         entityTypeFqn={fqn}
-        schemaName={this.props.schemaName}
-        schemaNamespace={this.props.schemaNamespace}
-        updateFn={this.props.updateFn}
+        schemaName={schemaName}
+        schemaNamespace={schemaNamespace}
+        updateFn={updateFn}
       />);
     });
     return (
@@ -95,14 +95,14 @@ export class EntityTypeFqnList extends React.Component {
             </tr>
             {entityTypeFqnList}
             <NameNamespaceAutosuggest
-              className={this.addRowClass[this.state.newEntityTypeRow]}
-              namespaces={this.props.allEntityTypeNamespaces}
+              className={this.addRowClass[newEntityTypeRow]}
+              namespaces={allEntityTypeNamespaces}
               addProperty={this.addEntityTypeToSchema}
             />
           </tbody>
         </table>
-        <button onClick={this.newEntityType} className={this.addButtonClass[!this.state.newEntityTypeRow]}>+</button>
-        <div className={this.showErrorMsgClass[this.state.error]}>Unable to add entity type.</div>
+        <button onClick={this.newEntityType} className={this.addButtonClass[!newEntityTypeRow]}>+</button>
+        <div className={this.showErrorMsgClass[error]}>Unable to add entity type.</div>
       </div>
     );
   }

@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
-import Consts from '../../../utils/AppConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import PageConsts from '../../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
 import homeIcon from '../../../../src/images/home-icon.png';
 import catalogIcon from '../../../../src/images/catalog-icon.png';
@@ -31,12 +32,12 @@ export class Navbar extends React.Component {
     const hashRegex = /#\/([a-zA-Z]+)(?!\?.*)?/;
     const route = window.location.hash.match(hashRegex)[1];
     switch (route) {
-      case (Consts.HOME):
-        return Consts.HOME;
-      case (Consts.CATALOG):
-        return Consts.CATALOG;
+      case (PageConsts.HOME):
+        return PageConsts.HOME;
+      case (PageConsts.CATALOG):
+        return PageConsts.CATALOG;
       default:
-        return Consts.EMPTY;
+        return StringConsts.EMPTY;
     }
   }
 
@@ -49,7 +50,7 @@ export class Navbar extends React.Component {
 
   logout = () => {
     this.props.auth.logout();
-    this.context.router.push(`/${Consts.LOGIN}`);
+    this.context.router.push(`/${PageConsts.LOGIN}`);
   }
 
   getButtonClass = (state) => {
@@ -66,18 +67,18 @@ export class Navbar extends React.Component {
     return (
       <div className={styles.navbarContainer}>
         <button
-          className={this.getButtonClass(Consts.HOME)}
+          className={this.getButtonClass(PageConsts.HOME)}
           onClick={() => {
-            this.updateState(Consts.HOME);
+            this.updateState(PageConsts.HOME);
           }}
         >
           <img src={homeIcon} role="presentation" className={styles.navButtonIcon} />
           <div className={styles.navButtonText}>Home</div>
         </button>
         <button
-          className={this.getButtonClass(Consts.CATALOG)}
+          className={this.getButtonClass(PageConsts.CATALOG)}
           onClick={() => {
-            this.updateState(Consts.CATALOG);
+            this.updateState(PageConsts.CATALOG);
           }}
         >
           <img src={catalogIcon} role="presentation" className={styles.navButtonIcon} />

@@ -1,5 +1,5 @@
 import FileSaver from 'file-saver';
-import Consts from './AppConsts';
+import FileConsts from './Consts/FileConsts';
 
 export default class FileService {
 
@@ -7,7 +7,7 @@ export default class FileService {
     let contentType = 'application/json';
     let data = entityData;
 
-    if (datatype === Consts.JSON) {
+    if (datatype === FileConsts.JSON) {
       contentType = 'text/csv';
       data = JSON.stringify(entityData);
     }
@@ -17,7 +17,7 @@ export default class FileService {
     });
 
     FileSaver.saveAs(blob, name.concat(
-      (datatype === Consts.JSON) ? '.json' : '.csv'
+      (datatype === FileConsts.JSON) ? '.json' : '.csv'
     ));
     success(datatype);
   }
