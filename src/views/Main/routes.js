@@ -7,33 +7,61 @@ import { Catalog } from './Catalog/Catalog';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
-import Consts from '../../utils/AppConsts';
+import AuthConsts from '../../utils/Consts/AuthConsts';
+import PageConsts from '../../utils/Consts/PageConsts';
+import EnvConsts from '../../utils/Consts/EnvConsts';
+import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
+import StringConsts from '../../utils/Consts/StringConsts';
+
 
 declare var __LOCAL__;
 
-const auth = new AuthService(Consts.AUTH0_CLIENT_ID, Consts.AUTH0_DOMAIN);
+const auth = new AuthService(AuthConsts.AUTH0_CLIENT_ID, AuthConsts.AUTH0_DOMAIN);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
   if (!auth.loggedIn()) {
-    replace({ pathname: `/${Consts.LOGIN}` });
+    replace({ pathname: `/${PageConsts.LOGIN}` });
   }
   else {
     const authToken = auth.getToken();
-    const baseUrl = (__LOCAL__) ? Consts.LOCAL : `https://api.${window.location.host}`;
+    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${window.location.host}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
 
+const requireAdmin = (nextState, replace) => {
+  requireAuth(nextState, replace);
+  if (!auth.getProfile().roles.includes(UserRoleConsts.ADMIN)) {
+    replace({ pathname: `/${PageConsts.HOME}` });
+  }
+};
+
+const isAdmin = () => {
+  return (auth.loggedIn() && auth.getProfile().roles.includes(UserRoleConsts.ADMIN));
+};
+
+const getName = () => {
+  return (auth.loggedIn()) ? auth.getProfile().given_name : StringConsts.EMPTY;
+};
+
+const getProfileStatus = () => {
+  return {
+    isAdmin: isAdmin(),
+    name: getName()
+  };
+};
+
 export const makeMainRoutes = () => {
+  isAdmin();
   return (
-    <Route path={'/'} component={Container} auth={auth}>
-      <IndexRedirect to={`/${Consts.HOME}`} />
-      <Route path={Consts.HOME} component={Home} onEnter={requireAuth} />
-      <Route path={Consts.CATALOG} component={Catalog} onEnter={requireAuth} />
-      <Route path={Consts.LOGIN} component={Login} />
+    <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
+      <IndexRedirect to={`/${PageConsts.HOME}`} />
+      <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
+      <Route path={PageConsts.CATALOG} component={Catalog} onEnter={requireAuth} />
+      <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
+      <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
-      <Route path={Consts.SETTINGS} component={Settings} />
     </Route>
   );
 };

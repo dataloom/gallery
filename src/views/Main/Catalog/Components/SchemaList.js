@@ -3,7 +3,7 @@ import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
@@ -25,7 +25,7 @@ export class SchemaList extends React.Component {
   }
 
   showNewSchema = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -112,7 +112,16 @@ export class SchemaList extends React.Component {
   }
 
   render() {
-    const schemaList = this.state.schemas.map((schema) => {
+    const {
+      schemas,
+      allPropNamespaces,
+      allEntityTypeNamespaces,
+      newSchema,
+      newSchemaNamespace,
+      newSchemaName,
+      error
+    } = this.state;
+    const schemaList = schemas.map((schema) => {
       return (<Schema
         key={schema.key}
         name={schema.name}
@@ -121,8 +130,8 @@ export class SchemaList extends React.Component {
         entityTypeFqns={schema.entityTypeFqns}
         jsonContents={schema}
         updateFn={this.updateFn}
-        allPropNamespaces={this.state.allPropNamespaces}
-        allEntityTypeNamespaces={this.state.allEntityTypeNamespaces}
+        allPropNamespaces={allPropNamespaces}
+        allEntityTypeNamespaces={allEntityTypeNamespaces}
       />);
     });
     return (
@@ -130,17 +139,17 @@ export class SchemaList extends React.Component {
         <div className={styles.edmContainer}>
           <button
             onClick={this.newSchema}
-            className={this.showNewSchemaButton[!this.state.newSchema]}
+            className={this.showNewSchemaButton[!newSchema]}
           >Create a new schema
           </button>
-          <div className={this.showNewSchema[this.state.newSchema]}>
+          <div className={this.showNewSchema[newSchema]}>
             <div>Schema Namespace:</div>
             <div className={styles.spacerMini} />
             <input
               className={styles.inputBox}
               type="text"
               placeholder="namespace"
-              value={this.state.newSchemaNamespace}
+              value={newSchemaNamespace}
               onChange={this.handleNamespaceChange}
             />
             <div className={styles.spacerSmall} />
@@ -150,13 +159,13 @@ export class SchemaList extends React.Component {
               className={styles.inputBox}
               type="text"
               placeholder="name"
-              value={this.state.newSchemaName}
+              value={newSchemaName}
               onChange={this.handleNameChange}
             />
             <div className={styles.spacerSmall} />
             <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>
           </div>
-          <div className={this.errorClass[this.state.error]}>Unable to create schema.</div>
+          <div className={this.errorClass[error]}>Unable to create schema.</div>
         </div>
         {schemaList}
       </div>

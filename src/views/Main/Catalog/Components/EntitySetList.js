@@ -26,9 +26,9 @@ export class EntitySetList extends React.Component {
     const entitySetList = this.state.entitySets.map((entitySet) => {
       return (<EntitySet
         key={entitySet.key}
-        name={entitySet.name}
-        title={entitySet.title}
-        type={entitySet.type}
+        name={entitySet.entitySet.name}
+        title={entitySet.entitySet.title}
+        type={entitySet.entitySet.type}
         permissions={entitySet.permissions}
         isOwner={entitySet.isOwner}
         auth={this.props.auth}
