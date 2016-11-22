@@ -76,8 +76,8 @@ export class Home extends React.Component {
   }
 
   getPermissionType(permissions) {
-    if (permissions.includes(PermissionsConsts.WRITE.toUpperCase())) return PermissionsConsts.WRITE;
-    return PermissionsConsts.READ;
+    if (permissions.includes(PermissionsConsts.WRITE)) return PermissionsConsts.WRITE.toLowerCase();
+    return PermissionsConsts.READ.toLowerCase();
   }
 
   renderAllRequests = () => {
