@@ -1,7 +1,7 @@
 const DEFAULT_USER_ROLE = 'user';
 const ADMIN = 'admin';
-const USER = 'user';
-const ROLE = 'role';
+const USER = 'USER';
+const ROLE = 'ROLE';
 
 export default {
   DEFAULT_USER_ROLE,

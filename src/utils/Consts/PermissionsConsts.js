@@ -1,13 +1,13 @@
-const HIDDEN = 'hidden';
-const DISCOVER = 'discover';
-const READ = 'read';
-const WRITE = 'write';
-const OWNER = 'owner';
+const HIDDEN = 'HIDDEN';
+const DISCOVER = 'DISCOVER';
+const READ = 'READ';
+const WRITE = 'WRITE';
+const OWNER = 'OWNER';
 
-const ADD = 'add';
-const REMOVE = 'remove';
-const SET = 'set';
-const REQUEST = 'request';
+const ADD = 'ADD';
+const REMOVE = 'REMOVE';
+const SET = 'SET';
+const REQUEST = 'REQUEST';
 
 export default {
   HIDDEN,
