@@ -42,20 +42,32 @@ const labelElementId = 'visualization_label';
 export class LineChartVisualization extends React.Component {
 
   static propTypes = {
-    entitySetName: PropTypes.string
+    entitySetName: PropTypes.string,
+    xProp: PropTypes.object,
+    yProps: PropTypes.array
   }
 
   updateMouseOverPoint = (label) => {
     document.getElementById(labelElementId).innerHTML = label;
   }
 
+  renderLines = () => {
+    this.state.yProps.forEach((prop) => {
+
+    });
+  }
+
   render() {
+    const lines = this.state.yProps.map((prop) => {
+      return <Line type="monotone" dataKey={prop.name} stroke="#8884d8" />
+    });
+
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>
           <LineChart width={750} height={250} data={lineData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <XAxis
-              dataKey="year"
+              dataKey={this.state.xAxisProp.name}
               name="year"
               type="number"
               domain={['dataMin', 'dataMax']}
@@ -66,6 +78,7 @@ export class LineChartVisualization extends React.Component {
             <Legend />
             <Line type="monotone" dataKey="people" stroke="#8884d8" />
             <Line type="monotone" dataKey="a" stroke="#82ca9d" />
+            {lines}
           </LineChart>
         </div>
         <div className={styles.label} id={labelElementId} />

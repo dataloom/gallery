@@ -6,9 +6,36 @@
 }
 
 .visualizationWrapper {
-  display: inline-block;
+  display: inline;
 }
 
 .label {
 
+}
+
+.chartAndCheckboxesWrapper {
+  position: relative;
+  height: 300px;
+}
+
+.checkboxes {
+  width: 300px;
+  display: inline;
+  position: absolute;
+  left: 20px;
+}
+
+.chartWrapper {
+  display: inline;
+  position: absolute;
+  right: 20px;
+}
+
+.xAxisSelectWrapper {
+  display: inline-block;
+  min-width: 300px;
+}
+
+.spacerSmall {
+  height: 15px;
 }
