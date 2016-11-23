@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
-import Consts from '../../../../utils/AppConsts';
 import Utils from '../../../../utils/Utils';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class NameNamespaceAutosuggest extends React.Component {
@@ -18,9 +18,9 @@ export class NameNamespaceAutosuggest extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nameVal: Consts.EMPTY,
+      nameVal: StringConsts.EMPTY,
       nameSuggestions: [],
-      namespaceVal: Consts.EMPTY,
+      namespaceVal: StringConsts.EMPTY,
       namespaceSuggestions: [],
       unusedProperties: Utils.loadUnusedPairs(props.namespaces, props.usedProperties)
     };
@@ -37,7 +37,7 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   showSave = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   };
 
@@ -60,8 +60,8 @@ export class NameNamespaceAutosuggest extends React.Component {
     if (!this.props || this.props === undefined) return null;
     const suggestionResult = [];
     const suggestionSet = new Set();
-    const inputName = ((nameVal === undefined) ? Consts.EMPTY : nameVal).trim().toLowerCase();
-    const inputNamespace = ((namespaceVal === undefined) ? Consts.EMPTY : namespaceVal).trim().toLowerCase();
+    const inputName = ((nameVal === undefined) ? StringConsts.EMPTY : nameVal).trim().toLowerCase();
+    const inputNamespace = ((namespaceVal === undefined) ? StringConsts.EMPTY : namespaceVal).trim().toLowerCase();
     const allNamespaces = Object.keys(this.state.unusedProperties);
     allNamespaces.forEach((namespace) => {
       if (namespace.trim().toLowerCase().slice(0, inputNamespace.length) === inputNamespace) {
@@ -103,7 +103,7 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   onNameChange = (e) => {
-    const nameVal = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    const nameVal = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
     this.onNameInputChange(nameVal);
   }
 
@@ -120,7 +120,7 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   onNamespaceChange = (e) => {
-    const namespaceVal = (e && e !== undefined) ? e.value : Consts.EMPTY;
+    const namespaceVal = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
     this.onNamespaceInputChange(namespaceVal);
   }
 

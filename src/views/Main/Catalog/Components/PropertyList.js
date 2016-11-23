@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyList extends React.Component {
@@ -24,7 +26,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: Consts.ADD
+        action: PermissionsConsts.ADD
       },
       verifyingDelete: false,
       propertyToDelete: undefined
@@ -32,7 +34,7 @@ export class PropertyList extends React.Component {
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -54,7 +56,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: Consts.ADD
+        action: PermissionsConsts.ADD
       }
     });
     this.props.updateFn();
@@ -72,15 +74,12 @@ export class PropertyList extends React.Component {
 
   addPropertyToEntityType = (namespace, name) => {
     EntityDataModelApi.addPropertyTypesToEntityType(
-      {
-        namespace: this.props.entityTypeNamespace,
-        name: this.props.entityTypeName
-      },
-      [{ namespace, name }]
+      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
+      [Utils.getFqnObj(namespace, name)]
     ).then(() => {
       this.updateFqns();
     }).catch(() => {
-      this.updateError(Consts.ADD);
+      this.updateError(PermissionsConsts.ADD);
     });
   }
 
@@ -90,26 +89,20 @@ export class PropertyList extends React.Component {
 
   deleteProp = () => {
     EntityDataModelApi.removePropertyTypesFromEntityType(
-      {
-        namespace: this.props.entityTypeNamespace,
-        name: this.props.entityTypeName
-      },
-      [{
-        namespace: this.state.propertyToDelete.namespace,
-        name: this.state.propertyToDelete.name
-      }]
+      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
+      [this.state.propertyToDelete]
     ).then(() => {
       this.setState({
         verifyingDelete: false,
         propertyToDelete: undefined,
         error: {
           display: styles.hidden,
-          action: Consts.REMOVE
+          action: PermissionsConsts.REMOVE
         }
       });
       return this.props.updateFn();
     }).catch(() => {
-      this.updateError(Consts.REMOVE);
+      this.updateError(PermissionsConsts.REMOVE);
     });
   }
 
@@ -128,8 +121,9 @@ export class PropertyList extends React.Component {
   }
 
   renderVerifyDeletePropertyBox = () => {
-    if (this.state.verifyingDelete) {
-      const prop = `${this.state.propertyToDelete.namespace}.${this.state.propertyToDelete.name}`;
+    const { verifyingDelete, propertyToDelete } = this.state;
+    if (verifyingDelete) {
+      const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
       const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
       return (
         <div className={styles.verifyDeleteContainer}>
@@ -152,8 +146,10 @@ export class PropertyList extends React.Component {
       primaryKey,
       entitySetName,
       editingPermissions,
-      isOwner
+      isOwner,
+      allPropNamespaces
     } = this.props;
+    const { newPropertyRow, error } = this.state;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
@@ -181,15 +177,15 @@ export class PropertyList extends React.Component {
             </tr>
             {propertyList}
             <NameNamespaceAutosuggest
-              className={this.shouldShow[this.state.newPropertyRow]}
-              namespaces={this.props.allPropNamespaces}
-              usedProperties={this.props.properties}
+              className={this.shouldShow[newPropertyRow]}
+              namespaces={allPropNamespaces}
+              usedProperties={properties}
               addProperty={this.addPropertyToEntityType}
             />
           </tbody>
         </table>
         <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
+        <div className={error.display}>Unable to {error.action} property.</div>
         {this.renderVerifyDeletePropertyBox()}
       </div>
     );

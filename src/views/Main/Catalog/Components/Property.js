@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
 
@@ -14,7 +14,7 @@ export class Property extends React.Component {
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 

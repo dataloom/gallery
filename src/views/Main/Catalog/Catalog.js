@@ -5,7 +5,7 @@ import { EntityTypeList } from './Components/EntityTypeList';
 import { EntitySetList } from './Components/EntitySetList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
-import Consts from '../../../utils/AppConsts';
+import EdmConsts from '../../../utils/Consts/EdmConsts';
 import AuthService from '../../../utils/AuthService';
 import '../../../styles/dropdown.css';
 
@@ -19,7 +19,7 @@ export class Catalog extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      dataModelView: Consts.SCHEMA
+      dataModelView: EdmConsts.SCHEMA
     };
   }
 
@@ -30,13 +30,13 @@ export class Catalog extends React.Component {
   getDataModelView() {
     const view = this.state.dataModelView;
     switch (view) {
-      case Consts.SCHEMA:
+      case EdmConsts.SCHEMA:
         return (<SchemaList />);
-      case Consts.ENTITY_SET:
+      case EdmConsts.ENTITY_SET:
         return (<EntitySetList auth={this.props.auth} />);
-      case Consts.ENTITY_TYPE:
+      case EdmConsts.ENTITY_TYPE:
         return (<EntityTypeList />);
-      case Consts.PROPERTY_TYPE:
+      case EdmConsts.PROPERTY_TYPE:
         return (<PropertyTypeList navBar />);
       default:
         return (<SchemaList />);
