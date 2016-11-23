@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const starbucksData = [
 '-149.8935557,61.21759217,Starbucks - AK - Anchorage  00001,"601 West Street_601 West 5th Avenue_Anchorage, Alaska 99501_907-277-2477"',
 '-149.9054948,61.19533942,Starbucks - AK - Anchorage  00002,"Carrs-Anchorage #1805_1650 W Northern Lights Blvd_Anchorage, Alaska 99503_907-339-0500"',

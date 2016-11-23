@@ -44,7 +44,7 @@ const data = [
 const labelElementId = 'visualization_label';
 
 
-export class Visualization extends React.Component {
+export class GeoVisualization extends React.Component {
 
   static propTypes = {
     entitySetName: PropTypes.string
@@ -111,4 +111,4 @@ export class Visualization extends React.Component {
   }
 }
 
-export default Visualization;
+export default GeoVisualization;
