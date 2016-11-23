@@ -6,9 +6,10 @@ import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import FileConsts from '../../../../utils/Consts/FileConsts';
+import PageConsts from '../../../../utils/Consts/PageConsts';
 import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
-import { Visualization } from '../../Visualizations/Visualization';
+import { LineChartVisualization } from '../../Visualizations/LineChartVisualization';
 import styles from '../styles.module.css';
 
 const permissionLevels = {
@@ -19,6 +20,11 @@ const permissionLevels = {
 };
 
 export class EntitySet extends React.Component {
+
+  static contextTypes = {
+    router: PropTypes.object
+  }
+
   static propTypes = {
     name: PropTypes.string,
     title: PropTypes.string,
@@ -96,6 +102,10 @@ export class EntitySet extends React.Component {
 
   editEntitySetPermissions = () => {
     this.setState({ showPanel: true });
+  }
+
+  navigateToVisualize = () => {
+    this.context.router.push(`/${PageConsts.VISUALIZE}`);
   }
 
   renderDownloadButton = (options) => {
@@ -176,7 +186,7 @@ export class EntitySet extends React.Component {
         <br />
         <div className={styles.spacerSmall} />
         {this.renderPermissionsPanel(name)}
-        <Visualization entitySetName={name} />
+        <LineChartVisualization entitySetName={name} />
         <div>
           <table>
             <tbody>
@@ -201,6 +211,11 @@ export class EntitySet extends React.Component {
           editingPermissions={editing}
           isOwner={isOwner}
         />
+        <div className={styles.spacerMed} />
+        <button
+          className={styles.simpleButton}
+          onClick={this.navigateToVisualize}
+        >Visualize</button>
         <div className={styles.spacerBig} />
         <hr />
       </div>
