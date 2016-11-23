@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { PropertyTypeList } from './PropertyTypeList';
-import Consts from '../../../../utils/AppConsts';
+import FileConsts from '../../../../utils/Consts/FileConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
 import { DropdownButton } from './DropdownButton';
@@ -28,7 +28,7 @@ export class Schema extends React.Component {
 
   handleClick = () => {
     this.setState({ disableJson: true });
-    this.downloadFile(Consts.JSON);
+    this.downloadFile(FileConsts.JSON);
   }
 
   downloadFile = (datatype) => {
@@ -43,14 +43,22 @@ export class Schema extends React.Component {
   }
 
   enableButton = (datatype) => {
-    if (datatype === Consts.JSON) {
+    if (datatype === FileConsts.JSON) {
       this.setState({ disableJson: false });
     }
   }
 
   render() {
-    const { name, namespace, propertyTypes, entityTypeFqns, updateFn } = this.props;
-    const options = [Consts.JSON];
+    const {
+      name,
+      namespace,
+      propertyTypes,
+      entityTypeFqns,
+      updateFn,
+      allEntityTypeNamespaces,
+      allPropNamespaces
+    } = this.props;
+    const options = [FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
@@ -66,7 +74,7 @@ export class Schema extends React.Component {
           schemaName={name}
           schemaNamespace={namespace}
           updateFn={updateFn}
-          allEntityTypeNamespaces={this.props.allEntityTypeNamespaces}
+          allEntityTypeNamespaces={allEntityTypeNamespaces}
         />
         <br />
         <div className={styles.spacerMed} />
@@ -76,7 +84,7 @@ export class Schema extends React.Component {
           namespace={namespace}
           updateSchemaFn={updateFn}
           navBar={false}
-          allPropNamespaces={this.props.allPropNamespaces}
+          allPropNamespaces={allPropNamespaces}
         />
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />

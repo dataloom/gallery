@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
@@ -14,24 +15,17 @@ export class PropertyType extends React.Component {
   }
 
   deleteProp = () => {
-    EntityDataModelApi.removePropertyTypesFromSchema(
-      {
-        namespace: this.props.schemaNamespace,
-        name: this.props.schemaName
-      },
-      [{
-        namespace: this.props.propertyType.namespace,
-        name: this.props.propertyType.name
-      }]
-    ).then(() => {
-      return this.props.updateFn();
+    const { schemaName, schemaNamespace, propertyType, updateFn, error } = this.props;
+    EntityDataModelApi.removePropertyTypesFromSchema(Utils.getFqnObj(schemaNamespace, schemaName), [propertyType])
+    .then(() => {
+      return updateFn();
     }).catch(() => {
-      return this.props.error();
+      return error();
     });
   }
 
   shouldShowDeleteButton = () => {
-    return (this.props.navBar ? styles.hidden : Consts.EMPTY);
+    return (this.props.navBar ? styles.hidden : StringConsts.EMPTY);
   }
 
   render() {

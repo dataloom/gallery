@@ -1,13 +1,16 @@
 import React from 'react';
 import { UsersApi } from 'loom-data';
-import Consts from '../../../utils/AppConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
+
 import styles from './styles.module.css';
 
-const hiddenRoles = [Consts.USER, Consts.ADMIN];
+const hiddenRoles = [UserRoleConsts.USER, UserRoleConsts.ADMIN];
 
 const emptyErrorObj = {
   display: styles.hidden,
-  value: Consts.EMPTY
+  value: StringConsts.EMPTY
 };
 
 export class Settings extends React.Component {
@@ -32,7 +35,7 @@ export class Settings extends React.Component {
     UsersApi.getAllUsers()
     .then((userData) => {
       const selectedUser = (userId && userId !== undefined) ? userId : Object.keys(userData)[0];
-      const newRoleValue = (shouldClear) ? Consts.EMPTY : this.state.newRoleValue;
+      const newRoleValue = (shouldClear) ? StringConsts.EMPTY : this.state.newRoleValue;
       this.setState({
         userData,
         selectedUser,
@@ -54,15 +57,16 @@ export class Settings extends React.Component {
   }
 
   updateRoles = (action, role) => {
+    const { userData, selectedUser } = this.state;
     if (this.roleIsReserved(role)) return;
-    const userId = this.state.selectedUser;
+    const userId = selectedUser;
     const newRoleList = [];
     let newRole = role.trim();
-    this.state.userData[userId].roles.forEach((oldRole) => {
+    userData[userId].roles.forEach((oldRole) => {
       if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
       else newRole = oldRole.trim();
     });
-    if (action === Consts.ADD) newRoleList.push(newRole);
+    if (action === PermissionsConsts.ADD) newRoleList.push(newRole);
     UsersApi.resetUserRoles(userId, newRoleList)
     .then(() => {
       this.setState({ updateError: styles.hidden });
@@ -70,9 +74,8 @@ export class Settings extends React.Component {
     .catch(() => {
       this.setState({ updateError: styles.error });
     });
-    const userData = this.state.userData;
     userData[userId].roles = newRoleList;
-    const newRoleValue = (action === Consts.ADD) ? Consts.EMPTY : this.state.newRoleValue;
+    const newRoleValue = (action === PermissionsConsts.ADD) ? StringConsts.EMPTY : this.state.newRoleValue;
     const reservedRoleError = emptyErrorObj;
     this.setState({ userData, newRoleValue, reservedRoleError });
   }
@@ -98,14 +101,15 @@ export class Settings extends React.Component {
   }
 
   renderUsers() {
-    if (Object.keys(this.state.userData).length) {
-      return Object.keys(this.state.userData).map((userId) => {
-        const user = this.state.userData[userId];
-        const className = (userId === this.state.selectedUser) ?
+    const { userData, selectedUser } = this.state;
+    if (Object.keys(userData).length) {
+      return Object.keys(userData).map((userId) => {
+        const user = userData[userId];
+        const className = (userId === selectedUser) ?
           `${styles.listItem} ${styles.selected}` : styles.listItem;
         if (user.email && user.email !== undefined) {
           return (
-            <div className={className} key={Object.keys(this.state.userData).indexOf(userId)}>
+            <div className={className} key={Object.keys(userData).indexOf(userId)}>
               <button
                 className={styles.roleRowButton}
                 onClick={() => {
@@ -124,8 +128,9 @@ export class Settings extends React.Component {
   }
 
   renderRolesForUser() {
-    if (Object.keys(this.state.userData).length) {
-      const roles = this.state.userData[this.state.selectedUser].roles;
+    const { userData, selectedUser } = this.state;
+    if (Object.keys(userData).length) {
+      const roles = userData[selectedUser].roles;
       return roles.map((role) => {
         if (hiddenRoles.includes(role.trim().toLowerCase())) return null;
         return (
@@ -133,7 +138,7 @@ export class Settings extends React.Component {
             <div className={styles.inline}>
               <button
                 onClick={() => {
-                  this.updateRoles(Consts.REMOVE, role);
+                  this.updateRoles(PermissionsConsts.REMOVE, role);
                 }}
                 className={styles.deleteButton}
               >-</button>
@@ -147,14 +152,15 @@ export class Settings extends React.Component {
   }
 
   render() {
+    const { reservedRoleError, newRoleValue } = this.state;
     return (
       <div>
         <h2 className={styles.title}>Settings</h2>
         <div className={styles.spacer} />
         <div className={styles.setRolesContainer}>
           <div className={styles.headerText}>Manage roles in your domain.</div>
-          <div className={this.state.reservedRoleError.display}>
-            Error: {this.state.reservedRoleError.value} is a reserved role.
+          <div className={reservedRoleError.display}>
+            Error: {reservedRoleError.value} is a reserved role.
           </div>
           <div className={this.state.loadUsersError}>Error: unable to load users.</div>
           <div className={this.state.updateError}>Error: unable to update user.</div>
@@ -171,13 +177,13 @@ export class Settings extends React.Component {
                 type="text"
                 className={styles.addInput}
                 placeholder={'Add a role to the selected user'}
-                value={this.state.newRoleValue}
+                value={newRoleValue}
                 onChange={this.updateNewRoleValue}
               />
               <button
                 className={styles.simpleButton}
                 onClick={() => {
-                  this.updateRoles(Consts.ADD, this.state.newRoleValue);
+                  this.updateRoles(PermissionsConsts.ADD, newRoleValue);
                 }}
               >Add</button>
             </div>

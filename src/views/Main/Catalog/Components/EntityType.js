@@ -2,7 +2,8 @@ import React, { PropTypes } from 'react';
 import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
-import Consts from '../../../../utils/AppConsts';
+import FileConsts from '../../../../utils/Consts/FileConsts';
+import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
@@ -12,17 +13,16 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    allPropNames: PropTypes.object,
     allPropNamespaces: PropTypes.object
   }
 
   getUrl = (datatype) => {
-    return DataApi.getAllEntitiesOfTypeFileUrl({ namespace: this.props.namespace, name: this.props.name }, datatype);
+    return DataApi.getAllEntitiesOfTypeFileUrl(Utils.getFqnObj(this.props.namespace, this.props.name), datatype);
   }
 
   render() {
-    const { name, namespace, properties, primaryKey, updateFn } = this.props;
-    const options = [Consts.CSV, Consts.JSON];
+    const { name, namespace, properties, primaryKey, updateFn, allPropNamespaces } = this.props;
+    const options = [FileConsts.CSV, FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
         <div className={styles.name}>{name}</div>
@@ -38,8 +38,7 @@ export class EntityType extends React.Component {
           entityTypeName={name}
           entityTypeNamespace={namespace}
           updateFn={updateFn}
-          allPropNames={this.props.allPropNames}
-          allPropNamespaces={this.props.allPropNamespaces}
+          allPropNamespaces={allPropNamespaces}
           allowEdit
           editingPermissions={false}
         />

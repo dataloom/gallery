@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import Autosuggest from 'react-autosuggest';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import '../../../../styles/autosuggest.css';
 import styles from '../styles.module.css';
 
@@ -37,7 +37,7 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   showSave = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   };
 

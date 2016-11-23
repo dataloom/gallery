@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Consts from '../../../../utils/AppConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 export class DataModelToolbar extends React.Component {
@@ -10,16 +10,16 @@ export class DataModelToolbar extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      dataModelView: Consts.SCHEMA
+      dataModelView: EdmConsts.SCHEMA
     };
   }
 
   dataModelLabels =
     [
-      { label: 'Schemas', type: Consts.SCHEMA, key: 0 },
-      { label: 'Entity Sets', type: Consts.ENTITY_SET, key: 1 },
-      { label: 'Entity Types', type: Consts.ENTITY_TYPE, key: 2 },
-      { label: 'Property Types', type: Consts.PROPERTY_TYPE, key: 3 }
+      { label: 'Schemas', type: EdmConsts.SCHEMA, key: 0 },
+      { label: 'Entity Sets', type: EdmConsts.ENTITY_SET, key: 1 },
+      { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE, key: 2 },
+      { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE, key: 3 }
     ]
 
   updateViewAndToolbar(type) {
