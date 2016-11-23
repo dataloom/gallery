@@ -105,7 +105,15 @@ export class EntitySet extends React.Component {
   }
 
   navigateToVisualize = () => {
-    this.context.router.push(`/${PageConsts.VISUALIZE}`);
+    const { name, type } = this.props;
+    this.context.router.push({
+      pathname: `/${PageConsts.VISUALIZE}`,
+      query: {
+        name,
+        typeNamespace: type.namespace,
+        typeName: type.name
+      }
+    });
   }
 
   renderDownloadButton = (options) => {

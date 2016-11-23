@@ -39,10 +39,31 @@ const EDM_PRIMITIVE_TYPES = [
   'GeometryCollection'
 ];
 
+const EDM_NUMBER_TYPES = [
+  'Decimal',
+  'Double',
+  'Int16',
+  'Int32',
+  'Int64'
+];
+
+const EDM_GEOGRAPHY_TYPES = [
+  'Geography',
+  'GeographyPoint',
+  'GeographyLineString',
+  'GeographyPolygon',
+  'GeographyMultiPoint',
+  'GeographyMultiLineString',
+  'GeographyMultiPolygon',
+  'GeographyCollection'
+];
+
 export default {
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
   PROPERTY_TYPE,
-  EDM_PRIMITIVE_TYPES
+  EDM_PRIMITIVE_TYPES,
+  EDM_NUMBER_TYPES,
+  EDM_GEOGRAPHY_TYPES
 };
