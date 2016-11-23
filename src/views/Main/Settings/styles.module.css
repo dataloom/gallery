@@ -9,6 +9,12 @@
   font-size: 16px;
 }
 
+.error {
+  text-align: center;
+  color: red;
+  padding-top: 10px;
+}
+
 /* spacers */
 
 .spacer {
@@ -27,6 +33,10 @@
 
 .inline {
   display: inline;
+}
+
+.hidden {
+  display: none;
 }
 
 /* button styling */
@@ -58,10 +68,10 @@
   margin-top: 10px;
 }
 
-.roleListContainer {
+.userListContainer {
   position: absolute;
   margin: 0 auto;
-  height: 450px;
+  height: 490px;
   top: 0;
   width: 49%;
   overflow: scroll;
@@ -84,7 +94,9 @@
 
 .listItem {
   padding: 5px 10px;
+  height: 35px;
   position: relative;
+  text-align: left;
 }
 
 .listItem:hover {
@@ -125,7 +137,7 @@
 
 /* email list */
 
-.emailListContainer {
+.roleListContainer {
   position: absolute;
   margin: 0 auto;
   height: 450px;
