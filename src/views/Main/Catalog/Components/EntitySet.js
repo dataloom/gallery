@@ -194,7 +194,6 @@ export class EntitySet extends React.Component {
         <br />
         <div className={styles.spacerSmall} />
         {this.renderPermissionsPanel(name)}
-        <LineChartVisualization entitySetName={name} />
         <div>
           <table>
             <tbody>
