@@ -61,7 +61,10 @@ export class Visualize extends React.Component {
 
   handleLineChartXAxisPropChange = (e) => {
     const lineChartXAxisProp = (e && e !== undefined) ? e.value : undefined;
-    this.setState({ lineChartXAxisProp });
+    this.setState({
+      lineChartXAxisProp,
+      selectedYProps: []
+    });
   }
 
   renderLineChart = () => {

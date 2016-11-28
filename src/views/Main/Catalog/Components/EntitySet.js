@@ -9,7 +9,6 @@ import FileConsts from '../../../../utils/Consts/FileConsts';
 import PageConsts from '../../../../utils/Consts/PageConsts';
 import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
-import { LineChartVisualization } from '../../Visualizations/LineChartVisualization';
 import styles from '../styles.module.css';
 
 const permissionLevels = {

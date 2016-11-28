@@ -11,29 +11,29 @@ import {
 import styles from './styles.module.css';
 
 const lineData = [
-  { year: 1994, people: 300, a: 47 },
-  { year: 1995, people: 305, a: 51 },
-  { year: 1996, people: 321, a: 54 },
-  { year: 1997, people: 323, a: 70 },
-  { year: 1998, people: 318, a: 69 },
-  { year: 1999, people: 340, a: 75 },
-  { year: 2000, people: 408, a: 90 },
-  { year: 2001, people: 425, a: 95 },
-  { year: 2002, people: 515, a: 133 },
-  { year: 2003, people: 502, a: 143 },
-  { year: 2004, people: 541, a: 161 },
-  { year: 2005, people: 561, a: 201 },
-  { year: 2006, people: 594, a: 184 },
-  { year: 2007, people: 677, a: 190 },
-  { year: 2008, people: 731, a: 224 },
-  { year: 2009, people: 623, a: 281 },
-  { year: 2010, people: 608, a: 231 },
-  { year: 2011, people: 509, a: 202 },
-  { year: 2012, people: 580, a: 170 },
-  { year: 2013, people: 602, a: 205 },
-  { year: 2014, people: 634, a: 230 },
-  { year: 2015, people: 640, a: 269 },
-  { year: 2016, people: 680, a: 298 }
+  { name: 1994, salary: 300, life_expectancy: 47 },
+  { name: 1995, salary: 305, life_expectancy: 51 },
+  { name: 1996, salary: 321, life_expectancy: 54 },
+  { name: 1997, salary: 323, life_expectancy: 70 },
+  { name: 1998, salary: 318, life_expectancy: 69 },
+  { name: 1999, salary: 340, life_expectancy: 75 },
+  { name: 2000, salary: 408, life_expectancy: 90 },
+  { name: 2001, salary: 425, life_expectancy: 95 },
+  { name: 2002, salary: 515, life_expectancy: 133 },
+  { name: 2003, salary: 502, life_expectancy: 143 },
+  { name: 2004, salary: 541, life_expectancy: 161 },
+  { name: 2005, salary: 561, life_expectancy: 201 },
+  { name: 2006, salary: 594, life_expectancy: 184 },
+  { name: 2007, salary: 677, life_expectancy: 190 },
+  { name: 2008, salary: 731, life_expectancy: 224 },
+  { name: 2009, salary: 623, life_expectancy: 281 },
+  { name: 2010, salary: 608, life_expectancy: 231 },
+  { name: 2011, salary: 509, life_expectancy: 202 },
+  { name: 2012, salary: 580, life_expectancy: 170 },
+  { name: 2013, salary: 602, life_expectancy: 205 },
+  { name: 2014, salary: 634, life_expectancy: 230 },
+  { name: 2015, salary: 640, life_expectancy: 269 },
+  { name: 2016, salary: 680, life_expectancy: 298 }
 ];
 
 const labelElementId = 'visualization_label';
@@ -52,23 +52,26 @@ export class LineChartVisualization extends React.Component {
   }
 
   renderLines = () => {
-    this.state.yProps.forEach((prop) => {
-
+    this.props.yProps.forEach((prop) => {
+      console.log(prop);
     });
   }
 
   render() {
-    const lines = this.state.yProps.map((prop) => {
-      return <Line type="monotone" dataKey={prop.name} stroke="#8884d8" />
+    const lines = this.props.yProps.map((prop) => {
+      return <Line type="monotone" dataKey={prop.name} stroke="#8884d8" key={prop.name} />;
     });
 
+    if (this.props.xProp === undefined || this.props.yProps === undefined) return null;
+    console.log(this.props.xProp.name);
+    console.log(this.props.yProps);
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>
           <LineChart width={750} height={250} data={lineData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <XAxis
-              dataKey={this.state.xAxisProp.name}
-              name="year"
+              dataKey={JSON.parse(this.props.xProp).name}
+              name="name"
               type="number"
               domain={['dataMin', 'dataMax']}
             />
@@ -76,8 +79,6 @@ export class LineChartVisualization extends React.Component {
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             <Legend />
-            <Line type="monotone" dataKey="people" stroke="#8884d8" />
-            <Line type="monotone" dataKey="a" stroke="#82ca9d" />
             {lines}
           </LineChart>
         </div>
