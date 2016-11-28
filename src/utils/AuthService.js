@@ -13,7 +13,7 @@ export default class AuthService extends EventEmitter {
     this.lock = new Auth0Lock(clientId, domain, {
       auth: {
         params: {
-          scope: 'openid email user_metadata app_metadata nickname roles'
+          scope: 'openid email user_metadata app_metadata nickname roles user_id'
         }
       }
     });
