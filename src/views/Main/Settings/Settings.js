@@ -6,8 +6,6 @@ import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
 
 import styles from './styles.module.css';
 
-const hiddenRoles = [UserRoleConsts.USER, UserRoleConsts.ADMIN];
-
 const emptyErrorObj = {
   display: styles.hidden,
   value: StringConsts.EMPTY
@@ -39,7 +37,7 @@ export class Settings extends React.Component {
   }
 
   roleIsReserved = (role) => {
-    if (hiddenRoles.includes(role.trim().toLowerCase())) {
+    if (UserRoleConsts.RESERVED_ROLES.includes(role.trim().toLowerCase())) {
       const reservedRoleError = { display: styles.error, value: role };
       this.setState({ reservedRoleError });
       return true;
@@ -114,7 +112,7 @@ export class Settings extends React.Component {
     if (Object.keys(userData).length) {
       const roles = userData[selectedUser].roles;
       return roles.map((role) => {
-        if (hiddenRoles.includes(role.trim().toLowerCase())) return null;
+        if (UserRoleConsts.RESERVED_ROLES.includes(role.trim().toLowerCase())) return null;
         return (
           <div className={styles.listItem} key={roles.indexOf(role)}>
             <div className={styles.inline}>
