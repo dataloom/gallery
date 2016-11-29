@@ -47,10 +47,13 @@ export class Visualize extends React.Component {
       if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) numberProps.push(prop);
       if (EdmConsts.EDM_GEOGRAPHY_TYPES.includes(prop.datatype)) geoProps.push(prop);
     });
+    const chartOptions = this.getAvailableVisualizations(numberProps, geoProps);
+    const currentView = (chartOptions.length > 0) ? chartOptions[0] : undefined;
     this.setState({
       properties,
       numberProps,
-      geoProps
+      geoProps,
+      currentView
     });
   }
 
@@ -287,13 +290,15 @@ export class Visualize extends React.Component {
     return (option === this.state.currentView) ? `${styles.optionButton} ${styles.selected}` : styles.optionButton;
   }
 
-  getAvailableVisualizations = () => {
+  getAvailableVisualizations = (optionalNumberProps, optionalGeoProps) => {
+    const numberProps = (optionalNumberProps !== undefined) ? optionalNumberProps : this.state.numberProps;
+    const geoProps = (optionalGeoProps !== undefined) ? optionalGeoProps : this.state.geoProps;
     const options = [];
-    if (this.state.numberProps.length > 1) {
+    if (numberProps.length > 1) {
       options.push(chartTypes.SCATTER_CHART);
       options.push(chartTypes.LINE_CHART);
     }
-    if (this.state.geoProps.length > 0) options.push(chartTypes.GEO_CHART);
+    if (geoProps.length > 0) options.push(chartTypes.GEO_CHART);
     return options;
   }
 
@@ -327,23 +332,18 @@ export class Visualize extends React.Component {
 
   render() {
     let visualization = null;
-    const allVisualizations = this.getAvailableVisualizations();
-    let currentView = null;
-    if (allVisualizations.length > 0) {
-      currentView = (this.state.currentView !== undefined) ? this.state.currentView : allVisualizations[0];
-      switch (currentView) {
-        case chartTypes.SCATTER_CHART:
-          visualization = this.renderScatterChartContainer();
-          break;
-        case chartTypes.LINE_CHART:
-          visualization = this.renderLineChartContainer();
-          break;
-        case chartTypes.GEO_CHART:
-          visualization = this.renderGeoChartContainer();
-          break;
-        default:
-          visualization = null;
-      }
+    switch (this.state.currentView) {
+      case chartTypes.SCATTER_CHART:
+        visualization = this.renderScatterChartContainer();
+        break;
+      case chartTypes.LINE_CHART:
+        visualization = this.renderLineChartContainer();
+        break;
+      case chartTypes.GEO_CHART:
+        visualization = this.renderGeoChartContainer();
+        break;
+      default:
+        visualization = null;
     }
     return (
       <div className={styles.container}>

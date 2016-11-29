@@ -24,6 +24,7 @@
 
 .chartContainer {
   display: inline-block;
+  height: 300px;
 }
 
 .checkboxes {
