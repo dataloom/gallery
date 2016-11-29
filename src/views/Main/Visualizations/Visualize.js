@@ -4,6 +4,7 @@ import { Promise } from 'bluebird';
 import Select from 'react-select';
 import { LineChartVisualization } from './LineChartVisualization';
 import { ScatterChartVisualization } from './ScatterChartVisualization';
+import { GeoVisualization } from './GeoVisualization';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import Utils from '../../../utils/Utils';
 import styles from './styles.module.css';
@@ -34,6 +35,7 @@ export class Visualize extends React.Component {
       selectedYProps: [],
       scatterChartXAxisProp: undefined,
       scatterChartYAxisProp: undefined,
+      geoChartProp: undefined,
       currentView: undefined
     };
   }
@@ -89,6 +91,11 @@ export class Visualize extends React.Component {
     this.setState({ scatterChartYAxisProp });
   }
 
+  handleGeoChartPropChange = (e) => {
+    const geoChartProp = (e && e !== undefined) ? e.value : undefined;
+    this.setState({ geoChartProp });
+  }
+
   renderLineChart = () => {
     return (
       <div>
@@ -107,6 +114,17 @@ export class Visualize extends React.Component {
         <ScatterChartVisualization
           xProp={this.state.scatterChartXAxisProp}
           yProp={this.state.scatterChartYAxisProp}
+          entitySetName={this.state.name}
+        />
+      </div>
+    );
+  }
+
+  renderGeoChart = () => {
+    return (
+      <div>
+        <GeoVisualization
+          geoProp={this.state.geoChartProp}
           entitySetName={this.state.name}
         />
       </div>
@@ -132,7 +150,32 @@ export class Visualize extends React.Component {
   }
 
   renderGeoChartContainer = () => {
-    return null;
+    if (this.state.geoProps.length <= 1) return null;
+    const options = this.state.geoProps.map((prop) => {
+      const fqn = `${prop.namespace}.${prop.name}`;
+      return { label: fqn, value: JSON.stringify(prop) };
+    });
+    return (
+      <div>
+        <h1>Geographic Chart Visualization</h1>
+        <div className={styles.chartContainer}>
+          {this.renderGeoChart()}
+        </div>
+        <div className={styles.spacerSmall} />
+        <div className={styles.inlineBlock}>
+          <div className={styles.xAxisSelectWrapper}>
+            <div className={styles.selectButton}>
+              <Select
+                placeholder="Choose a property to map"
+                options={options}
+                value={this.state.geoChartProp}
+                onChange={this.handleGeoChartPropChange}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   renderScatterChartContainer = () => {

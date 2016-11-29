@@ -50,6 +50,14 @@ export class GeoVisualization extends React.Component {
     entitySetName: PropTypes.string
   }
 
+  constructor() {
+    super();
+    this.state = {
+      entitySetName: PropTypes.string,
+      geoProp: PropTypes.string
+    };
+  }
+
   getData = () => {
     const result = StarbucksData.starbucksData.map((line) => {
       const lineArray = line.split(',');
