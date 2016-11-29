@@ -52,11 +52,12 @@ export class LineChartVisualization extends React.Component {
   }
 
   render() {
+    if (this.props.xProp === undefined || this.props.yProps === undefined) return null;
+
     const lines = this.props.yProps.map((prop) => {
       return <Line type="monotone" dataKey={prop.name} stroke="#8884d8" key={prop.name} />;
     });
 
-    if (this.props.xProp === undefined || this.props.yProps === undefined) return null;
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>

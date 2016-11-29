@@ -270,6 +270,7 @@ export class Visualize extends React.Component {
             this.switchView(option);
           }}
           className={this.getOptionButtonClass(option)}
+          key={option}
         >{option}
         </button>
       );

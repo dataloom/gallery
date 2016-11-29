@@ -54,12 +54,6 @@ export class ScatterChartVisualization extends React.Component {
           data={point}
           fill="#8884d8"
           key={point[0].name}
-          onMouseOver={() => {
-            this.updateMouseOverPoint(point[0].label);
-          }}
-          onMouseOut={() => {
-            this.updateMouseOverPoint('');
-          }}
         />
       );
     });
