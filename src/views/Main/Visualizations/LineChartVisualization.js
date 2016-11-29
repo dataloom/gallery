@@ -43,18 +43,12 @@ export class LineChartVisualization extends React.Component {
 
   static propTypes = {
     entitySetName: PropTypes.string,
-    xProp: PropTypes.object,
+    xProp: PropTypes.string,
     yProps: PropTypes.array
   }
 
   updateMouseOverPoint = (label) => {
     document.getElementById(labelElementId).innerHTML = label;
-  }
-
-  renderLines = () => {
-    this.props.yProps.forEach((prop) => {
-      console.log(prop);
-    });
   }
 
   render() {
@@ -63,8 +57,6 @@ export class LineChartVisualization extends React.Component {
     });
 
     if (this.props.xProp === undefined || this.props.yProps === undefined) return null;
-    console.log(this.props.xProp.name);
-    console.log(this.props.yProps);
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>

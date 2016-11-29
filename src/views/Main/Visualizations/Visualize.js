@@ -3,7 +3,6 @@ import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Select from 'react-select';
 import { LineChartVisualization } from './LineChartVisualization';
-import StringConsts from '../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import Utils from '../../../utils/Utils';
 import styles from './styles.module.css';
@@ -108,8 +107,14 @@ export class Visualize extends React.Component {
       selectOptions.push({ label: fqn, value: JSON.stringify(prop) });
       if (!xAxisProp || (prop.name === xAxisProp.name && prop.namespace === xAxisProp.namespace)) return null;
       return (
-        <div>
-          <input type="checkbox" id={fqn} onClick={this.handleCheckboxChange} value={JSON.stringify(prop)} /><label htmlFor={fqn}>{fqn}</label>
+        <div key={fqn}>
+          <input
+            type="checkbox"
+            id={fqn}
+            onClick={this.handleCheckboxChange}
+            value={JSON.stringify(prop)}
+          />
+          <label htmlFor={fqn}>{fqn}</label>
         </div>
       );
     });
