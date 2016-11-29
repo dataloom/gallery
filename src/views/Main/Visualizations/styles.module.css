@@ -1,3 +1,7 @@
+.container {
+  text-align: center;
+}
+
 .visualizationContainer {
   width: 100%;
   height: 400px;
@@ -18,8 +22,12 @@
   height: 300px;
 }
 
+.chartContainer {
+  display: inline-block;
+}
+
 .checkboxes {
-  width: 300px;
+  width: 20%;
   display: inline;
   position: absolute;
   left: 20px;
@@ -29,13 +37,49 @@
   display: inline;
   position: absolute;
   right: 20px;
+  width: 80%;
+}
+
+.inlineBlock {
+  display: inline-block;
 }
 
 .xAxisSelectWrapper {
-  display: inline-block;
+  display: flex;
+  min-width: 300px;
+}
+
+.selectButton {
+  display: inline;
   min-width: 300px;
 }
 
 .spacerSmall {
   height: 15px;
+}
+
+.marginLeft {
+  margin-left: 5px;
+}
+
+.optionsBar {
+  padding: 30px;
+}
+
+.optionButton {
+  display: table-cell;
+  margin: 0;
+  vertical-align: middle;
+  padding: 10px;
+  border: none;
+  background: #d1d6da;
+}
+
+.optionButton:hover {
+  background: #c7cbcf;
+}
+
+.selected {
+  background: #b9bdc0;
+  font-weight: bold;
 }

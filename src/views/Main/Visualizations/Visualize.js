@@ -3,9 +3,16 @@ import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Select from 'react-select';
 import { LineChartVisualization } from './LineChartVisualization';
+import { ScatterChartVisualization } from './ScatterChartVisualization';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import Utils from '../../../utils/Utils';
 import styles from './styles.module.css';
+
+const chartTypes = {
+  LINE_CHART: 'Line Chart Visualizations',
+  SCATTER_CHART: 'Scatter Chart Visualizations',
+  GEO_CHART: 'Geographical Visualizations'
+};
 
 export class Visualize extends React.Component {
 
@@ -24,7 +31,10 @@ export class Visualize extends React.Component {
       numberProps: [],
       geoProps: [],
       lineChartXAxisProp: undefined,
-      selectedYProps: []
+      selectedYProps: [],
+      scatterChartXAxisProp: undefined,
+      scatterChartYAxisProp: undefined,
+      currentView: undefined
     };
   }
 
@@ -66,6 +76,19 @@ export class Visualize extends React.Component {
     });
   }
 
+  handleScatterChartXAxisPropChange = (e) => {
+    const scatterChartXAxisProp = (e && e !== undefined) ? e.value : undefined;
+    this.setState({
+      scatterChartXAxisProp,
+      scatterChartYAxisProp: undefined
+    });
+  }
+
+  handleScatterChartYAxisPropChange = (e) => {
+    const scatterChartYAxisProp = (e && e !== undefined) ? e.value : undefined;
+    this.setState({ scatterChartYAxisProp });
+  }
+
   renderLineChart = () => {
     return (
       <div>
@@ -78,22 +101,82 @@ export class Visualize extends React.Component {
     );
   }
 
+  renderScatterChart = () => {
+    return (
+      <div>
+        <ScatterChartVisualization
+          xProp={this.state.scatterChartXAxisProp}
+          yProp={this.state.scatterChartYAxisProp}
+          entitySetName={this.state.name}
+        />
+      </div>
+    );
+  }
+
+  removePropFromArray = (array, prop) => {
+    let indexToRemove = -1;
+    array.forEach((oldProp) => {
+      if (oldProp.name === prop.name && oldProp.namespace === prop.namespace) {
+        indexToRemove = array.indexOf(oldProp);
+      }
+    });
+    if (indexToRemove > -1) array.splice(indexToRemove, 1);
+  }
+
   handleCheckboxChange = (e) => {
     const prop = JSON.parse(e.target.value);
-    const newProps = this.state.selectedYProps;
-    if (e.target.checked) {
-      newProps.push(prop);
-    }
-    else {
-      let indexToRemove = -1;
-      newProps.forEach((oldProp) => {
-        if (oldProp.name === prop.name && oldProp.namespace === prop.namespace) {
-          indexToRemove = newProps.indexOf(oldProp);
-        }
-      });
-      if (indexToRemove > -1) newProps.splice(indexToRemove, 1);
-    }
+    let newProps = this.state.selectedYProps;
+    if (e.target.checked) newProps.push(prop);
+    else newProps = this.removePropFromArray(this.state.selectedYProps, prop);
     this.setState({ selectedYProps: newProps });
+  }
+
+  renderGeoChartContainer = () => {
+    return null;
+  }
+
+  renderScatterChartContainer = () => {
+    if (this.state.numberProps.length <= 1) return null;
+    const xAxisProp = (this.state.scatterChartXAxisProp !== undefined) ?
+      JSON.parse(this.state.scatterChartXAxisProp) : null;
+    const yAxisOptions = [];
+    const xAxisOptions = this.state.numberProps.map((prop) => {
+      const fqn = `${prop.namespace}.${prop.name}`;
+      if (!(xAxisProp && xAxisProp.name === prop.name && xAxisProp.namespace === prop.namespace)) {
+        yAxisOptions.push({ label: fqn, value: JSON.stringify(prop) });
+      }
+      return { label: fqn, value: JSON.stringify(prop) };
+    });
+    return (
+      <div>
+        <h1>Scatter Chart Visualization</h1>
+        <div className={styles.chartContainer}>
+          {this.renderScatterChart()}
+        </div>
+        <div className={styles.spacerSmall} />
+        <div className={styles.inlineBlock}>
+          <div className={styles.xAxisSelectWrapper}>
+            <div className={styles.selectButton}>
+              <Select
+                placeholder="Choose a property for the x axis"
+                options={xAxisOptions}
+                value={this.state.scatterChartXAxisProp}
+                onChange={this.handleScatterChartXAxisPropChange}
+              />
+            </div>
+            <div className={`${styles.selectButton} ${styles.marginLeft}`}>
+              <Select
+                placeholder="Choose a property for the y axis"
+                options={yAxisOptions}
+                value={this.state.scatterChartYAxisProp}
+                onChange={this.handleScatterChartYAxisPropChange}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
   }
 
   renderLineChartContainer = () => {
@@ -120,48 +203,109 @@ export class Visualize extends React.Component {
     });
     return (
       <div>
+        <h1>Line Chart Visualization</h1>
         <div className={styles.chartAndCheckboxesWrapper}>
+          {checkboxMsg}
+          <div className={styles.spacerMed} />
           <div className={styles.checkboxes}>
-            {checkboxMsg}
-            <div className={styles.spacerSmall} />
             {checkboxes}
           </div>
           <div className={styles.chartWrapper}>
             {this.renderLineChart()}
           </div>
         </div>
-        <div className={styles.xAxisSelectWrapper}>
-          <Select
-            placeholder="Choose a property for the x axis"
-            options={selectOptions}
-            value={this.state.lineChartXAxisProp}
-            onChange={this.handleLineChartXAxisPropChange}
-          />
+        <div className={styles.inlineBlock}>
+          <div className={styles.xAxisSelectWrapper}>
+            <div className={styles.selectButton}>
+              <Select
+                placeholder="Choose a property for the x axis"
+                options={selectOptions}
+                value={this.state.lineChartXAxisProp}
+                onChange={this.handleLineChartXAxisPropChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  render() {
-    const numberTypes = this.state.numberProps.map((prop) => {
-      return <div key={prop.name}>{`${prop.namespace}.${prop.name}, ${prop.datatype}`}</div>;
+  switchView = (newView) => {
+    this.setState({
+      currentView: newView,
+      scatterChartXAxisProp: undefined,
+      scatterChartYAxisProp: undefined,
+      lineChartXAxisProp: undefined,
+      selectedYProps: []
     });
-    const geoTypes = this.state.geoProps.map((prop) => {
-      return <div key={prop.name}>{`${prop.namespace}.${prop.name}, ${prop.datatype}`}</div>;
-    });
-    const allTypes = this.state.properties.map((prop) => {
-      return <div key={prop.name}>{`${prop.namespace}.${prop.name}, ${prop.datatype}`}</div>;
+  }
+
+  getOptionButtonClass = (option) => {
+    return (option === this.state.currentView) ? `${styles.optionButton} ${styles.selected}` : styles.optionButton;
+  }
+
+  getAvailableVisualizations = () => {
+    const options = [];
+    if (this.state.numberProps.length > 1) {
+      options.push(chartTypes.SCATTER_CHART);
+      options.push(chartTypes.LINE_CHART);
+    }
+    if (this.state.geoProps.length > 0) options.push(chartTypes.GEO_CHART);
+    return options;
+  }
+
+  renderViewOptions = () => {
+    const options = this.getAvailableVisualizations();
+    if (options.length === 0) {
+      return (
+        <div className={styles.optionsBar}>
+          There are no visualizations available for this entity set.
+        </div>
+      );
+    }
+    const optionsBar = options.map((option) => {
+      return (
+        <button
+          onClick={() => {
+            this.switchView(option);
+          }}
+          className={this.getOptionButtonClass(option)}
+        >{option}
+        </button>
+      );
     });
     return (
-      <div style={{ textAlign: 'center' }}>visualize!!!
-        <h1>Number Types</h1>
-        {numberTypes}
-        <h1>Geo Types</h1>
-        {geoTypes}
-        <h1>All Types</h1>
-        {allTypes}
+      <div className={styles.optionsBar}>
+        {optionsBar}
+      </div>
+    );
+  }
+
+  render() {
+    let visualization = null;
+    const allVisualizations = this.getAvailableVisualizations();
+    let currentView = null;
+    if (allVisualizations.length > 0) {
+      currentView = (this.state.currentView !== undefined) ? this.state.currentView : allVisualizations[0];
+      switch (currentView) {
+        case chartTypes.SCATTER_CHART:
+          visualization = this.renderScatterChartContainer();
+          break;
+        case chartTypes.LINE_CHART:
+          visualization = this.renderLineChartContainer();
+          break;
+        case chartTypes.GEO_CHART:
+          visualization = this.renderGeoChartContainer();
+          break;
+        default:
+          visualization = null;
+      }
+    }
+    return (
+      <div className={styles.container}>
+        {this.renderViewOptions()}
         <div className={styles.lineChartContainer}>
-          {this.renderLineChartContainer()}
+          {visualization}
         </div>
       </div>
     );
