@@ -1,16 +1,29 @@
+/* text styling */
+
+.entitySetName {
+  font-size: 16px;
+}
+
+/* utils */
+
+.inlineBlock {
+  display: inline-block;
+}
+
+.spacerSmall {
+  height: 15px;
+}
+
+.marginLeft {
+  margin-left: 5px;
+}
+
+
+
+/* visualization container */
+
 .container {
   text-align: center;
-}
-
-.visualizationContainer {
-  width: 100%;
-  height: 400px;
-  padding: 10px;
-  text-align: center;
-}
-
-.visualizationWrapper {
-  display: inline;
 }
 
 .label {
@@ -41,31 +54,30 @@
   width: 80%;
 }
 
-.inlineBlock {
-  display: inline-block;
-}
-
 .xAxisSelectWrapper {
   display: flex;
   min-width: 300px;
 }
 
-.selectButton {
-  display: inline;
-  min-width: 300px;
-}
-
-.spacerSmall {
-  height: 15px;
-}
-
-.marginLeft {
-  margin-left: 5px;
-}
-
 .optionsBar {
   padding: 30px;
 }
+
+
+/* visualizations */
+
+.visualizationContainer {
+  width: 100%;
+  height: 400px;
+  padding: 10px;
+  text-align: center;
+}
+
+.visualizationWrapper {
+  display: inline;
+}
+
+/* buttons */
 
 .optionButton {
   display: table-cell;
@@ -83,4 +95,9 @@
 .selected {
   background: #b9bdc0;
   font-weight: bold;
+}
+
+.selectButton {
+  display: inline;
+  min-width: 300px;
 }

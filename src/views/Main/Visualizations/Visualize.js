@@ -6,13 +6,14 @@ import { LineChartVisualization } from './LineChartVisualization';
 import { ScatterChartVisualization } from './ScatterChartVisualization';
 import { GeoVisualization } from './GeoVisualization';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
 import Utils from '../../../utils/Utils';
 import styles from './styles.module.css';
 
 const chartTypes = {
-  LINE_CHART: 'Line Chart Visualizations',
-  SCATTER_CHART: 'Scatter Chart Visualizations',
-  GEO_CHART: 'Geographical Visualizations'
+  LINE_CHART: 'Line Chart Visualization',
+  SCATTER_CHART: 'Scatter Chart Visualization',
+  GEO_CHART: 'Geographical Visualization'
 };
 
 export class Visualize extends React.Component {
@@ -160,7 +161,6 @@ export class Visualize extends React.Component {
     });
     return (
       <div>
-        <h1>Geographic Chart Visualization</h1>
         <div className={styles.chartContainer}>
           {this.renderGeoChart()}
         </div>
@@ -195,7 +195,6 @@ export class Visualize extends React.Component {
     });
     return (
       <div>
-        <h1>Scatter Chart Visualization</h1>
         <div className={styles.chartContainer}>
           {this.renderScatterChart()}
         </div>
@@ -222,7 +221,6 @@ export class Visualize extends React.Component {
         </div>
       </div>
     );
-
   }
 
   renderLineChartContainer = () => {
@@ -249,7 +247,6 @@ export class Visualize extends React.Component {
     });
     return (
       <div>
-        <h1>Line Chart Visualization</h1>
         <div className={styles.chartAndCheckboxesWrapper}>
           {checkboxMsg}
           <div className={styles.spacerMed} />
@@ -345,9 +342,12 @@ export class Visualize extends React.Component {
       default:
         visualization = null;
     }
+    const title = (visualization) ? this.state.currentView : StringConsts.EMPTY;
     return (
       <div className={styles.container}>
         {this.renderViewOptions()}
+        <div className={styles.entitySetName}>{this.state.name}</div>
+        <h1>{title}</h1>
         <div className={styles.lineChartContainer}>
           {visualization}
         </div>
