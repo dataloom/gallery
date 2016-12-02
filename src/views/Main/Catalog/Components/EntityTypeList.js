@@ -174,6 +174,7 @@ export class EntityTypeList extends React.Component {
               <tbody>
                 <NameNamespaceAutosuggest
                   namespaces={allPropNamespaces}
+                  usedProperties={[]}
                   addProperty={this.createNewEntityType}
                   saveOption={false}
                   onNameChange={this.handlePKeyNameChange}

@@ -82,7 +82,7 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   render() {
-    const { schemaName, schemaNamespace, updateFn, allEntityTypeNamespaces } = this.props;
+    const { schemaName, schemaNamespace, updateFn, allEntityTypeNamespaces, entityTypeFqns } = this.props;
     const { newEntityTypeRow, error } = this.state;
     const fqnArray = this.keyPropertyTypes();
     const entityTypeFqnList = fqnArray.map((fqn) => {
@@ -110,6 +110,7 @@ export class EntityTypeFqnList extends React.Component {
             <NameNamespaceAutosuggest
               className={this.addRowClass[newEntityTypeRow]}
               namespaces={allEntityTypeNamespaces}
+              usedProperties={entityTypeFqns}
               addProperty={this.addEntityTypeToSchema}
             />
           </tbody>
