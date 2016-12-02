@@ -2,32 +2,38 @@
 
 Gallery provides Loom's UI for interacting with the entity data model, as well as downloading and visualizing datasets.
 
-**Setup**
+**Setup for Mac**
 
-1. Install [cassandra](https://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html)
-2. Clone the entire [loom](http://stash.krypt.int/projects/KRYP/repos/loom/browse) superproject
-3. Install dependencies.
+1. Clone [gallery](https://github.com/kryptnostic/gallery), [conductor](https://github.com/dataloom/conductor), and [datastore](https://github.com/dataloom/datastore)
+2. Install cassandra version 3.9
+```
+brew install cassandra
+```
+3. Install JS/NPM dependencies within the gallery project.
 
 ```
+cd gallery
 npm install
 ```
 
 **Running locally**
 
 1. Run cassandra
-2. Run [kryptnostic-conductor](https://github.com/dataloom/conductor) and [datastore](https://github.com/dataloom/datastore) from the `loom` superproject
+2. Run [conductor](https://github.com/dataloom/conductor) and [datastore](https://github.com/dataloom/datastore) from the outer directory they are contained in.
 ```
 ./gradlew :kryptnostic-conductor:run
 ./gradlew :datastore:run
 ```
-3. Run the server on http://localhost:9000/gallery/
+3. Run the server on http://localhost:9000/gallery/ within the gallery project.
 ```
+cd gallery
 npm run app
 ```
 
 **Building for prod**
 
-Run the prod build.
+Run the prod build within the gallery project.
 ```
+cd gallery
 npm run build:prod
 ```
