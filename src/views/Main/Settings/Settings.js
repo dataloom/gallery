@@ -21,7 +21,9 @@ export class Settings extends React.Component {
       userData: {},
       newRoleValue: '',
       selectedUser: '',
-      reservedRoleError: emptyErrorObj
+      reservedRoleError: emptyErrorObj,
+      loadUsersError: styles.hidden,
+      updateError: styles.hidden
     };
   }
 
@@ -34,7 +36,14 @@ export class Settings extends React.Component {
     .then((userData) => {
       const selectedUser = (userId && userId !== undefined) ? userId : Object.keys(userData)[0];
       const newRoleValue = (shouldClear) ? StringConsts.EMPTY : this.state.newRoleValue;
-      this.setState({ userData, selectedUser, newRoleValue });
+      this.setState({
+        userData,
+        selectedUser,
+        newRoleValue,
+        loadUsersError: styles.hidden
+      });
+    }).catch(() => {
+      this.setState({ loadUsersError: styles.error });
     });
   }
 
@@ -58,7 +67,13 @@ export class Settings extends React.Component {
       else newRole = oldRole.trim();
     });
     if (action === PermissionsConsts.ADD) newRoleList.push(newRole);
-    UsersApi.resetUserRoles(userId, newRoleList);
+    UsersApi.resetUserRoles(userId, newRoleList)
+    .then(() => {
+      this.setState({ updateError: styles.hidden });
+    })
+    .catch(() => {
+      this.setState({ updateError: styles.error });
+    });
     userData[userId].roles = newRoleList;
     const newRoleValue = (action === PermissionsConsts.ADD) ? StringConsts.EMPTY : this.state.newRoleValue;
     const reservedRoleError = emptyErrorObj;
@@ -73,8 +88,11 @@ export class Settings extends React.Component {
       this.setState({
         userData,
         selectedUser: userId,
-        reservedRoleError: emptyErrorObj
+        reservedRoleError: emptyErrorObj,
+        loadUsersError: styles.hidden
       });
+    }).catch(() => {
+      this.setState({ loadUsersError: styles.error });
     });
   }
 
@@ -144,6 +162,8 @@ export class Settings extends React.Component {
           <div className={reservedRoleError.display}>
             Error: {reservedRoleError.value} is a reserved role.
           </div>
+          <div className={this.state.loadUsersError}>Error: unable to load users.</div>
+          <div className={this.state.updateError}>Error: unable to update user.</div>
           <div className={styles.roleManagementContainer}>
             <div className={styles.divider} />
             <div className={styles.userListContainer}>

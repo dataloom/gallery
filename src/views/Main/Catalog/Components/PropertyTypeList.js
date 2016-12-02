@@ -25,6 +25,7 @@ export class PropertyTypeList extends React.Component {
       newPropertyRow: false,
       addError: false,
       deleteError: false,
+      loadTypesError: false,
       newPropName: '',
       newPropNamespace: '',
       newPropDatatype: '',
@@ -48,16 +49,20 @@ export class PropertyTypeList extends React.Component {
 
   updateFn = () => {
     EntityDataModelApi.getAllPropertyTypes()
-      .then((propertyTypes) => {
-        this.setState({
-          propertyTypes: Utils.addKeysToArray(propertyTypes),
-          newPropertyRow: false,
-          newPropName: '',
-          newPropNamespace: '',
-          newPropMultiplicity: '',
-          newPropDatatype: ''
-        });
+    .then((propertyTypes) => {
+      this.setState({
+        propertyTypes: Utils.addKeysToArray(propertyTypes),
+        newPropertyRow: false,
+        newPropName: '',
+        newPropNamespace: '',
+        newPropMultiplicity: '',
+        newPropDatatype: '',
+        addError: false,
+        deleteError: false
       });
+    }).catch(() => {
+      this.setState({ loadTypesError: true });
+    });
   }
 
   keyPropertyTypes() {
@@ -101,7 +106,11 @@ export class PropertyTypeList extends React.Component {
   }
 
   successfullyAddedProperty = () => {
-    this.setState({ newPropertyRow: false });
+    this.setState({
+      newPropertyRow: false,
+      addError: false,
+      deleteError: false
+    });
     this.props.updateSchemaFn();
   }
 
@@ -166,6 +175,7 @@ export class PropertyTypeList extends React.Component {
     });
     return (
       <div className={this.shouldDisplayContainer()}>
+        <div className={this.showErrorMsgClass[this.state.loadTypesError]}>Unable to load property types.</div>
         <table>
           <tbody>
             <tr>

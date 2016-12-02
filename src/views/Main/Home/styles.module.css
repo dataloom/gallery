@@ -15,6 +15,11 @@
   text-align: center;
 }
 
+.errorMsg {
+  color: red;
+  padding-top: 10px;
+}
+
 
 /* page sections */
 
