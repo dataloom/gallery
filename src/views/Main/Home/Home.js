@@ -21,7 +21,9 @@ export class Home extends React.Component {
     super();
     this.state = {
       resolved: {},
-      requests: []
+      requests: [],
+      loadRequestsError: false,
+      respondToRequestError: false
     };
   }
 
@@ -35,6 +37,11 @@ export class Home extends React.Component {
     false: styles.hidden
   }
 
+  errorClass = {
+    true: styles.errorMsg,
+    false: styles.hidden
+  }
+
   loadRequestStatuses = () => {
     PermissionsApi.getAllReceivedRequestsForPermissions()
     .then((requests) => {
@@ -42,7 +49,13 @@ export class Home extends React.Component {
       requests.forEach((request) => {
         map[request.requestId] = 0;
       });
-      this.setState({ resolved: map, requests });
+      this.setState({
+        resolved: map,
+        requests,
+        loadRequestsError: false
+      });
+    }).catch(() => {
+      this.setState({ loadRequestsError: true });
     });
   }
 
@@ -62,17 +75,26 @@ export class Home extends React.Component {
         }]),
         PermissionsApi.removePermissionsRequestForEntitySet(requestId),
         () => {
-          this.setState({ resolved: map });
+          this.setState({
+            resolved: map,
+            respondToRequestError: false
+          });
         }
-      );
+      ).catch(() => {
+        this.setState({ respondToRequestError: true });
+      });
     }
     else {
       PermissionsApi.removePermissionsRequestForEntitySet(requestId)
       .then(() => {
-        this.setState({ resolved: map });
+        this.setState({
+          resolved: map,
+          respondToRequestError: false
+        });
+      }).catch(() => {
+        this.setState({ respondToRequestError: true });
       });
     }
-    this.setState({ resolved: map });
   }
 
   getPermissionType(permissions) {
@@ -98,6 +120,7 @@ export class Home extends React.Component {
 
       return (
         <div className={styles.objContainer} key={requestId}>
+          <div className={this.errorClass[this.state.respondToRequestError]}>Unable to respond to request.</div>
           <div className={this.shouldShow[(reqStatus === 0)]}>
             <div>{(request.timestamp)}</div>
             <div>
@@ -148,6 +171,7 @@ export class Home extends React.Component {
       <div>
         <div>
           <h2 className={styles.sectionHeader}>Pending Action Items</h2>
+          <div className={this.errorClass[this.state.loadRequestsError]}>Unable to load permissions requests.</div>
           {this.renderAllRequests()}
         </div>
         <div className={styles.spacer} />
