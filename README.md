@@ -15,7 +15,7 @@ npm install
 **Running locally**
 
 1. Run cassandra
-2. Run kryptnostic-conductor and datastore from the `loom` superproject
+2. Run [kryptnostic-conductor](https://github.com/dataloom/conductor) and [datastore](https://github.com/dataloom/datastore) from the `loom` superproject
 ```
 ./gradlew :kryptnostic-conductor:run
 ./gradlew :datastore:run
