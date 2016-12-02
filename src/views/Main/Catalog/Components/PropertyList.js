@@ -20,8 +20,8 @@ export class PropertyList extends React.Component {
     isOwner: PropTypes.bool
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       newPropertyRow: false,
       error: {
@@ -179,6 +179,7 @@ export class PropertyList extends React.Component {
             <NameNamespaceAutosuggest
               className={this.shouldShow[newPropertyRow]}
               namespaces={allPropNamespaces}
+              usedProperties={properties}
               addProperty={this.addPropertyToEntityType}
             />
           </tbody>

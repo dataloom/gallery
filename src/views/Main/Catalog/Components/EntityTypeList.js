@@ -13,7 +13,8 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       newEntityType: false,
-      error: false,
+      loadTypesError: false,
+      createTypeError: false,
       allPropNamespaces: {},
       newEntityTypeName: '',
       newEntityTypeNamespace: '',
@@ -54,13 +55,13 @@ export class EntityTypeList extends React.Component {
           newEntityTypeName: '',
           newEntityTypeNamespace: '',
           newPKeyName: '',
-          newPKeyNamespace: ''
+          newPKeyNamespace: '',
+          loadTypesError: false,
+          createTypeError: false
         });
+      }).catch(() => {
+        this.setState({ loadTypesError: true });
       });
-  }
-
-  showError = () => {
-    this.setState({ error: true });
   }
 
   createNewEntityType = () => {
@@ -72,7 +73,7 @@ export class EntityTypeList extends React.Component {
     .then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
-      this.showError();
+      this.setState({ createTypeError: true });
     });
   }
 
@@ -92,10 +93,13 @@ export class EntityTypeList extends React.Component {
         });
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
-          allPropNamespaces
+          allPropNamespaces,
+          loadTypesError: false
         });
       }
-    );
+    ).catch(() => {
+      this.setState({ loadTypesError: true });
+    });
   }
 
   handleNameChange = (e) => {
@@ -121,7 +125,8 @@ export class EntityTypeList extends React.Component {
       newEntityType,
       newEntityTypeNamespace,
       newEntityTypeName,
-      error
+      createTypeError,
+      loadTypesError
     } = this.state;
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
@@ -169,6 +174,7 @@ export class EntityTypeList extends React.Component {
               <tbody>
                 <NameNamespaceAutosuggest
                   namespaces={allPropNamespaces}
+                  usedProperties={[]}
                   addProperty={this.createNewEntityType}
                   saveOption={false}
                   onNameChange={this.handlePKeyNameChange}
@@ -179,8 +185,9 @@ export class EntityTypeList extends React.Component {
             <div className={styles.spacerSmall} />
             <button className={styles.genericButton} onClick={this.createNewEntityType}>Create</button>
           </div>
-          <div className={this.errorClass[error]}>Unable to create entity type.</div>
+          <div className={this.errorClass[createTypeError]}>Unable to create entity type.</div>
         </div>
+        <div className={this.errorClass[loadTypesError]}>Unable to load entity types.</div>
         {entityTypeList}
       </div>
     );

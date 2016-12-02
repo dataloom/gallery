@@ -67,7 +67,8 @@ export class PermissionsPanel extends React.Component {
       newRoleValue: '',
       newEmailValue: '',
       allUsersList: {},
-      allRolesList: new Set()
+      allRolesList: new Set(),
+      loadUsersError: false
     };
   }
 
@@ -87,7 +88,13 @@ export class PermissionsPanel extends React.Component {
           if (role !== UserRoleConsts.DEFAULT_USER_ROLE) allRolesList.add(role);
         });
       });
-      this.setState({ allUsersList, allRolesList });
+      this.setState({
+        allUsersList,
+        allRolesList,
+        loadUsersError: false
+      });
+    }).catch(() => {
+      this.setState({ loadUsersError: true });
     });
   }
 
@@ -120,7 +127,8 @@ export class PermissionsPanel extends React.Component {
       userAcls,
       updateSuccess,
       newRoleValue: '',
-      newEmailValue: ''
+      newEmailValue: '',
+      updateError: false
     });
   }
 
@@ -132,12 +140,18 @@ export class PermissionsPanel extends React.Component {
       PermissionsApi.getOwnerAclsForPropertyTypeInEntitySet(entitySetName, fqn)
       .then((acls) => {
         this.updateStateAcls(acls, updateSuccess);
+      }).catch(() => {
+        this.setState({
+          updateError: true
+        });
       });
     }
     else {
       PermissionsApi.getOwnerAclsForEntitySet(entitySetName)
       .then((acls) => {
         this.updateStateAcls(acls, updateSuccess);
+      }).catch(() => {
+        this.setState({ updateError: true });
       });
     }
   }
@@ -196,8 +210,13 @@ export class PermissionsPanel extends React.Component {
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
     const req = { principal, action, name, permissions };
     if (propertyTypeName) req.property = Utils.getFqnObj(propertyTypeNamespace, propertyTypeName);
-    updateFn([req]).then(() => {
+    updateFn([req])
+    .then(() => {
       this.loadAcls(true);
+    }).catch(() => {
+      this.setState({
+        updateError: true
+      });
     });
   }
 
@@ -218,6 +237,7 @@ export class PermissionsPanel extends React.Component {
       Object.keys(accessOptions) : Object.keys(permissionOptions);
     return (
       <div className={styles.viewWrapper}>
+        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
         <div>Choose the default permissions for everyone:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
@@ -300,6 +320,7 @@ export class PermissionsPanel extends React.Component {
     });
     return (
       <div>
+        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load roles.</div>
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView)}
@@ -406,6 +427,7 @@ export class PermissionsPanel extends React.Component {
 
     return (
       <div>
+        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load users.</div>
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, emailsView)}
@@ -456,10 +478,10 @@ export class PermissionsPanel extends React.Component {
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>
-        <div id="updateSuccess" className={this.shouldShowSuccess[this.state.updateSuccess]}>
+        <div className={this.shouldShowSuccess[this.state.updateSuccess]}>
           Your changes have been saved.
         </div>
-        <div id="updateError" className={this.shouldShowError[this.state.updateError]}>
+        <div className={this.shouldShowError[this.state.updateError]}>
           Unable to save changes.
         </div>
         <button className={styles.cancelButton} onClick={this.props.exitPanel}>x</button>

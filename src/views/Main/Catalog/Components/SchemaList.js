@@ -12,7 +12,8 @@ export class SchemaList extends React.Component {
     this.state = {
       schemas: [],
       newSchema: false,
-      error: false,
+      createSchemaError: false,
+      loadSchemasError: false,
       allPropNamespaces: {},
       allEntityTypeNamespaces: {},
       newSchemaName: '',
@@ -45,18 +46,17 @@ export class SchemaList extends React.Component {
 
   newSchemaSuccess = () => {
     EntityDataModelApi.getAllSchemas()
-      .then((schemas) => {
-        this.setState({
-          schemas: Utils.addKeysToArray(schemas),
-          newSchema: false,
-          newSchemaName: '',
-          newSchemaNamespace: ''
-        });
+    .then((schemas) => {
+      this.setState({
+        schemas: Utils.addKeysToArray(schemas),
+        newSchema: false,
+        newSchemaName: '',
+        newSchemaNamespace: '',
+        loadSchemasError: false
       });
-  }
-
-  showError = () => {
-    this.setState({ error: true });
+    }).catch(() => {
+      this.setState({ loadSchemasError: true });
+    });
   }
 
   createNewSchema = () => {
@@ -66,7 +66,7 @@ export class SchemaList extends React.Component {
     .then(() => {
       this.newSchemaSuccess();
     }).catch(() => {
-      this.showError();
+      this.setState({ createSchemaError: true });
     });
   }
 
@@ -98,8 +98,11 @@ export class SchemaList extends React.Component {
         this.setState({
           schemas: Utils.addKeysToArray(schemas),
           allPropNamespaces,
-          allEntityTypeNamespaces
+          allEntityTypeNamespaces,
+          loadSchemasError: false
         });
+      }).catch(() => {
+        this.setState({ loadSchemasError: true });
       });
   }
 
@@ -119,7 +122,8 @@ export class SchemaList extends React.Component {
       newSchema,
       newSchemaNamespace,
       newSchemaName,
-      error
+      createSchemaError,
+      loadSchemasError
     } = this.state;
     const schemaList = schemas.map((schema) => {
       return (<Schema
@@ -165,8 +169,10 @@ export class SchemaList extends React.Component {
             <div className={styles.spacerSmall} />
             <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>
           </div>
-          <div className={this.errorClass[error]}>Unable to create schema.</div>
+
+          <div className={this.errorClass[createSchemaError]}>Unable to create schema.</div>
         </div>
+        <div className={this.errorClass[loadSchemasError]}>Unable to load schemas.</div>
         {schemaList}
       </div>
     );
