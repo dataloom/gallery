@@ -233,6 +233,12 @@ tr:first-child .tableCell {
   text-align: right;
 }
 
+.permissionRequestStatusMsg {
+  width: 100%;
+  text-align: right;
+  margin: 0 0 10px 0;
+}
+
 
 /* utils */
 
