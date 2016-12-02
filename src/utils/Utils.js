@@ -14,10 +14,14 @@ export default class Utils {
   }
 
   static loadUnusedPairs(allProps, properties) {
-    if (allProps === undefined || properties === undefined) return {};
+    if (allProps === undefined || properties === undefined) {
+      return {};
+    }
     const propMap = {};
     properties.forEach((prop) => {
-      if (!propMap[prop.namespace] || propMap[prop.namespace] === undefined) propMap[prop.namespace] = [prop.name];
+      if (!propMap[prop.namespace] || propMap[prop.namespace] === undefined) {
+        propMap[prop.namespace] = [prop.name];
+      }
       else {
         const newList = propMap[prop.namespace];
         newList.push(prop.name);
@@ -27,7 +31,9 @@ export default class Utils {
 
     const resultMap = {};
     Object.keys(allProps).forEach((namespace) => {
-      if (!propMap[namespace] || propMap[namespace] === undefined) resultMap[namespace] = allProps[namespace];
+      if (!propMap[namespace] || propMap[namespace] === undefined) {
+        resultMap[namespace] = allProps[namespace];
+      }
       else {
         const resultList = allProps[namespace].filter((name) => {
           return !propMap[namespace].includes(name);
