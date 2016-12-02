@@ -7,7 +7,9 @@ import { ScatterChartVisualization } from './ScatterChartVisualization';
 import { GeoVisualization } from './GeoVisualization';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../utils/Consts/StringConsts';
+import AuthService from '../../../utils/AuthService';
 import Utils from '../../../utils/Utils';
+import VisualizationApi from '../../../utils/VisualizationApi';
 import styles from './styles.module.css';
 
 const chartTypes = {
@@ -19,6 +21,7 @@ const chartTypes = {
 export class Visualize extends React.Component {
 
   static propTypes = {
+    auth: PropTypes.instanceOf(AuthService),
     location: PropTypes.object
   }
 
@@ -37,8 +40,20 @@ export class Visualize extends React.Component {
       scatterChartXAxisProp: undefined,
       scatterChartYAxisProp: undefined,
       geoChartProp: undefined,
-      currentView: undefined
+      currentView: undefined,
+      data: StringConsts.EMPTY
     };
+  }
+
+  loadData = (propertyTypes) => {
+    const { typeNamespace, typeName, name } = this.state;
+    const propertyTypesList = propertyTypes.map((type) => {
+      return Utils.getFqnObj(type.namespace, type.name);
+    });
+    return VisualizationApi.getVisualizationData(typeNamespace, typeName, name, propertyTypesList, this.props.auth)
+    .then((data) => {
+      return data;
+    });
   }
 
   filterPropDatatypes = (properties) => {
@@ -50,11 +65,17 @@ export class Visualize extends React.Component {
     });
     const chartOptions = this.getAvailableVisualizations(numberProps, geoProps);
     const currentView = (chartOptions.length > 0) ? chartOptions[0] : undefined;
-    this.setState({
-      properties,
-      numberProps,
-      geoProps,
-      currentView
+    this.loadData(numberProps.concat(geoProps))
+    .then((data) => {
+      console.log('DATA!!!');
+      console.log(data);
+      this.setState({
+        properties,
+        numberProps,
+        geoProps,
+        currentView,
+        data
+      });
     });
   }
 
@@ -101,35 +122,41 @@ export class Visualize extends React.Component {
   }
 
   renderLineChart = () => {
+    const { lineChartXAxisProp, selectedYProps, name, data } = this.state;
     return (
       <div>
         <LineChartVisualization
-          xProp={this.state.lineChartXAxisProp}
-          yProps={this.state.selectedYProps}
-          entitySetName={this.state.name}
+          xProp={lineChartXAxisProp}
+          yProps={selectedYProps}
+          entitySetName={name}
+          data={data}
         />
       </div>
     );
   }
 
   renderScatterChart = () => {
+    const { scatterChartXAxisProp, scatterChartYAxisProp, name, data} = this.state;
     return (
       <div>
         <ScatterChartVisualization
-          xProp={this.state.scatterChartXAxisProp}
-          yProp={this.state.scatterChartYAxisProp}
-          entitySetName={this.state.name}
+          xProp={scatterChartXAxisProp}
+          yProp={scatterChartYAxisProp}
+          entitySetName={name}
+          data={data}
         />
       </div>
     );
   }
 
   renderGeoChart = () => {
+    const { geoChartProp, name, data } = this.state;
     return (
       <div>
         <GeoVisualization
-          geoProp={this.state.geoChartProp}
-          entitySetName={this.state.name}
+          geoProp={geoChartProp}
+          entitySetName={name}
+          data={data}
         />
       </div>
     );
@@ -240,6 +267,7 @@ export class Visualize extends React.Component {
             id={fqn}
             onClick={this.handleCheckboxChange}
             value={JSON.stringify(prop)}
+            className={styles.checkbox}
           />
           <label htmlFor={fqn}>{fqn}</label>
         </div>

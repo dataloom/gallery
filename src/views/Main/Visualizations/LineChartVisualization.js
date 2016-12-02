@@ -44,7 +44,8 @@ export class LineChartVisualization extends React.Component {
   static propTypes = {
     entitySetName: PropTypes.string,
     xProp: PropTypes.string,
-    yProps: PropTypes.array
+    yProps: PropTypes.array,
+    data: PropTypes.object
   }
 
   updateMouseOverPoint = (label) => {

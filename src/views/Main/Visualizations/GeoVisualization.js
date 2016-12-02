@@ -16,15 +16,9 @@ const labelElementId = 'visualization_label';
 export class GeoVisualization extends React.Component {
 
   static propTypes = {
-    entitySetName: PropTypes.string
-  }
-
-  constructor() {
-    super();
-    this.state = {
-      entitySetName: PropTypes.string,
-      geoProp: PropTypes.string
-    };
+    entitySetName: PropTypes.string,
+    geoProp: PropTypes.string,
+    data: PropTypes.object
   }
 
   getData = () => {

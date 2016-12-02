@@ -42,7 +42,8 @@ export class ScatterChartVisualization extends React.Component {
   static propTypes = {
     entitySetName: PropTypes.string,
     xProp: PropTypes.string,
-    yProp: PropTypes.string
+    yProp: PropTypes.string,
+    data: PropTypes.object
   }
 
   render() {
