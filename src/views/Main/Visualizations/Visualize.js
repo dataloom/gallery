@@ -14,9 +14,9 @@ import VisualizationApi from '../../../utils/VisualizationApi';
 import styles from './styles.module.css';
 
 const chartTypes = {
-  LINE_CHART: 'Line Chart Visualization',
-  SCATTER_CHART: 'Scatter Chart Visualization',
-  GEO_CHART: 'Geographical Visualization'
+  LINE_CHART: VisualizationConsts.LINE_CHART,
+  SCATTER_CHART: VisualizationConsts.SCATTER_CHART,
+  MAP_CHART: VisualizationConsts.MAP_CHART
 };
 
 export class Visualize extends React.Component {
@@ -316,7 +316,7 @@ export class Visualize extends React.Component {
       options.push(chartTypes.SCATTER_CHART);
       options.push(chartTypes.LINE_CHART);
     }
-    if (geoProps.length > 0) options.push(chartTypes.GEO_CHART);
+    if (geoProps.length > 0) options.push(chartTypes.MAP_CHART);
     return options;
   }
 
@@ -357,7 +357,7 @@ export class Visualize extends React.Component {
       case chartTypes.LINE_CHART:
         visualization = this.renderLineChartContainer();
         break;
-      case chartTypes.GEO_CHART:
+      case chartTypes.MAP_CHART:
         visualization = this.renderGeoChartContainer();
         break;
       default:
