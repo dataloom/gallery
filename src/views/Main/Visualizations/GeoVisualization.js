@@ -1,81 +1,52 @@
 import React, { PropTypes } from 'react';
-import {
-  CartesianGrid,
-  Scatter,
-  ScatterChart,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
-import StarbucksData from './StarbucksData';
+import { divIcon } from 'leaflet';
+import { Map, Marker, TileLayer } from 'react-leaflet';
 import styles from './styles.module.css';
-
-const labelElementId = 'visualization_label';
-
 
 export class GeoVisualization extends React.Component {
 
   static propTypes = {
-    geoProp: PropTypes.string,
+    geoProps: PropTypes.array,
     data: PropTypes.array
   }
 
-  getData = () => {
-    const result = StarbucksData.starbucksData.map((line) => {
-      const lineArray = line.split(',');
-      return [{
-        long: Number(lineArray[0]),
-        lat: Number(lineArray[1]),
-        id: lineArray[2],
-        label: lineArray[3]
-      }];
-    });
-    return result;
-  }
-
-  updateMouseOverPoint = (label) => {
-    document.getElementById(labelElementId).innerHTML = label;
-  }
-
   render() {
-    const dataToUse = this.getData();
-    const scatterPoints = dataToUse.map((point) => {
-      return (
-        <Scatter
-          data={point}
-          fill="#8884d8"
-          key={point[0].id}
-          onMouseOver={() => {
-            this.updateMouseOverPoint(point[0].label);
-          }}
-          onMouseOut={() => {
-            this.updateMouseOverPoint('');
-          }}
-        />
-      );
+    const { geoProps, data } = this.props;
+    if (geoProps[0] === undefined || geoProps[1] === undefined) return null;
+    const icon = divIcon({ className: styles.divIcon });
+
+    const latName = geoProps[0].name;
+    const longName = geoProps[1].name;
+
+    let maxLat = -90;
+    let minLat = 90;
+    let maxLong = -180;
+    let minLong = 180;
+
+    const markers = data.map((point) => {
+      const lat = point[latName][0];
+      const long = point[longName][0];
+      const position = [lat, long];
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+      if (long < minLong) minLong = long;
+      if (long > maxLong) maxLong = long;
+      return <Marker position={position} icon={icon} key={data.indexOf(point)} />;
     });
+
+    const bounds = [
+      [minLat, minLong],
+      [maxLat, maxLong]
+    ];
     return (
-      <div className={styles.visualizationContainer}>
-        <div className={styles.visualizationWrapper}>
-          <ScatterChart width={750} height={250}>
-            <XAxis
-              dataKey="long"
-              name="longitude"
-              type="number"
-              domain={['dataMin', 'dataMax']}
-            />
-            <YAxis
-              dataKey="lat"
-              name="latitude"
-              type="number"
-              domain={['dataMin', 'dataMax']}
-            />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            {scatterPoints}
-          </ScatterChart>
-        </div>
-        <div className={styles.label} id={labelElementId} />
+      <div>
+        <Map bounds={bounds} className={styles.map}>
+          <TileLayer
+            url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {markers}
+        </Map>
       </div>
     );
   }

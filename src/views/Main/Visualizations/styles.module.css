@@ -77,6 +77,22 @@
   display: inline;
 }
 
+.divIcon {
+  height: 3px;
+  width: 3px;
+  color: red;
+  background: red;
+  border: 1px solid black;
+  border-radius: 7px;
+}
+
+.map {
+  height: 400px;
+  width: 750px;
+  text-align: center;
+  display: inline-block;
+}
+
 /* buttons */
 
 .optionButton {

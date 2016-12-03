@@ -7,6 +7,7 @@ import { ScatterChartVisualization } from './ScatterChartVisualization';
 import { GeoVisualization } from './GeoVisualization';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../utils/Consts/StringConsts';
+import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import AuthService from '../../../utils/AuthService';
 import Utils from '../../../utils/Utils';
 import VisualizationApi from '../../../utils/VisualizationApi';
@@ -41,7 +42,7 @@ export class Visualize extends React.Component {
       scatterChartYAxisProp: undefined,
       geoChartProp: undefined,
       currentView: undefined,
-      data: StringConsts.EMPTY
+      data: []
     };
   }
 
@@ -57,12 +58,22 @@ export class Visualize extends React.Component {
   }
 
   filterPropDatatypes = (properties) => {
+    let latProp = null;
+    let longProp = null;
     const numberProps = [];
-    const geoProps = [];
     properties.forEach((prop) => {
-      if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) numberProps.push(prop);
-      if (EdmConsts.EDM_GEOGRAPHY_TYPES.includes(prop.datatype)) geoProps.push(prop);
+      if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) {
+        numberProps.push(prop);
+        const propName = prop.name.trim().toLowerCase();
+        if (propName === VisualizationConsts.LATITUDE) {
+          latProp = prop;
+        }
+        else if (propName === VisualizationConsts.LONGITUDE) {
+          longProp = prop;
+        }
+      }
     });
+    const geoProps = (!latProp || !longProp) ? [] : [latProp, longProp];
     const chartOptions = this.getAvailableVisualizations(numberProps, geoProps);
     const currentView = (chartOptions.length > 0) ? chartOptions[0] : undefined;
     this.loadData(numberProps.concat(geoProps))
@@ -177,10 +188,6 @@ export class Visualize extends React.Component {
 
   renderGeoChartContainer = () => {
     if (this.state.geoProps.length <= 1) return null;
-    const options = this.state.geoProps.map((prop) => {
-      const fqn = `${prop.namespace}.${prop.name}`;
-      return { label: fqn, value: JSON.stringify(prop) };
-    });
     return (
       <div>
         <div className={styles.chartContainer}>
@@ -188,16 +195,7 @@ export class Visualize extends React.Component {
         </div>
         <div className={styles.spacerSmall} />
         <div className={styles.inlineBlock}>
-          <div className={styles.xAxisSelectWrapper}>
-            <div className={styles.selectButton}>
-              <Select
-                placeholder="Choose a property to map"
-                options={options}
-                value={this.state.geoChartProp}
-                onChange={this.handleGeoChartPropChange}
-              />
-            </div>
-          </div>
+          <GeoVisualization data={this.state.data} geoProps={this.state.geoProps} />
         </div>
       </div>
     );
