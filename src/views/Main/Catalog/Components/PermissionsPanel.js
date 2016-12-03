@@ -70,6 +70,9 @@ export class PermissionsPanel extends React.Component {
       allRolesList: new Set(),
       loadUsersError: false
     };
+  }
+
+  componentDidMount() {
     this.loadAcls();
   }
 
