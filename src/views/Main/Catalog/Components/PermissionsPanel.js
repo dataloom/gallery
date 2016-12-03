@@ -202,7 +202,7 @@ export class PermissionsPanel extends React.Component {
     const { entitySetName, propertyTypeName, propertyTypeNamespace } = this.props;
     const name = entitySetName;
     const permissions = (action === PermissionsConsts.REMOVE) ?
-      [view.toLowerCase()] : permissionLevels[view.toLowerCase()];
+      [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
     const updateFn = (propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
     const req = { principal, action, name, permissions };
@@ -377,7 +377,7 @@ export class PermissionsPanel extends React.Component {
   updateEmails = (action, email, view) => {
     const principal = {
       type: UserRoleConsts.USER,
-      name: this.state.allUsersList[email]
+      id: this.state.allUsersList[email]
     };
     this.updatePermissions(action, principal, view);
   }
