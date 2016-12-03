@@ -87,7 +87,7 @@ export class EntitySet extends React.Component {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
         type: UserRoleConsts.USER,
-        name: this.props.auth.getProfile().email
+        name: this.props.auth.getProfile().user_id
       },
       action: PermissionsConsts.REQUEST,
       name: this.props.name,

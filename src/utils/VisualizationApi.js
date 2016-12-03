@@ -13,7 +13,7 @@ export default class VisualizationApi {
     const url = `${BASE_URL}/${typeNamespace}/${typeName}/${name}/selected`;
     return axios.put(url, propertyTypes, authHeader)
     .then((response) => {
-      return JSON.parse(response.data);
+      return response.data;
     });
   }
 }

@@ -122,13 +122,12 @@ export class Visualize extends React.Component {
   }
 
   renderLineChart = () => {
-    const { lineChartXAxisProp, selectedYProps, name, data } = this.state;
+    const { lineChartXAxisProp, selectedYProps, data } = this.state;
     return (
       <div>
         <LineChartVisualization
           xProp={lineChartXAxisProp}
           yProps={selectedYProps}
-          entitySetName={name}
           data={data}
         />
       </div>
@@ -136,13 +135,12 @@ export class Visualize extends React.Component {
   }
 
   renderScatterChart = () => {
-    const { scatterChartXAxisProp, scatterChartYAxisProp, name, data} = this.state;
+    const { scatterChartXAxisProp, scatterChartYAxisProp, data } = this.state;
     return (
       <div>
         <ScatterChartVisualization
           xProp={scatterChartXAxisProp}
           yProp={scatterChartYAxisProp}
-          entitySetName={name}
           data={data}
         />
       </div>
@@ -150,12 +148,11 @@ export class Visualize extends React.Component {
   }
 
   renderGeoChart = () => {
-    const { geoChartProp, name, data } = this.state;
+    const { geoChartProp, data } = this.state;
     return (
       <div>
         <GeoVisualization
           geoProp={geoChartProp}
-          entitySetName={name}
           data={data}
         />
       </div>

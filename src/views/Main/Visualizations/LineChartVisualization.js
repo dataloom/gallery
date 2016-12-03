@@ -42,10 +42,9 @@ const labelElementId = 'visualization_label';
 export class LineChartVisualization extends React.Component {
 
   static propTypes = {
-    entitySetName: PropTypes.string,
     xProp: PropTypes.string,
     yProps: PropTypes.array,
-    data: PropTypes.object
+    data: PropTypes.array
   }
 
   updateMouseOverPoint = (label) => {
