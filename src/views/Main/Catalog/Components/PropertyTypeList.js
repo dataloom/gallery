@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
+import Select from 'react-select';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
-import Consts from '../../../../utils/AppConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
-import { EdmDatatypeAutosuggest } from './EdmDatatypeAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
@@ -24,6 +25,7 @@ export class PropertyTypeList extends React.Component {
       newPropertyRow: false,
       addError: false,
       deleteError: false,
+      loadTypesError: false,
       newPropName: '',
       newPropNamespace: '',
       newPropDatatype: '',
@@ -32,7 +34,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -47,16 +49,20 @@ export class PropertyTypeList extends React.Component {
 
   updateFn = () => {
     EntityDataModelApi.getAllPropertyTypes()
-      .then((propertyTypes) => {
-        this.setState({
-          propertyTypes: Utils.addKeysToArray(propertyTypes),
-          newPropertyRow: false,
-          newPropName: '',
-          newPropNamespace: '',
-          newPropMultiplicity: '',
-          newPropDatatype: ''
-        });
+    .then((propertyTypes) => {
+      this.setState({
+        propertyTypes: Utils.addKeysToArray(propertyTypes),
+        newPropertyRow: false,
+        newPropName: '',
+        newPropNamespace: '',
+        newPropMultiplicity: '',
+        newPropDatatype: '',
+        addError: false,
+        deleteError: false
       });
+    }).catch(() => {
+      this.setState({ loadTypesError: true });
+    });
   }
 
   keyPropertyTypes() {
@@ -100,17 +106,18 @@ export class PropertyTypeList extends React.Component {
   }
 
   successfullyAddedProperty = () => {
-    this.setState({ newPropertyRow: false });
+    this.setState({
+      newPropertyRow: false,
+      addError: false,
+      deleteError: false
+    });
     this.props.updateSchemaFn();
   }
 
   addPropertyToSchema = (namespace, name) => {
     EntityDataModelApi.addPropertyTypesToSchema(
-      {
-        namespace: this.props.namespace,
-        name: this.props.name
-      },
-      [{ namespace, name }]
+      Utils.getFqnObj(this.props.namespace, this.props.name),
+      [Utils.getFqnObj(namespace, name)]
     ).then(() => {
       this.successfullyAddedProperty();
     }).catch(() => {
@@ -119,7 +126,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldDisplayContainer = () => {
-    return (this.props.navBar) ? styles.edmContainer : Consts.EMPTY;
+    return (this.props.navBar) ? styles.edmContainer : StringConsts.EMPTY;
   }
 
   handleNameChange = (e) => {
@@ -130,8 +137,9 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropNamespace: e.target.value });
   }
 
-  handleDatatypeChange = (newValue) => {
-    this.setState({ newPropDatatype: newValue });
+  handleDatatypeChange = (e) => {
+    const newPropDatatype = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
+    this.setState({ newPropDatatype });
   }
 
   handleMultiplicityChange = (e) => {
@@ -143,49 +151,67 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const propArray = (this.props.navBar) ? this.state.propertyTypes : this.keyPropertyTypes();
+    const { navBar, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
+    const {
+      propertyTypes,
+      newPropertyRow,
+      newPropName,
+      newPropNamespace,
+      newPropMultiplicity,
+      addError,
+      deleteError
+    } = this.state;
+    const propArray = (navBar) ? propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
         key={prop.key}
         propertyType={prop}
-        navBar={this.props.navBar}
+        navBar={navBar}
         error={this.updateDeleteError}
-        updateFn={this.props.updateSchemaFn}
-        schemaName={this.props.name}
-        schemaNamespace={this.props.namespace}
+        updateFn={updateSchemaFn}
+        schemaName={name}
+        schemaNamespace={namespace}
       />);
     });
     return (
       <div className={this.shouldDisplayContainer()}>
+        <div className={this.showErrorMsgClass[this.state.loadTypesError]}>Unable to load property types.</div>
         <table>
           <tbody>
             <tr>
-              <th className={this.shouldShow[!this.props.navBar]} />
+              <th className={this.shouldShow[!navBar]} />
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
               <th className={styles.tableCell}>Property Type Datatype</th>
               <th className={styles.tableCell}>Property Type Multiplicity</th>
             </tr>
             {propertyTypeList}
-            <tr className={this.shouldShow[this.state.newPropertyRow && this.props.navBar]}>
+            <tr className={this.shouldShow[newPropertyRow && navBar]}>
               <td><input
                 type="text"
-                value={this.state.newPropName}
+                value={newPropName}
                 onChange={this.handleNameChange}
                 placeholder="name"
                 className={styles.tableCell}
               /></td>
               <td><input
                 type="text"
-                value={this.state.newPropNamespace}
+                value={newPropNamespace}
                 onChange={this.handleNamespaceChange}
                 placeholder="namespace"
                 className={styles.tableCell}
               /></td>
-              <td><EdmDatatypeAutosuggest onChangeFn={this.handleDatatypeChange} /></td>
+              <td>
+                <Select
+                  value={this.state.newPropDatatype}
+                  onChange={this.handleDatatypeChange}
+                  options={EdmConsts.EDM_PRIMITIVE_TYPES}
+                  placeholder="datatype"
+                />
+              </td>
               <td><input
                 type="text"
-                value={this.state.newPropMultiplicity}
+                value={newPropMultiplicity}
                 onChange={this.handleMultiplicityChange}
                 placeholder="multiplicity"
                 className={styles.tableCell}
@@ -193,15 +219,16 @@ export class PropertyTypeList extends React.Component {
               <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
             </tr>
             <NameNamespaceAutosuggest
-              className={this.shouldShow[this.state.newPropertyRow && !this.props.navBar]}
-              namespaces={this.props.allPropNamespaces}
+              className={this.shouldShow[newPropertyRow && !navBar]}
+              namespaces={allPropNamespaces}
+              usedProperties={propertyTypes}
               addProperty={this.addPropertyToSchema}
             />
           </tbody>
         </table>
         <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={this.showErrorMsgClass[this.state.addError]}>Unable to add property type.</div>
-        <div className={this.showErrorMsgClass[this.state.deleteError]}>Unable to delete property type.</div>
+        <div className={this.showErrorMsgClass[addError]}>Unable to add property type.</div>
+        <div className={this.showErrorMsgClass[deleteError]}>Unable to delete property type.</div>
       </div>
     );
   }

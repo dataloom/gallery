@@ -12,13 +12,26 @@ export class EntitySetList extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = { entitySets: [] };
+    this.state = {
+      entitySets: [],
+      error: false
+    };
+  }
+
+  errorClass = {
+    true: styles.error,
+    false: styles.hidden
   }
 
   componentDidMount() {
     EntityDataModelApi.getAllEntitySets()
       .then((entitySets) => {
-        this.setState({ entitySets: Utils.addKeysToArray(entitySets) });
+        this.setState({
+          entitySets: Utils.addKeysToArray(entitySets),
+          error: false
+        });
+      }).catch(() => {
+        this.setState({ error: true });
       });
   }
 
@@ -26,9 +39,9 @@ export class EntitySetList extends React.Component {
     const entitySetList = this.state.entitySets.map((entitySet) => {
       return (<EntitySet
         key={entitySet.key}
-        name={entitySet.name}
-        title={entitySet.title}
-        type={entitySet.type}
+        name={entitySet.entitySet.name}
+        title={entitySet.entitySet.title}
+        type={entitySet.entitySet.type}
         permissions={entitySet.permissions}
         isOwner={entitySet.isOwner}
         auth={this.props.auth}
@@ -37,6 +50,7 @@ export class EntitySetList extends React.Component {
     return (
       <div>
         <div className={styles.spacerBig} />
+        <div className={this.errorClass[this.state.error]}>Unable to load entity sets.</div>
         {entitySetList}
       </div>
     );

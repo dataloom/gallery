@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
-import Consts from '../../../utils/AppConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
+import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
 import styles from './styles.module.css';
 
 const authConsts = {
@@ -11,21 +13,32 @@ const authConsts = {
 };
 
 export class Home extends React.Component {
+  static propTypes = {
+    updateTopbarFn: PropTypes.func
+  }
 
   constructor() {
     super();
     this.state = {
       resolved: {},
-      requests: []
+      requests: [],
+      loadRequestsError: false,
+      respondToRequestError: false
     };
   }
 
   componentDidMount() {
+    setTimeout(this.props.updateTopbarFn, 300);
     this.loadRequestStatuses();
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
+    false: styles.hidden
+  }
+
+  errorClass = {
+    true: styles.errorMsg,
     false: styles.hidden
   }
 
@@ -36,7 +49,13 @@ export class Home extends React.Component {
       requests.forEach((request) => {
         map[request.requestId] = 0;
       });
-      this.setState({ resolved: map, requests });
+      this.setState({
+        resolved: map,
+        requests,
+        loadRequestsError: false
+      });
+    }).catch(() => {
+      this.setState({ loadRequestsError: true });
     });
   }
 
@@ -47,43 +66,53 @@ export class Home extends React.Component {
       Promise.join(
         PermissionsApi.updateAclsForEntitySets([{
           principal: {
-            type: Consts.USER,
+            type: UserRoleConsts.USER,
             name: email
           },
-          action: Consts.SET,
+          action: PermissionsConsts.SET,
           name: entitySet,
           permissions
         }]),
         PermissionsApi.removePermissionsRequestForEntitySet(requestId),
         () => {
-          this.setState({ resolved: map });
+          this.setState({
+            resolved: map,
+            respondToRequestError: false
+          });
         }
-      );
+      ).catch(() => {
+        this.setState({ respondToRequestError: true });
+      });
     }
     else {
       PermissionsApi.removePermissionsRequestForEntitySet(requestId)
       .then(() => {
-        this.setState({ resolved: map });
+        this.setState({
+          resolved: map,
+          respondToRequestError: false
+        });
+      }).catch(() => {
+        this.setState({ respondToRequestError: true });
       });
     }
-    this.setState({ resolved: map });
   }
 
   getPermissionType(permissions) {
-    if (permissions.includes(Consts.WRITE.toUpperCase())) return Consts.WRITE;
-    return Consts.READ;
+    if (permissions.includes(PermissionsConsts.WRITE)) return PermissionsConsts.WRITE.toLowerCase();
+    return PermissionsConsts.READ.toLowerCase();
   }
 
   renderAllRequests = () => {
-    if (this.state.requests.length === 0) {
+    const { requests, resolved } = this.state;
+    if (requests.length === 0) {
       return (
         <div className={styles.objContainer}>
           <div className={styles.noRequests}>You have no action items.</div>
         </div>
       );
     }
-    return this.state.requests.map((request) => {
-      const reqStatus = this.state.resolved[request.requestId];
+    return requests.map((request) => {
+      const reqStatus = resolved[request.requestId];
       const email = request.principal.name;
       const entitySet = request.name;
       const permissions = request.permissions;
@@ -91,6 +120,7 @@ export class Home extends React.Component {
 
       return (
         <div className={styles.objContainer} key={requestId}>
+          <div className={this.errorClass[this.state.respondToRequestError]}>Unable to respond to request.</div>
           <div className={this.shouldShow[(reqStatus === 0)]}>
             <div>{(request.timestamp)}</div>
             <div>
@@ -141,6 +171,7 @@ export class Home extends React.Component {
       <div>
         <div>
           <h2 className={styles.sectionHeader}>Pending Action Items</h2>
+          <div className={this.errorClass[this.state.loadRequestsError]}>Unable to load permissions requests.</div>
           {this.renderAllRequests()}
         </div>
         <div className={styles.spacer} />

@@ -13,41 +13,38 @@ export default class Utils {
     return newArray;
   }
 
-  static getAllEdmPrimitiveTypes() {
-    return [
-      'Binary',
-      'Boolean',
-      'Byte',
-      'SByte',
-      'Date',
-      'DateTimeOffset',
-      'TimeOfDay',
-      'Duration',
-      'Decimal',
-      'Single',
-      'Double',
-      'Guid',
-      'Int16',
-      'Int32',
-      'Int64',
-      'String',
-      'Stream',
-      'Geography',
-      'GeographyPoint',
-      'GeographyLineString',
-      'GeographyPolygon',
-      'GeographyMultiPoint',
-      'GeographyMultiLineString',
-      'GeographyMultiPolygon',
-      'GeographyCollection',
-      'Geometry',
-      'GeometryPoint',
-      'GeometryLineString',
-      'GeometryPolygon',
-      'GeometryMultiPoint',
-      'GeometryMultiLineString',
-      'GeometryMultiPolygon',
-      'GeometryCollection'
-    ];
+  static loadUnusedPairs(allProps, properties) {
+    if (allProps === undefined || properties === undefined) {
+      return {};
+    }
+    const propMap = {};
+    properties.forEach((prop) => {
+      if (!propMap[prop.namespace] || propMap[prop.namespace] === undefined) {
+        propMap[prop.namespace] = [prop.name];
+      }
+      else {
+        const newList = propMap[prop.namespace];
+        newList.push(prop.name);
+        propMap[prop.namespace] = newList;
+      }
+    });
+
+    const resultMap = {};
+    Object.keys(allProps).forEach((namespace) => {
+      if (!propMap[namespace] || propMap[namespace] === undefined) {
+        resultMap[namespace] = allProps[namespace];
+      }
+      else {
+        const resultList = allProps[namespace].filter((name) => {
+          return !propMap[namespace].includes(name);
+        });
+        resultMap[namespace] = resultList;
+      }
+    });
+    return resultMap;
+  }
+
+  static getFqnObj(namespace, name) {
+    return { namespace, name };
   }
 }

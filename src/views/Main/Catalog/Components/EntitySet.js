@@ -2,16 +2,19 @@ import React, { PropTypes } from 'react';
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
-import Consts from '../../../../utils/AppConsts';
+import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import FileConsts from '../../../../utils/Consts/FileConsts';
 import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
 
 const permissionLevels = {
   hidden: [],
-  discover: [Consts.DISCOVER],
-  read: [Consts.DISCOVER, Consts.READ],
-  write: [Consts.DISCOVER, Consts.READ, Consts.WRITE]
+  discover: [PermissionsConsts.DISCOVER],
+  read: [PermissionsConsts.DISCOVER, PermissionsConsts.READ],
+  write: [PermissionsConsts.DISCOVER, PermissionsConsts.READ, PermissionsConsts.WRITE]
 };
 
 export class EntitySet extends React.Component {
@@ -29,7 +32,12 @@ export class EntitySet extends React.Component {
     this.state = {
       properties: [],
       editing: false,
-      showPanel: false
+      showPanel: false,
+      loadEntityTypeError: false,
+      permissionRequestStatus: {
+        display: styles.hidden,
+        msg: ''
+      }
     };
   }
 
@@ -48,12 +56,20 @@ export class EntitySet extends React.Component {
     false: styles.hidden
   }
 
+  errorClass = {
+    true: styles.errorMsg,
+    false: styles.hidden
+  }
+
   componentDidMount() {
     EntityDataModelApi.getEntityType(this.props.type)
     .then((type) => {
       this.setState({
-        properties: type.properties
+        properties: type.properties,
+        loadEntityTypeError: false
       });
+    }).catch(() => {
+      this.setState({ loadEntityTypeError: true });
     });
   }
 
@@ -64,17 +80,36 @@ export class EntitySet extends React.Component {
   requestPermission = (type) => {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
-        type: Consts.USER,
+        type: UserRoleConsts.USER,
         name: this.props.auth.getProfile().email
       },
-      action: Consts.REQUEST,
+      action: PermissionsConsts.REQUEST,
       name: this.props.name,
       permissions: permissionLevels[type]
-    }]);
+    }]).then(() => {
+      this.setState({
+        permissionRequestStatus: {
+          display: styles.updateSuccess,
+          msg: `You have requested ${type.toLowerCase()} permissions.`
+        }
+      });
+    }).catch(() => {
+      this.setState({
+        permissionRequestStatus: {
+          display: styles.errorMsg,
+          msg: `Error: unable to request ${type.toLowerCase()} permissions.`
+        }
+      });
+    });
   }
 
   shouldShow = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
+    false: styles.hidden
+  };
+
+  errorClass = {
+    true: styles.errorMsg,
     false: styles.hidden
   };
 
@@ -119,19 +154,21 @@ export class EntitySet extends React.Component {
   renderDownloadOrRequestDropdowns = () => {
     let downloadOptions;
     let requestOptions;
+    const reqStatus = this.state.permissionRequestStatus;
     const permissions = this.props.permissions;
-    if (permissions.includes(Consts.WRITE.toUpperCase())) {
-      downloadOptions = [Consts.CSV, Consts.JSON];
+    if (permissions.includes(PermissionsConsts.WRITE)) {
+      downloadOptions = [FileConsts.CSV, FileConsts.JSON];
     }
-    else if (permissions.includes(Consts.READ.toUpperCase())) {
-      downloadOptions = [Consts.CSV, Consts.JSON];
-      requestOptions = [Consts.WRITE];
+    else if (permissions.includes(PermissionsConsts.READ)) {
+      downloadOptions = [FileConsts.CSV, FileConsts.JSON];
+      requestOptions = [PermissionsConsts.WRITE.toLowerCase()];
     }
     else {
-      requestOptions = [Consts.READ, Consts.WRITE];
+      requestOptions = [PermissionsConsts.READ.toLowerCase(), PermissionsConsts.WRITE.toLowerCase()];
     }
     return (
       <div>
+        <div className={`${reqStatus.display} ${styles.permissionRequestStatusMsg}`}>{reqStatus.msg}</div>
         {this.renderRequestPermissionButton(requestOptions)}
         <div className={styles.spacerSmall} />
         {this.renderDownloadButton(downloadOptions)}
@@ -152,16 +189,17 @@ export class EntitySet extends React.Component {
 
   render() {
     const { name, title, type, isOwner } = this.props;
+    const { properties, editing } = this.state;
     return (
       <div className={styles.edmContainer}>
-        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[this.props.isOwner]}>
-          {(this.state.editing) ? 'Stop editing' : 'Edit permissions'}
+        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[isOwner]}>
+          {(editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
         <div className={styles.spacerSmall} />
         <div className={styles.name}>{name}</div>
         <div className={styles.spacerLeft} />
         <button
-          className={this.shouldShowPermissionButton[this.state.editing]}
+          className={this.shouldShowPermissionButton[editing]}
           onClick={this.editEntitySetPermissions}
         >Change permissions</button>
         <div className={styles.spacerMed} />
@@ -171,6 +209,9 @@ export class EntitySet extends React.Component {
         <br />
         <div className={styles.spacerSmall} />
         {this.renderPermissionsPanel(name)}
+        <div className={this.errorClass[this.state.loadEntityTypeError]}>
+          Unable to load entity type details for {name}.
+        </div>
         <div>
           <table>
             <tbody>
@@ -187,12 +228,12 @@ export class EntitySet extends React.Component {
         </div>
         <div className={styles.spacerBig} />
         <PropertyList
-          properties={this.state.properties}
+          properties={properties}
           entityTypeName={type.name}
           entityTypeNamespace={type.namespace}
           allowEdit={false}
           entitySetName={name}
-          editingPermissions={this.state.editing}
+          editingPermissions={editing}
           isOwner={isOwner}
         />
         <div className={styles.spacerBig} />

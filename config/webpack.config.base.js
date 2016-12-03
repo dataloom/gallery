@@ -22,7 +22,7 @@ Object.assign(APP_GLOBALS, ENV);
  */
 
 const BABEL_LOADER = {
-  loader: 'babel',
+  loader: 'babel-loader',
   test: /\.(js|jsx)$/,
   include: [
     PATHS.ABS.SOURCE,
@@ -41,12 +41,12 @@ const BABEL_LOADER = {
 // };
 
 const JSON_LOADER = {
-  loader: 'json',
+  loader: 'json-loader',
   test: /\.json$/
 };
 
 const MEDIA_FILE_LOADER = {
-  loader: 'file',
+  loader: 'file-loader',
   test: CONSTS.MEDIA_FILE_REGEX,
   query: {
     name: 'static/media/[name].[hash:8].[ext]'
@@ -54,7 +54,7 @@ const MEDIA_FILE_LOADER = {
 };
 
 const MEDIA_URL_LOADER = {
-  loader: 'url',
+  loader: 'url-loader',
   test: CONSTS.MEDIA_URL_REGEX,
   query: {
     limit: 10000,
@@ -63,7 +63,7 @@ const MEDIA_URL_LOADER = {
 };
 
 const CSS_LOADER = {
-  loader: ExtractTextPlugin.extract('css?modules'),
+  loader: ExtractTextPlugin.extract('css-loader?modules'),
   test: /\.css$/
 };
 
@@ -103,8 +103,7 @@ module.exports = {
       MEDIA_FILE_LOADER,
       MEDIA_URL_LOADER,
       CSS_LOADER
-    ],
-    noParse: []
+    ]
   },
   plugins: [
     new webpack.DefinePlugin(definePluginProperties),

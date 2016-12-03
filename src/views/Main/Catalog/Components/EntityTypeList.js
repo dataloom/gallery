@@ -3,7 +3,7 @@ import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
-import Consts from '../../../../utils/AppConsts';
+import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
@@ -13,7 +13,8 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       newEntityType: false,
-      error: false,
+      loadTypesError: false,
+      createTypeError: false,
       allPropNamespaces: {},
       newEntityTypeName: '',
       newEntityTypeNamespace: '',
@@ -32,7 +33,7 @@ export class EntityTypeList extends React.Component {
   }
 
   showNewEntityType = {
-    true: Consts.EMPTY,
+    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -54,27 +55,25 @@ export class EntityTypeList extends React.Component {
           newEntityTypeName: '',
           newEntityTypeNamespace: '',
           newPKeyName: '',
-          newPKeyNamespace: ''
+          newPKeyNamespace: '',
+          loadTypesError: false,
+          createTypeError: false
         });
+      }).catch(() => {
+        this.setState({ loadTypesError: true });
       });
   }
 
-  showError = () => {
-    this.setState({ error: true });
-  }
-
   createNewEntityType = () => {
-    const name = this.state.newEntityTypeName;
-    const namespace = this.state.newEntityTypeNamespace;
-    const pKey = [{
-      name: this.state.newPKeyName,
-      namespace: this.state.newPKeyNamespace
-    }];
+    const { newEntityTypeName, newEntityTypeNamespace, newPKeyName, newPKeyNamespace } = this.state;
+    const name = newEntityTypeName;
+    const namespace = newEntityTypeNamespace;
+    const pKey = [Utils.getFqnObj(newPKeyNamespace, newPKeyName)];
     EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
     .then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
-      this.showError();
+      this.setState({ createTypeError: true });
     });
   }
 
@@ -94,10 +93,13 @@ export class EntityTypeList extends React.Component {
         });
         this.setState({
           entityTypes: Utils.addKeysToArray(entityTypes),
-          allPropNamespaces
+          allPropNamespaces,
+          loadTypesError: false
         });
       }
-    );
+    ).catch(() => {
+      this.setState({ loadTypesError: true });
+    });
   }
 
   handleNameChange = (e) => {
@@ -117,7 +119,16 @@ export class EntityTypeList extends React.Component {
   }
 
   render() {
-    const entityTypeList = this.state.entityTypes.map((entityType) => {
+    const {
+      entityTypes,
+      allPropNamespaces,
+      newEntityType,
+      newEntityTypeNamespace,
+      newEntityTypeName,
+      createTypeError,
+      loadTypesError
+    } = this.state;
+    const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
         key={entityType.key}
         name={entityType.name}
@@ -125,7 +136,7 @@ export class EntityTypeList extends React.Component {
         properties={entityType.properties}
         primaryKey={entityType.primaryKey}
         updateFn={this.updateFn}
-        allPropNamespaces={this.state.allPropNamespaces}
+        allPropNamespaces={allPropNamespaces}
       />);
     });
     return (
@@ -133,14 +144,14 @@ export class EntityTypeList extends React.Component {
         <div className={styles.edmContainer}>
           <button
             onClick={this.newEntityType}
-            className={this.showNewEntityTypeButton[!this.state.newEntityType]}
+            className={this.showNewEntityTypeButton[!newEntityType]}
           >Create a new entity type
           </button>
-          <div className={this.showNewEntityType[this.state.newEntityType]}>
+          <div className={this.showNewEntityType[newEntityType]}>
             <div>Entity Type Namespace:</div>
             <div className={styles.spacerMini} />
             <input
-              value={this.state.newEntityTypeNamespace}
+              value={newEntityTypeNamespace}
               onChange={this.handleNamespaceChange}
               className={styles.inputBox}
               type="text"
@@ -150,7 +161,7 @@ export class EntityTypeList extends React.Component {
             <div>Entity Type Name:</div>
             <div className={styles.spacerMini} />
             <input
-              value={this.state.newEntityTypeName}
+              value={newEntityTypeName}
               onChange={this.handleNameChange}
               className={styles.inputBox}
               type="text"
@@ -162,19 +173,23 @@ export class EntityTypeList extends React.Component {
             <table>
               <tbody>
                 <NameNamespaceAutosuggest
-                  namespaces={this.state.allPropNamespaces}
+                  namespaces={allPropNamespaces}
+                  usedProperties={[]}
                   addProperty={this.createNewEntityType}
                   saveOption={false}
                   onNameChange={this.handlePKeyNameChange}
                   onNamespaceChange={this.handlePKeyNamespaceChange}
+                  initialName={this.state.newPKeyName}
+                  initialNamespace={this.state.newPKeyNamespace}
                 />
               </tbody>
             </table>
             <div className={styles.spacerSmall} />
             <button className={styles.genericButton} onClick={this.createNewEntityType}>Create</button>
           </div>
-          <div className={this.errorClass[this.state.error]}>Unable to create entity type.</div>
+          <div className={this.errorClass[createTypeError]}>Unable to create entity type.</div>
         </div>
+        <div className={this.errorClass[loadTypesError]}>Unable to load entity types.</div>
         {entityTypeList}
       </div>
     );
