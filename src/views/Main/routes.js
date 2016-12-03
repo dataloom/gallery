@@ -26,7 +26,9 @@ const requireAuth = (nextState, replace) => {
   }
   else {
     const authToken = auth.getToken();
-    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${window.location.host}`;
+    const host = window.location.host;
+    const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
+    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
