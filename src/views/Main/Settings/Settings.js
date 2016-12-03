@@ -6,7 +6,7 @@ import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
 
 import styles from './styles.module.css';
 
-const hiddenRoles = [UserRoleConsts.USER, UserRoleConsts.ADMIN];
+const hiddenRoles = [UserRoleConsts.DEFAULT_USER_ROLE, UserRoleConsts.ADMIN];
 
 const emptyErrorObj = {
   display: styles.hidden,
