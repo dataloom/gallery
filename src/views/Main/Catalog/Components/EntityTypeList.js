@@ -179,6 +179,8 @@ export class EntityTypeList extends React.Component {
                   saveOption={false}
                   onNameChange={this.handlePKeyNameChange}
                   onNamespaceChange={this.handlePKeyNamespaceChange}
+                  initialName={this.state.newPKeyName}
+                  initialNamespace={this.state.newPKeyNamespace}
                 />
               </tbody>
             </table>
