@@ -1,0 +1,119 @@
+/* text styling */
+
+.entitySetName {
+  font-size: 16px;
+}
+
+/* utils */
+
+.inlineBlock {
+  display: inline-block;
+}
+
+.spacerSmall {
+  height: 15px;
+}
+
+.marginLeft {
+  margin-left: 5px;
+}
+
+
+
+/* visualization container */
+
+.container {
+  text-align: center;
+}
+
+.label {
+
+}
+
+.chartAndCheckboxesWrapper {
+  position: relative;
+  height: 300px;
+}
+
+.chartContainer {
+  display: inline-block;
+  height: 300px;
+}
+
+.checkboxes {
+  width: 20%;
+  display: inline;
+  position: absolute;
+  left: 20px;
+}
+
+.chartWrapper {
+  display: inline;
+  position: absolute;
+  right: 20px;
+  width: 80%;
+}
+
+.xAxisSelectWrapper {
+  display: flex;
+  min-width: 300px;
+}
+
+.optionsBar {
+  padding: 30px;
+}
+
+
+/* visualizations */
+
+.visualizationContainer {
+  width: 100%;
+  height: 400px;
+  padding: 10px;
+  text-align: center;
+}
+
+.visualizationWrapper {
+  display: inline;
+}
+
+.divIcon {
+  height: 3px;
+  width: 3px;
+  color: red;
+  background: red;
+  border: 1px solid black;
+  border-radius: 7px;
+}
+
+.map {
+  height: 400px;
+  width: 750px;
+  text-align: center;
+  display: inline-block;
+}
+
+/* buttons */
+
+.optionButton {
+  display: table-cell;
+  margin: 0;
+  vertical-align: middle;
+  padding: 10px;
+  border: none;
+  background: #d1d6da;
+}
+
+.optionButton:hover {
+  background: #c7cbcf;
+}
+
+.selected {
+  background: #b9bdc0;
+  font-weight: bold;
+}
+
+.selectButton {
+  display: inline;
+  min-width: 300px;
+}

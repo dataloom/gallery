@@ -46,8 +46,8 @@ export class Home extends React.Component {
     PermissionsApi.getAllReceivedRequestsForPermissions()
     .then((requests) => {
       const map = this.state.resolved;
-      requests.forEach((request) => {
-        map[request.requestId] = 0;
+      requests.forEach((requestObj) => {
+        map[requestObj.request.requestId] = 0;
       });
       this.setState({
         resolved: map,
@@ -59,7 +59,7 @@ export class Home extends React.Component {
     });
   }
 
-  respondToRequest = (approvalGranted, email, entitySet, requestId, permissions) => {
+  respondToRequest = (approvalGranted, id, entitySet, requestId, permissions) => {
     const map = this.state.resolved;
     map[requestId] = (approvalGranted) ? 1 : 2;
     if (approvalGranted) {
@@ -67,7 +67,7 @@ export class Home extends React.Component {
         PermissionsApi.updateAclsForEntitySets([{
           principal: {
             type: UserRoleConsts.USER,
-            name: email
+            id
           },
           action: PermissionsConsts.SET,
           name: entitySet,
@@ -111,9 +111,11 @@ export class Home extends React.Component {
         </div>
       );
     }
-    return requests.map((request) => {
+    return requests.map((requestObj) => {
+      const request = requestObj.request;
       const reqStatus = resolved[request.requestId];
       const email = request.principal.name;
+      const id = request.principal.id;
       const entitySet = request.name;
       const permissions = request.permissions;
       const requestId = request.requestId;
@@ -133,14 +135,14 @@ export class Home extends React.Component {
               <button
                 className={styles.genericButton}
                 onClick={() => {
-                  this.respondToRequest(true, email, entitySet, requestId, permissions);
+                  this.respondToRequest(true, id, entitySet, requestId, permissions);
                 }}
               >Approve</button>
               <div className={styles.extraMargin}>
                 <button
                   className={styles.genericButton}
                   onClick={() => {
-                    this.respondToRequest(false, email, entitySet, requestId, permissions);
+                    this.respondToRequest(false, id, entitySet, requestId, permissions);
                   }}
                 >Deny</button>
               </div>

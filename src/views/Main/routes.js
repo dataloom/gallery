@@ -7,6 +7,7 @@ import { Catalog } from './Catalog/Catalog';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
+import { Visualize } from './Visualizations/Visualize';
 import AuthConsts from '../../utils/Consts/AuthConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
@@ -60,6 +61,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={Catalog} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
+      <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAdmin} />
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
     </Route>

@@ -6,6 +6,7 @@ import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import FileConsts from '../../../../utils/Consts/FileConsts';
+import PageConsts from '../../../../utils/Consts/PageConsts';
 import AuthService from '../../../../utils/AuthService';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
@@ -18,6 +19,11 @@ const permissionLevels = {
 };
 
 export class EntitySet extends React.Component {
+
+  static contextTypes = {
+    router: PropTypes.object
+  }
+
   static propTypes = {
     name: PropTypes.string,
     title: PropTypes.string,
@@ -81,7 +87,7 @@ export class EntitySet extends React.Component {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
         type: UserRoleConsts.USER,
-        name: this.props.auth.getProfile().email
+        id: this.props.auth.getProfile().user_id
       },
       action: PermissionsConsts.REQUEST,
       name: this.props.name,
@@ -129,6 +135,18 @@ export class EntitySet extends React.Component {
     this.setState({ showPanel: true });
   }
 
+  navigateToVisualize = () => {
+    const { name, type } = this.props;
+    this.context.router.push({
+      pathname: `/${PageConsts.VISUALIZE}`,
+      query: {
+        name,
+        typeNamespace: type.namespace,
+        typeName: type.name
+      }
+    });
+  }
+
   renderDownloadButton = (options) => {
     if (options !== undefined) {
       return (
@@ -174,6 +192,12 @@ export class EntitySet extends React.Component {
         {this.renderDownloadButton(downloadOptions)}
       </div>
     );
+  }
+
+  visualizeButtonClass = () => {
+    const permissions = this.props.permissions;
+    return (permissions.includes(PermissionsConsts.READ) || permissions.includes(PermissionsConsts.WRITE)) ?
+      styles.simpleButton : styles.hidden;
   }
 
   renderPermissionsPanel = (name) => {
@@ -236,6 +260,11 @@ export class EntitySet extends React.Component {
           editingPermissions={editing}
           isOwner={isOwner}
         />
+        <div className={styles.spacerMed} />
+        <button
+          className={this.visualizeButtonClass()}
+          onClick={this.navigateToVisualize}
+        >Visualize</button>
         <div className={styles.spacerBig} />
         <hr />
       </div>
