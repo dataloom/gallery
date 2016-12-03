@@ -87,7 +87,7 @@ export class EntitySet extends React.Component {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
         type: UserRoleConsts.USER,
-        name: this.props.auth.getProfile().user_id
+        id: this.props.auth.getProfile().user_id
       },
       action: PermissionsConsts.REQUEST,
       name: this.props.name,
@@ -194,6 +194,12 @@ export class EntitySet extends React.Component {
     );
   }
 
+  visualizeButtonClass = () => {
+    const permissions = this.props.permissions;
+    return (permissions.includes(PermissionsConsts.READ) || permissions.includes(PermissionsConsts.WRITE)) ?
+      styles.simpleButton : styles.hidden;
+  }
+
   renderPermissionsPanel = (name) => {
     if (this.props.isOwner) {
       return (
@@ -256,7 +262,7 @@ export class EntitySet extends React.Component {
         />
         <div className={styles.spacerMed} />
         <button
-          className={styles.simpleButton}
+          className={this.visualizeButtonClass()}
           onClick={this.navigateToVisualize}
         >Visualize</button>
         <div className={styles.spacerBig} />
