@@ -67,8 +67,6 @@ export class Visualize extends React.Component {
     const currentView = (chartOptions.length > 0) ? chartOptions[0] : undefined;
     this.loadData(numberProps.concat(geoProps))
     .then((data) => {
-      console.log('DATA!!!');
-      console.log(data);
       this.setState({
         properties,
         numberProps,
