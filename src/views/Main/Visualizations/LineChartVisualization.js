@@ -32,12 +32,22 @@ export class LineChartVisualization extends React.Component {
   }
 
   formatData = () => {
-    const formattedData = this.props.data.map((dataPoint) => {
+    const formattedData = [];
+    this.props.data.forEach((dataPoint) => {
       const formattedPoint = {};
+      let isValidPoint = true;
       Object.keys(dataPoint).forEach((key) => {
-        formattedPoint[key] = parseFloat(dataPoint[key][0]);
+        const value = parseFloat(dataPoint[key][0]);
+        if (isNaN(value)) {
+          isValidPoint = false;
+        }
+        else {
+          formattedPoint[key] = value;
+        }
       });
-      return formattedPoint;
+      if (isValidPoint) {
+        formattedData.push(formattedPoint);
+      }
     });
     this.setState({ formattedData });
   }
