@@ -106,8 +106,11 @@ export class NameNamespaceAutosuggest extends React.Component {
       this.props.onNameChange(value);
     }
     const suggestions = this.loadSuggestionValues(true, value);
+    const namespaceVal = (suggestions.namespaceSuggestions.length === 1) ?
+      suggestions.namespaceSuggestions[0].value : this.state.namespaceVal;
     this.setState({
       nameVal: value,
+      namespaceVal,
       nameSuggestions: suggestions.nameSuggestions,
       namespaceSuggestions: suggestions.namespaceSuggestions
     });
