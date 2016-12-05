@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Select from 'react-select';
 import { LineChartVisualization } from './LineChartVisualization';
 import { ScatterChartVisualization } from './ScatterChartVisualization';
 import { GeoVisualization } from './GeoVisualization';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
+import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import AuthService from '../../../utils/AuthService';
@@ -89,15 +90,22 @@ export class Visualize extends React.Component {
   }
 
   loadProperties = () => {
-    EntityDataModelApi.getEntityType(Utils.getFqnObj(this.state.typeNamespace, this.state.typeName))
-    .then((type) => {
-      const allPropertiesAsync = type.properties.map((prop) => {
-        return EntityDataModelApi.getPropertyType(prop);
-      });
-      Promise.all(allPropertiesAsync).then((properties) => {
-        this.filterPropDatatypes(properties);
-      });
-    });
+    Promise.join(
+      EntityDataModelApi.getEntityType(Utils.getFqnObj(this.state.typeNamespace, this.state.typeName)),
+      PermissionsApi.getAclsForPropertyTypesInEntitySet(this.state.name),
+      (type, propertyTypePermissions) => {
+        const allPropertiesAsync = []
+        type.properties.forEach((prop) => {
+          const permissions = propertyTypePermissions[`${prop.namespace}.${prop.name}`];
+          if (permissions.includes(PermissionsConsts.READ) || permissions.includes(PermissionsConsts.WRITE)) {
+            allPropertiesAsync.push(EntityDataModelApi.getPropertyType(prop));
+          }
+        });
+        Promise.all(allPropertiesAsync).then((properties) => {
+          this.filterPropDatatypes(properties);
+        });
+      }
+    );
   }
 
   componentDidMount() {
