@@ -24,8 +24,8 @@ export class GeoVisualization extends React.Component {
     let minLong = 180;
 
     const markers = data.map((point) => {
-      const lat = point[latName][0];
-      const long = point[longName][0];
+      const lat = parseFloat(point[latName][0]);
+      const long = parseFloat(point[longName][0]);
       const position = [lat, long];
       if (lat < minLat) minLat = lat;
       if (lat > maxLat) maxLat = lat;

@@ -35,7 +35,7 @@ export class LineChartVisualization extends React.Component {
     const formattedData = this.props.data.map((dataPoint) => {
       const formattedPoint = {};
       Object.keys(dataPoint).forEach((key) => {
-        formattedPoint[key] = dataPoint[key][0];
+        formattedPoint[key] = parseFloat(dataPoint[key][0]);
       });
       return formattedPoint;
     });

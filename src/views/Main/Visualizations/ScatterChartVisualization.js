@@ -29,8 +29,8 @@ export class ScatterChartVisualization extends React.Component {
     const scatterPoints = this.props.data.map((pointData) => {
       if (!pointData[xPropFqn] || !pointData[yPropFqn]) return null;
       const point = {};
-      point[xPropFqn] = pointData[xPropFqn][0];
-      point[yPropFqn] = pointData[yPropFqn][0];
+      point[xPropFqn] = parseFloat(pointData[xPropFqn][0]);
+      point[yPropFqn] = parseFloat(pointData[yPropFqn][0]);
       key += 1;
       return (
         <Scatter
