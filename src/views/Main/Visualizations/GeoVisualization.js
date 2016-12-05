@@ -23,15 +23,17 @@ export class GeoVisualization extends React.Component {
     let maxLong = -180;
     let minLong = 180;
 
-    const markers = data.map((point) => {
-      const lat = point[latName][0];
-      const long = point[longName][0];
+    const markers = [];
+    data.forEach((point) => {
+      const lat = parseFloat(point[latName][0]);
+      const long = parseFloat(point[longName][0]);
+      if (isNaN(lat) || isNaN(long)) return;
       const position = [lat, long];
       if (lat < minLat) minLat = lat;
       if (lat > maxLat) maxLat = lat;
       if (long < minLong) minLong = long;
       if (long > maxLong) maxLong = long;
-      return <Marker position={position} icon={icon} key={data.indexOf(point)} />;
+      markers.push(<Marker position={position} icon={icon} key={data.indexOf(point)} />);
     });
 
     const bounds = [
