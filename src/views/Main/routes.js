@@ -26,7 +26,9 @@ const requireAuth = (nextState, replace) => {
   }
   else {
     const authToken = auth.getToken();
-    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${window.location.host}`;
+    const host = window.location.host;
+    const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
+    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
@@ -61,7 +63,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={Catalog} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
-      <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAdmin} />
+      <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
     </Route>
