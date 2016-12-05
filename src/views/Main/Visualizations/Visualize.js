@@ -94,7 +94,7 @@ export class Visualize extends React.Component {
       EntityDataModelApi.getEntityType(Utils.getFqnObj(this.state.typeNamespace, this.state.typeName)),
       PermissionsApi.getAclsForPropertyTypesInEntitySet(this.state.name),
       (type, propertyTypePermissions) => {
-        const allPropertiesAsync = []
+        const allPropertiesAsync = [];
         type.properties.forEach((prop) => {
           const permissions = propertyTypePermissions[`${prop.namespace}.${prop.name}`];
           if (permissions.includes(PermissionsConsts.READ) || permissions.includes(PermissionsConsts.WRITE)) {
