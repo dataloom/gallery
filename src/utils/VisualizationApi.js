@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/ontology/data/entitydata';
+const BASE_URL = 'https://api.thedataloom.com/datastore/ontology/data/entitydata';
 
 export default class VisualizationApi {
 
