@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
 import AuthService from '../../../utils/AuthService';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
-import homeIcon from '../../../../src/images/home-icon.png';
-import catalogIcon from '../../../../src/images/catalog-icon.png';
 
 export class Navbar extends React.Component {
   static contextTypes = {
@@ -72,7 +71,7 @@ export class Navbar extends React.Component {
             this.updateState(PageConsts.HOME);
           }}
         >
-          <img src={homeIcon} role="presentation" className={styles.navButtonIcon} />
+          <FontAwesome name="home" size="2x" />
           <div className={styles.navButtonText}>Home</div>
         </button>
         <button
@@ -81,8 +80,17 @@ export class Navbar extends React.Component {
             this.updateState(PageConsts.CATALOG);
           }}
         >
-          <img src={catalogIcon} role="presentation" className={styles.navButtonIcon} />
+          <FontAwesome name="book" size="2x" />
           <div className={styles.navButtonText}>Catalog</div>
+        </button>
+        <button
+          className={this.getButtonClass(PageConsts.VISUALIZE)}
+          onClick={() => {
+            this.updateState(PageConsts.VISUALIZE);
+          }}
+        >
+          <FontAwesome name="eye" size="2x" />
+          <div className={styles.navButtonText}>Visualize</div>
         </button>
       </div>
     );
