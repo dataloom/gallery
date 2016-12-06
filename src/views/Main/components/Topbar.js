@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
+import FontAwesome from 'react-fontawesome';
 import AuthService from '../../../utils/AuthService';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
-import settingsIcon from '../../../../src/images/settings-icon.png';
 
 export class Topbar extends React.Component {
   static contextTypes = {
@@ -42,7 +42,7 @@ export class Topbar extends React.Component {
         <div className={styles.loggedInItemsContainer}>
           <div className={`${styles.greeting} ${this.extraAdminClass()}`}>{greeting}</div>
           <button onClick={this.navigateToSettings} className={this.settingsButtonClass()}>
-            <img src={settingsIcon} role="presentation" className={styles.settingsIconImg} />
+            <FontAwesome name="cog" size="3x" />
           </button>
           <button onClick={this.logout} className={`${styles.logoutButton} ${this.extraAdminClass()}`}>Logout</button>
         </div>
