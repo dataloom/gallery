@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
-import Select from 'react-select';
-import { LineChartVisualization } from './LineChartVisualization';
-import { ScatterChartVisualization } from './ScatterChartVisualization';
-import { GeoVisualization } from './GeoVisualization';
+import { LineChartContainer } from './LineChartContainer';
+import { ScatterChartContainer } from './ScatterChartContainer';
+import { GeoContainer } from './GeoContainer';
+import { EntitySetVisualizationList } from './EntitySetVisualizationList';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
 import StringConsts from '../../../utils/Consts/StringConsts';
@@ -29,19 +29,22 @@ export class Visualize extends React.Component {
 
   constructor(props) {
     super(props);
+    let name;
+    let typeNamespace;
+    let typeName;
     const query = props.location.query;
+    if (query.name !== undefined && query.typeNamespace !== undefined && query.typeName !== undefined) {
+      name = query.name;
+      typeNamespace = query.typeNamespace;
+      typeName = query.typeName;
+    }
     this.state = {
-      name: query.name,
-      typeNamespace: query.typeNamespace,
-      typeName: query.typeName,
+      name,
+      typeNamespace,
+      typeName,
       properties: [],
       numberProps: [],
       geoProps: [],
-      lineChartXAxisProp: undefined,
-      selectedYProps: [],
-      scatterChartXAxisProp: undefined,
-      scatterChartYAxisProp: undefined,
-      geoChartProp: undefined,
       currentView: undefined,
       data: []
     };
@@ -89,6 +92,13 @@ export class Visualize extends React.Component {
     });
   }
 
+  loadPropertiesIfEntitySetChosen = () => {
+    const { name, typeName, typeNamespace } = this.state;
+    if (name !== undefined && typeName !== undefined && typeNamespace !== undefined) {
+      this.loadProperties();
+    }
+  }
+
   loadProperties = () => {
     Promise.join(
       EntityDataModelApi.getEntityType(Utils.getFqnObj(this.state.typeNamespace, this.state.typeName)),
@@ -109,206 +119,18 @@ export class Visualize extends React.Component {
   }
 
   componentDidMount() {
-    this.loadProperties();
+    this.loadPropertiesIfEntitySetChosen();
   }
 
-  handleLineChartXAxisPropChange = (e) => {
-    const lineChartXAxisProp = (e && e !== undefined) ? e.value : undefined;
-    this.setState({
-      lineChartXAxisProp,
-      selectedYProps: []
-    });
-  }
-
-  handleScatterChartXAxisPropChange = (e) => {
-    const scatterChartXAxisProp = (e && e !== undefined) ? e.value : undefined;
-    this.setState({
-      scatterChartXAxisProp,
-      scatterChartYAxisProp: undefined
-    });
-  }
-
-  handleScatterChartYAxisPropChange = (e) => {
-    const scatterChartYAxisProp = (e && e !== undefined) ? e.value : undefined;
-    this.setState({ scatterChartYAxisProp });
-  }
-
-  handleGeoChartPropChange = (e) => {
-    const geoChartProp = (e && e !== undefined) ? e.value : undefined;
-    this.setState({ geoChartProp });
-  }
-
-  renderLineChart = () => {
-    const { lineChartXAxisProp, selectedYProps, data } = this.state;
-    return (
-      <div>
-        <LineChartVisualization
-          xProp={lineChartXAxisProp}
-          yProps={selectedYProps}
-          data={data}
-        />
-      </div>
-    );
-  }
-
-  renderScatterChart = () => {
-    const { scatterChartXAxisProp, scatterChartYAxisProp, data } = this.state;
-    return (
-      <div>
-        <ScatterChartVisualization
-          xProp={scatterChartXAxisProp}
-          yProp={scatterChartYAxisProp}
-          data={data}
-        />
-      </div>
-    );
-  }
-
-  renderGeoChart = () => {
-    const { geoChartProp, data } = this.state;
-    return (
-      <div>
-        <GeoVisualization
-          geoProp={geoChartProp}
-          data={data}
-        />
-      </div>
-    );
-  }
-
-  removePropFromArray = (array, prop) => {
-    let indexToRemove = -1;
-    array.forEach((oldProp) => {
-      if (oldProp.name === prop.name && oldProp.namespace === prop.namespace) {
-        indexToRemove = array.indexOf(oldProp);
-      }
-    });
-    if (indexToRemove > -1) array.splice(indexToRemove, 1);
-  }
-
-  handleCheckboxChange = (e) => {
-    const prop = JSON.parse(e.target.value);
-    let newProps = this.state.selectedYProps;
-    if (e.target.checked) newProps.push(prop);
-    else newProps = this.removePropFromArray(this.state.selectedYProps, prop);
-    this.setState({ selectedYProps: newProps });
-  }
-
-  renderGeoChartContainer = () => {
-    if (this.state.geoProps.length <= 1) return null;
-    return (
-      <div>
-        <div className={styles.chartContainer}>
-          {this.renderGeoChart()}
-        </div>
-        <div className={styles.spacerSmall} />
-        <div className={styles.inlineBlock}>
-          <GeoVisualization data={this.state.data} geoProps={this.state.geoProps} />
-        </div>
-      </div>
-    );
-  }
-
-  renderScatterChartContainer = () => {
-    if (this.state.numberProps.length <= 1) return null;
-    const xAxisProp = (this.state.scatterChartXAxisProp !== undefined) ?
-      JSON.parse(this.state.scatterChartXAxisProp) : null;
-    const yAxisOptions = [];
-    const xAxisOptions = this.state.numberProps.map((prop) => {
-      const fqn = `${prop.namespace}.${prop.name}`;
-      if (!(xAxisProp && xAxisProp.name === prop.name && xAxisProp.namespace === prop.namespace)) {
-        yAxisOptions.push({ label: fqn, value: JSON.stringify(prop) });
-      }
-      return { label: fqn, value: JSON.stringify(prop) };
-    });
-    return (
-      <div>
-        <div className={styles.chartContainer}>
-          {this.renderScatterChart()}
-        </div>
-        <div className={styles.spacerSmall} />
-        <div className={styles.inlineBlock}>
-          <div className={styles.xAxisSelectWrapper}>
-            <div className={styles.selectButton}>
-              <Select
-                placeholder="Choose a property for the x axis"
-                options={xAxisOptions}
-                value={this.state.scatterChartXAxisProp}
-                onChange={this.handleScatterChartXAxisPropChange}
-              />
-            </div>
-            <div className={`${styles.selectButton} ${styles.marginLeft}`}>
-              <Select
-                placeholder="Choose a property for the y axis"
-                options={yAxisOptions}
-                value={this.state.scatterChartYAxisProp}
-                onChange={this.handleScatterChartYAxisPropChange}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  renderLineChartContainer = () => {
-    if (this.state.numberProps.length <= 1) return null;
-    const xAxisProp = (this.state.lineChartXAxisProp !== undefined) ?
-      JSON.parse(this.state.lineChartXAxisProp) : null;
-    const checkboxMsg = (xAxisProp) ? `Choose properties to plot against ${xAxisProp.namespace}.${xAxisProp.name}` : '';
-    const selectOptions = [];
-    const checkboxes = this.state.numberProps.map((prop) => {
-      const fqn = `${prop.namespace}.${prop.name}`;
-      selectOptions.push({ label: fqn, value: JSON.stringify(prop) });
-      if (!xAxisProp || (prop.name === xAxisProp.name && prop.namespace === xAxisProp.namespace)) return null;
-      return (
-        <div key={fqn}>
-          <input
-            type="checkbox"
-            id={fqn}
-            onClick={this.handleCheckboxChange}
-            value={JSON.stringify(prop)}
-            className={styles.checkbox}
-          />
-          <label htmlFor={fqn}>{fqn}</label>
-        </div>
-      );
-    });
-    return (
-      <div>
-        <div className={styles.chartAndCheckboxesWrapper}>
-          {checkboxMsg}
-          <div className={styles.spacerMed} />
-          <div className={styles.checkboxes}>
-            {checkboxes}
-          </div>
-          <div className={styles.chartWrapper}>
-            {this.renderLineChart()}
-          </div>
-        </div>
-        <div className={styles.inlineBlock}>
-          <div className={styles.xAxisSelectWrapper}>
-            <div className={styles.selectButton}>
-              <Select
-                placeholder="Choose a property for the x axis"
-                options={selectOptions}
-                value={this.state.lineChartXAxisProp}
-                onChange={this.handleLineChartXAxisPropChange}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.name !== this.state.name) {
+      this.loadPropertiesIfEntitySetChosen();
+    }
   }
 
   switchView = (newView) => {
     this.setState({
-      currentView: newView,
-      scatterChartXAxisProp: undefined,
-      scatterChartYAxisProp: undefined,
-      lineChartXAxisProp: undefined,
-      selectedYProps: []
+      currentView: newView
     });
   }
 
@@ -356,30 +178,58 @@ export class Visualize extends React.Component {
     );
   }
 
-  render() {
+  displayEntitySet = (name, typeNamespace, typeName) => {
+    this.setState({
+      name,
+      typeNamespace,
+      typeName
+    });
+  }
+
+  renderVisualization = () => {
+    const { currentView, name, data, numberProps, geoProps } = this.state;
     let visualization = null;
-    switch (this.state.currentView) {
+    switch (currentView) {
       case chartTypes.SCATTER_CHART:
-        visualization = this.renderScatterChartContainer();
+        visualization = <ScatterChartContainer data={data} numberProps={numberProps} />;
         break;
       case chartTypes.LINE_CHART:
-        visualization = this.renderLineChartContainer();
+        visualization = <LineChartContainer data={data} numberProps={numberProps} />;
         break;
       case chartTypes.MAP_CHART:
-        visualization = this.renderGeoChartContainer();
+        visualization = <GeoContainer data={data} geoProps={geoProps} />;
         break;
       default:
         visualization = null;
     }
-    const title = (visualization) ? this.state.currentView : StringConsts.EMPTY;
+    const title = (visualization) ? currentView : StringConsts.EMPTY;
     return (
-      <div className={styles.container}>
+      <div>
         {this.renderViewOptions()}
-        <div className={styles.entitySetName}>{this.state.name}</div>
+        <div className={styles.entitySetName}>{name}</div>
         <h1>{title}</h1>
-        <div className={styles.lineChartContainer}>
+        <div>
           {visualization}
         </div>
+      </div>
+    );
+  }
+
+  renderEntitySetVisualizationList = () => {
+    return (
+      <div className={styles.container}>
+        <EntitySetVisualizationList displayEntitySetFn={this.displayEntitySet} />
+      </div>
+    );
+  }
+
+  render() {
+    const { name, typeName, typeNamespace } = this.state;
+    const content = (name === undefined || typeName === undefined || typeNamespace === undefined) ?
+      this.renderEntitySetVisualizationList() : this.renderVisualization();
+    return (
+      <div className={styles.container}>
+        {content}
       </div>
     );
   }

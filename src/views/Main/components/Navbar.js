@@ -6,6 +6,7 @@ import PageConsts from '../../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
 import homeIcon from '../../../../src/images/home-icon.png';
 import catalogIcon from '../../../../src/images/catalog-icon.png';
+import visualizeIcon from '../../../../src/images/visualize-icon.png';
 
 export class Navbar extends React.Component {
   static contextTypes = {
@@ -83,6 +84,15 @@ export class Navbar extends React.Component {
         >
           <img src={catalogIcon} role="presentation" className={styles.navButtonIcon} />
           <div className={styles.navButtonText}>Catalog</div>
+        </button>
+        <button
+          className={this.getButtonClass(PageConsts.VISUALIZE)}
+          onClick={() => {
+            this.updateState(PageConsts.VISUALIZE);
+          }}
+        >
+          <img src={visualizeIcon} role="presentation" className={styles.navButtonIcon} />
+          <div className={styles.navButtonText}>Visualize</div>
         </button>
       </div>
     );

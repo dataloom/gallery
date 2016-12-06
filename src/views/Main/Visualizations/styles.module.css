@@ -18,6 +18,9 @@
   margin-left: 5px;
 }
 
+.hidden {
+  display: none;
+}
 
 
 /* visualization container */
@@ -35,7 +38,7 @@
   height: 300px;
 }
 
-.chartContainer {
+.scatterChartContainer {
   display: inline-block;
   height: 300px;
 }
@@ -116,4 +119,30 @@
 .selectButton {
   display: inline;
   min-width: 300px;
+}
+
+.listItemButton {
+  width: 100%;
+  background: #f1f5f8;
+  border: none;
+  padding: 10px;
+  text-align: left;
+}
+
+.listItemButton:hover {
+  background: #dde1e4;
+}
+
+
+/* entity set visualization list */
+
+.entitySetName {
+  font-weight: bold;
+  font-size: 16px;
+  padding: 10px;
+}
+
+.entitySetTitle {
+  font-size: 14px;
+  padding: 0 0 10px 10px;
 }
