@@ -15,8 +15,8 @@ export class GeoVisualization extends React.Component {
     if (geoProps === undefined || geoProps[0] === undefined || geoProps[1] === undefined) return null;
     const icon = divIcon({ className: styles.divIcon });
 
-    const latName = geoProps[0].name;
-    const longName = geoProps[1].name;
+    const latName = `${geoProps[0].namespace}.${geoProps[0].name}`;
+    const longName = `${geoProps[1].namespace}.${geoProps[1].name}`;
 
     let maxLat = -90;
     let minLat = 90;
@@ -36,6 +36,12 @@ export class GeoVisualization extends React.Component {
       markers.push(<Marker position={position} icon={icon} key={data.indexOf(point)} />);
     });
 
+    if (minLat === maxLat && minLong === maxLong) {
+      minLat -= 0.01;
+      maxLat += 0.01;
+      minLong -= 0.01;
+      maxLong += 0.01;
+    }
     const bounds = [
       [minLat, minLong],
       [maxLat, maxLong]
