@@ -19,7 +19,8 @@ export class EntityTypeList extends React.Component {
       newEntityTypeName: '',
       newEntityTypeNamespace: '',
       newPKeyName: '',
-      newPKeyNamespace: ''
+      newPKeyNamespace: '',
+      newPKeysAdded: []
     };
   }
 
@@ -56,6 +57,7 @@ export class EntityTypeList extends React.Component {
           newEntityTypeNamespace: '',
           newPKeyName: '',
           newPKeyNamespace: '',
+          newPKeysAdded: [],
           loadTypesError: false,
           createTypeError: false
         });
@@ -65,12 +67,15 @@ export class EntityTypeList extends React.Component {
   }
 
   createNewEntityType = () => {
-    const { newEntityTypeName, newEntityTypeNamespace, newPKeyName, newPKeyNamespace } = this.state;
+    const { newEntityTypeName, newEntityTypeNamespace, newPKeysAdded } = this.state;
     const name = newEntityTypeName;
     const namespace = newEntityTypeNamespace;
-    const pKey = [Utils.getFqnObj(newPKeyNamespace, newPKeyName)];
-    EntityDataModelApi.createEntityType({ namespace, name, properties: pKey, key: pKey })
-    .then(() => {
+    EntityDataModelApi.createEntityType({
+      namespace,
+      name,
+      properties: newPKeysAdded,
+      key: newPKeysAdded
+    }).then(() => {
       this.newEntityTypeSuccess();
     }).catch(() => {
       this.setState({ createTypeError: true });
@@ -102,6 +107,27 @@ export class EntityTypeList extends React.Component {
     });
   }
 
+  addPKeyToList = () => {
+    const newPKey = {
+      namespace: this.state.newPKeyNamespace,
+      name: this.state.newPKeyName
+    };
+    const newPKeysAdded = this.state.newPKeysAdded;
+    newPKeysAdded.push(newPKey);
+    this.setState({
+      newPKeysAdded,
+      newPKeyName: StringConsts.EMPTY,
+      newPKeyNamespace: StringConsts.EMPTY
+    });
+  }
+
+  removePKeyFromList = (pKeyToDelete) => {
+    const newPKeysAdded = this.state.newPKeysAdded.filter((pKey) => {
+      return (pKey.name !== pKeyToDelete.name || pKey.namespace !== pKeyToDelete.namespace);
+    });
+    this.setState({ newPKeysAdded });
+  }
+
   handleNameChange = (e) => {
     this.setState({ newEntityTypeName: e.target.value });
   }
@@ -126,8 +152,10 @@ export class EntityTypeList extends React.Component {
       newEntityTypeNamespace,
       newEntityTypeName,
       createTypeError,
-      loadTypesError
+      loadTypesError,
+      newPKeysAdded
     } = this.state;
+
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
         key={entityType.key}
@@ -138,6 +166,23 @@ export class EntityTypeList extends React.Component {
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
       />);
+    });
+
+    const pKeysAdded = newPKeysAdded.map((pKey) => {
+      return (
+        <tr key={`${pKey.namespace}.${pKey.name}`}>
+          <td>
+            <button
+              className={styles.deleteButton}
+              onClick={() => {
+                this.removePKeyFromList(pKey);
+              }}
+            >-</button>
+          </td>
+          <td className={styles.tableCell}>{pKey.name}</td>
+          <td className={styles.tableCell}>{pKey.namespace}</td>
+        </tr>
+      );
     });
     return (
       <div>
@@ -172,11 +217,16 @@ export class EntityTypeList extends React.Component {
             <div className={styles.spacerMini} />
             <table>
               <tbody>
+                <tr>
+                  <th />
+                  <th className={styles.tableCell}>Name</th>
+                  <th className={styles.tableCell}>Namespace</th>
+                </tr>
+                {pKeysAdded}
                 <NameNamespaceAutosuggest
                   namespaces={allPropNamespaces}
-                  usedProperties={[]}
-                  addProperty={this.createNewEntityType}
-                  saveOption={false}
+                  usedProperties={newPKeysAdded}
+                  addProperty={this.addPKeyToList}
                   onNameChange={this.handlePKeyNameChange}
                   onNamespaceChange={this.handlePKeyNamespaceChange}
                   initialName={this.state.newPKeyName}
