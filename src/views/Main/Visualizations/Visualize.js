@@ -77,7 +77,7 @@ export class Visualize extends React.Component {
     const geoProps = (!latProp || !longProp) ? [] : [latProp, longProp];
     const chartOptions = this.getAvailableVisualizations(numberProps, geoProps);
     const currentView = (chartOptions.length > 0) ? chartOptions[0] : undefined;
-    this.loadData(numberProps.concat(geoProps))
+    this.loadData(numberProps)
     .then((data) => {
       this.setState({
         properties,
