@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { divIcon } from 'leaflet';
 import { Map, Marker, TileLayer } from 'react-leaflet';
+import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import styles from './styles.module.css';
 
 export class GeoVisualization extends React.Component {
@@ -15,8 +16,8 @@ export class GeoVisualization extends React.Component {
     if (geoProps === undefined || geoProps[0] === undefined || geoProps[1] === undefined) return null;
     const icon = divIcon({ className: styles.divIcon });
 
-    const latName = `${geoProps[0].namespace}.${geoProps[0].name}`;
-    const longName = `${geoProps[1].namespace}.${geoProps[1].name}`;
+    const latFqn = `${geoProps[0].namespace}.${geoProps[0].name}`;
+    const longFqn = `${geoProps[1].namespace}.${geoProps[1].name}`;
 
     let maxLat = -90;
     let minLat = 90;
@@ -25,8 +26,8 @@ export class GeoVisualization extends React.Component {
 
     const markers = [];
     data.forEach((point) => {
-      const lat = parseFloat(point[latName][0]);
-      const long = parseFloat(point[longName][0]);
+      const lat = parseFloat(point[latFqn][0]);
+      const long = parseFloat(point[longFqn][0]);
       if (isNaN(lat) || isNaN(long)) return;
       const position = [lat, long];
       if (lat < minLat) minLat = lat;
@@ -37,10 +38,10 @@ export class GeoVisualization extends React.Component {
     });
 
     if (minLat === maxLat && minLong === maxLong) {
-      minLat -= 0.01;
-      maxLat += 0.01;
-      minLong -= 0.01;
-      maxLong += 0.01;
+      minLat -= VisualizationConsts.DEFAULT_BOUND_OFFSET;
+      maxLat += VisualizationConsts.DEFAULT_BOUND_OFFSET;
+      minLong -= VisualizationConsts.DEFAULT_BOUND_OFFSET;
+      maxLong += VisualizationConsts.DEFAULT_BOUND_OFFSET;
     }
     const bounds = [
       [minLat, minLong],
