@@ -12,7 +12,7 @@ export class GeoVisualization extends React.Component {
 
   render() {
     const { geoProps, data } = this.props;
-    if (geoProps[0] === undefined || geoProps[1] === undefined) return null;
+    if (geoProps === undefined || geoProps[0] === undefined || geoProps[1] === undefined) return null;
     const icon = divIcon({ className: styles.divIcon });
 
     const latName = geoProps[0].name;
