@@ -10,7 +10,6 @@ export class NameNamespaceAutosuggest extends React.Component {
     usedProperties: PropTypes.array,
     className: PropTypes.string,
     addProperty: PropTypes.func,
-    saveOption: PropTypes.bool,
     onNameChange: PropTypes.func,
     onNamespaceChange: PropTypes.func,
     initialName: PropTypes.string,
@@ -46,11 +45,6 @@ export class NameNamespaceAutosuggest extends React.Component {
     }
     this.setState(newState);
   }
-
-  showSave = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
-  };
 
   loadInitialSuggestionValues = () => {
     const suggestions = this.loadSuggestionValues(true, this.state.nameVal);
@@ -106,8 +100,11 @@ export class NameNamespaceAutosuggest extends React.Component {
       this.props.onNameChange(value);
     }
     const suggestions = this.loadSuggestionValues(true, value);
+    const namespaceVal = (suggestions.namespaceSuggestions.length === 1) ?
+      suggestions.namespaceSuggestions[0].value : this.state.namespaceVal;
     this.setState({
       nameVal: value,
+      namespaceVal,
       nameSuggestions: suggestions.nameSuggestions,
       namespaceSuggestions: suggestions.namespaceSuggestions
     });
@@ -139,17 +136,13 @@ export class NameNamespaceAutosuggest extends React.Component {
     this.loadInitialSuggestionValues();
   }
 
-  getClassName = () => {
-    return (this.props.saveOption) ? styles.tableCell : styles.primaryKeyInput;
-  }
-
   render() {
     if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
     const { nameVal, nameSuggestions, namespaceVal, namespaceSuggestions } = this.state;
     return (
       <tr className={this.props.className}>
         <td />
-        <td className={this.getClassName()}>
+        <td className={styles.tableCell}>
           <Select
             options={nameSuggestions}
             value={nameVal}
@@ -159,7 +152,7 @@ export class NameNamespaceAutosuggest extends React.Component {
             placeholder="name"
           />
         </td>
-        <td className={this.getClassName()}>
+        <td className={styles.tableCell}>
           <Select
             options={namespaceSuggestions}
             value={namespaceVal}
@@ -169,8 +162,9 @@ export class NameNamespaceAutosuggest extends React.Component {
             placeholder="namespace"
           />
         </td>
-        <td className={this.showSave[this.props.saveOption]}>
-          <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button></td>
+        <td>
+          <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button>
+        </td>
       </tr>
     );
   }

@@ -33,6 +33,7 @@
     "react-bootstrap": "^0.30.0-rc.1",
     "react-dom": "^15.3.2",
     "react-dropdown": "^1.1.0",
+    "react-fontawesome": "^1.4.0",
     "react-leaflet": "^1.0.1",
     "react-router": "^2.8.1",
     "react-select": "^1.0.0-rc.2",

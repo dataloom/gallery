@@ -140,10 +140,18 @@ export class PropertyList extends React.Component {
     return null;
   }
 
+  isPrimaryKey = (prop) => {
+    if (this.props.primaryKey === undefined) return false;
+    let primaryKey = false;
+    this.props.primaryKey.forEach((pKey) => {
+      if (pKey.name === prop.name && pKey.namespace === prop.namespace) primaryKey = true;
+    });
+    return primaryKey;
+  }
+
   render() {
     const {
       properties,
-      primaryKey,
       entitySetName,
       editingPermissions,
       isOwner,
@@ -153,12 +161,11 @@ export class PropertyList extends React.Component {
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
-      const pKey = (primaryKey && primaryKey[0].name === prop.name && primaryKey[0].namespace === prop.namespace);
       return (
         <Property
           key={prop.key}
           property={prop}
-          primaryKey={pKey}
+          primaryKey={this.isPrimaryKey(prop)}
           editingPermissions={editingPermissions}
           entitySetName={entitySetName}
           isOwner={isOwner}
