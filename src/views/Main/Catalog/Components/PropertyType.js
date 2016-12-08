@@ -7,7 +7,7 @@ import styles from '../styles.module.css';
 export class PropertyType extends React.Component {
   static propTypes = {
     propertyType: PropTypes.object,
-    navBar: PropTypes.bool,
+    propertyTypePage: PropTypes.bool,
     error: PropTypes.func,
     updateFn: PropTypes.func,
     schemaName: PropTypes.string,
@@ -29,7 +29,7 @@ export class PropertyType extends React.Component {
   }
 
   renderDeleteButton = () => {
-    const className = (this.props.navBar) ? styles.hidden : StringConsts.EMPTY;
+    const className = (this.props.propertyTypePage) ? styles.hidden : StringConsts.EMPTY;
     if (this.context.isAdmin) {
       return (
         <td className={className}>

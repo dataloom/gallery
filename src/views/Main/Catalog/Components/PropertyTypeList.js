@@ -14,7 +14,7 @@ export class PropertyTypeList extends React.Component {
     name: PropTypes.string,
     namespace: PropTypes.string,
     updateSchemaFn: PropTypes.func,
-    navBar: PropTypes.bool,
+    propertyTypePage: PropTypes.bool,
     allPropNamespaces: PropTypes.object
   }
 
@@ -48,7 +48,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   componentDidMount() {
-    return (this.props.navBar) ? this.updateFn() : this.keyPropertyTypes();
+    return (this.props.propertyTypePage) ? this.updateFn() : this.keyPropertyTypes();
   }
 
   updateFn = () => {
@@ -130,7 +130,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldDisplayContainer = () => {
-    return (this.props.navBar) ? styles.edmContainer : StringConsts.EMPTY;
+    return (this.props.propertyTypePage) ? styles.edmContainer : StringConsts.EMPTY;
   }
 
   handleNameChange = (e) => {
@@ -154,7 +154,7 @@ export class PropertyTypeList extends React.Component {
     const { newPropertyRow, newPropName, newPropNamespace, newPropMultiplicity } = this.state;
     if (!this.context.isAdmin) return null;
     return (
-      <tr className={this.shouldShow[newPropertyRow && this.props.navBar]}>
+      <tr className={this.shouldShow[newPropertyRow && this.props.propertyTypePage]}>
         <td><input
           type="text"
           value={newPropName}
@@ -199,14 +199,14 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { navBar, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
+    const { propertyTypePage, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
     const { propertyTypes, newPropertyRow, addError, deleteError } = this.state;
-    const propArray = (navBar) ? propertyTypes : this.keyPropertyTypes();
+    const propArray = (propertyTypePage) ? propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
         key={prop.key}
         propertyType={prop}
-        navBar={navBar}
+        propertyTypePage={propertyTypePage}
         error={this.updateDeleteError}
         updateFn={updateSchemaFn}
         schemaName={name}
@@ -219,7 +219,7 @@ export class PropertyTypeList extends React.Component {
         <table>
           <tbody>
             <tr>
-              <th className={this.shouldShow[!navBar]} />
+              <th className={this.shouldShow[!propertyTypePage]} />
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
               <th className={styles.tableCell}>Property Type Datatype</th>
@@ -228,7 +228,7 @@ export class PropertyTypeList extends React.Component {
             {propertyTypeList}
             {this.renderNewPropertyTypeInputLine()}
             <NameNamespaceAutosuggest
-              className={this.shouldShow[newPropertyRow && !navBar && this.context.isAdmin]}
+              className={this.shouldShow[newPropertyRow && !propertyTypePage && this.context.isAdmin]}
               namespaces={allPropNamespaces}
               usedProperties={propertyTypes}
               addProperty={this.addPropertyToSchema}

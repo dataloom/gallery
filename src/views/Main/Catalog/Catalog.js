@@ -48,7 +48,7 @@ export class Catalog extends React.Component {
       case EdmConsts.ENTITY_TYPE:
         return (<EntityTypeList />);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeList navBar />);
+        return (<PropertyTypeList propertyTypePage />);
       default:
         return (<SchemaList />);
     }
