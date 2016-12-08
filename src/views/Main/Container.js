@@ -6,7 +6,8 @@ import { Topbar } from './components/Topbar';
 
 export class Container extends React.Component {
   static contextTypes = {
-    router: PropTypes.object
+    router: PropTypes.object,
+    admin: PropTypes.bool
   }
 
   static propTypes = {
@@ -17,10 +18,6 @@ export class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = props.route.profileFn();
-  }
-
-  componentDidMount() {
-    this.updateState();
   }
 
   updateState = () => {

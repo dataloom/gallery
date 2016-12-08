@@ -15,7 +15,10 @@ export class PropertyTypeList extends React.Component {
     namespace: PropTypes.string,
     updateSchemaFn: PropTypes.func,
     navBar: PropTypes.bool,
-    allPropNamespaces: PropTypes.object,
+    allPropNamespaces: PropTypes.object
+  }
+
+  static contextTypes = {
     isAdmin: PropTypes.bool
   }
 
@@ -147,13 +150,9 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropMultiplicity: e.target.value });
   }
 
-  newPropertyRowClass = () => {
-    return (!this.state.newPropertyRow && this.props.isAdmin) ? styles.addButton : styles.hidden;
-  }
-
   renderNewPropertyTypeInputLine = () => {
     const { newPropertyRow, newPropName, newPropNamespace, newPropMultiplicity } = this.state;
-    if (!this.props.isAdmin) return null;
+    if (!this.context.isAdmin) return null;
     return (
       <tr className={this.shouldShow[newPropertyRow && this.props.navBar]}>
         <td><input
@@ -191,7 +190,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   renderNewPropertyButton = () => {
-    if (!this.props.isAdmin) return null;
+    if (!this.context.isAdmin) return null;
     const className = (this.state.newPropertyRow) ? styles.hidden : styles.addButton;
     const val = (
       <button onClick={this.newProperty} className={className}>+</button>
@@ -200,7 +199,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { navBar, updateSchemaFn, name, namespace, allPropNamespaces, isAdmin } = this.props;
+    const { navBar, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
     const { propertyTypes, newPropertyRow, addError, deleteError } = this.state;
     const propArray = (navBar) ? propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
@@ -212,7 +211,6 @@ export class PropertyTypeList extends React.Component {
         updateFn={updateSchemaFn}
         schemaName={name}
         schemaNamespace={namespace}
-        isAdmin={isAdmin}
       />);
     });
     return (
@@ -230,7 +228,7 @@ export class PropertyTypeList extends React.Component {
             {propertyTypeList}
             {this.renderNewPropertyTypeInputLine()}
             <NameNamespaceAutosuggest
-              className={this.shouldShow[newPropertyRow && !navBar && isAdmin]}
+              className={this.shouldShow[newPropertyRow && !navBar && this.context.isAdmin]}
               namespaces={allPropNamespaces}
               usedProperties={propertyTypes}
               addProperty={this.addPropertyToSchema}

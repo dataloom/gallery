@@ -17,7 +17,10 @@ export class PropertyList extends React.Component {
     allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
-    isOwner: PropTypes.bool,
+    isOwner: PropTypes.bool
+  }
+
+  static contextTypes = {
     isAdmin: PropTypes.bool
   }
 
@@ -142,7 +145,7 @@ export class PropertyList extends React.Component {
   }
 
   renderNewRowButton = () => {
-    if (!this.props.isAdmin) return false;
+    if (!this.context.isAdmin) return null;
     const className = (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
     return (
       <button onClick={this.newProperty} className={className}>+</button>
@@ -150,8 +153,8 @@ export class PropertyList extends React.Component {
   }
 
   renderNewRowInput = () => {
-    const { properties, isAdmin, allPropNamespaces } = this.props;
-    if (!isAdmin) return false;
+    if (!this.context.isAdmin) return null;
+    const { properties, allPropNamespaces } = this.props;
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
@@ -164,7 +167,7 @@ export class PropertyList extends React.Component {
   }
 
   render() {
-    const { properties, entitySetName, editingPermissions, isOwner, isAdmin } = this.props;
+    const { properties, entitySetName, editingPermissions, isOwner } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
@@ -177,7 +180,6 @@ export class PropertyList extends React.Component {
           entitySetName={entitySetName}
           isOwner={isOwner}
           verifyDeleteFn={this.verifyDelete}
-          isAdmin={isAdmin}
         />
       );
     });

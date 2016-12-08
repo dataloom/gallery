@@ -9,7 +9,7 @@ import styles from '../styles.module.css';
 
 export class EntityTypeList extends React.Component {
 
-  static propTypes = {
+  static contextTypes = {
     isAdmin: PropTypes.bool
   }
 
@@ -31,16 +31,6 @@ export class EntityTypeList extends React.Component {
 
   componentDidMount() {
     this.updateFn();
-  }
-
-  showNewEntityTypeButton = {
-    true: styles.genericButton,
-    false: styles.hidden
-  }
-
-  showNewEntityType = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
   }
 
   errorClass = {
@@ -150,7 +140,7 @@ export class EntityTypeList extends React.Component {
   }
 
   renderCreateEntityTypeButton = () => {
-    if (!this.props.isAdmin) return null;
+    if (!this.context.isAdmin) return null;
     const className = (this.state.newEntityType) ? styles.hidden : styles.genericButton;
     return (
       <button onClick={this.newEntityType} className={className}>Create a new entity type</button>
@@ -158,7 +148,7 @@ export class EntityTypeList extends React.Component {
   }
 
   renderCreateEntityTypeInput = () => {
-    if (!this.props.isAdmin) return null;
+    if (!this.context.isAdmin) return null;
     const {
       allPropNamespaces,
       newEntityType,
@@ -184,9 +174,9 @@ export class EntityTypeList extends React.Component {
         </tr>
       );
     });
-
+    const className = (newEntityType) ? StringConsts.EMPTY : styles.hidden;
     return (
-      <div className={this.showNewEntityType[newEntityType]}>
+      <div className={className}>
         <div>Entity Type Namespace:</div>
         <div className={styles.spacerMini} />
         <input
@@ -247,7 +237,6 @@ export class EntityTypeList extends React.Component {
         primaryKey={entityType.primaryKey}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
-        isAdmin={this.props.isAdmin}
       />);
     });
 

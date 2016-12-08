@@ -17,6 +17,10 @@ export class Catalog extends React.Component {
     profileFn: PropTypes.func
   }
 
+  static childContextTypes = {
+    isAdmin: PropTypes.bool
+  };
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -28,20 +32,25 @@ export class Catalog extends React.Component {
     this.props.updateTopbarFn();
   }
 
+  getChildContext() {
+    return {
+      isAdmin: this.props.profileFn().isAdmin
+    };
+  }
+
   getDataModelView() {
-    const isAdmin = this.props.profileFn().isAdmin;
     const view = this.state.dataModelView;
     switch (view) {
       case EdmConsts.SCHEMA:
-        return (<SchemaList isAdmin={isAdmin} />);
+        return (<SchemaList />);
       case EdmConsts.ENTITY_SET:
-        return (<EntitySetList auth={this.props.auth} isAdmin={isAdmin} />);
+        return (<EntitySetList auth={this.props.auth} />);
       case EdmConsts.ENTITY_TYPE:
-        return (<EntityTypeList isAdmin={isAdmin} />);
+        return (<EntityTypeList />);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeList navBar isAdmin={isAdmin} />);
+        return (<PropertyTypeList navBar />);
       default:
-        return (<SchemaList isAdmin={isAdmin} />);
+        return (<SchemaList />);
     }
   }
 

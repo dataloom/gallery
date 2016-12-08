@@ -10,7 +10,10 @@ export class EntityTypeFqn extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    errorFn: PropTypes.func,
+    errorFn: PropTypes.func
+  }
+
+  static contextTypes = {
     isAdmin: PropTypes.bool
   }
 
@@ -25,7 +28,7 @@ export class EntityTypeFqn extends React.Component {
   }
 
   renderDeleteButton = () => {
-    if (this.props.isAdmin) {
+    if (this.context.isAdmin) {
       return (
         <td>
           <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>

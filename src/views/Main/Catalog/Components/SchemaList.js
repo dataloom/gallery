@@ -8,7 +8,7 @@ import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
 
-  static propTypes = {
+  static contextTypes = {
     isAdmin: PropTypes.bool
   }
 
@@ -28,16 +28,6 @@ export class SchemaList extends React.Component {
 
   componentDidMount() {
     this.updateFn();
-  }
-
-  showNewSchema = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
-  }
-
-  showNewSchemaButton = {
-    true: styles.genericButton,
-    false: styles.hidden
   }
 
   errorClass = {
@@ -120,21 +110,23 @@ export class SchemaList extends React.Component {
   }
 
   renderCreateNewSchemaButton = () => {
-    if (!this.props.isAdmin) return null;
+    if (!this.context.isAdmin) return null;
+    const className = (this.state.newSchema) ? styles.hidden : styles.genericButton;
     return (
       <button
         onClick={this.newSchema}
-        className={this.showNewSchemaButton[!this.state.newSchema]}
+        className={className}
       >Create a new schema
       </button>
     );
   }
 
   renderCreateNewSchemaInput = () => {
+    if (!this.context.isAdmin) return null;
     const { newSchema, newSchemaNamespace, newSchemaName, createSchemaError } = this.state;
-    if (!this.props.isAdmin) return null;
+    const className = (newSchema) ? StringConsts.EMPTY : styles.hidden;
     return (
-      <div className={this.showNewSchema[newSchema]}>
+      <div className={className}>
         <div>Schema Namespace:</div>
         <div className={styles.spacerMini} />
         <input
@@ -174,7 +166,6 @@ export class SchemaList extends React.Component {
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
         allEntityTypeNamespaces={allEntityTypeNamespaces}
-        isAdmin={this.props.isAdmin}
       />);
     });
     return (

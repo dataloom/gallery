@@ -13,7 +13,10 @@ export class EntityTypeFqnList extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    allEntityTypeNamespaces: PropTypes.object,
+    allEntityTypeNamespaces: PropTypes.object
+  }
+
+  static contextTypes = {
     isAdmin: PropTypes.bool
   }
 
@@ -73,7 +76,7 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   renderAddNewRowButton = () => {
-    if (!this.props.isAdmin) return null;
+    if (!this.context.isAdmin) return null;
     const className = (this.state.newEntityTypeRow) ? styles.hidden : styles.addButton;
     return (
       <button onClick={this.newEntityType} className={className}>+</button>
@@ -81,8 +84,8 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   renderNewRowInput = () => {
-    const { allEntityTypeNamespaces, entityTypeFqns, isAdmin } = this.props;
-    if (!isAdmin) return null;
+    const { allEntityTypeNamespaces, entityTypeFqns } = this.props;
+    if (!this.context.isAdmin) return null;
     const className = (this.state.newEntityTypeRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
@@ -95,7 +98,7 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   render() {
-    const { schemaName, schemaNamespace, updateFn, isAdmin } = this.props;
+    const { schemaName, schemaNamespace, updateFn } = this.props;
     const fqnArray = this.keyPropertyTypes();
     const entityTypeFqnList = fqnArray.map((fqn) => {
       return (
@@ -106,7 +109,6 @@ export class EntityTypeFqnList extends React.Component {
           schemaNamespace={schemaNamespace}
           updateFn={updateFn}
           errorFn={this.updateError}
-          isAdmin={isAdmin}
         />
       );
     });
