@@ -13,6 +13,10 @@ export class EntitySetList extends React.Component {
     auth: PropTypes.instanceOf(AuthService)
   }
 
+  static contextTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -30,16 +34,6 @@ export class EntitySetList extends React.Component {
 
   errorClass = {
     true: styles.error,
-    false: styles.hidden
-  }
-
-  showNewEntitySetButton = {
-    true: styles.genericButton,
-    false: styles.hidden
-  }
-
-  showNewEntitySet = {
-    true: StringConsts.EMPTY,
     false: styles.hidden
   }
 
@@ -125,18 +119,72 @@ export class EntitySetList extends React.Component {
     this.setState({ newEntitySetTypeNamespace: newValue });
   }
 
-  render() {
+  renderCreateEntitySetButton = () => {
+    if (!this.context.isAdmin) return null;
+    const className = (this.state.newEntitySet) ? styles.hidden : styles.genericButton;
+    return (
+      <button onClick={this.showCreateNewEntitySet} className={className}>
+        Create a new entity set
+      </button>
+    );
+  }
+
+  renderCreateEntitySetInput = () => {
+    if (!this.context.isAdmin) return null;
     const {
-      entitySets,
       newEntitySet,
       newEntitySetName,
       newEntitySetTitle,
       newEntitySetTypeName,
       newEntitySetTypeNamespace,
-      createEntitySetError,
-      loadEntitySetsError,
       allTypeNamespaces
     } = this.state;
+    const className = (newEntitySet) ? StringConsts.EMPTY : styles.hidden;
+    return (
+      <div className={className}>
+        <div>Entity Set Name:</div>
+        <div className={styles.spacerMini} />
+        <input
+          value={newEntitySetName}
+          onChange={this.handleNameChange}
+          className={styles.inputBox}
+          type="text"
+          placeholder="name"
+        />
+        <div className={styles.spacerSmall} />
+        <div>Entity Set Title:</div>
+        <div className={styles.spacerMini} />
+        <input
+          value={newEntitySetTitle}
+          onChange={this.handleTitleChange}
+          className={styles.inputBox}
+          type="text"
+          placeholder="title"
+        />
+        <div className={styles.spacerSmall} />
+        <div>Entity Type:</div>
+        <div className={styles.spacerMini} />
+        <table>
+          <tbody>
+            <NameNamespaceAutosuggest
+              namespaces={allTypeNamespaces}
+              usedProperties={[]}
+              noSaveButton
+              onNameChange={this.handleTypeNameChange}
+              onNamespaceChange={this.handleTypeNamespaceChange}
+              initialName={newEntitySetTypeName}
+              initialNamespace={newEntitySetTypeNamespace}
+            />
+          </tbody>
+        </table>
+        <div className={styles.spacerSmall} />
+        <button className={styles.genericButton} onClick={this.createNewEntitySet}>Create</button>
+      </div>
+    );
+  }
+
+  render() {
+    const { entitySets, createEntitySetError, loadEntitySetsError } = this.state;
     const entitySetList = entitySets.map((entitySet) => {
       return (<EntitySet
         key={entitySet.key}
@@ -150,50 +198,8 @@ export class EntitySetList extends React.Component {
     });
     return (
       <div className={styles.edmContainer}>
-        <button
-          onClick={this.showCreateNewEntitySet}
-          className={this.showNewEntitySetButton[!newEntitySet]}
-        >Create a new entity set
-        </button>
-        <div className={this.showNewEntitySet[newEntitySet]}>
-          <div>Entity Set Name:</div>
-          <div className={styles.spacerMini} />
-          <input
-            value={newEntitySetName}
-            onChange={this.handleNameChange}
-            className={styles.inputBox}
-            type="text"
-            placeholder="name"
-          />
-          <div className={styles.spacerSmall} />
-          <div>Entity Set Title:</div>
-          <div className={styles.spacerMini} />
-          <input
-            value={newEntitySetTitle}
-            onChange={this.handleTitleChange}
-            className={styles.inputBox}
-            type="text"
-            placeholder="title"
-          />
-          <div className={styles.spacerSmall} />
-          <div>Entity Type:</div>
-          <div className={styles.spacerMini} />
-          <table>
-            <tbody>
-              <NameNamespaceAutosuggest
-                namespaces={allTypeNamespaces}
-                usedProperties={[]}
-                noSaveButton
-                onNameChange={this.handleTypeNameChange}
-                onNamespaceChange={this.handleTypeNamespaceChange}
-                initialName={newEntitySetTypeName}
-                initialNamespace={newEntitySetTypeNamespace}
-              />
-            </tbody>
-          </table>
-          <div className={styles.spacerSmall} />
-          <button className={styles.genericButton} onClick={this.createNewEntitySet}>Create</button>
-        </div>
+        {this.renderCreateEntitySetButton()}
+        {this.renderCreateEntitySetInput()}
         <div className={this.errorClass[createEntitySetError]}>Unable to create entity set.</div>
         <div className={styles.spacerBig} />
         <div className={this.errorClass[loadEntitySetsError]}>Unable to load entity sets.</div>
