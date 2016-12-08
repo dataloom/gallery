@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Utils from '../../../../utils/Utils';
@@ -7,6 +7,11 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
+
+  static contextTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -23,16 +28,6 @@ export class SchemaList extends React.Component {
 
   componentDidMount() {
     this.updateFn();
-  }
-
-  showNewSchema = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
-  }
-
-  showNewSchemaButton = {
-    true: styles.genericButton,
-    false: styles.hidden
   }
 
   errorClass = {
@@ -114,17 +109,52 @@ export class SchemaList extends React.Component {
     this.setState({ newSchemaNamespace: e.target.value });
   }
 
+  renderCreateNewSchemaButton = () => {
+    if (!this.context.isAdmin) return null;
+    const className = (this.state.newSchema) ? styles.hidden : styles.genericButton;
+    return (
+      <button
+        onClick={this.newSchema}
+        className={className}
+      >Create a new schema
+      </button>
+    );
+  }
+
+  renderCreateNewSchemaInput = () => {
+    if (!this.context.isAdmin) return null;
+    const { newSchema, newSchemaNamespace, newSchemaName, createSchemaError } = this.state;
+    const className = (newSchema) ? StringConsts.EMPTY : styles.hidden;
+    return (
+      <div className={className}>
+        <div>Schema Namespace:</div>
+        <div className={styles.spacerMini} />
+        <input
+          className={styles.inputBox}
+          type="text"
+          placeholder="namespace"
+          value={newSchemaNamespace}
+          onChange={this.handleNamespaceChange}
+        />
+        <div className={styles.spacerSmall} />
+        <div>Schema Name:</div>
+        <div className={styles.spacerMini} />
+        <input
+          className={styles.inputBox}
+          type="text"
+          placeholder="name"
+          value={newSchemaName}
+          onChange={this.handleNameChange}
+        />
+        <div className={styles.spacerSmall} />
+        <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>
+        <div className={this.errorClass[createSchemaError]}>Unable to create schema.</div>
+      </div>
+    );
+  }
+
   render() {
-    const {
-      schemas,
-      allPropNamespaces,
-      allEntityTypeNamespaces,
-      newSchema,
-      newSchemaNamespace,
-      newSchemaName,
-      createSchemaError,
-      loadSchemasError
-    } = this.state;
+    const { schemas, allPropNamespaces, allEntityTypeNamespaces, loadSchemasError } = this.state;
     const schemaList = schemas.map((schema) => {
       return (<Schema
         key={schema.key}
@@ -141,36 +171,8 @@ export class SchemaList extends React.Component {
     return (
       <div>
         <div className={styles.edmContainer}>
-          <button
-            onClick={this.newSchema}
-            className={this.showNewSchemaButton[!newSchema]}
-          >Create a new schema
-          </button>
-          <div className={this.showNewSchema[newSchema]}>
-            <div>Schema Namespace:</div>
-            <div className={styles.spacerMini} />
-            <input
-              className={styles.inputBox}
-              type="text"
-              placeholder="namespace"
-              value={newSchemaNamespace}
-              onChange={this.handleNamespaceChange}
-            />
-            <div className={styles.spacerSmall} />
-            <div>Schema Name:</div>
-            <div className={styles.spacerMini} />
-            <input
-              className={styles.inputBox}
-              type="text"
-              placeholder="name"
-              value={newSchemaName}
-              onChange={this.handleNameChange}
-            />
-            <div className={styles.spacerSmall} />
-            <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>
-          </div>
-
-          <div className={this.errorClass[createSchemaError]}>Unable to create schema.</div>
+          {this.renderCreateNewSchemaButton()}
+          {this.renderCreateNewSchemaInput()}
         </div>
         <div className={this.errorClass[loadSchemasError]}>Unable to load schemas.</div>
         {schemaList}

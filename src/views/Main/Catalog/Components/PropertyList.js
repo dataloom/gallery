@@ -20,6 +20,10 @@ export class PropertyList extends React.Component {
     isOwner: PropTypes.bool
   }
 
+  static contextTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -31,11 +35,6 @@ export class PropertyList extends React.Component {
       verifyingDelete: false,
       propertyToDelete: undefined
     };
-  }
-
-  shouldShow = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
   }
 
   keyProperties() {
@@ -81,10 +80,6 @@ export class PropertyList extends React.Component {
     }).catch(() => {
       this.updateError(PermissionsConsts.ADD);
     });
-  }
-
-  newPropertyRowClass = () => {
-    return (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
   }
 
   deleteProp = () => {
@@ -149,15 +144,30 @@ export class PropertyList extends React.Component {
     return primaryKey;
   }
 
+  renderNewRowButton = () => {
+    if (!this.context.isAdmin) return null;
+    const className = (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
+    return (
+      <button onClick={this.newProperty} className={className}>+</button>
+    );
+  }
+
+  renderNewRowInput = () => {
+    if (!this.context.isAdmin) return null;
+    const { properties, allPropNamespaces } = this.props;
+    const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
+    return (
+      <NameNamespaceAutosuggest
+        className={className}
+        namespaces={allPropNamespaces}
+        usedProperties={properties}
+        addProperty={this.addPropertyToEntityType}
+      />
+    );
+  }
+
   render() {
-    const {
-      properties,
-      entitySetName,
-      editingPermissions,
-      isOwner,
-      allPropNamespaces
-    } = this.props;
-    const { newPropertyRow, error } = this.state;
+    const { properties, entitySetName, editingPermissions, isOwner } = this.props;
     const propArray = (properties !== null && properties.length > 0) ?
       this.keyProperties() : [];
     const propertyList = propArray.map((prop) => {
@@ -183,16 +193,11 @@ export class PropertyList extends React.Component {
               <th className={styles.tableCell}>Property Type Namespace</th>
             </tr>
             {propertyList}
-            <NameNamespaceAutosuggest
-              className={this.shouldShow[newPropertyRow]}
-              namespaces={allPropNamespaces}
-              usedProperties={properties}
-              addProperty={this.addPropertyToEntityType}
-            />
+            {this.renderNewRowInput()}
           </tbody>
         </table>
-        <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
-        <div className={error.display}>Unable to {error.action} property.</div>
+        {this.renderNewRowButton()}
+        <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
         {this.renderVerifyDeletePropertyBox()}
       </div>
     );

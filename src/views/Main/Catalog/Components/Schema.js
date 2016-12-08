@@ -83,7 +83,7 @@ export class Schema extends React.Component {
           name={name}
           namespace={namespace}
           updateSchemaFn={updateFn}
-          navBar={false}
+          propertyTypePage={false}
           allPropNamespaces={allPropNamespaces}
         />
         <div className={this.state.error}>Unable to download {name}</div>

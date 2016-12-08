@@ -14,8 +14,12 @@ export class PropertyTypeList extends React.Component {
     name: PropTypes.string,
     namespace: PropTypes.string,
     updateSchemaFn: PropTypes.func,
-    navBar: PropTypes.bool,
+    propertyTypePage: PropTypes.bool,
     allPropNamespaces: PropTypes.object
+  }
+
+  static contextTypes = {
+    isAdmin: PropTypes.bool
   }
 
   constructor() {
@@ -44,7 +48,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   componentDidMount() {
-    return (this.props.navBar) ? this.updateFn() : this.keyPropertyTypes();
+    return (this.props.propertyTypePage) ? this.updateFn() : this.keyPropertyTypes();
   }
 
   updateFn = () => {
@@ -126,7 +130,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   shouldDisplayContainer = () => {
-    return (this.props.navBar) ? styles.edmContainer : StringConsts.EMPTY;
+    return (this.props.propertyTypePage) ? styles.edmContainer : StringConsts.EMPTY;
   }
 
   handleNameChange = (e) => {
@@ -146,27 +150,63 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropMultiplicity: e.target.value });
   }
 
-  newPropertyRowClass = () => {
-    return (this.state.newPropertyRow) ? styles.hidden : styles.addButton;
+  renderNewPropertyTypeInputLine = () => {
+    const { newPropertyRow, newPropName, newPropNamespace, newPropMultiplicity } = this.state;
+    if (!this.context.isAdmin) return null;
+    return (
+      <tr className={this.shouldShow[newPropertyRow && this.props.propertyTypePage]}>
+        <td><input
+          type="text"
+          value={newPropName}
+          onChange={this.handleNameChange}
+          placeholder="name"
+          className={styles.tableCell}
+        /></td>
+        <td><input
+          type="text"
+          value={newPropNamespace}
+          onChange={this.handleNamespaceChange}
+          placeholder="namespace"
+          className={styles.tableCell}
+        /></td>
+        <td>
+          <Select
+            value={this.state.newPropDatatype}
+            onChange={this.handleDatatypeChange}
+            options={EdmConsts.EDM_PRIMITIVE_TYPES}
+            placeholder="datatype"
+          />
+        </td>
+        <td><input
+          type="text"
+          value={newPropMultiplicity}
+          onChange={this.handleMultiplicityChange}
+          placeholder="multiplicity"
+          className={styles.tableCell}
+        /></td>
+        <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
+      </tr>
+    );
+  }
+
+  renderNewPropertyButton = () => {
+    if (!this.context.isAdmin) return null;
+    const className = (this.state.newPropertyRow) ? styles.hidden : styles.addButton;
+    const val = (
+      <button onClick={this.newProperty} className={className}>+</button>
+    );
+    return val;
   }
 
   render() {
-    const { navBar, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
-    const {
-      propertyTypes,
-      newPropertyRow,
-      newPropName,
-      newPropNamespace,
-      newPropMultiplicity,
-      addError,
-      deleteError
-    } = this.state;
-    const propArray = (navBar) ? propertyTypes : this.keyPropertyTypes();
+    const { propertyTypePage, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
+    const { propertyTypes, newPropertyRow, addError, deleteError } = this.state;
+    const propArray = (propertyTypePage) ? propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
         key={prop.key}
         propertyType={prop}
-        navBar={navBar}
+        propertyTypePage={propertyTypePage}
         error={this.updateDeleteError}
         updateFn={updateSchemaFn}
         schemaName={name}
@@ -179,54 +219,23 @@ export class PropertyTypeList extends React.Component {
         <table>
           <tbody>
             <tr>
-              <th className={this.shouldShow[!navBar]} />
+              <th className={this.shouldShow[!propertyTypePage]} />
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
               <th className={styles.tableCell}>Property Type Datatype</th>
               <th className={styles.tableCell}>Property Type Multiplicity</th>
             </tr>
             {propertyTypeList}
-            <tr className={this.shouldShow[newPropertyRow && navBar]}>
-              <td><input
-                type="text"
-                value={newPropName}
-                onChange={this.handleNameChange}
-                placeholder="name"
-                className={styles.tableCell}
-              /></td>
-              <td><input
-                type="text"
-                value={newPropNamespace}
-                onChange={this.handleNamespaceChange}
-                placeholder="namespace"
-                className={styles.tableCell}
-              /></td>
-              <td>
-                <Select
-                  value={this.state.newPropDatatype}
-                  onChange={this.handleDatatypeChange}
-                  options={EdmConsts.EDM_PRIMITIVE_TYPES}
-                  placeholder="datatype"
-                />
-              </td>
-              <td><input
-                type="text"
-                value={newPropMultiplicity}
-                onChange={this.handleMultiplicityChange}
-                placeholder="multiplicity"
-                className={styles.tableCell}
-              /></td>
-              <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
-            </tr>
+            {this.renderNewPropertyTypeInputLine()}
             <NameNamespaceAutosuggest
-              className={this.shouldShow[newPropertyRow && !navBar]}
+              className={this.shouldShow[newPropertyRow && !propertyTypePage && this.context.isAdmin]}
               namespaces={allPropNamespaces}
               usedProperties={propertyTypes}
               addProperty={this.addPropertyToSchema}
             />
           </tbody>
         </table>
-        <button onClick={this.newProperty} className={this.newPropertyRowClass()}>+</button>
+        {this.renderNewPropertyButton()}
         <div className={this.showErrorMsgClass[addError]}>Unable to add property type.</div>
         <div className={this.showErrorMsgClass[deleteError]}>Unable to delete property type.</div>
       </div>

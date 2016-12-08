@@ -56,7 +56,6 @@ const getProfileStatus = () => {
 };
 
 export const makeMainRoutes = () => {
-  isAdmin();
   return (
     <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
       <IndexRedirect to={`/${PageConsts.HOME}`} />

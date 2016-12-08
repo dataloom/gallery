@@ -13,6 +13,10 @@ export class EntityTypeFqn extends React.Component {
     errorFn: PropTypes.func
   }
 
+  static contextTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   deleteProp = () => {
     const { schemaNamespace, schemaName, entityTypeFqn, updateFn, errorFn } = this.props;
     EntityDataModelApi.removeEntityTypesFromSchema(Utils.getFqnObj(schemaNamespace, schemaName), [entityTypeFqn])
@@ -23,11 +27,24 @@ export class EntityTypeFqn extends React.Component {
     });
   }
 
+  renderDeleteButton = () => {
+    if (this.context.isAdmin) {
+      return (
+        <td>
+          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
+        </td>
+      );
+    }
+    return (
+      <td />
+    );
+  }
+
   render() {
     const fqn = this.props.entityTypeFqn;
     return (
       <tr className={styles.tableRows}>
-        <td><button className={styles.deleteButton} onClick={this.deleteProp}>-</button></td>
+        {this.renderDeleteButton()}
         <td className={styles.tableCell}>{fqn.name}</td>
         <td className={styles.tableCell}>{fqn.namespace}</td>
       </tr>

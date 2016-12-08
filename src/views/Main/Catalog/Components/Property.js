@@ -13,9 +13,8 @@ export class Property extends React.Component {
     verifyDeleteFn: PropTypes.func
   }
 
-  shouldShow = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
+  static contextTypes = {
+    isAdmin: PropTypes.bool
   }
 
   constructor() {
@@ -51,14 +50,11 @@ export class Property extends React.Component {
     this.setState({ showPanel: false });
   }
 
-  shouldShowDeleteButton = () => {
-    return (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
-  }
-
   renderEditPermissions = (prop) => {
     if (this.props.isOwner) {
+      const className = (this.state.showPanel) ? StringConsts.EMPTY : styles.hidden;
       return (
-        <td className={this.shouldShow[this.state.showPanel]}>
+        <td className={className}>
           <PermissionsPanel
             entitySetName={this.props.entitySetName}
             propertyTypeName={prop.name}
@@ -71,18 +67,30 @@ export class Property extends React.Component {
     return null;
   }
 
+  renderDeleteButton = () => {
+    if (this.context.isAdmin) {
+      const className = (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
+      return (
+        <td>
+          <button
+            onClick={() => {
+              this.props.verifyDeleteFn(this.props.property);
+            }}
+            className={className}
+          >-</button>
+        </td>
+      );
+    }
+    return (
+      <td />
+    );
+  }
+
   render() {
     const prop = this.props.property;
     return (
       <tr className={styles.tableRows}>
-        <td>
-          <button
-            onClick={() => {
-              this.props.verifyDeleteFn(prop);
-            }}
-            className={this.shouldShowDeleteButton()}
-          >-</button>
-        </td>
+        {this.renderDeleteButton()}
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>
         {this.isPrimaryKey()}
