@@ -13,7 +13,8 @@ export class NameNamespaceAutosuggest extends React.Component {
     onNameChange: PropTypes.func,
     onNamespaceChange: PropTypes.func,
     initialName: PropTypes.string,
-    initialNamespace: PropTypes.string
+    initialNamespace: PropTypes.string,
+    noSaveButton: PropTypes.bool
   }
 
   constructor(props) {
@@ -136,13 +137,25 @@ export class NameNamespaceAutosuggest extends React.Component {
     this.loadInitialSuggestionValues();
   }
 
+  shouldHideSaveButton = () => {
+    return (this.props.noSaveButton !== undefined && this.props.noSaveButton);
+  }
+
+  saveButtonClass = () => {
+    return (this.shouldHideSaveButton()) ? styles.hidden : StringConsts.EMPTY;
+  }
+
+  selectInputClassName = () => {
+    return (this.shouldHideSaveButton()) ? styles.entitySetInput : styles.tableCell;
+  }
+
   render() {
     if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
     const { nameVal, nameSuggestions, namespaceVal, namespaceSuggestions } = this.state;
     return (
       <tr className={this.props.className}>
         <td />
-        <td className={styles.tableCell}>
+        <td className={this.selectInputClassName()}>
           <Select
             options={nameSuggestions}
             value={nameVal}
@@ -152,7 +165,7 @@ export class NameNamespaceAutosuggest extends React.Component {
             placeholder="name"
           />
         </td>
-        <td className={styles.tableCell}>
+        <td className={this.selectInputClassName()}>
           <Select
             options={namespaceSuggestions}
             value={namespaceVal}
@@ -162,7 +175,7 @@ export class NameNamespaceAutosuggest extends React.Component {
             placeholder="namespace"
           />
         </td>
-        <td>
+        <td className={this.saveButtonClass()}>
           <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button>
         </td>
       </tr>

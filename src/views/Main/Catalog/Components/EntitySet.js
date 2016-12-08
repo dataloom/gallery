@@ -215,7 +215,7 @@ export class EntitySet extends React.Component {
     const { name, title, type, isOwner } = this.props;
     const { properties, editing } = this.state;
     return (
-      <div className={styles.edmContainer}>
+      <div>
         <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[isOwner]}>
           {(editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
