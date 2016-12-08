@@ -32,7 +32,8 @@ export class Container extends React.Component {
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
         auth: this.props.route.auth,
-        updateTopbarFn: this.updateState
+        updateTopbarFn: this.updateState,
+        profileFn: this.props.route.profileFn
       });
     }
     return children;

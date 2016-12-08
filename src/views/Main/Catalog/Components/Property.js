@@ -10,7 +10,8 @@ export class Property extends React.Component {
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
     isOwner: PropTypes.bool,
-    verifyDeleteFn: PropTypes.func
+    verifyDeleteFn: PropTypes.func,
+    isAdmin: PropTypes.bool
   }
 
   shouldShow = {
@@ -71,18 +72,30 @@ export class Property extends React.Component {
     return null;
   }
 
-  render() {
-    const prop = this.props.property;
-    return (
-      <tr className={styles.tableRows}>
+  renderDeleteButton = () => {
+    const { property, isAdmin } = this.props;
+    if (isAdmin) {
+      return (
         <td>
           <button
             onClick={() => {
-              this.props.verifyDeleteFn(prop);
+              this.props.verifyDeleteFn(property);
             }}
             className={this.shouldShowDeleteButton()}
           >-</button>
         </td>
+      );
+    }
+    return (
+      <td />
+    );
+  }
+
+  render() {
+    const prop = this.props.property;
+    return (
+      <tr className={styles.tableRows}>
+        {this.renderDeleteButton()}
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>
         {this.isPrimaryKey()}

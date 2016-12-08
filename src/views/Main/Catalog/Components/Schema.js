@@ -15,7 +15,8 @@ export class Schema extends React.Component {
     jsonContents: PropTypes.object,
     updateFn: PropTypes.func,
     allPropNamespaces: PropTypes.object,
-    allEntityTypeNamespaces: PropTypes.object
+    allEntityTypeNamespaces: PropTypes.object,
+    isAdmin: PropTypes.bool
   }
 
   constructor() {
@@ -56,7 +57,8 @@ export class Schema extends React.Component {
       entityTypeFqns,
       updateFn,
       allEntityTypeNamespaces,
-      allPropNamespaces
+      allPropNamespaces,
+      isAdmin
     } = this.props;
     const options = [FileConsts.JSON];
     return (
@@ -75,6 +77,7 @@ export class Schema extends React.Component {
           schemaNamespace={namespace}
           updateFn={updateFn}
           allEntityTypeNamespaces={allEntityTypeNamespaces}
+          isAdmin={isAdmin}
         />
         <br />
         <div className={styles.spacerMed} />
@@ -85,6 +88,7 @@ export class Schema extends React.Component {
           updateSchemaFn={updateFn}
           navBar={false}
           allPropNamespaces={allPropNamespaces}
+          isAdmin={isAdmin}
         />
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />

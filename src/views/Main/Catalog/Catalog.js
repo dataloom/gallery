@@ -13,7 +13,8 @@ export class Catalog extends React.Component {
 
   static propTypes = {
     auth: PropTypes.instanceOf(AuthService),
-    updateTopbarFn: PropTypes.func
+    updateTopbarFn: PropTypes.func,
+    profileFn: PropTypes.func
   }
 
   constructor(props, context) {
@@ -28,18 +29,19 @@ export class Catalog extends React.Component {
   }
 
   getDataModelView() {
+    const isAdmin = this.props.profileFn().isAdmin;
     const view = this.state.dataModelView;
     switch (view) {
       case EdmConsts.SCHEMA:
-        return (<SchemaList />);
+        return (<SchemaList isAdmin={isAdmin} />);
       case EdmConsts.ENTITY_SET:
-        return (<EntitySetList auth={this.props.auth} />);
+        return (<EntitySetList auth={this.props.auth} isAdmin={isAdmin} />);
       case EdmConsts.ENTITY_TYPE:
-        return (<EntityTypeList />);
+        return (<EntityTypeList isAdmin={isAdmin} />);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeList navBar />);
+        return (<PropertyTypeList navBar isAdmin={isAdmin} />);
       default:
-        return (<SchemaList />);
+        return (<SchemaList isAdmin={isAdmin} />);
     }
   }
 

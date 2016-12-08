@@ -11,7 +11,8 @@ export class PropertyType extends React.Component {
     error: PropTypes.func,
     updateFn: PropTypes.func,
     schemaName: PropTypes.string,
-    schemaNamespace: PropTypes.string
+    schemaNamespace: PropTypes.string,
+    isAdmin: PropTypes.bool
   }
 
   deleteProp = () => {
@@ -24,17 +25,25 @@ export class PropertyType extends React.Component {
     });
   }
 
-  shouldShowDeleteButton = () => {
-    return (this.props.navBar ? styles.hidden : StringConsts.EMPTY);
+  renderDeleteButton = () => {
+    const className = (this.props.navBar) ? styles.hidden : StringConsts.EMPTY;
+    if (this.props.isAdmin) {
+      return (
+        <td className={className}>
+          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
+        </td>
+      );
+    }
+    return (
+      <td className={className} />
+    );
   }
 
   render() {
     const prop = this.props.propertyType;
     return (
       <tr className={styles.tableRows}>
-        <td className={this.shouldShowDeleteButton()}>
-          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
-        </td>
+        {this.renderDeleteButton()}
         <td className={styles.tableCell}>{prop.name}</td>
         <td className={styles.tableCell}>{prop.namespace}</td>
         <td className={styles.tableCell}>{prop.datatype}</td>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
@@ -8,6 +8,11 @@ import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class EntityTypeList extends React.Component {
+
+  static propTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -144,29 +149,24 @@ export class EntityTypeList extends React.Component {
     this.setState({ newPKeyNamespace: newValue });
   }
 
-  render() {
+  renderCreateEntityTypeButton = () => {
+    if (!this.props.isAdmin) return null;
+    const className = (this.state.newEntityType) ? styles.hidden : styles.genericButton;
+    return (
+      <button onClick={this.newEntityType} className={className}>Create a new entity type</button>
+    );
+  }
+
+  renderCreateEntityTypeInput = () => {
+    if (!this.props.isAdmin) return null;
     const {
-      entityTypes,
       allPropNamespaces,
       newEntityType,
       newEntityTypeNamespace,
       newEntityTypeName,
       createTypeError,
-      loadTypesError,
       newPKeysAdded
     } = this.state;
-
-    const entityTypeList = entityTypes.map((entityType) => {
-      return (<EntityType
-        key={entityType.key}
-        name={entityType.name}
-        namespace={entityType.namespace}
-        properties={entityType.properties}
-        primaryKey={entityType.primaryKey}
-        updateFn={this.updateFn}
-        allPropNamespaces={allPropNamespaces}
-      />);
-    });
 
     const pKeysAdded = newPKeysAdded.map((pKey) => {
       return (
@@ -184,60 +184,78 @@ export class EntityTypeList extends React.Component {
         </tr>
       );
     });
+
+    return (
+      <div className={this.showNewEntityType[newEntityType]}>
+        <div>Entity Type Namespace:</div>
+        <div className={styles.spacerMini} />
+        <input
+          value={newEntityTypeNamespace}
+          onChange={this.handleNamespaceChange}
+          className={styles.inputBox}
+          type="text"
+          placeholder="namespace"
+        />
+        <div className={styles.spacerSmall} />
+        <div>Entity Type Name:</div>
+        <div className={styles.spacerMini} />
+        <input
+          value={newEntityTypeName}
+          onChange={this.handleNameChange}
+          className={styles.inputBox}
+          type="text"
+          placeholder="name"
+        />
+        <div className={styles.spacerSmall} />
+        <div>Primary Key:</div>
+        <div className={styles.spacerMini} />
+        <table>
+          <tbody>
+            <tr>
+              <th />
+              <th className={styles.tableCell}>Name</th>
+              <th className={styles.tableCell}>Namespace</th>
+            </tr>
+            {pKeysAdded}
+            <NameNamespaceAutosuggest
+              namespaces={allPropNamespaces}
+              usedProperties={newPKeysAdded}
+              addProperty={this.addPKeyToList}
+              onNameChange={this.handlePKeyNameChange}
+              onNamespaceChange={this.handlePKeyNamespaceChange}
+              initialName={this.state.newPKeyName}
+              initialNamespace={this.state.newPKeyNamespace}
+            />
+          </tbody>
+        </table>
+        <div className={styles.spacerSmall} />
+        <button className={styles.genericButton} onClick={this.createNewEntityType}>Create</button>
+        <div className={this.errorClass[createTypeError]}>Unable to create entity type.</div>
+      </div>
+    );
+  }
+
+  render() {
+    const { entityTypes, allPropNamespaces, loadTypesError } = this.state;
+
+    const entityTypeList = entityTypes.map((entityType) => {
+      return (<EntityType
+        key={entityType.key}
+        name={entityType.name}
+        namespace={entityType.namespace}
+        properties={entityType.properties}
+        primaryKey={entityType.primaryKey}
+        updateFn={this.updateFn}
+        allPropNamespaces={allPropNamespaces}
+        isAdmin={this.props.isAdmin}
+      />);
+    });
+
     return (
       <div>
         <div className={styles.edmContainer}>
-          <button
-            onClick={this.newEntityType}
-            className={this.showNewEntityTypeButton[!newEntityType]}
-          >Create a new entity type
-          </button>
-          <div className={this.showNewEntityType[newEntityType]}>
-            <div>Entity Type Namespace:</div>
-            <div className={styles.spacerMini} />
-            <input
-              value={newEntityTypeNamespace}
-              onChange={this.handleNamespaceChange}
-              className={styles.inputBox}
-              type="text"
-              placeholder="namespace"
-            />
-            <div className={styles.spacerSmall} />
-            <div>Entity Type Name:</div>
-            <div className={styles.spacerMini} />
-            <input
-              value={newEntityTypeName}
-              onChange={this.handleNameChange}
-              className={styles.inputBox}
-              type="text"
-              placeholder="name"
-            />
-            <div className={styles.spacerSmall} />
-            <div>Primary Key:</div>
-            <div className={styles.spacerMini} />
-            <table>
-              <tbody>
-                <tr>
-                  <th />
-                  <th className={styles.tableCell}>Name</th>
-                  <th className={styles.tableCell}>Namespace</th>
-                </tr>
-                {pKeysAdded}
-                <NameNamespaceAutosuggest
-                  namespaces={allPropNamespaces}
-                  usedProperties={newPKeysAdded}
-                  addProperty={this.addPKeyToList}
-                  onNameChange={this.handlePKeyNameChange}
-                  onNamespaceChange={this.handlePKeyNamespaceChange}
-                  initialName={this.state.newPKeyName}
-                  initialNamespace={this.state.newPKeyNamespace}
-                />
-              </tbody>
-            </table>
-            <div className={styles.spacerSmall} />
-            <button className={styles.genericButton} onClick={this.createNewEntityType}>Create</button>
-          </div>
-          <div className={this.errorClass[createTypeError]}>Unable to create entity type.</div>
+          {this.renderCreateEntityTypeButton()}
+          {this.renderCreateEntityTypeInput()}
         </div>
         <div className={this.errorClass[loadTypesError]}>Unable to load entity types.</div>
         {entityTypeList}

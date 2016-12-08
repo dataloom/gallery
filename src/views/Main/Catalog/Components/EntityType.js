@@ -13,7 +13,8 @@ export class EntityType extends React.Component {
     properties: PropTypes.array,
     primaryKey: PropTypes.array,
     updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object
+    allPropNamespaces: PropTypes.object,
+    isAdmin: PropTypes.bool
   }
 
   getUrl = (datatype) => {
@@ -21,7 +22,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { name, namespace, properties, primaryKey, updateFn, allPropNamespaces } = this.props;
+    const { name, namespace, properties, primaryKey, updateFn, allPropNamespaces, isAdmin } = this.props;
     const options = [FileConsts.CSV, FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
@@ -39,8 +40,8 @@ export class EntityType extends React.Component {
           entityTypeNamespace={namespace}
           updateFn={updateFn}
           allPropNamespaces={allPropNamespaces}
-          allowEdit
           editingPermissions={false}
+          isAdmin={isAdmin}
         />
         <div className={styles.spacerBig} />
         <hr />

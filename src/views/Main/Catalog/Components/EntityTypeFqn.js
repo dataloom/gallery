@@ -10,7 +10,8 @@ export class EntityTypeFqn extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    errorFn: PropTypes.func
+    errorFn: PropTypes.func,
+    isAdmin: PropTypes.bool
   }
 
   deleteProp = () => {
@@ -23,11 +24,24 @@ export class EntityTypeFqn extends React.Component {
     });
   }
 
+  renderDeleteButton = () => {
+    if (this.props.isAdmin) {
+      return (
+        <td>
+          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
+        </td>
+      );
+    }
+    return (
+      <td />
+    );
+  }
+
   render() {
     const fqn = this.props.entityTypeFqn;
     return (
       <tr className={styles.tableRows}>
-        <td><button className={styles.deleteButton} onClick={this.deleteProp}>-</button></td>
+        {this.renderDeleteButton()}
         <td className={styles.tableCell}>{fqn.name}</td>
         <td className={styles.tableCell}>{fqn.namespace}</td>
       </tr>

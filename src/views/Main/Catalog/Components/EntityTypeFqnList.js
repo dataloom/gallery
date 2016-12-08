@@ -13,7 +13,8 @@ export class EntityTypeFqnList extends React.Component {
     schemaName: PropTypes.string,
     schemaNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    allEntityTypeNamespaces: PropTypes.object
+    allEntityTypeNamespaces: PropTypes.object,
+    isAdmin: PropTypes.bool
   }
 
   constructor() {
@@ -25,16 +26,6 @@ export class EntityTypeFqnList extends React.Component {
         action: PermissionsConsts.ADD
       }
     };
-  }
-
-  addRowClass = {
-    true: StringConsts.EMPTY,
-    false: styles.hidden
-  }
-
-  addButtonClass = {
-    true: styles.addButton,
-    false: styles.hidden
   }
 
   keyPropertyTypes() {
@@ -81,9 +72,30 @@ export class EntityTypeFqnList extends React.Component {
     });
   }
 
+  renderAddNewRowButton = () => {
+    if (!this.props.isAdmin) return null;
+    const className = (this.state.newEntityTypeRow) ? styles.hidden : styles.addButton;
+    return (
+      <button onClick={this.newEntityType} className={className}>+</button>
+    );
+  }
+
+  renderNewRowInput = () => {
+    const { allEntityTypeNamespaces, entityTypeFqns, isAdmin } = this.props;
+    if (!isAdmin) return null;
+    const className = (this.state.newEntityTypeRow) ? StringConsts.EMPTY : styles.hidden;
+    return (
+      <NameNamespaceAutosuggest
+        className={className}
+        namespaces={allEntityTypeNamespaces}
+        usedProperties={entityTypeFqns}
+        addProperty={this.addEntityTypeToSchema}
+      />
+    );
+  }
+
   render() {
-    const { schemaName, schemaNamespace, updateFn, allEntityTypeNamespaces, entityTypeFqns } = this.props;
-    const { newEntityTypeRow, error } = this.state;
+    const { schemaName, schemaNamespace, updateFn, isAdmin } = this.props;
     const fqnArray = this.keyPropertyTypes();
     const entityTypeFqnList = fqnArray.map((fqn) => {
       return (
@@ -94,6 +106,7 @@ export class EntityTypeFqnList extends React.Component {
           schemaNamespace={schemaNamespace}
           updateFn={updateFn}
           errorFn={this.updateError}
+          isAdmin={isAdmin}
         />
       );
     });
@@ -107,16 +120,11 @@ export class EntityTypeFqnList extends React.Component {
               <th className={styles.tableCell}>Entity Type Namespace</th>
             </tr>
             {entityTypeFqnList}
-            <NameNamespaceAutosuggest
-              className={this.addRowClass[newEntityTypeRow]}
-              namespaces={allEntityTypeNamespaces}
-              usedProperties={entityTypeFqns}
-              addProperty={this.addEntityTypeToSchema}
-            />
+            {this.renderNewRowInput()}
           </tbody>
         </table>
-        <button onClick={this.newEntityType} className={this.addButtonClass[!newEntityTypeRow]}>+</button>
-        <div className={error.display}>Unable to {error.action} entity type.</div>
+        {this.renderAddNewRowButton()}
+        <div className={this.state.error.display}>Unable to {this.state.error.action} entity type.</div>
       </div>
     );
   }
