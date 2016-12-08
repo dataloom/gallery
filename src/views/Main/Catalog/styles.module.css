@@ -46,6 +46,11 @@ table {
   padding: 0 10px;
 }
 
+.entitySetInput {
+  height: 40px;
+  width: 200px;
+}
+
 
 /* text styling */
 
