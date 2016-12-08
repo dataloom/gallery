@@ -6,8 +6,7 @@ import { Topbar } from './components/Topbar';
 
 export class Container extends React.Component {
   static contextTypes = {
-    router: PropTypes.object,
-    admin: PropTypes.bool
+    router: PropTypes.object
   }
 
   static propTypes = {
