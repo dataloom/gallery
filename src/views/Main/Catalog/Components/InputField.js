@@ -7,7 +7,6 @@ export class InputField extends React.Component {
     title: PropTypes.string,
     name: PropTypes.string,
     value: PropTypes.string,
-    placeholder: PropTypes.string,
     updateFn: PropTypes.func
   }
 
@@ -16,7 +15,7 @@ export class InputField extends React.Component {
   }
 
   render() {
-    const { title, name, value, placeholder } = this.props;
+    const { title, name, value } = this.props;
     return (
       <div>
         <div>{title}</div>
@@ -25,7 +24,7 @@ export class InputField extends React.Component {
           type="text"
           value={value}
           name={name}
-          placeholder={placeholder}
+          placeholder={name}
           onChange={this.handleChange}
           className={styles.inputBox}
         />

@@ -69,14 +69,12 @@ export class NewSchema extends React.Component {
           title="Schema Namespace"
           name={NAMESPACE_FIELD}
           value={this.state[NAMESPACE_FIELD]}
-          placeholder={this.state[NAMESPACE_FIELD]}
           updateFn={this.handleInputChange}
         />
         <InputField
           title="Schema Name"
           name={NAME_FIELD}
           value={this.state[NAME_FIELD]}
-          placeholder={this.state[NAME_FIELD]}
           updateFn={this.handleInputChange}
         />
         <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>

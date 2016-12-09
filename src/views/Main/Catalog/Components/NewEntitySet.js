@@ -102,14 +102,12 @@ export class NewEntitySet extends React.Component {
           title="Entity Set Name"
           name={NAME_FIELD}
           value={this.state[NAME_FIELD]}
-          placeholder={this.state[NAME_FIELD]}
           updateFn={this.handleInputChange}
         />
         <InputField
           title="Entity Set Title"
           name={TITLE_FIELD}
           value={this.state[TITLE_FIELD]}
-          placeholder={this.state[TITLE_FIELD]}
           updateFn={this.handleInputChange}
         />
         <table>
