@@ -133,7 +133,6 @@ export class NewEntityType extends React.Component {
           updateFn={this.handleInputChange}
         />
         <div>Primary Key:</div>
-        <div className={styles.spacerMini} />
         <table>
           <tbody>
             <tr>

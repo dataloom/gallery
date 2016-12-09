@@ -3,7 +3,8 @@ import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
-import { NewEntityType } from './NewEntityType';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 export class EntityTypeList extends React.Component {
@@ -70,7 +71,13 @@ export class EntityTypeList extends React.Component {
 
   renderCreateEntityType = () => {
     if (!this.context.isAdmin) return null;
-    return <NewEntityType namespaces={this.state.allPropNamespaces} createSuccess={this.newEntityTypeSuccess} />;
+    return (
+      <NewEdmObjectInput
+        namespaces={this.state.allPropNamespaces}
+        createSuccess={this.newEntityTypeSuccess}
+        edmType={EdmConsts.ENTITY_TYPE_TITLE}
+      />
+    );
   }
 
   render() {

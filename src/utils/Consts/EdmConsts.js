@@ -3,6 +3,10 @@ const ENTITY_SET = 'entitySet';
 const ENTITY_TYPE = 'entityType';
 const PROPERTY_TYPE = 'propertyType';
 
+const SCHEMA_TITLE = 'Schema';
+const ENTITY_SET_TITLE = 'Entity Set';
+const ENTITY_TYPE_TITLE = 'Entity Type';
+
 const EDM_PRIMITIVE_TYPES = [
   { value: 'Binary', label: 'Binary' },
   { value: 'Boolean', label: 'Boolean' },
@@ -62,6 +66,9 @@ export default {
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
+  SCHEMA_TITLE,
+  ENTITY_SET_TITLE,
+  ENTITY_TYPE_TITLE,
   PROPERTY_TYPE,
   EDM_PRIMITIVE_TYPES,
   EDM_NUMBER_TYPES,

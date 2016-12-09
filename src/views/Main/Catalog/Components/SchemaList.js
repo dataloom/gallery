@@ -3,7 +3,8 @@ import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
-import { NewSchema } from './NewSchema';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
@@ -82,7 +83,7 @@ export class SchemaList extends React.Component {
 
   renderCreateNewSchema = () => {
     if (!this.context.isAdmin) return null;
-    return <NewSchema createSuccess={this.newSchemaSuccess} />;
+    return <NewEdmObjectInput createSuccess={this.newSchemaSuccess} edmType={EdmConsts.SCHEMA_TITLE} />;
   }
 
   render() {

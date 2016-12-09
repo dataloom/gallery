@@ -3,8 +3,9 @@ import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import AuthService from '../../../../utils/AuthService';
-import { NewEntitySet } from './NewEntitySet';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
 import { EntitySet } from './EntitySet';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 export class EntitySetList extends React.Component {
@@ -21,7 +22,7 @@ export class EntitySetList extends React.Component {
     this.state = {
       entitySets: [],
       loadEntitySetsError: false,
-      entityTypes: []
+      namespaces: []
     };
   }
 
@@ -39,9 +40,18 @@ export class EntitySetList extends React.Component {
       EntityDataModelApi.getAllEntitySets(),
       EntityDataModelApi.getAllEntityTypes(),
       (entitySets, entityTypes) => {
+        const namespaces = {};
+        entityTypes.forEach((type) => {
+          if (namespaces[type.namespace] === undefined) {
+            namespaces[type.namespace] = [type.name];
+          }
+          else {
+            namespaces[type.namespace].push(type.name);
+          }
+        });
         this.setState({
           entitySets: Utils.addKeysToArray(entitySets),
-          entityTypes,
+          namespaces,
           loadEntitySetsError: false
         });
       }
@@ -63,7 +73,13 @@ export class EntitySetList extends React.Component {
 
   renderCreateEntitySet = () => {
     if (!this.context.isAdmin) return null;
-    return <NewEntitySet createSuccess={this.newEntitySetSuccess} allTypes={this.state.entityTypes} />;
+    return (
+      <NewEdmObjectInput
+        createSuccess={this.newEntitySetSuccess}
+        namespaces={this.state.namespaces}
+        edmType={EdmConsts.ENTITY_SET_TITLE}
+      />
+    );
   }
 
   render() {
