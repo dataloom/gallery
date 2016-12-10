@@ -3,7 +3,7 @@ const ADMIN = 'admin';
 const USER = 'USER';
 const ROLE = 'ROLE';
 
-const RESERVED_ROLES = [DEFAULT_USER_ROLE, ADMIN];
+const RESERVED_ROLES = [DEFAULT_USER_ROLE];
 
 export default {
   DEFAULT_USER_ROLE,
