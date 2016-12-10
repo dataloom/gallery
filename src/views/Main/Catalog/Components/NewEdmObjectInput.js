@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
-import { InputField } from './InputField';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -142,12 +141,19 @@ export class NewEdmObjectInput extends React.Component {
 
   renderInputField = (fieldType, fieldName) => {
     return (
-      <InputField
-        title={`${this.props.edmType} ${fieldType}:`}
-        name={fieldName}
-        value={this.state[fieldName]}
-        updateFn={this.handleInputChange}
-      />
+      <div>
+        <div>`${this.props.edmType} ${fieldType}`</div>
+        <div className={styles.spacerMini} />
+        <input
+          type="text"
+          value={this.state[fieldName]}
+          name={fieldName}
+          placeholder={fieldName}
+          onChange={this.handleInputChange}
+          className={styles.inputBox}
+        />
+        <div className={styles.spacerSmall} />
+      </div>
     );
   }
 

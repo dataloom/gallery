@@ -22,7 +22,7 @@ export class EntitySetList extends React.Component {
     this.state = {
       entitySets: [],
       loadEntitySetsError: false,
-      namespaces: []
+      allTypeNamespaces: {}
     };
   }
 
@@ -40,18 +40,18 @@ export class EntitySetList extends React.Component {
       EntityDataModelApi.getAllEntitySets(),
       EntityDataModelApi.getAllEntityTypes(),
       (entitySets, entityTypes) => {
-        const namespaces = {};
+        const allTypeNamespaces = {};
         entityTypes.forEach((type) => {
-          if (namespaces[type.namespace] === undefined) {
-            namespaces[type.namespace] = [type.name];
+          if (allTypeNamespaces[type.namespace] === undefined) {
+            allTypeNamespaces[type.namespace] = [type.name];
           }
           else {
-            namespaces[type.namespace].push(type.name);
+            allTypeNamespaces[type.namespace].push(type.name);
           }
         });
         this.setState({
           entitySets: Utils.addKeysToArray(entitySets),
-          namespaces,
+          allTypeNamespaces,
           loadEntitySetsError: false
         });
       }
@@ -76,7 +76,7 @@ export class EntitySetList extends React.Component {
     return (
       <NewEdmObjectInput
         createSuccess={this.newEntitySetSuccess}
-        namespaces={this.state.namespaces}
+        namespaces={this.state.allTypeNamespaces}
         edmType={EdmConsts.ENTITY_SET_TITLE}
       />
     );
