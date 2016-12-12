@@ -3,7 +3,8 @@ import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
-import StringConsts from '../../../../utils/Consts/StringConsts';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 export class SchemaList extends React.Component {
@@ -16,13 +17,9 @@ export class SchemaList extends React.Component {
     super(props, context);
     this.state = {
       schemas: [],
-      newSchema: false,
-      createSchemaError: false,
       loadSchemasError: false,
       allPropNamespaces: {},
-      allEntityTypeNamespaces: {},
-      newSchemaName: '',
-      newSchemaNamespace: ''
+      allEntityTypeNamespaces: {}
     };
   }
 
@@ -35,18 +32,11 @@ export class SchemaList extends React.Component {
     false: styles.hidden
   }
 
-  newSchema = () => {
-    this.setState({ newSchema: true });
-  }
-
   newSchemaSuccess = () => {
     EntityDataModelApi.getAllSchemas()
     .then((schemas) => {
       this.setState({
         schemas: Utils.addKeysToArray(schemas),
-        newSchema: false,
-        newSchemaName: '',
-        newSchemaNamespace: '',
         loadSchemasError: false
       });
     }).catch(() => {
@@ -54,16 +44,6 @@ export class SchemaList extends React.Component {
     });
   }
 
-  createNewSchema = () => {
-    const name = this.state.newSchemaName;
-    const namespace = this.state.newSchemaNamespace;
-    EntityDataModelApi.createSchema({ namespace, name })
-    .then(() => {
-      this.newSchemaSuccess();
-    }).catch(() => {
-      this.setState({ createSchemaError: true });
-    });
-  }
 
   updateFn = () => {
     Promise.join(
@@ -101,56 +81,9 @@ export class SchemaList extends React.Component {
       });
   }
 
-  handleNameChange = (e) => {
-    this.setState({ newSchemaName: e.target.value });
-  }
-
-  handleNamespaceChange = (e) => {
-    this.setState({ newSchemaNamespace: e.target.value });
-  }
-
-  renderCreateNewSchemaButton = () => {
+  renderCreateNewSchema = () => {
     if (!this.context.isAdmin) return null;
-    const className = (this.state.newSchema) ? styles.hidden : styles.genericButton;
-    return (
-      <button
-        onClick={this.newSchema}
-        className={className}
-      >Create a new schema
-      </button>
-    );
-  }
-
-  renderCreateNewSchemaInput = () => {
-    if (!this.context.isAdmin) return null;
-    const { newSchema, newSchemaNamespace, newSchemaName, createSchemaError } = this.state;
-    const className = (newSchema) ? StringConsts.EMPTY : styles.hidden;
-    return (
-      <div className={className}>
-        <div>Schema Namespace:</div>
-        <div className={styles.spacerMini} />
-        <input
-          className={styles.inputBox}
-          type="text"
-          placeholder="namespace"
-          value={newSchemaNamespace}
-          onChange={this.handleNamespaceChange}
-        />
-        <div className={styles.spacerSmall} />
-        <div>Schema Name:</div>
-        <div className={styles.spacerMini} />
-        <input
-          className={styles.inputBox}
-          type="text"
-          placeholder="name"
-          value={newSchemaName}
-          onChange={this.handleNameChange}
-        />
-        <div className={styles.spacerSmall} />
-        <button className={styles.genericButton} onClick={this.createNewSchema}>Create</button>
-        <div className={this.errorClass[createSchemaError]}>Unable to create schema.</div>
-      </div>
-    );
+    return <NewEdmObjectInput createSuccess={this.newSchemaSuccess} edmType={EdmConsts.SCHEMA_TITLE} />;
   }
 
   render() {
@@ -171,8 +104,7 @@ export class SchemaList extends React.Component {
     return (
       <div>
         <div className={styles.edmContainer}>
-          {this.renderCreateNewSchemaButton()}
-          {this.renderCreateNewSchemaInput()}
+          {this.renderCreateNewSchema()}
         </div>
         <div className={this.errorClass[loadSchemasError]}>Unable to load schemas.</div>
         {schemaList}
