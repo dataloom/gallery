@@ -5,6 +5,7 @@
 /* eslint-disable import/no-extraneous-dependencies, import/extensions */
 
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import DashboardPlugin from 'webpack-dashboard/plugin';
 import Webpack from 'webpack';
 
 import APP_CONFIG from '../app.config.js';
@@ -28,6 +29,7 @@ const output = Object.assign({}, baseWebpackConfig.output, {
 });
 
 const plugins = [
+  new DashboardPlugin(),
   new Webpack.NamedModulesPlugin(),
   // TODO - waiting on RHL v3
   new Webpack.HotModuleReplacementPlugin(),

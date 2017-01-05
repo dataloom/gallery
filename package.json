@@ -94,10 +94,12 @@
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.0-rc",
+    "webpack-dashboard": "^0.2.1",
     "webpack-dev-server": "^2.2.0-rc"
   },
   "scripts": {
     "app": "better-npm-run webpack-dev-server",
+    "dev": "better-npm-run webpack-dashboard",
     "build:prod": "better-npm-run build:prod",
     "clean": "rimraf build/*",
     "flow": "flow check",
@@ -110,6 +112,12 @@
       "command": "webpack --config config/webpack/webpack.config.babel.js",
       "env": {
         "BUILD": "production"
+      }
+    },
+    "webpack-dashboard": {
+      "command": "webpack-dashboard -- webpack-dev-server --config config/webpack/webpack.config.babel.js --progress --profile --colors",
+      "env": {
+        "BUILD": "development"
       }
     },
     "webpack-dev-server": {
