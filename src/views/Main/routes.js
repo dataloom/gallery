@@ -55,6 +55,8 @@ const getName = () => {
           displayName = profile.name;
       } else if (profile.hasOwnProperty('nickname')) {
           displayName = profile.nickname;
+      } else if (profile.hasOwnProperty('email')) {
+              displayName = profile.email;
       } else {
           displayName = StringConsts.EMPTY;
       }
