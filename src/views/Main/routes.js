@@ -45,7 +45,24 @@ const isAdmin = () => {
 };
 
 const getName = () => {
-  return (auth.loggedIn()) ? auth.getProfile().given_name : StringConsts.EMPTY;
+  let displayName;
+  if (auth.loggedIn()) {
+      let profile = auth.getProfile();
+
+      if (profile.hasOwnProperty('given_name')) {
+          displayName = profile.given_name;
+      } else if (profile.hasOwnProperty('name')) {
+          displayName = profile.name;
+      } else if (profile.hasOwnProperty('nickname')) {
+          displayName = profile.nickname;
+      } else if (profile.hasOwnProperty('email')) {
+              displayName = profile.email;
+      } else {
+          displayName = StringConsts.EMPTY;
+      }
+  }
+
+  return displayName;
 };
 
 const getProfileStatus = () => {
