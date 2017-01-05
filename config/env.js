@@ -2,18 +2,23 @@
  * @flow
  */
 
-const ENVIRONMENTS = {
-  LOCAL: 'local',
-  PROD: 'production',
-  STG: 'staging',
-  TEST: 'testing'
-};
+function ifElse(condition :boolean) :Function {
+  return (isTrue :any, isFalse :any) => {
+    return condition ? isTrue : isFalse;
+  };
+}
 
-const NODE_ENV = process.env.NODE_ENV || ENVIRONMENTS.LOCAL;
+const BUILD :string = process.env.BUILD || 'development';
 
-module.exports = {
-  __LOCAL__: NODE_ENV === ENVIRONMENTS.LOCAL,
-  __PROD__: NODE_ENV === ENVIRONMENTS.PROD,
-  __STG__: NODE_ENV === ENVIRONMENTS.STG,
-  __TEST__: NODE_ENV === ENVIRONMENTS.TEST
+const isDev :boolean = BUILD === 'development';
+const isProd :boolean = BUILD === 'production';
+
+const ifDev :Function = ifElse(isDev);
+const ifProd :Function = ifElse(isProd);
+
+export {
+  isDev,
+  isProd,
+  ifDev,
+  ifProd
 };
