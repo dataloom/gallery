@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "app": "npm run webpack:server",
+    "dev": "NODE_ENV=local webpack-dashboard -- webpack-dev-server --config config/webpack.config.babel.js --port 9000 --progress --profile --colors",
     "build:prod": "npm run webpack:prod",
     "clean": "rimraf build/*",
     "flow": "echo \"Error: flow task not implemented\" && exit 1",
@@ -81,6 +82,7 @@
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
     "webpack": "^2.1.0-beta",
+    "webpack-dashboard": "^0.2.1",
     "webpack-dev-server": "^2.1.0-beta"
   }
 }
