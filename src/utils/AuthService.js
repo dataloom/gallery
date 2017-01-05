@@ -12,6 +12,7 @@ export default class AuthService extends EventEmitter {
     super();
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
+      closable: false,
       theme: {
         logo: img
       },
@@ -52,6 +53,10 @@ export default class AuthService extends EventEmitter {
   login() {
     // Call the show method to display the widget.
     this.lock.show();
+  }
+
+  hideLoginPrompt() {
+    this.lock.hide();
   }
 
   loggedIn() {
