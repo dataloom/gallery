@@ -5,12 +5,16 @@ import * as Cookies from 'js-cookie';
 import { EventEmitter } from 'events';
 
 import { isTokenExpired } from './jwtHelper';
+import img from '../images/kryptnostic-logo-big.png';
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
     super();
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
+      theme: {
+        logo: img
+      },
       auth: {
         params: {
           scope: 'openid email user_metadata app_metadata nickname roles user_id'
