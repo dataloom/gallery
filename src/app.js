@@ -13,10 +13,10 @@ import {
 } from 'react-router';
 
 import initializeReduxStore from './core/redux/ReduxStore';
-import makeRoutes from './routes';
+import makeRoutes from './core/router/Routes';
 
-const routes = makeRoutes();
 const reduxStore = initializeReduxStore();
+const routes = makeRoutes();
 
 ReactDOM.render(
   <Provider store={reduxStore}>
