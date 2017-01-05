@@ -6,6 +6,7 @@
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 const CONSTS = require('./consts');
 const PATHS = require('./paths');
@@ -38,7 +39,8 @@ const plugins = []
       inject: true,
       template: `${PATHS.ABS.SOURCE}/${CONSTS.APP_HTML}`
     })
-  );
+  )
+  .concat(new DashboardPlugin());
 
 module.exports = Object.assign({}, baseWebpackConfig, {
   output,
