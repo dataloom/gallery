@@ -1,15 +1,26 @@
+import 'babel-polyfill';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { hashHistory } from 'react-router';
-import App from './containers/App/App';
-import { makeRoutes } from './routes';
+import {
+  Provider
+} from 'react-redux';
 
+import {
+  Router,
+  hashHistory
+} from 'react-router';
+
+import initializeReduxStore from './core/redux/ReduxStore';
+import makeRoutes from './core/router/Routes';
+
+const reduxStore = initializeReduxStore();
 const routes = makeRoutes();
 
-const mountNode = document.querySelector('#app');
-
 ReactDOM.render(
-  <App history={hashHistory} routes={routes} />,
-  mountNode
+  <Provider store={reduxStore}>
+    <Router history={hashHistory} routes={routes} />
+  </Provider>,
+  document.getElementById('app')
 );

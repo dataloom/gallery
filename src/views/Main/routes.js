@@ -8,16 +8,17 @@ import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
-import AuthConsts from '../../utils/Consts/AuthConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
 
+// injected by Webpack.DefinePlugin
+declare var __AUTH0_CLIENT_ID__;
+declare var __AUTH0_DOMAIN__;
+declare var __DEV__;
 
-declare var __LOCAL__;
-
-const auth = new AuthService(AuthConsts.AUTH0_CLIENT_ID, AuthConsts.AUTH0_DOMAIN);
+const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
@@ -28,7 +29,7 @@ const requireAuth = (nextState, replace) => {
     const authToken = auth.getToken();
     const host = window.location.host;
     const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
-    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
+    const baseUrl = (__DEV__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
   }
 };

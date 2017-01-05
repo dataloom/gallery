@@ -54,8 +54,12 @@ export class NewEdmObjectInput extends React.Component {
     this.setState({ pKeysAdded });
   }
 
-  handleInputChange = (newState) => {
-    this.setState(newState);
+  handleInputChange = (e) => {
+
+    const fieldName = e.target.name;
+    this.setState({
+      [fieldName]: e.target.value
+    });
   }
 
   handleTypeNamespaceChange = (newValue) => {
@@ -142,7 +146,7 @@ export class NewEdmObjectInput extends React.Component {
   renderInputField = (fieldType, fieldName) => {
     return (
       <div>
-        <div>`${this.props.edmType} ${fieldType}`</div>
+        <div>{`${this.props.edmType} ${fieldType}`}</div>
         <div className={styles.spacerMini} />
         <input
           type="text"
