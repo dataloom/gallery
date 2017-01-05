@@ -20,6 +20,12 @@ const output = Object.assign({}, baseWebpackConfig.output, {
 
 const plugins = [
   new Webpack.optimize.OccurrenceOrderPlugin(),
+  // https://facebook.github.io/react/docs/optimizing-performance.html#use-the-production-build
+  new Webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: JSON.stringify('production')
+    }
+  }),
   new HtmlWebpackPlugin({
     inject: true,
     template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
