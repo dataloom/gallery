@@ -15,17 +15,17 @@ import baseWebpackConfig from './webpack.config.base.js';
 const output = Object.assign({}, baseWebpackConfig.output, {
   filename: `${APP_PATHS.REL.STATIC_JS}/app.[hash:8].js`,
   chunkFilename: `${APP_PATHS.REL.STATIC_JS}/app.chunk.[id].[chunkhash:8].js`,
-  publicPath: '/gallery'
+  publicPath: '/gallery/'
 });
 
 const plugins = [
-  new Webpack.optimize.OccurrenceOrderPlugin(),
   // https://facebook.github.io/react/docs/optimizing-performance.html#use-the-production-build
   new Webpack.DefinePlugin({
     'process.env': {
       NODE_ENV: JSON.stringify('production')
     }
   }),
+  new Webpack.optimize.OccurrenceOrderPlugin(),
   new HtmlWebpackPlugin({
     inject: true,
     template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
