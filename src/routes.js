@@ -2,7 +2,8 @@ import React from 'react';
 import { Route } from 'react-router';
 import { makeMainRoutes } from './views/Main/routes';
 
-export const makeRoutes = () => {
+export default function makeRoutes() {
+
   const main = makeMainRoutes();
 
   return (
@@ -10,6 +11,4 @@ export const makeRoutes = () => {
       {main}
     </Route>
   );
-};
-
-export default makeRoutes;
+}

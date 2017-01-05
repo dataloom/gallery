@@ -26,13 +26,6 @@ const plugins = []
     })
   )
   .concat(
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'react',
-      filename: `${PATHS.REL.STATIC_JS}/react.js`,
-      minChunks: Infinity
-    })
-  )
-  .concat(
     new webpack.optimize.UglifyJsPlugin()
   );
 

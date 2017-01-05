@@ -21,6 +21,7 @@ const baseWebpackConfig = require('./webpack.config.base.js');
 // ];
 
 const APP_ENTRY = [
+  'babel-polyfill',
   PATHS.ABS.APP_ENTRY
 ];
 

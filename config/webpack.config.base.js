@@ -83,15 +83,13 @@ const definePluginProperties = Object.keys(APP_GLOBALS).reduce((previous, key) =
 
 module.exports = {
   bail: true,
-  entry: {
-    app: [
-      PATHS.ABS.APP_ENTRY
-    ],
-    react: [
-      'react',
-      'react-dom'
-    ]
+  performance: {
+    hints: false // disable performance hints for now
   },
+  entry: [
+    'babel-polyfill',
+    PATHS.ABS.APP_ENTRY
+  ],
   output: {
     path: PATHS.ABS.BUILD,
     publicPath: '/gallery/'
