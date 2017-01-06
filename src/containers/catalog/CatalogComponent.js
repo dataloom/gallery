@@ -13,9 +13,11 @@ export class CatalogComponent extends React.Component {
   }
 
   render() {
-    return (<div>
-      <h1>Catalog</h1>
-      <EntitySetList auth={this.props.auth}/>
-    </div>);
+    return (
+      <div>
+        <h1>Catalog</h1>
+        <EntitySetList auth={this.props.auth}/>
+      </div>
+    );
   }
 }
