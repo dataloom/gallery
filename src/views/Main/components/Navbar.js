@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import AuthService from '../../../utils/AuthService';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
+import { Link } from 'react-router';
 
 export class Navbar extends React.Component {
   static contextTypes = {
@@ -40,18 +40,6 @@ export class Navbar extends React.Component {
     }
   }
 
-  showLogoutButton() {
-    if (this.props.auth.loggedIn()) {
-      return <Button onClick={this.logout} className={styles.logoutButton}>Logout</Button>;
-    }
-    return null;
-  }
-
-  logout = () => {
-    this.props.auth.logout();
-    this.context.router.push(`/${PageConsts.LOGIN}`);
-  }
-
   getButtonClass = (state) => {
     return (state === this.state.selected) ? `${styles.navButton} ${styles.navButtonSelected}` : `${styles.navButton}`;
   }
@@ -59,39 +47,38 @@ export class Navbar extends React.Component {
   updateState = (newState) => {
     this.props.updateTopbarFn();
     this.setState({ selected: newState });
-    this.context.router.push(`/${newState}`);
   }
 
   render() {
     return (
       <div className={styles.navbarContainer}>
-        <button
-          className={this.getButtonClass(PageConsts.HOME)}
-          onClick={() => {
-            this.updateState(PageConsts.HOME);
-          }}
-        >
+        <Link to={`/${PageConsts.HOME}`}
+              className={this.getButtonClass(PageConsts.HOME)}
+              onClick={() => { this.updateState(PageConsts.HOME); }}>
           <FontAwesome name="home" size="2x" />
           <div className={styles.navButtonText}>Home</div>
-        </button>
-        <button
+        </Link>
+
+        <Link to={`/${PageConsts.CATALOG}`}
           className={this.getButtonClass(PageConsts.CATALOG)}
-          onClick={() => {
-            this.updateState(PageConsts.CATALOG);
-          }}
-        >
+          onClick={() => { this.updateState(PageConsts.CATALOG); }}>
           <FontAwesome name="book" size="2x" />
           <div className={styles.navButtonText}>Catalog</div>
-        </button>
-        <button
-          className={this.getButtonClass(PageConsts.VISUALIZE)}
-          onClick={() => {
-            this.updateState(PageConsts.VISUALIZE);
-          }}
-        >
+        </Link>
+
+        <Link to={`/${PageConsts.VISUALIZE}`}
+              className={this.getButtonClass(PageConsts.VISUALIZE)}
+              onClick={() => { this.updateState(PageConsts.VISUALIZE); }}>
           <FontAwesome name="eye" size="2x" />
           <div className={styles.navButtonText}>Visualize</div>
-        </button>
+        </Link>
+
+        <Link to={`/${PageConsts.SCHEMAS}`}
+          className={this.getButtonClass(PageConsts.SCHEMAS)}
+          onClick={() => { this.updateState(PageConsts.SCHEMAS); }}>
+          <FontAwesome name="circle" size="2x" />
+          <div className={styles.navButtonText}>Schemas</div>
+        </Link>
       </div>
     );
   }
