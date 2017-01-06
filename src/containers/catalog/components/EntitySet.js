@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { PropertyList } from '../../../components/propertylist/PropertyList';
@@ -132,18 +133,6 @@ export class EntitySet extends React.Component {
     this.setState({ showPanel: true });
   }
 
-  navigateToVisualize = () => {
-    const { name, type } = this.props;
-    this.context.router.push({
-      pathname: `/${PageConsts.VISUALIZE}`,
-      query: {
-        name,
-        typeNamespace: type.namespace,
-        typeName: type.name
-      }
-    });
-  }
-
   renderDownloadButton = (options) => {
     if (options !== undefined) {
       return (
@@ -249,10 +238,11 @@ export class EntitySet extends React.Component {
           editingPermissions={editing}
           isOwner={isOwner}
         />
-        <button
-          className={this.visualizeButtonClass()}
-          onClick={this.navigateToVisualize}
-        >Visualize</button>
+        <Link
+          to={`/${PageConsts.VISUALIZE}?name=${name}&typeNamespace=${type.namespace}&typeName=${type.name}`}
+          className={this.visualizeButtonClass()}>
+          Visualize
+        </Link>
       </div>
     );
   }
