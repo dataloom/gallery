@@ -4,6 +4,7 @@ const LOGIN = 'login';
 const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
 const ORG = 'org';
+const SCHEMAS = 'schemas';
 
 export default {
   HOME,
@@ -11,5 +12,6 @@ export default {
   LOGIN,
   SETTINGS,
   VISUALIZE,
-  ORG
+  ORG,
+  SCHEMAS
 };

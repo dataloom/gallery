@@ -25,16 +25,9 @@ npm install
 ./gradlew :datastore:run
 ```
 3. Run the server on http://localhost:9000/gallery/ within the gallery project.
-    * *Option 1:* Run normal dev server
-        ```
-        cd gallery
-        npm run app
-        ```
-    * *Option 2:* Run [webpack-dashboard](https://www.npmjs.com/package/webpack-dashboard)
-        ```
-        cd gallery
-        npm run dev
-        ```
+    * *Option 1:* Run normal dev server `cd gallery; npm run app`
+    * *Option 2:* Run [webpack-dashboard](https://www.npmjs.com/package/webpack-dashboard) `cd gallery; npm run dev`
+
 **Building for prod**
 
 Run the prod build within the gallery project.

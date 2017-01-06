@@ -3,7 +3,7 @@ import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import { NameNamespaceAutosuggest } from '../../../../components/namespaceautosuggest/NameNamespaceAutosuggest';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 

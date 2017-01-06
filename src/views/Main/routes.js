@@ -3,11 +3,12 @@ import { Route, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import { Container } from './Container';
-import { Catalog } from './Catalog/Catalog';
+import { Schemas } from './Schemas/Schemas';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
+import { CatalogComponent } from '../../containers/catalog/CatalogComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
@@ -85,7 +86,8 @@ export const makeMainRoutes = () => {
     <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
-      <Route path={PageConsts.CATALOG} component={Catalog} onEnter={requireAuth} />
+      <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth} />

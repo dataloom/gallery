@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
-import Utils from '../../../../utils/Utils';
-import StringConsts from '../../../../utils/Consts/StringConsts';
-import styles from '../styles.module.css';
+import Utils from '../../utils/Utils';
+import StringConsts from '../../utils/Consts/StringConsts';
+import styles from '../../views/Main/Schemas/styles.module.css';
 
 export class NameNamespaceAutosuggest extends React.Component {
   static propTypes = {

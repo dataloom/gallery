@@ -17,7 +17,6 @@ export class DataModelToolbar extends React.Component {
   dataModelLabels =
     [
       { label: 'Schemas', type: EdmConsts.SCHEMA, key: 0 },
-      { label: 'Entity Sets', type: EdmConsts.ENTITY_SET, key: 1 },
       { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE, key: 2 },
       { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE, key: 3 }
     ]
@@ -31,6 +30,7 @@ export class DataModelToolbar extends React.Component {
     const navButtons = this.dataModelLabels.map((labels) => {
       const label = labels.label;
       const type = labels.type;
+
       let className = styles.buttonStyle;
       if (type === this.state.dataModelView) {
         className = `${styles.buttonStyle} ${styles.selectedButtonStyle}`;
