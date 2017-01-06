@@ -3,7 +3,7 @@ import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
-import { NewEdmObjectInput } from './NewEdmObjectInput';
+import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 

@@ -1,0 +1,25 @@
+@import "../../core/styles/index.css";
+
+.permissionButton {
+    border: none;
+    background: #5b5f66;
+    color: white;
+    border-radius: 3px;
+    padding: 8px 15px;
+    vertical-align: middle;
+}
+
+.permissionButton:hover {
+    background: #494c52;
+}
+
+.requestPermissionWrapper {
+    vertical-align: middle;
+    text-align: right;
+}
+
+.permissionRequestStatusMsg {
+    width: 100%;
+    text-align: right;
+    margin: 0 0 10px 0;
+}

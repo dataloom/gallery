@@ -1,0 +1,37 @@
+th {
+    font-weight: bold;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr:first-child .tableCell {
+    border: none;
+}
+
+.tableCell {
+    padding: 5px 10px;
+    color: #767a7c;
+    border: 1px solid #d1d6da;
+    height: 30px;
+    min-width: 185px;
+}
+
+.tableRows {
+    padding: 5px 10px;
+}
+
+.primaryKey {
+    color: gray;
+    padding-left: 6px;
+}

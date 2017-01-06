@@ -2,12 +2,11 @@ import React, { PropTypes } from 'react';
 import styles from './styles.module.css';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
-import { EntitySetList } from './Components/EntitySetList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import AuthService from '../../../utils/AuthService';
-import '../../../styles/dropdown.css';
+import '../../../core/styles/global/dropdown.css';
 
 export class Schemas extends React.Component {
 
@@ -37,8 +36,6 @@ export class Schemas extends React.Component {
     switch (view) {
       case EdmConsts.SCHEMA:
         return (<SchemaList />);
-      case EdmConsts.ENTITY_SET:
-        return (<EntitySetList auth={this.props.auth} />);
       case EdmConsts.ENTITY_TYPE:
         return (<EntityTypeList />);
       case EdmConsts.PROPERTY_TYPE:
@@ -56,7 +53,7 @@ export class Schemas extends React.Component {
   render() {
     return (
       <div>
-        <h2 className={styles.center}>Catalog</h2>
+        <h2 className={styles.center}>Schemas</h2>
         <DataModelToolbar changeView={this.changeDataModelView} />
         <div className={styles.spacerBig} />
         {this.getDataModelView()}
