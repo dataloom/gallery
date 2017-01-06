@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import AuthService from '../../../utils/AuthService';
 import StringConsts from '../../../utils/Consts/StringConsts';
@@ -35,6 +34,10 @@ export class Navbar extends React.Component {
         return PageConsts.HOME;
       case (PageConsts.CATALOG):
         return PageConsts.CATALOG;
+      case (PageConsts.VISUALIZE):
+        return PageConsts.VISUALIZE;
+      case (PageConsts.ORG):
+        return PageConsts.ORG;
       default:
         return StringConsts.EMPTY;
     }
@@ -42,7 +45,7 @@ export class Navbar extends React.Component {
 
   showLogoutButton() {
     if (this.props.auth.loggedIn()) {
-      return <Button onClick={this.logout} className={styles.logoutButton}>Logout</Button>;
+      return <button onClick={this.logout} className={styles.logoutButton}>Logout</button>;
     }
     return null;
   }
@@ -91,6 +94,14 @@ export class Navbar extends React.Component {
         >
           <FontAwesome name="eye" size="2x" />
           <div className={styles.navButtonText}>Visualize</div>
+        </button>
+        <button
+          className={this.getButtonClass(PageConsts.ORG)} onClick={() => {
+            this.updateState(PageConsts.ORG);
+          }}
+        >
+          <FontAwesome name="sitemap" size="2x" />
+          <div className={styles.navButtonText}>Org</div>
         </button>
       </div>
     );

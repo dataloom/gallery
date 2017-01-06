@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Jumbotron } from 'react-bootstrap';
 import styles from './styles.module.css';
 import { Navbar } from './components/Navbar';
 import { Topbar } from './components/Topbar';
@@ -38,14 +37,14 @@ export class Container extends React.Component {
   render() {
     const children = this.getChildren();
     return (
-      <Jumbotron>
+      <div>
         <Topbar auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
         <Navbar auth={this.props.route.auth} updateTopbarFn={this.props.route.profileFn} />
         <div className={styles.bodyContainer}>
           <div className={styles.topSpacer} />
           {children}
         </div>
-      </Jumbotron>
+      </div>
     );
   }
 }

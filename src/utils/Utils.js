@@ -47,4 +47,12 @@ export default class Utils {
   static getFqnObj(namespace, name) {
     return { namespace, name };
   }
+
+  static isValidEmail(email) {
+    // http://stackoverflow.com/a/46181/196921
+    /* eslint-disable max-len, no-useless-escape */
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    /* eslint-enable */
+    return emailRegex.test(email);
+  }
 }
