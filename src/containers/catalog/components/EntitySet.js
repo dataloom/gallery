@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { PropertyList } from '../../../components/propertylist/PropertyList';
 import { DropdownButton } from '../../../components/dropdown/DropdownButton';
@@ -46,11 +47,6 @@ export class EntitySet extends React.Component {
         msg: ''
       }
     };
-  }
-
-  requestPermissionClass = {
-    true: styles.requestPermissionWrapper,
-    false: styles.hidden
   }
 
   shouldShowPermissionButton = {
@@ -189,7 +185,6 @@ export class EntitySet extends React.Component {
       <div>
         <div className={`${reqStatus.display} ${styles.permissionRequestStatusMsg}`}>{reqStatus.msg}</div>
         {this.renderRequestPermissionButton(requestOptions)}
-        <div className={styles.spacerSmall} />
         {this.renderDownloadButton(downloadOptions)}
       </div>
     );
@@ -220,19 +215,13 @@ export class EntitySet extends React.Component {
         <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[isOwner]}>
           {(editing) ? 'Stop editing' : 'Edit permissions'}
         </button>
-        <div className={styles.spacerSmall} />
         <div className={styles.name}>{name}</div>
-        <div className={styles.spacerLeft} />
         <button
           className={this.shouldShowPermissionButton[editing]}
           onClick={this.editEntitySetPermissions}
         >Change permissions</button>
-        <div className={styles.spacerMed} />
         <div className={styles.subtitle}>{title}</div>
-        <div className={styles.spacerMed} />
         {this.renderDownloadOrRequestDropdowns()}
-        <br />
-        <div className={styles.spacerSmall} />
         {this.renderPermissionsPanel(name)}
         <div className={this.errorClass[this.state.loadEntityTypeError]}>
           Unable to load entity type details for {name}.
@@ -251,7 +240,6 @@ export class EntitySet extends React.Component {
             </tbody>
           </table>
         </div>
-        <div className={styles.spacerBig} />
         <PropertyList
           properties={properties}
           entityTypeName={type.name}
@@ -261,13 +249,10 @@ export class EntitySet extends React.Component {
           editingPermissions={editing}
           isOwner={isOwner}
         />
-        <div className={styles.spacerMed} />
         <button
           className={this.visualizeButtonClass()}
           onClick={this.navigateToVisualize}
         >Visualize</button>
-        <div className={styles.spacerBig} />
-        <hr />
       </div>
     );
   }
