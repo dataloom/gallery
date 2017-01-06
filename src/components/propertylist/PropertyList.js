@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
-import StringConsts from '../../../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
-import Utils from '../../../../utils/Utils';
-import styles from '../styles.module.css';
+import StringConsts from '../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../utils/Consts/PermissionsConsts';
+import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
+import Utils from '../../utils/Utils';
+import styles from './propertylist.module.css';
 
 export class PropertyList extends React.Component {
   static propTypes = {

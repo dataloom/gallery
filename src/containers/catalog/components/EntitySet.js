@@ -1,15 +1,16 @@
 import React, { PropTypes } from 'react';
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
-import { PropertyList } from './PropertyList';
-import { DropdownButton } from './DropdownButton';
-import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
-import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
-import StringConsts from '../../../../utils/Consts/StringConsts';
-import FileConsts from '../../../../utils/Consts/FileConsts';
-import PageConsts from '../../../../utils/Consts/PageConsts';
-import AuthService from '../../../../utils/AuthService';
-import { PermissionsPanel } from './PermissionsPanel';
-import styles from '../styles.module.css';
+import { PropertyList } from '../../../components/propertylist/PropertyList';
+import { DropdownButton } from '../../../components/dropdown/DropdownButton';
+import { PermissionsPanel } from '../../../components/permissions/PermissionsPanel';
+import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
+import StringConsts from '../../../utils/Consts/StringConsts';
+import FileConsts from '../../../utils/Consts/FileConsts';
+import PageConsts from '../../../utils/Consts/PageConsts';
+import AuthService from '../../../utils/AuthService';
+
+import styles from '../catalog.module.css';
 
 const permissionLevels = {
   hidden: [],

@@ -1,0 +1,12 @@
+@import "../../../core/styles/index.css";
+
+/* button styling */
+.firstEdmButton {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.lastEdmButton {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}

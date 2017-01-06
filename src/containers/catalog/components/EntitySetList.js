@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
-import Utils from '../../../../utils/Utils';
-import AuthService from '../../../../utils/AuthService';
-import { NewEdmObjectInput } from './NewEdmObjectInput';
+import Utils from '../../../utils/Utils';
+import AuthService from '../../../utils/AuthService';
+import { NewEdmObjectInput } from '../../../components/edminput/NewEdmObjectInput';
 import { EntitySet } from './EntitySet';
-import EdmConsts from '../../../../utils/Consts/EdmConsts';
-import styles from '../styles.module.css';
+import EdmConsts from '../../../utils/Consts/EdmConsts';
+import styles from '../catalog.module.css';
 
 export class EntitySetList extends React.Component {
   static propTypes = {

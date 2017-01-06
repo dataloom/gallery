@@ -3,7 +3,7 @@ import { PropertyTypeList } from './PropertyTypeList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
-import { DropdownButton } from './DropdownButton';
+import { DropdownButton } from '../../../../components/dropdown/DropdownButton';
 import styles from '../styles.module.css';
 
 export class Schema extends React.Component {

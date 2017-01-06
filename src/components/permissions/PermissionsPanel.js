@@ -2,12 +2,12 @@ import React, { PropTypes } from 'react';
 import Dropdown from 'react-dropdown';
 import Select from 'react-select';
 import { PermissionsApi, UsersApi } from 'loom-data';
-import StringConsts from '../../../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
-import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
-import styles from '../styles.module.css';
-import Utils from '../../../../utils/Utils';
-import '../../../../styles/dropdown.css';
+import StringConsts from '../../utils/Consts/StringConsts';
+import PermissionsConsts from '../../utils/Consts/PermissionsConsts';
+import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
+import styles from './permissions.module.css';
+import Utils from '../../utils/Utils';
+import '../../core/styles/global/dropdown.css';
 
 const views = {
   GLOBAL: 0,
