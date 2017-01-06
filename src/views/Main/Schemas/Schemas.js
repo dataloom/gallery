@@ -9,7 +9,7 @@ import EdmConsts from '../../../utils/Consts/EdmConsts';
 import AuthService from '../../../utils/AuthService';
 import '../../../styles/dropdown.css';
 
-export class Catalog extends React.Component {
+export class Schemas extends React.Component {
 
   static propTypes = {
     auth: PropTypes.instanceOf(AuthService),
@@ -30,12 +30,6 @@ export class Catalog extends React.Component {
 
   componentDidMount() {
     this.props.updateTopbarFn();
-  }
-
-  getChildContext() {
-    return {
-      isAdmin: this.props.profileFn().isAdmin
-    };
   }
 
   getDataModelView() {
@@ -71,4 +65,4 @@ export class Catalog extends React.Component {
   }
 }
 
-export default Catalog;
+export default Schemas;
