@@ -4,7 +4,7 @@ body {
   width: 100%;
 }
 
-#app {
+body > div {
   height: 100%;
   width: 100%;
 }
@@ -17,22 +17,24 @@ body {
   line-height: 18px;
 }
 
-h1, h2 {
-  font-size: 26px;
-  color: #404446;
-  font-weight: bold;
+.appWrapper {
+  color: #455a64;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-button {
-  cursor: pointer;
+.appBody {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: row;
 }
 
-.topSpacer {
-  height: 50px;
-}
-
-.bodyContainer {
-  background: white;
-  margin-left: 80px;
-  margin-right: 80px;
+.appContent {
+  background-color: #fafbfc;
+  padding: 10px;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
 }
