@@ -38,6 +38,6 @@
   text-align: center;
 }
 
-.sideNavItemSelected {
+.sideNavItemSelected .sideNavItem {
   color: #1565c0;
 }

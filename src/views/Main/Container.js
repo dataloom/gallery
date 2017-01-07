@@ -41,7 +41,7 @@ export class Container extends React.Component {
       <div className={styles.appWrapper}>
         <HeaderNav auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
         <div className={styles.appBody}>
-          <SideNav updateTopbarFn={this.props.route.profileFn} name={this.state.name} />
+          <SideNav name={this.state.name} />
           <div className={styles.appContent}>
             { this.getChildren() }
           </div>
