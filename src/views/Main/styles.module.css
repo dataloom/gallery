@@ -1,27 +1,42 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+body > div {
+  height: 100%;
+  width: 100%;
+}
+
 * {
   font-family: 'Lato', 'Helvetica Neue', 'Open Sans', sans-serif;
-	font-size: 13px;
-	font-style: normal;
-	font-variant: normal;
-	line-height: 18px;
+  font-size: 13px;
+  font-style: normal;
+  font-variant: normal;
+  line-height: 18px;
 }
 
-h1, h2 {
-  font-size: 26px;
-  color: #404446;
-  font-weight: bold;
+.appWrapper {
+  color: #455a64;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-button {
-  cursor: pointer;
+.appBody {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: row;
 }
 
-.topSpacer {
-  height: 50px;
-}
-
-.bodyContainer {
-  background: white;
-  margin-left: 80px;
-  margin-right: 80px;
+.appContent {
+  background-color: #fafbfc;
+  padding: 10px;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
 }

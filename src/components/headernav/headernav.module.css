@@ -1,0 +1,54 @@
+.loom {
+  font-size: 20px;
+}
+
+.headerNavWrapper {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+}
+
+.headerNav {
+  border-bottom: 1px solid #e4edf5;
+  padding: 25px;
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: space-between;
+}
+
+.headerNavLeft {
+  display: flex;
+  align-items: center;
+}
+
+.headerNavLeft .headerNavItem {
+  margin-right: 20px;
+}
+
+.headerNavRight {
+  display: flex;
+  align-items: center;
+}
+
+.headerNavRight .headerNavItem {
+  margin-left: 20px;
+}
+
+.headerNavItem {
+  color: #455a64;
+}
+
+.headerNavLink {
+  color: #455a64;
+  text-decoration: none;
+}
+
+.headerNavLink:hover {
+  color: #1565c0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.hidden {
+  display: none;
+}
