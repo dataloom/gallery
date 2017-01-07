@@ -1,0 +1,43 @@
+.sideNav {
+  border-right: 1px solid #e4edf5;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.sideNavLink {
+  text-decoration: none;
+}
+
+.sideNavItem {
+  color: #455a64;
+  height: 80px;
+  width: 80px;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.sideNavItem:hover {
+  color: #1565c0;
+  cursor: pointer;
+}
+
+.sideNavItemIcon {
+  width: 100%;
+  text-align: center;
+}
+
+.sideNavItemText {
+  text-align: center;
+}
+
+.sideNavItemSelected {
+  color: #1565c0;
+}
