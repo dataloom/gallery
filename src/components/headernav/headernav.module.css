@@ -43,6 +43,12 @@
   text-decoration: none;
 }
 
+.headerNavLink:hover {
+  color: #1565c0;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 .hidden {
   display: none;
 }
