@@ -14,7 +14,7 @@ import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
 
-import OrganizationsComponent from '../../containers/Organizations/OrganizationsComponent';
+import OrganizationsComponent from '../../containers/organizations/OrganizationsComponent';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;

@@ -65,7 +65,7 @@ function getOrgInfo() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve('Kryptnostic, Inc.');
-    }, 250);
+    }, 350);
   });
 }
 

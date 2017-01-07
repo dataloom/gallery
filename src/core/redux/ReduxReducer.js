@@ -6,7 +6,7 @@ import {
   combineReducers
 } from 'redux-immutable';
 
-import organizationsReducer from '../../containers/Organizations/OrganizationsReducer';
+import organizationsReducer from '../../containers/organizations/OrganizationsReducer';
 
 export default function reduxReducer() {
 
