@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { DropdownButton, Button, MenuItem } from 'react-bootstrap';
 
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 import { PropertyList } from '../../../components/propertylist/PropertyList';
-import { DropdownButton } from '../../../components/dropdown/DropdownButton';
 import { PermissionsPanel } from '../../../components/permissions/PermissionsPanel';
 import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
 import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
@@ -50,37 +50,12 @@ export class EntitySet extends React.Component {
     };
   }
 
-  shouldShowPermissionButton = {
-    true: styles.simpleButton,
-    false: styles.hidden
-  }
-
-  shouldAllowEditPermissions = {
-    true: styles.permissionButton,
-    false: styles.hidden
-  }
-
   errorClass = {
     true: styles.errorMsg,
     false: styles.hidden
   }
 
-  componentDidMount() {
-    EntityDataModelApi.getEntityType(this.props.type)
-    .then((type) => {
-      this.setState({
-        properties: type.properties,
-        loadEntityTypeError: false
-      });
-    }).catch(() => {
-      this.setState({ loadEntityTypeError: true });
-    });
-  }
-
-  getUrl = (datatype) => {
-    return DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
-  }
-
+  /* API Calls */
   requestPermission = (type) => {
     PermissionsApi.addPermissionsRequestForPropertyTypesInEntitySet([{
       principal: {
@@ -106,6 +81,23 @@ export class EntitySet extends React.Component {
       });
     });
   }
+
+  componentDidMount() {
+    EntityDataModelApi.getEntityType(this.props.type)
+    .then((type) => {
+      this.setState({
+        properties: type.properties,
+        loadEntityTypeError: false
+      });
+    }).catch(() => {
+      this.setState({ loadEntityTypeError: true });
+    });
+  }
+
+  getUrl = (datatype) => {
+    return DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
+  }
+  /* Component Logic */
 
   shouldShow = {
     true: StringConsts.EMPTY,
@@ -182,7 +174,7 @@ export class EntitySet extends React.Component {
   visualizeButtonClass = () => {
     const permissions = this.props.permissions;
     return (permissions.includes(PermissionsConsts.READ) || permissions.includes(PermissionsConsts.WRITE)) ?
-      styles.simpleButton : styles.hidden;
+      "" : styles.hidden;
   }
 
   renderPermissionsPanel = (name) => {
@@ -199,35 +191,44 @@ export class EntitySet extends React.Component {
   render() {
     const { name, title, type, isOwner } = this.props;
     const { properties, editing } = this.state;
-    return (
-      <div>
-        <button onClick={this.changeEditingState} className={this.shouldAllowEditPermissions[isOwner]}>
+
+    let editButton;
+    if (isOwner) {
+      editButton = (
+        <Button onClick={this.changeEditingState}>
           {(editing) ? 'Stop editing' : 'Edit permissions'}
-        </button>
-        <div className={styles.name}>{name}</div>
-        <button
-          className={this.shouldShowPermissionButton[editing]}
-          onClick={this.editEntitySetPermissions}
-        >Change permissions</button>
-        <div className={styles.subtitle}>{title}</div>
-        {this.renderDownloadOrRequestDropdowns()}
+        </Button>
+      );
+    }
+
+    return (
+      <article className={styles.entitySet}>
+        <header>
+          <h2 className={styles.title}>
+            {name}
+            <small>{type.namespace} {type.name}</small>
+          </h2>
+
+          <div className={styles.controls}>
+            {editButton}
+            <DropdownButton title="Actions" id="action-dropdown">
+              <MenuItem header>Download</MenuItem>
+              <MenuItem href={this.getUrl(FileConsts.CSV)}>CSV</MenuItem>
+              <MenuItem href={this.getUrl(FileConsts.JSON)}>JSON</MenuItem>
+              <MenuItem divider/>
+              <MenuItem>
+                <Link
+                  to={`/${PageConsts.VISUALIZE}?name=${name}&typeNamespace=${type.namespace}&typeName=${type.name}`}>
+                  Visualize
+                </Link>
+              </MenuItem>
+            </DropdownButton>
+          </div>
+        </header>
+
         {this.renderPermissionsPanel(name)}
         <div className={this.errorClass[this.state.loadEntityTypeError]}>
           Unable to load entity type details for {name}.
-        </div>
-        <div>
-          <table>
-            <tbody>
-              <tr>
-                <th className={styles.tableCell}>Entity Type Name</th>
-                <th className={styles.tableCell}>Entity Type Namespace</th>
-              </tr>
-              <tr className={styles.tableRows}>
-                <td className={styles.tableCell}>{type.name}</td>
-                <td className={styles.tableCell}>{type.namespace}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
         <PropertyList
           properties={properties}
@@ -238,12 +239,7 @@ export class EntitySet extends React.Component {
           editingPermissions={editing}
           isOwner={isOwner}
         />
-        <Link
-          to={`/${PageConsts.VISUALIZE}?name=${name}&typeNamespace=${type.namespace}&typeName=${type.name}`}
-          className={this.visualizeButtonClass()}>
-          Visualize
-        </Link>
-      </div>
+      </article>
     );
   }
 }

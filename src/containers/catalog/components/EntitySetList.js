@@ -96,7 +96,7 @@ export class EntitySetList extends React.Component {
       />);
     });
     return (
-      <div className={styles.edmContainer}>
+      <div className={styles.entitySetList}>
         {this.renderCreateEntitySet()}
         <div className={this.errorClass[loadEntitySetsError]}>Unable to load entity sets.</div>
         {entitySetList}
