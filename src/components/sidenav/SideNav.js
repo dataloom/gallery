@@ -40,6 +40,7 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', 'book') }
         { this.getSideNavItemLayout(PageConsts.VISUALIZE, 'Visualize', 'eye') }
         { this.getSideNavItemLayout(PageConsts.SCHEMAS, 'Schemas', 'circle') }
+        { this.getSideNavItemLayout(PageConsts.ORG, 'Organizations', 'sitemap') }
       </nav>
     );
   }
