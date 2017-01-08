@@ -6,7 +6,7 @@ import { ScatterChartContainer } from './ScatterChartContainer';
 import { GeoContainer } from './GeoContainer';
 import { EntitySetVisualizationList } from './EntitySetVisualizationList';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
-import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import PermissionsConsts from '../../../core/permissions/Permission';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import Utils from '../../../utils/Utils';

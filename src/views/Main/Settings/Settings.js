@@ -1,7 +1,7 @@
 import React from 'react';
 import { UsersApi } from 'loom-data';
 import StringConsts from '../../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import PermissionsConsts from '../../../core/permissions/Permission';
 import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
 
 import styles from './styles.module.css';

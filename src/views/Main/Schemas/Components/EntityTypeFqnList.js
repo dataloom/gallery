@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
-import PermissionsConsts from '../../../../utils/Consts/PermissionsConsts';
+import PermissionsConsts from '../../../../core/permissions/Permission';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NameNamespaceAutosuggest } from '../../../../components/namespaceautosuggest/NameNamespaceAutosuggest';
 import Utils from '../../../../utils/Utils';
