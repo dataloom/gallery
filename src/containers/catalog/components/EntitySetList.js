@@ -26,11 +26,7 @@ export class EntitySetList extends React.Component {
     };
   }
 
-  errorClass = {
-    true: styles.error,
-    false: styles.hidden
-  }
-
+  /* API Calls */
   componentDidMount() {
     this.updateFn();
   }
@@ -58,7 +54,7 @@ export class EntitySetList extends React.Component {
     ).catch(() => {
       this.setState({ loadEntitySetsError: true });
     });
-  }
+  };
 
   newEntitySetSuccess = () => {
     EntityDataModelApi.getAllEntitySets().then((entitySets) => {
@@ -69,6 +65,12 @@ export class EntitySetList extends React.Component {
     }).catch(() => {
       this.setState({ loadEntitySetsError: true });
     });
+  }
+
+  /* Component */
+  errorClass = {
+    true: styles.error,
+    false: styles.hidden
   }
 
   renderCreateEntitySet = () => {
@@ -90,9 +92,7 @@ export class EntitySetList extends React.Component {
         name={entitySet.entitySet.name}
         title={entitySet.entitySet.title}
         type={entitySet.entitySet.type}
-        permissions={entitySet.permissions}
         isOwner={entitySet.isOwner}
-        auth={this.props.auth}
       />);
     });
     return (

@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { EntitySetList } from './components/EntitySetList';
 import AuthService from '../../utils/AuthService';
 
-
 export class CatalogComponent extends React.Component {
   static propTypes = {
     auth: PropTypes.instanceOf(AuthService)
