@@ -8,6 +8,7 @@ import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 
 import FileConsts from '../../utils/Consts/FileConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
+import { EntitySet } from './EntitySetStorage';
 import styles from './entityset.module.css';
 
 const MAX_DESCRIPTION_LENGTH = 300;
@@ -56,14 +57,54 @@ class ExpandableText extends React.Component {
   }
 }
 
-export class EntitySet extends React.Component {
-  static propTypes = {
-    // TODO: Use flow to specify types
-    entitySet: PropTypes.object.isRequired
-  };
+function ActionDropdown(props) {
+  let { entitySet } = props;
+  let type = entitySet.type;
 
-  constructor() {
-    super();
+  return (
+    <SplitButton pullRight title="Actions" id="action-dropdown">
+      <MenuItem header>Download</MenuItem>
+      <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.CSV)}>CSV</MenuItem>
+      <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.JSON)}>JSON</MenuItem>
+      <MenuItem divider/>
+      <li role="presentation">
+        <Link
+          to={`/${PageConsts.VISUALIZE}?name=${entitySet.name}&typeNamespace=${type.namespace}&typeName=${type.name}`}>
+          Visualize
+        </Link>
+      </li>
+    </SplitButton>
+  );
+}
+
+/* EntitySet Components */
+type EntitySetComponentProps = {
+  entitySet: EntitySet
+}
+
+export function EntitySetSummary(props: EntitySetComponentProps) {
+  let {entitySet} = props;
+
+  return (
+    <article className={styles.entitySet}>
+      <header>
+        <h2 className={styles.title}>
+          {entitySet.title}
+          <small className={styles.subtitle}>{entitySet.type.namespace}.{entitySet.type.name}</small>
+        </h2>
+
+        <div className={styles.controls}>
+          <ActionDropdown entitySet={entitySet} />
+        </div>
+      </header>
+      <ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description} />
+    </article>
+  );
+}
+
+export class EntitySetDetail extends React.Component {
+  constructor(props: EntitySetComponentProps) {
+    super(props);
     this.state = {
       editing: false,
       showPanel: false,
@@ -74,14 +115,8 @@ export class EntitySet extends React.Component {
     };
   }
 
-  getUrl(datatype) {
-    let entitySet = this.props.entitySet;
-    return DataApi.getAllEntitiesOfTypeInSetFileUrl(entitySet.type, entitySet.name, datatype);
-  }
-
   render() {
     const { entitySet } = this.props;
-    let type = entitySet.type;
 
     return (
       <article className={styles.entitySet}>
@@ -92,18 +127,7 @@ export class EntitySet extends React.Component {
           </h2>
 
           <div className={styles.controls}>
-            <SplitButton pullRight title="Actions" id="action-dropdown">
-              <MenuItem header>Download</MenuItem>
-              <MenuItem href={this.getUrl(FileConsts.CSV)}>CSV</MenuItem>
-              <MenuItem href={this.getUrl(FileConsts.JSON)}>JSON</MenuItem>
-              <MenuItem divider/>
-              <li role="presentation">
-                <Link
-                  to={`/${PageConsts.VISUALIZE}?name=${entitySet.name}&typeNamespace=${type.namespace}&typeName=${type.name}`}>
-                  Visualize
-                </Link>
-              </li>
-            </SplitButton>
+            <ActionDropdown entitySet={entitySet} />
           </div>
         </header>
         <ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description} />
@@ -111,5 +135,3 @@ export class EntitySet extends React.Component {
     );
   }
 }
-
-export default EntitySet;

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-import { EntitySet } from './EntitySet';
+import { EntitySetSummary } from './EntitySet';
 import styles from '../../containers/catalog/catalog.module.css';
 
 export class EntitySetList extends React.Component {
@@ -11,7 +11,7 @@ export class EntitySetList extends React.Component {
   render() {
     const entitySetList = this.props.entitySets.map((entitySet) => {
       return (
-        <EntitySet
+        <EntitySetSummary
           key={entitySet.key}
           entitySet={entitySet}
         />

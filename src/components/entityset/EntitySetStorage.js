@@ -2,7 +2,7 @@
 
 import { Permission } from '../../core/permissions/Permission';
 
-type EntitySet = {
+export type EntitySet = {
   // DB Reference
   name: string,
   // Friendly name
