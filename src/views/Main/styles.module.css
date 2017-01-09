@@ -37,6 +37,5 @@ body > div {
   background-color: #ffffff;
   padding: 10px;
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
 }
