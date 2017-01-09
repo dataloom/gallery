@@ -4,6 +4,7 @@ body {
   width: 100%;
   padding: 0;
   margin: 0;
+  color: #404345;
 }
 
 body > div {
@@ -20,7 +21,6 @@ body > div {
 }
 
 .appWrapper {
-  color: #455a64;
   height: 100%;
   width: 100%;
   display: flex;
@@ -34,7 +34,7 @@ body > div {
 }
 
 .appContent {
-  background-color: #fafbfc;
+  background-color: #ffffff;
   padding: 10px;
   display: flex;
   flex: 1 0 auto;

@@ -1,0 +1,24 @@
+.entitySet {
+    background: #f3f5f7;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.entitySet header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.entitySet .title {
+    margin: 0px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.expandTextButton {
+    padding: 0;
+    border: 0;
+    margin: -4px 0 0 4px;
+    font-size: 13px;
+    line-height: 18px;
+}
