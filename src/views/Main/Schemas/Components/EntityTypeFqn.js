@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
-import PermissionsConsts from '../../../../core/permissions/Permission';
+import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
 import styles from '../styles.module.css';
+
 
 export class EntityTypeFqn extends React.Component {
   static propTypes = {

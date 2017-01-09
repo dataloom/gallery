@@ -5,29 +5,26 @@ import { Link } from 'react-router';
 import { DropdownButton, Button, MenuItem } from 'react-bootstrap';
 
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
-import { PropertyList } from '../../../components/propertylist/PropertyList';
-import { PermissionsPanel } from '../../../components/permissions/PermissionsPanel';
-import StringConsts from '../../../utils/Consts/StringConsts';
-import FileConsts from '../../../utils/Consts/FileConsts';
-import PageConsts from '../../../utils/Consts/PageConsts';
 
-import styles from '../catalog.module.css';
+import { PropertyList } from '../propertylist/PropertyList';
+import { PermissionsPanel } from '../permissions/PermissionsPanel';
+import StringConsts from '../../utils/Consts/StringConsts';
+import FileConsts from '../../utils/Consts/FileConsts';
+import PageConsts from '../../utils/Consts/PageConsts';
+import { Permission } from '../../core/permissions/Permission';
+import styles from '../../containers/catalog/catalog.module.css';
 
 export class EntitySet extends React.Component {
   static propTypes = {
-    name: PropTypes.string,
-    title: PropTypes.string,
-    type: PropTypes.object,
-    isOwner: PropTypes.bool
+    // TODO: Use flow to specify types
+    entitySet: PropTypes.object.isRequired
   };
 
   constructor() {
     super();
     this.state = {
-      properties: [],
       editing: false,
       showPanel: false,
-      loadEntityTypeError: false,
       permissionRequestStatus: {
         display: styles.hidden,
         msg: ''
@@ -35,31 +32,14 @@ export class EntitySet extends React.Component {
     };
   }
 
-  /* API Calls */
-  componentDidMount() {
-    EntityDataModelApi.getEntityType(this.props.type)
-    .then((type) => {
-      this.setState({
-        properties: type.properties,
-        loadEntityTypeError: false
-      });
-    }).catch(() => {
-      this.setState({ loadEntityTypeError: true });
-    });
-  }
-
-  getUrl = (datatype) => {
-    return DataApi.getAllEntitiesOfTypeInSetFileUrl(this.props.type, this.props.name, datatype);
-  }
   /* Component Logic */
+  getUrl(datatype) {
+    let entitySet = this.props.entitySet;
+    return DataApi.getAllEntitiesOfTypeInSetFileUrl(entitySet.type, entitySet.name, datatype);
+  }
 
   shouldShow = {
     true: StringConsts.EMPTY,
-    false: styles.hidden
-  };
-
-  errorClass = {
-    true: styles.errorMsg,
     false: styles.hidden
   };
 
@@ -88,8 +68,11 @@ export class EntitySet extends React.Component {
   };
 
   render() {
-    const { name, title, type, isOwner } = this.props;
-    const { properties, editing } = this.state;
+    const { entitySet } = this.props;
+    const { editing } = this.state;
+
+    let isOwner = entitySet.permission.hasPermission(Permission.OWNER);
+    let type = entitySet.type;
 
     let editButton;
     if (isOwner) {
@@ -126,15 +109,12 @@ export class EntitySet extends React.Component {
         </header>
 
         {this.renderPermissionsPanel(name)}
-        <div className={this.errorClass[this.state.loadEntityTypeError]}>
-          Unable to load entity type details for {name}.
-        </div>
         <PropertyList
-          properties={properties}
+          properties={entitySet.properties}
           entityTypeName={type.name}
           entityTypeNamespace={type.namespace}
           allowEdit={false}
-          entitySetName={name}
+          entitySetName={entitySet.name}
           editingPermissions={editing}
           isOwner={isOwner}
         />

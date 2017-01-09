@@ -3,7 +3,8 @@ import Dropdown from 'react-dropdown';
 import Select from 'react-select';
 import { PermissionsApi, UsersApi } from 'loom-data';
 import StringConsts from '../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../core/permissions/Permission';
+import { Permission } from '../../core/permissions/Permission';
+import PermissionsConsts from '../../utils/Consts/PermissionConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
 import styles from './permissions.module.css';
 import Utils from '../../utils/Utils';
@@ -18,9 +19,9 @@ const views = {
 
 const permissionLevels = {
   hidden: [],
-  discover: [PermissionsConsts.DISCOVER],
-  read: [PermissionsConsts.DISCOVER, PermissionsConsts.READ],
-  write: [PermissionsConsts.DISCOVER, PermissionsConsts.READ, PermissionsConsts.WRITE]
+  discover: [Permission.DISCOVER],
+  read: [Permission.DISCOVER, Permission.READ],
+  write: [Permission.DISCOVER, Permission.READ, Permission.WRITE]
 };
 
 const viewLabels = {

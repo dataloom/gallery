@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
-import { EntitySetList } from './components/EntitySetList';
-import AuthService from '../../utils/AuthService';
+import { connect } from 'react-redux';
+import { EntitySetList } from '../../components/entityset/EntitySetList';
 
-export class CatalogComponent extends React.Component {
+class CatalogComponent extends React.Component {
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService)
-  }
+    entitySets: PropTypes.array.isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -15,8 +15,14 @@ export class CatalogComponent extends React.Component {
     return (
       <div>
         <h1>Catalog</h1>
-        <EntitySetList auth={this.props.auth}/>
+        <EntitySetList entitySets={this.props.entitySets}/>
       </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return state.get('catalog');
+}
+
+export default connect(mapStateToProps)(CatalogComponent);

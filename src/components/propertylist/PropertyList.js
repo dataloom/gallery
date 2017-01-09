@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import StringConsts from '../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../core/permissions/Permission';
+import PermissionsConsts from '../../utils/Consts/PermissionConsts';
 import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
 import Utils from '../../utils/Utils';
 import styles from './propertylist.module.css';

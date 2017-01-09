@@ -13,7 +13,7 @@ function enumFactory(friendlyName) {
   };
 }
 
-class Permission extends Enum {}
+export class Permission extends Enum {}
 Permission.initEnum({
   'HIDDEN': enumFactory("Hidden"),
   'DISCOVER': enumFactory("Discover"),
@@ -22,9 +22,7 @@ Permission.initEnum({
   'OWNER': enumFactory("Owner")
 });
 
-const ALL_PERMISSIONS = Array.from(Permission);
-
-function maxPermission(permissions: Permission) {
+export function maxPermission(permissions: Permission) {
   let highestPerm = Permission.HIDDEN;
 
   for (let permission of permissions) {
@@ -32,16 +30,4 @@ function maxPermission(permissions: Permission) {
       highestPerm = permission;
     }
   }
-}
-
-export default {
-  HIDDEN: Permission.HIDDEN,
-  DISCOVER: Permission.DISCOVER,
-  READ: Permission.READ,
-  WRITE: Permission.WRITE,
-  OWNER: Permission.OWNER,
-  ALL_PERMISSIONS,
-
-  Permission,
-  maxPermission
 }
