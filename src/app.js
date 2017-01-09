@@ -12,6 +12,7 @@ import {
   hashHistory
 } from 'react-router';
 
+import './core/styles/global/dropdown.css';
 import initializeReduxStore from './core/redux/ReduxStore';
 import makeRoutes from './core/router/Routes';
 

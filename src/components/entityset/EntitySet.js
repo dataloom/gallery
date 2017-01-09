@@ -2,7 +2,7 @@
 
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { DropdownButton, Button, MenuItem } from 'react-bootstrap';
+import { SplitButton, Button, MenuItem } from 'react-bootstrap';
 
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 
@@ -39,17 +39,17 @@ class ExpandableText extends React.Component {
       controlText,
       displayText;
     if (isOpen) {
-      controlText = "Read Less";
+      controlText = "Read less";
       displayText = text;
     } else {
-      controlText = "Read More";
+      controlText = "Read more";
       displayText = text.substring(0, maxLength) + "...";
     }
 
     return (
       <div>
         {displayText}
-        <Button bsStyle="link" className={styles.expandTextButton} onClick={this.switchState}>({controlText})</Button>
+        <Button bsStyle="link" className={styles.expandTextButton} onClick={this.switchState}>{controlText}</Button>
       </div>
     );
 
@@ -88,21 +88,22 @@ export class EntitySet extends React.Component {
         <header>
           <h2 className={styles.title}>
             {entitySet.title}
+            <small className={styles.subtitle}>{entitySet.type.namespace}.{entitySet.type.name}</small>
           </h2>
 
           <div className={styles.controls}>
-            <DropdownButton title="Actions" id="action-dropdown">
+            <SplitButton pullRight title="Actions" id="action-dropdown">
               <MenuItem header>Download</MenuItem>
               <MenuItem href={this.getUrl(FileConsts.CSV)}>CSV</MenuItem>
               <MenuItem href={this.getUrl(FileConsts.JSON)}>JSON</MenuItem>
               <MenuItem divider/>
-              <MenuItem>
+              <li role="presentation">
                 <Link
-                  to={`/${PageConsts.VISUALIZE}?name=${name}&typeNamespace=${type.namespace}&typeName=${type.name}`}>
+                  to={`/${PageConsts.VISUALIZE}?name=${entitySet.name}&typeNamespace=${type.namespace}&typeName=${type.name}`}>
                   Visualize
                 </Link>
-              </MenuItem>
-            </DropdownButton>
+              </li>
+            </SplitButton>
           </div>
         </header>
         <ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description} />
