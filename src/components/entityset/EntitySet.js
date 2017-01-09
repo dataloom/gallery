@@ -57,7 +57,7 @@ class ExpandableText extends React.Component {
   }
 }
 
-function ActionDropdown(props) {
+function ActionDropdown(props: {entitySet: EntitySet}) {
   let { entitySet } = props;
   let type = entitySet.type;
 
@@ -69,7 +69,14 @@ function ActionDropdown(props) {
       <MenuItem divider/>
       <li role="presentation">
         <Link
-          to={`/${PageConsts.VISUALIZE}?name=${entitySet.name}&typeNamespace=${type.namespace}&typeName=${type.name}`}>
+          to={{
+            pathname: `/${PageConsts.VISUALIZE}`,
+            query: {
+              name: entitySet.name,
+              typeNamespace: type.namespace,
+              typeName:type.name
+             }
+          }}>
           Visualize
         </Link>
       </li>
