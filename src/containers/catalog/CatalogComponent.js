@@ -39,6 +39,7 @@ function mapStateToProps(state) {
   return state.get('catalog');
 }
 
+//TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
     requestEntitySets: () => { dispatch(createEntitySetListRequest()) }
