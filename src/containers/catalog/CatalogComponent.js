@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { EntitySetPropType } from '../../components/entityset/EntitySet';
-import { FilteredEntitySetList } from '../../components/entityset/EntitySetList';
-import { createEntitySetListRequest } from './CatalogActionFactories';
+import { FilteredEntitySetList, FilterParamsPropType } from '../../components/entityset/EntitySetList';
+import { createEntitySetListRequest, createUpdateFilters } from './CatalogActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 
 class CatalogComponent extends React.Component {
@@ -11,6 +11,8 @@ class CatalogComponent extends React.Component {
       isLoading: PropTypes.bool.isRequired,
       errorMessage: PropTypes.string
     }).isRequired,
+    filterParams: FilterParamsPropType.isRequired,
+    onFilterUpdate: PropTypes.func,
     entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
     requestEntitySets: PropTypes.func.isRequired
   };
@@ -22,7 +24,7 @@ class CatalogComponent extends React.Component {
   render() {
     return (
       <AsyncContent {...this.props.asyncState}>
-        <FilteredEntitySetList entitySets={this.props.entitySets}/>
+        <FilteredEntitySetList {...this.props} />
       </AsyncContent>
     );
   }
@@ -39,7 +41,8 @@ function mapStateToProps(state) {
 //TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
-    requestEntitySets: () => { dispatch(createEntitySetListRequest()) }
+    requestEntitySets: () => { dispatch(createEntitySetListRequest()) },
+    onFilterUpdate: (filterParams) => { dispatch(createUpdateFilters(filterParams))}
   }
 }
 

@@ -7,7 +7,12 @@ export const INITIAL_STATE = Immutable.fromJS({
     isLoading: true,
     errorMessage: ''
   },
-  entitySets: []
+  entitySets: [],
+  filterParams: {
+    keyword: '',
+    propertyTypeIds: [],
+    entityTypeId: ''
+  }
 });
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -20,7 +25,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         },
         entitySets: []
       });
-      break;
 
     case actionTypes.ENTITY_SET_LIST_FAILURE:
       return state.merge({
@@ -30,7 +34,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         },
         entitySets: []
       });
-      break;
 
     case actionTypes.ENTITY_SET_LIST_SUCCESS:
       return state.merge({
@@ -40,7 +43,9 @@ export default function reducer(state = INITIAL_STATE, action) {
         },
         entitySets: action.entitySets
       });
-      break;
+
+    case actionTypes.CATALOG_UPDATE_FILTER:
+      return state.set('filterParams', Immutable.fromJS(action.filterParams));
 
     default:
       return state

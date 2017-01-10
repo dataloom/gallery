@@ -1,7 +1,9 @@
+/* @flow */
 import * as actionTypes from './CatalogActionTypes';
 import { Permission } from '../../core/permissions/Permission';
 import * as actionFactories from './CatalogActionFactories';
 import { Observable } from 'rxjs';
+import { combineEpics } from 'redux-observable';
 
 const EXAMPLE_ENTITY_SET = {
   "key": "asdf",
@@ -24,9 +26,16 @@ const EXAMPLE_ENTITY_SET = {
   "In finibus sem a cursus lobortis. Curabitur laoreet orci eget nisl pharetra ornare. Aliquam pulvinar eros nisi, vel porta nunc tincidunt eu. Ut id hendrerit lectus. Nunc cursus eleifend tincidunt. In vitae maximus leo. Nullam arcu arcu, faucibus vel fermentum ullamcorper, scelerisque quis ligula. Suspendisse nec sapien et mi convallis interdum vel non sapien. Fusce vitae semper arcu. Phasellus ut nisi pharetra, dapibus tellus eleifend, accumsan orci. Duis arcu enim, venenatis eu dictum id, laoreet non dolor. Morbi feugiat erat quis nulla tristique rutrum."
 };
 
-export default function(action$) {
+function filterEpic(action$) {
+  return action$.ofType(actionTypes.CATALOG_UPDATE_FILTER)
+    .forEach(action => console.log(action.filterParams))
+}
+
+function entitySetListRequestEpic(action$) {
   return action$.ofType(actionTypes.ENTITY_SET_LIST_REQUEST)
-    // .delay(2000)
+  // .delay(2000)
     .mapTo(actionFactories.createEntitySetListSuccess([EXAMPLE_ENTITY_SET]))
     .catch(error => Observable.of(actionFactories.createEntitySetListFailure(error.xhr.response)));
 }
+
+export default combineEpics(filterEpic, entitySetListRequestEpic);
