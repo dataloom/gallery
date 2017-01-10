@@ -10,7 +10,7 @@ export const INITIAL_STATE = Immutable.fromJS({
   entitySets: []
 });
 
-export function reducer(state = INITIAL_STATE, action) {
+export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case actionTypes.ENTITY_SET_LIST_REQUEST:
       return state.merge({

@@ -6,7 +6,7 @@ import {
   combineReducers
 } from 'redux-immutable';
 
-import { reducer as catalogReducer } from '../../containers/catalog/CatalogReducer';
+import catalogReducer from '../../containers/catalog/CatalogReducer';
 
 export default function reduxReducer() {
 
