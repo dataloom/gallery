@@ -36,7 +36,7 @@ class CatalogComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return state.get('catalog');
+  return state.get('catalog').toJS();
 }
 
 //TODO: Decide if/how to incorporate bindActionCreators

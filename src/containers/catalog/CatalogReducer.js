@@ -1,18 +1,19 @@
 /* @flow */
 import * as actionTypes from './CatalogActionTypes';
+import Immutable from 'immutable';
 
-export const INITIAL_STATE = {
+export const INITIAL_STATE = Immutable.fromJS({
   asyncState: {
     isLoading: true,
     errorMessage: ""
   },
   entitySets: []
-};
+});
 
 export function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case actionTypes.ENTITY_SET_LIST_REQUEST:
-      return Object.assign({}, state, {
+      return state.merge({
         asyncState: {
           isLoading: true,
           errorMessage: ""
@@ -22,7 +23,7 @@ export function reducer(state = INITIAL_STATE, action) {
       break;
 
     case actionTypes.ENTITY_SET_LIST_FAILURE:
-      return Object.assign({}, state, {
+      return state.merge({
         asyncState: {
           isLoading: false,
           errorMessage: action.errorMessage
@@ -32,7 +33,7 @@ export function reducer(state = INITIAL_STATE, action) {
       break;
 
     case actionTypes.ENTITY_SET_LIST_SUCCESS:
-      return Object.assign({}, state, {
+      return state.merge({
         asyncState: {
           isLoading: false,
           errorMessage: ""
