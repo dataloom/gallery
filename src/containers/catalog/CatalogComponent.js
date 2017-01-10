@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { EntitySetList } from '../../components/entityset/EntitySetList';
+import { createEntitySetListRequest } from './CatalogActionFactories';
 
 class CatalogComponent extends React.Component {
   static propTypes = {
-    entitySets: PropTypes.array.isRequired
+    entitySets: PropTypes.array.isRequired,
+    requestEntitySets: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -19,10 +21,20 @@ class CatalogComponent extends React.Component {
       </div>
     );
   }
+
+  componentDidMount() {
+    this.props.requestEntitySets();
+  }
 }
 
 function mapStateToProps(state) {
   return state.get('catalog');
 }
 
-export default connect(mapStateToProps)(CatalogComponent);
+function mapDispatchToProps(dispatch) {
+  return {
+    requestEntitySets: () => { dispatch(createEntitySetListRequest()) }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogComponent);

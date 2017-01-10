@@ -1,4 +1,6 @@
 import 'babel-polyfill';
+// Needed by redux-observable
+import 'rxjs';
 
 import React from 'react';
 import ReactDOM from 'react-dom';

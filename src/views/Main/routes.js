@@ -9,6 +9,7 @@ import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
+import { EntitySetDetail } from '../../components/entityset/EntitySet';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
@@ -80,6 +81,7 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
+      <Route path='entityset/:id' component={EntitySetDetail} onEnter={requireAuth} />
       <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
