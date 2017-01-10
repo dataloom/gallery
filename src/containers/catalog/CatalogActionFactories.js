@@ -1,6 +1,5 @@
 /* @flow */
 import * as actionTypes from './CatalogActionTypes';
-import { EntitySet } from '../../components/entityset/EntitySetStorage';
 
 export function createEntitySetListRequest() {
   return {

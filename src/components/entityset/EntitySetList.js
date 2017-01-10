@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 
-import { EntitySetSummary } from './EntitySet';
+import { EntitySetSummary, EntitySetPropType } from './EntitySet';
 import styles from '../../containers/catalog/catalog.module.css';
 
 export class EntitySetList extends React.Component {
   static propTypes = {
-    entitySets: PropTypes.array.isRequired
+    entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired
   };
 
   render() {

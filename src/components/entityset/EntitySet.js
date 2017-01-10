@@ -6,9 +6,9 @@ import { SplitButton, Button, MenuItem } from 'react-bootstrap';
 
 import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
 
+import { Permission } from '../../core/permissions/Permission';
 import FileConsts from '../../utils/Consts/FileConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
-import { EntitySet } from './EntitySetStorage';
 import styles from './entityset.module.css';
 
 const MAX_DESCRIPTION_LENGTH = 300;
@@ -85,33 +85,51 @@ function ActionDropdown(props: {entitySet: EntitySet}) {
 }
 
 /* EntitySet Components */
-type EntitySetComponentProps = {
-  entitySet: EntitySet
-}
+export const EntitySetPropType = PropTypes.shape({
+  id: PropTypes.string,
+  type: PropTypes.shape({
+    namespace: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
+  }).isRequired,
+  name: PropTypes.string,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  permission: PropTypes.instanceOf(Permission)
+});
 
-export function EntitySetSummary(props: EntitySetComponentProps) {
-  let {entitySet} = props;
+export class EntitySetSummary extends React.Component{
+  static propTypes = {
+    entitySet: EntitySetPropType.isRequired
+  }
 
-  return (
-    <article className={styles.entitySet}>
-      <header>
-        <h2 className={styles.title}>
-          {entitySet.title}
-          <small className={styles.subtitle}>{entitySet.type.namespace}.{entitySet.type.name}</small>
-        </h2>
+  render() {
+    const { entitySet } = this.props;
 
-        <div className={styles.controls}>
-          <ActionDropdown entitySet={entitySet} />
-        </div>
-      </header>
-      <ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description} />
-    </article>
-  );
+    return (
+      <article className={styles.entitySet}>
+        <header>
+          <h2 className={styles.title}>
+            {entitySet.title}
+            <small className={styles.subtitle}>{entitySet.type.namespace}.{entitySet.type.name}</small>
+          </h2>
+
+          <div className={styles.controls}>
+            <ActionDropdown entitySet={entitySet}/>
+          </div>
+        </header>
+        <ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description}/>
+      </article>
+    );
+  }
 }
 
 //TODO: Reduxify and attach EntitySetDetail to router
 export class EntitySetDetail extends React.Component {
-  constructor(props: EntitySetComponentProps) {
+  static propTypes = {
+    entitySet: EntitySetPropType.isRequired
+  };
+
+  constructor(props) {
     super(props);
     this.state = {
       editing: false,
