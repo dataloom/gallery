@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { EntitySetList } from '../../components/entityset/EntitySetList';
 import { EntitySetPropType } from '../../components/entityset/EntitySet';
+import { FilteredEntitySetList } from '../../components/entityset/EntitySetList';
 import { createEntitySetListRequest } from './CatalogActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 
@@ -21,12 +21,9 @@ class CatalogComponent extends React.Component {
 
   render() {
     return (
-      <div>
-        <h1>Catalog</h1>
-        <AsyncContent {...this.props.asyncState}>
-          <EntitySetList entitySets={this.props.entitySets}/>
-        </AsyncContent>
-      </div>
+      <AsyncContent {...this.props.asyncState}>
+        <FilteredEntitySetList entitySets={this.props.entitySets}/>
+      </AsyncContent>
     );
   }
 

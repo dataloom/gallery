@@ -26,7 +26,7 @@ const EXAMPLE_ENTITY_SET = {
 
 export default function(action$) {
   return action$.ofType(actionTypes.ENTITY_SET_LIST_REQUEST)
-    .delay(2000)
+    // .delay(2000)
     .mapTo(actionFactories.createEntitySetListSuccess([EXAMPLE_ENTITY_SET]))
     .catch(error => Observable.of(actionFactories.createEntitySetListFailure(error.xhr.response)));
 }
