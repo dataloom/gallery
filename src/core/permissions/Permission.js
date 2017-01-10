@@ -30,4 +30,6 @@ export function maxPermission(permissions: Permission) {
       highestPerm = permission;
     }
   }
+
+  return highestPerm;
 }
