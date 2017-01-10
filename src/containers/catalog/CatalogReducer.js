@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 export const INITIAL_STATE = Immutable.fromJS({
   asyncState: {
     isLoading: true,
-    errorMessage: ""
+    errorMessage: ''
   },
   entitySets: []
 });
@@ -16,7 +16,7 @@ export function reducer(state = INITIAL_STATE, action) {
       return state.merge({
         asyncState: {
           isLoading: true,
-          errorMessage: ""
+          errorMessage: ''
         },
         entitySets: []
       });
@@ -36,7 +36,7 @@ export function reducer(state = INITIAL_STATE, action) {
       return state.merge({
         asyncState: {
           isLoading: false,
-          errorMessage: ""
+          errorMessage: ''
         },
         entitySets: action.entitySets
       });
