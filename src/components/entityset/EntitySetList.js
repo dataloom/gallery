@@ -89,7 +89,6 @@ export class FilteredEntitySetList extends React.Component {
   }
 
   render() {
-    const { filterParams } = this.props;
     return (
       <div className={classnames(styles.filteredEntitySetList, this.props.className)}>
         <header>
