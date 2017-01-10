@@ -109,6 +109,7 @@ export function EntitySetSummary(props: EntitySetComponentProps) {
   );
 }
 
+//TODO: Reduxify and attach EntitySetDetail to router
 export class EntitySetDetail extends React.Component {
   constructor(props: EntitySetComponentProps) {
     super(props);
