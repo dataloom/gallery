@@ -2,9 +2,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { EntitySetList } from '../../components/entityset/EntitySetList';
 import { createEntitySetListRequest } from './CatalogActionFactories';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
 
 class CatalogComponent extends React.Component {
   static propTypes = {
+    asyncState: PropTypes.object.isRequired,
     entitySets: PropTypes.array.isRequired,
     requestEntitySets: PropTypes.func.isRequired
   };
@@ -17,7 +19,9 @@ class CatalogComponent extends React.Component {
     return (
       <div>
         <h1>Catalog</h1>
-        <EntitySetList entitySets={this.props.entitySets}/>
+        <AsyncContent {...this.props.asyncState}>
+          <EntitySetList entitySets={this.props.entitySets}/>
+        </AsyncContent>
       </div>
     );
   }

@@ -4,7 +4,6 @@ import * as actionTypes from './CatalogActionTypes';
 export const INITIAL_STATE = {
   asyncState: {
     isLoading: true,
-    hasError: false,
     errorMessage: ""
   },
   entitySets: []
@@ -16,7 +15,6 @@ export function reducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         asyncState: {
           isLoading: true,
-          hasError: false,
           errorMessage: ""
         },
         entitySets: []
@@ -27,7 +25,6 @@ export function reducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         asyncState: {
           isLoading: false,
-          hasError: true,
           errorMessage: action.errorMessage
         },
         entitySets: []
@@ -38,7 +35,6 @@ export function reducer(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         asyncState: {
           isLoading: false,
-          hasError: false,
           errorMessage: ""
         },
         entitySets: action.entitySets
