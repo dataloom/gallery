@@ -1,13 +1,17 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { EntitySetList } from '../../components/entityset/EntitySetList';
+import { EntitySetPropType } from '../../components/entityset/EntitySet';
 import { createEntitySetListRequest } from './CatalogActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 
 class CatalogComponent extends React.Component {
   static propTypes = {
-    asyncState: PropTypes.object.isRequired,
-    entitySets: PropTypes.array.isRequired,
+    asyncState: PropTypes.shape({
+      isLoading: PropTypes.bool.isRequired,
+      errorMessage: PropTypes.string
+    }).isRequired,
+    entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
     requestEntitySets: PropTypes.func.isRequired
   };
 
