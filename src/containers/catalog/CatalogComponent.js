@@ -1,12 +1,19 @@
 import React, { PropTypes } from 'react';
-import { EntitySetList } from './components/EntitySetList';
-import AuthService from '../../utils/AuthService';
+import { connect } from 'react-redux';
+import { EntitySetList } from '../../components/entityset/EntitySetList';
+import { EntitySetPropType } from '../../components/entityset/EntitySet';
+import { createEntitySetListRequest } from './CatalogActionFactories';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
 
-
-export class CatalogComponent extends React.Component {
+class CatalogComponent extends React.Component {
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService)
-  }
+    asyncState: PropTypes.shape({
+      isLoading: PropTypes.bool.isRequired,
+      errorMessage: PropTypes.string
+    }).isRequired,
+    entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
+    requestEntitySets: PropTypes.func.isRequired
+  };
 
   constructor(props) {
     super(props);
@@ -16,8 +23,27 @@ export class CatalogComponent extends React.Component {
     return (
       <div>
         <h1>Catalog</h1>
-        <EntitySetList auth={this.props.auth}/>
+        <AsyncContent {...this.props.asyncState}>
+          <EntitySetList entitySets={this.props.entitySets}/>
+        </AsyncContent>
       </div>
     );
   }
+
+  componentDidMount() {
+    this.props.requestEntitySets();
+  }
 }
+
+function mapStateToProps(state) {
+  return state.get('catalog').toJS();
+}
+
+//TODO: Decide if/how to incorporate bindActionCreators
+function mapDispatchToProps(dispatch) {
+  return {
+    requestEntitySets: () => { dispatch(createEntitySetListRequest()) }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogComponent);

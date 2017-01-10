@@ -1,4 +1,6 @@
 import 'babel-polyfill';
+// Needed by redux-observable
+import 'rxjs';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -12,6 +14,7 @@ import {
   hashHistory
 } from 'react-router';
 
+import './core/styles/global/dropdown.css';
 import initializeReduxStore from './core/redux/ReduxStore';
 import makeRoutes from './core/router/Routes';
 

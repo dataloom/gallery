@@ -6,7 +6,7 @@ import { ScatterChartContainer } from './ScatterChartContainer';
 import { GeoContainer } from './GeoContainer';
 import { EntitySetVisualizationList } from './EntitySetVisualizationList';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
-import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import { Permission } from '../../../core/permissions/Permission';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import Utils from '../../../utils/Utils';
@@ -106,7 +106,7 @@ export class Visualize extends React.Component {
         const allPropertiesAsync = [];
         type.properties.forEach((prop) => {
           const permissions = propertyTypePermissions[`${prop.namespace}.${prop.name}`];
-          if (permissions.includes(PermissionsConsts.READ) || permissions.includes(PermissionsConsts.WRITE)) {
+          if (permissions.includes(Permission.READ.name) || permissions.includes(Permission.WRITE.name)) {
             allPropertiesAsync.push(EntityDataModelApi.getPropertyType(prop));
           }
         });

@@ -21,16 +21,15 @@
 }
 
 .simpleButton {
-    margin-left: 5px;
-    position: relative;
     display: inline-block;
-    margin-right: 10px;
-    height: 35px;
-    top: 15%;
+    margin: auto 10px auto 5px;
+    padding: 0 10px;
+    line-height: 35px;
     background: #d1d6da;
     border-radius: 3px;
     border: 0;
-    padding: 0 10px;
+    color: #000000;
+    text-decoration: none;
 }
 
 .simpleButton:hover {

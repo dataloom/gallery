@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import Utils from '../../../utils/Utils';
-import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import { Permission } from '../../../core/permissions/Permission';
 import styles from './styles.module.css';
 
 export class EntitySetVisualizationList extends React.Component {
@@ -28,7 +28,7 @@ export class EntitySetVisualizationList extends React.Component {
       .then((entitySets) => {
         const entitySetsWithPermissions = Utils.addKeysToArray(entitySets.filter((entitySet) => {
           const acls = entitySet.permissions;
-          return (acls.includes(PermissionsConsts.READ) || acls.includes(PermissionsConsts.WRITE));
+          return (acls.includes(Permission.READ.name) || acls.includes(Permission.WRITE.name));
         }));
         this.setState({
           entitySets: entitySetsWithPermissions,
