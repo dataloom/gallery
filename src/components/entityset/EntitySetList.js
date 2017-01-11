@@ -48,13 +48,9 @@ export class FilteredEntitySetList extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.onKeywordChange = this.onKeywordChange.bind(this);
-    this.onPropertyTypesChange = this.onPropertyTypesChange.bind(this);
-    this.onEntityTypeChange = this.onEntityTypeChange.bind(this);
   }
 
-  onKeywordChange(event) {
+  onKeywordChange = (event) => {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
@@ -63,10 +59,10 @@ export class FilteredEntitySetList extends React.Component {
       });
       onFilterUpdate(params);
     }
-  }
+  };
 
   // TODO: Upgrade PropertyTypes and EntitityType with selects
-  onPropertyTypesChange(event) {
+  onPropertyTypesChange = (event) => {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
@@ -75,9 +71,9 @@ export class FilteredEntitySetList extends React.Component {
       });
       onFilterUpdate(params);
     }
-  }
+  };
 
-  onEntityTypeChange(event) {
+  onEntityTypeChange = (event) => {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
@@ -86,7 +82,7 @@ export class FilteredEntitySetList extends React.Component {
       });
       onFilterUpdate(params);
     }
-  }
+  };
 
   render() {
     return (
