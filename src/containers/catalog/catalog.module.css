@@ -23,3 +23,23 @@
     text-align: right;
     margin: 0 0 10px 0;
 }
+
+/* EntitySetList */
+.filteredEntitySetList {
+    width: 100%;
+}
+.filteredEntitySetList > header {
+    background: #f3f5f7;
+    padding: 40px 0 25px;
+    margin-bottom: 35px;
+}
+.filteredEntitySetList h1 {
+    margin: 0 auto 20px;
+    font-weight: 600;
+
+}
+
+.centeredContent {
+    width: 980px;
+    margin: auto;
+}
