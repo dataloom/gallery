@@ -21,7 +21,7 @@ export function createEntitySetListFailure(errorMessage: string) {
   }
 }
 
-export function createUpdateFilters(filterParams: {keyword: string, propertyTypeIds: string[], entityTypeId: string}) {
+export function createUpdateFilters(filterParams: Object) {
   return {
     type: actionTypes.CATALOG_UPDATE_FILTER,
     filterParams
