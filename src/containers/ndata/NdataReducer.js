@@ -8,10 +8,9 @@ export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case actionTypes.UPDATE_NORMALIZED_DATA:
       // Merge 1 level deep
-      let nState = action.normalizedData.reduce((state, collection, collectionName) => {
+      return action.normalizedData.reduce((state, collection, collectionName) => {
         return state.mergeIn([collectionName], collection);
       }, state);
-      return nState;
     default:
       return state
   }
