@@ -7,41 +7,41 @@ export const INITIAL_STATE = Immutable.fromJS({
     isLoading: true,
     errorMessage: ''
   },
-  entitySets: [],
   filterParams: {
     keyword: '',
     propertyTypeIds: [],
     entityTypeId: ''
-  }
+  },
+  normalizedData: {},
+  entitySetIds: []
 });
 
 export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case actionTypes.ENTITY_SET_LIST_REQUEST:
+    case actionTypes.CATALOG_SEARCH_REQUEST:
       return state.merge({
         asyncState: {
           isLoading: true,
           errorMessage: ''
-        },
-        entitySets: []
+        }
       });
 
-    case actionTypes.ENTITY_SET_LIST_FAILURE:
+    case actionTypes.CATALOG_SEARCH_REJECT:
       return state.merge({
         asyncState: {
           isLoading: false,
           errorMessage: action.errorMessage
-        },
-        entitySets: []
+        }
       });
 
-    case actionTypes.ENTITY_SET_LIST_SUCCESS:
+    case actionTypes.CATALOG_SEARCH_RESOLVE:
       return state.merge({
         asyncState: {
           isLoading: false,
           errorMessage: ''
         },
-        entitySets: action.entitySets
+        normalizedData: state.get('normalizedData').merge(action.normalizedData),
+        entitySetIds: action.entitySetIds
       });
 
     case actionTypes.CATALOG_UPDATE_FILTER:

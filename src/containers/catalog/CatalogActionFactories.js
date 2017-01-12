@@ -1,22 +1,24 @@
 /* @flow */
 import * as actionTypes from './CatalogActionTypes';
 
-export function createEntitySetListRequest() {
+export function catalogSearchRequest() {
   return {
-    type: actionTypes.ENTITY_SET_LIST_REQUEST
+    type: actionTypes.CATALOG_SEARCH_REQUEST
   };
 }
 
-export function createEntitySetListSuccess(entitySets: EntitySet[]) {
+//TODO: Determine the right place to normalize entitySets
+export function catalogSearchResolve(entitySetIds, normalizedData) {
   return {
-    type: actionTypes.ENTITY_SET_LIST_SUCCESS,
-    entitySets
+    type: actionTypes.CATALOG_SEARCH_RESOLVE,
+    normalizedData,
+    entitySetIds
   }
 }
 
-export function createEntitySetListFailure(errorMessage: string) {
+export function catalogSearchReject(errorMessage: string) {
   return {
-    type: actionTypes.ENTITY_SET_LIST_FAILURE,
+    type: actionTypes.CATALOG_SEARCH_REJECT,
     errorMessage
   }
 }

@@ -13,23 +13,17 @@ function enumFactory(friendlyName) {
   };
 }
 
-export class Permission extends Enum {}
+export class Permission extends Enum {
+  static maxPermission(perm1: Permission, perm2: Permission) {
+    return perm1.ordinal > perm2.ordinal ? perm1 : perm2
+  }
+}
 Permission.initEnum({
   'HIDDEN': enumFactory("Hidden"),
   'DISCOVER': enumFactory("Discover"),
+  'LINK': enumFactory("Link"),
   'READ': enumFactory("Read"),
   'WRITE': enumFactory("Write"),
   'OWNER': enumFactory("Owner")
 });
-
-export function maxPermission(permissions: Permission) {
-  let highestPerm = Permission.HIDDEN;
-
-  for (let permission of permissions) {
-    if (permission.ordinal > highestPerm.ordinal) {
-      highestPerm = permission;
-    }
-  }
-
-  return highestPerm;
-}
+Permission.enumValueOf = Permission.enumValueOf.bind(Permission);

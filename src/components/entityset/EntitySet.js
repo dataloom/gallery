@@ -34,7 +34,7 @@ class ExpandableText extends React.Component {
   render() {
     let {text, maxLength} = this.props;
     if (text.length <= maxLength) {
-      return text;
+      return (<div>{text}</div>);
     }
 
     let {isOpen} = this.state,
