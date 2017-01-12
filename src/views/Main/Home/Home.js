@@ -3,7 +3,7 @@ import { PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
-import PermissionsConsts from '../../../utils/Consts/PermissionsConsts';
+import PermissionsConsts from '../../../utils/Consts/PermissionConsts';
 import styles from './styles.module.css';
 
 const authConsts = {

@@ -8,7 +8,7 @@ import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
-import { CatalogComponent } from '../../containers/catalog/CatalogComponent';
+import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';

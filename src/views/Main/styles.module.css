@@ -2,6 +2,9 @@ html,
 body {
   height: 100%;
   width: 100%;
+  padding: 0;
+  margin: 0;
+  color: #404345;
 }
 
 body > div {
@@ -18,7 +21,6 @@ body > div {
 }
 
 .appWrapper {
-  color: #455a64;
   height: 100%;
   width: 100%;
   display: flex;
@@ -32,9 +34,9 @@ body > div {
 }
 
 .appContent {
-  background-color: #fafbfc;
-  padding: 10px;
+  background-color: #ffffff;
+  padding: 0;
   display: flex;
-  flex: 1 0 auto;
-  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
