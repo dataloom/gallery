@@ -8,10 +8,9 @@ export function catalogSearchRequest() {
 }
 
 //TODO: Determine the right place to normalize entitySets
-export function catalogSearchResolve(entitySetIds, normalizedData) {
+export function catalogSearchResolve(entitySetIds) {
   return {
     type: actionTypes.CATALOG_SEARCH_RESOLVE,
-    normalizedData,
     entitySetIds
   }
 }

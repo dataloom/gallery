@@ -1,11 +1,11 @@
 /* @flow */
-import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import { normalize } from 'normalizr';
 import Immutable from 'immutable';
 
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
+import * as ndataActionFactories from '../ndata/NdataActionFactories';
 import { Permission } from '../../core/permissions/Permission';
 import { EntitySet, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 
@@ -130,9 +130,10 @@ function searchCatalogEpic(action$) {
       let permissions = loadPermissions(propertyTypes.keySeq());
       return normalizedData.mergeDeepIn(['entities', 'propertyTypes'], permissions);
     })
-    .map(normalizedData => {
-      return actionFactories.catalogSearchResolve(normalizedData.get('result'), normalizedData.get('entities'))
-    })
+    .flatMap(normalizedData => [
+      ndataActionFactories.updateNormalizedData(normalizedData.get('entities')),
+      actionFactories.catalogSearchResolve(normalizedData.get('result'))
+    ])
 }
 
 export default combineEpics(filterEpic, searchCatalogEpic);

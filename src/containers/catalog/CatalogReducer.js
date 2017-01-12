@@ -12,7 +12,6 @@ export const INITIAL_STATE = Immutable.fromJS({
     propertyTypeIds: [],
     entityTypeId: ''
   },
-  normalizedData: {},
   entitySetIds: []
 });
 
@@ -23,7 +22,8 @@ export default function reducer(state = INITIAL_STATE, action) {
         asyncState: {
           isLoading: true,
           errorMessage: ''
-        }
+        },
+        entitySetIds: []
       });
 
     case actionTypes.CATALOG_SEARCH_REJECT:
@@ -40,7 +40,6 @@ export default function reducer(state = INITIAL_STATE, action) {
           isLoading: false,
           errorMessage: ''
         },
-        normalizedData: state.get('normalizedData').merge(action.normalizedData),
         entitySetIds: action.entitySetIds
       });
 

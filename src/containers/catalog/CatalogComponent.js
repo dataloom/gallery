@@ -37,11 +37,17 @@ class CatalogComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const catalog = state.get('catalog');
+  const catalog = state.get('catalog').toJS(),
+    normalizedData = state.get('normalizedData').toJS();
+
   return {
-    asyncState: catalog.get('asyncState').toJS(),
-    filterParams: catalog.get('filterParams').toJS(),
-    entitySets: denormalize(catalog.get('entitySetIds').toJS(), [EntitySetNschema], catalog.get('normalizedData').toJS())
+    asyncState: catalog.asyncState,
+    filterParams: catalog.filterParams,
+    entitySets: denormalize(
+      catalog.entitySetIds,
+      [EntitySetNschema],
+      normalizedData
+    )
   };
 }
 
