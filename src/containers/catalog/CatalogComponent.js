@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { EntitySetPropType } from '../../components/entityset/EntitySet';
+import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
 import { FilteredEntitySetList, FilterParamsPropType } from '../../components/entityset/EntitySetList';
 import { createEntitySetListRequest, createUpdateFilters } from './CatalogActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';

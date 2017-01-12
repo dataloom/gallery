@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 
 const EXAMPLE_ENTITY_SET = {
-  "key": "asdf",
+  "id": "asdf",
   "name": "Employees",
   "title": "The entity set title",
   "type": {

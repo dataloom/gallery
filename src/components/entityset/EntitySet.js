@@ -4,12 +4,13 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { SplitButton, Button, MenuItem } from 'react-bootstrap';
 
-import { DataApi, EntityDataModelApi, PermissionsApi } from 'loom-data';
+import { DataApi } from 'loom-data';
 
-import { Permission } from '../../core/permissions/Permission';
 import FileConsts from '../../utils/Consts/FileConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
+import { EntitySetPropType } from './EntitySetStorage';
 import styles from './entityset.module.css';
+
 
 const MAX_DESCRIPTION_LENGTH = 300;
 
@@ -57,50 +58,44 @@ class ExpandableText extends React.Component {
   }
 }
 
-function ActionDropdown(props: {entitySet: EntitySet}) {
-  let { entitySet } = props;
-  let type = entitySet.type;
+class ActionDropdown extends React.Component {
+  static propTypes = {
+    entitySet: EntitySetPropType.isRequired
+  };
 
-  return (
-    <SplitButton pullRight title="Actions" id="action-dropdown">
-      <MenuItem header>Download</MenuItem>
-      <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.CSV)}>CSV</MenuItem>
-      <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.JSON)}>JSON</MenuItem>
-      <MenuItem divider/>
-      <li role="presentation">
-        <Link
-          to={{
-            pathname: `/${PageConsts.VISUALIZE}`,
-            query: {
-              name: entitySet.name,
-              typeNamespace: type.namespace,
-              typeName:type.name
-             }
-          }}>
-          Visualize
-        </Link>
-      </li>
-    </SplitButton>
-  );
+  render() {
+    let {entitySet} = this.props;
+    let type = entitySet.type;
+
+    return (
+      <SplitButton pullRight title="Actions" id="action-dropdown">
+        <MenuItem header>Download</MenuItem>
+        <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.CSV)}>CSV</MenuItem>
+        <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.JSON)}>JSON</MenuItem>
+        <MenuItem divider/>
+        <li role="presentation">
+          <Link
+            to={{
+              pathname: `/${PageConsts.VISUALIZE}`,
+              query: {
+                name: entitySet.name,
+                typeNamespace: type.namespace,
+                typeName:type.name
+               }
+            }}>
+            Visualize
+          </Link>
+        </li>
+      </SplitButton>
+    );
+  }
 }
 
 /* EntitySet Components */
-export const EntitySetPropType = PropTypes.shape({
-  id: PropTypes.string,
-  type: PropTypes.shape({
-    namespace: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired,
-  name: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  permission: PropTypes.instanceOf(Permission)
-});
-
 export class EntitySetSummary extends React.Component{
   static propTypes = {
     entitySet: EntitySetPropType.isRequired
-  }
+  };
 
   render() {
     const { entitySet } = this.props;
