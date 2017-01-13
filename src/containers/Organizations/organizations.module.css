@@ -1,5 +1,6 @@
 .organizationsWrapper {
   padding: 20px;
+  min-width: 840px;
 }
 
 .section {
@@ -18,6 +19,15 @@
   margin-left: 50%;
   position: relative;
   left: -25px;
+}
+
+.orgDescription {
+  max-width: 800px;
+  min-height: 150px;
+}
+
+.createOrgSubmit {
+  margin-right: 20px;
 }
 
 [data-loader='circle-side'] {

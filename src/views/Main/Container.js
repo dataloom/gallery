@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 
 import styles from './styles.module.css';
-import '../../core/styles/global/dropdown.css';
 
 import HeaderNav from '../../components/headernav/HeaderNav';
 import SideNav from '../../components/sidenav/SideNav';

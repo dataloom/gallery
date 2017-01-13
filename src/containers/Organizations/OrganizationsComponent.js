@@ -7,6 +7,11 @@ import React from 'react';
 import FontAwesome from 'react-fontawesome';
 
 import {
+  EntityDataModelApi,
+  UsersApi
+} from 'loom-data';
+
+import {
   Button,
   ControlLabel,
   FormControl,
@@ -25,15 +30,17 @@ import {
 
 import styles from './organizations.module.css';
 
+import CreateOrganization from './CreateOrganizationComponent';
+
+import AuthService from '../../utils/AuthService';
+import Utils from '../../utils/Utils';
+
 import {
   setIsLoading,
   updateInviteEmail,
   sendInvitation,
   showInvalidEmailMessage
 } from './OrganizationsActionFactory';
-
-import AuthService from '../../utils/AuthService';
-import Utils from '../../utils/Utils';
 
 function mapStateToProps(state :Map<*, *>) {
 
@@ -80,6 +87,14 @@ class Organizations extends React.Component {
         console.log(response);
         this.props.actions.setIsLoading(false);
       });
+
+    UsersApi.getAllUsers()
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
   }
 
   handleInviteClick = () => {
@@ -102,6 +117,15 @@ class Organizations extends React.Component {
     return (
       <div className={styles.organizationsWrapper}>
         <div className={styles.loadingSpinner} data-loader={'circle-side'} />
+      </div>
+    );
+  }
+
+  renderCreateOrganizationComponent = () => {
+
+    return (
+      <div className={styles.organizationsWrapper}>
+        <CreateOrganization />
       </div>
     );
   }
@@ -147,7 +171,8 @@ class Organizations extends React.Component {
       return this.renderLoading();
     }
 
-    return this.renderComponent();
+    // return this.renderComponent();
+    return this.renderCreateOrganizationComponent();
   }
 }
 
