@@ -1,9 +1,9 @@
-/* @flow */
 import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import classnames from 'classnames';
 
-import { EntitySetSummary, EntitySetPropType } from './EntitySet';
+import { EntitySetSummary } from './EntitySet';
+import { EntitySetPropType } from './EntitySetStorage';
 import styles from '../../containers/catalog/catalog.module.css';
 
 const baseEntitySetListPropTypes = {
@@ -18,7 +18,7 @@ export class EntitySetList extends React.Component {
     const entitySetList = this.props.entitySets.map((entitySet) => {
       return (
         <EntitySetSummary
-          key={entitySet.key}
+          key={entitySet.id}
           entitySet={entitySet}
         />
       );
@@ -46,15 +46,11 @@ export const filteredEntitySetListPropTypes = Object.assign({}, baseEntitySetLis
 export class FilteredEntitySetList extends React.Component {
   static propTypes = filteredEntitySetListPropTypes;
 
-  constructor(props) {
-    super(props);
-  }
-
   onKeywordChange = (event) => {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
-      let params = Object.assign({}, this.props.filterParams, {
+      const params = Object.assign({}, this.props.filterParams, {
         keyword: event.target.value
       });
       onFilterUpdate(params);
@@ -66,7 +62,7 @@ export class FilteredEntitySetList extends React.Component {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
-      let params = Object.assign({}, this.props.filterParams, {
+      const params = Object.assign({}, this.props.filterParams, {
         propertyTypeIds: [event.target.value]
       });
       onFilterUpdate(params);
@@ -77,7 +73,7 @@ export class FilteredEntitySetList extends React.Component {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
-      let params = Object.assign({}, this.props.filterParams, {
+      const params = Object.assign({}, this.props.filterParams, {
         entityTypeId: event.target.value
       });
       onFilterUpdate(params);

@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { EntitySetPropType } from '../../components/entityset/EntitySet';
+import { denormalize } from 'normalizr';
+
+import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 import { FilteredEntitySetList, FilterParamsPropType } from '../../components/entityset/EntitySetList';
-import { createEntitySetListRequest, createUpdateFilters } from './CatalogActionFactories';
+import { catalogSearchRequest, createUpdateFilters } from './CatalogActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 
 class CatalogComponent extends React.Component {
@@ -12,14 +14,10 @@ class CatalogComponent extends React.Component {
       errorMessage: PropTypes.string
     }).isRequired,
     filterParams: FilterParamsPropType.isRequired,
-    onFilterUpdate: PropTypes.func,
     entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
+    onFilterUpdate: PropTypes.func,
     requestEntitySets: PropTypes.func.isRequired
   };
-
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     return (
@@ -35,15 +33,26 @@ class CatalogComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return state.get('catalog').toJS();
+  const catalog = state.get('catalog').toJS();
+  const normalizedData = state.get('normalizedData').toJS();
+
+  return {
+    asyncState: catalog.asyncState,
+    filterParams: catalog.filterParams,
+    entitySets: denormalize(
+      catalog.entitySetIds,
+      [EntitySetNschema],
+      normalizedData
+    )
+  };
 }
 
-//TODO: Decide if/how to incorporate bindActionCreators
+// TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
-    requestEntitySets: () => { dispatch(createEntitySetListRequest()) },
-    onFilterUpdate: (filterParams) => { dispatch(createUpdateFilters(filterParams))}
-  }
+    requestEntitySets: () => { dispatch(catalogSearchRequest()) },
+    onFilterUpdate: (filterParams) => { dispatch(createUpdateFilters(filterParams)); }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CatalogComponent);

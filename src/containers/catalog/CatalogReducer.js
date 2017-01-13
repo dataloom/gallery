@@ -1,53 +1,53 @@
 /* @flow */
-import * as actionTypes from './CatalogActionTypes';
 import Immutable from 'immutable';
 
-export const INITIAL_STATE = Immutable.fromJS({
+import * as actionTypes from './CatalogActionTypes';
+
+export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   asyncState: {
     isLoading: true,
     errorMessage: ''
   },
-  entitySets: [],
   filterParams: {
     keyword: '',
     propertyTypeIds: [],
     entityTypeId: ''
-  }
+  },
+  entitySetIds: []
 });
 
-export default function reducer(state = INITIAL_STATE, action) {
+export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, action:Object) {
   switch (action.type) {
-    case actionTypes.ENTITY_SET_LIST_REQUEST:
+    case actionTypes.CATALOG_SEARCH_REQUEST:
       return state.merge({
         asyncState: {
           isLoading: true,
           errorMessage: ''
         },
-        entitySets: []
+        entitySetIds: []
       });
 
-    case actionTypes.ENTITY_SET_LIST_FAILURE:
+    case actionTypes.CATALOG_SEARCH_REJECT:
       return state.merge({
         asyncState: {
           isLoading: false,
           errorMessage: action.errorMessage
-        },
-        entitySets: []
+        }
       });
 
-    case actionTypes.ENTITY_SET_LIST_SUCCESS:
+    case actionTypes.CATALOG_SEARCH_RESOLVE:
       return state.merge({
         asyncState: {
           isLoading: false,
           errorMessage: ''
         },
-        entitySets: action.entitySets
+        entitySetIds: action.entitySetIds
       });
 
     case actionTypes.CATALOG_UPDATE_FILTER:
       return state.set('filterParams', Immutable.fromJS(action.filterParams));
 
     default:
-      return state
+      return state;
   }
 }

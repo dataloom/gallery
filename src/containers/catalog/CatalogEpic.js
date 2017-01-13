@@ -1,41 +1,140 @@
 /* @flow */
-import * as actionTypes from './CatalogActionTypes';
-import { Permission } from '../../core/permissions/Permission';
-import * as actionFactories from './CatalogActionFactories';
-import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
+import { normalize } from 'normalizr';
+import Immutable from 'immutable';
 
-const EXAMPLE_ENTITY_SET = {
-  "key": "asdf",
-  "name": "Employees",
-  "title": "The entity set title",
-  "type": {
-    "name": "employee",
-    "namespace": "testcsv"
+import * as actionTypes from './CatalogActionTypes';
+import * as actionFactories from './CatalogActionFactories';
+import * as ndataActionFactories from '../ndata/NdataActionFactories';
+import { Permission } from '../../core/permissions/Permission';
+import type { EntitySet } from '../../components/entityset/EntitySetStorage';
+import { EntitySetNschema } from '../../components/entityset/EntitySetStorage';
+
+const EXAMPLE_SEARCH_RESPONSE = [{
+  'acls': [
+    'READ',
+    'OWNER',
+    'DISCOVER',
+    'LINK',
+    'WRITE'
+  ],
+  'entitySet': {
+    'description': 'This is a description for the entity set called employees.',
+    'entityTypeId': 'c271a300-ea05-420b-b33b-8ecb18de5ce7',
+    'id': '0a648f39-5e41-46b5-a928-ec44cdeeae13',
+    'name': 'Employees',
+    'title': 'The Entity Set Title',
+    'type': {
+      'fullQualifiedNameAsString': 'testcsv.employee',
+      'name': 'employee',
+      'namespace': 'testcsv'
+    }
   },
-  "properties": [{
-    "title": "Prop1",
-    "description": "Blah blah blah",
-    "permission": Permission.OWNER
-  }],
-  "permission": Permission.OWNER,
-  "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tempor, ipsum sed fermentum sollicitudin, arcu orci posuere leo, sed lobortis dui arcu sed leo. Integer posuere libero mollis sem vestibulum laoreet sit amet eu risus. Aliquam sit amet sapien eget urna posuere ultricies ut sed orci. Fusce quis pretium tortor, a ultrices dolor. Nunc vel vestibulum mi. Suspendisse potenti. Vivamus posuere sagittis velit, id porta metus consectetur sed. Vivamus imperdiet semper arcu, vel feugiat mi cursus id. Mauris maximus erat eu ante malesuada, et hendrerit diam pulvinar. In hac habitasse platea dictumst. Sed odio turpis, molestie aliquam urna nec, ullamcorper consequat augue. Quisque mollis sem in erat varius tempus. Aliquam fermentum justo nisl, in egestas dolor sodales quis. Interdum et malesuada fames ac ante ipsum primis in faucibus." +
-  "Etiam dictum gravida suscipit. Etiam convallis posuere purus ac dictum. Aenean feugiat ante vitae sem imperdiet, at volutpat dolor finibus. Pellentesque tincidunt purus sem, eget ultricies justo mattis vel. Quisque placerat lacus quis lectus euismod, ac tristique nisl aliquam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Morbi ut nunc accumsan, sagittis nibh eget, commodo est. Pellentesque convallis, neque sed finibus congue, odio diam pretium sem, quis posuere lectus nibh eget ante. Aenean non quam eget lectus semper sagittis. Donec semper gravida ultrices." +
-  "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam egestas, lacus vitae viverra semper, ligula ante cursus eros, id ultrices justo ipsum ac sem. Morbi vitae iaculis purus, sed pulvinar libero. Praesent at libero semper, lacinia nisi a, fringilla magna. Fusce non malesuada nisi. Praesent pulvinar tortor eget diam finibus, in tristique ante condimentum. Morbi neque orci, blandit eu tristique ut, pellentesque vel nisi. Aenean eget lectus mollis, fermentum enim at, luctus dolor. Morbi interdum pretium finibus." +
-  "Morbi ipsum diam, pretium a tellus nec, scelerisque pretium felis. Sed in magna vel nibh viverra placerat sed ut velit. Fusce vulputate arcu vel auctor fringilla. Mauris commodo pulvinar tellus, sit amet finibus nulla tempor ut. Integer convallis luctus urna non finibus. Sed elementum magna ex, quis elementum dolor ornare non. Mauris elementum elit ac nunc iaculis pretium. Praesent sed orci ex." +
-  "In finibus sem a cursus lobortis. Curabitur laoreet orci eget nisl pharetra ornare. Aliquam pulvinar eros nisi, vel porta nunc tincidunt eu. Ut id hendrerit lectus. Nunc cursus eleifend tincidunt. In vitae maximus leo. Nullam arcu arcu, faucibus vel fermentum ullamcorper, scelerisque quis ligula. Suspendisse nec sapien et mi convallis interdum vel non sapien. Fusce vitae semper arcu. Phasellus ut nisi pharetra, dapibus tellus eleifend, accumsan orci. Duis arcu enim, venenatis eu dictum id, laoreet non dolor. Morbi feugiat erat quis nulla tristique rutrum."
-};
+  'propertyTypes': [
+    {
+      'datatype': 'String',
+      'description': 'id of the employee',
+      'id': '033fef2a-8f34-4bcd-b1ad-e123c462561d',
+      'schemas': [],
+      'title': 'Employee Id',
+      'type': {
+        'fullQualifiedNameAsString': 'testcsv.employee_id',
+        'name': 'employee_id',
+        'namespace': 'testcsv'
+      }
+    },
+    {
+      'datatype': 'String',
+      'description': 'name of the employee',
+      'id': 'e76bc4e4-cf6a-43f4-a338-d241ded39093',
+      'schemas': [],
+      'title': 'Employee Name',
+      'type': {
+        'fullQualifiedNameAsString': 'testcsv.employee_name',
+        'name': 'employee_name',
+        'namespace': 'testcsv'
+      }
+    },
+    {
+      'datatype': 'String',
+      'description': 'title of the employee',
+      'id': '9727370f-8506-402c-8f35-2da4dbbb3c06',
+      'schemas': [],
+      'title': 'Employee Title',
+      'type': {
+        'fullQualifiedNameAsString': 'testcsv.employee_title',
+        'name': 'employee_title',
+        'namespace': 'testcsv'
+      }
+    },
+    {
+      'datatype': 'String',
+      'description': 'salary of the employee',
+      'id': 'eb15c62d-fe91-4231-abb7-1228759cae43',
+      'schemas': [],
+      'title': 'Employee Salary',
+      'type': {
+        'fullQualifiedNameAsString': 'testcsv.salary',
+        'name': 'salary',
+        'namespace': 'testcsv'
+      }
+    },
+    {
+      'datatype': 'String',
+      'description': 'department of the employee',
+      'id': '0bae0920-2b89-4da0-8af9-8079a52d9e98',
+      'schemas': [],
+      'title': 'Employee Department',
+      'type': {
+        'fullQualifiedNameAsString': 'testcsv.employee_dept',
+        'name': 'employee_dept',
+        'namespace': 'testcsv'
+      }
+    }
+  ]
+}];
 
 function filterEpic(action$) {
   return action$.ofType(actionTypes.CATALOG_UPDATE_FILTER)
-    .forEach(action => console.log(action.filterParams))
+    .forEach(action => console.log(action.filterParams));
 }
 
-function entitySetListRequestEpic(action$) {
-  return action$.ofType(actionTypes.ENTITY_SET_LIST_REQUEST)
+function convertSearchResult(rawResult): EntitySet {
+  let permission = rawResult.acls.map(Permission.enumValueOf).reduce(Permission.maxPermission);
+  return Object.assign({}, rawResult.entitySet, {
+    permission,
+    propertyTypes: rawResult.propertyTypes
+  });
+}
+
+function loadPermissions(ids) {
+  let permissionMap = {};
+  ids.forEach(id => {
+    permissionMap[id] = {
+      permission: Permission.OWNER
+    }
+  });
+  return permissionMap;
+}
+
+// TODO: Cancellation and Error handling
+function searchCatalogEpic(action$) {
+  return action$.ofType(actionTypes.CATALOG_SEARCH_REQUEST)
   // .delay(2000)
-    .mapTo(actionFactories.createEntitySetListSuccess([EXAMPLE_ENTITY_SET]))
-    .catch(error => Observable.of(actionFactories.createEntitySetListFailure(error.xhr.response)));
+    // Run search
+    .mapTo(EXAMPLE_SEARCH_RESPONSE)
+    .map(rawResult => rawResult.map(convertSearchResult))
+    .map(result => normalize(result, [EntitySetNschema]))
+    .map(Immutable.fromJS)
+    .map(normalizedData => {
+      const propertyTypes = normalizedData.getIn(['entities', 'propertyTypes']);
+      const permissions = loadPermissions(propertyTypes.keySeq());
+      return normalizedData.mergeDeepIn(['entities', 'propertyTypes'], permissions);
+    })
+    .flatMap(normalizedData => [
+      ndataActionFactories.updateNormalizedData(normalizedData.get('entities')),
+      actionFactories.catalogSearchResolve(normalizedData.get('result'))
+    ]);
 }
 
-export default combineEpics(filterEpic, entitySetListRequestEpic);
+export default combineEpics(filterEpic, searchCatalogEpic);
