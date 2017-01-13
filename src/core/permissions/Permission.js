@@ -2,34 +2,28 @@
 
 import { Enum } from 'enumify';
 
+export class Permission extends Enum {
+  static maxPermission(perm1:Permission, perm2:Permission) {
+    return perm1.ordinal > perm2.ordinal ? perm1 : perm2;
+  }
+}
+
 function enumFactory(friendlyName) {
   return {
-    get friendlyName() {
+    getFriendlyName() {
       return friendlyName;
     },
-    hasPermission(permission: Permission) {
+    hasPermission(permission:Permission) {
       return this.ordinal >= permission.ordinal;
     }
   };
 }
-
-export class Permission extends Enum {}
 Permission.initEnum({
-  'HIDDEN': enumFactory("Hidden"),
-  'DISCOVER': enumFactory("Discover"),
-  'READ': enumFactory("Read"),
-  'WRITE': enumFactory("Write"),
-  'OWNER': enumFactory("Owner")
+  HIDDEN: enumFactory('Hidden'),
+  DISCOVER: enumFactory('Discover'),
+  LINK: enumFactory('Link'),
+  READ: enumFactory('Read'),
+  WRITE: enumFactory('Write'),
+  OWNER: enumFactory('Owner')
 });
-
-export function maxPermission(permissions: Permission) {
-  let highestPerm = Permission.HIDDEN;
-
-  for (let permission of permissions) {
-    if (permission.ordinal > highestPerm.ordinal) {
-      highestPerm = permission;
-    }
-  }
-
-  return highestPerm;
-}
+Permission.enumValueOf = Permission.enumValueOf.bind(Permission);

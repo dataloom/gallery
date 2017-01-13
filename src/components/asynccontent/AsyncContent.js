@@ -1,4 +1,4 @@
-import  React, { PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import FontAwesome from 'react-fontawesome';
 import { Alert } from 'react-bootstrap';
 
