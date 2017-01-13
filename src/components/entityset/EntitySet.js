@@ -100,6 +100,13 @@ export class EntitySetSummary extends React.Component{
   render() {
     const { entitySet } = this.props;
 
+    let description;
+    if (entitySet.description) {
+      description = (<ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description}/>);
+    } else {
+      description = (<em>No description available</em>);
+    }
+
     return (
       <article className={styles.entitySet}>
         <header>
@@ -112,7 +119,7 @@ export class EntitySetSummary extends React.Component{
             <ActionDropdown entitySet={entitySet}/>
           </div>
         </header>
-        <ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description}/>
+        {description}
       </article>
     );
   }

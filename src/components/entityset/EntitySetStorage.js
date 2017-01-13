@@ -20,7 +20,7 @@ export type PropertyType = {
   permission: Permission,
   type: Type,
   title: string,
-  description: string,
+  description?: string,
   datatype: string,
 };
 
@@ -29,7 +29,7 @@ export const PropertyTypePropType = PropTypes.shape({
   permission: PropTypes.instanceOf(Permission),
   type: TypePropType.isRequired,
   title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
+  description: PropTypes.string,
   datatype: PropTypes.string.isRequired,
 });
 
