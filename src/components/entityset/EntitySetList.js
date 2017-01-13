@@ -47,7 +47,6 @@ export class FilteredEntitySetList extends React.Component {
   static propTypes = filteredEntitySetListPropTypes;
 
   onKeywordChange = (event) => {
-    debugger;
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
