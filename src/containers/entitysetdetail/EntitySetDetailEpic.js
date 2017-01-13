@@ -1,6 +1,7 @@
 /* @flow */
 import { normalize } from 'normalizr';
 import Immutable from 'immutable';
+import { Observable } from 'rxjs/Observable';
 
 import * as actionTypes from './EntitySetDetailActionTypes';
 import * as actionFactories from './EntitySetDetailActionFactories';
@@ -111,24 +112,45 @@ function loadPermissions(ids) {
   return permissionMap;
 }
 
+/* Worflow:
+  - Filter on action
+  - Get Id or IdList
+  - Pull available from cache
+  - Query for remainder
+    - Lift for multiple requests
+    - Send results to ndata
+  - Send Id(s) or Error
+ */
+
 // TODO: Cancellation and Error handling
-function loadEntitySetDetailEpic(action$) {
+function loadEntitySetDetailEpic(action$, store) {
+  // Filter on Action
   return action$.ofType(actionTypes.ENTITY_SET_REQUEST)
-  // .delay(2000)
-  // Run search
-    .mapTo(EXAMPLE_DETAIL_RESPONSE)
-    .map(converDetailResponse)
-    .map(result => normalize(result, EntitySetNschema))
-    .map(Immutable.fromJS)
-    .map(normalizedData => {
-      const propertyTypes = normalizedData.getIn(['entities', 'propertyTypes']);
-      const permissions = loadPermissions(propertyTypes.keySeq());
-      return normalizedData.mergeDeepIn(['entities', 'propertyTypes'], permissions);
-    })
-    .flatMap(normalizedData => [
-      ndataActionFactories.updateNormalizedData(normalizedData.get('entities')),
-      actionFactories.entitySetDetailResolve(normalizedData.get('result'))
-    ]);
+    // Get Id(s)
+    .map(action => action.id)
+    // Pull available from cache
+    .mergeMap(id => {
+      const state = store.getState();
+      const hasId = state.hasIn(['normalizedData', 'entitySets', id]);
+      if (hasId) {
+        return Observable.of(id)
+          .map(actionFactories.entitySetDetailResolve);
+      } else {
+        return Observable.of(EXAMPLE_DETAIL_RESPONSE)
+          .map(converDetailResponse)
+          .map(result => normalize(result, EntitySetNschema))
+          .map(Immutable.fromJS)
+          .map(normalizedData => {
+            const propertyTypes = normalizedData.getIn(['entities', 'propertyTypes']);
+            const permissions = loadPermissions(propertyTypes.keySeq());
+            return normalizedData.mergeDeepIn(['entities', 'propertyTypes'], permissions);
+          })
+          .flatMap(normalizedData => [
+            ndataActionFactories.updateNormalizedData(normalizedData.get('entities')),
+            actionFactories.entitySetDetailResolve(normalizedData.get('result'))
+          ]);
+      }
+    });
 }
 
 export default loadEntitySetDetailEpic;
