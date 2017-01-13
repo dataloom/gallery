@@ -6,7 +6,7 @@ import {
   combineReducers
 } from 'redux-immutable';
 
-import organizationsReducer from '../../containers/Organizations/OrganizationsReducer';
+import organizationsReducer from '../../containers/organizations/OrganizationsReducer';
 import catalogReducer from '../../containers/catalog/CatalogReducer';
 import ndataReducer from '../../containers/ndata/NdataReducer';
 
