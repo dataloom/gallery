@@ -10,7 +10,7 @@ export class Permission extends Enum {
 
 function enumFactory(friendlyName) {
   return {
-    get friendlyName() {
+    getFriendlyName() {
       return friendlyName;
     },
     hasPermission(permission:Permission) {

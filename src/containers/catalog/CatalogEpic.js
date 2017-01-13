@@ -7,7 +7,8 @@ import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
 import * as ndataActionFactories from '../ndata/NdataActionFactories';
 import { Permission } from '../../core/permissions/Permission';
-import { EntitySet, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
+import type { EntitySet } from '../../components/entityset/EntitySetStorage';
+import { EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 
 const EXAMPLE_SEARCH_RESPONSE = [{
   'acls': [

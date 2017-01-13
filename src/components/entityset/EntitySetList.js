@@ -1,4 +1,3 @@
-/* @flow */
 import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -48,6 +47,7 @@ export class FilteredEntitySetList extends React.Component {
   static propTypes = filteredEntitySetListPropTypes;
 
   onKeywordChange = (event) => {
+    debugger;
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {

@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { SplitButton, Button, MenuItem } from 'react-bootstrap';
