@@ -4,10 +4,13 @@ body {
   width: 100%;
   padding: 0;
   margin: 0;
-  color: #404345;
 }
 
-body > div {
+/*
+ * TODO: temporarily set in index.html. need figure out how to set this styling only on #app, since this selector
+ * will be changed by the compile step
+ */
+#app {
   height: 100%;
   width: 100%;
 }
@@ -34,9 +37,9 @@ body > div {
 }
 
 .appContent {
-  background-color: #ffffff;
+  background-color: #fafbfc;
   padding: 0;
   display: flex;
+  flex: 1 0 auto;
   justify-content: center;
-  width: 100%;
 }
