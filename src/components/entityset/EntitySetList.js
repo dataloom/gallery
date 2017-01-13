@@ -47,15 +47,11 @@ export const filteredEntitySetListPropTypes = Object.assign({}, baseEntitySetLis
 export class FilteredEntitySetList extends React.Component {
   static propTypes = filteredEntitySetListPropTypes;
 
-  constructor(props) {
-    super(props);
-  }
-
   onKeywordChange = (event) => {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
-      let params = Object.assign({}, this.props.filterParams, {
+      const params = Object.assign({}, this.props.filterParams, {
         keyword: event.target.value
       });
       onFilterUpdate(params);
@@ -67,7 +63,7 @@ export class FilteredEntitySetList extends React.Component {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
-      let params = Object.assign({}, this.props.filterParams, {
+      const params = Object.assign({}, this.props.filterParams, {
         propertyTypeIds: [event.target.value]
       });
       onFilterUpdate(params);
@@ -78,7 +74,7 @@ export class FilteredEntitySetList extends React.Component {
     const { onFilterUpdate } = this.props;
 
     if (onFilterUpdate) {
-      let params = Object.assign({}, this.props.filterParams, {
+      const params = Object.assign({}, this.props.filterParams, {
         entityTypeId: event.target.value
       });
       onFilterUpdate(params);

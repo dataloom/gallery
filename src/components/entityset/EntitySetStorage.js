@@ -16,12 +16,12 @@ export const TypePropType = PropTypes.shape({
 
 /* PropertyType */
 export type PropertyType = {
-  id: string,
-  permission: Permission,
-  type: Type,
-  title: string,
-  description?: string,
-  datatype: string,
+  id:string,
+  permission:Permission,
+  type:Type,
+  title:string,
+  description?:string,
+  datatype:string
 };
 
 export const PropertyTypePropType = PropTypes.shape({
@@ -30,20 +30,20 @@ export const PropertyTypePropType = PropTypes.shape({
   type: TypePropType.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
-  datatype: PropTypes.string.isRequired,
+  datatype: PropTypes.string.isRequired
 });
 
 export const PropertyTypeNschema = new schema.Entity('propertyTypes');
 
 /* EntitySet */
 export type EntitySet = {
-  id: string,
-  permission: Permission,
-  type: Type,
-  name: string,
-  title: string,
-  description: string,
-  propertyTypes: PropertyType[]
+  id:string,
+  permission:Permission,
+  type:Type,
+  name:string,
+  title:string,
+  description:string,
+  propertyTypes:PropertyType[]
 };
 
 export const EntitySetPropType = PropTypes.shape({

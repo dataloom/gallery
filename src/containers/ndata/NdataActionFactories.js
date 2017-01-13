@@ -5,5 +5,5 @@ export function updateNormalizedData(normalizedData) {
   return {
     type: actionTypes.UPDATE_NORMALIZED_DATA,
     normalizedData
-  }
+  };
 }

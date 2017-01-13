@@ -11,7 +11,6 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import { EntitySetPropType } from './EntitySetStorage';
 import styles from './entityset.module.css';
 
-
 const MAX_DESCRIPTION_LENGTH = 300;
 
 class ExpandableText extends React.Component {
@@ -28,24 +27,24 @@ class ExpandableText extends React.Component {
 
     this.switchState = () => {
       this.setState({ isOpen: !this.state.isOpen });
-    }
+    };
   }
 
   render() {
-    let {text, maxLength} = this.props;
+    const { text, maxLength } = this.props;
     if (text.length <= maxLength) {
       return (<div>{text}</div>);
     }
 
-    let {isOpen} = this.state,
-      controlText,
+    const { isOpen } = this.state;
+    let controlText,
       displayText;
     if (isOpen) {
-      controlText = "Read less";
+      controlText = 'Read less';
       displayText = text;
     } else {
-      controlText = "Read more";
-      displayText = text.substring(0, maxLength) + "...";
+      controlText = 'Read more';
+      displayText = `${text.substring(0, maxLength)}...`;
     }
 
     return (
@@ -64,8 +63,8 @@ class ActionDropdown extends React.Component {
   };
 
   render() {
-    let {entitySet} = this.props;
-    let type = entitySet.type;
+    const { entitySet } = this.props;
+    const type = entitySet.type;
 
     return (
       <SplitButton pullRight title="Actions" id="action-dropdown">
@@ -80,8 +79,8 @@ class ActionDropdown extends React.Component {
               query: {
                 name: entitySet.name,
                 typeNamespace: type.namespace,
-                typeName:type.name
-               }
+                typeName: type.name
+              }
             }}>
             Visualize
           </Link>
@@ -92,7 +91,7 @@ class ActionDropdown extends React.Component {
 }
 
 /* EntitySet Components */
-export class EntitySetSummary extends React.Component{
+export class EntitySetSummary extends React.Component {
   static propTypes = {
     entitySet: EntitySetPropType.isRequired
   };
@@ -125,7 +124,7 @@ export class EntitySetSummary extends React.Component{
   }
 }
 
-//TODO: Reduxify and attach EntitySetDetail to router
+// TODO: Reduxify and attach EntitySetDetail to router
 export class EntitySetDetail extends React.Component {
   static propTypes = {
     entitySet: EntitySetPropType.isRequired

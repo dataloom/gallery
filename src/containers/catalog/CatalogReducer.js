@@ -1,6 +1,7 @@
 /* @flow */
-import * as actionTypes from './CatalogActionTypes';
 import Immutable from 'immutable';
+
+import * as actionTypes from './CatalogActionTypes';
 
 export const INITIAL_STATE = Immutable.fromJS({
   asyncState: {
@@ -47,6 +48,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       return state.set('filterParams', Immutable.fromJS(action.filterParams));
 
     default:
-      return state
+      return state;
   }
 }

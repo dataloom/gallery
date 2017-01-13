@@ -19,10 +19,6 @@ class CatalogComponent extends React.Component {
     requestEntitySets: PropTypes.func.isRequired
   };
 
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <AsyncContent {...this.props.asyncState}>
@@ -37,8 +33,8 @@ class CatalogComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const catalog = state.get('catalog').toJS(),
-    normalizedData = state.get('normalizedData').toJS();
+  const catalog = state.get('catalog').toJS();
+  const normalizedData = state.get('normalizedData').toJS();
 
   return {
     asyncState: catalog.asyncState,
@@ -51,12 +47,12 @@ function mapStateToProps(state) {
   };
 }
 
-//TODO: Decide if/how to incorporate bindActionCreators
+// TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
     requestEntitySets: () => { dispatch(catalogSearchRequest()) },
-    onFilterUpdate: (filterParams) => { dispatch(createUpdateFilters(filterParams))}
-  }
+    onFilterUpdate: (filterParams) => { dispatch(createUpdateFilters(filterParams)); }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CatalogComponent);
