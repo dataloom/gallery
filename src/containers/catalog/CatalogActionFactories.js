@@ -1,9 +1,10 @@
 /* @flow */
 import * as actionTypes from './CatalogActionTypes';
 
-export function catalogSearchRequest() {
+export function catalogSearchRequest(filterParams:Object) {
   return {
-    type: actionTypes.CATALOG_SEARCH_REQUEST
+    type: actionTypes.CATALOG_SEARCH_REQUEST,
+    filterParams
   };
 }
 

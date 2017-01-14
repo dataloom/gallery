@@ -25,6 +25,9 @@
 }
 
 /* EntitySetList */
+.catalog {
+    width: 100%
+}
 .filteredEntitySetList {
     width: 100%;
 }
