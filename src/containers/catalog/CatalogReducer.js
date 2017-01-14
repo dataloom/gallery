@@ -2,10 +2,11 @@
 import Immutable from 'immutable';
 
 import * as actionTypes from './CatalogActionTypes';
+import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   asyncState: {
-    isLoading: true,
+    status: ASYNC_STATUS.PENDING,
     errorMessage: ''
   },
   filterParams: {
@@ -21,7 +22,7 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
     case actionTypes.CATALOG_SEARCH_REQUEST:
       return state.merge({
         asyncState: {
-          isLoading: true,
+          status: ASYNC_STATUS.LOADING,
           errorMessage: ''
         },
         entitySetIds: []
@@ -30,7 +31,7 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
     case actionTypes.CATALOG_SEARCH_REJECT:
       return state.merge({
         asyncState: {
-          isLoading: false,
+          status: ASYNC_STATUS.ERROR,
           errorMessage: action.errorMessage
         }
       });
@@ -38,7 +39,7 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
     case actionTypes.CATALOG_SEARCH_RESOLVE:
       return state.merge({
         asyncState: {
-          isLoading: false,
+          status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
         },
         entitySetIds: action.entitySetIds

@@ -6,7 +6,7 @@ import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/
 import { EntitySetList } from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../../components/securableobject/SecurableObjectSearch';
 import { catalogSearchRequest, createUpdateFilters } from './CatalogActionFactories';
-import AsyncContent from '../../components/asynccontent/AsyncContent';
+import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import styles from './catalog.module.css';
 
 // TODO: Replace with Async calls
@@ -30,14 +30,11 @@ const PROPERTY_TYPE_OPTIONS = [{
 },{
   value: '0bae0920-2b89-4da0-8af9-8079a52d9e98',
   label: 'Employee Department'
-},];
+}];
 
 class CatalogComponent extends React.Component {
   static propTypes = {
-    asyncState: PropTypes.shape({
-      isLoading: PropTypes.bool.isRequired,
-      errorMessage: PropTypes.string
-    }).isRequired,
+    asyncState: AsyncStatePropType.isRequired,
     filterParams: FilterParamsPropType.isRequired,
     entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
     onFilterUpdate: PropTypes.func,
@@ -55,7 +52,7 @@ class CatalogComponent extends React.Component {
             onSubmit={this.props.onSubmitSearch}
           />
         </header>
-        <AsyncContent {...this.props.asyncState}>
+        <AsyncContent {...this.props.asyncState} pendingContent={<h2>Please run a search</h2>}>
           <EntitySetList {...this.props} />
         </AsyncContent>
       </div>
