@@ -21,7 +21,11 @@ export default class AsyncContent extends React.Component {
     status: PropTypes.oneOf(Object.values(ASYNC_STATUS)),
     errorMessage: PropTypes.string,
     // Other stuff
-    pendingContent: PropTypes.node
+    pendingContent: PropTypes.node,
+    content: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.node
+    ]).isRequired
   };
 
   renderPending() {
@@ -51,7 +55,12 @@ export default class AsyncContent extends React.Component {
   }
 
   renderContent() {
-    return this.props.children;
+    const { content } = this.props;
+    if (typeof content === 'function') {
+      return content();
+    } else {
+      return content;
+    }
   }
 
   render() {

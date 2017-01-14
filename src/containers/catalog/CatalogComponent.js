@@ -52,9 +52,10 @@ class CatalogComponent extends React.Component {
             onSubmit={this.props.onSubmitSearch}
           />
         </header>
-        <AsyncContent {...this.props.asyncState} pendingContent={<h2>Please run a search</h2>}>
-          <EntitySetList {...this.props} />
-        </AsyncContent>
+        <AsyncContent {...this.props.asyncState}
+          pendingContent={<h2>Please run a search</h2>}
+          content={() => <EntitySetList {...this.props} />}
+        />
       </div>
     );
   }

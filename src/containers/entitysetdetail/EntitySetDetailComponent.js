@@ -19,9 +19,7 @@ class EntitySetDetailComponent extends React.Component {
 
   render() {
     return (
-      <AsyncContent {...this.props.asyncState}>
-        <EntitySetDetail {...this.props} />
-      </AsyncContent>
+      <AsyncContent {...this.props.asyncState} content={() => <EntitySetDetail {...this.props} />}/>
     );
   }
 
