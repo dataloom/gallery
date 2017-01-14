@@ -83,7 +83,7 @@ export default class AuthService extends EventEmitter {
     this.storage.setItem('id_token', idToken);
 
     Cookies.set('authorization', `Bearer ${idToken}`, {
-      domain: `.${window.location.hostname}`
+      domain: `${window.location.hostname}`
     });
   }
 
