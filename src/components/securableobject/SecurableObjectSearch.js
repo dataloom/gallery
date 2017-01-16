@@ -41,20 +41,32 @@ export default class SecurableObjectSearch extends React.Component {
   };
 
   // TODO: Upgrade PropertyTypes and EntitityType with selects
-  onPropertyTypesChange = (value) => {
+  onPropertyTypesChange = (option) => {
     this.setState({
-      propertyTypeIds: value
+      propertyTypeIds: option
     });
   };
 
-  onEntityTypeChange = (value) => {
+  onEntityTypeChange = (option) => {
     this.setState({
-      entitySetTypeId: value
+      entitySetTypeId: option
     });
   };
 
   onSubmit = () => {
-    this.props.onSubmit(this.state);
+    const { keyword, propertyTypeIds, entitySetTypeId} = this.state;
+    const filterParams = {};
+
+    if (keyword) {
+      filterParams.keyword = keyword;
+    }
+    if (propertyTypeIds) {
+      filterParams.propertyTypeIds = propertyTypeIds.map(option => option.value);
+    }
+    if (entitySetTypeId) {
+      filterParams.entitySetTypeId = entitySetTypeId.value;
+    }
+    this.props.onSubmit(filterParams);
   };
 
   render() {

@@ -22,10 +22,3 @@ export function catalogSearchReject(errorMessage:string) {
     errorMessage
   };
 }
-
-export function createUpdateFilters(filterParams:Object) {
-  return {
-    type: actionTypes.CATALOG_UPDATE_FILTER,
-    filterParams
-  };
-}

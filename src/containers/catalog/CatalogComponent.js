@@ -5,7 +5,7 @@ import { denormalize } from 'normalizr';
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 import { EntitySetList } from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../../components/securableobject/SecurableObjectSearch';
-import { catalogSearchRequest, createUpdateFilters } from './CatalogActionFactories';
+import { catalogSearchRequest } from './CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import styles from './catalog.module.css';
 
@@ -80,7 +80,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     onSubmitSearch: (filterParams) => { dispatch(catalogSearchRequest(filterParams)) },
-    onFilterUpdate: (filterParams) => { dispatch(createUpdateFilters(filterParams)); }
   };
 }
 
