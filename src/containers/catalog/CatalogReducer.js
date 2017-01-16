@@ -9,11 +9,6 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
   },
-  filterParams: {
-    keyword: '',
-    propertyTypeIds: [],
-    entityTypeId: ''
-  },
   entitySetIds: []
 });
 
@@ -44,9 +39,6 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
         },
         entitySetIds: action.entitySetIds
       });
-
-    case actionTypes.CATALOG_UPDATE_FILTER:
-      return state.set('filterParams', Immutable.fromJS(action.filterParams));
 
     default:
       return state;

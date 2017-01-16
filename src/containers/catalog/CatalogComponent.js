@@ -35,11 +35,21 @@ const PROPERTY_TYPE_OPTIONS = [{
 class CatalogComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
-    filterParams: FilterParamsPropType.isRequired,
     entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
-    onFilterUpdate: PropTypes.func,
-    onSubmitSearch: PropTypes.func.isRequired
+    onSubmitSearch: PropTypes.func.isRequired,
+    filterParams: FilterParamsPropType
   };
+
+  componentDidMount() {
+    if (this.props.filterParams) {
+      // TODO: Remove Object.assign when searchAPI can handle single arguments
+      this.props.onSubmitSearch(Object.assign({
+        keyword: '',
+        propertyTypeIds: [],
+        entitySetTypeId: ''
+      },this.props.filterParams));
+    }
+  }
 
   render() {
     return (
@@ -47,6 +57,7 @@ class CatalogComponent extends React.Component {
         <header>
           <h1>Browse the Catalog</h1>
           <SecurableObjectSearch
+            filterParams={this.props.filterParams}
             entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}
             propertyTypeOptions={PROPERTY_TYPE_OPTIONS}
             onSubmit={this.props.onSubmitSearch}
@@ -61,13 +72,67 @@ class CatalogComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function filterParamsFromLocation(location) {
+  const query = location.query;
+  const filterParams = {};
+  let hasFilters = false;
+
+  if (query.kw) {
+    filterParams.keyword = query.kw;
+    hasFilters = true;
+  }
+  if (query.eid) {
+    filterParams.entitySetTypeId = query.eid;
+    hasFilters = true;
+  }
+  if (query.pid) {
+    const pid = query.pid;
+    hasFilters = true;
+    if (Array.isArray(pid)) {
+      filterParams.propertyTypeIds = pid;
+    } else {
+      filterParams.propertyTypeIds = [pid];
+    }
+  }
+
+  if (hasFilters) {
+    return filterParams;
+  } else {
+    return null;
+  }
+}
+
+function locationFromFilterParams(filterParams) {
+  const query = {};
+  let hasFilters = false;
+
+  if (filterParams.keyword) {
+    query.kw = filterParams.keyword;
+    hasFilters = true;
+  }
+  if (filterParams.entitySetTypeId) {
+    query.eid = filterParams.entitySetTypeId;
+    hasFilters = true;
+  }
+  if (filterParams.propertyTypeIds) {
+    query.pid = filterParams.propertyTypeIds;
+    hasFilters = true;
+  }
+
+  if (hasFilters) {
+    return { query };
+  } else {
+    return {};
+  }
+}
+
+function mapStateToProps(state, ownProps) {
   const catalog = state.get('catalog').toJS();
   const normalizedData = state.get('normalizedData').toJS();
 
   return {
     asyncState: catalog.asyncState,
-    filterParams: catalog.filterParams,
+    filterParams: filterParamsFromLocation(ownProps.location),
     entitySets: denormalize(
       catalog.entitySetIds,
       [EntitySetNschema],
@@ -77,9 +142,13 @@ function mapStateToProps(state) {
 }
 
 // TODO: Decide if/how to incorporate bindActionCreators
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
   return {
-    onSubmitSearch: (filterParams) => { dispatch(catalogSearchRequest(filterParams)) },
+    onSubmitSearch: (filterParams) => {
+      const newLocation = Object.assign({}, ownProps.location, locationFromFilterParams(filterParams));
+      ownProps.router.push(newLocation);
+      dispatch(catalogSearchRequest(filterParams));
+    },
   };
 }
 

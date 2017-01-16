@@ -1,5 +1,4 @@
 /* @flow */
-import { combineEpics } from 'redux-observable';
 import { normalize } from 'normalizr';
 import Immutable from 'immutable';
 import { Observable } from 'rxjs';
@@ -12,11 +11,6 @@ import * as ndataActionFactories from '../ndata/NdataActionFactories';
 import { Permission } from '../../core/permissions/Permission';
 import type { EntitySet } from '../../components/entityset/EntitySetStorage';
 import { EntitySetNschema } from '../../components/entityset/EntitySetStorage';
-
-function filterEpic(action$) {
-  return action$.ofType(actionTypes.CATALOG_UPDATE_FILTER)
-    .forEach(action => console.log(action.filterParams));
-}
 
 function convertSearchResult(rawResult): EntitySet {
   let permission = rawResult.acls.map(Permission.enumValueOf).reduce(Permission.maxPermission);
@@ -52,4 +46,4 @@ function searchCatalogEpic(action$) {
     });
 }
 
-export default combineEpics(filterEpic, searchCatalogEpic);
+export default searchCatalogEpic;
