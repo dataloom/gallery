@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
+import _ from 'lodash';
 
 import { EntitySetSummary } from './EntitySet';
 import { EntitySetPropType } from './EntitySetStorage';
@@ -14,18 +15,29 @@ export class EntitySetList extends React.Component {
   static propTypes = baseEntitySetListPropTypes;
 
   render() {
-    const entitySetList = this.props.entitySets.map((entitySet) => {
-      return (
-        <EntitySetSummary
-          key={entitySet.id}
-          entitySet={entitySet}
-        />
+    const { entitySets } = this.props;
+
+    let content;
+    if (_.isEmpty(entitySets)) {
+      content = (
+        <div className={styles.empty}>
+          No entity sets found
+        </div>
       );
-    });
+    } else {
+      content = entitySets.map((entitySet) => {
+        return (
+          <EntitySetSummary
+            key={entitySet.id}
+            entitySet={entitySet}
+          />
+        );
+      });
+    }
 
     return (
       <div className={classnames(styles.entitySetList, this.props.className)}>
-        {entitySetList}
+        {content}
       </div>
     );
   }

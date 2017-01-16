@@ -42,12 +42,7 @@ class CatalogComponent extends React.Component {
 
   componentDidMount() {
     if (this.props.filterParams) {
-      // TODO: Remove Object.assign when searchAPI can handle single arguments
-      this.props.onSubmitSearch(Object.assign({
-        keyword: '',
-        propertyTypeIds: [],
-        entitySetTypeId: ''
-      },this.props.filterParams));
+      this.props.onSubmitSearch(this.props.filterParams);
     }
   }
 

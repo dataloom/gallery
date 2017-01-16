@@ -20,8 +20,8 @@ function convertSearchResult(rawResult): EntitySet {
   });
 }
 
-function searchCatalog(keyword, propertyTypeIds, entitySetTypeId) {
-  return Observable.from(SearchApi.searchGET(keyword, entitySetTypeId, propertyTypeIds))
+function searchCatalog(filterParams) {
+  return Observable.from(SearchApi.search(filterParams))
     .map(rawResult => rawResult.map(convertSearchResult))
     .map(result => normalize(result, [EntitySetNschema]))
     .map(Immutable.fromJS)
@@ -40,10 +40,8 @@ function searchCatalog(keyword, propertyTypeIds, entitySetTypeId) {
 function searchCatalogEpic(action$) {
   return action$.ofType(actionTypes.CATALOG_SEARCH_REQUEST)
     // Run search
-    .mergeMap(action => {
-      const {keyword, propertyTypeIds, entitySetTypeId} = action.filterParams;
-      return searchCatalog(keyword, propertyTypeIds, entitySetTypeId);
-    });
+    .map(action => action.filterParams)
+    .mergeMap(searchCatalog);
 }
 
 export default searchCatalogEpic;

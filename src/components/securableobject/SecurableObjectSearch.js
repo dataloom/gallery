@@ -60,7 +60,7 @@ export default class SecurableObjectSearch extends React.Component {
     if (keyword) {
       filterParams.keyword = keyword;
     }
-    if (propertyTypeIds) {
+    if (propertyTypeIds && propertyTypeIds.length > 0) {
       filterParams.propertyTypeIds = propertyTypeIds.map(option => option.value);
     }
     if (entitySetTypeId) {
