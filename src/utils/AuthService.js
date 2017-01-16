@@ -8,7 +8,7 @@ import { isTokenExpired } from './jwtHelper';
 import img from '../images/kryptnostic-logo-big.png';
 
 export default class AuthService extends EventEmitter {
-  constructor(clientId, domain) {
+  constructor(clientId, domain, isLocal) {
     super();
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
@@ -29,6 +29,7 @@ export default class AuthService extends EventEmitter {
     // binds login functions to keep this context
     this.login = this.login.bind(this);
     this.storage = localStorage;
+    this.isLocal = isLocal;
   }
 
   doAuthentication(authResult) {
@@ -81,9 +82,9 @@ export default class AuthService extends EventEmitter {
   setToken(idToken) {
     // Saves user token to localStorage
     this.storage.setItem('id_token', idToken);
-
+    const prefix = (this.isLocal) ? '' : '.';
     Cookies.set('authorization', `Bearer ${idToken}`, {
-      domain: `${window.location.hostname}`
+      domain: `${prefix}${window.location.hostname}`
     });
   }
 
