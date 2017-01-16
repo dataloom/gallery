@@ -19,7 +19,7 @@ declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
 declare var __DEV__;
 
-const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__);
+const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DEV__);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
