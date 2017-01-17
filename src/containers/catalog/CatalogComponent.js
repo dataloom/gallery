@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
 
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
-import { EntitySetList } from '../../components/entityset/EntitySetList';
+import EntitySetList from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../../components/securableobject/SecurableObjectSearch';
 import { catalogSearchRequest } from './CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';

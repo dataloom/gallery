@@ -6,13 +6,11 @@ import EntitySet from './EntitySet';
 import { EntitySetPropType } from './EntitySetStorage';
 import styles from '../../containers/catalog/catalog.module.css';
 
-const baseEntitySetListPropTypes = {
-  entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
-  className: PropTypes.string
-};
-
-export class EntitySetList extends React.Component {
-  static propTypes = baseEntitySetListPropTypes;
+export default class EntitySetList extends React.Component {
+  static propTypes = {
+    entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
+    className: PropTypes.string
+  };
 
   render() {
     const { entitySets } = this.props;
