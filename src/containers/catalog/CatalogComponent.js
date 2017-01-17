@@ -51,7 +51,7 @@ class CatalogComponent extends React.Component {
       <div className={styles.catalog}>
         <header>
           <div className={styles.headerContent}>
-            <h1 className={styles.title}>Browse the Catalog</h1>
+            <h1 className={styles.title}>Browse the catalog</h1>
             <SecurableObjectSearch
               filterParams={this.props.filterParams}
               entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}

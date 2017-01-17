@@ -1,21 +1,33 @@
 .search {
     color: #83858d;
-}
-
-.divider {
-    text-transform: uppercase;
-    font-weight: 600;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .search :global .control-label {
     font-weight: 400;
 }
 
+.search :global .form-group {
+    margin-bottom: 0;
+}
+
 .search :global .form-control {
     box-shadow: none !important;
 }
 
+/* Controls */
+.submitButton {
+    height: 37px;
+    width: 80px;
+    margin: 23px 0 0;
+    margin-left: auto;
+}
+
 /* Keyword */
+.search .keyword {
+    margin-bottom: 15px;
+}
 .keyword :global .form-control {
     padding-left: 0;
 }
@@ -27,6 +39,27 @@
 :global .input-group :global .form-control {
     border-left: none;
     border-radius: 0 3px 3px 0;
+}
+
+/* EDM Filters */
+.edmFilters {
+    display: flex;
+    align-items: flex-start;
+}
+
+.divider {
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 34px 20px 0 0;
+}
+
+.propertyTypes {
+    width: 500px;
+    margin-right: 20px;
+}
+
+.entityType {
+    width: 200px;
 }
 
 /* Select */
@@ -52,6 +85,7 @@
     background: #4203c5;
     color: #ffffff;
     border: none;
+    direction: rtl;
 }
 .search :global .Select--multi :global .Select-value-icon {
     border: none;
