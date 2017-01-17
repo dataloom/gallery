@@ -1,0 +1,49 @@
+.search {
+    color: #83858d;
+}
+
+.divider {
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.search :global .control-label {
+    font-weight: 400;
+}
+
+.search :global .form-control {
+    box-shadow: none !important;
+}
+
+/* Keyword */
+.keyword :global .form-control {
+    padding-left: 0;
+}
+
+.keyword :global .input-group-addon {
+    background: #ffffff;
+}
+
+:global .input-group :global .form-control {
+    border-left: none;
+    border-radius: 0 3px 3px 0;
+}
+
+/* Select */
+.search :global .input-group :global .form-control,
+.search :global .input-group-addon,
+.search :global .Select-control,
+.search :global .Select-menu-outer
+{
+    border-color: #a3a8ab;
+    border-width: 2pt;
+}
+
+.search :global .Select.is-open :global .Select-control
+{
+    border-bottom: 0;
+}
+
+.search :global .Select-menu-outer {
+    border-top-width: 1pt;
+}

@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Select from 'react-select';
-import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
+
+import styles from './securableobject.module.css';
 
 const OptionsPropType = PropTypes.shape({
   value: PropTypes.string.isRequired,
@@ -71,16 +74,20 @@ export default class SecurableObjectSearch extends React.Component {
 
   render() {
     return (
-      <div className={classnames(this.props.className)}>
+      <div className={classnames(this.props.className, styles.search)}>
         <form onSubmit={this.onSubmit}>
-          <FormGroup>
+          <FormGroup className={styles.keyword}>
             <ControlLabel>Keyword</ControlLabel>
-            <FormControl
-              value={this.state.keyword}
-              type="text"
-              onChange={this.onKeywordChange}
-            />
+            <InputGroup>
+              <InputGroup.Addon><FontAwesome name="search"/></InputGroup.Addon>
+              <FormControl
+                value={this.state.keyword}
+                type="text"
+                onChange={this.onKeywordChange}
+              />
+            </InputGroup>
           </FormGroup>
+
 
           <FormGroup>
             <ControlLabel>Property types</ControlLabel>
@@ -91,7 +98,7 @@ export default class SecurableObjectSearch extends React.Component {
               multi={true}
             />
           </FormGroup>
-          <span className="divider">Or</span>
+          <span className={styles.divider}>Or</span>
           <FormGroup>
             <ControlLabel>Entity type</ControlLabel>
             <Select
