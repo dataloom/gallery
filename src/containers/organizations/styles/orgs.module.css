@@ -1,16 +1,46 @@
-.organizationsWrapper {
+.organizationsWrapper, .organizationDetailsWrapper {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
 }
 
-.organizationsWrapper header {
-  margin-bottom: 25px;
-}
-
 .organizationsHeading h3 {
   margin: 5px 0;
 }
+
+.organizationDetailsWrapper {
+  padding: 25px;
+}
+
+
+
+
+.selectOrgMsg {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.organizationsList {
+  list-style-type: none;
+}
+
+.organizationListItem a {
+  color: #455a64;
+  text-decoration: none;
+}
+
+.organizationListItem a:hover {
+  color: #1565c0;
+  text-decoration: none;
+}
+
+
+
+
+
+
 
 .createOrganizationWrapper {
   min-width: 800px;

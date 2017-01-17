@@ -15,11 +15,8 @@ import {
 
 import {
   Button,
-  ControlLabel,
-  FormControl,
-  FormGroup,
-  HelpBlock,
-  InputGroup,
+  DropdownButton,
+  MenuItem,
 } from 'react-bootstrap';
 
 import {
@@ -27,7 +24,8 @@ import {
 } from 'react-redux';
 
 import {
-  Link
+  Link,
+  hashHistory
 } from 'react-router';
 
 import {
@@ -56,7 +54,7 @@ const { Organization } = DataModels;
 function mapStateToProps(state :Map<*, *>) {
 
   return {
-    isFetching: state.getIn(['organizations', 'isFetching']),
+    isFetchingOrgs: state.getIn(['organizations', 'isFetchingOrgs']),
     organizations: state.getIn(['organizations', 'organizations']).valueSeq()
   };
 }
@@ -108,8 +106,12 @@ class OrganizationList extends React.Component {
       fetchOrgsSuccess: React.PropTypes.func.isRequired,
       fetchOrgsFailure: React.PropTypes.func.isRequired
     }).isRequired,
-    isFetching: React.PropTypes.bool.isRequired,
-    organizations: React.PropTypes.instanceOf(Immutable.Iterable).isRequired
+    children: React.PropTypes.node,
+    isFetchingOrgs: React.PropTypes.bool.isRequired,
+    organizations: React.PropTypes.instanceOf(Immutable.Iterable).isRequired,
+    params: React.PropTypes.shape({
+      orgId: React.PropTypes.string
+    }).isRequired
   };
 
   constructor(props) {
@@ -134,23 +136,6 @@ class OrganizationList extends React.Component {
     });
   }
 
-  // handleInviteClick = () => {
-  //
-  //   if (Utils.isValidEmail(this.props.invitationEmail)) {
-  //     this.props.actions.sendInvitation(this.props.invitationEmail);
-  //   }
-  //   else {
-  //     this.setState({
-  //       showInvalidEmailMessage: true
-  //     });
-  //   }
-  // }
-
-  // handleEmailOnChange = (event) => {
-  //
-  //   this.props.actions.updateInviteEmail(event.target.value);
-  // }
-
   showCreateOrganizationComponent = () => {
 
     this.setState({
@@ -172,6 +157,10 @@ class OrganizationList extends React.Component {
 
   renderCreateOrganizationComponent = () => {
 
+    if (!this.state.showCreateOrganizationComponent) {
+      return null;
+    }
+
     const visibilityOptions = [
       'Discoverable',
       'Public',
@@ -186,70 +175,43 @@ class OrganizationList extends React.Component {
     );
   }
 
-  // renderOrganizations = () => {
-  //
-  //   if (!this.props.organizations || this.props.organizations.length === 0) {
-  //     return null;
-  //   }
-  //
-  //   const email = this.props.auth.getProfile().email;
-  //   const domain = email.substring(email.lastIndexOf('@') + 1);
-  //
-  //   return (
-  //     <div>
-  //       <div className={styles.section}>
-  //         <h3>{ domain }</h3>
-  //       </div>
-  //       { orgs }
-  //       <div className={`${styles.section} ${styles.invite}`}>
-  //         <h4>Invite</h4>
-  //         <FormGroup className={styles.inviteInput}>
-  //           <ControlLabel>Email Address</ControlLabel>
-  //           <InputGroup>
-  //             <FormControl type="email" placeholder="Enter email" onChange={this.handleEmailOnChange} />
-  //             <InputGroup.Button>
-  //               <Button onClick={this.handleInviteClick}>Invite</Button>
-  //             </InputGroup.Button>
-  //           </InputGroup>
-  //           <HelpBlock className={styles.invalidEmail}>
-  //             { (this.props.showInvalidEmailMessage) ? 'Invalid email' : '' }
-  //           </HelpBlock>
-  //         </FormGroup>
-  //       </div>
-  //       <div className={styles.section}>
-  //         <h4>Requests</h4>
-  //       </div>
-  //       <div className={styles.section}>
-  //         <h4>Users</h4>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  renderOrganizationsDropdown = () => {
 
-  renderOrganizationsList = () => {
+    const currentOrgId = this.props.params.orgId;
+    const currentOrg = this.props.organizations.get(currentOrgId);
+
+    let dropdownTitle = 'Your Organizations';
+    if (currentOrg !== undefined && currentOrg !== null) {
+      dropdownTitle = currentOrg.get('title');
+    }
 
     const orgs = this.props.organizations.map((org) => {
+      const orgId = org.get('id');
+      const orgTitle = org.get('title');
       return (
-        <li key={org.get('id')}>
-          <Link to={`/${PageConsts.ORG}/${org.get('id')}`} className={styles.headerNavLink}>
-            { org.get('title') }
-          </Link>
-        </li>
+        <MenuItem key={orgId} eventKey={orgId}>
+          { orgTitle }
+        </MenuItem>
       );
     });
 
     return (
-      <div>
-        <ul>
-          { orgs }
-        </ul>
-      </div>
+      <DropdownButton
+          id="your-orgs"
+          title={dropdownTitle}
+          onSelect={(selectedOrgId) => {
+            if (currentOrgId !== selectedOrgId) {
+              hashHistory.push(`/${PageConsts.ORG}/${selectedOrgId}`);
+            }
+          }}>
+        { orgs }
+      </DropdownButton>
     );
   };
 
   render() {
 
-    if (this.props.isFetching) {
+    if (this.props.isFetchingOrgs) {
       return <LoadingSpinner />;
     }
 
@@ -274,11 +236,10 @@ class OrganizationList extends React.Component {
 
           </nav>
         </header>
-        {
-          this.state.showCreateOrganizationComponent
-            ? this.renderCreateOrganizationComponent()
-            : this.renderOrganizationsList()
-        }
+        <div className={styles.organizationDetailsWrapper}>
+          { this.renderOrganizationsDropdown() }
+          { React.Children.toArray(this.props.children) }
+        </div>
       </div>
     );
   }

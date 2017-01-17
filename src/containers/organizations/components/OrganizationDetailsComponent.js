@@ -37,7 +37,7 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
   const emptyOrg = Immutable.fromJS({});
 
   return {
-    isFetching: state.getIn(['organizations', 'isFetching']),
+    isFetchingOrg: state.getIn(['organizations', 'isFetchingOrg']),
     organization: state.getIn(['organizations', 'organizations', orgId], emptyOrg)
   };
 }
@@ -89,10 +89,10 @@ class OrganizationDetails extends React.Component {
       fetchOrgSuccess: React.PropTypes.func.isRequired,
       fetchOrgFailure: React.PropTypes.func.isRequired
     }).isRequired,
+    isFetchingOrg: React.PropTypes.bool.isRequired,
     params: React.PropTypes.shape({
       orgId: React.PropTypes.string.isRequired
     }).isRequired,
-    isFetching: React.PropTypes.bool.isRequired,
     organization: React.PropTypes.shape(Organization).isRequired
   }
 
@@ -111,24 +111,15 @@ class OrganizationDetails extends React.Component {
 
   render() {
 
-    if (this.props.isFetching) {
+    if (this.props.isFetchingOrg) {
       return <LoadingSpinner />;
     }
 
     return (
-      <div className={styles.organizationsWrapper}>
-        <header className={headerStyles.headerNavWrapper}>
-          <nav className={headerStyles.headerNav}>
-            <div className={headerStyles.headerNavLeft}>
-              <div className={`${headerStyles.headerNavItem} ${styles.organizationsHeading}`}>
-                <h3>
-                  { this.props.organization.get('title') }
-                </h3>
-              </div>
-            </div>
-          </nav>
-        </header>
-
+      <div>
+        <h3>
+          { this.props.organization.get('title') }
+        </h3>
       </div>
     );
   }

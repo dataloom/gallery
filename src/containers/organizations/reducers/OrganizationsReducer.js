@@ -14,7 +14,8 @@ import {
 } from '../actions/OrganizationsActionTypes';
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
-  isFetching: false,
+  isFetchingOrg: false,
+  isFetchingOrgs: false,
   organizations: {}
 });
 
@@ -23,14 +24,16 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
   switch (action.type) {
 
     case FETCH_ORG_REQUEST:
+      return state.set('isFetchingOrg', true);
+
     case FETCH_ORGS_REQUEST:
-      return state.set('isFetching', true);
+      return state.set('isFetchingOrgs', true);
 
     case FETCH_ORG_SUCCESS: {
 
       const org = action.organization;
       return state
-        .set('isFetching', false)
+        .set('isFetchingOrg', false)
         .setIn(['organizations', org.id], Immutable.fromJS(org));
     }
 
@@ -42,7 +45,7 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
       });
 
       return state
-        .set('isFetching', false)
+        .set('isFetchingOrgs', false)
         .set('organizations', Immutable.fromJS(orgs));
     }
 
