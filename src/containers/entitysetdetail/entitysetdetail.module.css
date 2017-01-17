@@ -1,0 +1,8 @@
+.catalog {
+    width: 100%;
+}
+
+.headerContent, .content {
+    width: 980px;
+    margin: auto;
+}
