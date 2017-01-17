@@ -7,53 +7,10 @@ import { DataApi } from 'loom-data';
 import FileConsts from '../../utils/Consts/FileConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
 import { EntitySetPropType } from './EntitySetStorage';
+import ExpandableText from '../utils/ExpandableText';
 import styles from './entityset.module.css';
 
 const MAX_DESCRIPTION_LENGTH = 300;
-
-class ExpandableText extends React.Component {
-  static propTypes = {
-    text: PropTypes.string,
-    maxLength: PropTypes.number
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false
-    };
-
-    this.switchState = () => {
-      this.setState({ isOpen: !this.state.isOpen });
-    };
-  }
-
-  render() {
-    const { text, maxLength } = this.props;
-    if (text.length <= maxLength) {
-      return (<div>{text}</div>);
-    }
-
-    const { isOpen } = this.state;
-    let controlText,
-      displayText;
-    if (isOpen) {
-      controlText = 'Read less';
-      displayText = text;
-    } else {
-      controlText = 'Read more';
-      displayText = `${text.substring(0, maxLength)}...`;
-    }
-
-    return (
-      <div>
-        {displayText}
-        <Button bsStyle="link" className={styles.expandTextButton} onClick={this.switchState}>{controlText}</Button>
-      </div>
-    );
-
-  }
-}
 
 class ActionDropdown extends React.Component {
   static propTypes = {
