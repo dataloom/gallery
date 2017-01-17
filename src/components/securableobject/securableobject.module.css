@@ -47,3 +47,15 @@
 .search :global .Select-menu-outer {
     border-top-width: 1pt;
 }
+
+.search :global .Select--multi :global .Select-value {
+    background: #4203c5;
+    color: #ffffff;
+    border: none;
+}
+.search :global .Select--multi :global .Select-value-icon {
+    border: none;
+}
+.search :global .Select--multi :global .Select-value-icon:hover {
+    color: #a3a8ab;
+}
