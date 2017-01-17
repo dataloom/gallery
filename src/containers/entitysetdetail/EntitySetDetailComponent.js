@@ -10,21 +10,20 @@ import * as actionFactories from './EntitySetDetailActionFactories';
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
-    params: PropTypes.shape({
-      id: PropTypes.string.isRequired
-    }),
     entitySet: EntitySetPropType,
-    requestEntitySet: PropTypes.func.isRequired
+    loadEntitySet: PropTypes.func.isRequired
   };
 
   render() {
     return (
-      <AsyncContent {...this.props.asyncState} content={() => <EntitySetDetail {...this.props} />}/>
+      <AsyncContent {...this.props.asyncState} content={() => {
+        return (<EntitySetDetail entitySet={this.props.entitySet} />);
+      }}/>
     );
   }
 
   componentDidMount() {
-    this.props.requestEntitySet(this.props.params.id);
+    this.props.loadEntitySet();
   }
 }
 
@@ -46,9 +45,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
   return {
-    requestEntitySet: (id) => { dispatch(actionFactories.entitySetDetailRequest(id)); }
+    loadEntitySet: () => { dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id)); }
   }
 }
 
