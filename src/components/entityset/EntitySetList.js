@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import _ from 'lodash';
+import { isEmpty } from 'lodash/isEmpty';
 
 import { EntitySetSummary } from './EntitySet';
 import { EntitySetPropType } from './EntitySetStorage';
@@ -18,7 +18,7 @@ export class EntitySetList extends React.Component {
     const { entitySets } = this.props;
 
     let content;
-    if (_.isEmpty(entitySets)) {
+    if (isEmpty(entitySets)) {
       content = (
         <div className={styles.empty}>
           No entity sets found
