@@ -1,33 +1,11 @@
-.organizationsWrapper {
-  padding: 20px;
-  min-width: 840px;
-}
-
-.section {
-  margin-bottom: 50px;
-}
-
-.inviteInput {
-  width: 500px;
-}
-
-.invalidEmail {
-  color: #e53935;
+.loadingSpinnerWrapper {
+  display: flex;
+  flex: 1 0 auto;
+  justify-content: center;
 }
 
 .loadingSpinner {
-  margin-left: 50%;
-  position: relative;
-  left: -25px;
-}
-
-.orgDescription {
-  max-width: 800px;
-  min-height: 150px;
-}
-
-.createOrgSubmit {
-  margin-right: 20px;
+  align-self: center;
 }
 
 [data-loader='circle-side'] {

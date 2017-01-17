@@ -20,9 +20,8 @@ class SideNav extends React.Component {
 
     return (
       <Link
-        to={`/${route}`}
-        activeClassName={styles.sideNavItemSelected}
-      >
+          to={`/${route}`}
+          activeClassName={styles.sideNavItemSelected}>
         <div className={styles.sideNavItem}>
           <div className={styles.sideNavItemIcon}>
             <FontAwesome name={faIconType} size="2x" />

@@ -1,0 +1,43 @@
+.organizationsWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
+.organizationsWrapper header {
+  margin-bottom: 25px;
+}
+
+.organizationsHeading h3 {
+  margin: 5px 0;
+}
+
+.createOrganizationWrapper {
+  min-width: 800px;
+  align-self: center;
+}
+
+.createOrganizationButton {
+  margin-top: 5px;
+}
+
+.section {
+  margin-bottom: 50px;
+}
+
+.inviteInput {
+  width: 500px;
+}
+
+.invalidEmail {
+  color: #e53935;
+}
+
+.orgDescription {
+  max-width: 800px;
+  min-height: 150px;
+}
+
+.createOrgSubmit {
+  margin-right: 20px;
+}

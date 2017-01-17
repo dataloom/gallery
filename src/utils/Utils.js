@@ -1,4 +1,11 @@
+import validateUUID from 'uuid-validate';
+
 export default class Utils {
+
+  static isValidUuid(value :any) :boolean {
+
+    return validateUUID(value);
+  }
 
   static addKeysToArray(oldArray) {
     const newArray = [];

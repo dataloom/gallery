@@ -1,26 +1,26 @@
-:global .dropdown {
-   color: #ffffff;
- }
+:local .dropdown {
+  color: #ffffff;
+}
 
 /* TODO: Replace with bootstrap mixin from mixins/buttons.less, and make .btn-primary reskin */
-:global .dropdown .btn, :global .dropdown .dropdown-menu, :global .dropdown .dropdown-toggle {
+:local .dropdown .btn, :local .dropdown .dropdown-menu, :local .dropdown .dropdown-toggle {
   border-color: #4a2498;
   color: inherit;
 }
 
-:global .dropdown .btn, :global .dropdown .dropdown-menu  {
+:local .dropdown .btn, :local .dropdown .dropdown-menu  {
   border-color: #4a2498;
   background: #4203c5;
 }
 
-:global .dropdown .dropdown-toggle {
+:local .dropdown .dropdown-toggle {
   background: #260176;
 }
 
-:global .dropdown .dropdown-menu  li {
+:local .dropdown .dropdown-menu  li {
   color: #ffffff;
 }
 
-:global .dropdown .dropdown-menu  a {
+:local .dropdown .dropdown-menu  a {
   color: #ffffff;
 }
