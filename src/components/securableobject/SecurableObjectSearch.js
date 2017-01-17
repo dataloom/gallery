@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import Select from 'react-select';
-import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
+
+import styles from './securableobject.module.css';
 
 const OptionsPropType = PropTypes.shape({
   value: PropTypes.string.isRequired,
@@ -71,39 +74,42 @@ export default class SecurableObjectSearch extends React.Component {
 
   render() {
     return (
-      <div className={classnames(this.props.className)}>
-        <form onSubmit={this.onSubmit}>
-          <FormGroup>
-            <ControlLabel>Keyword</ControlLabel>
+      <form onSubmit={this.onSubmit} className={classnames(this.props.className, styles.search)}>
+        <FormGroup className={styles.keyword}>
+          <ControlLabel>Keyword</ControlLabel>
+          <InputGroup>
+            <InputGroup.Addon><FontAwesome name="search"/></InputGroup.Addon>
             <FormControl
               value={this.state.keyword}
               type="text"
               onChange={this.onKeywordChange}
             />
-          </FormGroup>
+          </InputGroup>
+        </FormGroup>
 
-          <FormGroup>
-            <ControlLabel>Property types</ControlLabel>
-            <Select
-              value={this.state.propertyTypeIds}
-              options={this.props.propertyTypeOptions}
-              onChange={this.onPropertyTypesChange}
-              multi={true}
-            />
-          </FormGroup>
-          <span className="divider">Or</span>
-          <FormGroup>
-            <ControlLabel>Entity type</ControlLabel>
-            <Select
-              value={this.state.entitySetTypeId}
-              options={this.props.entitySetTypeOptions}
-              onChange={this.onEntityTypeChange}
-            />
-          </FormGroup>
+        <FormGroup className={styles.propertyTypes}>
+          <ControlLabel>Property types</ControlLabel>
+          <Select
+            value={this.state.propertyTypeIds}
+            options={this.props.propertyTypeOptions}
+            onChange={this.onPropertyTypesChange}
+            multi={true}
+          />
+        </FormGroup>
 
-          <Button type="submit" bsStyle="primary">Search</Button>
-        </form>
-      </div>
+        <span className={styles.divider}>Or</span>
+
+        <FormGroup className={styles.entityType}>
+          <ControlLabel>Entity type</ControlLabel>
+          <Select
+            value={this.state.entitySetTypeId}
+            options={this.props.entitySetTypeOptions}
+            onChange={this.onEntityTypeChange}
+          />
+        </FormGroup>
+
+        <Button type="submit" bsStyle="primary" className={styles.submitButton}>Search</Button>
+      </form>
     );
   }
 }

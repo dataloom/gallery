@@ -50,18 +50,23 @@ class CatalogComponent extends React.Component {
     return (
       <div className={styles.catalog}>
         <header>
-          <h1>Browse the Catalog</h1>
-          <SecurableObjectSearch
-            filterParams={this.props.filterParams}
-            entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}
-            propertyTypeOptions={PROPERTY_TYPE_OPTIONS}
-            onSubmit={this.props.onSubmitSearch}
-          />
+          <div className={styles.headerContent}>
+            <h1 className={styles.title}>Browse the catalog</h1>
+            <SecurableObjectSearch
+              filterParams={this.props.filterParams}
+              entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}
+              propertyTypeOptions={PROPERTY_TYPE_OPTIONS}
+              onSubmit={this.props.onSubmitSearch}
+              className={styles.search}
+            />
+          </div>
         </header>
-        <AsyncContent {...this.props.asyncState}
-          pendingContent={<h2>Please run a search</h2>}
-          content={() => <EntitySetList {...this.props} />}
-        />
+        <div className={styles.content}>
+          <AsyncContent {...this.props.asyncState}
+            pendingContent={<h2>Please run a search</h2>}
+            content={() => <EntitySetList {...this.props} />}
+          />
+        </div>
       </div>
     );
   }
