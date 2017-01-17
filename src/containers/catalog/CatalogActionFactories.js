@@ -1,9 +1,10 @@
 /* @flow */
 import * as actionTypes from './CatalogActionTypes';
 
-export function catalogSearchRequest() {
+export function catalogSearchRequest(filterParams:Object) {
   return {
-    type: actionTypes.CATALOG_SEARCH_REQUEST
+    type: actionTypes.CATALOG_SEARCH_REQUEST,
+    filterParams
   };
 }
 
@@ -19,12 +20,5 @@ export function catalogSearchReject(errorMessage:string) {
   return {
     type: actionTypes.CATALOG_SEARCH_REJECT,
     errorMessage
-  };
-}
-
-export function createUpdateFilters(filterParams:Object) {
-  return {
-    type: actionTypes.CATALOG_UPDATE_FILTER,
-    filterParams
   };
 }

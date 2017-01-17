@@ -4,15 +4,12 @@ import { denormalize } from 'normalizr';
 
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 import { EntitySetDetail } from '../../components/entityset/EntitySet';
-import AsyncContent from '../../components/asynccontent/AsyncContent';
+import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import * as actionFactories from './EntitySetDetailActionFactories';
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
-    asyncState: PropTypes.shape({
-      isLoading: PropTypes.bool.isRequired,
-      errorMessage: PropTypes.string
-    }).isRequired,
+    asyncState: AsyncStatePropType.isRequired,
     params: PropTypes.shape({
       id: PropTypes.string.isRequired
     }),
@@ -22,9 +19,7 @@ class EntitySetDetailComponent extends React.Component {
 
   render() {
     return (
-      <AsyncContent {...this.props.asyncState}>
-        <EntitySetDetail {...this.props} />
-      </AsyncContent>
+      <AsyncContent {...this.props.asyncState} content={() => <EntitySetDetail {...this.props} />}/>
     );
   }
 

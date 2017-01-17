@@ -80,8 +80,8 @@ class ActionDropdown extends React.Component {
       <SplitButton pullRight title="Actions" id="action-dropdown">
         {details}
         <MenuItem header>Download</MenuItem>
-        <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.CSV)}>CSV</MenuItem>
-        <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.JSON)}>JSON</MenuItem>
+        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySet.id, FileConsts.CSV)}>CSV</MenuItem>
+        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySet.id, FileConsts.JSON)}>JSON</MenuItem>
         <MenuItem divider/>
         <li role="presentation">
           <Link
