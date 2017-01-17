@@ -57,15 +57,28 @@ class ExpandableText extends React.Component {
 
 class ActionDropdown extends React.Component {
   static propTypes = {
-    entitySet: EntitySetPropType.isRequired
+    entitySet: EntitySetPropType.isRequired,
+    showDetails: PropTypes.bool
   };
 
   render() {
     const { entitySet } = this.props;
     const type = entitySet.type;
 
+    let details;
+    if (this.props.showDetails) {
+      details = (
+        <li role="presentation">
+          <Link to={`/entitysets/${this.props.entitySet.id}`}>
+            View Details
+          </Link>
+        </li>
+      );
+    }
+
     return (
       <SplitButton pullRight title="Actions" id="action-dropdown">
+        {details}
         <MenuItem header>Download</MenuItem>
         <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.CSV)}>CSV</MenuItem>
         <MenuItem href={DataApi.getAllEntitiesOfTypeInSetFileUrl(type, entitySet.name, FileConsts.JSON)}>JSON</MenuItem>
@@ -113,7 +126,7 @@ export class EntitySetSummary extends React.Component {
           </h2>
 
           <div className={styles.controls}>
-            <ActionDropdown entitySet={entitySet}/>
+            <ActionDropdown entitySet={entitySet} showDetails={true}/>
           </div>
         </header>
         {description}
