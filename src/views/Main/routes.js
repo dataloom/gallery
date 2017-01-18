@@ -9,6 +9,7 @@ import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
+import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
@@ -22,7 +23,7 @@ declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
 declare var __DEV__;
 
-const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__);
+const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DEV__);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
@@ -88,6 +89,7 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
+      <Route path='entitysets/:id' component={EntitySetDetailComponent} onEnter={requireAuth} />
       <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />

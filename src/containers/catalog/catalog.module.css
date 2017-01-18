@@ -25,6 +25,20 @@
 }
 
 /* EntitySetList */
+.catalog {
+    width: 100%;
+}
+
+.catalog header {
+    background: #f3f5f7;
+    padding: 40px 0 40px;
+}
+
+.title {
+    margin: 0 0 30px;
+    font-weight: 600;
+}
+
 .filteredEntitySetList {
     width: 100%;
 }
@@ -39,7 +53,7 @@
 
 }
 
-.centeredContent {
+.headerContent, .content {
     width: 980px;
     margin: auto;
 }
