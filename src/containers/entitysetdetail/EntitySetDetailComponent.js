@@ -5,10 +5,10 @@ import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
-import { EntitySetDetail } from '../../components/entityset/EntitySet';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
+import * as ndataActionFactories from '../ndata/NdataActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 
@@ -89,7 +89,17 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    loadEntitySet: () => { dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id)); }
+    loadEntitySet: () => {
+      const id = ownProps.params.id;
+      dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
+      dispatch(ndataActionFactories.filteredEdmRequest(
+        [{
+          type: 'EntitySet',
+          id,
+          'include': ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+        }]
+      ));
+    }
   }
 }
 

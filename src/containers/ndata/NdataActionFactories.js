@@ -8,3 +8,29 @@ export function updateNormalizedData(normalizedData: Map<string, Map<string, *>>
     normalizedData
   };
 }
+
+export function filteredEdmRequest(edmQuery) {
+  return {
+    type: actionTypes.FILTERED_EDM_REQUEST,
+    edmQuery
+  }
+}
+
+export function filteredEdmResolve() {
+  return {
+    type: actionTypes.FILTERED_EDM_RESOLVE
+  }
+}
+
+export function filteredEdmReject() {
+  return {
+    type: actionTypes.FILTERED_EDM_REJECT
+  }
+}
+
+export function edmObjectResolve(reference) {
+  return {
+    type: actionTypes.EDM_OBJECT_RESOLVE,
+    reference
+  }
+}

@@ -1,4 +1,5 @@
 import * as actionTypes from './EntitySetDetailActionTypes';
+import * as ndataActionFactories from '../ndata/NdataActionFactories';
 
 export function entitySetDetailRequest(id) {
   return {
