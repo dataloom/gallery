@@ -2,12 +2,12 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
 
+import Page from "../../components/page/Page";
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../../components/securableobject/SecurableObjectSearch';
 import { catalogSearchRequest } from './CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-import styles from './catalog.module.css';
 
 // TODO: Replace with Async calls
 const ENTITY_SET_TYPE_OPTIONS = [{
@@ -48,26 +48,23 @@ class CatalogComponent extends React.Component {
 
   render() {
     return (
-      <div className={styles.catalog}>
-        <header>
-          <div className={styles.headerContent}>
-            <h1 className={styles.title}>Browse the catalog</h1>
-            <SecurableObjectSearch
-              filterParams={this.props.filterParams}
-              entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}
-              propertyTypeOptions={PROPERTY_TYPE_OPTIONS}
-              onSubmit={this.props.onSubmitSearch}
-              className={styles.search}
-            />
-          </div>
-        </header>
-        <div className={styles.content}>
+      <Page>
+        <Page.Header>
+          <Page.Title>Browse the catalog</Page.Title>
+          <SecurableObjectSearch
+            filterParams={this.props.filterParams}
+            entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}
+            propertyTypeOptions={PROPERTY_TYPE_OPTIONS}
+            onSubmit={this.props.onSubmitSearch}
+          />
+        </Page.Header>
+        <Page.Body>
           <AsyncContent {...this.props.asyncState}
             pendingContent={<h2>Please run a search</h2>}
             content={() => <EntitySetList {...this.props} />}
           />
-        </div>
-      </div>
+        </Page.Body>
+      </Page>
     );
   }
 }

@@ -1,0 +1,19 @@
+.page {
+    width: 100%;
+}
+
+.header {
+    background: #f3f5f7;
+    padding: 40px 0 40px;
+    margin-bottom: 35px;
+}
+
+.content {
+    width: 980px;
+    margin: auto;
+}
+
+.title {
+    margin: 0 0 30px;
+    font-weight: 600;
+}

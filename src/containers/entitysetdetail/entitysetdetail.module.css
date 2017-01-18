@@ -1,44 +1,23 @@
-.catalog {
-    width: 100%;
-}
-
-.content {
-    width: 980px;
-    margin: auto;
-}
-
 /* Header */
-.catalog header {
-    background: #f3f5f7;
-    padding: 40px 0 40px;
-}
-
 .headerContent {
     display: flex;
 }
-.title {
-    margin: 0 0 20px;
-    font-weight: 600;
-}
-
 .descriptionTitle {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 15px;
 }
 
-header .controls  {
+.headerContent .controls  {
     margin-left: auto;
 }
 
-header .controls .control {
+.headerContent .controls .control {
     display: block;
     margin-bottom: 7px;
-    /*width: 210px;*/
-    /*height: 42px;*/
 }
 
-header .controls .control:last-child {
+.headerContent .controls .control:last-child {
     margin-bottom: 0;
 }
 

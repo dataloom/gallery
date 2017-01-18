@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
 import { Button } from 'react-bootstrap';
 
+import Page from '../../components/page/Page';
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 import { EntitySetDetail } from '../../components/entityset/EntitySet';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
@@ -22,7 +23,7 @@ class EntitySetDetailComponent extends React.Component {
     return (
       <div className={styles.headerContent}>
         <div>
-          <h1 className={styles.title}>{entitySet.title}</h1>
+          <Page.Title>{entitySet.title}</Page.Title>
           <div className={styles.descriptionTitle}>About this data</div>
           {entitySet.description}
         </div>
@@ -37,15 +38,14 @@ class EntitySetDetailComponent extends React.Component {
 
   render() {
     return (
-      <div className={styles.catalog}>
-        <header>
-          <div className={styles.content}>
-            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
-          </div>
-        </header>
-        <div className={styles.content}>
-        </div>
-      </div>
+      <Page>
+        <Page.Header>
+          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
+        </Page.Header>
+        <Page.Body>
+
+        </Page.Body>
+      </Page>
     );
   }
 

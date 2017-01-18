@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react';
-import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 
 import EntitySet from './EntitySet';
 import { EntitySetPropType } from './EntitySetStorage';
-import styles from '../../containers/catalog/catalog.module.css';
+import styles from './entityset.module.css';
 
 export default class EntitySetList extends React.Component {
   static propTypes = {
@@ -34,7 +33,7 @@ export default class EntitySetList extends React.Component {
     }
 
     return (
-      <div className={classnames(styles.entitySetList, this.props.className)}>
+      <div className={this.props.className}>
         {content}
       </div>
     );
