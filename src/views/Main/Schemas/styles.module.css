@@ -138,3 +138,78 @@
   height: 40px;
   width: 200px;
 }
+
+/* PermissionsPanel */
+.updateSuccess {
+  color: green;
+  padding-top: 10px;
+}
+
+.panelContainer {
+  position: fixed;
+  left: 100px;
+  right: 100px;
+  top: 80px;
+  bottom: 40px;
+  text-align: center;
+  background: #fff;
+  -webkit-box-shadow: 0 0 5px 2px #eee;
+  -moz-box-shadow: 0 0 5px 2px #eee;
+  box-shadow: 0 0 5px 2px #eee;
+  border: 1px solid #e3e3e3;
+  text-align: center;
+  z-index: 1;
+}
+
+.permissionsBodyContainer {
+  margin: 0 auto;
+  height: 200px;
+  width: 300px;
+  overflow: scroll;
+  text-align: left;
+  padding-top: 5px;
+  border: 1px solid #d1d6da;
+}
+
+.cancelButton {
+  position: absolute;
+  vertical-align: middle;
+  font-size: 20px;
+  right: 15px;
+  top: 15px;
+  width: 25px;
+  height: 25px;
+  background: #d1d6da;
+  border-radius: 3px;
+  border: 0;
+  padding-bottom: 15px;
+}
+
+.cancelButton:hover {
+  background: #d8dcdf;
+}
+
+.panelTitle {
+  margin-top: 25px;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center
+}
+
+.panelContents {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.viewWrapper {
+  text-align: center;
+}
+
+.dropdownWrapper {
+  width: 150px;
+  margin: 0 auto;
+}
+
+.permissionInputWidth {
+  width: 300px;
+}
