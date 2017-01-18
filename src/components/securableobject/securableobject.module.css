@@ -4,15 +4,15 @@
     flex-wrap: wrap;
 }
 
-.search :global .control-label {
+.search :local .control-label {
     font-weight: 400;
 }
 
-.search :global .form-group {
+.search :local .form-group {
     margin-bottom: 0;
 }
 
-.search :global .form-control {
+.search :local .form-control {
     box-shadow: none !important;
 }
 
@@ -28,15 +28,15 @@
 .search .keyword {
     margin-bottom: 15px;
 }
-.keyword :global .form-control {
+.keyword :local .form-control {
     padding-left: 0;
 }
 
-.keyword :global .input-group-addon {
+.keyword :local .input-group-addon {
     background: #ffffff;
 }
 
-:global .input-group :global .form-control {
+:local .input-group :local .form-control {
     border-left: none;
     border-radius: 0 3px 3px 0;
 }
@@ -63,33 +63,33 @@
 }
 
 /* Select */
-.search :global .input-group :global .form-control,
-.search :global .input-group-addon,
-.search :global .Select-control,
-.search :global .Select-menu-outer
+.search :local .input-group :local .form-control,
+.search :local .input-group-addon,
+.search :local .Select-control,
+.search :local .Select-menu-outer
 {
     border-color: #a3a8ab;
     border-width: 2pt;
 }
 
-.search :global .Select.is-open :global .Select-control
+.search :local .Select.is-open :local .Select-control
 {
     border-bottom: 0;
 }
 
-.search :global .Select-menu-outer {
+.search :local .Select-menu-outer {
     border-top-width: 1pt;
 }
 
-.search :global .Select--multi :global .Select-value {
+.search :local .Select--multi :local .Select-value {
     background: #4203c5;
     color: #ffffff;
     border: none;
     direction: rtl;
 }
-.search :global .Select--multi :global .Select-value-icon {
+.search :local .Select--multi :local .Select-value-icon {
     border: none;
 }
-.search :global .Select--multi :global .Select-value-icon:hover {
+.search :local .Select--multi :local .Select-value-icon:hover {
     color: #a3a8ab;
 }

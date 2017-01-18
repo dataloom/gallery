@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import { isEmpty } from 'lodash/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 
 import { EntitySetSummary } from './EntitySet';
 import { EntitySetPropType } from './EntitySetStorage';

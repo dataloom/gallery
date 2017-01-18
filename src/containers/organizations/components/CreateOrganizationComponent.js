@@ -6,7 +6,9 @@ import React from 'react';
 
 import {
   DataModels,
-  OrganizationsApi
+  Types,
+  OrganizationsApi,
+  PermissionsApi
 } from 'loom-data';
 
 import {
@@ -20,9 +22,20 @@ import {
 import styles from '../styles/create.org.module.css';
 
 const {
+  AceBuilder,
+  AclBuilder,
+  AclData,
+  AclDataBuilder,
   Organization,
-  OrganizationBuilder
+  OrganizationBuilder,
+  PrincipalBuilder
 } = DataModels;
+
+const {
+  ActionTypes,
+  PermissionTypes,
+  PrincipalTypes
+} = Types;
 
 class CreateOrganization extends React.Component {
 
@@ -100,7 +113,39 @@ class CreateOrganization extends React.Component {
       .setDescription(this.state.description)
       .build();
 
-    OrganizationsApi.createOrganization(org);
+    OrganizationsApi.createOrganization(org)
+      .then((createdOrgId :string) => {
+
+        const aclData :AclData = (new AclDataBuilder())
+          .setAction(ActionTypes.SET)
+          .setAcl(
+            (new AclBuilder())
+              .setAclKey([createdOrgId])
+              .setAces([
+                (new AceBuilder())
+                  .setPermissions([PermissionTypes.READ])
+                  .setPrincipal(
+                    (new PrincipalBuilder())
+                      .setType(PrincipalTypes.ROLE)
+                      .setId('whatisthis')
+                      .build()
+                  )
+                  .build()
+              ])
+              .build()
+          )
+          .build();
+
+        PermissionsApi.updateAcl(aclData)
+          .catch((e) => {
+            console.error(e);
+          });
+
+        this.props.onCreate(createdOrgId);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   render() {

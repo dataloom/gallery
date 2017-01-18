@@ -16,3 +16,11 @@
 .organizationsHeading h3 {
   margin: 5px 0;
 }
+
+.detailSection {
+  margin: 20px 0;
+}
+
+.inviteInput {
+  width: 500px;
+}

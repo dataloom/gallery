@@ -16,7 +16,7 @@ import {
 import {
   Button,
   DropdownButton,
-  MenuItem,
+  MenuItem
 } from 'react-bootstrap';
 
 import {
@@ -125,6 +125,11 @@ class OrganizationList extends React.Component {
 
   componentDidMount() {
 
+    this.fetchOrganizations();
+  }
+
+  fetchOrganizations = () => {
+
     this.props.actions.fetchOrgsRequest();
 
     OrganizationsApi.getAllOrganizations()
@@ -152,7 +157,11 @@ class OrganizationList extends React.Component {
 
   handleCreateOrganization = () => {
 
-    console.log('creating organization...');
+    this.setState({
+      showCreateOrganizationComponent: false
+    });
+
+    hashHistory.push('/org');
   }
 
   renderCreateOrganizationComponent = () => {
@@ -176,7 +185,7 @@ class OrganizationList extends React.Component {
     }
 
     return (
-      <div>
+      <div className={styles.flexComponent}>
         { this.renderOrganizationsDropdown() }
         { React.Children.toArray(this.props.children) }
       </div>
