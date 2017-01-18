@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
-import { NameNamespaceAutosuggest } from '../../../../components/namespaceautosuggest/NameNamespaceAutosuggest';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';

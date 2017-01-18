@@ -132,3 +132,9 @@
   background: none;
   padding: 8px 10px;
 }
+
+/* NameNamespaceAutosuggest */
+.entitySetInput {
+  height: 40px;
+  width: 200px;
+}

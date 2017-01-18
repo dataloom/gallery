@@ -5,7 +5,7 @@ import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import { NameNamespaceAutosuggest } from '../../../../components/namespaceautosuggest/NameNamespaceAutosuggest';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
