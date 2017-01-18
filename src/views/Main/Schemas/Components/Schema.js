@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
+import { EntityDataModelApi, DataModels } from 'loom-data';
 import { PropertyTypeList } from './PropertyTypeList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
 import { DropdownButton } from '../../../../components/dropdown/DropdownButton';
@@ -15,7 +17,9 @@ export class Schema extends React.Component {
     jsonContents: PropTypes.object,
     updateFn: PropTypes.func,
     allPropNamespaces: PropTypes.object,
-    allEntityTypeNamespaces: PropTypes.object
+    allEntityTypeNamespaces: PropTypes.object,
+    entityTypeFqnsToId: PropTypes.object,
+    propFqnsToId: PropTypes.object
   }
 
   constructor() {
@@ -48,15 +52,31 @@ export class Schema extends React.Component {
     }
   }
 
+  updateSchema = (newTypeUuid, action, type) => {
+    const { FullyQualifiedName } = DataModels;
+    const schemaFqn = new FullyQualifiedName(this.props.namespace, this.props.name);
+    if (type === EdmConsts.ENTITY_TYPE) {
+      return EntityDataModelApi.updateSchema(schemaFqn, action, newTypeUuid, [])
+      .then(() => {
+        this.props.updateFn();
+      });
+    }
+    return EntityDataModelApi.updateSchema(schemaFqn, action, [], newTypeUuid)
+    .then(() => {
+      this.props.updateFn();
+    });
+  }
+
   render() {
     const {
       name,
       namespace,
       propertyTypes,
       entityTypeFqns,
-      updateFn,
       allEntityTypeNamespaces,
-      allPropNamespaces
+      allPropNamespaces,
+      propFqnsToId,
+      entityTypeFqnsToId
     } = this.props;
     const options = [FileConsts.JSON];
     return (
@@ -71,10 +91,9 @@ export class Schema extends React.Component {
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
           entityTypeFqns={entityTypeFqns}
-          schemaName={name}
-          schemaNamespace={namespace}
-          updateFn={updateFn}
+          updateSchemaFn={this.updateSchema}
           allEntityTypeNamespaces={allEntityTypeNamespaces}
+          entityTypeFqnsToId={entityTypeFqnsToId}
         />
         <br />
         <div className={styles.spacerMed} />
@@ -82,9 +101,10 @@ export class Schema extends React.Component {
           propertyTypes={propertyTypes}
           name={name}
           namespace={namespace}
-          updateSchemaFn={updateFn}
+          updateSchemaFn={this.updateSchema}
           propertyTypePage={false}
           allPropNamespaces={allPropNamespaces}
+          propFqnsToId={propFqnsToId}
         />
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />

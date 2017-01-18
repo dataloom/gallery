@@ -50,7 +50,7 @@ const isAdmin = () => {
 const getName = () => {
   let displayName;
   if (auth.loggedIn()) {
-    let profile = auth.getProfile();
+    const profile = auth.getProfile();
 
     if (profile.hasOwnProperty('given_name')) {
       displayName = profile.given_name;
@@ -85,7 +85,7 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
-      <Route path='entitysets/:id' component={EntitySetDetailComponent} onEnter={requireAuth} />
+      <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
       <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />

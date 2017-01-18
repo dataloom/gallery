@@ -16,6 +16,9 @@ export default class AuthService extends EventEmitter {
       theme: {
         logo: img
       },
+      languageDictionary: {
+        title: 'LOOM'
+      },
       auth: {
         params: {
           scope: 'openid email user_metadata app_metadata nickname roles user_id'

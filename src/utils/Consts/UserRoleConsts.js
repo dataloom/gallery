@@ -1,4 +1,4 @@
-const DEFAULT_USER_ROLE = 'user';
+const DEFAULT_USER_ROLE = 'AuthenticatedUser';
 const ADMIN = 'admin';
 const USER = 'USER';
 const ROLE = 'ROLE';
