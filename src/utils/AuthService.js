@@ -5,12 +5,17 @@ import * as Cookies from 'js-cookie';
 import { EventEmitter } from 'events';
 
 import { isTokenExpired } from './jwtHelper';
+import img from '../images/kryptnostic-logo-big.png';
 
 export default class AuthService extends EventEmitter {
-  constructor(clientId, domain) {
+  constructor(clientId, domain, isLocal) {
     super();
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
+      closable: false,
+      theme: {
+        logo: img
+      },
       auth: {
         params: {
           scope: 'openid email user_metadata app_metadata nickname roles user_id'
@@ -24,6 +29,7 @@ export default class AuthService extends EventEmitter {
     // binds login functions to keep this context
     this.login = this.login.bind(this);
     this.storage = localStorage;
+    this.isLocal = isLocal;
   }
 
   doAuthentication(authResult) {
@@ -50,6 +56,10 @@ export default class AuthService extends EventEmitter {
     this.lock.show();
   }
 
+  hideLoginPrompt() {
+    this.lock.hide();
+  }
+
   loggedIn() {
     // Checks if there is a saved token and it's still valid
     const token = this.getToken();
@@ -72,9 +82,9 @@ export default class AuthService extends EventEmitter {
   setToken(idToken) {
     // Saves user token to localStorage
     this.storage.setItem('id_token', idToken);
-
+    const prefix = (this.isLocal) ? '' : '.';
     Cookies.set('authorization', `Bearer ${idToken}`, {
-      domain: `.${window.location.hostname}`
+      domain: `${prefix}${window.location.hostname}`
     });
   }
 

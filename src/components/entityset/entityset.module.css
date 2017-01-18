@@ -1,0 +1,41 @@
+.entitySet {
+    background: #f3f5f7;
+    padding: 25px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.entitySet header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 17px;
+}
+
+.entitySet .title {
+    margin: 0px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.entitySet .title .subtitle {
+    display: block;
+    color: #404345;
+    font-size: 18px;
+    margin-top: 4px;
+
+}
+
+/* ExpandibleText */
+.expandTextButton {
+    padding: 0;
+    border: 0;
+    margin: -4px 0 0 4px;
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: #0870f6;
+}
+
+.expandTextButton:hover {
+    text-decoration: none;
+}

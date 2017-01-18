@@ -1,0 +1,76 @@
+/* utils */
+.center {
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.padTop {
+    padding-top: 10px;
+}
+
+.padLeft {
+    padding-left: 10px;
+}
+
+/* text */
+.errorMsg {
+    color: red;
+    padding-top: 10px;
+}
+
+.name {
+    font-size: 24px;
+    color: #404446;
+    display: inline;
+}
+
+.subtitle {
+    display: inline;
+    font-size: 14px;
+    color: #404446;
+}
+
+/* Page sectioning */
+.edmContainer {
+    left: 20px;
+    margin-left: 50px;
+    padding: 20px;
+}
+
+.inputBox {
+    height: 40px;
+    padding: 0 10px;
+}
+
+/* spacers */
+.spacerMini {
+    height: 5px;
+}
+
+.spacerSmall {
+    height: 15px;
+}
+
+.spacerMed {
+    height: 20px;
+}
+
+.spacerBig {
+    height: 40px;
+}
+
+.spacerMargin {
+    margin: 10px;
+}
+
+.spacerLeft {
+    padding-left: 7px;
+    display: inline;
+}

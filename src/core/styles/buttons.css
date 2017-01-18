@@ -1,0 +1,83 @@
+.buttonStyle {
+    display: table-cell;
+    margin: 0;
+    vertical-align: middle;
+    padding: 10px;
+    border: none;
+    background: #d1d6da;
+}
+
+.buttonStyle:hover {
+    background: #c7cbcf;
+}
+
+.selectedButtonStyle {
+    background: #b9bdc0;
+    font-weight: bold;
+}
+
+.selectedButtonStyle:hover {
+    background: #a0a4a6;
+}
+
+.simpleButton {
+    display: inline-block;
+    margin: auto 10px auto 5px;
+    padding: 0 10px;
+    line-height: 35px;
+    background: #d1d6da;
+    border-radius: 3px;
+    border: 0;
+    color: #000000;
+    text-decoration: none;
+}
+
+.simpleButton:hover {
+    background: #d8dcdf;
+}
+
+.genericButton {
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px #767a7c;
+    background: -webkit-linear-gradient(#dddddd, #d1d6da);
+}
+
+.genericButton:hover {
+    background: #d8dcdf;
+}
+
+.addButton {
+    background: -webkit-linear-gradient(#0ab053, #09a34d);
+    border: 0;
+    border-radius: 4px;
+    width: 25px;
+    height: 25px;
+    color: white;
+    box-shadow: 1px 1px 1px #767a7c;
+    margin: 5px 3px 3px 3px;
+}
+
+.addButton:hover {
+    background: #088941;
+}
+
+.deleteButton {
+    background: -webkit-linear-gradient(#e00d18, #d30c17);
+    border: 0;
+    border-radius: 4px;
+    width: 25px;
+    height: 25px;
+    color: white;
+    box-shadow: 1px 1px 1px #767a7c;
+    margin: 3px;
+}
+
+.deleteButton:hover {
+    background: #b90b14
+}
+
+.dropdownButtonContainer {
+    text-align: right;
+}

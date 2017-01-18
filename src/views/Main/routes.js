@@ -3,21 +3,24 @@ import { Route, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import { Container } from './Container.js';
-import { Catalog } from './Catalog/Catalog';
+import { Schemas } from './Schemas/Schemas';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
-import AuthConsts from '../../utils/Consts/AuthConsts';
+import CatalogComponent from '../../containers/catalog/CatalogComponent';
+import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
 
+// injected by Webpack.DefinePlugin
+declare var __AUTH0_CLIENT_ID__;
+declare var __AUTH0_DOMAIN__;
+declare var __DEV__;
 
-declare var __LOCAL__;
-
-const auth = new AuthService(AuthConsts.AUTH0_CLIENT_ID, AuthConsts.AUTH0_DOMAIN);
+const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DEV__);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
@@ -28,7 +31,7 @@ const requireAuth = (nextState, replace) => {
     const authToken = auth.getToken();
     const host = window.location.host;
     const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
-    const baseUrl = (__LOCAL__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
+    const baseUrl = (__DEV__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
@@ -45,7 +48,24 @@ const isAdmin = () => {
 };
 
 const getName = () => {
-  return (auth.loggedIn()) ? auth.getProfile().given_name : StringConsts.EMPTY;
+  let displayName;
+  if (auth.loggedIn()) {
+      let profile = auth.getProfile();
+
+      if (profile.hasOwnProperty('given_name')) {
+          displayName = profile.given_name;
+      } else if (profile.hasOwnProperty('name')) {
+          displayName = profile.name;
+      } else if (profile.hasOwnProperty('nickname')) {
+          displayName = profile.nickname;
+      } else if (profile.hasOwnProperty('email')) {
+              displayName = profile.email;
+      } else {
+          displayName = StringConsts.EMPTY;
+      }
+  }
+
+  return displayName;
 };
 
 const getProfileStatus = () => {
@@ -56,12 +76,13 @@ const getProfileStatus = () => {
 };
 
 export const makeMainRoutes = () => {
-  isAdmin();
   return (
     <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
-      <Route path={PageConsts.CATALOG} component={Catalog} onEnter={requireAuth} />
+      <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
+      <Route path='entitysets/:id' component={EntitySetDetailComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.LOGIN} component={Login} />

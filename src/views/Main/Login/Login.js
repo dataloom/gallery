@@ -1,9 +1,8 @@
 import React, { PropTypes } from 'react';
-import { ButtonToolbar } from 'react-bootstrap';
 import AuthService from '../../../utils/AuthService';
 import styles from './styles.module.css';
-import img from '../../../images/kryptnostic-logo-big.png';
 
+// Blank component that triggers the login lock
 export class Login extends React.Component {
   static propTypes = {
     auth: PropTypes.instanceOf(AuthService)
@@ -11,24 +10,18 @@ export class Login extends React.Component {
 
   constructor() {
     super();
-    this.login = this.login.bind(this);
   }
 
-  login() {
-    const { auth } = this.props;
-    auth.login();
+  componentDidMount() {
+    this.props.auth.login();
+  }
+
+  componentWillUnmount() {
+    this.props.auth.hideLoginPrompt();
   }
 
   render() {
-    return (
-      <div className={styles.root}>
-        <img src={img} role="presentation" />
-        <h2>Login</h2>
-        <ButtonToolbar className={styles.toolbar}>
-          <button className={styles.loginButton} onClick={this.login}>Login</button>
-        </ButtonToolbar>
-      </div>
-    );
+    return <div className={styles.root}/>;
   }
 }
 

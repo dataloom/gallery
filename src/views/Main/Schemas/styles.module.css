@@ -1,0 +1,215 @@
+@import "../../../core/styles/index.css";
+
+/* button styling */
+.firstEdmButton {
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.lastEdmButton {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+/* Property List & Property */
+.verifyDeleteContainer {
+  position: fixed;
+  height: 160px;
+  width: 300px;
+  text-align: center;
+  background: #f1f5f8;
+  top: 50%;
+  left: 50%;
+  margin-top: -80px;
+  margin-left: -150px;
+  border: 1px solid #404446;
+  color: #404446;
+  -webkit-box-shadow: 0 0 5px 2px #eee;
+  -moz-box-shadow: 0 0 5px 2px #eee;
+  box-shadow: 0 0 5px 2px #eee;
+  border-radius: 3px;
+}
+
+.buttonContainer {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  bottom: 10px;
+}
+
+.verifyDeleteText {
+  position: absolute;
+  font-size: 16px;
+  margin: 10px;
+}
+
+/* Dropdown */
+.hidden {
+  display: none;
+}
+
+.dropdownContainer {
+  position: relative;
+  color: #404446;
+}
+
+.buttonContainer {
+  height: 30px;
+}
+
+.downloadButton {
+  background: #d1d6da;
+  height: 100%;
+  vertical-align: middle;
+  border: none;
+  width: 115px;
+  text-align: left;
+  padding-left: 10px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  display: inline-block;
+}
+
+.singleOption {
+  text-align: center;
+  border-radius: 3px;
+}
+
+.downloadButton:hover, .downloadButtonSingle:hover {
+  background: #c7cbcf;
+}
+
+.dropdownButton {
+  display: inline-block;
+  background: #7d8082;
+  color: white;
+  font-size: 8px;
+  vertical-align: middle;
+  text-align: center;
+  height: 100%;
+  width: 20px;
+  border: none;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.dropdownButton:hover {
+  background: #6b6e70;
+}
+
+.menuContainer {
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: -1px;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  width: 115px;
+  right: 20px;
+  z-index: 1000;
+  -webkit-overflow-scrolling: touch;
+  text-align: left;
+}
+
+.requestingPermission {
+  width: 150px;
+}
+
+.menuOption {
+  box-sizing: border-box;
+  display: block;
+}
+
+.menuOption:hover {
+  background-color: #f2f9fc;
+}
+
+.menuOptionButton {
+  border: none;
+  background: none;
+  padding: 8px 10px;
+}
+
+/* NameNamespaceAutosuggest */
+.entitySetInput {
+  height: 40px;
+  width: 200px;
+}
+
+/* PermissionsPanel */
+.updateSuccess {
+  color: green;
+  padding-top: 10px;
+}
+
+.panelContainer {
+  position: fixed;
+  left: 100px;
+  right: 100px;
+  top: 80px;
+  bottom: 40px;
+  text-align: center;
+  background: #fff;
+  -webkit-box-shadow: 0 0 5px 2px #eee;
+  -moz-box-shadow: 0 0 5px 2px #eee;
+  box-shadow: 0 0 5px 2px #eee;
+  border: 1px solid #e3e3e3;
+  text-align: center;
+  z-index: 1;
+}
+
+.permissionsBodyContainer {
+  margin: 0 auto;
+  height: 200px;
+  width: 300px;
+  overflow: scroll;
+  text-align: left;
+  padding-top: 5px;
+  border: 1px solid #d1d6da;
+}
+
+.cancelButton {
+  position: absolute;
+  vertical-align: middle;
+  font-size: 20px;
+  right: 15px;
+  top: 15px;
+  width: 25px;
+  height: 25px;
+  background: #d1d6da;
+  border-radius: 3px;
+  border: 0;
+  padding-bottom: 15px;
+}
+
+.cancelButton:hover {
+  background: #d8dcdf;
+}
+
+.panelTitle {
+  margin-top: 25px;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center
+}
+
+.panelContents {
+  margin-top: 35px;
+  text-align: center;
+}
+
+.viewWrapper {
+  text-align: center;
+}
+
+.dropdownWrapper {
+  width: 150px;
+  margin: 0 auto;
+}
+
+.permissionInputWidth {
+  width: 300px;
+}

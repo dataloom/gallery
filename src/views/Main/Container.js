@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
-import { Jumbotron } from 'react-bootstrap';
 import styles from './styles.module.css';
-import { Navbar } from './components/Navbar';
-import { Topbar } from './components/Topbar';
+
+import HeaderNav from '../../components/headernav/HeaderNav';
+import SideNav from '../../components/sidenav/SideNav';
 
 export class Container extends React.Component {
   static contextTypes = {
@@ -19,10 +19,6 @@ export class Container extends React.Component {
     this.state = props.route.profileFn();
   }
 
-  componentDidMount() {
-    this.updateState();
-  }
-
   updateState = () => {
     this.setState(this.props.route.profileFn());
   }
@@ -32,23 +28,25 @@ export class Container extends React.Component {
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
         auth: this.props.route.auth,
-        updateTopbarFn: this.updateState
+        updateTopbarFn: this.updateState,
+        profileFn: this.props.route.profileFn
       });
     }
     return children;
   }
 
   render() {
-    const children = this.getChildren();
+
     return (
-      <Jumbotron>
-        <Topbar auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
-        <Navbar auth={this.props.route.auth} updateTopbarFn={this.props.route.profileFn} />
-        <div className={styles.bodyContainer}>
-          <div className={styles.topSpacer} />
-          {children}
+      <div className={styles.appWrapper}>
+        <HeaderNav auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
+        <div className={styles.appBody}>
+          <SideNav name={this.state.name} />
+          <div className={styles.appContent}>
+            { this.getChildren() }
+          </div>
         </div>
-      </Jumbotron>
+      </div>
     );
   }
 }
