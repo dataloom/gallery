@@ -77,7 +77,7 @@ function getOrgInfo(orgId) {
         if (org.id === orgId) result = org;
       });
       resolve(result);
-    }, 350);
+    }, 450);
   });
 }
 

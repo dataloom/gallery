@@ -157,21 +157,20 @@ class OrganizationList extends React.Component {
 
   renderCreateOrganizationComponent = () => {
 
-    if (!this.state.showCreateOrganizationComponent) {
-      return null;
-    }
-
-    const visibilityOptions = [
-      'Discoverable',
-      'Public',
-      'Private'
-    ];
-
     return (
       <CreateOrganization
-          visibilityOptions={visibilityOptions}
           onCreate={this.handleCreateOrganization}
           onCancel={this.hideCreateOrganizationComponent} />
+    );
+  }
+
+  renderOrganizationDetailsComponent = () => {
+
+    return (
+      <div>
+        { this.renderOrganizationsDropdown() }
+        { React.Children.toArray(this.props.children) }
+      </div>
     );
   }
 
@@ -216,7 +215,7 @@ class OrganizationList extends React.Component {
     }
 
     return (
-      <div className={styles.organizationsWrapper}>
+      <div className={styles.flexComponent}>
         <header className={headerStyles.headerNavWrapper}>
           <nav className={headerStyles.headerNav}>
 
@@ -236,9 +235,12 @@ class OrganizationList extends React.Component {
 
           </nav>
         </header>
-        <div className={styles.organizationDetailsWrapper}>
-          { this.renderOrganizationsDropdown() }
-          { React.Children.toArray(this.props.children) }
+        <div className={`${styles.flexComponent} ${styles.componentPadding}`}>
+          {
+            this.state.showCreateOrganizationComponent
+            ? this.renderCreateOrganizationComponent()
+            : this.renderOrganizationDetailsComponent()
+          }
         </div>
       </div>
     );

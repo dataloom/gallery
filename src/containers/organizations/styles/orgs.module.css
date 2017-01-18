@@ -1,73 +1,13 @@
-.organizationsWrapper, .organizationDetailsWrapper {
+.flexComponent {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
 }
 
-.organizationsHeading h3 {
-  margin: 5px 0;
-}
-
-.organizationDetailsWrapper {
+.componentPadding {
   padding: 25px;
 }
 
-
-
-
-.selectOrgMsg {
-  display: flex;
-  flex: 1 0 auto;
-  align-items: center;
-  justify-content: center;
-}
-
-.organizationsList {
-  list-style-type: none;
-}
-
-.organizationListItem a {
-  color: #455a64;
-  text-decoration: none;
-}
-
-.organizationListItem a:hover {
-  color: #1565c0;
-  text-decoration: none;
-}
-
-
-
-
-
-
-
-.createOrganizationWrapper {
-  min-width: 800px;
-  align-self: center;
-}
-
-.createOrganizationButton {
-  margin-top: 5px;
-}
-
-.section {
-  margin-bottom: 50px;
-}
-
-.inviteInput {
-  width: 500px;
-}
-
-.invalidEmail {
-  color: #e53935;
-}
-
-.orgDescription {
-  max-width: 800px;
-  min-height: 150px;
-}
-
-.createOrgSubmit {
-  margin-right: 20px;
+.organizationsHeading h3 {
+  margin: 5px 0;
 }
