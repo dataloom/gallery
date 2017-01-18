@@ -33,7 +33,7 @@ export class PropertyTypeList extends React.Component {
       newPropName: '',
       newPropNamespace: '',
       newPropDatatype: '',
-      newPropMultiplicity: ''
+      newPropTitle: ''
     };
   }
 
@@ -59,12 +59,12 @@ export class PropertyTypeList extends React.Component {
         newPropertyRow: false,
         newPropName: '',
         newPropNamespace: '',
-        newPropMultiplicity: '',
+        newPropTitle: '',
         newPropDatatype: '',
         addError: false,
         deleteError: false
       });
-    }).catch(() => {
+    }).catch((e) => {
       this.setState({ loadTypesError: true });
     });
   }
@@ -100,8 +100,8 @@ export class PropertyTypeList extends React.Component {
     const name = this.state.newPropName;
     const namespace = this.state.newPropNamespace;
     const datatype = this.state.newPropDatatype;
-    const multiplicity = this.state.newPropMultiplicity;
-    EntityDataModelApi.createPropertyType({ name, namespace, datatype, multiplicity })
+    const title = this.state.newPropTitle;
+    EntityDataModelApi.createPropertyType({ name, namespace, datatype, title })
     .then(() => {
       this.updateFn();
     }).catch(() => {
@@ -146,20 +146,20 @@ export class PropertyTypeList extends React.Component {
     this.setState({ newPropDatatype });
   }
 
-  handleMultiplicityChange = (e) => {
-    this.setState({ newPropMultiplicity: e.target.value });
+  handleTitleChange = (e) => {
+    this.setState({ newPropTitle: e.target.value });
   }
 
   renderNewPropertyTypeInputLine = () => {
-    const { newPropertyRow, newPropName, newPropNamespace, newPropMultiplicity } = this.state;
+    const { newPropertyRow, newPropName, newPropNamespace, newPropTitle } = this.state;
     if (!this.context.isAdmin) return null;
     return (
       <tr className={this.shouldShow[newPropertyRow && this.props.propertyTypePage]}>
         <td><input
           type="text"
-          value={newPropName}
-          onChange={this.handleNameChange}
-          placeholder="name"
+          value={newPropTitle}
+          onChange={this.handleTitleChange}
+          placeholder="title"
           className={styles.tableCell}
         /></td>
         <td><input
@@ -167,6 +167,13 @@ export class PropertyTypeList extends React.Component {
           value={newPropNamespace}
           onChange={this.handleNamespaceChange}
           placeholder="namespace"
+          className={styles.tableCell}
+        /></td>
+        <td><input
+          type="text"
+          value={newPropName}
+          onChange={this.handleNameChange}
+          placeholder="name"
           className={styles.tableCell}
         /></td>
         <td>
@@ -177,13 +184,6 @@ export class PropertyTypeList extends React.Component {
             placeholder="datatype"
           />
         </td>
-        <td><input
-          type="text"
-          value={newPropMultiplicity}
-          onChange={this.handleMultiplicityChange}
-          placeholder="multiplicity"
-          className={styles.tableCell}
-        /></td>
         <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
       </tr>
     );
@@ -220,10 +220,10 @@ export class PropertyTypeList extends React.Component {
           <tbody>
             <tr>
               <th className={this.shouldShow[!propertyTypePage]} />
-              <th className={styles.tableCell}>Property Type Name</th>
+              <th className={styles.tableCell}>Property Type Title</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
+              <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Datatype</th>
-              <th className={styles.tableCell}>Property Type Multiplicity</th>
             </tr>
             {propertyTypeList}
             {this.renderNewPropertyTypeInputLine()}

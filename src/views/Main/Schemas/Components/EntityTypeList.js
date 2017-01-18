@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
-import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
 import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -18,7 +17,8 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       loadTypesError: false,
-      allPropNamespaces: {}
+      allPropNamespaces: {},
+      fqnToId: {}
     };
   }
 
@@ -35,7 +35,7 @@ export class EntityTypeList extends React.Component {
     EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
         this.setState({
-          entityTypes: Utils.addKeysToArray(entityTypes),
+          entityTypes,
           loadTypesError: false,
           createTypeError: false
         });
@@ -50,17 +50,22 @@ export class EntityTypeList extends React.Component {
       EntityDataModelApi.getAllPropertyTypes(),
       (entityTypes, propertyTypes) => {
         const allPropNamespaces = {};
-        propertyTypes.forEach((prop) => {
-          if (allPropNamespaces[prop.namespace] === undefined) {
-            allPropNamespaces[prop.namespace] = [prop.name];
-          }
-          else {
-            allPropNamespaces[prop.namespace].push(prop.name);
-          }
-        });
+        const fqnToId = {};
+        if (propertyTypes.length > 0) {
+          propertyTypes.forEach((prop) => {
+            if (allPropNamespaces[prop.type.namespace] === undefined) {
+              allPropNamespaces[prop.type.namespace] = [prop.type.name];
+            }
+            else {
+              allPropNamespaces[prop.type.namespace].push(prop.type.name);
+            }
+            fqnToId[`${prop.type.namespace}.${prop.type.name}`] = prop.id;
+          });
+        }
         this.setState({
-          entityTypes: Utils.addKeysToArray(entityTypes),
+          entityTypes,
           allPropNamespaces,
+          fqnToId,
           loadTypesError: false
         });
       }
@@ -74,6 +79,7 @@ export class EntityTypeList extends React.Component {
     return (
       <NewEdmObjectInput
         namespaces={this.state.allPropNamespaces}
+        fqnToId={this.state.fqnToId}
         createSuccess={this.newEntityTypeSuccess}
         edmType={EdmConsts.ENTITY_TYPE_TITLE}
       />
@@ -85,10 +91,11 @@ export class EntityTypeList extends React.Component {
 
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
-        key={entityType.key}
-        name={entityType.name}
-        namespace={entityType.namespace}
-        properties={entityType.properties}
+        key={entityType.id}
+        id={entityType.id}
+        name={entityType.type.name}
+        namespace={entityType.type.namespace}
+        propertyIds={entityType.properties}
         primaryKey={entityType.primaryKey}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}

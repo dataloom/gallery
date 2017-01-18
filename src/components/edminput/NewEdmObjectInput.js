@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi, DataModels } from 'loom-data';
 import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
 import StringConsts from '../../utils/Consts/StringConsts';
 import EdmConsts from '../../utils/Consts/EdmConsts';
@@ -8,11 +8,13 @@ import styles from '../../views/Main/Schemas/styles.module.css';
 const NAME_FIELD = 'name';
 const NAMESPACE_FIELD = 'namespace';
 const TITLE_FIELD = 'title';
+const DESCRIPTION_FIELD = 'description';
 
 const INITIAL_STATE = {
   [NAME_FIELD]: StringConsts.EMPTY,
   [NAMESPACE_FIELD]: StringConsts.EMPTY,
   [TITLE_FIELD]: StringConsts.EMPTY,
+  [DESCRIPTION_FIELD]: StringConsts.EMPTY,
   pKeysAdded: [],
   typeName: StringConsts.EMPTY,
   typeNamespace: StringConsts.EMPTY,
@@ -25,18 +27,22 @@ export class NewEdmObjectInput extends React.Component {
   static propTypes = {
     createSuccess: PropTypes.func,
     namespaces: PropTypes.object,
+    fqnToId: PropTypes.object,
     edmType: PropTypes.string
   }
 
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = INITIAL_STATE;
   }
 
   addPKeyToList = () => {
+    const newPKeyId = this.props.fqnToId[`${this.state.typeNamespace}.${this.state.typeName}`];
+    if (newPKeyId === undefined) return;
     const newPKey = {
       namespace: this.state.typeNamespace,
-      name: this.state.typeName
+      name: this.state.typeName,
+      id: newPKeyId
     };
     const pKeysAdded = this.state.pKeysAdded;
     pKeysAdded.push(newPKey);
@@ -70,6 +76,14 @@ export class NewEdmObjectInput extends React.Component {
     this.setState({ typeName: newValue });
   }
 
+  handleTitleChange = (newValue) => {
+    this.setState({ title: newValue });
+  }
+
+  handleDescriptionChange = (newValue) => {
+    this.setState({ description: newValue });
+  }
+
   setEditing = () => {
     this.setState({ editing: true });
   }
@@ -85,12 +99,15 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   createNewObjectForEdmType = () => {
+    const { FullyQualifiedName, EntityTypeBuilder } = DataModels;
+    const fqn = new FullyQualifiedName({
+      namespace: this.state[NAMESPACE_FIELD],
+      name: this.state[NAME_FIELD]
+    });
     switch (this.props.edmType) {
-      case EdmConsts.SCHEMA_TITLE:
-        return EntityDataModelApi.createSchema({
-          namespace: this.state[NAMESPACE_FIELD],
-          name: this.state[NAME_FIELD]
-        });
+      case EdmConsts.SCHEMA_TITLE: {
+        return EntityDataModelApi.createEmptySchema(fqn);
+      }
       case EdmConsts.ENTITY_SET_TITLE:
         return EntityDataModelApi.createEntitySets([{
           name: this.state[NAME_FIELD],
@@ -100,13 +117,20 @@ export class NewEdmObjectInput extends React.Component {
             namespace: this.state.typeNamespace
           }
         }]);
-      case EdmConsts.ENTITY_TYPE_TITLE:
-        return EntityDataModelApi.createEntityType({
-          namespace: this.state[NAMESPACE_FIELD],
-          name: this.state[NAME_FIELD],
-          properties: this.state.pKeysAdded,
-          key: this.state.pKeysAdded
+      case EdmConsts.ENTITY_TYPE_TITLE: {
+        const pKeys = this.state.pKeysAdded.map((pKey) => {
+          return pKey.id;
         });
+        const entityType = new EntityTypeBuilder()
+          .setType(fqn)
+          .setTitle(this.state[TITLE_FIELD])
+          .setDescription(this.state[DESCRIPTION_FIELD])
+          .setPropertyTypes(pKeys)
+          .setKey(pKeys)
+          .setSchemas([])
+          .build();
+        return EntityDataModelApi.createEntityType(entityType);
+      }
       default:
         return Promise.resolve();
     }
@@ -174,8 +198,10 @@ export class NewEdmObjectInput extends React.Component {
       case EdmConsts.ENTITY_TYPE_TITLE:
         return (
           <div>
+            {this.renderInputField('Title', TITLE_FIELD)}
             {this.renderInputField('Namespace', NAMESPACE_FIELD)}
             {this.renderInputField('Name', NAME_FIELD)}
+            {this.renderInputField('Description', DESCRIPTION_FIELD)}
           </div>
         );
       default:

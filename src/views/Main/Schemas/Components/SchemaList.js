@@ -53,22 +53,26 @@ export class SchemaList extends React.Component {
       (schemas, propertyTypes, entityTypes) => {
         const allPropNamespaces = {};
         const allEntityTypeNamespaces = {};
-        propertyTypes.forEach((prop) => {
-          if (allPropNamespaces[prop.namespace] === undefined) {
-            allPropNamespaces[prop.namespace] = [prop.name];
-          }
-          else {
-            allPropNamespaces[prop.namespace].push(prop.name);
-          }
-        });
-        entityTypes.forEach((entityType) => {
-          if (allEntityTypeNamespaces[entityType.namespace] === undefined) {
-            allEntityTypeNamespaces[entityType.namespace] = [entityType.name];
-          }
-          else {
-            allEntityTypeNamespaces[entityType.namespace].push(entityType.name);
-          }
-        });
+        if (propertyTypes.length > 0) {
+          propertyTypes.forEach((prop) => {
+            if (allPropNamespaces[prop.namespace] === undefined) {
+              allPropNamespaces[prop.namespace] = [prop.name];
+            }
+            else {
+              allPropNamespaces[prop.namespace].push(prop.name);
+            }
+          });
+        }
+        if (entityTypes.length > 0) {
+          entityTypes.forEach((entityType) => {
+            if (allEntityTypeNamespaces[entityType.namespace] === undefined) {
+              allEntityTypeNamespaces[entityType.namespace] = [entityType.name];
+            }
+            else {
+              allEntityTypeNamespaces[entityType.namespace].push(entityType.name);
+            }
+          });
+        }
 
         this.setState({
           schemas: Utils.addKeysToArray(schemas),

@@ -47,10 +47,10 @@ export class PropertyType extends React.Component {
     return (
       <tr className={styles.tableRows}>
         {this.renderDeleteButton()}
-        <td className={styles.tableCell}>{prop.name}</td>
-        <td className={styles.tableCell}>{prop.namespace}</td>
+        <td className={styles.tableCell}>{prop.title}</td>
+        <td className={styles.tableCell}>{prop.type.namespace}</td>
+        <td className={styles.tableCell}>{prop.type.name}</td>
         <td className={styles.tableCell}>{prop.datatype}</td>
-        <td className={styles.tableCell}>{prop.multiplicity}</td>
       </tr>
     );
   }
