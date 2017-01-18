@@ -1,32 +1,59 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
+import { Button } from 'react-bootstrap';
 
+import Page from '../../components/page/Page';
 import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
 import { EntitySetDetail } from '../../components/entityset/EntitySet';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import * as actionFactories from './EntitySetDetailActionFactories';
+import ActionDropdown from '../../components/entityset/ActionDropdown';
+import styles from './entitysetdetail.module.css';
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
-    params: PropTypes.shape({
-      id: PropTypes.string.isRequired
-    }),
     entitySet: EntitySetPropType,
-    requestEntitySet: PropTypes.func.isRequired
+    loadEntitySet: PropTypes.func.isRequired
+  };
+
+  renderHeaderContent = () => {
+    const { entitySet } = this.props;
+    return (
+      <div className={styles.headerContent}>
+        <div>
+          <Page.Title>{entitySet.title}</Page.Title>
+          <div className={styles.descriptionTitle}>About this data</div>
+          {entitySet.description}
+        </div>
+
+        <div className={styles.controls}>
+          <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button>
+          <ActionDropdown entitySet={entitySet}/>
+        </div>
+      </div>
+    );
   };
 
   render() {
     return (
-      <AsyncContent {...this.props.asyncState} content={() => <EntitySetDetail {...this.props} />}/>
+      <Page>
+        <Page.Header>
+          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
+        </Page.Header>
+        <Page.Body>
+
+        </Page.Body>
+      </Page>
     );
   }
 
   componentDidMount() {
-    this.props.requestEntitySet(this.props.params.id);
+    this.props.loadEntitySet();
   }
 }
+
 
 function mapStateToProps(state, ownProps) {
   const entitySetDetail = state.get('entitySetDetail').toJS(),
@@ -46,9 +73,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
   return {
-    requestEntitySet: (id) => { dispatch(actionFactories.entitySetDetailRequest(id)); }
+    loadEntitySet: () => { dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id)); }
   }
 }
 
