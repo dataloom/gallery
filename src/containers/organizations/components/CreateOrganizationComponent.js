@@ -5,6 +5,11 @@
 import React from 'react';
 
 import {
+  DataModels,
+  OrganizationsApi
+} from 'loom-data';
+
+import {
   Button,
   Checkbox,
   ControlLabel,
@@ -13,7 +18,11 @@ import {
 } from 'react-bootstrap';
 
 import styles from '../styles/create.org.module.css';
-import orgStyles from '../styles/orgs.module.css';
+
+const {
+  Organization,
+  OrganizationBuilder
+} = DataModels;
 
 class CreateOrganization extends React.Component {
 
@@ -84,9 +93,17 @@ class CreateOrganization extends React.Component {
     });
   }
 
-  render() {
+  onClickCreate = () => {
 
-    console.log('CreateOrganizationComponent.render()');
+    const org :Organization = (new OrganizationBuilder())
+      .setTitle(this.state.title)
+      .setDescription(this.state.description)
+      .build();
+
+    OrganizationsApi.createOrganization(org);
+  }
+
+  render() {
 
     return (
       <div className={styles.createOrganizationWrapper}>
@@ -125,15 +142,15 @@ class CreateOrganization extends React.Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <Checkbox>Google Apps Auth</Checkbox>
-          <Checkbox>Username - Password</Checkbox>
-          <Checkbox>LDAP</Checkbox>
+          <Checkbox disabled>Google Apps Auth</Checkbox>
+          <Checkbox disabled>Username - Password</Checkbox>
+          <Checkbox disabled>LDAP</Checkbox>
         </FormGroup>
         <Button
             className={styles.createOrgSubmit}
             type="submit"
             bsStyle="primary"
-            onClick={this.props.onCreate}>
+            onClick={this.onClickCreate}>
           Create Organization
         </Button>
         <Button onClick={this.props.onCancel}>Cancel</Button>

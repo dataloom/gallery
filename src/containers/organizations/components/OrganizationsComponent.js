@@ -127,13 +127,13 @@ class OrganizationList extends React.Component {
 
     this.props.actions.fetchOrgsRequest();
 
-    getOrgInfo()
-    .then((response) => {
-      this.props.actions.fetchOrgsSuccess(response);
-    })
-    .catch(() => {
-      this.props.actions.fetchOrgsFailure();
-    });
+    OrganizationsApi.getAllOrganizations()
+      .then((response) => {
+        this.props.actions.fetchOrgsSuccess(response);
+      })
+      .catch(() => {
+        this.props.actions.fetchOrgsFailure();
+      });
   }
 
   showCreateOrganizationComponent = () => {
