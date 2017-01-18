@@ -21,12 +21,14 @@ class EntitySetDetailComponent extends React.Component {
     const { entitySet } = this.props;
     return (
       <div className={styles.headerContent}>
-        <h1 className={styles.title}>{entitySet.title}</h1>
-        <h2>About this data</h2>
-        {entitySet.description}
+        <div>
+          <h1 className={styles.title}>{entitySet.title}</h1>
+          <div className={styles.descriptionTitle}>About this data</div>
+          {entitySet.description}
+        </div>
 
         <div className={styles.controls}>
-          <Button bsStyle="primary" bsSize="large">Manage Permissions</Button>
+          <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button>
           <ActionDropdown entitySet={entitySet}/>
         </div>
       </div>
@@ -37,7 +39,9 @@ class EntitySetDetailComponent extends React.Component {
     return (
       <div className={styles.catalog}>
         <header>
+          <div className={styles.content}>
             <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
+          </div>
         </header>
         <div className={styles.content}>
         </div>
