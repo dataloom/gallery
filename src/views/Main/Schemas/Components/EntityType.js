@@ -5,17 +5,15 @@ import { PropertyList } from '../../../../components/propertylist/PropertyList';
 import { DropdownButton } from '../../../../components/dropdown/DropdownButton';
 import FileService from '../../../../utils/FileService';
 import FileConsts from '../../../../utils/Consts/FileConsts';
+import PermissionConsts from '../../../../utils/Consts/PermissionConsts';
 import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
   static propTypes = {
-    id: PropTypes.string,
-    name: PropTypes.string,
-    namespace: PropTypes.string,
-    propertyIds: PropTypes.array,
-    primaryKey: PropTypes.array,
+    entityType: PropTypes.object,
     updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object
+    allPropNamespaces: PropTypes.object,
+    fqnToId: PropTypes.object
   }
 
   constructor() {
@@ -30,7 +28,7 @@ export class EntityType extends React.Component {
   }
 
   loadProperties = () => {
-    Promise.map(this.props.propertyIds, (propertyId) => {
+    Promise.map(this.props.entityType.properties, (propertyId) => {
       return EntityDataModelApi.getPropertyType(propertyId);
     }).then((properties) => {
       this.setState({ properties });
@@ -38,37 +36,50 @@ export class EntityType extends React.Component {
   }
 
   downloadFile = (datatype) => {
-    const entityType = {
-      id: this.props.id,
-      type: {
-        namespace: this.props.namespace,
-        name: this.props.name
-      },
-      primaryKey: this.props.primaryKey,
-      propertyTypes: this.state.properties
+    const properties = {
+      properties: this.state.properties
     };
-    FileService.saveFile(entityType, this.props.name, datatype, this.enableButton);
+    const entityType = Object.assign(this.props.entityType, properties);
+    FileService.saveFile(entityType, this.props.entityType.title, datatype, this.enableButton);
+  }
+
+  updateEntityType = (newTypeUuid, action) => {
+    let newPropertyIds = this.props.entityType.properties;
+    if (action === PermissionConsts.ADD) {
+      newPropertyIds = this.state.propertyIds.concat(newTypeUuid);
+    }
+    else if (action === PermissionConsts.REMOVE) {
+      newPropertyIds = this.state.propertyIds.filter((id) => {
+        return (id !== newTypeUuid[0]);
+      });
+    }
+    EntityDataModelApi.updatePropertyTypesForEntityType(this.props.entityType.id, newPropertyIds)
+    .then(() => {
+      this.props.updateFn();
+    });
   }
 
   render() {
-    const { name, namespace, primaryKey, updateFn, allPropNamespaces } = this.props;
+    const { entityType, updateFn, allPropNamespaces, fqnToId } = this.props;
     const options = [FileConsts.CSV, FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
-        <div className={styles.name}>{name}</div>
+        <div className={styles.title}>{entityType.title}</div>
+        <div className={styles.description}>{entityType.description}</div>
         <div className={styles.spacerSmall} />
-        <div className={styles.subtitle}>{namespace}</div>
+        <div className={styles.subtitle}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
         <div className={styles.dropdownButtonContainer}>
           <DropdownButton downloadFn={this.downloadFile} options={options} />
         </div>
         <div className={styles.spacerMed} />
         <PropertyList
           properties={this.state.properties}
-          primaryKey={primaryKey}
-          entityTypeName={name}
-          entityTypeNamespace={namespace}
+          primaryKey={entityType.primaryKey}
+          entityTypeName={entityType.type.name}
+          entityTypeNamespace={entityType.type.namespace}
           updateFn={updateFn}
           allPropNamespaces={allPropNamespaces}
+          propFqnsToId={fqnToId}
           editingPermissions={false}
         />
         <div className={styles.spacerBig} />

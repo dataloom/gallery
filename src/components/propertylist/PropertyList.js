@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import StringConsts from '../../utils/Consts/StringConsts';
+import EdmConsts from '../../utils/Consts/EdmConsts';
 import PermissionsConsts from '../../utils/Consts/PermissionConsts';
 import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
-import Utils from '../../utils/Utils';
 import styles from './propertylist.module.css';
 
 export class PropertyList extends React.Component {
@@ -17,7 +16,8 @@ export class PropertyList extends React.Component {
     allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
-    isOwner: PropTypes.bool
+    isOwner: PropTypes.bool,
+    propFqnsToId: PropTypes.object
   }
 
   static contextTypes = {
@@ -71,33 +71,29 @@ export class PropertyList extends React.Component {
     });
   }
 
-  addPropertyToEntityType = (namespace, name) => {
-    EntityDataModelApi.addPropertyTypesToEntityType(
-      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
-      [Utils.getFqnObj(namespace, name)]
-    ).then(() => {
-      this.updateFqns();
-    }).catch(() => {
-      this.updateError(PermissionsConsts.ADD);
-    });
+  addProperty = (namespace, name) => {
+    const propId = this.props.propFqnsToId[`${namespace}.${name}`];
+    if (!propId || propId === undefined) return;
+    this.props.updateFn([propId], PermissionsConsts.ADD, EdmConsts.PROPERTY_TYPE);
   }
 
-  deleteProp = () => {
-    EntityDataModelApi.removePropertyTypesFromEntityType(
-      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
-      [this.state.propertyToDelete]
-    ).then(() => {
-      this.setState({
-        verifyingDelete: false,
-        propertyToDelete: undefined,
-        error: {
-          display: styles.hidden,
-          action: PermissionsConsts.REMOVE
-        }
-      });
-      return this.props.updateFn();
-    }).catch(() => {
-      this.updateError(PermissionsConsts.REMOVE);
+  // addPropertyToEntityType = (namespace, name) => {
+  //   EntityDataModelApi.addPropertyTypesToEntityType(
+  //     Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
+  //     [Utils.getFqnObj(namespace, name)]
+  //   ).then(() => {
+  //     this.updateFqns();
+  //   }).catch(() => {
+  //     this.updateError(PermissionsConsts.ADD);
+  //   });
+  // }
+
+  deleteProp = (optionalProperty) => {
+    const property = (optionalProperty === undefined) ? this.state.propertyToDelete : optionalProperty;
+    this.props.updateFn([property.id], PermissionsConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
+    this.setState({
+      verifyingDelete: false,
+      propertyToDelete: undefined
     });
   }
 
@@ -109,10 +105,15 @@ export class PropertyList extends React.Component {
   }
 
   verifyDelete = (property) => {
-    this.setState({
-      verifyingDelete: true,
-      propertyToDelete: property
-    });
+    if (this.props.entityTypeNamespace !== undefined && this.props.entityTypeName !== undefined) {
+      this.setState({
+        verifyingDelete: true,
+        propertyToDelete: property
+      });
+    }
+    else {
+      this.deleteProp(property);
+    }
   }
 
   renderVerifyDeletePropertyBox = () => {
@@ -161,7 +162,7 @@ export class PropertyList extends React.Component {
         className={className}
         namespaces={allPropNamespaces}
         usedProperties={properties}
-        addProperty={this.addPropertyToEntityType}
+        addProperty={this.addProperty}
       />
     );
   }
@@ -189,9 +190,9 @@ export class PropertyList extends React.Component {
           <tbody>
             <tr>
               <th />
-              <th className={styles.tableCell}>Property Type Title</th>
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
+              <th className={styles.tableCell}>Property Type Title</th>
             </tr>
             {propertyList}
             {this.renderNewRowInput()}

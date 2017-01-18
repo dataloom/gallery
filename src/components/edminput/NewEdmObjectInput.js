@@ -196,14 +196,14 @@ export class NewEdmObjectInput extends React.Component {
 
   renderInputFieldsForEdmType = () => {
     switch (this.props.edmType) {
+      case EdmConsts.SCHEMA_TITLE:
       case EdmConsts.ENTITY_SET_TITLE:
         return (
           <div>
             {this.renderInputField('Name', NAME_FIELD)}
-            {this.renderInputField('Title', TITLE_FIELD)}
+            {this.renderInputField('Namespace', NAMESPACE_FIELD)}
           </div>
         );
-      case EdmConsts.SCHEMA_TITLE:
       case EdmConsts.ENTITY_TYPE_TITLE:
         return (
           <div>

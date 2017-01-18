@@ -87,18 +87,15 @@ export class EntityTypeList extends React.Component {
   }
 
   render() {
-    const { entityTypes, allPropNamespaces, loadTypesError } = this.state;
+    const { entityTypes, allPropNamespaces, fqnToId, loadTypesError } = this.state;
 
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
         key={entityType.id}
-        id={entityType.id}
-        name={entityType.type.name}
-        namespace={entityType.type.namespace}
-        propertyIds={entityType.properties}
-        primaryKey={entityType.primaryKey}
+        entityType={entityType}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
+        fqnToId={fqnToId}
       />);
     });
 

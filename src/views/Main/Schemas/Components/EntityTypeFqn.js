@@ -15,7 +15,7 @@ export class EntityTypeFqn extends React.Component {
   }
 
   deleteProp = () => {
-    this.props.updateSchemaFn([this.props.entityTypeFqn.id], PermissionsConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
+    this.props.updateSchemaFn([this.props.entityTypeFqn.id], PermissionsConsts.REMOVE, EdmConsts.ENTITY_TYPE);
   }
 
   renderDeleteButton = () => {

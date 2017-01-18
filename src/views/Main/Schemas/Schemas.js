@@ -5,15 +5,12 @@ import { EntityTypeList } from './Components/EntityTypeList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
-import AuthService from '../../../utils/AuthService';
 import '../../../core/styles/global/dropdown.css';
 
 export class Schemas extends React.Component {
 
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService),
-    updateTopbarFn: PropTypes.func,
-    profileFn: PropTypes.func
+    updateTopbarFn: PropTypes.func
   }
 
   static childContextTypes = {

@@ -1,8 +1,8 @@
+import { EventEmitter } from 'events';
+
 import Auth0Lock from 'auth0-lock';
 
 import * as Cookies from 'js-cookie';
-
-import { EventEmitter } from 'events';
 
 import { isTokenExpired } from './jwtHelper';
 import img from '../images/kryptnostic-logo-big.png';

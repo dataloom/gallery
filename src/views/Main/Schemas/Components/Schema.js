@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi, DataModels } from 'loom-data';
-import { PropertyTypeList } from './PropertyTypeList';
+import { EntityDataModelApi } from 'loom-data';
+import { PropertyList } from '../../../../components/propertylist/PropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import FileService from '../../../../utils/FileService';
@@ -10,11 +10,7 @@ import styles from '../styles.module.css';
 
 export class Schema extends React.Component {
   static propTypes = {
-    name: PropTypes.string,
-    namespace: PropTypes.string,
-    propertyTypes: PropTypes.array,
-    entityTypeFqns: PropTypes.array,
-    jsonContents: PropTypes.object,
+    schema: PropTypes.object,
     updateFn: PropTypes.func,
     allPropNamespaces: PropTypes.object,
     allEntityTypeNamespaces: PropTypes.object,
@@ -36,7 +32,7 @@ export class Schema extends React.Component {
   }
 
   downloadFile = (datatype) => {
-    FileService.saveFile(this.props.jsonContents, this.props.name, datatype, this.enableButton);
+    FileService.saveFile(this.props.schema, this.props.schema.fqn.name, datatype, this.enableButton);
   }
 
   displayError = () => {
@@ -53,15 +49,13 @@ export class Schema extends React.Component {
   }
 
   updateSchema = (newTypeUuid, action, type) => {
-    const { FullyQualifiedName } = DataModels;
-    const schemaFqn = new FullyQualifiedName(this.props.namespace, this.props.name);
     if (type === EdmConsts.ENTITY_TYPE) {
-      return EntityDataModelApi.updateSchema(schemaFqn, action, newTypeUuid, [])
+      return EntityDataModelApi.updateSchema(this.props.schema.fqn, action, newTypeUuid, [])
       .then(() => {
         this.props.updateFn();
       });
     }
-    return EntityDataModelApi.updateSchema(schemaFqn, action, [], newTypeUuid)
+    return EntityDataModelApi.updateSchema(this.props.schema.fqn, action, [], newTypeUuid)
     .then(() => {
       this.props.updateFn();
     });
@@ -69,10 +63,7 @@ export class Schema extends React.Component {
 
   render() {
     const {
-      name,
-      namespace,
-      propertyTypes,
-      entityTypeFqns,
+      schema,
       allEntityTypeNamespaces,
       allPropNamespaces,
       propFqnsToId,
@@ -81,30 +72,28 @@ export class Schema extends React.Component {
     const options = [FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
-        <div className={styles.name}>{name}</div>
+        <div className={styles.name}>{schema.fqn.name}</div>
         <div className={styles.spacerSmall} />
-        <div className={styles.subtitle}>{namespace}</div>
+        <div className={styles.subtitle}>{schema.fqn.namespace}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
           <DropdownButton downloadFn={this.downloadFile} options={options} />
         </div>
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
-          entityTypeFqns={entityTypeFqns}
+          entityTypeFqns={schema.entityTypes}
           updateSchemaFn={this.updateSchema}
           allEntityTypeNamespaces={allEntityTypeNamespaces}
           entityTypeFqnsToId={entityTypeFqnsToId}
         />
         <br />
         <div className={styles.spacerMed} />
-        <PropertyTypeList
-          propertyTypes={propertyTypes}
-          name={name}
-          namespace={namespace}
-          updateSchemaFn={this.updateSchema}
-          propertyTypePage={false}
+        <PropertyList
+          properties={schema.propertyTypes}
+          updateFn={this.updateSchema}
           allPropNamespaces={allPropNamespaces}
           propFqnsToId={propFqnsToId}
+          editingPermissions={false}
         />
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />
