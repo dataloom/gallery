@@ -34,7 +34,7 @@ class HeaderNav extends React.Component {
         <nav className={styles.headerNav}>
 
           <div className={styles.headerNavLeft}>
-            <div className={`${styles.headerNavItem} ${styles.loom}`}>LOOM</div>
+            <h2 className={`${styles.headerNavItem} ${styles.loom}`}>LOOM</h2>
           </div>
 
           <div className={styles.headerNavRight}>
@@ -46,10 +46,9 @@ class HeaderNav extends React.Component {
             </div>
             <div className={styles.headerNavItem}>
               <Link
-                to={`/${PageConsts.LOGIN}`}
-                className={styles.headerNavLink}
-                onClick={this.onLogoutClick}
-              >
+                  to={`/${PageConsts.LOGIN}`}
+                  className={styles.headerNavLink}
+                  onClick={this.onLogoutClick}>
                 Logout
               </Link>
             </div>

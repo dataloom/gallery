@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
-import { PropertyList } from '../../../../components/propertylist/PropertyList';
-import { DropdownButton } from '../../../../components/dropdown/DropdownButton';
 import FileService from '../../../../utils/FileService';
+import { DataApi } from 'loom-data';
+import { PropertyList } from './PropertyList';
+import { DropdownButton } from './DropdownButton';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import PermissionConsts from '../../../../utils/Consts/PermissionConsts';
 import styles from '../styles.module.css';

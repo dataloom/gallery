@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
 import { Property } from './Property';
-import StringConsts from '../../utils/Consts/StringConsts';
-import EdmConsts from '../../utils/Consts/EdmConsts';
-import PermissionsConsts from '../../utils/Consts/PermissionConsts';
-import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
-import styles from './propertylist.module.css';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
+import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import Utils from '../../../../utils/Utils';
+import styles from '../styles.module.css';
 
 export class PropertyList extends React.Component {
   static propTypes = {

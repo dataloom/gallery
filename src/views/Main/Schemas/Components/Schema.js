@@ -5,7 +5,7 @@ import FileConsts from '../../../../utils/Consts/FileConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
-import { DropdownButton } from '../../../../components/dropdown/DropdownButton';
+import { DropdownButton } from './DropdownButton';
 import styles from '../styles.module.css';
 
 export class Schema extends React.Component {

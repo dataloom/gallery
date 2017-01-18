@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
 import { EntityDataModelApi, DataModels } from 'loom-data';
-import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
-import StringConsts from '../../utils/Consts/StringConsts';
-import EdmConsts from '../../utils/Consts/EdmConsts';
-import styles from '../../views/Main/Schemas/styles.module.css';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
+import styles from '../styles.module.css';
 
 const NAME_FIELD = 'name';
 const NAMESPACE_FIELD = 'namespace';

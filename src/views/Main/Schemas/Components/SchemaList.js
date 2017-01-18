@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import { Schema } from './Schema';
-import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
@@ -87,9 +87,10 @@ export class SchemaList extends React.Component {
           entityTypeFqnsToId,
           loadSchemasError: false
         });
-      }).catch(() => {
-        this.setState({ loadSchemasError: true });
-      });
+      }
+    ).catch(() => {
+      this.setState({ loadSchemasError: true });
+    });
   }
 
   renderCreateNewSchema = () => {

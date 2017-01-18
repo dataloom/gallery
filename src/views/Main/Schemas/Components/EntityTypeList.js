@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import { EntityType } from './EntityType';
-import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 

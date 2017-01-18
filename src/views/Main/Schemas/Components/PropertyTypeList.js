@@ -5,6 +5,7 @@ import Utils from '../../../../utils/Utils';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
+import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {

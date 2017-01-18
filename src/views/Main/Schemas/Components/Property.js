@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
-import StringConsts from '../../utils/Consts/StringConsts';
-import { PermissionsPanel } from '../permissions/PermissionsPanel';
-import styles from './propertylist.module.css';
+import StringConsts from '../../../../utils/Consts/StringConsts';
+import { PermissionsPanel } from './PermissionsPanel';
+import styles from '../styles.module.css';
 
 export class Property extends React.Component {
   static propTypes = {
