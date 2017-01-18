@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { SplitButton, Button, MenuItem } from 'react-bootstrap';
+import classnames from 'classnames';
 
 import { DataApi } from 'loom-data';
 
@@ -11,7 +12,8 @@ import PageConsts from '../../utils/Consts/PageConsts';
 export default class ActionDropdown extends React.Component {
   static propTypes = {
     entitySet: EntitySetPropType.isRequired,
-    showDetails: PropTypes.bool
+    showDetails: PropTypes.bool,
+    className: PropTypes.string
   };
 
   render() {
@@ -30,7 +32,7 @@ export default class ActionDropdown extends React.Component {
     }
 
     return (
-      <SplitButton pullRight title="Actions" id="action-dropdown">
+      <SplitButton pullRight title="Actions" id="action-dropdown" className={classnames(this.props.className)}>
         {details}
         <MenuItem header>Download</MenuItem>
         <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySet.id, FileConsts.CSV)}>CSV</MenuItem>
