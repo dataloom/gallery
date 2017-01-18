@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { DataApi } from 'loom-data';
-import { PropertyList } from '../../../../components/propertylist/PropertyList';
-import { DropdownButton } from '../../../../components/dropdown/DropdownButton';
+import { PropertyList } from './PropertyList';
+import { DropdownButton } from './DropdownButton';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
