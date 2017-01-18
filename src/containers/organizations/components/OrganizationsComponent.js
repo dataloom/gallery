@@ -166,11 +166,29 @@ class OrganizationList extends React.Component {
 
   renderOrganizationDetailsComponent = () => {
 
+    if (this.props.organizations.size === 0) {
+      return (
+        <div className={`${styles.flexComponent} ${styles.flexCenter}`}>
+          <h4>{ 'No organizations. Create a new Organization!' }</h4>
+          { this.renderCreateOrganizationButton() }
+        </div>
+      );
+    }
+
     return (
       <div>
         { this.renderOrganizationsDropdown() }
         { React.Children.toArray(this.props.children) }
       </div>
+    );
+  }
+
+  renderCreateOrganizationButton = () => {
+
+    return (
+      <Button bsSize="small" onClick={this.showCreateOrganizationComponent}>
+        Create New Organization
+      </Button>
     );
   }
 
@@ -227,9 +245,7 @@ class OrganizationList extends React.Component {
 
             <div className={headerStyles.headerNavRight}>
               <div className={headerStyles.headerNavItem}>
-                <Button bsSize="small" onClick={this.showCreateOrganizationComponent}>
-                  Create New Organization
-                </Button>
+                { this.renderCreateOrganizationButton() }
               </div>
             </div>
 

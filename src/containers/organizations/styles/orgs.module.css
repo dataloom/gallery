@@ -4,6 +4,11 @@
   flex: 1 0 auto;
 }
 
+.flexCenter {
+  align-items: center;
+  justify-content: center;
+}
+
 .componentPadding {
   padding: 25px;
 }
