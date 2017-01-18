@@ -1,0 +1,18 @@
+.flexComponent {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
+.flexCenter {
+  align-items: center;
+  justify-content: center;
+}
+
+.componentPadding {
+  padding: 25px;
+}
+
+.organizationsHeading h3 {
+  margin: 5px 0;
+}

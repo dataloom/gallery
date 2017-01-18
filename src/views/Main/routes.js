@@ -1,8 +1,8 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { Route, IndexRoute, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
-import { Container } from './Container.js';
+import { Container } from './Container';
 import { Schemas } from './Schemas/Schemas';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
@@ -14,6 +14,9 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
+
+import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
+import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
@@ -48,21 +51,26 @@ const isAdmin = () => {
 };
 
 const getName = () => {
+
   let displayName;
   if (auth.loggedIn()) {
-      let profile = auth.getProfile();
+    const profile = auth.getProfile();
 
-      if (profile.hasOwnProperty('given_name')) {
-          displayName = profile.given_name;
-      } else if (profile.hasOwnProperty('name')) {
-          displayName = profile.name;
-      } else if (profile.hasOwnProperty('nickname')) {
-          displayName = profile.nickname;
-      } else if (profile.hasOwnProperty('email')) {
-              displayName = profile.email;
-      } else {
-          displayName = StringConsts.EMPTY;
-      }
+    if (profile.hasOwnProperty('given_name')) {
+      displayName = profile.given_name;
+    }
+    else if (profile.hasOwnProperty('name')) {
+      displayName = profile.name;
+    }
+    else if (profile.hasOwnProperty('nickname')) {
+      displayName = profile.nickname;
+    }
+    else if (profile.hasOwnProperty('email')) {
+      displayName = profile.email;
+    }
+    else {
+      displayName = StringConsts.EMPTY;
+    }
   }
 
   return displayName;
@@ -85,6 +93,9 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
+      <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
+        <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
+      </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
     </Route>
