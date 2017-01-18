@@ -92,7 +92,8 @@ export class Property extends React.Component {
       <tr className={styles.tableRows}>
         {this.renderDeleteButton()}
         <td className={styles.tableCell}>{prop.title}</td>
-        <td className={styles.tableCell}>{prop.description}</td>
+        <td className={styles.tableCell}>{prop.type.name}</td>
+        <td className={styles.tableCell}>{prop.type.namespace}</td>
         {this.isPrimaryKey()}
         {this.editPermissionsButton()}
         {this.renderEditPermissions(prop)}

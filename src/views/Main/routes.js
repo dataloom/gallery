@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
-import { Container } from './Container.js';
+import { Container } from './Container';
 import { Schemas } from './Schemas/Schemas';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
@@ -50,19 +50,23 @@ const isAdmin = () => {
 const getName = () => {
   let displayName;
   if (auth.loggedIn()) {
-      let profile = auth.getProfile();
+    let profile = auth.getProfile();
 
-      if (profile.hasOwnProperty('given_name')) {
-          displayName = profile.given_name;
-      } else if (profile.hasOwnProperty('name')) {
-          displayName = profile.name;
-      } else if (profile.hasOwnProperty('nickname')) {
-          displayName = profile.nickname;
-      } else if (profile.hasOwnProperty('email')) {
-              displayName = profile.email;
-      } else {
-          displayName = StringConsts.EMPTY;
-      }
+    if (profile.hasOwnProperty('given_name')) {
+      displayName = profile.given_name;
+    }
+    else if (profile.hasOwnProperty('name')) {
+      displayName = profile.name;
+    }
+    else if (profile.hasOwnProperty('nickname')) {
+      displayName = profile.nickname;
+    }
+    else if (profile.hasOwnProperty('email')) {
+      displayName = profile.email;
+    }
+    else {
+      displayName = StringConsts.EMPTY;
+    }
   }
 
   return displayName;

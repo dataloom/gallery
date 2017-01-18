@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react';
-import Select from 'react-select';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import { NameNamespaceAutosuggest } from '../../../../components/namespaceautosuggest/NameNamespaceAutosuggest';
+import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
@@ -14,8 +13,7 @@ export class PropertyTypeList extends React.Component {
     name: PropTypes.string,
     namespace: PropTypes.string,
     updateSchemaFn: PropTypes.func,
-    propertyTypePage: PropTypes.bool,
-    allPropNamespaces: PropTypes.object
+    propertyTypePage: PropTypes.bool
   }
 
   static contextTypes = {
@@ -29,11 +27,7 @@ export class PropertyTypeList extends React.Component {
       newPropertyRow: false,
       addError: false,
       deleteError: false,
-      loadTypesError: false,
-      newPropName: '',
-      newPropNamespace: '',
-      newPropDatatype: '',
-      newPropTitle: ''
+      loadTypesError: false
     };
   }
 
@@ -56,15 +50,10 @@ export class PropertyTypeList extends React.Component {
     .then((propertyTypes) => {
       this.setState({
         propertyTypes: Utils.addKeysToArray(propertyTypes),
-        newPropertyRow: false,
-        newPropName: '',
-        newPropNamespace: '',
-        newPropTitle: '',
-        newPropDatatype: '',
         addError: false,
         deleteError: false
       });
-    }).catch((e) => {
+    }).catch(() => {
       this.setState({ loadTypesError: true });
     });
   }
@@ -76,10 +65,6 @@ export class PropertyTypeList extends React.Component {
       return newType;
     });
     return propertyTypes;
-  }
-
-  newProperty = () => {
-    this.setState({ newPropertyRow: true });
   }
 
   updateAddError = () => {
@@ -133,74 +118,19 @@ export class PropertyTypeList extends React.Component {
     return (this.props.propertyTypePage) ? styles.edmContainer : StringConsts.EMPTY;
   }
 
-  handleNameChange = (e) => {
-    this.setState({ newPropName: e.target.value });
-  }
-
-  handleNamespaceChange = (e) => {
-    this.setState({ newPropNamespace: e.target.value });
-  }
-
-  handleDatatypeChange = (e) => {
-    const newPropDatatype = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    this.setState({ newPropDatatype });
-  }
-
-  handleTitleChange = (e) => {
-    this.setState({ newPropTitle: e.target.value });
-  }
-
   renderNewPropertyTypeInputLine = () => {
-    const { newPropertyRow, newPropName, newPropNamespace, newPropTitle } = this.state;
     if (!this.context.isAdmin) return null;
     return (
-      <tr className={this.shouldShow[newPropertyRow && this.props.propertyTypePage]}>
-        <td><input
-          type="text"
-          value={newPropTitle}
-          onChange={this.handleTitleChange}
-          placeholder="title"
-          className={styles.tableCell}
-        /></td>
-        <td><input
-          type="text"
-          value={newPropNamespace}
-          onChange={this.handleNamespaceChange}
-          placeholder="namespace"
-          className={styles.tableCell}
-        /></td>
-        <td><input
-          type="text"
-          value={newPropName}
-          onChange={this.handleNameChange}
-          placeholder="name"
-          className={styles.tableCell}
-        /></td>
-        <td>
-          <Select
-            value={this.state.newPropDatatype}
-            onChange={this.handleDatatypeChange}
-            options={EdmConsts.EDM_PRIMITIVE_TYPES}
-            placeholder="datatype"
-          />
-        </td>
-        <td><button className={styles.genericButton} onClick={this.createNewPropertyType}>Save</button></td>
-      </tr>
+      <NewEdmObjectInput
+        createSuccess={this.updateFn}
+        edmType={EdmConsts.PROPERTY_TYPE_TITLE}
+      />
     );
-  }
-
-  renderNewPropertyButton = () => {
-    if (!this.context.isAdmin) return null;
-    const className = (this.state.newPropertyRow) ? styles.hidden : styles.addButton;
-    const val = (
-      <button onClick={this.newProperty} className={className}>+</button>
-    );
-    return val;
   }
 
   render() {
-    const { propertyTypePage, updateSchemaFn, name, namespace, allPropNamespaces } = this.props;
-    const { propertyTypes, newPropertyRow, addError, deleteError } = this.state;
+    const { propertyTypePage, updateSchemaFn, name, namespace } = this.props;
+    const { propertyTypes, addError, deleteError } = this.state;
     const propArray = (propertyTypePage) ? propertyTypes : this.keyPropertyTypes();
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
@@ -213,29 +143,12 @@ export class PropertyTypeList extends React.Component {
         schemaNamespace={namespace}
       />);
     });
+
     return (
       <div className={this.shouldDisplayContainer()}>
+        {this.renderNewPropertyTypeInputLine()}
         <div className={this.showErrorMsgClass[this.state.loadTypesError]}>Unable to load property types.</div>
-        <table>
-          <tbody>
-            <tr>
-              <th className={this.shouldShow[!propertyTypePage]} />
-              <th className={styles.tableCell}>Property Type Title</th>
-              <th className={styles.tableCell}>Property Type Namespace</th>
-              <th className={styles.tableCell}>Property Type Name</th>
-              <th className={styles.tableCell}>Property Type Datatype</th>
-            </tr>
-            {propertyTypeList}
-            {this.renderNewPropertyTypeInputLine()}
-            <NameNamespaceAutosuggest
-              className={this.shouldShow[newPropertyRow && !propertyTypePage && this.context.isAdmin]}
-              namespaces={allPropNamespaces}
-              usedProperties={propertyTypes}
-              addProperty={this.addPropertyToSchema}
-            />
-          </tbody>
-        </table>
-        {this.renderNewPropertyButton()}
+        {propertyTypeList}
         <div className={this.showErrorMsgClass[addError]}>Unable to add property type.</div>
         <div className={this.showErrorMsgClass[deleteError]}>Unable to delete property type.</div>
       </div>

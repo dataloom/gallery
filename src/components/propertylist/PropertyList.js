@@ -189,6 +189,7 @@ export class PropertyList extends React.Component {
           <tbody>
             <tr>
               <th />
+              <th className={styles.tableCell}>Property Type Title</th>
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
             </tr>

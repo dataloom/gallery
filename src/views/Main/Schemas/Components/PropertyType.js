@@ -45,13 +45,15 @@ export class PropertyType extends React.Component {
   render() {
     const prop = this.props.propertyType;
     return (
-      <tr className={styles.tableRows}>
-        {this.renderDeleteButton()}
-        <td className={styles.tableCell}>{prop.title}</td>
-        <td className={styles.tableCell}>{prop.type.namespace}</td>
-        <td className={styles.tableCell}>{prop.type.name}</td>
-        <td className={styles.tableCell}>{prop.datatype}</td>
-      </tr>
+      <div className={styles.edmContainer}>
+        <div className={styles.name}>{prop.title}</div>
+        <div className={styles.description}>{prop.description}</div>
+        <div className={styles.spacerSmall} />
+        <div className={styles.subtitle}>{`${prop.type.namespace}.${prop.type.name}`}</div>
+        <div className={styles.datatype}>datatype: {prop.datatype}</div>
+        <div className={styles.spacerBig} />
+        <hr />
+      </div>
     );
   }
 }

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Select from 'react-select';
 import { EntityDataModelApi, DataModels } from 'loom-data';
 import { NameNamespaceAutosuggest } from '../namespaceautosuggest/NameNamespaceAutosuggest';
 import StringConsts from '../../utils/Consts/StringConsts';
@@ -18,6 +19,7 @@ const INITIAL_STATE = {
   pKeysAdded: [],
   typeName: StringConsts.EMPTY,
   typeNamespace: StringConsts.EMPTY,
+  datatype: StringConsts.EMPTY,
   editing: false,
   error: false
 };
@@ -76,12 +78,9 @@ export class NewEdmObjectInput extends React.Component {
     this.setState({ typeName: newValue });
   }
 
-  handleTitleChange = (newValue) => {
-    this.setState({ title: newValue });
-  }
-
-  handleDescriptionChange = (newValue) => {
-    this.setState({ description: newValue });
+  handleDatatypeChange = (e) => {
+    const newValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
+    this.setState({ datatype: newValue });
   }
 
   setEditing = () => {
@@ -99,11 +98,12 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   createNewObjectForEdmType = () => {
-    const { FullyQualifiedName, EntityTypeBuilder } = DataModels;
+    const { FullyQualifiedName, EntityTypeBuilder, PropertyTypeBuilder } = DataModels;
     const fqn = new FullyQualifiedName({
       namespace: this.state[NAMESPACE_FIELD],
       name: this.state[NAME_FIELD]
     });
+
     switch (this.props.edmType) {
       case EdmConsts.SCHEMA_TITLE: {
         return EntityDataModelApi.createEmptySchema(fqn);
@@ -130,6 +130,15 @@ export class NewEdmObjectInput extends React.Component {
           .setSchemas([])
           .build();
         return EntityDataModelApi.createEntityType(entityType);
+      }
+      case EdmConsts.PROPERTY_TYPE_TITLE: {
+        const propertyType = new PropertyTypeBuilder()
+          .setType(fqn)
+          .setTitle(this.state[TITLE_FIELD])
+          .setDescription(this.state[DESCRIPTION_FIELD])
+          .setDataType(this.state.datatype)
+          .build();
+        return EntityDataModelApi.createPropertyType(propertyType);
       }
       default:
         return Promise.resolve();
@@ -204,12 +213,21 @@ export class NewEdmObjectInput extends React.Component {
             {this.renderInputField('Description', DESCRIPTION_FIELD)}
           </div>
         );
+      case EdmConsts.PROPERTY_TYPE_TITLE:
+        return (
+          <div>
+            {this.renderInputField('Title', TITLE_FIELD)}
+            {this.renderInputField('Namespace', NAMESPACE_FIELD)}
+            {this.renderInputField('Name', NAME_FIELD)}
+            {this.renderInputField('Description', DESCRIPTION_FIELD)}
+          </div>
+        );
       default:
         return null;
     }
   }
 
-  renderInputAutosuggest = () => {
+  renderInputFqnAutosuggest = () => {
     const { edmType, namespaces } = this.props;
     const { pKeysAdded, typeName, typeNamespace } = this.state;
     if (edmType !== EdmConsts.ENTITY_TYPE_TITLE && edmType !== EdmConsts.ENTITY_SET_TITLE) return null;
@@ -241,12 +259,29 @@ export class NewEdmObjectInput extends React.Component {
     );
   }
 
+  renderInputDatatypeAutosuggest = () => {
+    if (this.props.edmType !== EdmConsts.PROPERTY_TYPE_TITLE) return null;
+    return (
+      <div>
+        <div>Datatype:</div>
+        <Select
+          value={this.state.datatype}
+          onChange={this.handleDatatypeChange}
+          options={EdmConsts.EDM_PRIMITIVE_TYPES}
+          placeholder="datatype"
+        />
+        <div className={styles.spacerSmall} />
+      </div>
+    );
+  }
+
   renderInput = () => {
     const inputClassName = (this.state.editing) ? StringConsts.EMPTY : styles.hidden;
     return (
       <div className={inputClassName}>
         {this.renderInputFieldsForEdmType()}
-        {this.renderInputAutosuggest()}
+        {this.renderInputFqnAutosuggest()}
+        {this.renderInputDatatypeAutosuggest()}
         <button className={styles.genericButton} onClick={this.createNewEdmObject}>Create</button>
       </div>
     );
