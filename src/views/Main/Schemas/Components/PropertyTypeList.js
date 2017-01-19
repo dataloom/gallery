@@ -9,14 +9,6 @@ import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
-  static propTypes = {
-    propertyTypes: PropTypes.array,
-    name: PropTypes.string,
-    namespace: PropTypes.string,
-    updateSchemaFn: PropTypes.func,
-    propertyTypePage: PropTypes.bool
-  }
-
   static contextTypes = {
     isAdmin: PropTypes.bool
   }
@@ -25,9 +17,7 @@ export class PropertyTypeList extends React.Component {
     super();
     this.state = {
       propertyTypes: [],
-      newPropertyRow: false,
       addError: false,
-      deleteError: false,
       loadTypesError: false
     };
   }
@@ -51,8 +41,7 @@ export class PropertyTypeList extends React.Component {
     .then((propertyTypes) => {
       this.setState({
         propertyTypes,
-        addError: false,
-        deleteError: false
+        addError: false
       });
     }).catch(() => {
       this.setState({ loadTypesError: true });
@@ -61,15 +50,7 @@ export class PropertyTypeList extends React.Component {
 
   updateAddError = () => {
     this.setState({
-      addError: true,
-      deleteError: false
-    });
-  }
-
-  updateDeleteError = () => {
-    this.setState({
-      deleteError: true,
-      addError: false
+      addError: true
     });
   }
 
@@ -86,30 +67,6 @@ export class PropertyTypeList extends React.Component {
     });
   }
 
-  successfullyAddedProperty = () => {
-    this.setState({
-      newPropertyRow: false,
-      addError: false,
-      deleteError: false
-    });
-    this.props.updateSchemaFn();
-  }
-
-  addPropertyToSchema = (namespace, name) => {
-    EntityDataModelApi.addPropertyTypesToSchema(
-      Utils.getFqnObj(this.props.namespace, this.props.name),
-      [Utils.getFqnObj(namespace, name)]
-    ).then(() => {
-      this.successfullyAddedProperty();
-    }).catch(() => {
-      this.updateAddError();
-    });
-  }
-
-  shouldDisplayContainer = () => {
-    return (this.props.propertyTypePage) ? styles.edmContainer : StringConsts.EMPTY;
-  }
-
   renderNewPropertyTypeInputLine = () => {
     if (!this.context.isAdmin) return null;
     return (
@@ -121,28 +78,21 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { propertyTypePage, updateSchemaFn, name, namespace } = this.props;
-    const { propertyTypes, addError, deleteError } = this.state;
+    const { propertyTypes, addError } = this.state;
     const propArray = propertyTypes;
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
         key={prop.id}
         propertyType={prop}
-        propertyTypePage={propertyTypePage}
-        error={this.updateDeleteError}
-        updateFn={updateSchemaFn}
-        schemaName={name}
-        schemaNamespace={namespace}
       />);
     });
 
     return (
-      <div className={this.shouldDisplayContainer()}>
+      <div className={styles.edmContainer}>
         {this.renderNewPropertyTypeInputLine()}
         <div className={this.showErrorMsgClass[this.state.loadTypesError]}>Unable to load property types.</div>
         {propertyTypeList}
         <div className={this.showErrorMsgClass[addError]}>Unable to add property type.</div>
-        <div className={this.showErrorMsgClass[deleteError]}>Unable to delete property type.</div>
       </div>
     );
   }
