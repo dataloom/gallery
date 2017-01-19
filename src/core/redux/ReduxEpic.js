@@ -1,10 +1,10 @@
 import { combineEpics } from 'redux-observable';
 import CatalogEpic from '../../containers/catalog/CatalogEpic';
-import EntitySetDetailEpic from '../../containers/entitysetdetail/EntitySetDetailEpic';
+import EdmEpic from '../../containers/edm/EdmEpic';
 
 export default function reduxEpic() {
   return combineEpics(
     CatalogEpic,
-    EntitySetDetailEpic
+    EdmEpic
   );
 }

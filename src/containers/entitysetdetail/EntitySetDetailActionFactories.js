@@ -6,17 +6,3 @@ export function entitySetDetailRequest(id) {
     id
   }
 }
-
-export function entitySetDetailResolve(id) {
-  return {
-    type: actionTypes.ENTITY_SET_RESOLVE,
-    id
-  }
-}
-
-export function entitySetDetailReject(errorMessage) {
-  return {
-    type: actionTypes.ENTITY_SET_REJECT,
-    errorMessage
-  }
-}

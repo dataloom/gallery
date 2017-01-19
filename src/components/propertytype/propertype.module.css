@@ -1,0 +1,29 @@
+.propertyTypeList {
+    display: table;
+    width: 100%;
+    font-size: 16px;
+}
+
+.propertyTypeListHeader, .propertyType {
+    display: table-row;
+}
+.propertyTypeListHeader {
+    font-weight: 600;
+}
+
+.title, .description {
+    display: table-cell;
+    padding: 15px;
+}
+
+.propertyType:nth-child(even) .title, .propertyType:nth-child(even) .description {
+    background: #f3f5f7;
+}
+
+.title {
+    border-right: 1px solid #c9cfd3;
+    width: 180px
+}
+.description {
+    text-align: justify;
+}

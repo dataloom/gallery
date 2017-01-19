@@ -8,7 +8,7 @@ import {
 
 import catalogReducer from '../../containers/catalog/CatalogReducer';
 import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
-import ndataReducer from '../../containers/ndata/NdataReducer';
+import edmReducer from '../../containers/edm/EdmReducer';
 import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 
 export default function reduxReducer() {
@@ -16,7 +16,7 @@ export default function reduxReducer() {
   return combineReducers({
     catalog: catalogReducer,
     entitySetDetail: entitySetDetailReducer,
-    normalizedData: ndataReducer,
+    normalizedData: edmReducer,
     organizations: organizationsReducer
   });
 }

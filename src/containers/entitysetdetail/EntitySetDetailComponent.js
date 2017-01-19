@@ -4,10 +4,12 @@ import { denormalize } from 'normalizr';
 import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
-import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
-import { EntitySetDetail } from '../../components/entityset/EntitySet';
+import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
+import { EntitySetNschema } from '../edm/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 
@@ -43,7 +45,10 @@ class EntitySetDetailComponent extends React.Component {
           <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
         </Page.Header>
         <Page.Body>
-
+          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+          <AsyncContent {...this.props.asyncState} content={() => {
+            return (<PropertyTypeList propertyTypes={this.props.entitySet.entityType.properties}/>);
+          }}/>
         </Page.Body>
       </Page>
     );
@@ -54,11 +59,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 }
 
-
 function mapStateToProps(state, ownProps) {
   const entitySetDetail = state.get('entitySetDetail').toJS(),
     normalizedData = state.get('normalizedData');
 
+  // TODO: Move loading into helper function in EdmStorage
   const entitySetId = ownProps.params.id;
   let entitySet;
   if (normalizedData.hasIn(['entitySets'], entitySetId)) {
@@ -75,7 +80,18 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-    loadEntitySet: () => { dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id)); }
+    loadEntitySet: () => {
+      const id = ownProps.params.id;
+      dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
+      // TODO: Move filter creation in helper function in EdmApi
+      dispatch(edmActionFactories.filteredEdmRequest(
+        [{
+          type: 'EntitySet',
+          id,
+          'include': ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+        }]
+      ));
+    }
   }
 }
 
