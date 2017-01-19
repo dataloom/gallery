@@ -46,11 +46,12 @@ export class PropertyType extends React.Component {
     const prop = this.props.propertyType;
     return (
       <div className={styles.edmContainer}>
+        <div className={styles.italic}>{`${prop.type.namespace}.${prop.type.name}`}</div>
+        <div className={styles.spacerSmall} />
         <div className={styles.title}>{prop.title}</div>
         <div className={styles.description}>{prop.description}</div>
         <div className={styles.spacerSmall} />
-        <div className={styles.subtitle}>{`${prop.type.namespace}.${prop.type.name}`}</div>
-        <div className={styles.datatype}>datatype: {prop.datatype}</div>
+        <div className={styles.italic}>datatype: {prop.datatype}</div>
         <div className={styles.spacerBig} />
         <hr />
       </div>

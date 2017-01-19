@@ -62,13 +62,14 @@ export class EntityType extends React.Component {
 
   render() {
     const { entityType, updateFn, allPropNamespaces, fqnToId } = this.props;
-    const options = [FileConsts.CSV, FileConsts.JSON];
+    const options = [FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
+        <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
+        <div className={styles.spacerSmall} />
         <div className={styles.title}>{entityType.title}</div>
         <div className={styles.description}>{entityType.description}</div>
         <div className={styles.spacerSmall} />
-        <div className={styles.subtitle}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
         <div className={styles.dropdownButtonContainer}>
           <DropdownButton downloadFn={this.downloadFile} options={options} />
         </div>

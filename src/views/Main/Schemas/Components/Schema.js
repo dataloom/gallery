@@ -72,9 +72,7 @@ export class Schema extends React.Component {
     const options = [FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
-        <div className={styles.name}>{schema.fqn.name}</div>
-        <div className={styles.spacerSmall} />
-        <div className={styles.subtitle}>{schema.fqn.namespace}</div>
+        <div className={styles.name}>{`${schema.fqn.namespace}.${schema.fqn.name}`}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
           <DropdownButton downloadFn={this.downloadFile} options={options} />
