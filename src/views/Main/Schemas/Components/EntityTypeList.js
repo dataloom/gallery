@@ -99,7 +99,7 @@ export class EntityTypeList extends React.Component {
 
     return (
       <div>
-        <div className={styles.edmContainer}>
+        <div>
           {this.renderCreateEntityType()}
         </div>
         <div className={this.errorClass[loadTypesError]}>Unable to load entity types.</div>

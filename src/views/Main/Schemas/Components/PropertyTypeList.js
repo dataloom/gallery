@@ -65,7 +65,7 @@ export class PropertyTypeList extends React.Component {
     });
 
     return (
-      <div className={styles.edmContainer}>
+      <div>
         {this.renderNewPropertyTypeInputLine()}
         <div className={this.showErrorMsgClass[this.state.loadTypesError]}>Unable to load property types.</div>
         {propertyTypeList}

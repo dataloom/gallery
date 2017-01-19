@@ -116,9 +116,7 @@ export class SchemaList extends React.Component {
     });
     return (
       <div>
-        <div className={styles.edmContainer}>
-          {this.renderCreateNewSchema()}
-        </div>
+        {this.renderCreateNewSchema()}
         <div className={this.errorClass[loadSchemasError]}>Unable to load schemas.</div>
         {schemaList}
       </div>

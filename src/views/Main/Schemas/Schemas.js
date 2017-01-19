@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import styles from './styles.module.css';
+import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
@@ -49,12 +50,15 @@ export class Schemas extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2 className={styles.center}>Schemas</h2>
-        <DataModelToolbar changeView={this.changeDataModelView} />
-        <div className={styles.spacerBig} />
-        {this.getDataModelView()}
-      </div>
+      <Page>
+        <Page.Header>
+          <Page.Title>Data Model</Page.Title>
+          <DataModelToolbar changeView={this.changeDataModelView} />
+        </Page.Header>
+        <Page.Body>
+          {this.getDataModelView()}
+        </Page.Body>
+      </Page>
     );
   }
 }

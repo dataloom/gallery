@@ -63,7 +63,7 @@ export class EntityType extends React.Component {
     const { entityType, updateFn, allPropNamespaces } = this.props;
     const options = [FileConsts.JSON];
     return (
-      <div className={styles.edmContainer}>
+      <div>
         <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
         <div className={styles.spacerSmall} />
         <div className={styles.title}>{entityType.title}</div>

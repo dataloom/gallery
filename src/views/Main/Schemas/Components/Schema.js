@@ -63,7 +63,7 @@ export class Schema extends React.Component {
     const { schema, allEntityTypeNamespaces, allPropNamespaces } = this.props;
     const options = [FileConsts.JSON];
     return (
-      <div className={styles.edmContainer}>
+      <div>
         <div className={styles.name}>{`${schema.fqn.namespace}.${schema.fqn.name}`}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
