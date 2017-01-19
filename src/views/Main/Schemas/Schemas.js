@@ -52,7 +52,7 @@ export class Schemas extends React.Component {
     return (
       <Page>
         <Page.Header>
-          <Page.Title>Data Model</Page.Title>
+          <Page.Title>Data model</Page.Title>
           <DataModelToolbar changeView={this.changeDataModelView} />
         </Page.Header>
         <Page.Body>
