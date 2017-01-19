@@ -157,23 +157,21 @@ export class NameNamespaceAutosuggest extends React.Component {
         <td />
         <td className={this.selectInputClassName()}>
           <Select
-            options={nameSuggestions}
-            value={nameVal}
-            onChange={this.onNameChange}
-            onInputChange={this.onNameInputChange}
-            onFocus={this.onFocus}
-            placeholder="name"
-          />
+              options={nameSuggestions}
+              value={nameVal}
+              onChange={this.onNameChange}
+              onInputChange={this.onNameInputChange}
+              onFocus={this.onFocus}
+              placeholder="name" />
         </td>
         <td className={this.selectInputClassName()}>
           <Select
-            options={namespaceSuggestions}
-            value={namespaceVal}
-            onChange={this.onNamespaceChange}
-            onInputChange={this.onNamespaceInputChange}
-            onFocus={this.onFocus}
-            placeholder="namespace"
-          />
+              options={namespaceSuggestions}
+              value={namespaceVal}
+              onChange={this.onNamespaceChange}
+              onInputChange={this.onNamespaceInputChange}
+              onFocus={this.onFocus}
+              placeholder="namespace" />
         </td>
         <td className={this.saveButtonClass()}>
           <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button>

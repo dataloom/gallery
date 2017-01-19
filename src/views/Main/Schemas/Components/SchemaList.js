@@ -107,12 +107,11 @@ export class SchemaList extends React.Component {
     } = this.state;
     const schemaList = schemas.map((schema) => {
       return (<Schema
-        key={`${schema.fqn.namespace}.${schema.fqn.name}`}
-        schema={schema}
-        updateFn={this.updateFn}
-        allPropNamespaces={allPropNamespaces}
-        allEntityTypeNamespaces={allEntityTypeNamespaces}
-      />);
+          key={`${schema.fqn.namespace}.${schema.fqn.name}`}
+          schema={schema}
+          updateFn={this.updateFn}
+          allPropNamespaces={allPropNamespaces}
+          allEntityTypeNamespaces={allEntityTypeNamespaces} />);
     });
     return (
       <div>

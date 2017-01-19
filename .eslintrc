@@ -88,7 +88,7 @@
       }
     ],
     "react/sort-comp": "off",
-    "react/forbid-prop-types": "off"
+    "react/forbid-prop-types": "off",
     "react/jsx-indent-props": ["error", 4],
     "react/prefer-stateless-function": "warn",
   }
