@@ -4,9 +4,13 @@
 
 import React from 'react';
 
+import Select from 'react-select';
+
 import {
   DataModels,
-  OrganizationsApi
+  Types,
+  OrganizationsApi,
+  PermissionsApi
 } from 'loom-data';
 
 import {
@@ -14,21 +18,36 @@ import {
   Checkbox,
   ControlLabel,
   FormControl,
-  FormGroup
+  FormGroup,
+  HelpBlock
 } from 'react-bootstrap';
+
 
 import styles from '../styles/create.org.module.css';
 
+import Utils from '../../../utils/Utils';
+
 const {
+  AceBuilder,
+  AclBuilder,
+  AclData,
+  AclDataBuilder,
   Organization,
-  OrganizationBuilder
+  OrganizationBuilder,
+  PrincipalBuilder
 } = DataModels;
+
+const {
+  ActionTypes,
+  PermissionTypes,
+  PrincipalTypes
+} = Types;
 
 class CreateOrganization extends React.Component {
 
   state :{
     title :string,
-    domains :string,
+    domains :Array<Object>,
     description :string,
     visibility :string
   };
@@ -44,7 +63,7 @@ class CreateOrganization extends React.Component {
 
     this.state = {
       title: '',
-      domains: '',
+      domains: [],
       description: '',
       visibility: ''
     };
@@ -72,13 +91,6 @@ class CreateOrganization extends React.Component {
     });
   }
 
-  handleOnChangeDomains = (e :Object) => {
-
-    this.setState({
-      domains: e.target.value
-    });
-  }
-
   handleOnChangeDescription = (e :Object) => {
 
     this.setState({
@@ -95,12 +107,61 @@ class CreateOrganization extends React.Component {
 
   onClickCreate = () => {
 
+    const emailDomains = this.state.domains.map((obj) => {
+      return obj.value;
+    });
+
     const org :Organization = (new OrganizationBuilder())
       .setTitle(this.state.title)
       .setDescription(this.state.description)
+      .setAutoApprovedEmails(emailDomains)
       .build();
 
-    OrganizationsApi.createOrganization(org);
+    OrganizationsApi.createOrganization(org)
+      .then((createdOrgId :string) => {
+
+        const aclData :AclData = (new AclDataBuilder())
+          .setAction(ActionTypes.SET)
+          .setAcl(
+            (new AclBuilder())
+              .setAclKey([createdOrgId])
+              .setAces([
+                (new AceBuilder())
+                  .setPermissions([PermissionTypes.READ])
+                  .setPrincipal(
+                    (new PrincipalBuilder())
+                      .setType(PrincipalTypes.ROLE)
+                      .setId('AuthenticatedUser')
+                      .build()
+                  )
+                  .build()
+              ])
+              .build()
+          )
+          .build();
+
+        PermissionsApi.updateAcl(aclData)
+          .catch((e) => {
+            console.error(e);
+          });
+
+        this.props.onCreate(createdOrgId);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
+
+  onChangeDomainTag = (value :Array<Object>) => {
+
+    this.setState({
+      domains: value
+    });
+  }
+
+  isValidDomain = (value :Object) => {
+
+    return Utils.isValidEmail(`test@${value.label}`);
   }
 
   render() {
@@ -118,11 +179,13 @@ class CreateOrganization extends React.Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>Domains</ControlLabel>
-          <FormControl
-              componentClass="input"
-              type="text"
-              placeholder="Domains..."
-              onChange={this.handleOnChangeDomains} />
+          <Select.Creatable
+              multi
+              options={[]}
+              value={this.state.domains}
+              onChange={this.onChangeDomainTag}
+              isValidNewOption={this.isValidDomain} />
+          <HelpBlock>{ 'Ex: kryptnostic.com' }</HelpBlock>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Description</ControlLabel>

@@ -6,6 +6,8 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
+import Select from 'react-select';
+import classnames from 'classnames';
 
 import {
   DataModels,
@@ -16,7 +18,7 @@ import {
 import {
   Button,
   DropdownButton,
-  MenuItem,
+  MenuItem
 } from 'react-bootstrap';
 
 import {
@@ -49,13 +51,38 @@ import {
   fetchOrgsFailure
 } from '../actions/OrganizationsActionFactory';
 
-const { Organization } = DataModels;
 
-function mapStateToProps(state :Map<*, *>) {
+const ReactSelectOptionPropType = React.PropTypes.shape({
+  label: React.PropTypes.string.isRequired,
+  value: React.PropTypes.string.isRequired
+});
+
+function mapStateToProps(state :Map<*, *>, ownProps :Object) {
+
+  const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map());
+  const orgCount = organizations.size;
+
+  let selectedOrgOption = {
+    label: '',
+    value: ''
+  };
+
+  const selectOrgOptions = organizations.map((org) => {
+    const selectOption = {
+      label: org.get('title'),
+      value: org.get('id')
+    };
+    if (ownProps.params.orgId === org.get('id')) {
+      selectedOrgOption = selectOption;
+    }
+    return selectOption;
+  }).valueSeq().toJS();
 
   return {
     isFetchingOrgs: state.getIn(['organizations', 'isFetchingOrgs']),
-    organizations: state.getIn(['organizations', 'organizations']).valueSeq()
+    orgCount,
+    selectOrgOptions,
+    selectedOrgOption
   };
 }
 
@@ -72,28 +99,6 @@ function mapDispatchToProps(dispatch :Function) {
   };
 }
 
-// !!!HACK!!! - only temporary until there's an API to talk to
-function getOrgInfo() {
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const organizations = [
-        {
-          id: 'abcd-1234-efg-456',
-          title: 'Kryptnostic Inc.',
-          description: 'Fully Homomorphic Encryption For The Win'
-        },
-        {
-          id: 'euhd-4729-aie-639',
-          title: 'JustBeamIt',
-          description: 'File Transfer Made Easy'
-        }
-      ];
-      resolve(organizations);
-    }, 350);
-  });
-}
-
 class OrganizationList extends React.Component {
 
   state :{
@@ -108,10 +113,9 @@ class OrganizationList extends React.Component {
     }).isRequired,
     children: React.PropTypes.node,
     isFetchingOrgs: React.PropTypes.bool.isRequired,
-    organizations: React.PropTypes.instanceOf(Immutable.Iterable).isRequired,
-    params: React.PropTypes.shape({
-      orgId: React.PropTypes.string
-    }).isRequired
+    orgCount: React.PropTypes.number.isRequired,
+    selectOrgOptions: React.PropTypes.arrayOf(ReactSelectOptionPropType).isRequired,
+    selectedOrgOption: ReactSelectOptionPropType.isRequired
   };
 
   constructor(props) {
@@ -119,11 +123,17 @@ class OrganizationList extends React.Component {
     super(props);
 
     this.state = {
+      selectedOrganization: null,
       showCreateOrganizationComponent: false
     };
   }
 
   componentDidMount() {
+
+    this.fetchOrganizations();
+  }
+
+  fetchOrganizations = () => {
 
     this.props.actions.fetchOrgsRequest();
 
@@ -152,7 +162,11 @@ class OrganizationList extends React.Component {
 
   handleCreateOrganization = () => {
 
-    console.log('creating organization...');
+    this.setState({
+      showCreateOrganizationComponent: false
+    });
+
+    hashHistory.push('/org');
   }
 
   renderCreateOrganizationComponent = () => {
@@ -166,9 +180,9 @@ class OrganizationList extends React.Component {
 
   renderOrganizationDetailsComponent = () => {
 
-    if (this.props.organizations.size === 0) {
+    if (this.props.orgCount === 0) {
       return (
-        <div className={`${styles.flexComponent} ${styles.flexCenter}`}>
+        <div className={classnames(styles.flexComponent, styles.flexCenter)}>
           <h4>{ 'No organizations. Create a new Organization!' }</h4>
           { this.renderCreateOrganizationButton() }
         </div>
@@ -176,8 +190,8 @@ class OrganizationList extends React.Component {
     }
 
     return (
-      <div>
-        { this.renderOrganizationsDropdown() }
+      <div className={classnames(styles.flexComponent, styles.orgDetailsWrapper)}>
+        { this.renderOrganizationsSelect() }
         { React.Children.toArray(this.props.children) }
       </div>
     );
@@ -192,37 +206,26 @@ class OrganizationList extends React.Component {
     );
   }
 
-  renderOrganizationsDropdown = () => {
+  renderOrganizationsSelect = () => {
 
-    const currentOrgId = this.props.params.orgId;
-    const currentOrg = this.props.organizations.get(currentOrgId);
+    const updateSelectedOrganization = (newSelectedOrgOption :Object) => {
 
-    let dropdownTitle = 'Your Organizations';
-    if (currentOrg !== undefined && currentOrg !== null) {
-      dropdownTitle = currentOrg.get('title');
-    }
-
-    const orgs = this.props.organizations.map((org) => {
-      const orgId = org.get('id');
-      const orgTitle = org.get('title');
-      return (
-        <MenuItem key={orgId} eventKey={orgId}>
-          { orgTitle }
-        </MenuItem>
-      );
-    });
+      if (!newSelectedOrgOption) {
+        hashHistory.push('/org');
+      }
+      else if (this.props.selectedOrgOption.value !== newSelectedOrgOption.value) {
+        hashHistory.push(`/org/${newSelectedOrgOption.value}`);
+      }
+    };
 
     return (
-      <DropdownButton
-          id="your-orgs"
-          title={dropdownTitle}
-          onSelect={(selectedOrgId) => {
-            if (currentOrgId !== selectedOrgId) {
-              hashHistory.push(`/${PageConsts.ORG}/${selectedOrgId}`);
-            }
-          }}>
-        { orgs }
-      </DropdownButton>
+      <Select
+          clearable
+          searchable
+          placeholder="Your Organizations"
+          options={this.props.selectOrgOptions}
+          value={this.props.selectedOrgOption}
+          onChange={updateSelectedOrganization} />
     );
   };
 
