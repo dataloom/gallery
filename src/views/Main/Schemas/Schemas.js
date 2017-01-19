@@ -1,19 +1,17 @@
 import React, { PropTypes } from 'react';
 import styles from './styles.module.css';
+import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
-import AuthService from '../../../utils/AuthService';
 import '../../../core/styles/global/dropdown.css';
 
 export class Schemas extends React.Component {
 
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService),
-    updateTopbarFn: PropTypes.func,
-    profileFn: PropTypes.func
+    updateTopbarFn: PropTypes.func
   }
 
   static childContextTypes = {
@@ -39,7 +37,7 @@ export class Schemas extends React.Component {
       case EdmConsts.ENTITY_TYPE:
         return (<EntityTypeList />);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeList propertyTypePage />);
+        return (<PropertyTypeList />);
       default:
         return (<SchemaList />);
     }
@@ -52,12 +50,15 @@ export class Schemas extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2 className={styles.center}>Schemas</h2>
-        <DataModelToolbar changeView={this.changeDataModelView} />
-        <div className={styles.spacerBig} />
-        {this.getDataModelView()}
-      </div>
+      <Page>
+        <Page.Header>
+          <Page.Title>Data model</Page.Title>
+          <DataModelToolbar changeView={this.changeDataModelView} />
+        </Page.Header>
+        <Page.Body>
+          {this.getDataModelView()}
+        </Page.Body>
+      </Page>
     );
   }
 }

@@ -5,18 +5,19 @@ body {
   padding: 0;
   margin: 0;
   color: #404345;
-}
-
-body > div {
-  height: 100%;
-  width: 100%;
-}
-
-* {
+  line-height: 18px;
   font-family: 'Lato', 'Helvetica Neue', 'Open Sans', sans-serif;
   font-size: 13px;
   font-variant: normal;
-  line-height: 18px;
+}
+
+/*
+ * TODO: temporarily set in index.html. need figure out how to set this styling only on #app, since this selector
+ * will be changed by the compile step
+ */
+#app {
+  height: 100%;
+  width: 100%;
 }
 
 .appWrapper {
@@ -33,9 +34,8 @@ body > div {
 }
 
 .appContent {
-  background-color: #ffffff;
+  background-color: #fafbfc;
   padding: 0;
   display: flex;
-  justify-content: center;
-  width: 100%;
+  flex: 1 0 auto;
 }

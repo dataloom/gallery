@@ -11,6 +11,14 @@
   border-bottom-right-radius: 4px;
 }
 
+.description {
+  font-size: 14px;
+
+}
+
+.italic {
+  font-style: italic;
+}
 /* Property List & Property */
 .verifyDeleteContainer {
   position: fixed;

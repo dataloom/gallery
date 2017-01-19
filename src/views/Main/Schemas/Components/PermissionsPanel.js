@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { PermissionsApi, UsersApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
 import styles from '../styles.module.css';
 import Utils from '../../../../utils/Utils';
@@ -204,7 +204,7 @@ export class PermissionsPanel extends React.Component {
   updatePermissions(action, principal, view) {
     const { entitySetName, propertyTypeName, propertyTypeNamespace } = this.props;
     const name = entitySetName;
-    const permissions = (action === PermissionsConsts.REMOVE) ?
+    const permissions = (action === ActionConsts.REMOVE) ?
       [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
     const updateFn = (propertyTypeName) ?
       PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
@@ -221,7 +221,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissions = () => {
-    this.updateRoles(PermissionsConsts.SET, UserRoleConsts.DEFAULT_USER_ROLE, this.state.globalValue);
+    this.updateRoles(ActionConsts.SET, UserRoleConsts.DEFAULT_USER_ROLE, this.state.globalValue);
   }
 
   updateDropdownValue = (e) => {
@@ -309,7 +309,7 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.updateRoles(PermissionsConsts.REMOVE, role, rolesView);
+                this.updateRoles(ActionConsts.REMOVE, role, rolesView);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -340,7 +340,7 @@ export class PermissionsPanel extends React.Component {
           <button
             className={`${styles.simpleButton} ${styles.spacerMargin}`}
             onClick={() => {
-              this.updateRoles(PermissionsConsts.SET, newRoleValue, rolesView);
+              this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
             }}
           >Save</button>
         </div>
@@ -415,7 +415,7 @@ export class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <button
               onClick={() => {
-                this.updateEmails(PermissionsConsts.REMOVE, email, emailsView);
+                this.updateEmails(ActionConsts.REMOVE, email, emailsView);
               }}
               className={styles.deleteButton}
             >-</button>
@@ -447,7 +447,7 @@ export class PermissionsPanel extends React.Component {
           <button
             className={`${styles.simpleButton} ${styles.spacerMargin}`}
             onClick={() => {
-              this.updateEmails(PermissionsConsts.SET, newEmailValue, emailsView);
+              this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
             }}
           >Save</button>
         </div>

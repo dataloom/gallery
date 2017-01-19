@@ -7,10 +7,10 @@ import { SearchApi } from 'loom-data';
 
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
-import * as ndataActionFactories from '../ndata/NdataActionFactories';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import { Permission } from '../../core/permissions/Permission';
 import type { EntitySet } from '../../components/entityset/EntitySetStorage';
-import { EntitySetNschema } from '../../components/entityset/EntitySetStorage';
+import { EntitySetNschema } from '../edm/EdmStorage';
 
 function convertSearchResult(rawResult): EntitySet {
   let permission = rawResult.acls.map(Permission.enumValueOf).reduce(Permission.maxPermission);
@@ -26,7 +26,7 @@ function searchCatalog(filterParams) {
     .map(result => normalize(result, [EntitySetNschema]))
     .map(Immutable.fromJS)
     .flatMap(normalizedData => [
-      ndataActionFactories.updateNormalizedData(normalizedData.get('entities')),
+      edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
       actionFactories.catalogSearchResolve(normalizedData.get('result'))
     ])
     // Error Handling

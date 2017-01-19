@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+
 import styles from './styles.module.css';
 
 import HeaderNav from '../../components/headernav/HeaderNav';
@@ -14,9 +15,19 @@ export class Container extends React.Component {
     route: PropTypes.object
   }
 
+  static childContextTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   constructor(props) {
     super(props);
     this.state = props.route.profileFn();
+  }
+
+  getChildContext() {
+    return {
+      isAdmin: this.props.route.profileFn().isAdmin
+    };
   }
 
   updateState = () => {

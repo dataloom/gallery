@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
@@ -30,7 +30,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       },
       verifyingDelete: false,
       propertyToDelete: undefined
@@ -55,7 +55,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       }
     });
     this.props.updateFn();
@@ -71,33 +71,25 @@ export class PropertyList extends React.Component {
     });
   }
 
-  addPropertyToEntityType = (namespace, name) => {
-    EntityDataModelApi.addPropertyTypesToEntityType(
-      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
-      [Utils.getFqnObj(namespace, name)]
-    ).then(() => {
-      this.updateFqns();
-    }).catch(() => {
-      this.updateError(PermissionsConsts.ADD);
+  addProperty = (namespace, name) => {
+    const propIdList = this.props.allPropNamespaces[namespace].filter((propObj) => {
+      return (propObj.name === name);
     });
+    if (propIdList.length !== 1) {
+      this.updateError();
+      return;
+    }
+    const propId = propIdList[0].id;
+    this.props.updateFn([propId], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
+    this.updateFqns();
   }
 
-  deleteProp = () => {
-    EntityDataModelApi.removePropertyTypesFromEntityType(
-      Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
-      [this.state.propertyToDelete]
-    ).then(() => {
-      this.setState({
-        verifyingDelete: false,
-        propertyToDelete: undefined,
-        error: {
-          display: styles.hidden,
-          action: PermissionsConsts.REMOVE
-        }
-      });
-      return this.props.updateFn();
-    }).catch(() => {
-      this.updateError(PermissionsConsts.REMOVE);
+  deleteProp = (optionalProperty) => {
+    const property = (optionalProperty === undefined) ? this.state.propertyToDelete : optionalProperty;
+    this.props.updateFn([property.id], ActionConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
+    this.setState({
+      verifyingDelete: false,
+      propertyToDelete: undefined
     });
   }
 
@@ -109,10 +101,15 @@ export class PropertyList extends React.Component {
   }
 
   verifyDelete = (property) => {
-    this.setState({
-      verifyingDelete: true,
-      propertyToDelete: property
-    });
+    if (this.props.entityTypeNamespace !== undefined && this.props.entityTypeName !== undefined) {
+      this.setState({
+        verifyingDelete: true,
+        propertyToDelete: property
+      });
+    }
+    else {
+      this.deleteProp(property);
+    }
   }
 
   renderVerifyDeletePropertyBox = () => {
@@ -161,7 +158,7 @@ export class PropertyList extends React.Component {
         className={className}
         namespaces={allPropNamespaces}
         usedProperties={properties}
-        addProperty={this.addPropertyToEntityType}
+        addProperty={this.addProperty}
       />
     );
   }
@@ -191,6 +188,7 @@ export class PropertyList extends React.Component {
               <th />
               <th className={styles.tableCell}>Property Type Name</th>
               <th className={styles.tableCell}>Property Type Namespace</th>
+              <th className={styles.tableCell}>Property Type Title</th>
             </tr>
             {propertyList}
             {this.renderNewRowInput()}

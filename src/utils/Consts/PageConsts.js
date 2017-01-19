@@ -3,7 +3,8 @@ const CATALOG = 'catalog';
 const LOGIN = 'login';
 const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
-const SCHEMAS = "schemas";
+const ORG = 'org';
+const DATA_MODEL = 'datamodel';
 
 export default {
   HOME,
@@ -11,5 +12,6 @@ export default {
   LOGIN,
   SETTINGS,
   VISUALIZE,
-  SCHEMAS
+  ORG,
+  DATA_MODEL
 };

@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
-import Utils from '../../../../utils/Utils';
 import { EntityType } from './EntityType';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -35,7 +34,7 @@ export class EntityTypeList extends React.Component {
     EntityDataModelApi.getAllEntityTypes()
       .then((entityTypes) => {
         this.setState({
-          entityTypes: Utils.addKeysToArray(entityTypes),
+          entityTypes,
           loadTypesError: false,
           createTypeError: false
         });
@@ -50,16 +49,22 @@ export class EntityTypeList extends React.Component {
       EntityDataModelApi.getAllPropertyTypes(),
       (entityTypes, propertyTypes) => {
         const allPropNamespaces = {};
-        propertyTypes.forEach((prop) => {
-          if (allPropNamespaces[prop.namespace] === undefined) {
-            allPropNamespaces[prop.namespace] = [prop.name];
-          }
-          else {
-            allPropNamespaces[prop.namespace].push(prop.name);
-          }
-        });
+        if (propertyTypes.length > 0) {
+          propertyTypes.forEach((prop) => {
+            const propObj = {
+              name: prop.type.name,
+              id: prop.id
+            };
+            if (allPropNamespaces[prop.type.namespace] === undefined) {
+              allPropNamespaces[prop.type.namespace] = [propObj];
+            }
+            else {
+              allPropNamespaces[prop.type.namespace].push(propObj);
+            }
+          });
+        }
         this.setState({
-          entityTypes: Utils.addKeysToArray(entityTypes),
+          entityTypes,
           allPropNamespaces,
           loadTypesError: false
         });
@@ -85,11 +90,8 @@ export class EntityTypeList extends React.Component {
 
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
-        key={entityType.key}
-        name={entityType.name}
-        namespace={entityType.namespace}
-        properties={entityType.properties}
-        primaryKey={entityType.primaryKey}
+        key={entityType.id}
+        entityType={entityType}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
       />);
@@ -97,7 +99,7 @@ export class EntityTypeList extends React.Component {
 
     return (
       <div>
-        <div className={styles.edmContainer}>
+        <div>
           {this.renderCreateEntityType()}
         </div>
         <div className={this.errorClass[loadTypesError]}>Unable to load entity types.</div>
