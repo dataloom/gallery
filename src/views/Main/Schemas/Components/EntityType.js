@@ -48,13 +48,13 @@ export class EntityType extends React.Component {
 
   updateEntityType = (newTypeUuid, action) => {
     if (action === ActionConsts.ADD) {
-      EntityDataModelApi.addPropertyTypesToEntityType(this.props.entityType.id, newTypeUuid[0])
+      EntityDataModelApi.addPropertyTypeToEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
         this.props.updateFn();
       });
     }
     else if (action === ActionConsts.REMOVE) {
-      EntityDataModelApi.removePropertyTypesFromEntityType(this.props.entityType.id, newTypeUuid[0])
+      EntityDataModelApi.removePropertyTypeFromEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
         this.props.updateFn();
       });
