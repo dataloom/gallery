@@ -2,7 +2,7 @@
 import Immutable from 'immutable';
 
 import * as actionTypes from './EntitySetDetailActionTypes';
-import * as ndataActionTypes from '../edm/NdataActionTypes';
+import * as ndataActionTypes from '../edm/EdmActionTypes';
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const INITIAL_STATE:Immutable.Map<*,*> = Immutable.fromJS({

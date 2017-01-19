@@ -1,7 +1,7 @@
 /* @flow */
 import Immutable from 'immutable';
 
-import * as actionTypes from './NdataActionTypes';
+import * as actionTypes from './EdmActionTypes';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({});
 

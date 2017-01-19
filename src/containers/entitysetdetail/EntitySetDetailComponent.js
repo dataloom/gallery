@@ -9,7 +9,7 @@ import { EntitySetNschema } from '../edm/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
-import * as ndataActionFactories from '../edm/NdataActionFactories';
+import * as ndataActionFactories from '../edm/EdmActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 

@@ -1,6 +1,6 @@
 /* @flow */
 import { Map } from 'immutable';
-import * as actionTypes from './NdataActionTypes';
+import * as actionTypes from './EdmActionTypes';
 
 export function updateNormalizedData(normalizedData: Map<string, Map<string, *>>) {
   return {
