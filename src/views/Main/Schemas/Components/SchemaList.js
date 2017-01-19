@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
+import Page from '../../../../components/page/Page';
 import { Schema } from './Schema';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -116,9 +117,7 @@ export class SchemaList extends React.Component {
     });
     return (
       <div>
-        <div className={styles.edmContainer}>
-          {this.renderCreateNewSchema()}
-        </div>
+        {this.renderCreateNewSchema()}
         <div className={this.errorClass[loadSchemasError]}>Unable to load schemas.</div>
         {schemaList}
       </div>
