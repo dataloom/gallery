@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
+import { Button } from 'react-bootstrap';
+import styles from './expandabletext.module.css';
 
 export default class ExpandableText extends React.Component {
   static propTypes = {
-    text: PropTypes.string,
-    maxLength: PropTypes.number
+    text: PropTypes.string.isRequired,
+    maxLength: PropTypes.number.isRequired
   };
 
   constructor(props) {
