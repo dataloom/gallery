@@ -3,7 +3,7 @@ import { Route, IndexRoute, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import { Container } from './Container';
-import { Schemas } from './Schemas/Schemas';
+import { DataModel } from './Schemas/DataModel';
 import { Login } from './Login/Login';
 import { Home } from './Home/Home';
 import { Settings } from './Settings/Settings';
@@ -93,7 +93,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
-      <Route path={PageConsts.DATA_MODEL} component={Schemas} onEnter={requireAuth} />
+      <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
