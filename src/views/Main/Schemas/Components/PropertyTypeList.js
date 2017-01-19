@@ -17,7 +17,6 @@ export class PropertyTypeList extends React.Component {
     super();
     this.state = {
       propertyTypes: [],
-      addError: false,
       loadTypesError: false
     };
   }
@@ -39,31 +38,9 @@ export class PropertyTypeList extends React.Component {
   updateFn = () => {
     EntityDataModelApi.getAllPropertyTypes()
     .then((propertyTypes) => {
-      this.setState({
-        propertyTypes,
-        addError: false
-      });
+      this.setState({ propertyTypes });
     }).catch(() => {
       this.setState({ loadTypesError: true });
-    });
-  }
-
-  updateAddError = () => {
-    this.setState({
-      addError: true
-    });
-  }
-
-  createNewPropertyType = () => {
-    const name = this.state.newPropName;
-    const namespace = this.state.newPropNamespace;
-    const datatype = this.state.newPropDatatype;
-    const title = this.state.newPropTitle;
-    EntityDataModelApi.createPropertyType({ name, namespace, datatype, title })
-    .then(() => {
-      this.updateFn();
-    }).catch(() => {
-      this.updateAddError();
     });
   }
 
@@ -78,7 +55,7 @@ export class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { propertyTypes, addError } = this.state;
+    const { propertyTypes } = this.state;
     const propArray = propertyTypes;
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
@@ -92,7 +69,6 @@ export class PropertyTypeList extends React.Component {
         {this.renderNewPropertyTypeInputLine()}
         <div className={this.showErrorMsgClass[this.state.loadTypesError]}>Unable to load property types.</div>
         {propertyTypeList}
-        <div className={this.showErrorMsgClass[addError]}>Unable to add property type.</div>
       </div>
     );
   }
