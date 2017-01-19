@@ -161,13 +161,11 @@ export class Visualize extends React.Component {
     const optionsBar = options.map((option) => {
       return (
         <button
-          onClick={() => {
-            this.switchView(option);
-          }}
-          className={this.getOptionButtonClass(option)}
-          key={option}
-        >{option}
-        </button>
+            onClick={() => {
+              this.switchView(option);
+            }}
+            className={this.getOptionButtonClass(option)}
+            key={option}>{option}</button>
       );
     });
     return (
