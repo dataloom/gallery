@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
-import Page from '../../../../components/page/Page';
 import { Schema } from './Schema';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
