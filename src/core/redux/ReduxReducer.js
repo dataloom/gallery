@@ -8,7 +8,7 @@ import {
 
 import catalogReducer from '../../containers/catalog/CatalogReducer';
 import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
-import ndataReducer from '../../containers/ndata/NdataReducer';
+import ndataReducer from '../../containers/edm/NdataReducer';
 import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 
 export default function reduxReducer() {

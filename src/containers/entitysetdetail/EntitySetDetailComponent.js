@@ -5,11 +5,11 @@ import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
-import { EntitySetNschema } from '../ndata/EdmStorage';
+import { EntitySetNschema } from '../edm/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
-import * as ndataActionFactories from '../ndata/NdataActionFactories';
+import * as ndataActionFactories from '../edm/NdataActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 
