@@ -9,7 +9,7 @@ import { EntitySetNschema } from '../edm/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
-import * as ndataActionFactories from '../edm/EdmActionFactories';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 
@@ -84,7 +84,7 @@ function mapDispatchToProps(dispatch, ownProps) {
       const id = ownProps.params.id;
       dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
       // TODO: Move filter creation in helper function in EdmApi
-      dispatch(ndataActionFactories.filteredEdmRequest(
+      dispatch(edmActionFactories.filteredEdmRequest(
         [{
           type: 'EntitySet',
           id,

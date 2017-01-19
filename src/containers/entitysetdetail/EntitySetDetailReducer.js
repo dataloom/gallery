@@ -2,7 +2,7 @@
 import Immutable from 'immutable';
 
 import * as actionTypes from './EntitySetDetailActionTypes';
-import * as ndataActionTypes from '../edm/EdmActionTypes';
+import * as edmActionTypes from '../edm/EdmActionTypes';
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const INITIAL_STATE:Immutable.Map<*,*> = Immutable.fromJS({
@@ -26,7 +26,7 @@ export default function reducer(state:Immutable.Map<*,*> = INITIAL_STATE, action
         entitySetId: action.id,
       });
 
-    case ndataActionTypes.EDM_OBJECT_RESOLVE:
+    case edmActionTypes.EDM_OBJECT_RESOLVE:
       if (state.entitySetId != action.reference.id) {
         return state;
       }
