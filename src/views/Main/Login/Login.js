@@ -8,10 +8,6 @@ export class Login extends React.Component {
     auth: PropTypes.instanceOf(AuthService)
   }
 
-  constructor() {
-    super();
-  }
-
   componentDidMount() {
     this.props.auth.login();
   }
@@ -21,7 +17,7 @@ export class Login extends React.Component {
   }
 
   render() {
-    return <div className={styles.root}/>;
+    return <div className={styles.root} />;
   }
 }
 

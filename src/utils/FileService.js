@@ -19,6 +19,8 @@ export default class FileService {
     FileSaver.saveAs(blob, name.concat(
       (datatype === FileConsts.JSON) ? '.json' : '.csv'
     ));
-    success(datatype);
+    if (success && success !== undefined) {
+      success(datatype);
+    }
   }
 }

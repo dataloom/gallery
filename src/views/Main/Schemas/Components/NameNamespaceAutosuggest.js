@@ -72,9 +72,9 @@ export class NameNamespaceAutosuggest extends React.Component {
     allNamespaces.forEach((namespace) => {
       if (namespace.trim().toLowerCase().slice(0, inputNamespace.length) === inputNamespace) {
         const possibleNames = this.state.unusedProperties[namespace];
-        possibleNames.forEach((name) => {
-          if (name.trim().toLowerCase().slice(0, inputName.length) === inputName) {
-            const valueToAdd = (getNames) ? name : namespace;
+        possibleNames.forEach((propObj) => {
+          if (propObj.name.trim().toLowerCase().slice(0, inputName.length) === inputName) {
+            const valueToAdd = (getNames) ? propObj.name : namespace;
             if (!suggestionSet.has(valueToAdd)) suggestionSet.add(valueToAdd);
           }
         });

@@ -89,12 +89,12 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
-      <Route path='entitysets/:id' component={EntitySetDetailComponent} onEnter={requireAuth} />
-      <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
+      <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.DATA_MODEL} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
-        <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
+      <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}

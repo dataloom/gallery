@@ -4,7 +4,7 @@ const LOGIN = 'login';
 const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
 const ORG = 'org';
-const SCHEMAS = 'schemas';
+const DATA_MODEL = 'datamodel';
 
 export default {
   HOME,
@@ -13,5 +13,5 @@ export default {
   SETTINGS,
   VISUALIZE,
   ORG,
-  SCHEMAS
+  DATA_MODEL
 };

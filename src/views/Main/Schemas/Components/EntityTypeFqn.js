@@ -1,17 +1,13 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
-import Utils from '../../../../utils/Utils';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import styles from '../styles.module.css';
 
 
 export class EntityTypeFqn extends React.Component {
   static propTypes = {
     entityTypeFqn: PropTypes.object,
-    schemaName: PropTypes.string,
-    schemaNamespace: PropTypes.string,
-    updateFn: PropTypes.func,
-    errorFn: PropTypes.func
+    updateSchemaFn: PropTypes.func
   }
 
   static contextTypes = {
@@ -19,13 +15,7 @@ export class EntityTypeFqn extends React.Component {
   }
 
   deleteProp = () => {
-    const { schemaNamespace, schemaName, entityTypeFqn, updateFn, errorFn } = this.props;
-    EntityDataModelApi.removeEntityTypesFromSchema(Utils.getFqnObj(schemaNamespace, schemaName), [entityTypeFqn])
-    .then(() => {
-      return updateFn();
-    }).catch(() => {
-      return errorFn(PermissionsConsts.REMOVE);
-    });
+    this.props.updateSchemaFn([this.props.entityTypeFqn.id], ActionConsts.REMOVE, EdmConsts.ENTITY_TYPE);
   }
 
   renderDeleteButton = () => {
@@ -46,8 +36,9 @@ export class EntityTypeFqn extends React.Component {
     return (
       <tr className={styles.tableRows}>
         {this.renderDeleteButton()}
-        <td className={styles.tableCell}>{fqn.name}</td>
-        <td className={styles.tableCell}>{fqn.namespace}</td>
+        <td className={styles.tableCell}>{fqn.type.name}</td>
+        <td className={styles.tableCell}>{fqn.type.namespace}</td>
+        <td className={styles.tableCell}>{fqn.title}</td>
       </tr>
     );
   }

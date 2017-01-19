@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { Promise } from 'bluebird';
-import Utils from '../../../../utils/Utils';
 import { Schema } from './Schema';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -36,7 +35,7 @@ export class SchemaList extends React.Component {
     EntityDataModelApi.getAllSchemas()
     .then((schemas) => {
       this.setState({
-        schemas: Utils.addKeysToArray(schemas),
+        schemas,
         loadSchemasError: false
       });
     }).catch(() => {
@@ -51,34 +50,48 @@ export class SchemaList extends React.Component {
       EntityDataModelApi.getAllPropertyTypes(),
       EntityDataModelApi.getAllEntityTypes(),
       (schemas, propertyTypes, entityTypes) => {
+        console.log(schemas);
         const allPropNamespaces = {};
         const allEntityTypeNamespaces = {};
-        propertyTypes.forEach((prop) => {
-          if (allPropNamespaces[prop.namespace] === undefined) {
-            allPropNamespaces[prop.namespace] = [prop.name];
-          }
-          else {
-            allPropNamespaces[prop.namespace].push(prop.name);
-          }
-        });
-        entityTypes.forEach((entityType) => {
-          if (allEntityTypeNamespaces[entityType.namespace] === undefined) {
-            allEntityTypeNamespaces[entityType.namespace] = [entityType.name];
-          }
-          else {
-            allEntityTypeNamespaces[entityType.namespace].push(entityType.name);
-          }
-        });
+        if (propertyTypes.length > 0) {
+          propertyTypes.forEach((prop) => {
+            const propObj = {
+              name: prop.type.name,
+              id: prop.id
+            };
+            if (allPropNamespaces[prop.type.namespace] === undefined) {
+              allPropNamespaces[prop.type.namespace] = [propObj];
+            }
+            else {
+              allPropNamespaces[prop.type.namespace].push(propObj);
+            }
+          });
+        }
+        if (entityTypes.length > 0) {
+          entityTypes.forEach((entityType) => {
+            const typeObj = {
+              name: entityType.type.name,
+              id: entityType.id
+            };
+            if (allEntityTypeNamespaces[entityType.type.namespace] === undefined) {
+              allEntityTypeNamespaces[entityType.type.namespace] = [typeObj];
+            }
+            else {
+              allEntityTypeNamespaces[entityType.type.namespace].push(typeObj);
+            }
+          });
+        }
 
         this.setState({
-          schemas: Utils.addKeysToArray(schemas),
+          schemas,
           allPropNamespaces,
           allEntityTypeNamespaces,
           loadSchemasError: false
         });
-      }).catch(() => {
-        this.setState({ loadSchemasError: true });
-      });
+      }
+    ).catch(() => {
+      this.setState({ loadSchemasError: true });
+    });
   }
 
   renderCreateNewSchema = () => {
@@ -87,15 +100,17 @@ export class SchemaList extends React.Component {
   }
 
   render() {
-    const { schemas, allPropNamespaces, allEntityTypeNamespaces, loadSchemasError } = this.state;
+    const {
+      schemas,
+      allPropNamespaces,
+      allEntityTypeNamespaces,
+      loadSchemasError
+    } = this.state;
     const schemaList = schemas.map((schema) => {
+      console.log(schema);
       return (<Schema
-        key={schema.key}
-        name={schema.name}
-        namespace={schema.namespace}
-        propertyTypes={schema.propertyTypes}
-        entityTypeFqns={schema.entityTypeFqns}
-        jsonContents={schema}
+        key={`${schema.fqn.namespace}.${schema.fqn.name}`}
+        schema={schema}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
         allEntityTypeNamespaces={allEntityTypeNamespaces}

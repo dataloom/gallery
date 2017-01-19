@@ -1,7 +1,7 @@
 import React from 'react';
 import { UsersApi } from 'loom-data';
 import StringConsts from '../../../utils/Consts/StringConsts';
-import PermissionConsts from '../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../utils/Consts/ActionConsts';
 import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
 
 import styles from './styles.module.css';
@@ -64,7 +64,7 @@ export class Settings extends React.Component {
       if (role.trim().toLowerCase() !== oldRole.trim().toLowerCase()) newRoleList.push(oldRole);
       else newRole = oldRole.trim();
     });
-    if (action === PermissionConsts.ADD) newRoleList.push(newRole);
+    if (action === ActionConsts.ADD) newRoleList.push(newRole);
     UsersApi.resetUserRoles(userId, newRoleList)
     .then(() => {
       this.setState({ updateError: styles.hidden });
@@ -73,7 +73,7 @@ export class Settings extends React.Component {
       this.setState({ updateError: styles.error });
     });
     userData[userId].roles = newRoleList;
-    const newRoleValue = (action === PermissionConsts.ADD) ? StringConsts.EMPTY : this.state.newRoleValue;
+    const newRoleValue = (action === ActionConsts.ADD) ? StringConsts.EMPTY : this.state.newRoleValue;
     const reservedRoleError = emptyErrorObj;
     this.setState({ userData, newRoleValue, reservedRoleError });
   }
@@ -136,7 +136,7 @@ export class Settings extends React.Component {
             <div className={styles.inline}>
               <button
                 onClick={() => {
-                  this.updateRoles(PermissionConsts.REMOVE, role);
+                  this.updateRoles(ActionConsts.REMOVE, role);
                 }}
                 className={styles.deleteButton}
               >-</button>
@@ -181,7 +181,7 @@ export class Settings extends React.Component {
               <button
                 className={styles.simpleButton}
                 onClick={() => {
-                  this.updateRoles(PermissionConsts.ADD, newRoleValue);
+                  this.updateRoles(ActionConsts.ADD, newRoleValue);
                 }}
               >Add</button>
             </div>

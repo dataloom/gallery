@@ -15,9 +15,19 @@ export class Container extends React.Component {
     route: PropTypes.object
   }
 
+  static childContextTypes = {
+    isAdmin: PropTypes.bool
+  }
+
   constructor(props) {
     super(props);
     this.state = props.route.profileFn();
+  }
+
+  getChildContext() {
+    return {
+      isAdmin: this.props.route.profileFn().isAdmin
+    };
   }
 
   updateState = () => {

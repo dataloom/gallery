@@ -3,7 +3,7 @@ import { PermissionsApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
-import PermissionsConsts from '../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../utils/Consts/ActionConsts';
 import styles from './styles.module.css';
 
 const authConsts = {
@@ -69,7 +69,7 @@ export class Home extends React.Component {
             type: UserRoleConsts.USER,
             id
           },
-          action: PermissionsConsts.SET,
+          action: ActionConsts.SET,
           name: entitySet,
           permissions
         }]),
@@ -98,8 +98,8 @@ export class Home extends React.Component {
   }
 
   getPermissionType(permissions) {
-    if (permissions.includes(PermissionsConsts.WRITE)) return PermissionsConsts.WRITE.toLowerCase();
-    return PermissionsConsts.READ.toLowerCase();
+    if (permissions.includes(ActionConsts.WRITE)) return ActionConsts.WRITE.toLowerCase();
+    return ActionConsts.READ.toLowerCase();
   }
 
   renderAllRequests = () => {

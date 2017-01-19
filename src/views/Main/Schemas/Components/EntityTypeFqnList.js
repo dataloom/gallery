@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
@@ -10,9 +10,7 @@ import styles from '../styles.module.css';
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
     entityTypeFqns: PropTypes.array,
-    schemaName: PropTypes.string,
-    schemaNamespace: PropTypes.string,
-    updateFn: PropTypes.func,
+    updateSchemaFn: PropTypes.func,
     allEntityTypeNamespaces: PropTypes.object
   }
 
@@ -26,18 +24,9 @@ export class EntityTypeFqnList extends React.Component {
       newEntityTypeRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       }
     };
-  }
-
-  keyPropertyTypes() {
-    const entityTypeFqns = this.props.entityTypeFqns.map((fqn) => {
-      const newFqn = fqn;
-      newFqn.key = this.props.entityTypeFqns.indexOf(fqn);
-      return newFqn;
-    });
-    return entityTypeFqns;
   }
 
   newEntityType = () => {
@@ -45,12 +34,11 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   updateFqns = () => {
-    this.props.updateFn();
     this.setState({
       newEntityTypeRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       }
     });
   }
@@ -65,14 +53,16 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addEntityTypeToSchema = (namespace, name) => {
-    EntityDataModelApi.addEntityTypesToSchema(
-      Utils.getFqnObj(this.props.schemaNamespace, this.props.schemaName),
-      [Utils.getFqnObj(namespace, name)]
-    ).then(() => {
-      this.updateFqns();
-    }).catch(() => {
-      this.updateError(PermissionsConsts.ADD);
+    const entityTypeIdList = this.props.allEntityTypeNamespaces[namespace].filter((typeObj) => {
+      return (typeObj.name === name);
     });
+    if (entityTypeIdList.length !== 1) {
+      this.updateError();
+      return;
+    }
+    const entityTypeId = entityTypeIdList[0].id;
+    this.props.updateSchemaFn([entityTypeId], ActionConsts.ADD, EdmConsts.ENTITY_TYPE);
+    this.updateFqns();
   }
 
   renderAddNewRowButton = () => {
@@ -98,17 +88,13 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   render() {
-    const { schemaName, schemaNamespace, updateFn } = this.props;
-    const fqnArray = this.keyPropertyTypes();
-    const entityTypeFqnList = fqnArray.map((fqn) => {
+    const { entityTypeFqns, updateSchemaFn } = this.props;
+    const entityTypeFqnList = entityTypeFqns.map((fqn) => {
       return (
         <EntityTypeFqn
-          key={fqn.key}
+          key={fqn.id}
           entityTypeFqn={fqn}
-          schemaName={schemaName}
-          schemaNamespace={schemaNamespace}
-          updateFn={updateFn}
-          errorFn={this.updateError}
+          updateSchemaFn={updateSchemaFn}
         />
       );
     });
@@ -120,6 +106,7 @@ export class EntityTypeFqnList extends React.Component {
               <th />
               <th className={styles.tableCell}>Entity Type Name</th>
               <th className={styles.tableCell}>Entity Type Namespace</th>
+              <th className={styles.tableCell}>Entity Type Title</th>
             </tr>
             {entityTypeFqnList}
             {this.renderNewRowInput()}
