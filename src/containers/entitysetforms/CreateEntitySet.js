@@ -5,6 +5,8 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import * as edmActionFactories from '../edm/EdmActionFactories';
+import { getEdmObjectsShallow } from '../edm/EdmStorage';
 import { EntityTypePropType } from '../../components/entityset/EntitySetStorage';
 
 class CreateEntitySet extends React.Component {
@@ -99,7 +101,10 @@ class CreateEntitySet extends React.Component {
 }
 
 function mapStateToProps(state) {
+  const normalizedData = state.get('normalizedData').toJS(),
+    entityTypeReferences = state.get('createEntitySet').get('entityTypeReferences').toJS();
   return {
+    entityTypes: getEdmObjectsShallow(normalizedData, entityTypeReferences)
   };
 }
 
@@ -107,7 +112,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     onCreate: () => {},
-    loadEntityTypes: () => {}
+    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest())}
   };
 }
 

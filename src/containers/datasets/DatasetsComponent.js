@@ -8,9 +8,6 @@ import CreateEntitySet from '../entitysetforms/CreateEntitySet';
 import styles from './datasets.module.css';
 
 class DatasourcesComponent extends React.Component {
-  static propTypes = {
-  };
-
   constructor(props) {
     super(props);
 
