@@ -4,7 +4,8 @@ import { denormalize } from 'normalizr';
 import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
-import { EntitySetPropType, EntitySetNschema } from '../../components/entityset/EntitySetStorage';
+import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
+import { EntitySetNschema } from '../ndata/EdmNormalizeSchema';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
@@ -67,7 +68,6 @@ class EntitySetDetailComponent extends React.Component {
     this.props.loadEntitySet();
   }
 }
-
 
 function mapStateToProps(state, ownProps) {
   const entitySetDetail = state.get('entitySetDetail').toJS(),

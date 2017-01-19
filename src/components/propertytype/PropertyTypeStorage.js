@@ -1,5 +1,4 @@
 /* @flow */
-import { schema } from 'normalizr';
 import { PropTypes } from 'react';
 
 import { Permission } from '../../core/permissions/Permission';
@@ -23,5 +22,3 @@ export const PropertyTypePropType = PropTypes.shape({
   description: PropTypes.string,
   datatype: PropTypes.string
 });
-
-export const PropertyTypeNschema = new schema.Entity('propertyTypes');

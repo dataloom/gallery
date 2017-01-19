@@ -1,5 +1,4 @@
 /* @flow */
-import { schema } from 'normalizr';
 import { PropTypes } from 'react';
 
 import { Permission } from '../../core/permissions/Permission';
@@ -26,8 +25,4 @@ export const EntitySetPropType = PropTypes.shape({
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   propertyTypes: PropTypes.arrayOf(PropertyTypePropType)
-});
-
-export const EntitySetNschema = new schema.Entity('entitySets', {
-  propertyTypes: [PropertyTypeNschema]
 });
