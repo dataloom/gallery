@@ -1,46 +1,14 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
+import { PropertyTypePropType } from '../../../../components/propertytype/PropertyTypeStorage';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
   static propTypes = {
-    propertyType: PropTypes.object,
-    propertyTypePage: PropTypes.bool,
-    error: PropTypes.func,
-    updateFn: PropTypes.func,
-    schemaName: PropTypes.string,
-    schemaNamespace: PropTypes.string
-  }
-
-  static contextTypes = {
-    isAdmin: PropTypes.bool
-  }
-
-  deleteProp = () => {
-    const { schemaName, schemaNamespace, propertyType, updateFn, error } = this.props;
-    EntityDataModelApi.removePropertyTypesFromSchema(Utils.getFqnObj(schemaNamespace, schemaName), [propertyType])
-    .then(() => {
-      return updateFn();
-    }).catch(() => {
-      return error();
-    });
-  }
-
-  renderDeleteButton = () => {
-    const className = (this.props.propertyTypePage) ? styles.hidden : StringConsts.EMPTY;
-    if (this.context.isAdmin) {
-      return (
-        <td className={className}>
-          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
-        </td>
-      );
-    }
-    return (
-      <td className={className} />
-    );
-  }
+    propertyType: PropertyTypePropType.isRequired
+  };
 
   render() {
     const prop = this.props.propertyType;

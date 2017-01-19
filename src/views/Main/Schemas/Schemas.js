@@ -36,7 +36,7 @@ export class Schemas extends React.Component {
       case EdmConsts.ENTITY_TYPE:
         return (<EntityTypeList />);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeList propertyTypePage />);
+        return (<PropertyTypeList />);
       default:
         return (<SchemaList />);
     }
