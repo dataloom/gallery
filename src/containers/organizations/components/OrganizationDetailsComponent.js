@@ -5,21 +5,37 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import classnames from 'classnames';
 
 import {
-  DataModels
+  DataModels,
+  OrganizationApi
 } from 'loom-data';
+
+import {
+  Button,
+  ControlLabel,
+  FormControl,
+  FormGroup,
+  HelpBlock,
+  InputGroup,
+  ListGroup,
+  ListGroupItem
+} from 'react-bootstrap';
 
 import {
   connect
 } from 'react-redux';
 
 import {
+  hashHistory
+} from 'react-router';
+
+import {
   bindActionCreators
 } from 'redux';
 
 import styles from '../styles/orgs.module.css';
-import headerStyles from '../../../components/headernav/headernav.module.css';
 
 import LoadingSpinner from '../../../components/loadingspinner/LoadingSpinner';
 
@@ -55,33 +71,11 @@ function mapDispatchToProps(dispatch :Function) {
   };
 }
 
-// !!!HACK!!! - only temporary until there's an API to talk to
-function getOrgInfo(orgId) {
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const organizations = [
-        {
-          id: 'abcd-1234-efg-456',
-          title: 'Kryptnostic Inc.',
-          description: 'Fully Homomorphic Encryption For The Win'
-        },
-        {
-          id: 'euhd-4729-aie-639',
-          title: 'JustBeamIt',
-          description: 'File Transfer Made Easy'
-        }
-      ];
-      let result = null;
-      organizations.forEach((org) => {
-        if (org.id === orgId) result = org;
-      });
-      resolve(result);
-    }, 450);
-  });
-}
-
 class OrganizationDetails extends React.Component {
+
+  state :{
+    isInvalidEmail :boolean
+  }
 
   static propTypes = {
     actions: React.PropTypes.shape({
@@ -96,17 +90,69 @@ class OrganizationDetails extends React.Component {
     organization: React.PropTypes.shape(Organization).isRequired
   }
 
+  constructor(props :Object) {
+
+    super(props);
+
+    this.state = {
+      isInvalidEmail: false
+    };
+  }
+
   componentDidMount() {
 
-    this.props.actions.fetchOrgRequest();
+    if (this.props.organization.isEmpty()) {
 
-    getOrgInfo(this.props.params.orgId)
-      .then((response) => {
-        this.props.actions.fetchOrgSuccess(response);
-      })
-      .catch(() => {
-        this.props.actions.fetchOrgFailure();
-      });
+      this.props.actions.fetchOrgRequest();
+
+      OrganizationApi.getOrganization(this.props.params.orgId)
+        .then((response) => {
+          this.props.actions.fetchOrgSuccess(response);
+          hashHistory.push('/org');
+        })
+        .catch(() => {
+          this.props.actions.fetchOrgFailure();
+        });
+    }
+  }
+
+  renderInvitationSection = () => {
+
+    return (
+      <div className={styles.detailSection}>
+        <h4>Invite</h4>
+        <FormGroup className={styles.inviteInput}>
+          <ControlLabel>Email Address</ControlLabel>
+          <InputGroup>
+            <FormControl type="text" placeholder="Enter email" onChange={() => {}} />
+            <InputGroup.Button>
+              <Button onClick={() => {}}>Invite</Button>
+            </InputGroup.Button>
+          </InputGroup>
+          <HelpBlock className={styles.invalidEmail}>
+            { (this.props.isInvalidEmail) ? 'Invalid email' : '' }
+          </HelpBlock>
+        </FormGroup>
+      </div>
+    );
+  }
+
+  renderDomainsSection = () => {
+
+    const domains = this.props.organization.get('emails', []).map((domain :string) => {
+      return (
+        <ListGroupItem key={domain}>{ domain }</ListGroupItem>
+      );
+    });
+
+    return (
+      <div className={classnames(styles.detailSection, styles.domains)}>
+        <h4>Domains</h4>
+        <ListGroup>
+          { domains }
+        </ListGroup>
+      </div>
+    );
   }
 
   render() {
@@ -116,10 +162,23 @@ class OrganizationDetails extends React.Component {
     }
 
     return (
-      <div>
-        <h3>
-          { this.props.organization.get('title') }
-        </h3>
+      <div className={classnames(styles.flexComponent)}>
+        <div className={styles.detailSection}>
+          <h3>
+            { this.props.organization.get('title') }
+          </h3>
+          <h4>
+            { this.props.organization.get('description') }
+          </h4>
+        </div>
+        { this.renderInvitationSection() }
+        { this.renderDomainsSection() }
+        <div className={styles.detailSection}>
+          <h4>Requests</h4>
+        </div>
+        <div className={styles.detailSection}>
+          <h4>Users</h4>
+        </div>
       </div>
     );
   }
