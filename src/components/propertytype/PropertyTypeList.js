@@ -24,7 +24,7 @@ export default class PropertyTypeList extends React.Component {
     return (
       <div className={styles.propertyTypeList}>
         <div className={styles.propertyTypeListHeader}>
-          <div className={styles.title}>Title</div>
+          <div className={styles.title}>Property Title</div>
           <div className={styles.description}>Description</div>
         </div>
         {content}

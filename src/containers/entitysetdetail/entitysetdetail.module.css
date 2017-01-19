@@ -22,3 +22,8 @@
 }
 
 /* Body */
+.propertyTypeTitle {
+    margin: 0 0 25px 0;
+    font-size: 21px;
+    font-weight: 600;
+}

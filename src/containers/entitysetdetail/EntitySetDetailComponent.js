@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
-import { EntitySetNschema } from '../ndata/EdmNormalizeSchema';
+import { EntitySetNschema } from '../ndata/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
@@ -58,7 +58,10 @@ class EntitySetDetailComponent extends React.Component {
           <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
         </Page.Header>
         <Page.Body>
-          <PropertyTypeList propertyTypes={EXAMPLE_PROPERTY_TYPES}/>
+          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+          <AsyncContent {...this.props.asyncState} content={() => {
+            return (<PropertyTypeList propertyTypes={this.props.entitySet.entityType.properties}/>);
+          }}/>
         </Page.Body>
       </Page>
     );

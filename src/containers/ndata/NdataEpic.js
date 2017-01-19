@@ -6,6 +6,7 @@ import { combineEpics } from 'redux-observable';
 import { DataModels, EntityDataModelApi } from 'loom-data';
 
 import * as EdmApi from './EdmApi';
+import * as EdmStorage from './EdmStorage'
 import * as actionTypes from './NdataActionTypes';
 import * as actionFactories from './NdataActionFactories';
 
@@ -35,6 +36,14 @@ function referenceEpic(action$) {
 function loadEdm(edmQuery) {
   return Observable.from(EdmApi.edmQuery(edmQuery))
     .map(Immutable.fromJS)
+    .map(normalizedData => {
+      return normalizedData
+        .update(EdmStorage.COLLECTIONS.ENTITY_SET, (entitySetMap) => {
+          return entitySetMap.mapEntries(([id, entitySet]) => {
+            return [id, entitySet.set('entityType', entitySet.get('entityTypeId'))]
+          })
+        })
+    })
     .map(actionFactories.updateNormalizedData);
 }
 
