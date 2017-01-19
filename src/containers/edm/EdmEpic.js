@@ -7,8 +7,8 @@ import { DataModels, EntityDataModelApi } from 'loom-data';
 
 import * as EdmApi from './EdmApi';
 import * as EdmStorage from './EdmStorage'
-import * as actionTypes from './NdataActionTypes';
-import * as actionFactories from './NdataActionFactories';
+import * as actionTypes from './EdmActionTypes';
+import * as actionFactories from './EdmActionFactories';
 
 /**
  * Listens for updateNormalizedData actions and dispatches object references

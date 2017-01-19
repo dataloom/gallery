@@ -5,11 +5,11 @@ import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
-import { EntitySetNschema } from '../ndata/EdmStorage';
+import { EntitySetNschema } from '../edm/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
-import * as ndataActionFactories from '../ndata/NdataActionFactories';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 
@@ -84,7 +84,7 @@ function mapDispatchToProps(dispatch, ownProps) {
       const id = ownProps.params.id;
       dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
       // TODO: Move filter creation in helper function in EdmApi
-      dispatch(ndataActionFactories.filteredEdmRequest(
+      dispatch(edmActionFactories.filteredEdmRequest(
         [{
           type: 'EntitySet',
           id,
