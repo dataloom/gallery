@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Property } from './Property';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
@@ -31,7 +31,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       },
       verifyingDelete: false,
       propertyToDelete: undefined
@@ -56,7 +56,7 @@ export class PropertyList extends React.Component {
       newPropertyRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       }
     });
     this.props.updateFn();
@@ -75,7 +75,8 @@ export class PropertyList extends React.Component {
   addProperty = (namespace, name) => {
     const propId = this.props.propFqnsToId[`${namespace}.${name}`];
     if (!propId || propId === undefined) return;
-    this.props.updateFn([propId], PermissionsConsts.ADD, EdmConsts.PROPERTY_TYPE);
+    this.props.updateFn([propId], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
+    this.updateFqns();
   }
 
   // addPropertyToEntityType = (namespace, name) => {
@@ -85,13 +86,13 @@ export class PropertyList extends React.Component {
   //   ).then(() => {
   //     this.updateFqns();
   //   }).catch(() => {
-  //     this.updateError(PermissionsConsts.ADD);
+  //     this.updateError(ActionConsts.ADD);
   //   });
   // }
 
   deleteProp = (optionalProperty) => {
     const property = (optionalProperty === undefined) ? this.state.propertyToDelete : optionalProperty;
-    this.props.updateFn([property.id], PermissionsConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
+    this.props.updateFn([property.id], ActionConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
     this.setState({
       verifyingDelete: false,
       propertyToDelete: undefined

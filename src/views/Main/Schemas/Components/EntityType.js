@@ -6,7 +6,7 @@ import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
 import FileConsts from '../../../../utils/Consts/FileConsts';
-import PermissionConsts from '../../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
@@ -46,11 +46,11 @@ export class EntityType extends React.Component {
 
   updateEntityType = (newTypeUuid, action) => {
     let newPropertyIds = this.props.entityType.properties;
-    if (action === PermissionConsts.ADD) {
-      newPropertyIds = this.state.propertyIds.concat(newTypeUuid);
+    if (action === ActionConsts.ADD) {
+      newPropertyIds = this.props.entityType.properties.concat(newTypeUuid);
     }
-    else if (action === PermissionConsts.REMOVE) {
-      newPropertyIds = this.state.propertyIds.filter((id) => {
+    else if (action === ActionConsts.REMOVE) {
+      newPropertyIds = this.props.entityType.properties.filter((id) => {
         return (id !== newTypeUuid[0]);
       });
     }
@@ -78,7 +78,7 @@ export class EntityType extends React.Component {
           primaryKey={entityType.primaryKey}
           entityTypeName={entityType.type.name}
           entityTypeNamespace={entityType.type.namespace}
-          updateFn={updateFn}
+          updateFn={this.updateEntityType}
           allPropNamespaces={allPropNamespaces}
           propFqnsToId={fqnToId}
           editingPermissions={false}

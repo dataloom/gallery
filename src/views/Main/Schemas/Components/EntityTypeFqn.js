@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import styles from '../styles.module.css';
 
 
@@ -15,7 +15,7 @@ export class EntityTypeFqn extends React.Component {
   }
 
   deleteProp = () => {
-    this.props.updateSchemaFn([this.props.entityTypeFqn.id], PermissionsConsts.REMOVE, EdmConsts.ENTITY_TYPE);
+    this.props.updateSchemaFn([this.props.entityTypeFqn.id], ActionConsts.REMOVE, EdmConsts.ENTITY_TYPE);
   }
 
   renderDeleteButton = () => {

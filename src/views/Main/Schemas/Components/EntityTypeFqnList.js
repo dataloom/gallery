@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import PermissionsConsts from '../../../../utils/Consts/PermissionConsts';
+import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import Utils from '../../../../utils/Utils';
@@ -25,7 +25,7 @@ export class EntityTypeFqnList extends React.Component {
       newEntityTypeRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       }
     };
   }
@@ -39,7 +39,7 @@ export class EntityTypeFqnList extends React.Component {
       newEntityTypeRow: false,
       error: {
         display: styles.hidden,
-        action: PermissionsConsts.ADD
+        action: ActionConsts.ADD
       }
     });
   }
@@ -56,7 +56,7 @@ export class EntityTypeFqnList extends React.Component {
   addEntityTypeToSchema = (namespace, name) => {
     const entityTypeId = this.props.entityTypeFqnsToId[`${namespace}.${name}`];
     if (!entityTypeId || entityTypeId === undefined) return;
-    this.props.updateSchemaFn([entityTypeId], PermissionsConsts.ADD, EdmConsts.ENTITY_TYPE);
+    this.props.updateSchemaFn([entityTypeId], ActionConsts.ADD, EdmConsts.ENTITY_TYPE);
     this.updateFqns();
   }
 

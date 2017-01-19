@@ -4,7 +4,7 @@ import { PropertyType } from './PropertyType';
 import Utils from '../../../../utils/Utils';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import { NewEdmObjectInput } from '../../../../components/edminput/NewEdmObjectInput';
+import { NewEdmObjectInput } from './NewEdmObjectInput';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
-import { PropertyList } from '../../../../components/propertylist/PropertyList';
+import { PropertyList } from './PropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import FileService from '../../../../utils/FileService';

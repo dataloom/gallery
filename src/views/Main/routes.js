@@ -90,7 +90,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
-      <Route path={PageConsts.SCHEMAS} component={Schemas} onEnter={requireAuth} />
+      <Route path={PageConsts.DATA_MODEL} component={Schemas} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
