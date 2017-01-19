@@ -25,6 +25,7 @@ export default class Utils {
   static loadUnusedPairs(allProps, properties) {
     const resultMap = Object.assign({}, allProps);
     properties.forEach((prop) => {
+      if (resultMap[prop.type.namespace] === undefined) return;
       const filteredNamespaceList = resultMap[prop.type.namespace].filter((propObj) => {
         return (propObj.id !== prop.id);
       });
