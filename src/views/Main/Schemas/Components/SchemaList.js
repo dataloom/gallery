@@ -50,7 +50,6 @@ export class SchemaList extends React.Component {
       EntityDataModelApi.getAllPropertyTypes(),
       EntityDataModelApi.getAllEntityTypes(),
       (schemas, propertyTypes, entityTypes) => {
-        console.log(schemas);
         const allPropNamespaces = {};
         const allEntityTypeNamespaces = {};
         if (propertyTypes.length > 0) {
@@ -107,7 +106,6 @@ export class SchemaList extends React.Component {
       loadSchemasError
     } = this.state;
     const schemaList = schemas.map((schema) => {
-      console.log(schema);
       return (<Schema
         key={`${schema.fqn.namespace}.${schema.fqn.name}`}
         schema={schema}

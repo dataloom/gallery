@@ -1,13 +1,14 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
+import { PropertyTypePropType } from '../../../../components/propertytype/PropertyTypeStorage';
 import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
   static propTypes = {
-    propertyType: PropTypes.object
-  }
+    propertyType: PropertyTypePropType.isRequired
+  };
 
   render() {
     const prop = this.props.propertyType;
