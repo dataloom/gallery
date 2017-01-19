@@ -16,18 +16,6 @@ export function filteredEdmRequest(edmQuery) {
   }
 }
 
-export function filteredEdmResolve() {
-  return {
-    type: actionTypes.FILTERED_EDM_RESOLVE
-  }
-}
-
-export function filteredEdmReject() {
-  return {
-    type: actionTypes.FILTERED_EDM_REJECT
-  }
-}
-
 export function edmObjectResolve(reference) {
   return {
     type: actionTypes.EDM_OBJECT_RESOLVE,

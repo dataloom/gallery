@@ -13,19 +13,6 @@ import * as ndataActionFactories from '../ndata/NdataActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
 
-const EXAMPLE_PROPERTY_TYPES = [
-  {
-    id: '1',
-    title: 'Title 1',
-    description: 'description 1',
-  },
-  {
-    id: '2',
-    title: 'Title 2',
-    description: 'description 2',
-  },
-];
-
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,

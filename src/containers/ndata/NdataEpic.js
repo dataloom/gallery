@@ -42,7 +42,7 @@ function loadEdm(edmQuery) {
           return entitySetMap.mapEntries(([id, entitySet]) => {
             return [id, entitySet.set('entityType', entitySet.get('entityTypeId'))]
           })
-        })
+        });
     })
     .map(actionFactories.updateNormalizedData);
 }
