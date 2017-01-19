@@ -76,6 +76,7 @@ function mapStateToProps(state, ownProps) {
   const entitySetDetail = state.get('entitySetDetail').toJS(),
     normalizedData = state.get('normalizedData');
 
+  // TODO: Move loading into helper function in EdmStorage
   const entitySetId = ownProps.params.id;
   let entitySet;
   if (normalizedData.hasIn(['entitySets'], entitySetId)) {
@@ -95,6 +96,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     loadEntitySet: () => {
       const id = ownProps.params.id;
       dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
+      // TODO: Move filter creation in helper function in EdmApi
       dispatch(ndataActionFactories.filteredEdmRequest(
         [{
           type: 'EntitySet',

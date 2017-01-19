@@ -6,6 +6,7 @@ import styles from './propertype.module.css';
 
 const MAX_DESCRIPTION_LENGTH = 300;
 
+// TODO: Make PropertyType a container that takes a PropertyType reference
 export default class PropertyType extends React.Component {
   static propTypes = {
     propertyType: PropertyTypePropType.isRequired,

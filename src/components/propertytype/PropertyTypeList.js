@@ -4,6 +4,7 @@ import { PropertyTypePropType } from './PropertyTypeStorage';
 import PropertyType from './PropertyType';
 import styles from './propertype.module.css';
 
+// TODO: make PropertyTypeList a container that takes a list of PropertyType references
 export default class PropertyTypeList extends React.Component {
   static propTypes = {
     propertyTypes: PropTypes.arrayOf(PropertyTypePropType).isRequired

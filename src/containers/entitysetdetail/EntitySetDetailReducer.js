@@ -10,6 +10,7 @@ export const INITIAL_STATE:Immutable.Map<*,*> = Immutable.fromJS({
     status: ASYNC_STATUS.LOADING,
     errorMessage: ''
   },
+  // TODO: Move to object reference
   entitySetId: null,
 });
 
