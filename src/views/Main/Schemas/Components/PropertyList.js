@@ -136,8 +136,8 @@ export class PropertyList extends React.Component {
   isPrimaryKey = (prop) => {
     if (this.props.primaryKey === undefined) return false;
     let primaryKey = false;
-    this.props.primaryKey.forEach((pKey) => {
-      if (pKey.name === prop.name && pKey.namespace === prop.namespace) primaryKey = true;
+    this.props.primaryKey.forEach((pKeyId) => {
+      if (pKeyId === prop.id) primaryKey = true;
     });
     return primaryKey;
   }

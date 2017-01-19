@@ -77,7 +77,7 @@ export class EntityType extends React.Component {
         <div className={styles.spacerMed} />
         <PropertyList
             properties={this.state.properties}
-            primaryKey={entityType.primaryKey}
+            primaryKey={entityType.key}
             entityTypeName={entityType.type.name}
             entityTypeNamespace={entityType.type.namespace}
             updateFn={this.updateEntityType}
