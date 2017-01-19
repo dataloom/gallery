@@ -17,8 +17,7 @@ export class PropertyList extends React.Component {
     allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
-    isOwner: PropTypes.bool,
-    propFqnsToId: PropTypes.object
+    isOwner: PropTypes.bool
   }
 
   static contextTypes = {
@@ -73,22 +72,17 @@ export class PropertyList extends React.Component {
   }
 
   addProperty = (namespace, name) => {
-    const propId = this.props.propFqnsToId[`${namespace}.${name}`];
-    if (!propId || propId === undefined) return;
+    const propIdList = this.props.allPropNamespaces[namespace].filter((propObj) => {
+      return (propObj.name === name);
+    });
+    if (propIdList.length !== 1) {
+      this.updateError();
+      return;
+    }
+    const propId = propIdList[0].id;
     this.props.updateFn([propId], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
     this.updateFqns();
   }
-
-  // addPropertyToEntityType = (namespace, name) => {
-  //   EntityDataModelApi.addPropertyTypesToEntityType(
-  //     Utils.getFqnObj(this.props.entityTypeNamespace, this.props.entityTypeName),
-  //     [Utils.getFqnObj(namespace, name)]
-  //   ).then(() => {
-  //     this.updateFqns();
-  //   }).catch(() => {
-  //     this.updateError(ActionConsts.ADD);
-  //   });
-  // }
 
   deleteProp = (optionalProperty) => {
     const property = (optionalProperty === undefined) ? this.state.propertyToDelete : optionalProperty;

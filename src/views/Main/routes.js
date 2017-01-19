@@ -94,7 +94,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
-        <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
+      <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}

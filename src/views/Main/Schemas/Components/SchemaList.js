@@ -18,9 +18,7 @@ export class SchemaList extends React.Component {
       schemas: [],
       loadSchemasError: false,
       allPropNamespaces: {},
-      allEntityTypeNamespaces: {},
-      propFqnsToId: {},
-      entityTypeFqnsToId: {}
+      allEntityTypeNamespaces: {}
     };
   }
 
@@ -52,29 +50,34 @@ export class SchemaList extends React.Component {
       EntityDataModelApi.getAllPropertyTypes(),
       EntityDataModelApi.getAllEntityTypes(),
       (schemas, propertyTypes, entityTypes) => {
+        console.log(schemas);
         const allPropNamespaces = {};
         const allEntityTypeNamespaces = {};
-        const propFqnsToId = {};
-        const entityTypeFqnsToId = {};
         if (propertyTypes.length > 0) {
           propertyTypes.forEach((prop) => {
-            propFqnsToId[`${prop.type.namespace}.${prop.type.name}`] = prop.id;
+            const propObj = {
+              name: prop.type.name,
+              id: prop.id
+            };
             if (allPropNamespaces[prop.type.namespace] === undefined) {
-              allPropNamespaces[prop.type.namespace] = [prop.type.name];
+              allPropNamespaces[prop.type.namespace] = [propObj];
             }
             else {
-              allPropNamespaces[prop.type.namespace].push(prop.type.name);
+              allPropNamespaces[prop.type.namespace].push(propObj);
             }
           });
         }
         if (entityTypes.length > 0) {
           entityTypes.forEach((entityType) => {
-            entityTypeFqnsToId[`${entityType.type.namespace}.${entityType.type.name}`] = entityType.id;
+            const typeObj = {
+              name: entityType.type.name,
+              id: entityType.id
+            };
             if (allEntityTypeNamespaces[entityType.type.namespace] === undefined) {
-              allEntityTypeNamespaces[entityType.type.namespace] = [entityType.type.name];
+              allEntityTypeNamespaces[entityType.type.namespace] = [typeObj];
             }
             else {
-              allEntityTypeNamespaces[entityType.type.namespace].push(entityType.type.name);
+              allEntityTypeNamespaces[entityType.type.namespace].push(typeObj);
             }
           });
         }
@@ -83,8 +86,6 @@ export class SchemaList extends React.Component {
           schemas,
           allPropNamespaces,
           allEntityTypeNamespaces,
-          propFqnsToId,
-          entityTypeFqnsToId,
           loadSchemasError: false
         });
       }
@@ -103,19 +104,16 @@ export class SchemaList extends React.Component {
       schemas,
       allPropNamespaces,
       allEntityTypeNamespaces,
-      loadSchemasError,
-      propFqnsToId,
-      entityTypeFqnsToId
+      loadSchemasError
     } = this.state;
     const schemaList = schemas.map((schema) => {
+      console.log(schema);
       return (<Schema
         key={`${schema.fqn.namespace}.${schema.fqn.name}`}
         schema={schema}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
         allEntityTypeNamespaces={allEntityTypeNamespaces}
-        propFqnsToId={propFqnsToId}
-        entityTypeFqnsToId={entityTypeFqnsToId}
       />);
     });
     return (

@@ -13,8 +13,7 @@ export class EntityType extends React.Component {
   static propTypes = {
     entityType: PropTypes.object,
     updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object,
-    fqnToId: PropTypes.object
+    allPropNamespaces: PropTypes.object
   }
 
   constructor() {
@@ -61,7 +60,7 @@ export class EntityType extends React.Component {
   }
 
   render() {
-    const { entityType, updateFn, allPropNamespaces, fqnToId } = this.props;
+    const { entityType, updateFn, allPropNamespaces } = this.props;
     const options = [FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
@@ -81,7 +80,6 @@ export class EntityType extends React.Component {
           entityTypeNamespace={entityType.type.namespace}
           updateFn={this.updateEntityType}
           allPropNamespaces={allPropNamespaces}
-          propFqnsToId={fqnToId}
           editingPermissions={false}
         />
         <div className={styles.spacerBig} />

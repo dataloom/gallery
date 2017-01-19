@@ -11,8 +11,7 @@ export class EntityTypeFqnList extends React.Component {
   static propTypes = {
     entityTypeFqns: PropTypes.array,
     updateSchemaFn: PropTypes.func,
-    allEntityTypeNamespaces: PropTypes.object,
-    entityTypeFqnsToId: PropTypes.object
+    allEntityTypeNamespaces: PropTypes.object
   }
 
   static contextTypes = {
@@ -54,8 +53,14 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addEntityTypeToSchema = (namespace, name) => {
-    const entityTypeId = this.props.entityTypeFqnsToId[`${namespace}.${name}`];
-    if (!entityTypeId || entityTypeId === undefined) return;
+    const entityTypeIdList = this.props.allEntityTypeNamespaces[namespace].filter((typeObj) => {
+      return (typeObj.name === name);
+    });
+    if (entityTypeIdList.length !== 1) {
+      this.updateError();
+      return;
+    }
+    const entityTypeId = entityTypeIdList[0].id;
     this.props.updateSchemaFn([entityTypeId], ActionConsts.ADD, EdmConsts.ENTITY_TYPE);
     this.updateFqns();
   }

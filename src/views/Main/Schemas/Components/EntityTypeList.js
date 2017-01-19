@@ -17,8 +17,7 @@ export class EntityTypeList extends React.Component {
     this.state = {
       entityTypes: [],
       loadTypesError: false,
-      allPropNamespaces: {},
-      fqnToId: {}
+      allPropNamespaces: {}
     };
   }
 
@@ -50,22 +49,23 @@ export class EntityTypeList extends React.Component {
       EntityDataModelApi.getAllPropertyTypes(),
       (entityTypes, propertyTypes) => {
         const allPropNamespaces = {};
-        const fqnToId = {};
         if (propertyTypes.length > 0) {
           propertyTypes.forEach((prop) => {
+            const propObj = {
+              name: prop.type.name,
+              id: prop.id
+            };
             if (allPropNamespaces[prop.type.namespace] === undefined) {
-              allPropNamespaces[prop.type.namespace] = [prop.type.name];
+              allPropNamespaces[prop.type.namespace] = [propObj];
             }
             else {
-              allPropNamespaces[prop.type.namespace].push(prop.type.name);
+              allPropNamespaces[prop.type.namespace].push(propObj);
             }
-            fqnToId[`${prop.type.namespace}.${prop.type.name}`] = prop.id;
           });
         }
         this.setState({
           entityTypes,
           allPropNamespaces,
-          fqnToId,
           loadTypesError: false
         });
       }
@@ -79,7 +79,6 @@ export class EntityTypeList extends React.Component {
     return (
       <NewEdmObjectInput
         namespaces={this.state.allPropNamespaces}
-        fqnToId={this.state.fqnToId}
         createSuccess={this.newEntityTypeSuccess}
         edmType={EdmConsts.ENTITY_TYPE_TITLE}
       />
@@ -87,7 +86,7 @@ export class EntityTypeList extends React.Component {
   }
 
   render() {
-    const { entityTypes, allPropNamespaces, fqnToId, loadTypesError } = this.state;
+    const { entityTypes, allPropNamespaces, loadTypesError } = this.state;
 
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
@@ -95,7 +94,6 @@ export class EntityTypeList extends React.Component {
         entityType={entityType}
         updateFn={this.updateFn}
         allPropNamespaces={allPropNamespaces}
-        fqnToId={fqnToId}
       />);
     });
 

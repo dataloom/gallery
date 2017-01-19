@@ -13,9 +13,7 @@ export class Schema extends React.Component {
     schema: PropTypes.object,
     updateFn: PropTypes.func,
     allPropNamespaces: PropTypes.object,
-    allEntityTypeNamespaces: PropTypes.object,
-    entityTypeFqnsToId: PropTypes.object,
-    propFqnsToId: PropTypes.object
+    allEntityTypeNamespaces: PropTypes.object
   }
 
   constructor() {
@@ -62,13 +60,7 @@ export class Schema extends React.Component {
   }
 
   render() {
-    const {
-      schema,
-      allEntityTypeNamespaces,
-      allPropNamespaces,
-      propFqnsToId,
-      entityTypeFqnsToId
-    } = this.props;
+    const { schema, allEntityTypeNamespaces, allPropNamespaces } = this.props;
     const options = [FileConsts.JSON];
     return (
       <div className={styles.edmContainer}>
@@ -82,7 +74,6 @@ export class Schema extends React.Component {
           entityTypeFqns={schema.entityTypes}
           updateSchemaFn={this.updateSchema}
           allEntityTypeNamespaces={allEntityTypeNamespaces}
-          entityTypeFqnsToId={entityTypeFqnsToId}
         />
         <br />
         <div className={styles.spacerMed} />
@@ -90,7 +81,6 @@ export class Schema extends React.Component {
           properties={schema.propertyTypes}
           updateFn={this.updateSchema}
           allPropNamespaces={allPropNamespaces}
-          propFqnsToId={propFqnsToId}
           editingPermissions={false}
         />
         <div className={this.state.error}>Unable to download {name}</div>

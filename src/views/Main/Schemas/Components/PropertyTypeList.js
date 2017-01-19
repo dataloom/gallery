@@ -43,29 +43,20 @@ export class PropertyTypeList extends React.Component {
   }
 
   componentDidMount() {
-    return (this.props.propertyTypePage) ? this.updateFn() : this.keyPropertyTypes();
+    this.updateFn();
   }
 
   updateFn = () => {
     EntityDataModelApi.getAllPropertyTypes()
     .then((propertyTypes) => {
       this.setState({
-        propertyTypes: Utils.addKeysToArray(propertyTypes),
+        propertyTypes,
         addError: false,
         deleteError: false
       });
     }).catch(() => {
       this.setState({ loadTypesError: true });
     });
-  }
-
-  keyPropertyTypes() {
-    const propertyTypes = this.props.propertyTypes.map((type) => {
-      const newType = type;
-      newType.key = this.props.propertyTypes.indexOf(type);
-      return newType;
-    });
-    return propertyTypes;
   }
 
   updateAddError = () => {
@@ -132,10 +123,10 @@ export class PropertyTypeList extends React.Component {
   render() {
     const { propertyTypePage, updateSchemaFn, name, namespace } = this.props;
     const { propertyTypes, addError, deleteError } = this.state;
-    const propArray = (propertyTypePage) ? propertyTypes : this.keyPropertyTypes();
+    const propArray = propertyTypes;
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
-        key={prop.key}
+        key={prop.id}
         propertyType={prop}
         propertyTypePage={propertyTypePage}
         error={this.updateDeleteError}
