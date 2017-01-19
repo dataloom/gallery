@@ -17,10 +17,10 @@
   margin: 5px 0;
 }
 
-.detailSection {
-  margin: 20px 0;
+.orgDetailsWrapper {
+  width: 500px;
 }
 
-.inviteInput {
-  width: 500px;
+.detailSection {
+  margin: 20px 0;
 }

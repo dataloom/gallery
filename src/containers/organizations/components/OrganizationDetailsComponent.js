@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import classnames from 'classnames';
 
 import {
   DataModels,
@@ -17,7 +18,9 @@ import {
   FormControl,
   FormGroup,
   HelpBlock,
-  InputGroup
+  InputGroup,
+  ListGroup,
+  ListGroupItem
 } from 'react-bootstrap';
 
 import {
@@ -113,7 +116,7 @@ class OrganizationDetails extends React.Component {
     }
   }
 
-  renderInvitationBlock = () => {
+  renderInvitationSection = () => {
 
     return (
       <div className={styles.detailSection}>
@@ -134,6 +137,24 @@ class OrganizationDetails extends React.Component {
     );
   }
 
+  renderDomainsSection = () => {
+
+    const domains = this.props.organization.get('emails', []).map((domain :string) => {
+      return (
+        <ListGroupItem key={domain}>{ domain }</ListGroupItem>
+      );
+    });
+
+    return (
+      <div className={classnames(styles.detailSection, styles.domains)}>
+        <h4>Domains</h4>
+        <ListGroup>
+          { domains }
+        </ListGroup>
+      </div>
+    );
+  }
+
   render() {
 
     if (this.props.isFetchingOrg) {
@@ -141,7 +162,7 @@ class OrganizationDetails extends React.Component {
     }
 
     return (
-      <div className={styles.flexComponent}>
+      <div className={classnames(styles.flexComponent)}>
         <div className={styles.detailSection}>
           <h3>
             { this.props.organization.get('title') }
@@ -150,7 +171,8 @@ class OrganizationDetails extends React.Component {
             { this.props.organization.get('description') }
           </h4>
         </div>
-        { this.renderInvitationBlock() }
+        { this.renderInvitationSection() }
+        { this.renderDomainsSection() }
         <div className={styles.detailSection}>
           <h4>Requests</h4>
         </div>
