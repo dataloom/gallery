@@ -43,16 +43,15 @@ export default class SecurableObjectSearch extends React.Component {
     });
   };
 
-  // TODO: Upgrade PropertyTypes and EntitityType with selects
-  onPropertyTypesChange = (option) => {
+  onPropertyTypesChange = (options) => {
     this.setState({
-      propertyTypeIds: option
+      propertyTypeIds: options.map(option => option.value)
     });
   };
 
   onEntityTypeChange = (option) => {
     this.setState({
-      entitySetTypeId: option
+      entitySetTypeId: option.value
     });
   };
 
@@ -64,7 +63,7 @@ export default class SecurableObjectSearch extends React.Component {
       filterParams.keyword = keyword;
     }
     if (propertyTypeIds && propertyTypeIds.length > 0) {
-      filterParams.propertyTypeIds = propertyTypeIds.map(option => option.value);
+      filterParams.propertyTypeIds = propertyTypeIds;
     }
     if (entitySetTypeId) {
       filterParams.entitySetTypeId = entitySetTypeId.value;
