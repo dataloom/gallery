@@ -24,6 +24,7 @@ class SecurableObjectSearch extends React.Component {
     entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
     loadEntityTypes: PropTypes.func.isRequired,
     propertyTypes: PropTypes.arrayOf(PropertyTypePropType).isRequired,
+    loadPropertyTypes: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     filterParams: FilterParamsPropType
   };
@@ -40,6 +41,7 @@ class SecurableObjectSearch extends React.Component {
 
   componentDidMount() {
     this.props.loadEntityTypes();
+    this.props.loadPropertyTypes();
   }
 
   onKeywordChange = (event) => {
@@ -85,6 +87,15 @@ class SecurableObjectSearch extends React.Component {
     });
   }
 
+  getPropertyTypeOptions() {
+    return this.props.propertyTypes.map(propertyType => {
+      return {
+        value: propertyType.id,
+        label: propertyType.title
+      };
+    });
+  }
+
   render() {
     return (
       <form onSubmit={this.onSubmit} className={classnames(this.props.className, styles.search)}>
@@ -104,7 +115,7 @@ class SecurableObjectSearch extends React.Component {
           <ControlLabel>Property types</ControlLabel>
           <Select
             value={this.state.propertyTypeIds}
-            options={this.props.propertyTypeOptions}
+            options={this.getPropertyTypeOptions()}
             onChange={this.onPropertyTypesChange}
             multi={true}
           />
@@ -132,12 +143,14 @@ function mapStateToProps(state) {
     securableObject = state.get('securableObject').toJS();
   return {
     entityTypes: getEdmObjectsShallow(normalizedData, securableObject.entityTypeReferences),
+    propertyTypes: getEdmObjectsShallow(normalizedData, securableObject.propertyTypeReferences),
   };
 }
 
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
+    loadPropertyTypes: () => { dispatch(edmActionFactories.allPropertyTypesRequest()); },
     loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
   };
 }
