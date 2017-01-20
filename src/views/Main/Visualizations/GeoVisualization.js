@@ -16,8 +16,8 @@ export class GeoVisualization extends React.Component {
     if (geoProps === undefined || geoProps[0] === undefined || geoProps[1] === undefined) return null;
     const icon = divIcon({ className: styles.divIcon });
 
-    const latFqn = `${geoProps[0].namespace}.${geoProps[0].name}`;
-    const longFqn = `${geoProps[1].namespace}.${geoProps[1].name}`;
+    const latId = geoProps[0].id;
+    const longId = geoProps[1].id;
 
     let maxLat = -90;
     let minLat = 90;
@@ -26,8 +26,8 @@ export class GeoVisualization extends React.Component {
 
     const markers = [];
     data.forEach((point) => {
-      const lat = parseFloat(point[latFqn][0]);
-      const long = parseFloat(point[longFqn][0]);
+      const lat = parseFloat(point[latId][0]);
+      const long = parseFloat(point[longId][0]);
       if (isNaN(lat) || isNaN(long)) return;
       const position = [lat, long];
       if (lat < minLat) minLat = lat;

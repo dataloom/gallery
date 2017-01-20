@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
+import { Checkbox } from 'react-bootstrap';
 import { LineChartVisualization } from './LineChartVisualization';
 import styles from './styles.module.css';
 
@@ -63,13 +64,11 @@ export class LineChartContainer extends React.Component {
       if (!xAxisProp || prop.id === xAxisProp.id) return null;
       return (
         <div key={prop.id}>
-          <input
+          <Checkbox
               type="checkbox"
               id={prop.id}
               onClick={this.handleCheckboxChange}
-              value={JSON.stringify(prop)}
-              className={styles.checkbox} />
-          <label htmlFor={prop.id}>{prop.title}</label>
+              value={JSON.stringify(prop)}>{prop.title}</Checkbox>
         </div>
       );
     });
