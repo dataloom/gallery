@@ -12,6 +12,7 @@ import { Permission } from '../../core/permissions/Permission';
 import type { EntitySet } from '../../components/entityset/EntitySetStorage';
 import { EntitySetNschema } from '../edm/EdmStorage';
 
+// TODO: Move processing and storage into EDM
 function convertSearchResult(rawResult): EntitySet {
   let permission = rawResult.acls.map(Permission.enumValueOf).reduce(Permission.maxPermission);
   return Object.assign({}, rawResult.entitySet, {

@@ -23,8 +23,8 @@ function createEntitySet(entitySet) {
         id: ndata.result
       };
       return [
-        actionFactories.createEntitySetResolve(reference),
-        edmActionFactories.updateNormalizedData(Immutable.fromJS(ndata.entities))
+        edmActionFactories.updateNormalizedData(Immutable.fromJS(ndata.entities)),
+        actionFactories.createEntitySetResolve(reference)
       ];
     })
     // Error Handling
