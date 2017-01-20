@@ -42,3 +42,21 @@ export function allEntityTypesReject(errorMessage:string) {
     errorMessage
   }
 }
+
+export function allPropertyTypesRequest() {
+  return {
+    type: actionTypes.ALL_PROPERTY_TYPES_REQUEST
+  }
+}
+export function allPropertyTypesResolve(references:EdmObjectReference[]) {
+  return {
+    type: actionTypes.ALL_PROPERTY_TYPES_RESOLVE,
+    references
+  }
+}
+export function allPropertyTypesReject(errorMessage:string) {
+  return {
+    type: actionTypes.ALL_PROPERTY_TYPES_REJECT,
+    errorMessage
+  }
+}

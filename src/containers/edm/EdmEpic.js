@@ -11,6 +11,27 @@ import * as EdmStorage from './EdmStorage';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
 
+function allPropertyTypesEpic(action$) {
+  return action$.ofType(actionTypes.ALL_PROPERTY_TYPES_REQUEST)
+    .mergeMap(action => {
+      return Observable.from(EntityDataModelApi.getAllPropertyTypes())
+        .map(propertyTypes => normalize(propertyTypes, [EdmStorage.PropertyTypeNschema]))
+        .flatMap(nData => {
+          const references = nData.result.map(id => {
+            return {
+              id,
+              collection: EdmStorage.COLLECTIONS.PROPERTY_TYPE
+            }
+          });
+          return [
+            actionFactories.updateNormalizedData(Immutable.fromJS(nData.entities)),
+            actionFactories.allPropertyTypesResolve(references)
+          ];
+        })
+        .catch(error => actionFactories.allPropertyTypesReject("Failed to load Property Types"))
+    });
+}
+
 function allEntityTypesEpic(action$) {
   return action$.ofType(actionTypes.ALL_ENTITY_TYPES_REQUEST)
     .mergeMap(action => {
@@ -28,7 +49,7 @@ function allEntityTypesEpic(action$) {
             actionFactories.allEntityTypesResolve(references)
           ];
         })
-        .catch(error => actionFactories.allEntityTypesReject("Failed to load EntityTypes"))
+        .catch(error => actionFactories.allEntityTypesReject("Failed to load Entity Types"))
     });
 }
 
@@ -67,4 +88,4 @@ function loadEdmEpic(action$) {
     .mergeMap(loadEdm)
 }
 
-export default combineEpics(loadEdmEpic, referenceEpic, allEntityTypesEpic);
+export default combineEpics(loadEdmEpic, referenceEpic, allEntityTypesEpic, allPropertyTypesEpic);

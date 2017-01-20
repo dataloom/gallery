@@ -3,26 +3,28 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import { connect } from 'react-redux';
 
+import { EntityTypePropType } from '../../components/entityset/EntitySetStorage';
+import { PropertyTypePropType } from '../../components/propertytype/PropertyTypeStorage';
+import { getEdmObjectsShallow } from '../edm/EdmStorage';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import styles from './securableobject.module.css';
 
-const OptionsPropType = PropTypes.shape({
-  value: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired
-});
 
 export const FilterParamsPropType = PropTypes.shape({
   keyword: PropTypes.string,
   propertyTypeIds: PropTypes.arrayOf(React.PropTypes.string),
-  entitySetTypeId: PropTypes.string
+  entityTypeId: PropTypes.string
 });
 
-
-export default class SecurableObjectSearch extends React.Component {
+class SecurableObjectSearch extends React.Component {
   static propTypes = {
     className: PropTypes.string,
-    entitySetTypeOptions: PropTypes.arrayOf(OptionsPropType).isRequired,
-    propertyTypeOptions: PropTypes.arrayOf(OptionsPropType).isRequired,
+    entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
+    loadEntityTypes: PropTypes.func.isRequired,
+    propertyTypes: PropTypes.arrayOf(PropertyTypePropType).isRequired,
+    loadPropertyTypes: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     filterParams: FilterParamsPropType
   };
@@ -33,8 +35,13 @@ export default class SecurableObjectSearch extends React.Component {
     this.state = Object.assign({
       keyword: '',
       propertyTypeIds: [],
-      entitySetTypeId: ''
+      entityTypeId: ''
     }, this.props.filterParams);
+  }
+
+  componentDidMount() {
+    this.props.loadEntityTypes();
+    this.props.loadPropertyTypes();
   }
 
   onKeywordChange = (event) => {
@@ -43,34 +50,51 @@ export default class SecurableObjectSearch extends React.Component {
     });
   };
 
-  // TODO: Upgrade PropertyTypes and EntitityType with selects
-  onPropertyTypesChange = (option) => {
+  onPropertyTypesChange = (options) => {
     this.setState({
-      propertyTypeIds: option
+      propertyTypeIds: options.map(option => option.value)
     });
   };
 
   onEntityTypeChange = (option) => {
     this.setState({
-      entitySetTypeId: option
+      entityTypeId: option.value
     });
   };
 
   onSubmit = () => {
-    const { keyword, propertyTypeIds, entitySetTypeId} = this.state;
+    const { keyword, propertyTypeIds, entityTypeId} = this.state;
     const filterParams = {};
 
     if (keyword) {
       filterParams.keyword = keyword;
     }
     if (propertyTypeIds && propertyTypeIds.length > 0) {
-      filterParams.propertyTypeIds = propertyTypeIds.map(option => option.value);
+      filterParams.propertyTypeIds = propertyTypeIds;
     }
-    if (entitySetTypeId) {
-      filterParams.entitySetTypeId = entitySetTypeId.value;
+    if (entityTypeId) {
+      filterParams.entityTypeId = entityTypeId;
     }
     this.props.onSubmit(filterParams);
   };
+
+  getEntityTypeOptions() {
+    return this.props.entityTypes.map(entityType => {
+      return {
+        value: entityType.id,
+        label: entityType.title
+      };
+    });
+  }
+
+  getPropertyTypeOptions() {
+    return this.props.propertyTypes.map(propertyType => {
+      return {
+        value: propertyType.id,
+        label: propertyType.title
+      };
+    });
+  }
 
   render() {
     return (
@@ -91,7 +115,7 @@ export default class SecurableObjectSearch extends React.Component {
           <ControlLabel>Property types</ControlLabel>
           <Select
             value={this.state.propertyTypeIds}
-            options={this.props.propertyTypeOptions}
+            options={this.getPropertyTypeOptions()}
             onChange={this.onPropertyTypesChange}
             multi={true}
           />
@@ -102,8 +126,8 @@ export default class SecurableObjectSearch extends React.Component {
         <FormGroup className={styles.entityType}>
           <ControlLabel>Entity type</ControlLabel>
           <Select
-            value={this.state.entitySetTypeId}
-            options={this.props.entitySetTypeOptions}
+            value={this.state.entityTypeId}
+            options={this.getEntityTypeOptions()}
             onChange={this.onEntityTypeChange}
           />
         </FormGroup>
@@ -113,3 +137,22 @@ export default class SecurableObjectSearch extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  const normalizedData = state.get('normalizedData').toJS(),
+    securableObject = state.get('securableObject').toJS();
+  return {
+    entityTypes: getEdmObjectsShallow(normalizedData, securableObject.entityTypeReferences),
+    propertyTypes: getEdmObjectsShallow(normalizedData, securableObject.propertyTypeReferences),
+  };
+}
+
+// TODO: Decide if/how to incorporate bindActionCreators
+function mapDispatchToProps(dispatch) {
+  return {
+    loadPropertyTypes: () => { dispatch(edmActionFactories.allPropertyTypesRequest()); },
+    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SecurableObjectSearch);

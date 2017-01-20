@@ -4,6 +4,7 @@ import Immutable from 'immutable';
 import * as actionTypes from './CatalogActionTypes';
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
+// TODO: Switch to references
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   asyncState: {
     status: ASYNC_STATUS.PENDING,

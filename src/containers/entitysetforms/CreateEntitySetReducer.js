@@ -25,7 +25,7 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
           status: ASYNC_STATUS.LOADING,
             errorMessage: ''
         },
-        entityTypeIds: []
+        entityTypeReferences: []
       });
     case edmActionTypes.ALL_ENTITY_TYPES_REJECT:
       return state.merge({

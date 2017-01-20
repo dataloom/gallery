@@ -27,7 +27,7 @@ export default function reducer(state:Immutable.Map<*,*> = INITIAL_STATE, action
         entitySetId: action.id,
         entitySetReference: null
       });
-
+    // TODO: Handle error case
     case edmActionTypes.EDM_OBJECT_RESOLVE:
       if (state.get('entitySetId') != action.reference.id) {
         return state;
