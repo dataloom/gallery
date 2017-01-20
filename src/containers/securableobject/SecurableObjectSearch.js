@@ -15,7 +15,7 @@ import styles from './securableobject.module.css';
 export const FilterParamsPropType = PropTypes.shape({
   keyword: PropTypes.string,
   propertyTypeIds: PropTypes.arrayOf(React.PropTypes.string),
-  entitySetTypeId: PropTypes.string
+  entityTypeId: PropTypes.string
 });
 
 class SecurableObjectSearch extends React.Component {
@@ -35,7 +35,7 @@ class SecurableObjectSearch extends React.Component {
     this.state = Object.assign({
       keyword: '',
       propertyTypeIds: [],
-      entitySetTypeId: ''
+      entityTypeId: ''
     }, this.props.filterParams);
   }
 
@@ -58,12 +58,12 @@ class SecurableObjectSearch extends React.Component {
 
   onEntityTypeChange = (option) => {
     this.setState({
-      entitySetTypeId: option.value
+      entityTypeId: option.value
     });
   };
 
   onSubmit = () => {
-    const { keyword, propertyTypeIds, entitySetTypeId} = this.state;
+    const { keyword, propertyTypeIds, entityTypeId} = this.state;
     const filterParams = {};
 
     if (keyword) {
@@ -72,8 +72,8 @@ class SecurableObjectSearch extends React.Component {
     if (propertyTypeIds && propertyTypeIds.length > 0) {
       filterParams.propertyTypeIds = propertyTypeIds;
     }
-    if (entitySetTypeId) {
-      filterParams.entitySetTypeId = entitySetTypeId.value;
+    if (entityTypeId) {
+      filterParams.entityTypeId = entityTypeId;
     }
     this.props.onSubmit(filterParams);
   };
@@ -126,7 +126,7 @@ class SecurableObjectSearch extends React.Component {
         <FormGroup className={styles.entityType}>
           <ControlLabel>Entity type</ControlLabel>
           <Select
-            value={this.state.entitySetTypeId}
+            value={this.state.entityTypeId}
             options={this.getEntityTypeOptions()}
             onChange={this.onEntityTypeChange}
           />

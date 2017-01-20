@@ -56,7 +56,7 @@ function filterParamsFromLocation(location) {
     hasFilters = true;
   }
   if (query.eid) {
-    filterParams.entitySetTypeId = query.eid;
+    filterParams.entityTypeId = query.eid;
     hasFilters = true;
   }
   if (query.pid) {
@@ -84,8 +84,8 @@ function locationFromFilterParams(filterParams) {
     query.kw = filterParams.keyword;
     hasFilters = true;
   }
-  if (filterParams.entitySetTypeId) {
-    query.eid = filterParams.entitySetTypeId;
+  if (filterParams.entityTypeId) {
+    query.eid = filterParams.entityTypeId;
     hasFilters = true;
   }
   if (filterParams.propertyTypeIds) {
