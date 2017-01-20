@@ -46,9 +46,11 @@ class EntitySetDetailComponent extends React.Component {
         </Page.Header>
         <Page.Body>
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+
           <AsyncContent {...this.props.asyncState} content={() => {
             return (<PropertyTypeList propertyTypes={this.props.entitySet.entityType.properties}/>);
           }}/>
+
         </Page.Body>
       </Page>
     );

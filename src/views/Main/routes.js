@@ -10,6 +10,7 @@ import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
+import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
@@ -96,6 +97,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
+      <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth}/>
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>

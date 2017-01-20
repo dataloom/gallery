@@ -1,0 +1,20 @@
+.datasources {
+    position: relative;
+}
+
+.datasources :global .modal, .datasources :global .modal-backdrop {
+    position: absolute;
+}
+
+.pageHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pageTitle {
+    margin-bottom: 0px;
+}
+
+.control {
+    height: 36px;
+}

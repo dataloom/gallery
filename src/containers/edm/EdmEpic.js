@@ -2,6 +2,7 @@
 import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
+import { normalize } from 'normalizr';
 
 import { DataModels, EntityDataModelApi } from 'loom-data';
 
@@ -9,6 +10,27 @@ import * as EdmApi from './EdmApi';
 import * as EdmStorage from './EdmStorage'
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
+
+function allEntityTypesEpic(action$) {
+  return action$.ofType(actionTypes.ALL_ENTITY_TYPES_REQUEST)
+    .mergeMap(action => {
+      return Observable.from(EntityDataModelApi.getAllEntityTypes())
+        .map(entityTypes => normalize(entityTypes, [EdmStorage.EntityTypeNschema]))
+        .flatMap(nData => {
+          const references = nData.result.map(id => {
+            return {
+              id,
+              collection: EdmStorage.COLLECTIONS.ENTITY_TYPE
+            }
+          });
+          return [
+            actionFactories.updateNormalizedData(Immutable.fromJS(nData.entities)),
+            actionFactories.allEntityTypesResolve(references)
+          ];
+        })
+        .catch(error => actionFactories.allEntityTypesReject("Failed to load EntityTypes"))
+    });
+}
 
 /**
  * Listens for updateNormalizedData actions and dispatches object references
@@ -55,4 +77,4 @@ function loadEdmEpic(action$) {
     .mergeMap(loadEdm)
 }
 
-export default combineEpics(loadEdmEpic, referenceEpic);
+export default combineEpics(loadEdmEpic, referenceEpic, allEntityTypesEpic);
