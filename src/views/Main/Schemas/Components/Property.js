@@ -56,11 +56,10 @@ export class Property extends React.Component {
       return (
         <td className={className}>
           <PermissionsPanel
-            entitySetName={this.props.entitySetName}
-            propertyTypeName={prop.name}
-            propertyTypeNamespace={prop.namespace}
-            exitPanel={this.exitPanel}
-          />
+              entitySetName={this.props.entitySetName}
+              propertyTypeName={prop.name}
+              propertyTypeNamespace={prop.namespace}
+              exitPanel={this.exitPanel} />
         </td>
       );
     }
@@ -73,11 +72,10 @@ export class Property extends React.Component {
       return (
         <td>
           <button
-            onClick={() => {
-              this.props.verifyDeleteFn(this.props.property);
-            }}
-            className={className}
-          >-</button>
+              onClick={() => {
+                this.props.verifyDeleteFn(this.props.property);
+              }}
+              className={className}>-</button>
         </td>
       );
     }

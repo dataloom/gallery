@@ -16,7 +16,6 @@ export const AsyncStatePropType = PropTypes.shape({
   errorMessage: PropTypes.string
 });
 
-
 export default class AsyncContent extends React.Component {
   static propTypes = {
     // State

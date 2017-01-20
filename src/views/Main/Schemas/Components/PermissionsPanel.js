@@ -242,18 +242,16 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Dropdown
-            options={options}
-            onChange={this.updateDropdownValue}
-            value={this.state.globalValue}
-          />
+              options={options}
+              onChange={this.updateDropdownValue}
+              value={this.state.globalValue} />
         </div>
         <div className={styles.spacerSmall} />
         <button
-          onClick={() => {
-            this.updateGlobalPermissions();
-          }}
-          className={styles.simpleButton}
-        >Save changes</button>
+            onClick={() => {
+              this.updateGlobalPermissions();
+            }}
+            className={styles.simpleButton}>Save changes</button>
       </div>
     );
   }
@@ -279,11 +277,10 @@ export class PermissionsPanel extends React.Component {
     if (permission === accessOptions.Hidden && this.props.propertyTypeName !== undefined) return null;
     return (
       <button
-        onClick={() => {
-          fn(permission);
-        }}
-        className={this.buttonStyle(permission, currView)}
-      >{permission}</button>
+          onClick={() => {
+            fn(permission);
+          }}
+          className={this.buttonStyle(permission, currView)}>{permission}</button>
     );
   }
 
@@ -308,11 +305,10 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.tableRows} key={roleList.indexOf(role)}>
           <div className={styles.inline}>
             <button
-              onClick={() => {
-                this.updateRoles(ActionConsts.REMOVE, role, rolesView);
-              }}
-              className={styles.deleteButton}
-            >-</button>
+                onClick={() => {
+                  this.updateRoles(ActionConsts.REMOVE, role, rolesView);
+                }}
+                className={styles.deleteButton}>-</button>
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{role}</div>
         </div>
@@ -332,17 +328,15 @@ export class PermissionsPanel extends React.Component {
         </div>
         <div className={styles.inline}>
           <Select
-            value={newRoleValue}
-            options={roleOptions}
-            onChange={this.handleNewRoleChange}
-            className={`${styles.inputBox} ${styles.permissionInputWidth}`}
-          />
+              value={newRoleValue}
+              options={roleOptions}
+              onChange={this.handleNewRoleChange}
+              className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
           <button
-            className={`${styles.simpleButton} ${styles.spacerMargin}`}
-            onClick={() => {
-              this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
-            }}
-          >Save</button>
+              className={`${styles.simpleButton} ${styles.spacerMargin}`}
+              onClick={() => {
+                this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
+              }}>Save</button>
         </div>
       </div>
     );
@@ -357,18 +351,16 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Dropdown
-            options={options}
-            onChange={this.onSelect}
-            value={options[0]}
-          />
+              options={options}
+              onChange={this.onSelect}
+              value={options[0]} />
         </div>
         <div className={styles.spacerSmall} />
         <button
-          onClick={() => {
-            this.updateGlobalPermissions(views.DOMAIN);
-          }}
-          className={styles.simpleButton}
-        >Save changes</button>
+            onClick={() => {
+              this.updateGlobalPermissions(views.DOMAIN);
+            }}
+            className={styles.simpleButton}>Save changes</button>
       </div>
     );
   }
@@ -414,11 +406,10 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.tableRows} key={emailList.indexOf(email)}>
           <div className={styles.inline}>
             <button
-              onClick={() => {
-                this.updateEmails(ActionConsts.REMOVE, email, emailsView);
-              }}
-              className={styles.deleteButton}
-            >-</button>
+                onClick={() => {
+                  this.updateEmails(ActionConsts.REMOVE, email, emailsView);
+                }}
+                className={styles.deleteButton}>-</button>
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{email}</div>
         </div>
@@ -439,17 +430,15 @@ export class PermissionsPanel extends React.Component {
         </div>
         <div className={styles.inline}>
           <Select
-            value={newEmailValue}
-            options={emailOptions}
-            onChange={this.handleNewEmailChange}
-            className={`${styles.inputBox} ${styles.permissionInputWidth}`}
-          />
+              value={newEmailValue}
+              options={emailOptions}
+              onChange={this.handleNewEmailChange}
+              className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
           <button
-            className={`${styles.simpleButton} ${styles.spacerMargin}`}
-            onClick={() => {
-              this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
-            }}
-          >Save</button>
+              className={`${styles.simpleButton} ${styles.spacerMargin}`}
+              onClick={() => {
+                this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
+              }}>Save</button>
         </div>
       </div>
     );
@@ -458,11 +447,10 @@ export class PermissionsPanel extends React.Component {
   renderViewButton = (view) => {
     return (
       <button
-        onClick={() => {
-          this.switchView(view);
-        }}
-        className={this.getClassName(view)}
-      >{viewLabels[view]}</button>
+          onClick={() => {
+            this.switchView(view);
+          }}
+          className={this.getClassName(view)}>{viewLabels[view]}</button>
     );
   }
 

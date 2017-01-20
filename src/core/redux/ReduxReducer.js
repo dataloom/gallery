@@ -10,6 +10,8 @@ import catalogReducer from '../../containers/catalog/CatalogReducer';
 import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
 import edmReducer from '../../containers/edm/EdmReducer';
 import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
+import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
+import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 
 export default function reduxReducer() {
 
@@ -17,6 +19,8 @@ export default function reduxReducer() {
     catalog: catalogReducer,
     entitySetDetail: entitySetDetailReducer,
     normalizedData: edmReducer,
-    organizations: organizationsReducer
+    organizations: organizationsReducer,
+    createEntitySet: createEntitySetReducer,
+    securableObject: securableObjectReducer
   });
 }

@@ -3,9 +3,17 @@ import { PropTypes } from 'react';
 
 import { Permission } from '../../core/permissions/Permission';
 import type { PropertyType } from '../propertytype/PropertyTypeStorage';
-import { PropertyTypePropType, PropertyTypeNschema } from '../propertytype/PropertyTypeStorage';
+import { PropertyTypePropType } from '../propertytype/PropertyTypeStorage';
 import type { Type } from '../utils/TypeStorage';
 import { TypePropType } from '../utils/TypeStorage';
+
+export const EntityTypePropType = PropTypes.shape({
+  id: PropTypes.string.isRequired,
+  properties: PropTypes.arrayOf(PropertyTypePropType),
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  type: TypePropType.isRequired,
+});
 
 export type EntitySet = {
   id:string,
@@ -24,5 +32,5 @@ export const EntitySetPropType = PropTypes.shape({
   name: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  propertyTypes: PropTypes.arrayOf(PropertyTypePropType)
+  entityType: EntityTypePropType
 });

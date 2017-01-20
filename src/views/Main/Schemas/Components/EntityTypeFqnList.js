@@ -4,7 +4,6 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
-import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class EntityTypeFqnList extends React.Component {
@@ -79,11 +78,10 @@ export class EntityTypeFqnList extends React.Component {
     const className = (this.state.newEntityTypeRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
-        className={className}
-        namespaces={allEntityTypeNamespaces}
-        usedProperties={entityTypeFqns}
-        addProperty={this.addEntityTypeToSchema}
-      />
+          className={className}
+          namespaces={allEntityTypeNamespaces}
+          usedProperties={entityTypeFqns}
+          addProperty={this.addEntityTypeToSchema} />
     );
   }
 
@@ -92,10 +90,9 @@ export class EntityTypeFqnList extends React.Component {
     const entityTypeFqnList = entityTypeFqns.map((fqn) => {
       return (
         <EntityTypeFqn
-          key={fqn.id}
-          entityTypeFqn={fqn}
-          updateSchemaFn={updateSchemaFn}
-        />
+            key={fqn.id}
+            entityTypeFqn={fqn}
+            updateSchemaFn={updateSchemaFn} />
       );
     });
     return (

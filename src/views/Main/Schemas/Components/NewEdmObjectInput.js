@@ -29,7 +29,6 @@ export class NewEdmObjectInput extends React.Component {
   static propTypes = {
     createSuccess: PropTypes.func,
     namespaces: PropTypes.object,
-    fqnToId: PropTypes.object,
     edmType: PropTypes.string
   }
 
@@ -39,12 +38,18 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   addPKeyToList = () => {
-    const newPKeyId = this.props.fqnToId[`${this.state.typeNamespace}.${this.state.typeName}`];
-    if (newPKeyId === undefined) return;
+    const newPKeyIdList = this.props.namespaces[this.state.typeNamespace].filter((propObj) => {
+      return (propObj.name === this.state.typeName);
+    });
+    if (newPKeyIdList.length !== 1) {
+      return;
+    }
     const newPKey = {
-      namespace: this.state.typeNamespace,
-      name: this.state.typeName,
-      id: newPKeyId
+      type: {
+        namespace: this.state.typeNamespace,
+        name: this.state.typeName
+      },
+      id: newPKeyIdList[0].id
     };
     const pKeysAdded = this.state.pKeysAdded;
     pKeysAdded.push(newPKey);
@@ -57,7 +62,7 @@ export class NewEdmObjectInput extends React.Component {
 
   removePKeyFromList = (pKeyToDelete) => {
     const pKeysAdded = this.state.pKeysAdded.filter((pKey) => {
-      return (pKey.name !== pKeyToDelete.name || pKey.namespace !== pKeyToDelete.namespace);
+      return (pKey.id !== pKeyToDelete.id);
     });
     this.setState({ pKeysAdded });
   }
@@ -149,9 +154,8 @@ export class NewEdmObjectInput extends React.Component {
     const className = (this.state.editing) ? styles.hidden : styles.genericButton;
     return (
       <button
-        onClick={this.setEditing}
-        className={className}
-      >Create a new {this.props.edmType.toLowerCase()}
+          onClick={this.setEditing}
+          className={className}>Create a new {this.props.edmType.toLowerCase()}
       </button>
     );
   }
@@ -160,17 +164,16 @@ export class NewEdmObjectInput extends React.Component {
     if (this.props.edmType !== EdmConsts.ENTITY_TYPE_TITLE) return null;
     return this.state.pKeysAdded.map((pKey) => {
       return (
-        <tr key={`${pKey.namespace}.${pKey.name}`}>
+        <tr key={`${pKey.type.namespace}.${pKey.type.name}`}>
           <td>
             <button
-              className={styles.deleteButton}
-              onClick={() => {
-                this.removePKeyFromList(pKey);
-              }}
-            >-</button>
+                className={styles.deleteButton}
+                onClick={() => {
+                  this.removePKeyFromList(pKey);
+                }}>-</button>
           </td>
-          <td className={styles.tableCell}>{pKey.name}</td>
-          <td className={styles.tableCell}>{pKey.namespace}</td>
+          <td className={styles.tableCell}>{pKey.type.name}</td>
+          <td className={styles.tableCell}>{pKey.type.namespace}</td>
         </tr>
       );
     });
@@ -182,13 +185,12 @@ export class NewEdmObjectInput extends React.Component {
         <div>{`${this.props.edmType} ${fieldType}`}</div>
         <div className={styles.spacerMini} />
         <input
-          type="text"
-          value={this.state[fieldName]}
-          name={fieldName}
-          placeholder={fieldName}
-          onChange={this.handleInputChange}
-          className={styles.inputBox}
-        />
+            type="text"
+            value={this.state[fieldName]}
+            name={fieldName}
+            placeholder={fieldName}
+            onChange={this.handleInputChange}
+            className={styles.inputBox} />
         <div className={styles.spacerSmall} />
       </div>
     );
@@ -244,15 +246,14 @@ export class NewEdmObjectInput extends React.Component {
             </tr>
             {this.renderPKeysAdded()}
             <NameNamespaceAutosuggest
-              namespaces={namespaces}
-              usedProperties={pKeysAdded}
-              noSaveButton={(edmType === EdmConsts.ENTITY_SET_TITLE)}
-              addProperty={this.addPKeyToList}
-              onNameChange={this.handleTypeNameChange}
-              onNamespaceChange={this.handleTypeNamespaceChange}
-              initialName={typeName}
-              initialNamespace={typeNamespace}
-            />
+                namespaces={namespaces}
+                usedProperties={pKeysAdded}
+                noSaveButton={(edmType === EdmConsts.ENTITY_SET_TITLE)}
+                addProperty={this.addPKeyToList}
+                onNameChange={this.handleTypeNameChange}
+                onNamespaceChange={this.handleTypeNamespaceChange}
+                initialName={typeName}
+                initialNamespace={typeNamespace} />
           </tbody>
         </table>
       </div>
@@ -265,11 +266,10 @@ export class NewEdmObjectInput extends React.Component {
       <div>
         <div>Datatype:</div>
         <Select
-          value={this.state.datatype}
-          onChange={this.handleDatatypeChange}
-          options={EdmConsts.EDM_PRIMITIVE_TYPES}
-          placeholder="datatype"
-        />
+            value={this.state.datatype}
+            onChange={this.handleDatatypeChange}
+            options={EdmConsts.EDM_PRIMITIVE_TYPES}
+            placeholder="datatype" />
         <div className={styles.spacerSmall} />
       </div>
     );
