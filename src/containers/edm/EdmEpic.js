@@ -60,7 +60,7 @@ function loadEdm(edmQuery) {
     .map(Immutable.fromJS)
     .map(normalizedData => {
       return normalizedData
-        .update(EdmStorage.COLLECTIONS.ENTITY_SET.name, (entitySetMap) => {
+        .update(EdmStorage.COLLECTIONS.ENTITY_SET, (entitySetMap) => {
           return entitySetMap.mapEntries(([id, entitySet]) => {
             return [id, entitySet.set('entityType', entitySet.get('entityTypeId'))]
           })
