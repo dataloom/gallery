@@ -1,16 +1,18 @@
 import React, { PropTypes } from 'react';
-import { FormControl, FormGroup, ControlLabel, Button } from 'react-bootstrap';
+import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import Select from 'react-select';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import * as edmActionFactories from '../edm/EdmActionFactories';
+import * as actionFactories from './CreateEntitySetActionFactories';
 import { getEdmObjectsShallow } from '../edm/EdmStorage';
 import { EntityTypePropType } from '../../components/entityset/EntitySetStorage';
 
 class CreateEntitySet extends React.Component {
   static propTypes = {
+    createEntitySetAsyncState: AsyncStatePropType.isRequired,
     onCreate: PropTypes.func.isRequired,
     loadEntityTypes: PropTypes.func.isRequired,
     entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
@@ -22,6 +24,7 @@ class CreateEntitySet extends React.Component {
     this.state = {
       title: '',
       description: '',
+      name: '',
       entityTypeId: null
     }
   }
@@ -36,6 +39,12 @@ class CreateEntitySet extends React.Component {
     });
   };
 
+  onNameChange = (event) => {
+    this.setState({
+      name: event.target.value
+    });
+  };
+
   onDescriptionChange = (event) => {
     this.setState({
       description: event.target.value
@@ -44,24 +53,22 @@ class CreateEntitySet extends React.Component {
 
   onEntityTypeChange = (option) => {
     this.setState({
-      entitySetTypeId: option.value
+      entityTypeId: option.value
     });
   };
 
   onSubmit = () => {
-    const { title, description, entitySetTypeId} = this.state;
-    const createParams = {};
+    const { title, name, description, entityTypeId } = this.state;
 
-    if (title) {
-      createParams.title = title;
-    }
-    if (description) {
-      createParams.description = description;
-    }
-    if (entitySetTypeId) {
-      createParams.entitySetTypeId = entitySetTypeId.value;
-    }
-    this.props.onCreate(createParams);
+    const entityType = this.props.entityTypes.filter(entityType => entityType.id === entityTypeId)[0];
+
+    this.props.onCreate({
+      title,
+      name,
+      description,
+      entityTypeId,
+      type: entityType.type
+    });
   };
 
   getEntityTypeOptions() {
@@ -73,12 +80,18 @@ class CreateEntitySet extends React.Component {
     });
   }
 
-  render() {
+  renderPending = () => {
     return (
       <form onSubmit={this.onSubmit} className={classnames(this.props.className)}>
         <FormGroup>
           <ControlLabel>Title</ControlLabel>
           <FormControl type="text" onChange={this.onTitleChange}/>
+        </FormGroup>
+
+
+        <FormGroup>
+          <ControlLabel>Name</ControlLabel>
+          <FormControl type="text" onChange={this.onNameChange}/>
         </FormGroup>
 
         <FormGroup>
@@ -89,7 +102,7 @@ class CreateEntitySet extends React.Component {
         <FormGroup>
           <ControlLabel>Entity type</ControlLabel>
           <Select
-            value={this.state.entitySetTypeId}
+            value={this.state.entityTypeId}
             options={this.getEntityTypeOptions()}
             onChange={this.onEntityTypeChange}
           />
@@ -97,22 +110,41 @@ class CreateEntitySet extends React.Component {
         <Button type="submit" bsStyle="primary">Create</Button>
       </form>
     );
+  };
+
+  renderSuccess = () => {
+    return (
+      <Alert bsStyle="success">
+        Successfully saved Datasource
+      </Alert>
+    );
+  };
+
+  render() {
+    return (
+      <AsyncContent
+        {...this.props.createEntitySetAsyncState}
+        pendingContent={this.renderPending()}
+        content={this.renderSuccess}
+      />
+    );
   }
 }
 
 function mapStateToProps(state) {
   const normalizedData = state.get('normalizedData').toJS(),
-    entityTypeReferences = state.get('createEntitySet').get('entityTypeReferences').toJS();
+    createEntitySetState = state.get('createEntitySet').toJS();
   return {
-    entityTypes: getEdmObjectsShallow(normalizedData, entityTypeReferences)
+    entityTypes: getEdmObjectsShallow(normalizedData, createEntitySetState.entityTypeReferences),
+    createEntitySetAsyncState: createEntitySetState.createEntitySetAsyncState
   };
 }
 
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
-    onCreate: () => {},
-    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest())}
+    onCreate: (entitySet) => { dispatch(actionFactories.createEntitySetRequest(entitySet)); },
+    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
   };
 }
 
