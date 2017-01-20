@@ -3,13 +3,14 @@ import classnames from 'classnames';
 import Select from 'react-select';
 import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import { connect } from 'react-redux';
 
+import { EntityTypePropType } from '../../components/entityset/EntitySetStorage';
+import { PropertyTypePropType } from '../../components/propertytype/PropertyTypeStorage';
+import { getEdmObjectsShallow } from '../edm/EdmStorage';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import styles from './securableobject.module.css';
 
-const OptionsPropType = PropTypes.shape({
-  value: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired
-});
 
 export const FilterParamsPropType = PropTypes.shape({
   keyword: PropTypes.string,
@@ -17,12 +18,12 @@ export const FilterParamsPropType = PropTypes.shape({
   entitySetTypeId: PropTypes.string
 });
 
-
-export default class SecurableObjectSearch extends React.Component {
+class SecurableObjectSearch extends React.Component {
   static propTypes = {
     className: PropTypes.string,
-    entitySetTypeOptions: PropTypes.arrayOf(OptionsPropType).isRequired,
-    propertyTypeOptions: PropTypes.arrayOf(OptionsPropType).isRequired,
+    entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
+    loadEntityTypes: PropTypes.func.isRequired,
+    propertyTypes: PropTypes.arrayOf(PropertyTypePropType).isRequired,
     onSubmit: PropTypes.func.isRequired,
     filterParams: FilterParamsPropType
   };
@@ -35,6 +36,10 @@ export default class SecurableObjectSearch extends React.Component {
       propertyTypeIds: [],
       entitySetTypeId: ''
     }, this.props.filterParams);
+  }
+
+  componentDidMount() {
+    this.props.loadEntityTypes();
   }
 
   onKeywordChange = (event) => {
@@ -71,6 +76,15 @@ export default class SecurableObjectSearch extends React.Component {
     this.props.onSubmit(filterParams);
   };
 
+  getEntityTypeOptions() {
+    return this.props.entityTypes.map(entityType => {
+      return {
+        value: entityType.id,
+        label: entityType.title
+      };
+    });
+  }
+
   render() {
     return (
       <form onSubmit={this.onSubmit} className={classnames(this.props.className, styles.search)}>
@@ -102,7 +116,7 @@ export default class SecurableObjectSearch extends React.Component {
           <ControlLabel>Entity type</ControlLabel>
           <Select
             value={this.state.entitySetTypeId}
-            options={this.props.entitySetTypeOptions}
+            options={this.getEntityTypeOptions()}
             onChange={this.onEntityTypeChange}
           />
         </FormGroup>
@@ -112,3 +126,20 @@ export default class SecurableObjectSearch extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  const normalizedData = state.get('normalizedData').toJS(),
+    securableObject = state.get('securableObject').toJS();
+  return {
+    entityTypes: getEdmObjectsShallow(normalizedData, securableObject.entityTypeReferences),
+  };
+}
+
+// TODO: Decide if/how to incorporate bindActionCreators
+function mapDispatchToProps(dispatch) {
+  return {
+    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SecurableObjectSearch);
