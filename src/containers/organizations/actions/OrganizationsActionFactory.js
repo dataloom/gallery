@@ -12,7 +12,9 @@ import {
   FETCH_ORG_FAILURE,
   FETCH_ORGS_REQUEST,
   FETCH_ORGS_SUCCESS,
-  FETCH_ORGS_FAILURE
+  FETCH_ORGS_FAILURE,
+
+  CREATE_NEW_ORG
 } from './OrganizationsActionTypes';
 
 const Organization = DataModels.Organization;
@@ -59,5 +61,13 @@ export function fetchOrgsFailure() :Object {
 
   return {
     type: FETCH_ORGS_FAILURE
+  };
+}
+
+export function createNewOrg(org :Organization) :Object {
+
+  return {
+    type: CREATE_NEW_ORG,
+    org
   };
 }

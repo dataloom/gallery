@@ -7,10 +7,7 @@ import React from 'react';
 import Select from 'react-select';
 
 import {
-  DataModels,
-  Types,
-  OrganizationsApi,
-  PermissionsApi
+  DataModels
 } from 'loom-data';
 
 import {
@@ -22,26 +19,42 @@ import {
   HelpBlock
 } from 'react-bootstrap';
 
+import {
+  connect
+} from 'react-redux';
+
+import {
+  bindActionCreators
+} from 'redux';
 
 import styles from '../styles/create.org.module.css';
 
 import Utils from '../../../utils/Utils';
 
-const {
-  AceBuilder,
-  AclBuilder,
-  AclData,
-  AclDataBuilder,
-  Organization,
-  OrganizationBuilder,
-  PrincipalBuilder
-} = DataModels;
+import {
+  createNewOrg
+} from '../actions/OrganizationsActionFactory';
 
 const {
-  ActionTypes,
-  PermissionTypes,
-  PrincipalTypes
-} = Types;
+  Organization,
+  OrganizationBuilder
+} = DataModels;
+
+function mapStateToProps(state :Map<*, *>) {
+
+  return {};
+}
+
+function mapDispatchToProps(dispatch :Function) {
+
+  const actions = {
+    createNewOrg
+  };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
 
 class CreateOrganization extends React.Component {
 
@@ -117,39 +130,7 @@ class CreateOrganization extends React.Component {
       .setAutoApprovedEmails(emailDomains)
       .build();
 
-    OrganizationsApi.createOrganization(org)
-      .then((createdOrgId :string) => {
-
-        const aclData :AclData = (new AclDataBuilder())
-          .setAction(ActionTypes.SET)
-          .setAcl(
-            (new AclBuilder())
-              .setAclKey([createdOrgId])
-              .setAces([
-                (new AceBuilder())
-                  .setPermissions([PermissionTypes.READ])
-                  .setPrincipal(
-                    (new PrincipalBuilder())
-                      .setType(PrincipalTypes.ROLE)
-                      .setId('AuthenticatedUser')
-                      .build()
-                  )
-                  .build()
-              ])
-              .build()
-          )
-          .build();
-
-        PermissionsApi.updateAcl(aclData)
-          .catch((e) => {
-            console.error(e);
-          });
-
-        this.props.onCreate(createdOrgId);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    this.props.actions.createNewOrg(org);
   }
 
   onChangeDomainTag = (value :Array<Object>) => {
@@ -222,4 +203,4 @@ class CreateOrganization extends React.Component {
   }
 }
 
-export default CreateOrganization;
+export default connect(mapStateToProps, mapDispatchToProps)(CreateOrganization);

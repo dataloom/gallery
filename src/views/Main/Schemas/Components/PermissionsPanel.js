@@ -85,7 +85,7 @@ export class PermissionsPanel extends React.Component {
         const user = users[userId];
         if (user.email && user.email !== undefined) allUsersList[user.email] = userId;
         user.roles.forEach((role) => {
-          if (role !== UserRoleConsts.DEFAULT_USER_ROLE) allRolesList.add(role);
+          if (role !== UserRoleConsts.AUTHENTICATED_USER) allRolesList.add(role);
         });
       });
       this.setState({
@@ -110,7 +110,7 @@ export class PermissionsPanel extends React.Component {
     const userAcls = { Discover: [], Read: [], Write: [] };
     acls.forEach((acl) => {
       if (acl.principal.type === UserRoleConsts.ROLE) {
-        if (acl.principal.name === UserRoleConsts.DEFAULT_USER_ROLE) {
+        if (acl.principal.name === UserRoleConsts.AUTHENTICATED_USER) {
           globalValue = this.getPermission(acl.permissions);
         }
         else {
@@ -221,7 +221,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissions = () => {
-    this.updateRoles(ActionConsts.SET, UserRoleConsts.DEFAULT_USER_ROLE, this.state.globalValue);
+    this.updateRoles(ActionConsts.SET, UserRoleConsts.AUTHENTICATED_USER, this.state.globalValue);
   }
 
   updateDropdownValue = (e) => {
