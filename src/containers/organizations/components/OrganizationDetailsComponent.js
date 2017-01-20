@@ -37,8 +37,6 @@ import {
 
 import styles from '../styles/orgs.module.css';
 
-import LoadingSpinner from '../../../components/loadingspinner/LoadingSpinner';
-
 import {
   fetchOrgRequest,
   fetchOrgSuccess,
