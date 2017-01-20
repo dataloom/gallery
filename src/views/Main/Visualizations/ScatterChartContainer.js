@@ -49,7 +49,6 @@ export class ScatterChartContainer extends React.Component {
     const xAxisPropJson = (xAxisProp !== undefined) ? JSON.parse(xAxisProp) : null;
     const yAxisOptions = [];
     const xAxisOptions = numberProps.map((prop) => {
-      //const fqn = `${prop.namespace}.${prop.name}`;
       if (!xAxisPropJson || xAxisPropJson.id !== prop.id) {
         yAxisOptions.push({ label: prop.title, value: JSON.stringify(prop) });
       }

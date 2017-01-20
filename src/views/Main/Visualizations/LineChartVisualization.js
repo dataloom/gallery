@@ -57,31 +57,26 @@ export class LineChartVisualization extends React.Component {
   }
 
   render() {
-    if (this.props.xProp === undefined || this.props.yProps === undefined) return null;
+    if (!this.props.xProp || !this.props.yProps) return null;
 
     const xProp = JSON.parse(this.props.xProp);
-    const xPropFqn = `${xProp.namespace}.${xProp.name}`;
-
     const lines = this.props.yProps.map((prop) => {
-      const yPropFqn = `${prop.namespace}.${prop.name}`;
-      return <Line type="monotone" dataKey={yPropFqn} stroke="#8884d8" key={yPropFqn} />;
+      return <Line type="monotone" dataKey={prop.id} name={prop.title} stroke="#4509cb" key={prop.id} />;
     });
 
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>
           <LineChart
-            width={750}
-            height={250}
-            data={this.state.formattedData}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
+              width={750}
+              height={250}
+              data={this.state.formattedData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <XAxis
-              dataKey={xPropFqn}
-              name={xPropFqn}
-              type="number"
-              domain={['dataMin', 'dataMax']}
-            />
+                dataKey={xProp.id}
+                name={xProp.title}
+                type="number"
+                domain={['dataMin', 'dataMax']} />
             <YAxis />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />

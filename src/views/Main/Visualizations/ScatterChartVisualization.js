@@ -35,7 +35,7 @@ export class ScatterChartVisualization extends React.Component {
       scatterPoints.push(
         <Scatter
             data={[point]}
-            fill="#8884d8"
+            fill="#4509cb"
             key={key} />
       );
     });

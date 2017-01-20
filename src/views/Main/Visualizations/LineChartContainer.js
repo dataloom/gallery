@@ -19,13 +19,9 @@ export class LineChartContainer extends React.Component {
   }
 
   removePropFromArray = (array, prop) => {
-    let indexToRemove = -1;
-    array.forEach((oldProp) => {
-      if (oldProp.name === prop.name && oldProp.namespace === prop.namespace) {
-        indexToRemove = array.indexOf(oldProp);
-      }
+    return array.filter((checkedProp) => {
+      return checkedProp.id !== prop.id;
     });
-    if (indexToRemove > -1) array.splice(indexToRemove, 1);
   }
 
   handleXAxisPropChange = (e) => {
@@ -48,10 +44,9 @@ export class LineChartContainer extends React.Component {
     return (
       <div>
         <LineChartVisualization
-          xProp={this.state.xAxisProp}
-          yProps={this.state.selectedYProps}
-          data={this.props.data}
-        />
+            xProp={this.state.xAxisProp}
+            yProps={this.state.selectedYProps}
+            data={this.props.data} />
       </div>
     );
   }
@@ -61,22 +56,20 @@ export class LineChartContainer extends React.Component {
     if (numberProps.length <= 1) return null;
     const xAxisProp = (this.state.xAxisProp !== undefined) ?
       JSON.parse(this.state.xAxisProp) : null;
-    const checkboxMsg = (xAxisProp) ? `Choose properties to plot against ${xAxisProp.namespace}.${xAxisProp.name}` : '';
+    const checkboxMsg = (xAxisProp) ? `Choose properties to plot against ${xAxisProp.title}` : '';
     const selectOptions = [];
     const checkboxes = numberProps.map((prop) => {
-      const fqn = `${prop.namespace}.${prop.name}`;
-      selectOptions.push({ label: fqn, value: JSON.stringify(prop) });
-      if (!xAxisProp || (prop.name === xAxisProp.name && prop.namespace === xAxisProp.namespace)) return null;
+      selectOptions.push({ label: prop.title, value: JSON.stringify(prop) });
+      if (!xAxisProp || prop.id === xAxisProp.id) return null;
       return (
-        <div key={fqn}>
+        <div key={prop.id}>
           <input
-            type="checkbox"
-            id={fqn}
-            onClick={this.handleCheckboxChange}
-            value={JSON.stringify(prop)}
-            className={styles.checkbox}
-          />
-          <label htmlFor={fqn}>{fqn}</label>
+              type="checkbox"
+              id={prop.id}
+              onClick={this.handleCheckboxChange}
+              value={JSON.stringify(prop)}
+              className={styles.checkbox} />
+          <label htmlFor={prop.id}>{prop.title}</label>
         </div>
       );
     });
@@ -96,11 +89,10 @@ export class LineChartContainer extends React.Component {
           <div className={styles.xAxisSelectWrapper}>
             <div className={styles.selectButton}>
               <Select
-                placeholder="Choose a property for the x axis"
-                options={selectOptions}
-                value={this.state.xAxisProp}
-                onChange={this.handleXAxisPropChange}
-              />
+                  placeholder="Choose a property for the x axis"
+                  options={selectOptions}
+                  value={this.state.xAxisProp}
+                  onChange={this.handleXAxisPropChange} />
             </div>
           </div>
         </div>
