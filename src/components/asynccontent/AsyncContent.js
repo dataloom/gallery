@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import FontAwesome from 'react-fontawesome';
 import { Alert } from 'react-bootstrap';
 
-import LoadingSpinner from '../../components/loadingspinner/LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 
 export const ASYNC_STATUS = Object.freeze({
   PENDING: Symbol('pending'),
