@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi, DataApi } from 'loom-data';
-import axios from 'axios';
+import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import Page from '../../../components/page/Page';
 import { LineChartContainer } from './LineChartContainer';
@@ -64,8 +63,6 @@ const chartTypes = {
   MAP_CHART: VisualizationConsts.MAP_CHART
 };
 
-const baseSyncId = '00000000-0000-0000-0000-000000000000';
-
 export class Visualize extends React.Component {
 
   static propTypes = {
@@ -107,7 +104,7 @@ export class Visualize extends React.Component {
     const propertyTypeIds = propertyTypes.map((propertyType) => {
       return propertyType.id;
     });
-    return DataApi.getSelectedEntitySetData(this.state.entitySetId, [baseSyncId], propertyTypeIds)
+    return DataApi.getSelectedEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
       // TODO: use real data not mock data
 
@@ -172,19 +169,10 @@ export class Visualize extends React.Component {
         permissions: [Permission.READ.name]
       };
     });
-    axios({
-      url: 'http://localhost:8080/datastore/authorizations',
-      method: 'post',
-      contentType: 'application/json',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InN1cHBvcnRAa3J5cHRub3N0aWMuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsidXNlciIsImFkbWluIiwiQXV0aGVudGljYXRlZFVzZXIiXSwib3JnYW5pemF0aW9ucyI6WyJsb29tIl19LCJuaWNrbmFtZSI6InN1cHBvcnQiLCJyb2xlcyI6WyJ1c2VyIiwiYWRtaW4iLCJBdXRoZW50aWNhdGVkVXNlciJdLCJ1c2VyX2lkIjoiYXV0aDB8NTdlNGIyZDhkOWQxZDE5NDc3OGZkNWI2IiwiaXNzIjoiaHR0cHM6Ly9sb29tLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1N2U0YjJkOGQ5ZDFkMTk0Nzc4ZmQ1YjYiLCJhdWQiOiJQVG15RXhkQmNrSEFpeU9qaDR3Mk1xU0lVR1dXRWRmOCIsImV4cCI6MTQ4NDk3MTQ3OSwiaWF0IjoxNDg0OTM1NDc5fQ.so8m3FdbO4CNo8G1LPYuEgLHe28Z4cFYRHbOPucjm4k'
-      },
-      data: accessChecks
-    })
+    AuthorizationApi.checkAuthorizations(accessChecks)
     .then((response) => {
       const propsWithReadAccess = [];
-      response.data.forEach((property) => {
+      response.forEach((property) => {
         if (property.permissions.READ) {
           propsWithReadAccess.push(property.aclKey[1]);
         }
