@@ -6,7 +6,7 @@ import Page from "../../components/page/Page";
 import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
 import { EntitySetNschema } from '../edm/EdmStorage';
 import EntitySetList from '../../components/entityset/EntitySetList';
-import SecurableObjectSearch, { FilterParamsPropType } from '../../components/securableobject/SecurableObjectSearch';
+import SecurableObjectSearch, { FilterParamsPropType } from '../securableobject/SecurableObjectSearch';
 import { catalogSearchRequest } from './CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 
@@ -54,8 +54,6 @@ class CatalogComponent extends React.Component {
           <Page.Title>Browse the catalog</Page.Title>
           <SecurableObjectSearch
             filterParams={this.props.filterParams}
-            entitySetTypeOptions={ENTITY_SET_TYPE_OPTIONS}
-            propertyTypeOptions={PROPERTY_TYPE_OPTIONS}
             onSubmit={this.props.onSubmitSearch}
           />
         </Page.Header>
@@ -80,7 +78,7 @@ function filterParamsFromLocation(location) {
     hasFilters = true;
   }
   if (query.eid) {
-    filterParams.entitySetTypeId = query.eid;
+    filterParams.entityTypeId = query.eid;
     hasFilters = true;
   }
   if (query.pid) {
@@ -108,8 +106,8 @@ function locationFromFilterParams(filterParams) {
     query.kw = filterParams.keyword;
     hasFilters = true;
   }
-  if (filterParams.entitySetTypeId) {
-    query.eid = filterParams.entitySetTypeId;
+  if (filterParams.entityTypeId) {
+    query.eid = filterParams.entityTypeId;
     hasFilters = true;
   }
   if (filterParams.propertyTypeIds) {

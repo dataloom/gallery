@@ -5,6 +5,7 @@ const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
 const ORG = 'org';
 const DATA_MODEL = 'datamodel';
+const DATASOURCES = 'datasources';
 
 export default {
   HOME,
@@ -13,5 +14,6 @@ export default {
   SETTINGS,
   VISUALIZE,
   ORG,
-  DATA_MODEL
+  DATA_MODEL,
+  DATASOURCES
 };
