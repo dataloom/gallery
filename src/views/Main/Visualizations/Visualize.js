@@ -86,7 +86,8 @@ export class Visualize extends React.Component {
       numberProps: [],
       geoProps: [],
       currentView: undefined,
-      data: []
+      data: [],
+      error: false
     };
   }
 
@@ -140,7 +141,8 @@ export class Visualize extends React.Component {
         geoProps,
         currentView,
         data,
-        title
+        title,
+        error: false
       });
     });
   }
@@ -183,10 +185,10 @@ export class Visualize extends React.Component {
       Promise.all(propertyTypePromises).then((propertyTypes) => {
         this.filterPropDatatypes(propertyTypes, title);
       }).catch(() => {
-        console.log('unable to load property types');
+        this.setState({ error: true });
       });
     }).catch(() => {
-      console.log('unable to determine authorization on property types');
+      this.setState({ error: true });
     });
   }
 
@@ -245,6 +247,13 @@ export class Visualize extends React.Component {
     });
   }
 
+  renderError = () => {
+    if (this.state.error) {
+      return <div clsasName={styles.error}>Unable to load visualization.</div>;
+    }
+    return null;
+  }
+
   renderVisualization = () => {
     const { currentView, title, data, numberProps, geoProps } = this.state;
     let visualization = null;
@@ -268,6 +277,7 @@ export class Visualize extends React.Component {
           {this.renderViewOptions()}
         </Page.Header>
         <Page.Body>
+          {this.renderError()}
           {visualization}
         </Page.Body>
       </div>

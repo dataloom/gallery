@@ -4,6 +4,10 @@
   font-size: 16px;
 }
 
+.error {
+  color: red;
+}
+
 /* utils */
 
 .inlineBlock {
