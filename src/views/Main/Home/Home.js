@@ -29,7 +29,7 @@ export class Home extends React.Component {
 
   componentDidMount() {
     setTimeout(this.props.updateTopbarFn, 300);
-    this.loadRequestStatuses();
+    // this.loadRequestStatuses();
   }
 
   shouldShow = {
@@ -43,20 +43,20 @@ export class Home extends React.Component {
   }
 
   loadRequestStatuses = () => {
-    PermissionsApi.getAllReceivedRequestsForPermissions()
-    .then((requests) => {
-      const map = this.state.resolved;
-      requests.forEach((requestObj) => {
-        map[requestObj.request.requestId] = 0;
-      });
-      this.setState({
-        resolved: map,
-        requests,
-        loadRequestsError: false
-      });
-    }).catch(() => {
-      this.setState({ loadRequestsError: true });
-    });
+    // PermissionsApi.getAllReceivedRequestsForPermissions()
+    // .then((requests) => {
+    //   const map = this.state.resolved;
+    //   requests.forEach((requestObj) => {
+    //     map[requestObj.request.requestId] = 0;
+    //   });
+    //   this.setState({
+    //     resolved: map,
+    //     requests,
+    //     loadRequestsError: false
+    //   });
+    // }).catch(() => {
+    //   this.setState({ loadRequestsError: true });
+    // });
   }
 
   respondToRequest = (approvalGranted, id, entitySet, requestId, permissions) => {
