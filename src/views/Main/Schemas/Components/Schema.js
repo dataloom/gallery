@@ -71,18 +71,16 @@ export class Schema extends React.Component {
         </div>
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
-          entityTypeFqns={schema.entityTypes}
-          updateSchemaFn={this.updateSchema}
-          allEntityTypeNamespaces={allEntityTypeNamespaces}
-        />
+            entityTypeFqns={schema.entityTypes}
+            updateSchemaFn={this.updateSchema}
+            allEntityTypeNamespaces={allEntityTypeNamespaces} />
         <br />
         <div className={styles.spacerMed} />
         <PropertyList
-          properties={schema.propertyTypes}
-          updateFn={this.updateSchema}
-          allPropNamespaces={allPropNamespaces}
-          editingPermissions={false}
-        />
+            properties={schema.propertyTypes}
+            updateFn={this.updateSchema}
+            allPropNamespaces={allPropNamespaces}
+            editingPermissions={false} />
         <div className={this.state.error}>Unable to download {name}</div>
         <div className={styles.spacerBig} />
         <hr />

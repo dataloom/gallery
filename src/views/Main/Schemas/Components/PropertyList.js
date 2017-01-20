@@ -4,7 +4,6 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
-import Utils from '../../../../utils/Utils';
 import styles from '../styles.module.css';
 
 export class PropertyList extends React.Component {
@@ -58,7 +57,6 @@ export class PropertyList extends React.Component {
         action: ActionConsts.ADD
       }
     });
-    this.props.updateFn();
   }
 
   updateError = (action) => {
@@ -84,22 +82,6 @@ export class PropertyList extends React.Component {
     this.updateFqns();
   }
 
-  deleteProp = (optionalProperty) => {
-    const property = (optionalProperty === undefined) ? this.state.propertyToDelete : optionalProperty;
-    this.props.updateFn([property.id], ActionConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
-    this.setState({
-      verifyingDelete: false,
-      propertyToDelete: undefined
-    });
-  }
-
-  cancelDelete = () => {
-    this.setState({
-      verifyingDelete: false,
-      propertyToDelete: undefined
-    });
-  }
-
   verifyDelete = (property) => {
     if (this.props.entityTypeNamespace !== undefined && this.props.entityTypeName !== undefined) {
       this.setState({
@@ -110,6 +92,25 @@ export class PropertyList extends React.Component {
     else {
       this.deleteProp(property);
     }
+  }
+
+  confirmDelete = () => {
+    this.deleteProp(this.state.propertyToDelete);
+  }
+
+  cancelDelete = () => {
+    this.setState({
+      verifyingDelete: false,
+      propertyToDelete: undefined
+    });
+  }
+
+  deleteProp = (property) => {
+    this.props.updateFn([property.id], ActionConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
+    this.setState({
+      verifyingDelete: false,
+      propertyToDelete: undefined
+    });
   }
 
   renderVerifyDeletePropertyBox = () => {
@@ -123,7 +124,7 @@ export class PropertyList extends React.Component {
             Are you sure you want to delete property type {prop} and all associated data from entity type {entityType}?
           </div>
           <div className={styles.buttonContainer}>
-            <button onClick={this.deleteProp} className={styles.simpleButton}>Delete</button>
+            <button onClick={this.confirmDelete} className={styles.simpleButton}>Delete</button>
             <button onClick={this.cancelDelete} className={styles.simpleButton}>Cancel</button>
           </div>
         </div>
@@ -135,8 +136,8 @@ export class PropertyList extends React.Component {
   isPrimaryKey = (prop) => {
     if (this.props.primaryKey === undefined) return false;
     let primaryKey = false;
-    this.props.primaryKey.forEach((pKey) => {
-      if (pKey.name === prop.name && pKey.namespace === prop.namespace) primaryKey = true;
+    this.props.primaryKey.forEach((pKeyId) => {
+      if (pKeyId === prop.id) primaryKey = true;
     });
     return primaryKey;
   }
@@ -155,11 +156,10 @@ export class PropertyList extends React.Component {
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
-        className={className}
-        namespaces={allPropNamespaces}
-        usedProperties={properties}
-        addProperty={this.addProperty}
-      />
+          className={className}
+          namespaces={allPropNamespaces}
+          usedProperties={properties}
+          addProperty={this.addProperty} />
     );
   }
 
@@ -170,14 +170,13 @@ export class PropertyList extends React.Component {
     const propertyList = propArray.map((prop) => {
       return (
         <Property
-          key={prop.key}
-          property={prop}
-          primaryKey={this.isPrimaryKey(prop)}
-          editingPermissions={editingPermissions}
-          entitySetName={entitySetName}
-          isOwner={isOwner}
-          verifyDeleteFn={this.verifyDelete}
-        />
+            key={prop.key}
+            property={prop}
+            primaryKey={this.isPrimaryKey(prop)}
+            editingPermissions={editingPermissions}
+            entitySetName={entitySetName}
+            isOwner={isOwner}
+            verifyDeleteFn={this.verifyDelete} />
       );
     });
     return (

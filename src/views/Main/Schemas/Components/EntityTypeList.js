@@ -78,10 +78,9 @@ export class EntityTypeList extends React.Component {
     if (!this.context.isAdmin) return null;
     return (
       <NewEdmObjectInput
-        namespaces={this.state.allPropNamespaces}
-        createSuccess={this.newEntityTypeSuccess}
-        edmType={EdmConsts.ENTITY_TYPE_TITLE}
-      />
+          namespaces={this.state.allPropNamespaces}
+          createSuccess={this.newEntityTypeSuccess}
+          edmType={EdmConsts.ENTITY_TYPE_TITLE} />
     );
   }
 
@@ -90,11 +89,10 @@ export class EntityTypeList extends React.Component {
 
     const entityTypeList = entityTypes.map((entityType) => {
       return (<EntityType
-        key={entityType.id}
-        entityType={entityType}
-        updateFn={this.updateFn}
-        allPropNamespaces={allPropNamespaces}
-      />);
+          key={entityType.id}
+          entityType={entityType}
+          updateFn={this.updateFn}
+          allPropNamespaces={allPropNamespaces} />);
     });
 
     return (

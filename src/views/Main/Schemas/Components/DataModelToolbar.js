@@ -14,12 +14,11 @@ export class DataModelToolbar extends React.Component {
     };
   }
 
-  dataModelLabels =
-    [
-      { label: 'Schemas', type: EdmConsts.SCHEMA, key: 0 },
-      { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE, key: 2 },
-      { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE, key: 3 }
-    ]
+  dataModelLabels = [
+    { label: 'Schemas', type: EdmConsts.SCHEMA, key: 0 },
+    { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE, key: 2 },
+    { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE, key: 3 }
+  ]
 
   updateViewAndToolbar(type) {
     this.props.changeView(type);
@@ -43,13 +42,11 @@ export class DataModelToolbar extends React.Component {
       }
       return (
         <button
-          className={className}
-          key={labels.key}
-          onClick={() => {
-            return this.updateViewAndToolbar(type);
-          }}
-        >{label}
-        </button>
+            className={className}
+            key={labels.key}
+            onClick={() => {
+              return this.updateViewAndToolbar(type);
+            }}>{label}</button>
       );
     });
 
