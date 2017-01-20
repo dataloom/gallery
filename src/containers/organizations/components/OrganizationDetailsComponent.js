@@ -157,10 +157,6 @@ class OrganizationDetails extends React.Component {
 
   render() {
 
-    if (this.props.isFetchingOrg) {
-      return <LoadingSpinner />;
-    }
-
     return (
       <div className={classnames(styles.flexComponent)}>
         <div className={styles.detailSection}>

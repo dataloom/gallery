@@ -167,7 +167,7 @@ class CreateOrganization extends React.Component {
   render() {
 
     return (
-      <div className={styles.createOrganizationWrapper}>
+      <div>
         <h3>Create Organization</h3>
         <FormGroup>
           <ControlLabel>Organization</ControlLabel>

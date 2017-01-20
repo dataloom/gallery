@@ -5,20 +5,15 @@
 import React from 'react';
 
 import Immutable from 'immutable';
-import FontAwesome from 'react-fontawesome';
 import Select from 'react-select';
 import classnames from 'classnames';
 
 import {
-  DataModels,
-  OrganizationsApi,
-  UsersApi
+  OrganizationsApi
 } from 'loom-data';
 
 import {
-  Button,
-  DropdownButton,
-  MenuItem
+  Button
 } from 'react-bootstrap';
 
 import {
@@ -26,7 +21,6 @@ import {
 } from 'react-redux';
 
 import {
-  Link,
   hashHistory
 } from 'react-router';
 
@@ -35,15 +29,10 @@ import {
 } from 'redux';
 
 import styles from '../styles/orgs.module.css';
-import headerStyles from '../../../components/headernav/headernav.module.css';
 
 import CreateOrganization from './CreateOrganizationComponent';
 
-import LoadingSpinner from '../../../components/loadingspinner/LoadingSpinner';
-
-import AuthService from '../../../utils/AuthService';
-import PageConsts from '../../../utils/Consts/PageConsts';
-import Utils from '../../../utils/Utils';
+import Page from '../../../components/page/Page';
 
 import {
   fetchOrgsRequest,
@@ -51,6 +40,9 @@ import {
   fetchOrgsFailure
 } from '../actions/OrganizationsActionFactory';
 
+import AsyncContent, {
+  AsyncStatePropType
+} from '../../../components/asynccontent/AsyncContent';
 
 const ReactSelectOptionPropType = React.PropTypes.shape({
   label: React.PropTypes.string.isRequired,
@@ -59,14 +51,11 @@ const ReactSelectOptionPropType = React.PropTypes.shape({
 
 function mapStateToProps(state :Map<*, *>, ownProps :Object) {
 
+  const asyncState = state.getIn(['organizations', 'asyncState']).toJS();
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map());
   const orgCount = organizations.size;
 
-  let selectedOrgOption = {
-    label: '',
-    value: ''
-  };
-
+  let selectedOrgOption = null;
   const selectOrgOptions = organizations.map((org) => {
     const selectOption = {
       label: org.get('title'),
@@ -80,6 +69,7 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
 
   return {
     isFetchingOrgs: state.getIn(['organizations', 'isFetchingOrgs']),
+    asyncState,
     orgCount,
     selectOrgOptions,
     selectedOrgOption
@@ -99,7 +89,7 @@ function mapDispatchToProps(dispatch :Function) {
   };
 }
 
-class OrganizationList extends React.Component {
+class Organizations extends React.Component {
 
   state :{
     showCreateOrganizationComponent :boolean
@@ -111,11 +101,12 @@ class OrganizationList extends React.Component {
       fetchOrgsSuccess: React.PropTypes.func.isRequired,
       fetchOrgsFailure: React.PropTypes.func.isRequired
     }).isRequired,
+    asyncState: AsyncStatePropType.isRequired,
     children: React.PropTypes.node,
     isFetchingOrgs: React.PropTypes.bool.isRequired,
     orgCount: React.PropTypes.number.isRequired,
     selectOrgOptions: React.PropTypes.arrayOf(ReactSelectOptionPropType).isRequired,
-    selectedOrgOption: ReactSelectOptionPropType.isRequired
+    selectedOrgOption: ReactSelectOptionPropType
   };
 
   constructor(props) {
@@ -151,6 +142,8 @@ class OrganizationList extends React.Component {
     this.setState({
       showCreateOrganizationComponent: true
     });
+
+    hashHistory.push('/org');
   }
 
   hideCreateOrganizationComponent = () => {
@@ -169,38 +162,10 @@ class OrganizationList extends React.Component {
     hashHistory.push('/org');
   }
 
-  renderCreateOrganizationComponent = () => {
-
-    return (
-      <CreateOrganization
-          onCreate={this.handleCreateOrganization}
-          onCancel={this.hideCreateOrganizationComponent} />
-    );
-  }
-
-  renderOrganizationDetailsComponent = () => {
-
-    if (this.props.orgCount === 0) {
-      return (
-        <div className={classnames(styles.flexComponent, styles.flexCenter)}>
-          <h4>{ 'No organizations. Create a new Organization!' }</h4>
-          { this.renderCreateOrganizationButton() }
-        </div>
-      );
-    }
-
-    return (
-      <div className={classnames(styles.flexComponent, styles.orgDetailsWrapper)}>
-        { this.renderOrganizationsSelect() }
-        { React.Children.toArray(this.props.children) }
-      </div>
-    );
-  }
-
   renderCreateOrganizationButton = () => {
 
     return (
-      <Button bsSize="small" onClick={this.showCreateOrganizationComponent}>
+      <Button bsStyle="primary" onClick={this.showCreateOrganizationComponent}>
         Create New Organization
       </Button>
     );
@@ -213,57 +178,83 @@ class OrganizationList extends React.Component {
       if (!newSelectedOrgOption) {
         hashHistory.push('/org');
       }
-      else if (this.props.selectedOrgOption.value !== newSelectedOrgOption.value) {
+      else if (!this.props.selectedOrgOption || this.props.selectedOrgOption.value !== newSelectedOrgOption.value) {
         hashHistory.push(`/org/${newSelectedOrgOption.value}`);
       }
     };
 
     return (
       <Select
+          className={classnames(styles.organizationsSelect)}
           clearable
           searchable
-          placeholder="Your Organizations"
           options={this.props.selectOrgOptions}
           value={this.props.selectedOrgOption}
           onChange={updateSelectedOrganization} />
     );
   };
 
-  render() {
+  renderCreateOrganizationComponent = () => {
 
-    if (this.props.isFetchingOrgs) {
-      return <LoadingSpinner />;
+    return (
+      <CreateOrganization
+          onCreate={this.handleCreateOrganization}
+          onCancel={this.hideCreateOrganizationComponent} />
+    );
+  }
+
+  renderOrganizationDetailsComponent = () => {
+
+    return (
+      <AsyncContent {...this.props.asyncState} content={this.content()} />
+    );
+  }
+
+  content = () => {
+
+    if (this.props.orgCount === 0) {
+      return (
+        <div>
+          <h4>{ 'No organizations are available. Create a new Organization!' }</h4>
+        </div>
+      );
+    }
+    else if (!this.props.selectedOrgOption) {
+      return (
+        <div>
+          <h4>{ 'Select an Organization to view.' }</h4>
+        </div>
+      );
     }
 
     return (
-      <div className={styles.flexComponent}>
-        <header className={headerStyles.headerNavWrapper}>
-          <nav className={headerStyles.headerNav}>
+      <div>
+        { React.Children.toArray(this.props.children) }
+      </div>
+    );
+  }
 
-            <div className={headerStyles.headerNavLeft}>
-              <div className={`${headerStyles.headerNavItem} ${styles.organizationsHeading}`}>
-                <h3>Organizations</h3>
-              </div>
-            </div>
+  render() {
 
-            <div className={headerStyles.headerNavRight}>
-              <div className={headerStyles.headerNavItem}>
-                { this.renderCreateOrganizationButton() }
-              </div>
-            </div>
-
-          </nav>
-        </header>
-        <div className={`${styles.flexComponent} ${styles.componentPadding}`}>
+    return (
+      <Page>
+        <Page.Header>
+          <Page.Title>Organizations</Page.Title>
+          <div className={classnames(styles.headerContent)}>
+            { this.renderOrganizationsSelect() }
+            { this.renderCreateOrganizationButton() }
+          </div>
+        </Page.Header>
+        <Page.Body>
           {
             this.state.showCreateOrganizationComponent
-            ? this.renderCreateOrganizationComponent()
-            : this.renderOrganizationDetailsComponent()
+              ? this.renderCreateOrganizationComponent()
+              : this.renderOrganizationDetailsComponent()
           }
-        </div>
-      </div>
+        </Page.Body>
+      </Page>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrganizationList);
+export default connect(mapStateToProps, mapDispatchToProps)(Organizations);

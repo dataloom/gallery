@@ -13,7 +13,15 @@ import {
   FETCH_ORGS_SUCCESS
 } from '../actions/OrganizationsActionTypes';
 
+import {
+  ASYNC_STATUS
+} from '../../../components/asynccontent/AsyncContent';
+
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+  asyncState: {
+    status: ASYNC_STATUS.PENDING,
+    errorMessage: ''
+  },
   isFetchingOrg: false,
   isFetchingOrgs: false,
   organizations: {}
@@ -27,7 +35,12 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
       return state.set('isFetchingOrg', true);
 
     case FETCH_ORGS_REQUEST:
-      return state.set('isFetchingOrgs', true);
+      return state
+        .set('isFetchingOrgs', true)
+        .set('asyncState', Immutable.fromJS({
+          status: ASYNC_STATUS.LOADING,
+          errorMessage: ''
+        }));
 
     case FETCH_ORG_SUCCESS: {
 
@@ -46,12 +59,20 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
 
       return state
         .set('isFetchingOrgs', false)
-        .set('organizations', Immutable.fromJS(orgs));
+        .set('organizations', Immutable.fromJS(orgs))
+        .set('asyncState', Immutable.fromJS({
+          status: ASYNC_STATUS.SUCCESS,
+          errorMessage: ''
+        }));
     }
 
     case FETCH_ORG_FAILURE:
     case FETCH_ORGS_FAILURE:
-      return INITIAL_STATE;
+      return INITIAL_STATE
+        .set('asyncState', Immutable.fromJS({
+          status: ASYNC_STATUS.ERROR,
+          errorMessage: 'Failed to load Organizations'
+        }));
 
     default:
       return state;
