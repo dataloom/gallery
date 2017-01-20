@@ -16,7 +16,13 @@ export function configure(baseURL:string, authToken) {
   });
 }
 
-export function edmQuery(queryParams) {
+export type EdmQueryParam = {
+  id:string,
+  type:string,
+  include:string[]
+}
+
+export function edmQuery(queryParams:EdmQueryParam[]) {
   return axiosInstance.post('/datastore/edm', queryParams)
     .then(response => response.data);
 }

@@ -1,17 +1,17 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { denormalize } from 'normalizr';
 import { Button } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
-import { EntitySetNschema } from '../edm/EdmStorage';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
 import styles from './entitysetdetail.module.css';
+import { getEdmObject } from '../edm/EdmStorage';
+
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
@@ -22,6 +22,7 @@ class EntitySetDetailComponent extends React.Component {
 
   renderHeaderContent = () => {
     const { entitySet } = this.props;
+
     return (
       <div className={styles.headerContent}>
         <div>
@@ -46,9 +47,11 @@ class EntitySetDetailComponent extends React.Component {
         </Page.Header>
         <Page.Body>
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+
           <AsyncContent {...this.props.asyncState} content={() => {
             return (<PropertyTypeList propertyTypes={this.props.entitySet.entityType.properties}/>);
           }}/>
+
         </Page.Body>
       </Page>
     );
@@ -59,21 +62,18 @@ class EntitySetDetailComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const entitySetDetail = state.get('entitySetDetail').toJS(),
+function mapStateToProps(state) {
+  const entitySetDetail = state.get('entitySetDetail'),
     normalizedData = state.get('normalizedData');
 
-  // TODO: Move loading into helper function in EdmStorage
-  const entitySetId = ownProps.params.id;
   let entitySet;
-  if (normalizedData.hasIn(['entitySets'], entitySetId)) {
-    entitySet = denormalize(entitySetId, EntitySetNschema, normalizedData.toJS());
-  } else {
-    entitySet = null;
+  const reference = entitySetDetail.get('entitySetReference');
+  if (reference) {
+    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
   }
 
   return {
-    asyncState: entitySetDetail.asyncState,
+    asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet
   };
 }

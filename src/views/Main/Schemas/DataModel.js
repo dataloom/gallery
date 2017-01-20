@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import styles from './styles.module.css';
 import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';
@@ -8,7 +7,7 @@ import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import '../../../core/styles/global/dropdown.css';
 
-export class Schemas extends React.Component {
+export class DataModel extends React.Component {
 
   static propTypes = {
     updateTopbarFn: PropTypes.func
@@ -63,4 +62,4 @@ export class Schemas extends React.Component {
   }
 }
 
-export default Schemas;
+export default DataModel;

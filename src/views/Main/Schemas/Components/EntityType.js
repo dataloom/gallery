@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
 import FileService from '../../../../utils/FileService';
-import { DataApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import { DropdownButton } from './DropdownButton';
 import FileConsts from '../../../../utils/Consts/FileConsts';
@@ -24,11 +23,15 @@ export class EntityType extends React.Component {
   }
 
   componentDidMount() {
-    this.loadProperties();
+    this.loadProperties(this.props.entityType.properties);
   }
 
-  loadProperties = () => {
-    Promise.map(this.props.entityType.properties, (propertyId) => {
+  componentWillReceiveProps(nextProps) {
+    this.loadProperties(nextProps.entityType.properties);
+  }
+
+  loadProperties = (propertyIds) => {
+    Promise.map(propertyIds, (propertyId) => {
       return EntityDataModelApi.getPropertyType(propertyId);
     }).then((properties) => {
       this.setState({ properties });
@@ -44,23 +47,22 @@ export class EntityType extends React.Component {
   }
 
   updateEntityType = (newTypeUuid, action) => {
-    let newPropertyIds = this.props.entityType.properties;
     if (action === ActionConsts.ADD) {
-      newPropertyIds = this.props.entityType.properties.concat(newTypeUuid);
-    }
-    else if (action === ActionConsts.REMOVE) {
-      newPropertyIds = this.props.entityType.properties.filter((id) => {
-        return (id !== newTypeUuid[0]);
+      EntityDataModelApi.addPropertyTypeToEntityType(this.props.entityType.id, newTypeUuid[0])
+      .then(() => {
+        this.props.updateFn();
       });
     }
-    EntityDataModelApi.updatePropertyTypesForEntityType(this.props.entityType.id, newPropertyIds)
-    .then(() => {
-      this.props.updateFn();
-    });
+    else if (action === ActionConsts.REMOVE) {
+      EntityDataModelApi.removePropertyTypeFromEntityType(this.props.entityType.id, newTypeUuid[0])
+      .then(() => {
+        this.props.updateFn();
+      });
+    }
   }
 
   render() {
-    const { entityType, updateFn, allPropNamespaces } = this.props;
+    const { entityType, allPropNamespaces } = this.props;
     const options = [FileConsts.JSON];
     return (
       <div>
@@ -74,14 +76,13 @@ export class EntityType extends React.Component {
         </div>
         <div className={styles.spacerMed} />
         <PropertyList
-          properties={this.state.properties}
-          primaryKey={entityType.primaryKey}
-          entityTypeName={entityType.type.name}
-          entityTypeNamespace={entityType.type.namespace}
-          updateFn={this.updateEntityType}
-          allPropNamespaces={allPropNamespaces}
-          editingPermissions={false}
-        />
+            properties={this.state.properties}
+            primaryKey={entityType.key}
+            entityTypeName={entityType.type.name}
+            entityTypeNamespace={entityType.type.namespace}
+            updateFn={this.updateEntityType}
+            allPropNamespaces={allPropNamespaces}
+            editingPermissions={false} />
         <div className={styles.spacerBig} />
         <hr />
       </div>

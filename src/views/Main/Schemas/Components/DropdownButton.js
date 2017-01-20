@@ -79,10 +79,9 @@ export class DropdownButton extends React.Component {
       return (
         <div className={styles.menuOption} key={datatype}>
           <button
-            className={styles.menuOptionButton}
-            onMouseDown={fn}
-            onClick={fn}
-          >{text}</button>
+              className={styles.menuOptionButton}
+              onMouseDown={fn}
+              onClick={fn}>{text}</button>
         </div>
       );
     });

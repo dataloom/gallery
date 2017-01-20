@@ -1,11 +1,9 @@
 import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyType } from './PropertyType';
-import Utils from '../../../../utils/Utils';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import styles from '../styles.module.css';
 
 export class PropertyTypeList extends React.Component {
@@ -48,9 +46,8 @@ export class PropertyTypeList extends React.Component {
     if (!this.context.isAdmin) return null;
     return (
       <NewEdmObjectInput
-        createSuccess={this.updateFn}
-        edmType={EdmConsts.PROPERTY_TYPE_TITLE}
-      />
+          createSuccess={this.updateFn}
+          edmType={EdmConsts.PROPERTY_TYPE_TITLE} />
     );
   }
 
@@ -59,9 +56,8 @@ export class PropertyTypeList extends React.Component {
     const propArray = propertyTypes;
     const propertyTypeList = propArray.map((prop) => {
       return (<PropertyType
-        key={prop.id}
-        propertyType={prop}
-      />);
+          key={prop.id}
+          propertyType={prop} />);
     });
 
     return (
