@@ -12,6 +12,7 @@ import edmReducer from '../../containers/edm/EdmReducer';
 import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
 import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+import permissionReducer from '../../containers/permissions/PermissionsReducer';
 
 export default function reduxReducer() {
 
@@ -21,6 +22,7 @@ export default function reduxReducer() {
     normalizedData: edmReducer,
     organizations: organizationsReducer,
     createEntitySet: createEntitySetReducer,
-    securableObject: securableObjectReducer
+    securableObject: securableObjectReducer,
+    permissions: permissionReducer
   });
 }

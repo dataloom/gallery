@@ -20,7 +20,7 @@ export type EntitySet = {
   name:string,
   title:string,
   description:string,
-  propertyTypes:PropertyType[]
+  propertyTypes:PropertyType[],
 };
 
 export const EntitySetPropType = PropTypes.shape({
