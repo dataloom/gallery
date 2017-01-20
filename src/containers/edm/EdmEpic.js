@@ -7,7 +7,7 @@ import { normalize } from 'normalizr';
 import { DataModels, EntityDataModelApi } from 'loom-data';
 
 import * as EdmApi from './EdmApi';
-import * as EdmStorage from './EdmStorage'
+import * as EdmStorage from './EdmStorage';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
 
@@ -39,18 +39,8 @@ function referenceEpic(action$) {
   return action$.ofType(actionTypes.UPDATE_NORMALIZED_DATA)
     .map(action => action.normalizedData)
     .flatMap(normalizedData => {
-      const objectReferences = normalizedData.reduce((references, idMap, collectionName) => {
-        const currentRefs = idMap.keySeq().map((id) => {
-          return {
-            id,
-            collection: collectionName
-          }
-        });
-        references.push(currentRefs);
-        return references;
-      }, []);
-
-      return objectReferences.map(actionFactories.edmObjectResolve)
+      const references = EdmStorage.getReferencesFromNormalizedData(normalizedData);
+      return references.map(actionFactories.edmObjectResolve)
     });
 }
 

@@ -1,4 +1,5 @@
-import { schema } from 'normalizr';
+import { schema, denormalize } from 'normalizr';
+import { Iterable } from 'immutable';
 
 /* Collections */
 export const COLLECTIONS = Object.freeze({
@@ -37,28 +38,44 @@ const SCHEMA_BY_COLLECTION = Object.freeze({
   [COLLECTIONS.ENTITY_SET]: EntitySetNschema
 });
 
+
+/**
+ *
+ * @param immutableNormalizedData in immutable format
+ */
+export function getReferencesFromNormalizedData(immutableNormalizedData):EdmObjectReference[] {
+  return immutableNormalizedData.reduce((references, idMap, collectionName) => {
+    const currentRefs = idMap.keySeq().toArray().map((id) => {
+      return {
+        id,
+        collection: collectionName
+      }
+    });
+    // TODO: Modify references array directly
+    return references.concat(currentRefs);
+  }, []);
+}
+
 /**
  *
  * @param normalizedData
- * @param references all references must refer to objects in the same collection
+ * @param reference
  * @return {any}
  */
-export function getEdmObjects(normalizedData:Object, references:EdmObjectReference[]) {
-  if (references.length == 0) {
-    return [];
+export function getEdmObject(normalizedData:Object, reference:EdmObjectReference) {
+  if (!reference) {
+    throw new Error('"reference" can\'t be null');
+  }
+  if (!normalizedData) {
+    throw new Error('"normalizedData" can\'t be null');
   }
 
-  const collection = references[0].collection;
-  if (!references.every(reference => reference.collection === collection)) {
-    throw new Error(`Not all references are from collection "${collection}"`);
+  const collection = normalizedData[reference.collection];
+  if (reference.id in collection) {
+    return denormalize(reference.id, SCHEMA_BY_COLLECTION[reference.collection], normalizedData);
+  } else {
+    throw new Error(`Invalid reference: ${referenceToString(reference)}`);
   }
-
-  if (!(collection in SCHEMA_BY_COLLECTION)) {
-    throw new Error(`"${collection}" is not a valid collection`);
-  }
-  const schema = SCHEMA_BY_COLLECTION[collection];
-
-  return denormalize(normalizedData, schema, references.map(reference => reference.id));
 }
 
 /**

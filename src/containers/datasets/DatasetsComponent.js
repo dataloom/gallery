@@ -45,7 +45,7 @@ class DatasourcesComponent extends React.Component {
             <Modal.Title>Create a datasource</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <CreateEntitySet onCreate={this.props.onCreateEntityType} entityTypes={[]}/>
+            <CreateEntitySet />
           </Modal.Body>
         </Modal>
 
