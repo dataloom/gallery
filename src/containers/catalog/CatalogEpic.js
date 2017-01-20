@@ -8,19 +8,15 @@ import { SearchApi } from 'loom-data';
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
-import { Permission } from '../../core/permissions/Permission';
 import type { EntitySet } from '../../components/entityset/EntitySetStorage';
 import { EntitySetNschema } from '../edm/EdmStorage';
 
 // TODO: Move processing and storage into EDM
 function convertSearchResult(rawResult): EntitySet {
-  let permission = rawResult.acls.map(Permission.enumValueOf).reduce(Permission.maxPermission);
-  return Object.assign({}, rawResult.entitySet, {
-    permission,
-    propertyTypes: rawResult.propertyTypes
-  });
+  return rawResult.entitySet
 }
 
+// TODO: Save property types
 function searchCatalog(filterParams) {
   return Observable.from(SearchApi.search(filterParams))
     .map(rawResult => rawResult.map(convertSearchResult))
