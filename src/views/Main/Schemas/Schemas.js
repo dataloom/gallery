@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import styles from './styles.module.css';
 import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import { EntityTypeList } from './Components/EntityTypeList';

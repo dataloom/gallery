@@ -12,7 +12,7 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 
 // TODO: Replace with Async calls
 const ENTITY_SET_TYPE_OPTIONS = [{
-  value: 'c271a300-ea05-420b-b33b-8ecb18de5ce7',
+  value: 'c65a53e7-5647-4f93-aeac-9ce8a1298fc6',
   label: 'Employee'
 }];
 

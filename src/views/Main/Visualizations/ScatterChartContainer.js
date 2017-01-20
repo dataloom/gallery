@@ -35,10 +35,9 @@ export class ScatterChartContainer extends React.Component {
     return (
       <div>
         <ScatterChartVisualization
-          xProp={this.state.xAxisProp}
-          yProp={this.state.yAxisProp}
-          data={this.props.data}
-        />
+            xProp={this.state.xAxisProp}
+            yProp={this.state.yAxisProp}
+            data={this.props.data} />
       </div>
     );
   }
@@ -47,15 +46,14 @@ export class ScatterChartContainer extends React.Component {
     const numberProps = this.props.numberProps;
     const { xAxisProp, yAxisProp } = this.state;
     if (numberProps.length <= 1) return null;
-    const xAxisPropJson = (xAxisProp !== undefined) ?
-      JSON.parse(xAxisProp) : null;
+    const xAxisPropJson = (xAxisProp !== undefined) ? JSON.parse(xAxisProp) : null;
     const yAxisOptions = [];
     const xAxisOptions = numberProps.map((prop) => {
-      const fqn = `${prop.namespace}.${prop.name}`;
-      if (!(xAxisPropJson && xAxisPropJson.name === prop.name && xAxisPropJson.namespace === prop.namespace)) {
-        yAxisOptions.push({ label: fqn, value: JSON.stringify(prop) });
+      //const fqn = `${prop.namespace}.${prop.name}`;
+      if (!xAxisPropJson || xAxisPropJson.id !== prop.id) {
+        yAxisOptions.push({ label: prop.title, value: JSON.stringify(prop) });
       }
-      return { label: fqn, value: JSON.stringify(prop) };
+      return { label: prop.title, value: JSON.stringify(prop) };
     });
     return (
       <div>
@@ -67,19 +65,17 @@ export class ScatterChartContainer extends React.Component {
           <div className={styles.xAxisSelectWrapper}>
             <div className={styles.selectButton}>
               <Select
-                placeholder="Choose a property for the x axis"
-                options={xAxisOptions}
-                value={xAxisProp}
-                onChange={this.handleXAxisPropChange}
-              />
+                  placeholder="Choose a property for the x axis"
+                  options={xAxisOptions}
+                  value={xAxisProp}
+                  onChange={this.handleXAxisPropChange} />
             </div>
             <div className={`${styles.selectButton} ${styles.marginLeft}`}>
               <Select
-                placeholder="Choose a property for the y axis"
-                options={yAxisOptions}
-                value={yAxisProp}
-                onChange={this.handleYAxisPropChange}
-              />
+                  placeholder="Choose a property for the y axis"
+                  options={yAxisOptions}
+                  value={yAxisProp}
+                  onChange={this.handleYAxisPropChange} />
             </div>
           </div>
         </div>
