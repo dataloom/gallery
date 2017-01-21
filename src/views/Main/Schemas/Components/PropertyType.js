@@ -1,5 +1,5 @@
 import React from 'react';
-import { PropertyTypePropType } from '../../../../components/propertytype/PropertyTypeStorage';
+import { PropertyTypePropType } from '../../../../containers/edm/EdmModel';
 import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {

@@ -28,8 +28,15 @@ export const PermissionsPropType = PropTypes.shape({
   OWNER:PropTypes.bool.isRequired
 });
 
+export type AclKey = string[];
+
+export type AccessCheck = {
+  aclKey:AclKey,
+  permissions:string[]
+}
+
 export type Authorization = {
-  aclKey:string[],
+  aclKey:AclKey,
   permissions: Permissions
 };
 
@@ -46,12 +53,19 @@ export function deserializeAuthorization(rawAuthorization:Object):Authorization 
   };
 }
 
+export function createAccessCheck(aclKey:AclKey) {
+  return {
+    aclKey,
+    permissions: ALL_PERMISSIONS
+  }
+}
+
 /**
  * return permissions. If none are found, return default
  * @param permissionsState
  * @param aclKey
  */
-export function getPermissions(permissionsState:Map<string,*>, aclKey:string[]):Permissions {
+export function getPermissions(permissionsState:Map<string,*>, aclKey:AclKey):Permissions {
   const permissions = permissionsState.get('authorizations').getIn(aclKey.concat(['permissions']));
   if (permissions) {
     // TODO: Remove toJS() when components move to Immutable

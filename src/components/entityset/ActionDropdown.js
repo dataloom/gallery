@@ -5,7 +5,7 @@ import classnames from 'classnames';
 
 import { DataApi } from 'loom-data';
 
-import { EntitySetPropType } from './EntitySetStorage';
+import { EntitySetPropType } from '../../containers/edm/EdmModel';
 import FileConsts from '../../utils/Consts/FileConsts';
 import PageConsts from '../../utils/Consts/PageConsts';
 
