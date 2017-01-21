@@ -60,8 +60,10 @@ export class LineChartVisualization extends React.Component {
     if (!this.props.xProp || !this.props.yProps) return null;
 
     const xProp = JSON.parse(this.props.xProp);
+    const xPropFqn = `${xProp.type.namespace}.${xProp.type.name}`;
     const lines = this.props.yProps.map((prop) => {
-      return <Line type="monotone" dataKey={prop.id} name={prop.title} stroke="#4509cb" key={prop.id} />;
+      const fqn = `${prop.type.namespace}.${prop.type.name}`
+      return <Line type="monotone" dataKey={fqn} name={prop.title} stroke="#4509cb" key={prop.id} />;
     });
 
     return (
@@ -73,7 +75,7 @@ export class LineChartVisualization extends React.Component {
               data={this.state.formattedData}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <XAxis
-                dataKey={xProp.id}
+                dataKey={xPropFqn}
                 name={xProp.title}
                 type="number"
                 domain={['dataMin', 'dataMax']} />

@@ -14,46 +14,46 @@ import styles from './styles.module.css';
 
 const mockdata = [
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [63],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [90000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.21759217],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.8935557]
+    'testcsv.height': [63],
+    'testcsv.salary': [90000],
+    'testcsv.latitude': [61.21759217],
+    'testcsv.longitude': [-149.8935557]
   },
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [60],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [84000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.19533942],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.9054948]
+    'testcsv.height': [60],
+    'testcsv.salary': [84000],
+    'testcsv.latitude': [61.19533942],
+    'testcsv.longitude': [-149.9054948]
   },
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [75],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [103000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.2297],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.7522]
+    'testcsv.height': [75],
+    'testcsv.salary': [103000],
+    'testcsv.latitude': [61.2297],
+    'testcsv.longitude': [-149.7522]
   },
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [76],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [99000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.19525062],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.8643361]
+    'testcsv.height': [76],
+    'testcsv.salary': [99000],
+    'testcsv.latitude': [61.19525062],
+    'testcsv.longitude': [-149.8643361]
   },
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [79],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [135000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.13751355],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.8379726]
+    'testcsv.height': [79],
+    'testcsv.salary': [135000],
+    'testcsv.latitude': [61.13751355],
+    'testcsv.longitude': [-149.8379726]
   },
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [80],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [128000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.13994658],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.9092788]
+    'testcsv.height': [80],
+    'testcsv.salary': [128000],
+    'testcsv.latitude': [61.13994658],
+    'testcsv.longitude': [-149.9092788]
   },
   {
-    'eafff9f7-4ad4-4f2c-98f0-793c1769436a': [87],
-    '23d1ab60-aaff-4270-9b7c-aedd5345a4a9': [162000],
-    'a7493f10-2b66-4ac1-bc7c-36d69af71c64': [61.19533265],
-    'abc9e586-56c8-4879-ae73-907034610569': [-149.7364877]
+    'testcsv.height': [87],
+    'testcsv.salary': [162000],
+    'testcsv.latitude': [61.19533265],
+    'testcsv.longitude': [-149.7364877]
   }
 ];
 
@@ -107,10 +107,7 @@ export class Visualize extends React.Component {
     });
     return DataApi.getSelectedEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
-      // TODO: use real data not mock data
-
-      // return data;
-      return mockdata;
+      return data;
     });
   }
 
