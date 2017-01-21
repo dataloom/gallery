@@ -72,16 +72,16 @@ function createNewOrg(action :Object) {
     .mergeMap((newOrgId :UUID) => {
       return setNewOrgPermissions(newOrgId);
     })
-    .catch((error) => {
-      console.error(error);
+    .catch(() => {
+      return Observable.of({
+        type: OrgsActionTypes.CREATE_NEW_ORG_FAILURE
+      });
     });
 }
 
 export default function createOrgEpic(action$ :Observable<Object>) {
 
   return action$
-    .ofType(OrgsActionTypes.CREATE_NEW_ORG)
-    .mergeMap((action :Object) => {
-      return createNewOrg(action);
-    });
+    .ofType(OrgsActionTypes.CREATE_NEW_ORG_REQUEST)
+    .mergeMap(createNewOrg);
 }

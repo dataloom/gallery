@@ -121,20 +121,7 @@ class Organizations extends React.Component {
 
   componentDidMount() {
 
-    this.fetchOrganizations();
-  }
-
-  fetchOrganizations = () => {
-
     this.props.actions.fetchOrgsRequest();
-
-    OrganizationsApi.getAllOrganizations()
-      .then((response) => {
-        this.props.actions.fetchOrgsSuccess(response);
-      })
-      .catch(() => {
-        this.props.actions.fetchOrgsFailure();
-      });
   }
 
   showCreateOrganizationComponent = () => {

@@ -32,7 +32,7 @@ import styles from '../styles/create.org.module.css';
 import Utils from '../../../utils/Utils';
 
 import {
-  createNewOrg
+  createNewOrgRequest
 } from '../actions/OrganizationsActionFactory';
 
 const {
@@ -48,7 +48,7 @@ function mapStateToProps(state :Map<*, *>) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
-    createNewOrg
+    createNewOrgRequest
   };
 
   return {
@@ -130,7 +130,7 @@ class CreateOrganization extends React.Component {
       .setAutoApprovedEmails(emailDomains)
       .build();
 
-    this.props.actions.createNewOrg(org);
+    this.props.actions.createNewOrgRequest(org);
   }
 
   onChangeDomainTag = (value :Array<Object>) => {

@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
-import * as permissionsActionFactories from '../permissions/PermissionsActionFactories';
+import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
@@ -92,7 +92,7 @@ function mapDispatchToProps(dispatch, ownProps) {
   return {
     loadEntitySet: () => {
       dispatch(actionFactories.entitySetDetailRequest(id));
-      dispatch(permissionsActionFactories.getEntitySetsAuthorizations([id]));
+      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
       // TODO: Move filter creation in helper function in EdmApi
       dispatch(edmActionFactories.filteredEdmRequest(
         [{

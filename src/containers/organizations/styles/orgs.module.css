@@ -35,3 +35,23 @@
 .organizationsSelect {
   width: 500px;
 }
+
+.orgTitleSectionWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.orgTitleOwnerWrapper {
+  display: flex;
+  align-self: flex-start;
+}
+
+.orgIsOwnerLabel {
+  margin-left: 20px;
+  margin-top: 24px;
+}
+
+.orgJoinButton {
+  align-self: center;
+}

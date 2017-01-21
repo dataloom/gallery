@@ -1,31 +1,43 @@
-/* @flow */
-import { Observable } from 'rxjs';
+/*
+ * @flow
+ */
 
-import { AuthorizationApi } from 'loom-data';
+import {
+  AuthorizationApi
+} from 'loom-data';
 
-import * as actionTypes from './PermissionsActionTypes';
-import * as actionFactories from './PermissionsActionFactories';
-import { deserializeAuthorization } from './PermissionsStorage';
+import {
+  Observable
+} from 'rxjs';
 
+import * as PermissionsActionTypes from './PermissionsActionTypes';
+import * as PermissionsActionFactory from './PermissionsActionFactory';
+
+import {
+  deserializeAuthorization
+} from './PermissionsStorage';
 
 // TODO: Save property types
-function authorizationCheck(accessChecks:Object[]) {
-  return Observable.from(AuthorizationApi.checkAuthorizations(accessChecks))
-    .map(authorizations => authorizations.map(deserializeAuthorization))
-    .map(actionFactories.checkAuthorizationResolve)
-    // Error Handling
-    .catch(error => {
-      console.error(error);
-      return Observable.of(actionFactories.checkAuthorizationReject(accessChecks, "Error loading authorizations"))
+function authorizationCheck(accessChecks :Object[]) :Observable<Action> {
+
+  return Observable
+    .from(AuthorizationApi.checkAuthorizations(accessChecks))
+    .map((authorizations) => {
+      return authorizations.map(deserializeAuthorization);
+    })
+    .map(PermissionsActionFactory.checkAuthorizationResolve)
+    .catch(() => {
+      return Observable.of(
+        PermissionsActionFactory.checkAuthorizationReject(accessChecks, 'Error loading authorizations')
+      );
     });
 }
 
 // TODO: Cancellation and Error handling
-function authorizationCheckEpic(action$) {
-  return action$.ofType(actionTypes.CHECK_AUTHORIZATION_REQUEST)
-  // Run search
+export default function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(PermissionsActionTypes.CHECK_AUTHORIZATION_REQUEST)
     .pluck('accessChecks')
     .mergeMap(authorizationCheck);
 }
-
-export default authorizationCheckEpic;

@@ -10,11 +10,14 @@ import {
   FETCH_ORG_REQUEST,
   FETCH_ORG_SUCCESS,
   FETCH_ORG_FAILURE,
+
   FETCH_ORGS_REQUEST,
   FETCH_ORGS_SUCCESS,
   FETCH_ORGS_FAILURE,
 
-  CREATE_NEW_ORG
+  CREATE_NEW_ORG_REQUEST,
+  CREATE_NEW_ORG_SUCCESS,
+  CREATE_NEW_ORG_FAILURE
 } from './OrganizationsActionTypes';
 
 const Organization = DataModels.Organization;
@@ -64,10 +67,25 @@ export function fetchOrgsFailure() :Object {
   };
 }
 
-export function createNewOrg(org :Organization) :Object {
+export function createNewOrgRequest(org :Organization) :Object {
 
   return {
-    type: CREATE_NEW_ORG,
+    type: CREATE_NEW_ORG_REQUEST,
     org
+  };
+}
+
+export function createNewOrgSuccess(orgId :UUID) :Object {
+
+  return {
+    type: CREATE_NEW_ORG_SUCCESS,
+    orgId
+  };
+}
+
+export function createNewOrgFailure() :Object {
+
+  return {
+    type: CREATE_NEW_ORG_FAILURE
   };
 }
