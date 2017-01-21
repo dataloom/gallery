@@ -9,8 +9,8 @@ import { deserializeAuthorization } from './PermissionsStorage';
 
 
 // TODO: Save property types
-function entitySetAuthorization(accessChecks:Object) {
-  return Observable.from(AuthorizationApi.checkAuthorizations)
+function authorizationCheck(accessChecks:Object[]) {
+  return Observable.from(AuthorizationApi.checkAuthorizations(accessChecks))
     .map(authorizations => authorizations.map(deserializeAuthorization))
     .map(actionFactories.checkAuthorizationResolve)
     // Error Handling
@@ -21,11 +21,11 @@ function entitySetAuthorization(accessChecks:Object) {
 }
 
 // TODO: Cancellation and Error handling
-function entitySetAuthorizationEpic(action$) {
+function authorizationCheckEpic(action$) {
   return action$.ofType(actionTypes.CHECK_AUTHORIZATION_REQUEST)
   // Run search
     .pluck('accessChecks')
-    .mergeMap(entitySetAuthorization);
+    .mergeMap(authorizationCheck);
 }
 
-export default entitySetAuthorizationEpic;
+export default authorizationCheckEpic;

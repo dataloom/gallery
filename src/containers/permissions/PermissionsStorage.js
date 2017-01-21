@@ -54,6 +54,7 @@ export function deserializeAuthorization(rawAuthorization:Object):Authorization 
 export function getPermissions(permissionsState:Map<string,*>, aclKey:string[]):Permissions {
   const permissions = permissionsState.get('authorizations').getIn(aclKey.concat(['permissions']));
   if (permissions) {
+    // TODO: Remove toJS() when components move to Immutable
     return permissions.toJS();
   } else {
     return DEFAULT_PERMISSIONS

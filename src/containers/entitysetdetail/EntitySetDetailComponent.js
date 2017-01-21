@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
-import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import * as edmActionFactories from '../edm/EdmActionFactories';
+import * as permissionsActionFactories from '../permissions/PermissionsActionFactories';
+import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import ActionDropdown from '../../components/entityset/ActionDropdown';
@@ -34,7 +35,7 @@ class EntitySetDetailComponent extends React.Component {
         </div>
 
         <div className={styles.controls}>
-          { entitySetPermissions.isOwner ? <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button> : ''}
+          { entitySetPermissions.OWNER ? <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button> : ''}
           <ActionDropdown entitySet={entitySet}/>
         </div>
       </div>
@@ -87,10 +88,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
+  const id = ownProps.params.id;
   return {
     loadEntitySet: () => {
-      const id = ownProps.params.id;
-      dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
+      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(permissionsActionFactories.getEntitySetsAuthorizations([id]));
       // TODO: Move filter creation in helper function in EdmApi
       dispatch(edmActionFactories.filteredEdmRequest(
         [{

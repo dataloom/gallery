@@ -1,6 +1,7 @@
 /* @flow */
 import * as actionTypes from './PermissionsActionTypes';
-import type { Authorization, ALL_PERMISSIONS } from './PermissionsStorage';
+import { ALL_PERMISSIONS } from './PermissionsStorage'
+import type { Authorization } from './PermissionsStorage';
 
 export function checkAuthorizationRequest(accessChecks:Object[]) {
   return {
