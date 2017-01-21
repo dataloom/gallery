@@ -11,12 +11,22 @@
     font-weight: 600;
 }
 
-.title, .description {
+.title, .description, .permissions {
     display: table-cell;
     padding: 15px;
 }
+.title {
+    padding-left: 0;
+}
+.permissions {
+    padding: 0 2px 0 15px;
+    width:15px;
+}
+.permissions:empty {
+    padding-right: 0;
+}
 
-.propertyType:nth-child(even) .title, .propertyType:nth-child(even) .description {
+.propertyType:nth-child(even) > * {
     background: #f3f5f7;
 }
 
