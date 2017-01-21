@@ -8,7 +8,7 @@ import * as PermissionsActionFactory from '../permissions/PermissionsActionFacto
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
-import ActionDropdown from '../../components/entityset/ActionDropdown';
+import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
@@ -36,7 +36,7 @@ class EntitySetDetailComponent extends React.Component {
 
         <div className={styles.controls}>
           { entitySetPermissions.OWNER ? <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button> : ''}
-          <ActionDropdown entitySet={entitySet}/>
+          <ActionDropdown entitySetId={entitySet.id}/>
         </div>
       </div>
     );
