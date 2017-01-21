@@ -1,22 +1,21 @@
 import React, { PropTypes } from 'react';
 
-import { PropertyTypePropType } from '../EdmModel';
 import PropertyType from './PropertyType';
 import styles from './propertype.module.css';
 
 // TODO: make PropertyTypeList a container that takes a list of PropertyType references
 export default class PropertyTypeList extends React.Component {
   static propTypes = {
-    propertyTypes: PropTypes.arrayOf(PropertyTypePropType).isRequired
+    propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired
   };
 
   render() {
-    const { propertyTypes } = this.props;
+    const { propertyTypeIds } = this.props;
 
     let content;
-    if (propertyTypes.length > 0) {
-      content = propertyTypes.map((propertyType) => {
-        return (<PropertyType propertyType={propertyType} key={propertyType.id}/>);
+    if (propertyTypeIds.length > 0) {
+      content = propertyTypeIds.map((id) => {
+        return (<PropertyType propertyTypeId={id} key={id}/>);
       });
     } else {
       content = (<em>No property types</em>);
