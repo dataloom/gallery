@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import FontAwesome from 'react-fontawesome';
 import { Alert } from 'react-bootstrap';
 
+import LoadingSpinner from './LoadingSpinner';
+
 export const ASYNC_STATUS = Object.freeze({
   PENDING: Symbol('pending'),
   LOADING: Symbol('loading'),
@@ -37,10 +39,7 @@ export default class AsyncContent extends React.Component {
 
   renderLoading() {
     return (
-      <div>
-        <h2>Loading</h2>
-        <FontAwesome name="spinner" size="5x" spin />
-      </div>
+      <LoadingSpinner />
     );
   }
 

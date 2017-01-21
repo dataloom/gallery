@@ -2,26 +2,29 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
 
-import Page from '../../components/page/Page';
-import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
-import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
-import ActionDropdown from '../../components/entityset/ActionDropdown';
-import styles from './entitysetdetail.module.css';
+import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
+import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
+import ActionDropdown from '../../components/entityset/ActionDropdown';
+import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
+import Page from '../../components/page/Page';
+import styles from './entitysetdetail.module.css';
 
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
     entitySet: EntitySetPropType,
+    entitySetPermissions: PermissionsPropType.isRequired,
     loadEntitySet: PropTypes.func.isRequired
   };
 
   renderHeaderContent = () => {
-    const { entitySet } = this.props;
+    const { entitySet, entitySetPermissions } = this.props;
 
     return (
       <div className={styles.headerContent}>
@@ -32,7 +35,7 @@ class EntitySetDetailComponent extends React.Component {
         </div>
 
         <div className={styles.controls}>
-          <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button>
+          { entitySetPermissions.OWNER ? <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button> : ''}
           <ActionDropdown entitySet={entitySet}/>
         </div>
       </div>
@@ -64,25 +67,32 @@ class EntitySetDetailComponent extends React.Component {
 
 function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail'),
-    normalizedData = state.get('normalizedData');
+    normalizedData = state.get('normalizedData'),
+    permissions = state.get('permissions');
 
   let entitySet;
+  let entitySetPermissions;
   const reference = entitySetDetail.get('entitySetReference');
   if (reference) {
     entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
+    entitySetPermissions = getPermissions(permissions, [entitySet.id])
+  } else {
+    entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
-    entitySet
+    entitySet,
+    entitySetPermissions
   };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
+  const id = ownProps.params.id;
   return {
     loadEntitySet: () => {
-      const id = ownProps.params.id;
-      dispatch(actionFactories.entitySetDetailRequest(ownProps.params.id));
+      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
       // TODO: Move filter creation in helper function in EdmApi
       dispatch(edmActionFactories.filteredEdmRequest(
         [{

@@ -9,7 +9,10 @@ import classnames from 'classnames';
 
 import {
   DataModels,
-  OrganizationApi
+  Types,
+  AuthorizationApi,
+  OrganizationApi,
+  PermissionsApi
 } from 'loom-data';
 
 import {
@@ -19,6 +22,7 @@ import {
   FormGroup,
   HelpBlock,
   InputGroup,
+  Label,
   ListGroup,
   ListGroupItem
 } from 'react-bootstrap';
@@ -37,15 +41,15 @@ import {
 
 import styles from '../styles/orgs.module.css';
 
-import LoadingSpinner from '../../../components/loadingspinner/LoadingSpinner';
-
 import {
   fetchOrgRequest,
   fetchOrgSuccess,
   fetchOrgFailure
 } from '../actions/OrganizationsActionFactory';
 
-const { Organization } = DataModels;
+const {
+  Organization
+} = DataModels;
 
 function mapStateToProps(state :Map<*, *>, ownProps :Object) {
 
@@ -114,6 +118,35 @@ class OrganizationDetails extends React.Component {
           this.props.actions.fetchOrgFailure();
         });
     }
+
+    PermissionsApi.getAcl([this.props.params.orgId]);
+  }
+
+  getOrgTitleSection = () => {
+
+    return (
+      <div className={classnames(styles.orgTitleSectionWrapper)}>
+        <div className={classnames(styles.orgTitleOwnerWrapper)}>
+          <h3 className={classnames(styles.orgTitle)}>
+            { this.props.organization.get('title') }
+          </h3>
+          {
+            this.props.organization.get('isOwner') === true
+            ? (
+              <h5 className={classnames(styles.orgIsOwnerLabel)}>
+                <Label bsStyle="success">Owner</Label>
+              </h5>
+            )
+            : null
+          }
+        </div>
+        {
+          this.props.organization.get('isOwner') === false
+            ? <Button className={classnames(styles.orgJoinButton)}>Request to Join</Button>
+            : null
+        }
+      </div>
+    );
   }
 
   renderInvitationSection = () => {
@@ -157,16 +190,10 @@ class OrganizationDetails extends React.Component {
 
   render() {
 
-    if (this.props.isFetchingOrg) {
-      return <LoadingSpinner />;
-    }
-
     return (
       <div className={classnames(styles.flexComponent)}>
-        <div className={styles.detailSection}>
-          <h3>
-            { this.props.organization.get('title') }
-          </h3>
+        <div className={classnames(styles.flexComponent, styles.detailSection)}>
+          { this.getOrgTitleSection() }
           <h4>
             { this.props.organization.get('description') }
           </h4>

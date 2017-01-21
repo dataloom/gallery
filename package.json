@@ -89,9 +89,9 @@
     "style-loader": "^0.13.1",
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
-    "webpack": "^2.2.0-rc",
+    "webpack": "^2.2.0",
     "webpack-dashboard": "^0.2.1",
-    "webpack-dev-server": "^2.2.0-rc"
+    "webpack-dev-server": "^2.2.0"
   },
   "scripts": {
     "app": "better-npm-run webpack-dev-server",

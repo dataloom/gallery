@@ -2,14 +2,13 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
 
-import Page from "../../components/page/Page";
+import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
 import { EntitySetNschema } from '../edm/EdmStorage';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../securableobject/SecurableObjectSearch';
 import { catalogSearchRequest } from './CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-
 
 class CatalogComponent extends React.Component {
   static propTypes = {
