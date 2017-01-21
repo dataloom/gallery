@@ -23,8 +23,8 @@ export class ScatterChartVisualization extends React.Component {
     if (this.props.xProp === undefined || this.props.yProp === undefined || this.props.data === undefined) return null;
     const xProp = JSON.parse(this.props.xProp);
     const yProp = JSON.parse(this.props.yProp);
-    const xPropFqn = `${xProp.namespace}.${xProp.name}`;
-    const yPropFqn = `${yProp.namespace}.${yProp.name}`;
+    const xPropFqn = `${xProp.type.namespace}.${xProp.type.name}`;
+    const yPropFqn = `${yProp.type.namespace}.${yProp.type.name}`;
     let key = 0;
     const scatterPoints = [];
     this.props.data.forEach((pointData) => {
@@ -36,10 +36,9 @@ export class ScatterChartVisualization extends React.Component {
       key += 1;
       scatterPoints.push(
         <Scatter
-          data={[point]}
-          fill="#8884d8"
-          key={key}
-        />
+            data={[point]}
+            fill="#4509cb"
+            key={key} />
       );
     });
     return (
@@ -47,17 +46,15 @@ export class ScatterChartVisualization extends React.Component {
         <div className={styles.visualizationWrapper}>
           <ScatterChart width={750} height={250}>
             <XAxis
-              dataKey={xPropFqn}
-              name={xPropFqn}
-              type="number"
-              domain={['dataMin', 'dataMax']}
-            />
+                dataKey={xPropFqn}
+                name={xProp.title}
+                type="number"
+                domain={['dataMin', 'dataMax']} />
             <YAxis
-              dataKey={yPropFqn}
-              name={yPropFqn}
-              type="number"
-              domain={['dataMin', 'dataMax']}
-            />
+                dataKey={yPropFqn}
+                name={yProp.title}
+                type="number"
+                domain={['dataMin', 'dataMax']} />
             <CartesianGrid strokeDasharray="3 3" />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
             {scatterPoints}

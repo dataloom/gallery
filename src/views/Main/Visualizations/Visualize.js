@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi, PermissionsApi, DataApi } from 'loom-data';
+import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 import { Promise } from 'bluebird';
+import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
+import Page from '../../../components/page/Page';
 import { LineChartContainer } from './LineChartContainer';
 import { ScatterChartContainer } from './ScatterChartContainer';
 import { GeoContainer } from './GeoContainer';
@@ -9,7 +11,6 @@ import EdmConsts from '../../../utils/Consts/EdmConsts';
 import { Permission } from '../../../core/permissions/Permission';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
-import Utils from '../../../utils/Utils';
 import styles from './styles.module.css';
 
 const chartTypes = {
@@ -26,35 +27,47 @@ export class Visualize extends React.Component {
 
   constructor(props) {
     super(props);
-    let name;
-    let typeNamespace;
-    let typeName;
+    let entitySetId;
+    let entityTypeId;
     const query = props.location.query;
-    if (query.name !== undefined && query.typeNamespace !== undefined && query.typeName !== undefined) {
-      name = query.name;
-      typeNamespace = query.typeNamespace;
-      typeName = query.typeName;
+    if (query.setId !== undefined && query.typeId !== undefined) {
+      entitySetId = query.setId;
+      entityTypeId = query.typeId;
     }
     this.state = {
-      name,
-      typeNamespace,
-      typeName,
+      entitySetId,
+      entityTypeId,
+      title: StringConsts.EMPTY,
       properties: [],
       numberProps: [],
       geoProps: [],
       currentView: undefined,
-      data: []
+      data: [],
+      asyncStatus: ASYNC_STATUS.LOADING
     };
   }
 
+  componentDidMount() {
+    if (this.state.entitySetId !== undefined) {
+      this.loadEntitySetTitle();
+    }
+    this.loadPropertiesIfEntitySetChosen();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.entitySetId !== this.state.entitySetId) {
+      if (this.state.entitySetId !== undefined) {
+        this.loadEntitySetTitle();
+      }
+      this.loadPropertiesIfEntitySetChosen();
+    }
+  }
+
   loadData = (propertyTypes) => {
-    if (propertyTypes.length < 2) return Promise.resolve();
-    const { typeNamespace, typeName, name } = this.state;
-    const entityTypeFqn = Utils.getFqnObj(typeNamespace, typeName);
-    const propertyTypesList = propertyTypes.map((type) => {
-      return Utils.getFqnObj(type.namespace, type.name);
+    const propertyTypeIds = propertyTypes.map((propertyType) => {
+      return propertyType.id;
     });
-    return DataApi.getSelectedEntitiesOfTypeInSet(entityTypeFqn, name, propertyTypesList)
+    return DataApi.getSelectedEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
       return data;
     });
@@ -67,7 +80,7 @@ export class Visualize extends React.Component {
     properties.forEach((prop) => {
       if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) {
         numberProps.push(prop);
-        const propName = prop.name.trim().toLowerCase();
+        const propName = prop.type.name.trim().toLowerCase();
         if (propName === VisualizationConsts.LATITUDE) {
           latProp = prop;
         }
@@ -86,45 +99,61 @@ export class Visualize extends React.Component {
         numberProps,
         geoProps,
         currentView,
-        data
+        data,
+        asyncStatus: ASYNC_STATUS.SUCCESS
       });
+    }).catch(() => {
+      this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
     });
   }
 
   loadPropertiesIfEntitySetChosen = () => {
-    const { name, typeName, typeNamespace } = this.state;
-    if (name !== undefined && typeName !== undefined && typeNamespace !== undefined) {
-      this.loadProperties();
+    const { entitySetId, entityTypeId } = this.state;
+    if (entitySetId !== undefined && entityTypeId !== undefined) {
+      this.loadEntitySetType();
     }
   }
 
-  loadProperties = () => {
-    Promise.join(
-      EntityDataModelApi.getEntityType(Utils.getFqnObj(this.state.typeNamespace, this.state.typeName)),
-      PermissionsApi.getAclsForPropertyTypesInEntitySet(this.state.name),
-      (type, propertyTypePermissions) => {
-        const allPropertiesAsync = [];
-        type.properties.forEach((prop) => {
-          const permissions = propertyTypePermissions[`${prop.namespace}.${prop.name}`];
-          if (permissions.includes(Permission.READ.name) || permissions.includes(Permission.WRITE.name)) {
-            allPropertiesAsync.push(EntityDataModelApi.getPropertyType(prop));
-          }
-        });
-        Promise.all(allPropertiesAsync).then((properties) => {
-          this.filterPropDatatypes(properties);
-        });
-      }
-    );
+  loadEntitySetTitle = () => {
+    EntityDataModelApi.getEntitySet(this.state.entitySetId)
+    .then((entitySet) => {
+      this.setState({ title: entitySet.title });
+    });
   }
 
-  componentDidMount() {
-    this.loadPropertiesIfEntitySetChosen();
+  loadEntitySetType = () => {
+    EntityDataModelApi.getEntityType(this.state.entityTypeId)
+    .then((entityType) => {
+      this.loadProperties(entityType.properties);
+    });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.name !== this.state.name) {
-      this.loadPropertiesIfEntitySetChosen();
-    }
+  loadProperties = (propertyIds) => {
+    const accessChecks = propertyIds.map((propertyId) => {
+      return {
+        aclKey: [this.state.entitySetId, propertyId],
+        permissions: [Permission.READ.name]
+      };
+    });
+    AuthorizationApi.checkAuthorizations(accessChecks)
+    .then((response) => {
+      const propsWithReadAccess = [];
+      response.forEach((property) => {
+        if (property.permissions.READ) {
+          propsWithReadAccess.push(property.aclKey[1]);
+        }
+      });
+      const propertyTypePromises = propsWithReadAccess.map((propId) => {
+        return EntityDataModelApi.getPropertyType(propId);
+      });
+      Promise.all(propertyTypePromises).then((propertyTypes) => {
+        this.filterPropDatatypes(propertyTypes);
+      }).catch(() => {
+        this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
+      });
+    }).catch(() => {
+      this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
+    });
   }
 
   switchView = (newView) => {
@@ -152,11 +181,7 @@ export class Visualize extends React.Component {
   renderViewOptions = () => {
     const options = this.getAvailableVisualizations();
     if (options.length === 0) {
-      return (
-        <div className={styles.optionsBar}>
-          There are no visualizations available for this entity set.
-        </div>
-      );
+      return null;
     }
     const optionsBar = options.map((option) => {
       return (
@@ -175,16 +200,15 @@ export class Visualize extends React.Component {
     );
   }
 
-  displayEntitySet = (name, typeNamespace, typeName) => {
+  displayEntitySet = (entitySetId, entityTypeId) => {
     this.setState({
-      name,
-      typeNamespace,
-      typeName
+      entitySetId,
+      entityTypeId
     });
   }
 
   renderVisualization = () => {
-    const { currentView, name, data, numberProps, geoProps } = this.state;
+    const { currentView, title, data, numberProps, geoProps } = this.state;
     let visualization = null;
     switch (currentView) {
       case chartTypes.SCATTER_CHART:
@@ -199,15 +223,20 @@ export class Visualize extends React.Component {
       default:
         visualization = null;
     }
-    const title = (visualization) ? currentView : StringConsts.EMPTY;
     return (
       <div>
-        {this.renderViewOptions()}
-        <div className={styles.entitySetName}>{name}</div>
-        <h1>{title}</h1>
-        <div>
-          {visualization}
-        </div>
+        <Page.Header>
+          <Page.Title>{title}</Page.Title>
+          {this.renderViewOptions()}
+        </Page.Header>
+        <Page.Body>
+          <AsyncContent
+              status={this.state.asyncStatus}
+              errorMessage="Unable to load visualization."
+              content={() => {
+                return visualization;
+              }} />
+        </Page.Body>
       </div>
     );
   }
@@ -221,13 +250,13 @@ export class Visualize extends React.Component {
   }
 
   render() {
-    const { name, typeName, typeNamespace } = this.state;
-    const content = (name === undefined || typeName === undefined || typeNamespace === undefined) ?
+    const { entitySetId, entityTypeId } = this.state;
+    const content = (entitySetId === undefined || entityTypeId === undefined) ?
       this.renderEntitySetVisualizationList() : this.renderVisualization();
     return (
-      <div className={styles.container}>
+      <Page>
         {content}
-      </div>
+      </Page>
     );
   }
 }
