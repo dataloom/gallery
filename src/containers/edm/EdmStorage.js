@@ -1,5 +1,4 @@
 import { schema, denormalize } from 'normalizr';
-import { Iterable } from 'immutable';
 
 /* Collections */
 export const COLLECTIONS = Object.freeze({
@@ -31,7 +30,9 @@ function referenceToString(reference:EdmObjectReference) {
   return `{id: '${reference.id}, collection: ${reference.collection}}`;
 }
 
-/* Utility Functions */
+/*
+** Utility Functions
+*/
 const SCHEMA_BY_COLLECTION = Object.freeze({
   [COLLECTIONS.PROPERTY_TYPE]: PropertyTypeNschema,
   [COLLECTIONS.ENTITY_TYPE]: EntityTypeNschema,

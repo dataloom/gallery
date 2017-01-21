@@ -5,8 +5,7 @@ import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'react-redux';
 
-import { EntityTypePropType } from '../../components/entityset/EntitySetStorage';
-import { PropertyTypePropType } from '../../components/propertytype/PropertyTypeStorage';
+import { EntityTypePropType, PropertyTypePropType } from '../edm/EdmModel';
 import { getEdmObjectsShallow } from '../edm/EdmStorage';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import styles from './securableobject.module.css';

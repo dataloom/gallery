@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
-import { PropertyTypePropType } from './PropertyTypeStorage';
-import ExpandableText from '../utils/ExpandableText';
+import { PropertyTypePropType } from '../EdmModel';
+import ExpandableText from '../../../components/utils/ExpandableText';
 import styles from './propertype.module.css';
 
 const MAX_DESCRIPTION_LENGTH = 300;

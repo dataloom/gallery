@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 
-import { PropertyTypePropType } from './PropertyTypeStorage';
+import { PropertyTypePropType } from '../EdmModel';
 import PropertyType from './PropertyType';
 import styles from './propertype.module.css';
 

@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
 import ActionDropdown from './ActionDropdown';
-import { EntitySetPropType } from './EntitySetStorage';
+import { EntitySetPropType } from '../../containers/edm/EdmModel';
 import ExpandableText from '../utils/ExpandableText';
 import styles from './entityset.module.css';
 
