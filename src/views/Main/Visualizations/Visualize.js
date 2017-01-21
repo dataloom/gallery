@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 import { Promise } from 'bluebird';
+import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
 import Page from '../../../components/page/Page';
 import { LineChartContainer } from './LineChartContainer';
 import { ScatterChartContainer } from './ScatterChartContainer';
@@ -11,51 +12,6 @@ import { Permission } from '../../../core/permissions/Permission';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import styles from './styles.module.css';
-
-const mockdata = [
-  {
-    'testcsv.height': [63],
-    'testcsv.salary': [90000],
-    'testcsv.latitude': [61.21759217],
-    'testcsv.longitude': [-149.8935557]
-  },
-  {
-    'testcsv.height': [60],
-    'testcsv.salary': [84000],
-    'testcsv.latitude': [61.19533942],
-    'testcsv.longitude': [-149.9054948]
-  },
-  {
-    'testcsv.height': [75],
-    'testcsv.salary': [103000],
-    'testcsv.latitude': [61.2297],
-    'testcsv.longitude': [-149.7522]
-  },
-  {
-    'testcsv.height': [76],
-    'testcsv.salary': [99000],
-    'testcsv.latitude': [61.19525062],
-    'testcsv.longitude': [-149.8643361]
-  },
-  {
-    'testcsv.height': [79],
-    'testcsv.salary': [135000],
-    'testcsv.latitude': [61.13751355],
-    'testcsv.longitude': [-149.8379726]
-  },
-  {
-    'testcsv.height': [80],
-    'testcsv.salary': [128000],
-    'testcsv.latitude': [61.13994658],
-    'testcsv.longitude': [-149.9092788]
-  },
-  {
-    'testcsv.height': [87],
-    'testcsv.salary': [162000],
-    'testcsv.latitude': [61.19533265],
-    'testcsv.longitude': [-149.7364877]
-  }
-];
 
 const chartTypes = {
   LINE_CHART: VisualizationConsts.LINE_CHART,
@@ -87,11 +43,12 @@ export class Visualize extends React.Component {
       geoProps: [],
       currentView: undefined,
       data: [],
-      error: false
+      asyncStatus: ASYNC_STATUS.LOADING
     };
   }
 
   componentDidMount() {
+    this.loadEntitySetTitle();
     this.loadPropertiesIfEntitySetChosen();
   }
 
@@ -111,7 +68,7 @@ export class Visualize extends React.Component {
     });
   }
 
-  filterPropDatatypes = (properties, title) => {
+  filterPropDatatypes = (properties) => {
     let latProp = null;
     let longProp = null;
     const numberProps = [];
@@ -138,9 +95,10 @@ export class Visualize extends React.Component {
         geoProps,
         currentView,
         data,
-        title,
-        error: false
+        asyncStatus: ASYNC_STATUS.SUCCESS
       });
+    }).catch(() => {
+      this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
     });
   }
 
@@ -151,17 +109,21 @@ export class Visualize extends React.Component {
     }
   }
 
-  loadEntitySetType = () => {
-    Promise.join(
-      EntityDataModelApi.getEntitySet(this.state.entitySetId),
-      EntityDataModelApi.getEntityType(this.state.entityTypeId),
-      (entitySet, entityType) => {
-        this.loadProperties(entityType.properties, entitySet.title);
-      }
-    );
+  loadEntitySetTitle = () => {
+    EntityDataModelApi.getEntitySet(this.state.entitySetId)
+    .then((entitySet) => {
+      this.setState({ title: entitySet.title });
+    });
   }
 
-  loadProperties = (propertyIds, title) => {
+  loadEntitySetType = () => {
+    EntityDataModelApi.getEntityType(this.state.entityTypeId)
+    .then((entityType) => {
+      this.loadProperties(entityType.properties);
+    });
+  }
+
+  loadProperties = (propertyIds) => {
     const accessChecks = propertyIds.map((propertyId) => {
       return {
         aclKey: [this.state.entitySetId, propertyId],
@@ -180,12 +142,12 @@ export class Visualize extends React.Component {
         return EntityDataModelApi.getPropertyType(propId);
       });
       Promise.all(propertyTypePromises).then((propertyTypes) => {
-        this.filterPropDatatypes(propertyTypes, title);
+        this.filterPropDatatypes(propertyTypes);
       }).catch(() => {
-        this.setState({ error: true });
+        this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
       });
     }).catch(() => {
-      this.setState({ error: true });
+      this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
     });
   }
 
@@ -214,11 +176,7 @@ export class Visualize extends React.Component {
   renderViewOptions = () => {
     const options = this.getAvailableVisualizations();
     if (options.length === 0) {
-      return (
-        <div className={styles.optionsBar}>
-          There are no visualizations available for this entity set.
-        </div>
-      );
+      return null;
     }
     const optionsBar = options.map((option) => {
       return (
@@ -244,13 +202,6 @@ export class Visualize extends React.Component {
     });
   }
 
-  renderError = () => {
-    if (this.state.error) {
-      return <div clsasName={styles.error}>Unable to load visualization.</div>;
-    }
-    return null;
-  }
-
   renderVisualization = () => {
     const { currentView, title, data, numberProps, geoProps } = this.state;
     let visualization = null;
@@ -274,8 +225,12 @@ export class Visualize extends React.Component {
           {this.renderViewOptions()}
         </Page.Header>
         <Page.Body>
-          {this.renderError()}
-          {visualization}
+          <AsyncContent
+              status={this.state.asyncStatus}
+              errorMessage="Unable to load visualization."
+              content={() => {
+                return visualization;
+              }} />
         </Page.Body>
       </div>
     );
