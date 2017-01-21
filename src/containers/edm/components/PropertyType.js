@@ -5,7 +5,7 @@ import FontAwesome from 'react-fontawesome';
 
 import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
-import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
+import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import ExpandableText from '../../../components/utils/ExpandableText';
 import styles from './propertype.module.css';
 
@@ -61,18 +61,17 @@ class PropertyType extends React.Component {
   }
 }
 
-
 function mapStateToProps(state, ownProps) {
   const normalizedData = state.get('normalizedData'),
     permissionsState = state.get('permissions');
 
-  const { entityTypeId, propertyTypeId } = ownProps;
+  const { entitySetId, propertyTypeId } = ownProps;
   const reference = createPropertyTypeReference(propertyTypeId);
 
   let permissions;
-  if (entityTypeId) {
+  if (entitySetId) {
     // TODO: Make permissions handle async states properly
-    permissions = getPermissions(permissionsState, [entityTypeId, propertyTypeId]);
+    permissions = getPermissions(permissionsState, [entitySetId, propertyTypeId]);
   }
 
   return {

@@ -77,7 +77,7 @@ export function getEdmObject(normalizedData:Object, reference:EdmObjectReference
 }
 
 export function getEdmObjectsShallow(normalizedData:Object, references:EdmObjectReference[]) {
-  if (!reference) {
+  if (!references) {
     throw new Error('"reference" can\'t be null');
   }
   if (!normalizedData) {

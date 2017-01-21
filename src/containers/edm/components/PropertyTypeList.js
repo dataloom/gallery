@@ -1,21 +1,30 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import PropertyType from './PropertyType';
+import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
+import { createAccessCheck } from '../../permissions/PermissionsStorage';
 import styles from './propertype.module.css';
 
-// TODO: make PropertyTypeList a container that takes a list of PropertyType references
-export default class PropertyTypeList extends React.Component {
+class PropertyTypeList extends React.Component {
   static propTypes = {
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired
+    propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    // Implies permissions view
+    entitySetId: PropTypes.string,
+    loadPermissions: PropTypes.func.isRequired
   };
 
+  componentDidMount() {
+    this.props.loadPermissions();
+  }
+
   render() {
-    const { propertyTypeIds } = this.props;
+    const { propertyTypeIds, entitySetId } = this.props;
 
     let content;
     if (propertyTypeIds.length > 0) {
       content = propertyTypeIds.map((id) => {
-        return (<PropertyType propertyTypeId={id} key={id}/>);
+        return (<PropertyType entitySetId={entitySetId} propertyTypeId={id} key={id}/>);
       });
     } else {
       content = (<em>No property types</em>);
@@ -32,3 +41,25 @@ export default class PropertyTypeList extends React.Component {
     );
   }
 }
+
+function mapDispatchToProps(dispatch, ownProps) {
+  const { entitySetId, propertyTypeIds } = ownProps;
+
+  let loadPermissions;
+  if (entitySetId) {
+    const accessChecks = propertyTypeIds.map(id => {
+      return createAccessCheck([entitySetId, id]);
+    });
+    loadPermissions = () => {
+      dispatch(checkAuthorizationRequest(accessChecks));
+    };
+  } else {
+    loadPermissions = () => {};
+  }
+
+  return {
+    loadPermissions
+  }
+}
+
+export default connect(null, mapDispatchToProps)(PropertyTypeList);
