@@ -1,8 +1,3 @@
-.createOrganizationWrapper {
-  min-width: 800px;
-  align-self: center;
-}
-
 .createOrganizationButton {
   margin-top: 5px;
 }
@@ -16,7 +11,7 @@
 }
 
 .orgDescription {
-  max-width: 800px;
+  max-width: 980px;
   min-height: 150px;
 }
 

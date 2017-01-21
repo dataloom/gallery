@@ -43,9 +43,8 @@ export default class ActionDropdown extends React.Component {
             to={{
               pathname: `/${PageConsts.VISUALIZE}`,
               query: {
-                name: entitySet.name,
-                typeNamespace: type.namespace,
-                typeName: type.name
+                setId: entitySet.id,
+                typeId: entitySet.entityTypeId
               }
             }}>
             Visualize

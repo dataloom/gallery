@@ -1,12 +1,18 @@
-const DEFAULT_USER_ROLE = 'AuthenticatedUser';
-const ADMIN = 'admin';
-const USER = 'USER';
-const ROLE = 'ROLE';
+/*
+ * @flow
+ */
 
-const RESERVED_ROLES = [DEFAULT_USER_ROLE];
+export const AUTHENTICATED_USER :string = 'AuthenticatedUser';
+export const ADMIN :string = 'admin';
+export const USER :string = 'USER';
+export const ROLE :string = 'ROLE';
+
+const RESERVED_ROLES :string[] = [
+  AUTHENTICATED_USER
+];
 
 export default {
-  DEFAULT_USER_ROLE,
+  AUTHENTICATED_USER,
   ADMIN,
   USER,
   ROLE,

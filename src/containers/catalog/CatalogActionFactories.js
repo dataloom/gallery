@@ -8,7 +8,7 @@ export function catalogSearchRequest(filterParams:Object) {
   };
 }
 
-//TODO: Determine the right place to normalize entitySets
+//TODO: Replace with EdmObjectReferences
 export function catalogSearchResolve(entitySetIds:string[]) {
   return {
     type: actionTypes.CATALOG_SEARCH_RESOLVE,

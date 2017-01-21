@@ -24,3 +24,34 @@
 .detailSection {
   margin: 20px 0;
 }
+
+.headerContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.organizationsSelect {
+  width: 500px;
+}
+
+.orgTitleSectionWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.orgTitleOwnerWrapper {
+  display: flex;
+  align-self: flex-start;
+}
+
+.orgIsOwnerLabel {
+  margin-left: 20px;
+  margin-top: 24px;
+}
+
+.orgJoinButton {
+  align-self: center;
+}
