@@ -48,12 +48,17 @@ export class Visualize extends React.Component {
   }
 
   componentDidMount() {
-    this.loadEntitySetTitle();
+    if (this.state.entitySetId !== undefined) {
+      this.loadEntitySetTitle();
+    }
     this.loadPropertiesIfEntitySetChosen();
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.entitySetId !== this.state.entitySetId) {
+      if (this.state.entitySetId !== undefined) {
+        this.loadEntitySetTitle();
+      }
       this.loadPropertiesIfEntitySetChosen();
     }
   }
