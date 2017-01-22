@@ -24,14 +24,13 @@ class ActionDropdown extends React.Component {
   };
 
   canRequestPermissions() {
-    return true;
-    // const { propertyTypePermissions } = this.props;
-    //
-    // if (propertyTypePermissions) {
-    //   return !propertyTypePermissions.every(permission => permission.READ);
-    // } else {
-    //   return false;
-    // }
+    const { propertyTypePermissions } = this.props;
+
+    if (propertyTypePermissions) {
+      return !propertyTypePermissions.every(permission => permission.READ);
+    } else {
+      return false;
+    }
   }
 
   renderRequestPermissions() {
