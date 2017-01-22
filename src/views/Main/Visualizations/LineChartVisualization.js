@@ -9,6 +9,7 @@ import {
   YAxis
 } from 'recharts';
 import styles from './styles.module.css';
+import { DataModels } from 'loom-data';
 
 const labelElementId = 'visualization_label';
 
@@ -57,13 +58,21 @@ export class LineChartVisualization extends React.Component {
   }
 
   render() {
+    const { FullyQualifiedName } = DataModels;
     if (!this.props.xProp || !this.props.yProps) return null;
 
     const xProp = JSON.parse(this.props.xProp);
     const xPropFqn = `${xProp.type.namespace}.${xProp.type.name}`;
     const lines = this.props.yProps.map((prop) => {
-      const fqn = `${prop.type.namespace}.${prop.type.name}`;
-      return <Line type="monotone" dataKey={fqn} name={prop.title} stroke="#4509cb" key={prop.id} />;
+      const fqn = new FullyQualifiedName(prop.type.namespace, prop.type.name);
+      return (
+        <Line
+            type="monotone"
+            dataKey={fqn.getFullyQualifiedName()}
+            name={prop.title}
+            stroke="#4509cb"
+            key={prop.id} />
+      );
     });
 
     return (

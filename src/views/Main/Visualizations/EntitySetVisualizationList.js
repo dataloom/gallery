@@ -117,7 +117,7 @@ export class EntitySetVisualizationList extends React.Component {
             className={styles.listItemButton}
             key={entitySet.id} >
           <div className={styles.entitySetTitle}>{entitySet.title}</div>
-          <div className={styles.entitySetFqn}>{entitySet.type.namespace}.{entitySet.type.name}</div>
+          <div className={styles.entitySetFqn}>{entitySet.description}</div>
         </button>
       );
     });
