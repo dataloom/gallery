@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FontAwesome from 'react-fontawesome';
+import { Checkbox } from 'react-bootstrap'
 
 import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
@@ -40,14 +41,16 @@ class PropertyType extends React.Component {
   };
 
   renderPermissions() {
-    // Only support READ for now
     const { display, permissions } = this.props;
 
-    if (display.permissions === 'edit') {
-      //TODO
-    } else if (display.permissions) {
+    if (display.permissions) {
       let content;
-      if (permissions && !permissions.READ) {
+      // TODO: Support more than just read
+      // TODO: Enforce entitySetId on edit
+      const canRead = permissions && permissions.READ;
+      if (display.permissions === 'edit') {
+        content = (<Checkbox checked={canRead}/>);
+      } else if (!canRead) {
        content =  (<FontAwesome name="lock"/>);
       }
       return (<div className={styles.permissions}>{content}</div>);

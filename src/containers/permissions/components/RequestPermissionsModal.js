@@ -7,11 +7,16 @@ import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
 
+const PROPERTY_TYPE_DISPLAY = {
+  permissions: 'edit',
+  title: true
+};
 
 class RequestPermissions extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
+    entitySetId: PropTypes.string,
     //Async Objects
     entitySet: EntitySetPropType,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string),
@@ -22,7 +27,7 @@ class RequestPermissions extends React.Component {
   };
 
   render() {
-    const { propertyTypeIds, entitySet, show, onHide } = this.props;
+    const { propertyTypeIds, entitySet, entitySetId, show, onHide } = this.props;
 
     let title;
     if (entitySet) {
@@ -36,7 +41,7 @@ class RequestPermissions extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={this.onSubmit}>
-            <PropertyTypeList propertyTypeIds={propertyTypeIds}/>
+            <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} display={PROPERTY_TYPE_DISPLAY}/>
             <Button type="submit" bsStyle="primary">Search</Button>
           </form>
         </Modal.Body>
@@ -63,6 +68,7 @@ function mapStateToProps(state) {
 
   return {
     propertyTypeIds,
+    entitySetId,
     entitySet,
     show: permissions.getIn(['requestPermissionsModal', 'show'])
   };
