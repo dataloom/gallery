@@ -1,9 +1,14 @@
 .rqm {
     padding: 0 20px 15px;
+    display: flex;
+    flex-wrap: wrap;
 }
 .rqm .subtitle {
     font-size: 16px;
     margin: 10px 0 0 ;
+}
+.rqm .submit {
+    margin-left: auto;
 }
 
 .rqm label {

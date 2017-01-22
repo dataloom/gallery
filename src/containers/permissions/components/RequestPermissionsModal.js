@@ -43,7 +43,7 @@ class RequestPermissions extends React.Component {
           <form onSubmit={this.onSubmit} className={styles.rqm}>
             <h2 className={styles.subtitle}>Select properties you want access to:</h2>
             <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} editing={PROPERTY_TYPE_EDITING}/>
-            <Button type="submit" bsStyle="primary">Search</Button>
+            <Button type="submit" bsStyle="primary" className={styles.submit}>Request Permissions</Button>
           </form>
         </Modal.Body>
       </Modal>
