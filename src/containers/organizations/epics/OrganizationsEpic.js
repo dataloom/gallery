@@ -65,14 +65,14 @@ function addDomainToOrg(action :Action) :Observable<Action> {
 
   const {
     orgId,
-    domain
+    emailDomain
   } = action;
 
   return Observable
-    .from(OrganizationsApi.addAutoApprovedEmailDomain(orgId, domain))
+    .from(OrganizationsApi.addAutoApprovedEmailDomain(orgId, emailDomain))
     .mergeMap(() => {
       return Observable.of(
-        OrgsActionFactory.addDomainToOrgSuccess(orgId, domain)
+        OrgsActionFactory.addDomainToOrgSuccess(orgId, emailDomain)
       );
     })
     .catch(() => {
@@ -93,14 +93,14 @@ function removeDomainFromOrg(action :Action) :Observable<Action> {
 
   const {
     orgId,
-    domain
+    emailDomain
   } = action;
 
   return Observable
-    .from(OrganizationsApi.removeAutoApprovedEmailDomain(orgId, domain))
+    .from(OrganizationsApi.removeAutoApprovedEmailDomain(orgId, emailDomain))
     .mergeMap(() => {
       return Observable.of(
-        OrgsActionFactory.removeDomainFromOrgSuccess(orgId, domain)
+        OrgsActionFactory.removeDomainFromOrgSuccess(orgId, emailDomain)
       );
     })
     .catch(() => {

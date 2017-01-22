@@ -101,21 +101,21 @@ export function joinOrgFailure() :Object {
   };
 }
 
-export function addDomainToOrgRequest(orgId :UUID, domain :string) :Object {
+export function addDomainToOrgRequest(orgId :UUID, emailDomain :string) :Object {
 
   return {
     type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_REQUEST,
     orgId,
-    domain
+    emailDomain
   };
 }
 
-export function addDomainToOrgSuccess(orgId :UUID, domain :string) :Object {
+export function addDomainToOrgSuccess(orgId :UUID, emailDomain :string) :Object {
 
   return {
     type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS,
     orgId,
-    domain
+    emailDomain
   };
 }
 
@@ -126,21 +126,21 @@ export function addDomainToOrgFailure() :Object {
   };
 }
 
-export function removeDomainFromOrgRequest(orgId :UUID, domain :string) :Object {
+export function removeDomainFromOrgRequest(orgId :UUID, emailDomain :string) :Object {
 
   return {
     type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST,
     orgId,
-    domain
+    emailDomain
   };
 }
 
-export function removeDomainFromOrgSuccess(orgId :UUID, domain :string) :Object {
+export function removeDomainFromOrgSuccess(orgId :UUID, emailDomain :string) :Object {
 
   return {
     type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS,
     orgId,
-    domain
+    emailDomain
   };
 }
 

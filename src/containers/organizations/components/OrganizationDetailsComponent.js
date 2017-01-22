@@ -26,8 +26,7 @@ import {
   InputGroup,
   Label,
   ListGroup,
-  ListGroupItem,
-  Table
+  ListGroupItem
 } from 'react-bootstrap';
 
 import {
@@ -47,6 +46,8 @@ import styles from '../styles/orgs.module.css';
 import {
   fetchOrgRequest,
   joinOrgRequest,
+  addDomainToOrgRequest,
+  removeDomainFromOrgRequest,
   addRoleToOrgRequest,
   removeRoleFromOrgRequest
 } from '../actions/OrganizationsActionFactory';
@@ -70,6 +71,8 @@ function mapDispatchToProps(dispatch :Function) {
   const actions = {
     fetchOrgRequest,
     joinOrgRequest,
+    addDomainToOrgRequest,
+    removeDomainFromOrgRequest,
     addRoleToOrgRequest,
     removeRoleFromOrgRequest
   };
@@ -83,6 +86,7 @@ class OrganizationDetails extends React.Component {
 
   state :{
     isInvalidEmail :boolean,
+    newDomainValue :string,
     newRoleValue :string
   }
 
@@ -103,6 +107,7 @@ class OrganizationDetails extends React.Component {
 
     this.state = {
       isInvalidEmail: false,
+      newDomainValue: '',
       newRoleValue: ''
     };
   }
@@ -168,20 +173,103 @@ class OrganizationDetails extends React.Component {
     );
   }
 
+  onChangeNewDomainInput = (event) => {
+
+    this.setState({
+      newDomainValue: event.target.value
+    });
+  }
+
+  onKeyPressNewDomainInput = (event) => {
+
+    if (event.key === 'Enter') {
+      this.addNewDomain();
+    }
+  }
+
+  addNewDomain = () => {
+
+    this.props.actions.addDomainToOrgRequest(
+      this.props.organization.get('id'),
+      this.state.newDomainValue
+    );
+
+    this.setState({
+      newDomainValue: ''
+    });
+  }
+
+
   renderDomainsSection = () => {
 
-    const domains = this.props.organization.get('emails', []).map((domain :string) => {
+    const orgDomainsList :List<*> = this.props.organization.get('emails', Immutable.List());
+
+    const domainListItems = orgDomainsList.map((domain) => {
       return (
-        <ListGroupItem key={domain}>{ domain }</ListGroupItem>
+        <ListGroupItem key={domain} className={classnames(styles.roleRowWrapper)}>
+          <ul className={classnames(styles.roleRow)}>
+            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
+              { domain }
+            </li>
+            {
+              this.props.organization.get('isOwner') === true
+                ? (
+                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                    <button
+                        onClick={() => {
+                          this.props.actions.removeDomainFromOrgRequest(
+                            this.props.organization.get('id'),
+                            domain
+                          );
+                        }}>
+                      <FontAwesome name="minus-square-o" />
+                    </button>
+                  </li>
+                )
+              : null
+            }
+          </ul>
+        </ListGroupItem>
       );
     });
 
+    const addDomainListItem = (
+      <ListGroupItem key={'addNewDomain'} className={classnames(styles.roleRowWrapper)}>
+        <ul className={classnames(styles.roleRow)}>
+          <li className={classnames(styles.roleRowItem, styles.roleRowItemAdd)}>
+            <FormGroup bsSize="small" className={classnames(styles.roleRowItemAddInput)}>
+              <FormControl
+                  type="text"
+                  placeholder="Add new domain..."
+                  onChange={this.onChangeNewDomainInput}
+                  onKeyPress={this.onKeyPressNewDomainInput} />
+            </FormGroup>
+          </li>
+          <li className={classnames(styles.roleRowItem, styles.roleRowItemAddButton)}>
+            <button onClick={this.addNewDomain}>
+              <FontAwesome name="plus-square-o" />
+            </button>
+          </li>
+        </ul>
+      </ListGroupItem>
+    );
+
+    const domainsListGroup = (
+      <ListGroup>
+        { domainListItems }
+        {
+          this.props.organization.get('isOwner') === true
+           ? addDomainListItem
+           : null
+        }
+      </ListGroup>
+    );
+
     return (
-      <div className={classnames(styles.detailSection, styles.domains)}>
+      <div className={styles.detailSection}>
         <h4>Domains</h4>
-        <ListGroup>
-          { domains }
-        </ListGroup>
+        { 'Users from these domains will automatically be approved when requesting to join this organization.' }
+        { domainsListGroup }
       </div>
     );
   }
@@ -267,7 +355,7 @@ class OrganizationDetails extends React.Component {
       </ListGroupItem>
     );
 
-    const roleListGroup = (
+    const rolesListGroup = (
       <ListGroup>
         { roleListItems }
         {
@@ -281,7 +369,8 @@ class OrganizationDetails extends React.Component {
     return (
       <div className={styles.detailSection}>
         <h4>Roles</h4>
-        { roleListGroup }
+        <h5>You will be able to use the Roles below to manage permissions on Entity Sets that you own.</h5>
+        { rolesListGroup }
       </div>
     );
   }
@@ -296,7 +385,6 @@ class OrganizationDetails extends React.Component {
             { this.props.organization.get('description') }
           </h4>
         </div>
-        { this.renderInvitationSection() }
         { this.renderDomainsSection() }
         { this.renderRolesSection() }
       </div>
