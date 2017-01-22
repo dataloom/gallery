@@ -112,7 +112,7 @@ export class EntitySetVisualizationList extends React.Component {
       return (
         <button
             onClick={() => {
-              this.props.displayEntitySetFn(entitySet.id, entitySet.entityTypeId);
+              this.props.displayEntitySetFn(entitySet.id);
             }}
             className={styles.listItemButton}
             key={entitySet.id} >
