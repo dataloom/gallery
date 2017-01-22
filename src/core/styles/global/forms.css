@@ -1,0 +1,54 @@
+/*{*/
+    /*color: #83858d;*/
+    /*display: flex;*/
+    /*flex-wrap: wrap;*/
+/*}*/
+
+.control-label {
+    font-weight: 400;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-control {
+    box-shadow: none !important;
+    border-radius: 3px;
+}
+
+/* Input group */
+.input-group-addon {
+    background: #ffffff;
+}
+
+/* Components */
+.input-group .form-control,
+.input-group-addon,
+.Select-control,
+.Select-menu-outer
+{
+    border: solid 2pt #a3a8ab;
+}
+
+.Select.is-open .Select-control
+{
+    border-bottom: 0;
+}
+
+.Select-menu-outer {
+    border-top-width: 1pt;
+}
+
+.Select--multi .Select-value {
+    background: #4203c5;
+    color: #ffffff;
+    border: none;
+    direction: rtl;
+}
+.Select--multi .Select-value-icon {
+    border: none;
+}
+.Select--multi .Select-value-icon:hover {
+    color: #a3a8ab;
+}
