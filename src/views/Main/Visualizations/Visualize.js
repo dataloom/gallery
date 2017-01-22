@@ -243,8 +243,13 @@ export class Visualize extends React.Component {
 
   renderEntitySetVisualizationList = () => {
     return (
-      <div className={styles.container}>
-        <EntitySetVisualizationList displayEntitySetFn={this.displayEntitySet} />
+      <div>
+        <Page.Header>
+          <Page.Title>Choose an entity set to visualize</Page.Title>
+        </Page.Header>
+        <Page.Body>
+          <EntitySetVisualizationList displayEntitySetFn={this.displayEntitySet} />
+        </Page.Body>
       </div>
     );
   }

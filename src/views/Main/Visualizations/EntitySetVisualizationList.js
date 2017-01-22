@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Promise from 'bluebird';
 import { AuthorizationApi, EntityDataModelApi } from 'loom-data';
+import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import { Permission } from '../../../core/permissions/Permission';
 import styles from './styles.module.css';
@@ -15,13 +16,8 @@ export class EntitySetVisualizationList extends React.Component {
     super(props, context);
     this.state = {
       entitySets: [],
-      error: false
+      asyncStatus: ASYNC_STATUS.LOADING
     };
-  }
-
-  errorClass = {
-    true: styles.error,
-    false: styles.hidden
   }
 
   componentDidMount() {
@@ -36,7 +32,7 @@ export class EntitySetVisualizationList extends React.Component {
           this.loadVisualizableEntitySets(entitySets, idToEdmObjects.idToEntityType, idToEdmObjects.idToPropertyType);
         });
       }).catch(() => {
-        this.setState({ error: true });
+        this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
       });
   }
 
@@ -104,7 +100,10 @@ export class EntitySetVisualizationList extends React.Component {
       const visualizableEntitySets = allEntitySetsResults.filter((entitySet) => {
         return entitySet;
       });
-      this.setState({ entitySets: visualizableEntitySets });
+      this.setState({
+        entitySets: visualizableEntitySets,
+        asyncStatus: ASYNC_STATUS.SUCCESS
+      });
     });
   }
 
@@ -124,10 +123,12 @@ export class EntitySetVisualizationList extends React.Component {
     });
     return (
       <div>
-        <div className={styles.spacerBig} />
-        <h1>Choose an entity set to visualize.</h1>
-        <div className={this.errorClass[this.state.error]}>Unable to load entity sets.</div>
-        {entitySetList}
+        <AsyncContent
+            status={this.state.asyncStatus}
+            errorMessage="Unable to load entity sets."
+            content={() => {
+              return (<div>{entitySetList}</div>);
+            }} />
       </div>
     );
   }
