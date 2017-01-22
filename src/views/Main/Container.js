@@ -4,20 +4,21 @@ import styles from './styles.module.css';
 
 import HeaderNav from '../../components/headernav/HeaderNav';
 import SideNav from '../../components/sidenav/SideNav';
+import RequestPermissionsModal from '../../containers/permissions/components/RequestPermissionsModal';
 
 export class Container extends React.Component {
   static contextTypes = {
     router: PropTypes.object
-  }
+  };
 
   static propTypes = {
     children: PropTypes.element,
     route: PropTypes.object
-  }
+  };
 
   static childContextTypes = {
     isAdmin: PropTypes.bool
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -32,7 +33,7 @@ export class Container extends React.Component {
 
   updateState = () => {
     this.setState(this.props.route.profileFn());
-  }
+  };
 
   getChildren() {
     let children = null;
@@ -50,6 +51,7 @@ export class Container extends React.Component {
 
     return (
       <div className={styles.appWrapper}>
+        <RequestPermissionsModal/>
         <HeaderNav auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
         <div className={styles.appBody}>
           <SideNav name={this.state.name} />

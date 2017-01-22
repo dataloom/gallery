@@ -34,10 +34,23 @@ function referenceToString(reference:EdmObjectReference) {
 ** Reference Factories
  */
 export function createPropertyTypeReference(id:string) {
+  if (!id) {
+    throw new Error('"id" can\'t be null');
+  }
   return {
     id,
     collection: COLLECTIONS.PROPERTY_TYPE
   };
+}
+
+export function createEntitySetReference(id:string) {
+  if (!id) {
+    throw new Error('"id" can\'t be null');
+  }
+  return {
+    id,
+    collection: COLLECTIONS.ENTITY_SET
+  }
 }
 
 /*

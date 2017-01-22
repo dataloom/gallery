@@ -1,42 +1,52 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
-import PropertyType from './PropertyType';
+import PropertyType, { EditingPropType, DEFAULT_EDITING } from './PropertyType';
 import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
 import { createAccessCheck } from '../../permissions/PermissionsStorage';
-import styles from './propertype.module.css';
 
 class PropertyTypeList extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    editing: EditingPropType,
     // Implies permissions view
     entitySetId: PropTypes.string,
     loadPermissions: PropTypes.func.isRequired
+  };
+
+  static defaultProps = {
+    display: DEFAULT_EDITING
   };
 
   componentDidMount() {
     this.props.loadPermissions();
   }
 
-  render() {
-    const { propertyTypeIds, entitySetId } = this.props;
+  renderContent() {
+    const { propertyTypeIds, entitySetId, editing } = this.props;
 
-    let content;
     if (propertyTypeIds.length > 0) {
-      content = propertyTypeIds.map((id) => {
-        return (<PropertyType entitySetId={entitySetId} propertyTypeId={id} key={id}/>);
+      return propertyTypeIds.map((id) => {
+        return (<PropertyType entitySetId={entitySetId} editing={editing} propertyTypeId={id} key={id}/>);
       });
     } else {
-      content = (<em>No property types</em>);
+      return (<em>No property types</em>);
     }
+  }
+
+  render() {
+    const { className } = this.props;
 
     return (
-      <div className={styles.propertyTypeList}>
-        <div className={styles.propertyTypeListHeader}>
-          <div className={styles.title}>Property Title</div>
-          <div className={styles.description}>Description</div>
+      <div className={classnames("propertyTypeList", className)}>
+        <div className="propertyTypeListHeader">
+          <div className="propertyTypeListPermissions"></div>
+          <div className="propertyTypeTitle">Property Title</div>
+          <div className="propertyTypeListDescription">Description</div>
         </div>
-        {content}
+        {this.renderContent()}
       </div>
     );
   }

@@ -5,7 +5,9 @@
 import {
   CHECK_AUTHORIZATION_REQUEST,
   CHECK_AUTHORIZATION_RESOLVE,
-  CHECK_AUTHORIZATION_REJECT
+  CHECK_AUTHORIZATION_REJECT,
+  REQUEST_PERMISSIONS_MODAL_SHOW,
+  REQUEST_PERMISSIONS_MODAL_HIDE
 } from './PermissionsActionTypes';
 
 import {
@@ -51,4 +53,16 @@ export function getEntitySetsAuthorizations(entitySetIds :UUID[]) :Object {
   });
 
   return checkAuthorizationRequest(accessChecks);
+}
+
+export function requestPermissionsModalShow(entitySetId: UUID) {
+  return {
+    type: REQUEST_PERMISSIONS_MODAL_SHOW,
+    entitySetId
+  }
+}
+export function requestPermissionsModalHide() {
+  return {
+    type: REQUEST_PERMISSIONS_MODAL_HIDE
+  }
 }
