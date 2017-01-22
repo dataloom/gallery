@@ -223,17 +223,23 @@ class OrganizationDetails extends React.Component {
             <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
               { role.get('id') }
             </li>
-            <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
-              <button
-                  onClick={() => {
-                    this.props.actions.removeRoleFromOrgRequest(
-                      this.props.organization.get('id'),
-                      role.get('id')
-                    );
-                  }}>
-                <FontAwesome name="minus-square-o" />
-              </button>
-            </li>
+            {
+              this.props.organization.get('isOwner') === true
+                ? (
+                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                    <button
+                        onClick={() => {
+                          this.props.actions.removeRoleFromOrgRequest(
+                            this.props.organization.get('id'),
+                            role.get('id')
+                          );
+                        }}>
+                      <FontAwesome name="minus-square-o" />
+                    </button>
+                  </li>
+                )
+              : null
+            }
           </ul>
         </ListGroupItem>
       );
@@ -264,7 +270,11 @@ class OrganizationDetails extends React.Component {
     const roleListGroup = (
       <ListGroup>
         { roleListItems }
-        { addRoleListItem }
+        {
+          this.props.organization.get('isOwner') === true
+           ? addRoleListItem
+           : null
+        }
       </ListGroup>
     );
 
