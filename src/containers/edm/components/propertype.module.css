@@ -31,6 +31,9 @@
     padding: 0 2px 0 15px;
     width:15px;
 }
+:global .propertyTypePermissions :global .checkbox {
+    margin: 0;
+}
 :global .propertyTypeTitle, :global .propertyTypeListTitle {
     border-right: 1px solid #c9cfd3;
     width: 180px

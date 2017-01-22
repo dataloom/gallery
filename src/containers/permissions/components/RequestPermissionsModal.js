@@ -7,9 +7,8 @@ import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
 
-const PROPERTY_TYPE_DISPLAY = {
-  permissions: 'edit',
-  title: true
+const PROPERTY_TYPE_EDITING = {
+  permissions: true
 };
 
 class RequestPermissions extends React.Component {
@@ -41,7 +40,7 @@ class RequestPermissions extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={this.onSubmit}>
-            <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} display={PROPERTY_TYPE_DISPLAY}/>
+            <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} editing={PROPERTY_TYPE_EDITING}/>
             <Button type="submit" bsStyle="primary">Search</Button>
           </form>
         </Modal.Body>

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import PropertyType, { DisplayPropType, DEFAULT_DISPLAY } from './PropertyType';
+import PropertyType, { EditingPropType, DEFAULT_EDITING } from './PropertyType';
 import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
 import { createAccessCheck } from '../../permissions/PermissionsStorage';
 
@@ -10,37 +10,26 @@ class PropertyTypeList extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-    display: DisplayPropType,
+    editing: EditingPropType,
     // Implies permissions view
     entitySetId: PropTypes.string,
     loadPermissions: PropTypes.func.isRequired
   };
 
   static defaultProps = {
-    display: DEFAULT_DISPLAY
+    display: DEFAULT_EDITING
   };
 
   componentDidMount() {
     this.props.loadPermissions();
   }
 
-  renderPermissions() {
-    const { display } = this.props;
-    if (display.permissions) {
-      const title = display.permissions === 'edit' ? 'Permissions' : null;
-
-      return (<div className="propertyTypeListPermissions">{ title }</div>);
-    } else {
-      return null;
-    }
-  }
-
   renderContent() {
-    const { propertyTypeIds, entitySetId, display } = this.props;
+    const { propertyTypeIds, entitySetId, editing } = this.props;
 
     if (propertyTypeIds.length > 0) {
       return propertyTypeIds.map((id) => {
-        return (<PropertyType entitySetId={entitySetId} display={display} propertyTypeId={id} key={id}/>);
+        return (<PropertyType entitySetId={entitySetId} editing={editing} propertyTypeId={id} key={id}/>);
       });
     } else {
       return (<em>No property types</em>);
@@ -48,14 +37,14 @@ class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { display, className } = this.props;
+    const { className } = this.props;
 
     return (
       <div className={classnames("propertyTypeList", className)}>
         <div className="propertyTypeListHeader">
-          {this.renderPermissions()}
-          { display.title ? <div className="propertyTypeTitle">Property Title</div> : null }
-          { display.description ? <div className="propertyTypeListDescription">Description</div> : null }
+          <div className="propertyTypeListPermissions"></div>
+          <div className="propertyTypeTitle">Property Title</div>
+          <div className="propertyTypeListDescription">Description</div>
         </div>
         {this.renderContent()}
       </div>

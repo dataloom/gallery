@@ -12,23 +12,19 @@ import ExpandableText from '../../../components/utils/ExpandableText';
 import './propertype.module.css';
 const MAX_DESCRIPTION_LENGTH = 300;
 
-export const DisplayPropType = PropTypes.shape({
-  permissions: PropTypes.oneOf([true, false, 'edit']),
-  title: PropTypes.bool,
-  description: PropTypes.bool
+export const EditingPropType = PropTypes.shape({
+  permissions: PropTypes.bool
 });
 
-export const DEFAULT_DISPLAY = {
-    permissions: true,
-    title: true,
-    description: true
+export const DEFAULT_EDITING = {
+    permissions: false
 };
 
 // TODO: Make PropertyType a container that takes a PropertyType reference
 class PropertyType extends React.Component {
   static propTypes = {
     propertyTypeId: PropTypes.string.isRequired,
-    display: DisplayPropType,
+    editing: EditingPropType,
     // Permissions are per-EntitySet. Passing entitySetId implies display permissions
     entitySetId: PropTypes.string,
     // Async Properties
@@ -37,60 +33,48 @@ class PropertyType extends React.Component {
   };
 
   static defaultProps = {
-    display: DEFAULT_DISPLAY
+    editing: DEFAULT_EDITING
   };
 
   renderPermissions() {
-    const { display, permissions } = this.props;
+    const { editing, permissions } = this.props;
 
-    if (display.permissions) {
-      let content;
+    let content;
+    const canRead = permissions && permissions.READ;
+    if (editing.permissions) {
       // TODO: Support more than just read
       // TODO: Enforce entitySetId on edit
-      const canRead = permissions && permissions.READ;
-      const editing = display.permissions === 'edit';
-      if (editing) {
-        content = (<Checkbox checked={canRead}/>);
-      } else if (!canRead) {
-       content =  (<FontAwesome name="lock"/>);
-      }
-      return (<div className={classnames("propertyTypePermissions", {editing})}>{content}</div>);
-    } else {
-      return null;
+      content = (<Checkbox checked={canRead}/>);
+    } else if (!canRead) {
+      content = (<FontAwesome name="lock"/>);
     }
+
+    const classes = classnames("propertyTypePermissions", {
+      editing: editing.permissions
+    });
+    return (<div className={classes}>{content}</div>);
   }
 
   renderTitle() {
-    const { display, propertyType } = this.props;
+    const { propertyType } = this.props;
 
-    if (display.title) {
-      let content;
-      if (propertyType) {
-        content = propertyType.title;
-      }
-      return (<div className="propertyTypeTitle">{content}</div>);
-    } else {
-      return null;
-    }
+    const content = propertyType ? propertyType.title : null;
+    return (<div className="propertyTypeTitle">{content}</div>);
   }
 
   renderDescription() {
-    const { display, propertyType } = this.props;
+    const { propertyType } = this.props;
 
-    if (display.description) {
-      let content;
-      if (propertyType) {
-        if (propertyType.description) {
-          content = (<ExpandableText text={propertyType.description} maxLength={MAX_DESCRIPTION_LENGTH}/>);
-        } else {
-          content = (<em>No description</em>);
-        }
+    let content;
+    if (propertyType) {
+      if (propertyType.description) {
+        content = (<ExpandableText text={propertyType.description} maxLength={MAX_DESCRIPTION_LENGTH}/>);
+      } else {
+        content = (<em>No description</em>);
       }
-
-      return (<div className="propertyTypeDescription">{content}</div>);
-    } else {
-      return null;
     }
+
+    return (<div className="propertyTypeDescription">{content}</div>);
   }
 
   render() {
