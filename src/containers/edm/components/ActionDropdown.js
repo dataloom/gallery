@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { DataApi } from 'loom-data';
 
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
@@ -16,25 +17,32 @@ class ActionDropdown extends React.Component {
     entitySetId: PropTypes.string.isRequired,
     showDetails: PropTypes.bool,
     className: PropTypes.string,
+    onRequestPermissions: PropTypes.func.isRequired,
     // Async props
     entityTypeId: PropTypes.string,
     propertyTypePermissions: PropTypes.arrayOf(PermissionsPropType)
   };
 
-
   canRequestPermissions() {
-    const { propertyTypePermissions } = this.props;
-
-    if (propertyTypePermissions) {
-      return !propertyTypePermissions.every(permission => permission.READ);
-    } else {
-      return false;
-    }
+    return true;
+    // const { propertyTypePermissions } = this.props;
+    //
+    // if (propertyTypePermissions) {
+    //   return !propertyTypePermissions.every(permission => permission.READ);
+    // } else {
+    //   return false;
+    // }
   }
 
   renderRequestPermissions() {
+    const { entitySetId, onRequestPermissions } = this.props;
+
     if (this.canRequestPermissions()) {
-      return (<MenuItem>Request Permissions</MenuItem>);
+      return (
+        <MenuItem onSelect={() => { onRequestPermissions(entitySetId); }}>
+          Request Permissions
+        </MenuItem>
+      );
     } else {
       return null;
     }
@@ -108,7 +116,11 @@ function mapStateToProps(state, ownProps) {
 
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
-  return { };
+  return {
+    onRequestPermissions: (entitySetId) => {
+      dispatch(PermissionsActionFactory.requestPermissionsModalShow(entitySetId));
+    }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ActionDropdown);
