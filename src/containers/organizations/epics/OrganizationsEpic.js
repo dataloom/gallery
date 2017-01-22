@@ -21,7 +21,8 @@ const {
 } = DataModels;
 
 const {
-  PermissionTypes
+  PermissionTypes,
+  PrincipalTypes
 } = Types;
 
 function fetchOrgs() :Observable<Action> {
@@ -49,10 +50,65 @@ function fetchOrgs() :Observable<Action> {
     });
 }
 
-
 export function fetchOrgsEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORGS_REQUEST)
     .mergeMap(fetchOrgs);
+}
+
+function addRoleToOrg(action :Action) {
+
+  const {
+    orgId,
+    role
+  } = action;
+
+  return Observable
+    .from(OrganizationsApi.addPrincipal(orgId, PrincipalTypes.ROLE, role))
+    .mergeMap(() => {
+      return Observable.of(
+        OrgsActionFactory.addRoleToOrgSuccess(orgId, role)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.addRoleToOrgFailure()
+      );
+    });
+}
+
+export function addRoleToOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.ADD_ROLE_TO_ORG_REQUEST)
+    .mergeMap(addRoleToOrg);
+}
+
+function removeRoleFromOrg(action :Action) {
+
+  const {
+    orgId,
+    role
+  } = action;
+
+  return Observable
+    .from(OrganizationsApi.removePrincipal(orgId, PrincipalTypes.ROLE, role))
+    .mergeMap(() => {
+      return Observable.of(
+        OrgsActionFactory.removeRoleFromOrgSuccess(orgId, role)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.removeRoleFromOrgFailure()
+      );
+    });
+}
+
+export function removeRoleFromOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.REMOVE_ROLE_FROM_ORG_REQUEST)
+    .mergeMap(removeRoleFromOrg);
 }

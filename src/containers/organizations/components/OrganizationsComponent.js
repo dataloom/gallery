@@ -35,9 +35,7 @@ import CreateOrganization from './CreateOrganizationComponent';
 import Page from '../../../components/page/Page';
 
 import {
-  fetchOrgsRequest,
-  fetchOrgsSuccess,
-  fetchOrgsFailure
+  fetchOrgsRequest
 } from '../actions/OrganizationsActionFactory';
 
 import AsyncContent, {
@@ -68,7 +66,6 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
   }).valueSeq().toJS();
 
   return {
-    isFetchingOrgs: state.getIn(['organizations', 'isFetchingOrgs']),
     asyncState,
     orgCount,
     selectOrgOptions,
@@ -79,9 +76,7 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
-    fetchOrgsRequest,
-    fetchOrgsSuccess,
-    fetchOrgsFailure
+    fetchOrgsRequest
   };
 
   return {
@@ -97,13 +92,10 @@ class Organizations extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
-      fetchOrgsRequest: React.PropTypes.func.isRequired,
-      fetchOrgsSuccess: React.PropTypes.func.isRequired,
-      fetchOrgsFailure: React.PropTypes.func.isRequired
+      fetchOrgsRequest: React.PropTypes.func.isRequired
     }).isRequired,
     asyncState: AsyncStatePropType.isRequired,
     children: React.PropTypes.node,
-    isFetchingOrgs: React.PropTypes.bool.isRequired,
     orgCount: React.PropTypes.number.isRequired,
     selectOrgOptions: React.PropTypes.arrayOf(ReactSelectOptionPropType).isRequired,
     selectedOrgOption: ReactSelectOptionPropType
