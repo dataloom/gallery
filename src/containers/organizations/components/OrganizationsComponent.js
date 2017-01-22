@@ -121,8 +121,6 @@ class Organizations extends React.Component {
     this.setState({
       showCreateOrganizationComponent: true
     });
-
-    hashHistory.push('/org');
   }
 
   hideCreateOrganizationComponent = () => {
@@ -137,8 +135,6 @@ class Organizations extends React.Component {
     this.setState({
       showCreateOrganizationComponent: false
     });
-
-    hashHistory.push('/org');
   }
 
   renderCreateOrganizationButton = () => {
