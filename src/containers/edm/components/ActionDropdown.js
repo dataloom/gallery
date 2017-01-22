@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import { DataApi } from 'loom-data';
 
+import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
@@ -17,26 +18,49 @@ class ActionDropdown extends React.Component {
     className: PropTypes.string,
     // Async props
     entityTypeId: PropTypes.string,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string)
+    propertyTypePermissions: PropTypes.arrayOf(PermissionsPropType)
   };
 
-  render() {
-    const { entitySetId, entityTypeId } = this.props;
 
-    let details;
+  canRequestPermissions() {
+    const { propertyTypePermissions } = this.props;
+
+    if (propertyTypePermissions) {
+      return !propertyTypePermissions.every(permission => permission.READ);
+    } else {
+      return false;
+    }
+  }
+
+  renderRequestPermissions() {
+    if (this.canRequestPermissions()) {
+      return (<MenuItem>Request Permissions</MenuItem>);
+    } else {
+      return null;
+    }
+  }
+
+  renderViewDetails() {
     if (this.props.showDetails) {
-      details = (
+      return (
         <li role="presentation">
           <Link to={`/entitysets/${entitySetId}`}>
             View Details
           </Link>
         </li>
       );
+    } else {
+      return null;
     }
+  }
+
+  render() {
+    const { entitySetId, entityTypeId } = this.props;
 
     return (
       <SplitButton pullRight title="Actions" id="action-dropdown" className={classnames(this.props.className)}>
-        {details}
+        {this.renderViewDetails()}
+        {this.renderRequestPermissions()}
         <MenuItem header>Download</MenuItem>
         <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
         <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
@@ -64,18 +88,20 @@ function mapStateToProps(state, ownProps) {
 
   const { entitySetId } = ownProps;
 
-  let propertyTypeIds,
+  let propertyTypePermissions,
     entityTypeId;
   // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
   const reference = createEntitySetReference(entitySetId);
   const entitySet = getEdmObjectSilent(normalizedData, reference, null);
   if (entitySet) {
     entityTypeId = entitySet.entityType.id;
-    propertyTypeIds = entitySet.entityType.properties.map(property => property.id);
+    propertyTypePermissions = entitySet.entityType.properties.map(property => {
+      return getPermissions(permissions, [entitySetId, property.id])
+    });
   }
 
   return {
-    propertyTypeIds,
+    propertyTypePermissions,
     entityTypeId
   };
 }
