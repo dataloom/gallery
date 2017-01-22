@@ -62,7 +62,7 @@ export class Visualize extends React.Component {
     const propertyTypeIds = propertyTypes.map((propertyType) => {
       return propertyType.id;
     });
-    return DataApi.getSelectedEntitySetData(this.state.entitySetId, [], propertyTypeIds)
+    return DataApi.getEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
       return data;
     });
