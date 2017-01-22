@@ -23,7 +23,6 @@ export const EntityTypePropType = PropTypes.shape({
 
 export const EntitySetPropType = PropTypes.shape({
   id: PropTypes.string.isRequired,
-  type: TypePropType.isRequired,
   name: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
