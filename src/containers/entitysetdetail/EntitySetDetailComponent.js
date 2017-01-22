@@ -54,7 +54,13 @@ class EntitySetDetailComponent extends React.Component {
           <AsyncContent {...this.props.asyncState} content={() => {
             // TODO: Remove when removing denormalization
             const propertyTypeIds = this.props.entitySet.entityType.properties.map(property => property.id);
-            return (<PropertyTypeList entitySetId={this.props.entitySet.id} propertyTypeIds={propertyTypeIds}/>);
+            return (
+                <PropertyTypeList
+                  entitySetId={this.props.entitySet.id}
+                  propertyTypeIds={propertyTypeIds}
+                  className="propertyTypeStyleDefault"
+                />
+              );
           }}/>
 
         </Page.Body>
