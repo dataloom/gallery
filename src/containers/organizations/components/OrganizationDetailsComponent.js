@@ -43,6 +43,8 @@ import {
 
 import styles from '../styles/orgs.module.css';
 
+import Utils from '../../../utils/Utils';
+
 import {
   fetchOrgRequest,
   joinOrgRequest,
@@ -189,6 +191,11 @@ class OrganizationDetails extends React.Component {
 
   addNewDomain = () => {
 
+    if (!Utils.isValidEmail(`test@${this.state.newDomainValue}`)) {
+      console.log('TODO: show an error message to the user that the email is invalid');
+      return;
+    }
+
     this.props.actions.addDomainToOrgRequest(
       this.props.organization.get('id'),
       this.state.newDomainValue
@@ -241,6 +248,7 @@ class OrganizationDetails extends React.Component {
               <FormControl
                   type="text"
                   placeholder="Add new domain..."
+                  value={this.state.newDomainValue}
                   onChange={this.onChangeNewDomainInput}
                   onKeyPress={this.onKeyPressNewDomainInput} />
             </FormGroup>
@@ -268,7 +276,9 @@ class OrganizationDetails extends React.Component {
     return (
       <div className={styles.detailSection}>
         <h4>Domains</h4>
-        { 'Users from these domains will automatically be approved when requesting to join this organization.' }
+        <h5>
+          { 'Users from these domains will automatically be approved when requesting to join this organization.' }
+        </h5>
         { domainsListGroup }
       </div>
     );
