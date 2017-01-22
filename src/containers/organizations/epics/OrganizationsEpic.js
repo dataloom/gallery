@@ -9,6 +9,10 @@ import {
 } from 'loom-data';
 
 import {
+  combineEpics
+} from 'redux-observable';
+
+import {
   Observable
 } from 'rxjs';
 
@@ -112,3 +116,9 @@ export function removeRoleFromOrgEpic(action$ :Observable<Action>) :Observable<A
     .ofType(OrgsActionTypes.REMOVE_ROLE_FROM_ORG_REQUEST)
     .mergeMap(removeRoleFromOrg);
 }
+
+export default combineEpics(
+  fetchOrgsEpic,
+  addRoleToOrgEpic,
+  removeRoleFromOrgEpic
+);

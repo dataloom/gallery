@@ -22,8 +22,6 @@ export default function reduxEpic() {
     PermissionsEpic,
 
     CreateOrganizationEpic,
-    OrganizationsEpic.fetchOrgsEpic,
-    OrganizationsEpic.addRoleToOrgEpic,
-    OrganizationsEpic.removeRoleFromOrgEpic
+    OrganizationsEpic
   );
 }
