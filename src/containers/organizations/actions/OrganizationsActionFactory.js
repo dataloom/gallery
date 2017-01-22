@@ -101,6 +101,56 @@ export function joinOrgFailure() :Object {
   };
 }
 
+export function addDomainToOrgRequest(orgId :UUID, domain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_REQUEST,
+    orgId,
+    domain
+  };
+}
+
+export function addDomainToOrgSuccess(orgId :UUID, domain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS,
+    orgId,
+    domain
+  };
+}
+
+export function addDomainToOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_FAILURE
+  };
+}
+
+export function removeDomainFromOrgRequest(orgId :UUID, domain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST,
+    orgId,
+    domain
+  };
+}
+
+export function removeDomainFromOrgSuccess(orgId :UUID, domain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS,
+    orgId,
+    domain
+  };
+}
+
+export function removeDomainFromOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_FAILURE
+  };
+}
+
 export function addRoleToOrgRequest(orgId :UUID, role :string) :Object {
 
   return {
