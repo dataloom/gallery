@@ -6,6 +6,7 @@ import * as actionFactory from '../PermissionsActionFactory';
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
+import styles from './requestPermissionsModal.module.css';
 
 const PROPERTY_TYPE_EDITING = {
   permissions: true
@@ -39,7 +40,8 @@ class RequestPermissions extends React.Component {
           <Modal.Title>{ title }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={this.onSubmit}>
+          <form onSubmit={this.onSubmit} className={styles.rqm}>
+            <h2 className={styles.subtitle}>Select properties you want access to:</h2>
             <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} editing={PROPERTY_TYPE_EDITING}/>
             <Button type="submit" bsStyle="primary">Search</Button>
           </form>

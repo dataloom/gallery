@@ -44,7 +44,7 @@ class PropertyType extends React.Component {
     if (editing.permissions) {
       // TODO: Support more than just read
       // TODO: Enforce entitySetId on edit
-      content = (<Checkbox checked={canRead}/>);
+      content = (<input type="checkbox" defaultChecked={canRead}/>);
     } else if (!canRead) {
       content = (<FontAwesome name="lock"/>);
     }

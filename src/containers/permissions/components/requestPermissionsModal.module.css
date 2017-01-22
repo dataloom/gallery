@@ -1,0 +1,30 @@
+.rqm {
+    padding: 0 20px 15px;
+}
+.rqm .subtitle {
+    font-size: 16px;
+    margin: 10px 0 0 ;
+}
+
+.rqm :global .propertyTypeList {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+    margin-bottom: 20px
+}
+
+.rqm :global .propertyTypeDescription, .rqm :global .propertyTypeListHeader {
+    display: none;
+}
+
+.rqm :global .propertyType {
+    width: 33%;
+    display: flex;
+    align-items: center;
+    margin-top: 10px
+}
+
+.rqm :global .propertyTypePermissions {
+    margin: 0 4px 1px 0;
+}
