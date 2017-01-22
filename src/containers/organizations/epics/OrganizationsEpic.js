@@ -61,7 +61,63 @@ export function fetchOrgsEpic(action$ :Observable<Action>) :Observable<Action> {
     .mergeMap(fetchOrgs);
 }
 
-function addRoleToOrg(action :Action) {
+function addDomainToOrg(action :Action) :Observable<Action> {
+
+  const {
+    orgId,
+    domain
+  } = action;
+
+  return Observable
+    .from(OrganizationsApi.addAutoApprovedEmailDomain(orgId, domain))
+    .mergeMap(() => {
+      return Observable.of(
+        OrgsActionFactory.addDomainToOrgSuccess(orgId, domain)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.addDomainToOrgFailure()
+      );
+    });
+}
+
+export function addDomainToOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.ADD_DOMAIN_TO_ORG_REQUEST)
+    .mergeMap(addDomainToOrg);
+}
+
+function removeDomainFromOrg(action :Action) :Observable<Action> {
+
+  const {
+    orgId,
+    domain
+  } = action;
+
+  return Observable
+    .from(OrganizationsApi.removeAutoApprovedEmailDomain(orgId, domain))
+    .mergeMap(() => {
+      return Observable.of(
+        OrgsActionFactory.removeDomainFromOrgSuccess(orgId, domain)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.removeDomainFromOrgFailure()
+      );
+    });
+}
+
+export function removeDomainFromOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST)
+    .mergeMap(removeDomainFromOrg);
+}
+
+function addRoleToOrg(action :Action) :Observable<Action> {
 
   const {
     orgId,
@@ -89,7 +145,7 @@ export function addRoleToOrgEpic(action$ :Observable<Action>) :Observable<Action
     .mergeMap(addRoleToOrg);
 }
 
-function removeRoleFromOrg(action :Action) {
+function removeRoleFromOrg(action :Action) :Observable<Action> {
 
   const {
     orgId,
@@ -119,6 +175,8 @@ export function removeRoleFromOrgEpic(action$ :Observable<Action>) :Observable<A
 
 export default combineEpics(
   fetchOrgsEpic,
+  addDomainToOrgEpic,
+  removeDomainFromOrgEpic,
   addRoleToOrgEpic,
   removeRoleFromOrgEpic
 );
