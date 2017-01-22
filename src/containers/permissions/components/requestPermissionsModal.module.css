@@ -6,6 +6,12 @@
     margin: 10px 0 0 ;
 }
 
+.rqm label {
+    display: inherit;
+    margin: inherit;
+    font-weight: inherit;
+}
+
 .rqm :global .propertyTypeList {
     width: 100%;
     display: flex;

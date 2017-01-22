@@ -37,14 +37,14 @@ class PropertyType extends React.Component {
   };
 
   renderPermissions() {
-    const { editing, permissions } = this.props;
+    const { editing, permissions, propertyType } = this.props;
 
     let content;
     const canRead = permissions && permissions.READ;
     if (editing.permissions) {
       // TODO: Support more than just read
       // TODO: Enforce entitySetId on edit
-      content = (<input type="checkbox" defaultChecked={true}/>);
+      content = (<input type="checkbox" id={`ptp-${propertyType.id}`} defaultChecked={true}/>);
     } else if (!canRead) {
       content = (<FontAwesome name="lock"/>);
     }
@@ -56,9 +56,18 @@ class PropertyType extends React.Component {
   }
 
   renderTitle() {
-    const { propertyType } = this.props;
+    const { editing, propertyType } = this.props;
 
-    const content = propertyType ? propertyType.title : null;
+    let content;
+    if (propertyType) {
+      if (editing.permissions) {
+        content = (
+          <label htmlFor={`ptp-${propertyType.id}`}>{propertyType.title}</label>
+        )
+      } else {
+        content = propertyType.title;
+      }
+    }
     return (<div className="propertyTypeTitle">{content}</div>);
   }
 
