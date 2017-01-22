@@ -1,13 +1,14 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 import PropertyType, { DisplayPropType, DEFAULT_DISPLAY } from './PropertyType';
 import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
 import { createAccessCheck } from '../../permissions/PermissionsStorage';
-import styles from './propertype.module.css';
 
 class PropertyTypeList extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     display: DisplayPropType,
     // Implies permissions view
@@ -28,7 +29,7 @@ class PropertyTypeList extends React.Component {
     if (display.permissions) {
       const title = display.permissions === 'edit' ? 'Permissions' : null;
 
-      return (<div className={styles.permissions}>{ title }</div>);
+      return (<div className="propertyTypeListPermissions">{ title }</div>);
     } else {
       return null;
     }
@@ -47,14 +48,14 @@ class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { display } = this.props;
+    const { display, className } = this.props;
 
     return (
-      <div className={styles.propertyTypeList}>
-        <div className={styles.propertyTypeListHeader}>
+      <div className={classnames("propertyTypeList", className)}>
+        <div className="propertyTypeListHeader">
           {this.renderPermissions()}
-          { display.title ? <div className={styles.title}>Property Title</div> : null }
-          { display.description ? <div className={styles.description}>Description</div> : null }
+          { display.title ? <div className="propertyTypeTitle">Property Title</div> : null }
+          { display.description ? <div className="propertyTypeListDescription">Description</div> : null }
         </div>
         {this.renderContent()}
       </div>

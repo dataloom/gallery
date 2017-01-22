@@ -8,8 +8,8 @@ import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import ExpandableText from '../../../components/utils/ExpandableText';
-import styles from './propertype.module.css';
-
+// Default styles
+import './propertype.module.css';
 const MAX_DESCRIPTION_LENGTH = 300;
 
 export const DisplayPropType = PropTypes.shape({
@@ -48,12 +48,13 @@ class PropertyType extends React.Component {
       // TODO: Support more than just read
       // TODO: Enforce entitySetId on edit
       const canRead = permissions && permissions.READ;
-      if (display.permissions === 'edit') {
+      const editing = display.permissions === 'edit';
+      if (editing) {
         content = (<Checkbox checked={canRead}/>);
       } else if (!canRead) {
        content =  (<FontAwesome name="lock"/>);
       }
-      return (<div className={styles.permissions}>{content}</div>);
+      return (<div className={classnames("propertyTypePermissions", {editing})}>{content}</div>);
     } else {
       return null;
     }
@@ -67,7 +68,7 @@ class PropertyType extends React.Component {
       if (propertyType) {
         content = propertyType.title;
       }
-      return (<div className={styles.title}>{content}</div>);
+      return (<div className="propertyTypeTitle">{content}</div>);
     } else {
       return null;
     }
@@ -86,7 +87,7 @@ class PropertyType extends React.Component {
         }
       }
 
-      return (<div className={styles.description}>{content}</div>);
+      return (<div className="propertyTypeDescription">{content}</div>);
     } else {
       return null;
     }
@@ -94,7 +95,7 @@ class PropertyType extends React.Component {
 
   render() {
     return (
-      <div className={styles.propertyType}>
+      <div className="propertyType">
         {this.renderPermissions()}
         {this.renderTitle()}
         {this.renderDescription()}

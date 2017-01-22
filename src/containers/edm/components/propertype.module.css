@@ -1,39 +1,40 @@
-.propertyTypeList {
+/* Default Styles */
+:global .propertyTypeList {
     display: table;
     width: 100%;
     font-size: 16px;
 }
 
-.propertyTypeListHeader, .propertyType {
+:global .propertyTypeListHeader, :global .propertyType {
     display: table-row;
 }
-.propertyTypeListHeader {
+:global .propertyTypeListHeader {
     font-weight: 600;
 }
 
-.title, .description, .permissions {
+:global .propertyType:nth-child(even) > div {
+    background: #f3f5f7;
+}
+:global .propertyTypePermissions,
+:global .propertyTypeTitle,
+:global .propertyTypeDescription,
+:global .propertyTypeListPermissions,
+:global .propertyTypeListTitle,
+:global .propertyTypeListDescription {
     display: table-cell;
     padding: 15px;
 }
-.title {
+:global .propertyTypeTitle, :global .propertyTypeListTitle {
     padding-left: 0;
 }
-.permissions {
+:global .propertyTypePermissions, :global .propertyTypeListPermissions {
     padding: 0 2px 0 15px;
     width:15px;
 }
-.permissions:empty {
-    padding-right: 0;
-}
-
-.propertyType:nth-child(even) > * {
-    background: #f3f5f7;
-}
-
-.title {
+:global .propertyTypeTitle, :global .propertyTypeListTitle {
     border-right: 1px solid #c9cfd3;
     width: 180px
 }
-.description {
+:global .propertyTypeDescription, :global .propertyTypeListDescription {
     text-align: justify;
 }
