@@ -62,7 +62,7 @@ export class LineChartVisualization extends React.Component {
     const xProp = JSON.parse(this.props.xProp);
     const xPropFqn = `${xProp.type.namespace}.${xProp.type.name}`;
     const lines = this.props.yProps.map((prop) => {
-      const fqn = `${prop.type.namespace}.${prop.type.name}`
+      const fqn = `${prop.type.namespace}.${prop.type.name}`;
       return <Line type="monotone" dataKey={fqn} name={prop.title} stroke="#4509cb" key={prop.id} />;
     });
 
