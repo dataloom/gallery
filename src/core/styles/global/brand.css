@@ -77,7 +77,7 @@ fieldset[disabled] .btn-danger {
 }
 
 .btn-primary {
-    border-color: #2a027f !important;
+    border: none;
     background: #4203c5 none;
 }
 
@@ -89,7 +89,6 @@ fieldset[disabled] .btn-danger {
 .btn-primary:active,
 .btn-primary.active {
     background-color: #2e0289 !important;
-    border-color: #2a027f !important;
 }
 
 .btn-primary.active.focus,
@@ -102,13 +101,12 @@ fieldset[disabled] .btn-danger {
 .open>.dropdown-toggle.btn-primary:focus,
 .open>.dropdown-toggle.btn-primary:hover {
     background-color: #2e0289 !important;
-    border-color: #2a027f !important;
 }
 
 
 .btn-info {
     background: #5bdadf none;
-    border-color: #28c5cb;
+    border: none;
 }
 
 .btn-info.active.focus,
@@ -121,7 +119,6 @@ fieldset[disabled] .btn-danger {
 .open>.dropdown-toggle.btn-info:focus,
 .open>.dropdown-toggle.btn-info:hover {
     background-color: #29cdd4 !important;
-    border-color: #28c5cb !important;
 }
 
 .btn-info:hover,
@@ -132,7 +129,6 @@ fieldset[disabled] .btn-danger {
 .btn-info:active,
 .btn-info.active {
     background-color: #29cdd4;
-    border-color: #28c5cb;
 }
 
 .btn-info.disabled,
@@ -189,7 +185,6 @@ fieldset[disabled] .btn-info.active {
     background-image: linear-gradient(to bottom, #d9edf7 0%, #b9def0 100%);
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffd9edf7', endColorstr='#ffb9def0', GradientType=0);
-    border-color: #9acfea;
 }
 
 .list-group-item.active,
@@ -197,7 +192,6 @@ fieldset[disabled] .btn-info.active {
 .list-group-item.active:focus {
     text-shadow: 0 -1px 0 #310293;
     background: #4203c5;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff4203c5', endColorstr='#ff35029f', GradientType=0);
     border-color: #35029f;
 }
 
