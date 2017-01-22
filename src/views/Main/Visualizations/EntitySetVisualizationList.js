@@ -122,14 +122,12 @@ export class EntitySetVisualizationList extends React.Component {
       );
     });
     return (
-      <div>
-        <AsyncContent
-            status={this.state.asyncStatus}
-            errorMessage="Unable to load entity sets."
-            content={() => {
-              return (<div>{entitySetList}</div>);
-            }} />
-      </div>
+      <AsyncContent
+          status={this.state.asyncStatus}
+          errorMessage="Unable to load entity sets."
+          content={() => {
+            return (<div>{entitySetList}</div>);
+          }} />
     );
   }
 }
