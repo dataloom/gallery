@@ -23,28 +23,40 @@ class PropertyTypeList extends React.Component {
     this.props.loadPermissions();
   }
 
-  render() {
+  renderPermissions() {
+    const { display } = this.props;
+    if (display.permissions) {
+      const title = display.permissions === 'edit' ? 'Permissions' : null;
+
+      return (<div className={styles.permissions}>{ title }</div>);
+    } else {
+      return null;
+    }
+  }
+
+  renderContent() {
     const { propertyTypeIds, entitySetId, display } = this.props;
 
-    let content;
     if (propertyTypeIds.length > 0) {
-      content = propertyTypeIds.map((id) => {
-        return (<PropertyType entitySetId={entitySetId} propertyTypeId={id} key={id}/>);
+      return propertyTypeIds.map((id) => {
+        return (<PropertyType entitySetId={entitySetId} display={display} propertyTypeId={id} key={id}/>);
       });
     } else {
-      content = (<em>No property types</em>);
+      return (<em>No property types</em>);
     }
+  }
 
-    const permissionsTitle = display.permissions === 'edit' ? 'Permissions' : null;
+  render() {
+    const { display } = this.props;
 
     return (
       <div className={styles.propertyTypeList}>
         <div className={styles.propertyTypeListHeader}>
-          <div className={styles.permissions}>{permissionsTitle}</div>
-          <div className={styles.title}>Property Title</div>
-          <div className={styles.description}>Description</div>
+          {this.renderPermissions()}
+          { display.title ? <div className={styles.title}>Property Title</div> : null }
+          { display.description ? <div className={styles.description}>Description</div> : null }
         </div>
-        {content}
+        {this.renderContent()}
       </div>
     );
   }
