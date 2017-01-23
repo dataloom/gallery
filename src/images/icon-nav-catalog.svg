@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-nav-catalog</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-nav-catalog" fill="#F3F5F7">
+            <g id="noun_18819">
+                <g id="Group">
+                    <g id="Shape">
+                        <path d="M3.44303797,3.44303797 L0,3.44303797 L0,0 L3.44303797,0 L3.44303797,3.44303797 Z M0.607594937,2.83544304 L2.83544304,2.83544304 L2.83544304,0.607594937 L0.607594937,0.607594937 L0.607594937,2.83544304 Z"></path>
+                        <path d="M3.44303797,9.72151899 L0,9.72151899 L0,6.27848101 L3.44303797,6.27848101 L3.44303797,9.72151899 Z M0.607594937,9.11392405 L2.83544304,9.11392405 L2.83544304,6.88607595 L0.607594937,6.88607595 L0.607594937,9.11392405 Z"></path>
+                        <path d="M3.44303797,16 L0,16 L0,12.556962 L3.44303797,12.556962 L3.44303797,16 Z M0.607594937,15.3924051 L2.83544304,15.3924051 L2.83544304,13.164557 L0.607594937,13.164557 L0.607594937,15.3924051 Z"></path>
+                    </g>
+                    <rect id="Rectangle-path" x="5.26582278" y="1.41772152" width="11.9493671" height="0.607594937"></rect>
+                    <rect id="Rectangle-path" x="5.26582278" y="7.69620253" width="11.9493671" height="0.607594937"></rect>
+                    <rect id="Rectangle-path" x="5.26582278" y="13.9746835" width="11.9493671" height="0.607594937"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

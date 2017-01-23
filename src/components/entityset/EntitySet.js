@@ -28,11 +28,10 @@ export default class EntitySet extends React.Component {
         <header>
           <h2 className={styles.title}>
             {entitySet.title}
-            <small className={styles.subtitle}>{entitySet.type.namespace}.{entitySet.type.name}</small>
           </h2>
 
           <div className={styles.controls}>
-            <ActionDropdown entitySet={entitySet} showDetails={true}/>
+            <ActionDropdown entitySetId={entitySet.id} showDetails={true} />
           </div>
         </header>
         {description}

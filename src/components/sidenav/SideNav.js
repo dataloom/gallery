@@ -4,8 +4,6 @@
 
 import React from 'react';
 
-import FontAwesome from 'react-fontawesome';
-
 import {
   Link
 } from 'react-router';
@@ -14,34 +12,40 @@ import styles from './sidenav.module.css';
 
 import PageConsts from '../../utils/Consts/PageConsts';
 
+import homeIcon from '../../images/icon-nav-home.svg';
+import catalogIcon from '../../images/icon-nav-catalog.svg';
+import datasourcesIcon from '../../images/icon-nav-datasources.svg';
+import visualizeIcon from '../../images/icon-nav-visualize.svg';
+import organizationsIcon from '../../images/icon-nav-organizations.svg';
+
 class SideNav extends React.Component {
 
-  getSideNavItemLayout = (route :string, text :string, faIconType :string) => {
+  getSideNavItemLayout = (route :string, text :string, imgSrc :object) => {
 
     return (
-        <div className={styles.sideNavItem}>
-          <Link
+      <div className={styles.sideNavItem}>
+        <Link
             to={`/${route}`}
             activeClassName={styles.sideNavItemSelected}>
           <div className={styles.sideNavItemIcon}>
-            <FontAwesome name={faIconType} size="2x" />
+            <img src={imgSrc} className={styles.sideNavIcon} role="presentation" />
           </div>
           <div className={styles.sideNavItemText}>{ text }</div>
-          </Link>
-        </div>
+        </Link>
+      </div>
     );
   }
 
   render() {
     return (
       <nav className={styles.sideNav}>
-        { this.getSideNavItemLayout(PageConsts.HOME, 'Home', 'home') }
-        { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', 'book') }
-        { this.getSideNavItemLayout(PageConsts.DATASOURCES, 'Datasources', 'database') }
-        { this.getSideNavItemLayout(PageConsts.VISUALIZE, 'Visualize', 'eye') }
+        { this.getSideNavItemLayout(PageConsts.HOME, 'Home', homeIcon) }
+        { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', catalogIcon) }
+        { this.getSideNavItemLayout(PageConsts.DATASOURCES, 'Datasources', datasourcesIcon) }
+        { this.getSideNavItemLayout(PageConsts.VISUALIZE, 'Visualize', visualizeIcon) }
         {/* Hiding the Data Model link for the demo */}
         {/*{ this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }*/}
-        { this.getSideNavItemLayout(PageConsts.ORG, 'Organizations', 'sitemap') }
+        { this.getSideNavItemLayout(PageConsts.ORG, 'Organizations', organizationsIcon) }
       </nav>
     );
   }

@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
-
+import { connect } from 'react-redux';
 import styles from './styles.module.css';
 
+import * as edmActionFactories from '../../containers/edm/EdmActionFactories';
 import HeaderNav from '../../components/headernav/HeaderNav';
 import SideNav from '../../components/sidenav/SideNav';
 import RequestPermissionsModal from '../../containers/permissions/components/RequestPermissionsModal';
@@ -13,7 +14,9 @@ export class Container extends React.Component {
 
   static propTypes = {
     children: PropTypes.element,
-    route: PropTypes.object
+    route: PropTypes.object,
+    loadPropertyTypes: PropTypes.func.isRequired,
+    loadEntityTypes: PropTypes.func.isRequired
   };
 
   static childContextTypes = {
@@ -23,6 +26,11 @@ export class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = props.route.profileFn();
+  }
+
+  componentDidMount() {
+    this.props.loadPropertyTypes();
+    this.props.loadEntityTypes();
   }
 
   getChildContext() {
@@ -64,4 +72,11 @@ export class Container extends React.Component {
   }
 }
 
-export default Container;
+function mapDispatchToProps(dispatch) {
+  return {
+    loadPropertyTypes: () => { dispatch(edmActionFactories.allPropertyTypesRequest()); },
+    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
+  };
+}
+
+export default connect(null, mapDispatchToProps)(Container);
