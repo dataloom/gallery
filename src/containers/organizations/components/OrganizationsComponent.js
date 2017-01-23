@@ -38,6 +38,10 @@ import {
   fetchOrgsRequest
 } from '../actions/OrganizationsActionFactory';
 
+import {
+  fetchAllUsersRequest
+} from '../actions/UsersActionFactory';
+
 import AsyncContent, {
   AsyncStatePropType
 } from '../../../components/asynccontent/AsyncContent';
@@ -76,7 +80,8 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
-    fetchOrgsRequest
+    fetchOrgsRequest,
+    fetchAllUsersRequest
   };
 
   return {
@@ -92,7 +97,8 @@ class Organizations extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
-      fetchOrgsRequest: React.PropTypes.func.isRequired
+      fetchOrgsRequest: React.PropTypes.func.isRequired,
+      fetchAllUsersRequest: React.PropTypes.func.isRequired
     }).isRequired,
     asyncState: AsyncStatePropType.isRequired,
     children: React.PropTypes.node,
@@ -114,6 +120,7 @@ class Organizations extends React.Component {
   componentDidMount() {
 
     this.props.actions.fetchOrgsRequest();
+    this.props.actions.fetchAllUsersRequest();
   }
 
   showCreateOrganizationComponent = () => {

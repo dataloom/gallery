@@ -177,14 +177,14 @@ function addMemberToOrg(action :Action) :Observable<Action> {
 
   const {
     orgId,
-    member
+    memberId
   } = action;
 
   return Observable
-    .from(OrganizationsApi.addPrincipal(orgId, PrincipalTypes.USER, member))
+    .from(OrganizationsApi.addPrincipal(orgId, PrincipalTypes.USER, memberId))
     .mergeMap(() => {
       return Observable.of(
-        OrgsActionFactory.addMemberToOrgSuccess(orgId, member)
+        OrgsActionFactory.addMemberToOrgSuccess(orgId, memberId)
       );
     })
     .catch(() => {
@@ -205,14 +205,14 @@ function removeMemberFromOrg(action :Action) :Observable<Action> {
 
   const {
     orgId,
-    member
+    memberId
   } = action;
 
   return Observable
-    .from(OrganizationsApi.removePrincipal(orgId, PrincipalTypes.USER, member))
+    .from(OrganizationsApi.removePrincipal(orgId, PrincipalTypes.USER, memberId))
     .mergeMap(() => {
       return Observable.of(
-        OrgsActionFactory.removeMemberFromOrgSuccess(orgId, member)
+        OrgsActionFactory.removeMemberFromOrgSuccess(orgId, memberId)
       );
     })
     .catch(() => {
@@ -234,5 +234,7 @@ export default combineEpics(
   addDomainToOrgEpic,
   removeDomainFromOrgEpic,
   addRoleToOrgEpic,
-  removeRoleFromOrgEpic
+  removeRoleFromOrgEpic,
+  addMemberToOrgEpic,
+  removeMemberFromOrgEpic
 );

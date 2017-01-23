@@ -142,7 +142,10 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
         .build();
 
       const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
-      const newRoles :List<Principal> = currentRoles.push(Immutable.fromJS(JSON.parse(newRolePrincipal.valueOf())));
+      // TODO: fix this conversion hell
+      const newRoles :List<Principal> = currentRoles.push(
+        Immutable.fromJS(JSON.parse(newRolePrincipal.valueOf()))
+      );
       return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
     }
 
@@ -160,6 +163,39 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
 
       const newRoles :List<Principal> = currentRoles.delete(index);
       return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
+    }
+
+    case OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      const newMemberPrincipal :Principal = (new PrincipalBuilder())
+        .setType(PrincipalTypes.USER)
+        .setId(action.memberId)
+        .build();
+
+      const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
+      // TODO: fix this conversion hell
+      const newMembers :List<Principal> = currentMembers.push(
+        Immutable.fromJS(JSON.parse(newMemberPrincipal.valueOf()))
+      );
+      return state.setIn(['organizations', orgId, 'members'], newMembers);
+    }
+
+    case OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
+
+      const index :number = currentMembers.findIndex((member) => {
+        return member.get('id') === action.memberId;
+      });
+
+      if (index < 0) {
+        return state;
+      }
+
+      const newMembers :List<Principal> = currentMembers.delete(index);
+      return state.setIn(['organizations', action.orgId, 'members'], newMembers);
     }
 
     default:

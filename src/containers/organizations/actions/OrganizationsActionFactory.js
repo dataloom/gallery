@@ -33,7 +33,6 @@ export function fetchOrgFailure() :Object {
   };
 }
 
-
 export function fetchOrgsRequest() :Object {
 
   return {
@@ -201,21 +200,21 @@ export function removeRoleFromOrgFailure() :Object {
   };
 }
 
-export function addMemberToOrgRequest(orgId :UUID, member :string) :Object {
+export function addMemberToOrgRequest(orgId :UUID, memberId :string) :Object {
 
   return {
     type: OrgsActionTypes.ADD_MEMBER_TO_ORG_REQUEST,
     orgId,
-    member
+    memberId
   };
 }
 
-export function addMemberToOrgSuccess(orgId :UUID, member :string) :Object {
+export function addMemberToOrgSuccess(orgId :UUID, memberId :string) :Object {
 
   return {
     type: OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS,
     orgId,
-    member
+    memberId
   };
 }
 
@@ -226,21 +225,21 @@ export function addMemberToOrgFailure() :Object {
   };
 }
 
-export function removeMemberFromOrgRequest(orgId :UUID, member :string) :Object {
+export function removeMemberFromOrgRequest(orgId :UUID, memberId :string) :Object {
 
   return {
     type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST,
     orgId,
-    member
+    memberId
   };
 }
 
-export function removeMemberFromOrgSuccess(orgId :UUID, member :string) :Object {
+export function removeMemberFromOrgSuccess(orgId :UUID, memberId :string) :Object {
 
   return {
     type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS,
     orgId,
-    member
+    memberId
   };
 }
 
