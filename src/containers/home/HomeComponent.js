@@ -4,9 +4,15 @@ import { connect } from 'react-redux';
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../edm/EdmModel';
 import { getEdmObjectSilent } from '../edm/EdmStorage';
+import WelcomeInstructionsBox from './WelcomeInstructionsBox';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import { popularEntitySetsRequest } from '../catalog/CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+
+import joinImg from '../../images/icon-join.svg';
+import exploreImg from '../../images/icon-explore.svg';
+import visualizeImg from '../../images/icon-visualize.svg';
+import styles from './styles.module.css';
 
 class HomeComponent extends React.Component {
   static propTypes = {
@@ -43,8 +49,24 @@ class HomeComponent extends React.Component {
       <Page>
         <Page.Header>
           <Page.Title>Welcome to Loom!</Page.Title>
+          <div className={styles.welcomeInstructionsContainer}>
+            <WelcomeInstructionsBox
+                title="JOIN"
+                description="Find the organizations to which you belong or with the data you need and request access."
+                imgSrc={joinImg} />
+            <WelcomeInstructionsBox
+                title="EXPLORE"
+                description="See the data available to you and download Excel and .JSON files to analyze each property."
+                imgSrc={exploreImg} />
+            <WelcomeInstructionsBox
+                title="VISUALIZE"
+                description="Use our visualization tools to easily organize, analyze, and share data with those who need it."
+                imgSrc={visualizeImg} />
+          </div>
         </Page.Header>
         <Page.Body>
+          <div className={styles.getStartedMessage}>Get started by exploring our most popular entity sets
+          </div>
           {this.renderPopularEntitySets()}
         </Page.Body>
       </Page>
