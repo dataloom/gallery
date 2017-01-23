@@ -39,7 +39,8 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', 'book') }
         { this.getSideNavItemLayout(PageConsts.DATASOURCES, 'Datasources', 'database') }
         { this.getSideNavItemLayout(PageConsts.VISUALIZE, 'Visualize', 'eye') }
-        { this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }
+        {/* Hiding the Data Model link for the demo */}
+        {/*{ this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }*/}
         { this.getSideNavItemLayout(PageConsts.ORG, 'Organizations', 'sitemap') }
       </nav>
     );
