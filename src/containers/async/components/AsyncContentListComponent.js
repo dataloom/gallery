@@ -49,7 +49,7 @@ function mapStateToProps(state, ownProps) {
     { references } = ownProps;
 
   return {
-    resolvedReferences: references.map(reference => resolveReference(asyncContent, reference));
+    resolvedReferences: references.map(reference => resolveReference(asyncContent, reference))
   }
 }
 
