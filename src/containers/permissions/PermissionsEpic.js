@@ -54,12 +54,13 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
       status: 'SUBMITTED'
     }])
       .mergeMap(statuses => {
-        const statusByReference = {};
+        const statusByReferenceId = {};
         statuses.forEach(status => {
-          statusByReference[createStatusAsyncReference(status.aclKey)] = status;
+          statusByReferenceId[createStatusAsyncReference(status.aclKey).id] = status;
         });
+
         return references.map(reference => {
-          const status = statusByReference[reference];
+          const status = statusByReferenceId[reference.id];
           const value = status ? status : ASYNC_STATUS.NOT_FOUND;
           return AsyncActionFactory.updateAsyncReference(reference, value);
         });

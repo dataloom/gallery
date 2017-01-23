@@ -35,7 +35,7 @@ class EntitySetPermissionsRequestList extends React.Component {
     if (fulfilledStatuses.length == 0) {
       return null;
     }
-    const statusesByPrincipalId = groupBy(statuses, (status) => status.principal.id);
+    const statusesByPrincipalId = groupBy(fulfilledStatuses, (status) => status.principal.id);
 
     const { entitySetId } = this.props;
     const entitySetPermissionsRequests = Object.keys(statusesByPrincipalId)
