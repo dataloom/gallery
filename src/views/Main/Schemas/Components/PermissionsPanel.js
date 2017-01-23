@@ -45,13 +45,13 @@ export class PermissionsPanel extends React.Component {
     exitPanel: PropTypes.func.isRequired,
     entitySetId: PropTypes.string,
     entitySetTitle: PropTypes.string,
-    propertyTypeName: PropTypes.string,
-    propertyTypeNamespace: PropTypes.string
+    propertyTypeId: PropTypes.string,
+    propertyTypeTitle: PropTypes.string
   }
 
   constructor(props) {
     super(props);
-    const options = (this.props.propertyTypeName === undefined) ?
+    const options = (this.props.propertyTypeId === undefined) ?
       Object.keys(accessOptions) : Object.keys(permissionOptions);
     this.state = {
       view: views.GLOBAL,
@@ -77,6 +77,7 @@ export class PermissionsPanel extends React.Component {
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
+    const myId = JSON.parse(localStorage.profile).user_id;
     PrincipalsApi.getAllUsers()
     .then((users) => {
       allUsersById = users;
@@ -85,6 +86,7 @@ export class PermissionsPanel extends React.Component {
           if (role !== AUTHENTICATED_USER) allRolesList.add(role);
         });
       });
+      allUsersById[myId] = null;
       this.setState({
         allUsersById,
         allRolesList,
@@ -132,27 +134,16 @@ export class PermissionsPanel extends React.Component {
   }
 
   loadAcls = (updateSuccess) => {
-    const { propertyTypeName, propertyTypeNamespace, entitySetId } = this.props;
+    const { propertyTypeId, entitySetId } = this.props;
+    const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
     this.loadAllUsersAndRoles();
-    if (propertyTypeName) {
-      const fqn = Utils.getFqnObj(propertyTypeNamespace, propertyTypeName);
-      PermissionsApi.getOwnerAclsForPropertyTypeInEntitySet(entitySetId, fqn)
-      .then((acls) => {
-        this.updateStateAcls(acls.aces, updateSuccess);
-      }).catch(() => {
-        this.setState({
-          updateError: true
-        });
-      });
-    }
-    else {
-      PermissionsApi.getAcl([entitySetId])
-      .then((acls) => {
-        this.updateStateAcls(acls.aces, updateSuccess);
-      }).catch(() => {
-        this.setState({ updateError: true });
-      });
-    }
+    PermissionsApi.getAcl(aclKey)
+    .then((acls) => {
+      this.updateStateAcls(acls.aces, updateSuccess);
+    }).catch(() => {
+      this.setState({ updateError: true });
+    });
   }
 
   shouldShowSuccess = {
@@ -166,11 +157,8 @@ export class PermissionsPanel extends React.Component {
   }
 
   getTitleText = () => {
-    const { propertyTypeName, propertyTypeNamespace, entitySetTitle } = this.props;
-    if (propertyTypeName) {
-      return `property type: ${propertyTypeNamespace}.${propertyTypeName}`;
-    }
-    return `entity set: ${entitySetTitle}`;
+    const { propertyTypeTitle, entitySetTitle } = this.props;
+    return (propertyTypeTitle) ? `property type: ${propertyTypeTitle}` : `entity set: ${entitySetTitle}`;
   }
 
   switchView = (view) => {
@@ -198,10 +186,11 @@ export class PermissionsPanel extends React.Component {
   }
 
   updatePermissions(action, principal, view) {
-    const { entitySetId, propertyTypeName, propertyTypeNamespace } = this.props;
+    const { entitySetId, propertyTypeId } = this.props;
     const permissions = (action === ActionConsts.REMOVE) ?
       [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
     const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
     const aces = [{ principal, permissions }];
     const acl = { aclKey, aces };
     const req = { action, acl };
@@ -228,7 +217,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   getGlobalView = () => {
-    const optionNames = (this.props.propertyTypeName === undefined) ?
+    const optionNames = (this.props.propertyTypeId === undefined) ?
       Object.keys(accessOptions) : Object.keys(permissionOptions);
     const options = optionNames.map((name) => {
       return {
@@ -275,7 +264,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   viewPermissionTypeButton = (permission, fn, currView) => {
-    if (permission === accessOptions.Hidden && this.props.propertyTypeName !== undefined) return null;
+    if (permission === accessOptions.Hidden && this.props.propertyTypeId !== undefined) return null;
     return (
       <button
           onClick={() => {
@@ -363,7 +352,7 @@ export class PermissionsPanel extends React.Component {
   getEmailOptions = (userIdList) => {
     const emailOptions = [];
     Object.keys(this.state.allUsersById).forEach((id) => {
-      if (!userIdList.includes(id)) {
+      if (!userIdList.includes(id) && this.state.allUsersById[id] && this.state.allUsersById[id].email) {
         emailOptions.push({ label: this.state.allUsersById[id].email, value: id });
       }
     });
@@ -373,7 +362,7 @@ export class PermissionsPanel extends React.Component {
   getEmailsView = () => {
     const { userAcls, emailsView, newEmailValue } = this.state;
     const userIdList = userAcls[emailsView].filter((userId) => {
-      return this.state.allUsersById[userId].email;
+      return (this.state.allUsersById[userId] && this.state.allUsersById[userId].email);
     });
 
     const emailOptions = this.getEmailOptions(userIdList);
