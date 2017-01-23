@@ -18,8 +18,6 @@ class ActionDropdown extends React.Component {
     showDetails: PropTypes.bool,
     className: PropTypes.string,
     onRequestPermissions: PropTypes.func.isRequired,
-    // Async props
-    entityTypeId: PropTypes.string,
     propertyTypePermissions: PropTypes.arrayOf(PermissionsPropType)
   };
 
@@ -51,7 +49,7 @@ class ActionDropdown extends React.Component {
     if (this.props.showDetails) {
       return (
         <li role="presentation">
-          <Link to={`/entitysets/${entitySetId}`}>
+          <Link to={`/entitysets/${this.props.entitySetId}`}>
             View Details
           </Link>
         </li>
@@ -62,23 +60,22 @@ class ActionDropdown extends React.Component {
   }
 
   render() {
-    const { entitySetId, entityTypeId } = this.props;
+    const { entitySetId } = this.props;
 
     return (
       <SplitButton pullRight title="Actions" id="action-dropdown" className={classnames(this.props.className)}>
         {this.renderViewDetails()}
         {this.renderRequestPermissions()}
         <MenuItem header>Download</MenuItem>
-        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
-        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
-        <MenuItem divider/>
+        <MenuItem href={''}>CSV</MenuItem>
+        <MenuItem href={''}>JSON</MenuItem>
+        <MenuItem divider />
         <li role="presentation">
           <Link
             to={{
               pathname: `/${PageConsts.VISUALIZE}`,
               query: {
-                setId: entitySetId,
-                typeId: entityTypeId
+                setId: entitySetId
               }
             }}>
             Visualize
@@ -100,7 +97,7 @@ function mapStateToProps(state, ownProps) {
   // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
   const reference = createEntitySetReference(entitySetId);
   const entitySet = getEdmObjectSilent(normalizedData, reference, null);
-  if (entitySet) {
+  if (entitySet && entitySet.entityType) {
     entityTypeId = entitySet.entityType.id;
     propertyTypePermissions = entitySet.entityType.properties.map(property => {
       return getPermissions(permissions, [entitySetId, property.id])
