@@ -65,12 +65,12 @@ class ActionDropdown extends React.Component {
     const { entitySetId, entityTypeId } = this.props;
 
     return (
-      <SplitButton pullRight title="Actions" id="action-dropdown" className={classnames(this.props.className)}>
+      <SplitButton pullRight title="Actions" bsStyle="primary" id="action-dropdown" className={classnames(this.props.className)}>
         {this.renderViewDetails()}
         {this.renderRequestPermissions()}
         <MenuItem header>Download</MenuItem>
-        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
-        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
+        <MenuItem>CSV</MenuItem>
+        <MenuItem>JSON</MenuItem>
         <MenuItem divider/>
         <li role="presentation">
           <Link

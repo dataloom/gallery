@@ -1,5 +1,10 @@
 .loom {
-  margin: 0;
+  margin: 0 0 0 10px;
+  font-size: 18px;
+  /* Current Font Supports max 600 weight */
+  font-weight: 600;
+  letter-spacing: 5px;
+  color: #4e5150;
 }
 
 .headerNavWrapper {
@@ -10,8 +15,8 @@
 }
 
 .headerNav {
-  border-bottom: 1px solid #e4edf5;
-  padding: 25px;
+  border: none;
+  padding: 20px;
   display: flex;
   flex: 1 0 auto;
   justify-content: space-between;

@@ -5,7 +5,6 @@ import { EntityTypeList } from './Components/EntityTypeList';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
-import '../../../core/styles/global/dropdown.css';
 
 export class DataModel extends React.Component {
 

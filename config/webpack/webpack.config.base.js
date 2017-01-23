@@ -39,7 +39,16 @@ const CSS_LOADER = {
   loader: ExtractTextPlugin.extract(
     'css-loader?modules&importLoader=1!postcss-loader?config=config/postcss/postcss.config.js'
   ),
-  test: /\.css$/
+  test: /\.css$/,
+  exclude: /src\/core\/styles\/global\/.*\.css/
+};
+
+const CSS_LOADER_GLOBALS = {
+  loader: ExtractTextPlugin.extract(
+    'css-loader'
+  ),
+  test: /\.css$/,
+  include: /src\/core\/styles\/global\/.*\.css/
 };
 
 const JSON_LOADER = {
@@ -104,6 +113,7 @@ export default {
     rules: [
       BABEL_LOADER,
       CSS_LOADER,
+      CSS_LOADER_GLOBALS,
       JSON_LOADER,
       MEDIA_FILE_LOADER,
       MEDIA_URL_LOADER
