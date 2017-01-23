@@ -29,8 +29,10 @@ class Container extends React.Component {
   }
 
   componentDidMount() {
-    this.props.loadPropertyTypes();
-    this.props.loadEntityTypes();
+    if (this.props.route.auth.loggedIn()) {
+      this.props.loadPropertyTypes();
+      this.props.loadEntityTypes();
+    }
   }
 
   getChildContext() {

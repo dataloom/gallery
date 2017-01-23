@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../edm/EdmModel';
 import { getEdmObjectSilent } from '../edm/EdmStorage';
+import * as edmActionFactories from '../edm/EdmActionFactories';
 import WelcomeInstructionsBox from './WelcomeInstructionsBox';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import { popularEntitySetsRequest } from '../catalog/CatalogActionFactories';
@@ -19,11 +20,15 @@ class HomeComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
     entitySets: PropTypes.arrayOf(EntitySetPropType),
-    loadEntitySets: PropTypes.func.isRequired
+    loadEntitySets: PropTypes.func.isRequired,
+    loadPropertyTypes: PropTypes.func.isRequired,
+    loadEntityTypes: PropTypes.func.isRequired
   };
 
   componentDidMount() {
     this.props.loadEntitySets();
+    this.props.loadPropertyTypes();
+    this.props.loadEntityTypes();
   }
 
   renderPopularEntitySets = () => {
@@ -91,6 +96,12 @@ function mapDispatchToProps(dispatch) {
   return {
     loadEntitySets: () => {
       dispatch(popularEntitySetsRequest());
+    },
+    loadPropertyTypes: () => {
+      dispatch(edmActionFactories.allPropertyTypesRequest());
+    },
+    loadEntityTypes: () => {
+      dispatch(edmActionFactories.allEntityTypesRequest());
     }
   };
 }
