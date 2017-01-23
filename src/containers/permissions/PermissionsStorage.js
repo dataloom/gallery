@@ -29,21 +29,27 @@ export const PermissionsPropType = PropTypes.shape({
 });
 
 export type AclKey = string[];
+export const AclKeyPropType = PropTypes.arrayOf(PropTypes.string);
 
 export type AccessCheck = {
-  aclKey:AclKey,
-  permissions:string[]
+  aclKey :AclKey,
+  permissions :string[]
 }
 
 export type Authorization = {
-  aclKey:AclKey,
-  permissions: Permissions
+  aclKey :AclKey,
+  permissions :Permissions
 };
 
 export const AuthorizationPropType = PropTypes.shape({
-  aclKey: PropTypes.arrayOf(PropTypes.string).isRequired,
+  aclKey: AclKeyPropType.isRequired,
   permissions: PermissionsPropType
 });
+
+export type PermissionsRequest = {
+  aclKey :AclKey,
+  permissions :string[]
+}
 
 /* Utility Functions */
 export function deserializeAuthorization(rawAuthorization:Object):Authorization {

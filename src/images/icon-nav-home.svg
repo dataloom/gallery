@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-nav-home</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Home" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-nav-home" fill="#F3F5F7">
+            <g id="home">
+                <path d="M15.9012,5.8912 L15.3676,6.6158 L7.9996,1.1902 L0.6324,6.6158 L0.0988,5.8912 L7.9996,0.0724 L13.7882,4.3352 L13.7882,3.4908 L14.6882,3.4908 L14.6882,4.998 L15.9012,5.8912 Z M7.9996,1.7784 L14.7032,6.715 L14.7032,15.9278 L9.6524,15.9278 L9.6524,11.5058 C9.6524,10.5946 8.911,9.8534 7.9996,9.8534 C7.0886,9.8534 6.3476,10.5946 6.3476,11.5058 L6.3476,15.9276 L1.2964,15.9276 L1.2964,6.715 L7.9996,1.7784 Z M13.8032,7.1698 L7.9996,2.8958 L2.1964,7.1698 L2.1964,15.0278 L5.4476,15.0278 L5.4476,11.5058 C5.4476,10.0984 6.5924,8.9534 7.9996,8.9534 C9.4072,8.9534 10.5524,10.0984 10.5524,11.5058 L10.5524,15.0276 L13.8032,15.0276 L13.8032,7.1698 L13.8032,7.1698 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

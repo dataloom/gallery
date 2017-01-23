@@ -2,10 +2,10 @@ import React from 'react';
 import { Route, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
-import { Container } from './Container';
+import Container from './Container';
 import { DataModel } from './Schemas/DataModel';
 import { Login } from './Login/Login';
-import { Home } from './Home/Home';
+import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
@@ -15,7 +15,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
-import { configure as edmApiConfigure } from '../../containers/edm/EdmApi';
+import { configure as edmApiConfigure } from '../../containers/Api';
 
 import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -91,7 +91,7 @@ export const makeMainRoutes = () => {
   return (
     <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
       <IndexRedirect to={`/${PageConsts.HOME}`} />
-      <Route path={PageConsts.HOME} component={Home} onEnter={requireAuth} />
+      <Route path={PageConsts.HOME} component={HomeComponent} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />

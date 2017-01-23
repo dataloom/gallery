@@ -7,7 +7,10 @@ import {
   CHECK_AUTHORIZATION_RESOLVE,
   CHECK_AUTHORIZATION_REJECT,
   REQUEST_PERMISSIONS_MODAL_SHOW,
-  REQUEST_PERMISSIONS_MODAL_HIDE
+  REQUEST_PERMISSIONS_MODAL_HIDE,
+  REQUEST_PERMISSIONS_REQUEST,
+  REQUEST_PERMISSIONS_REJECT,
+  REQUEST_PERMISSIONS_RESOLVE
 } from './PermissionsActionTypes';
 
 import {
@@ -15,7 +18,8 @@ import {
 } from './PermissionsStorage';
 
 import type {
-  Authorization
+  Authorization,
+  PermissionsRequest
 } from './PermissionsStorage';
 
 export function checkAuthorizationRequest(accessChecks :Object[]) :Object {
@@ -25,7 +29,6 @@ export function checkAuthorizationRequest(accessChecks :Object[]) :Object {
     accessChecks
   };
 }
-
 export function checkAuthorizationResolve(authorizations :Authorization[]) :Object {
 
   return {
@@ -33,7 +36,6 @@ export function checkAuthorizationResolve(authorizations :Authorization[]) :Obje
     authorizations
   };
 }
-
 export function checkAuthorizationReject(accessChecks :Object[], errorMessage :string) :Object {
 
   return {
@@ -64,5 +66,25 @@ export function requestPermissionsModalShow(entitySetId: UUID) {
 export function requestPermissionsModalHide() {
   return {
     type: REQUEST_PERMISSIONS_MODAL_HIDE
+  }
+}
+
+export function requestPermissionsRequest(requests :PermissionsRequest[]) {
+  return {
+    type: REQUEST_PERMISSIONS_REQUEST,
+    requests
+  }
+}
+export function requestPermissionsReject(requests :PermissionsRequest[], errorMessage :string) {
+  return {
+    type: REQUEST_PERMISSIONS_RESOLVE,
+    requests,
+    errorMessage
+  }
+}
+export function requestPermissionsResolve(requests :PermissionsRequest[]) {
+  return {
+    type: REQUEST_PERMISSIONS_RESOLVE,
+    requests
   }
 }
