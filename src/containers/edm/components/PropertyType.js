@@ -2,11 +2,11 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FontAwesome from 'react-fontawesome';
-import { Checkbox } from 'react-bootstrap'
 
 import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import ExpandableText from '../../../components/utils/ExpandableText';
 // Default styles
 import './propertype.module.css';
@@ -25,6 +25,7 @@ class PropertyType extends React.Component {
   static propTypes = {
     propertyTypeId: PropTypes.string.isRequired,
     editing: EditingPropType,
+    onChange: PropTypes.func,
     // Permissions are per-EntitySet. Passing entitySetId implies display permissions
     entitySetId: PropTypes.string,
     // Async Properties
@@ -36,6 +37,18 @@ class PropertyType extends React.Component {
     editing: DEFAULT_EDITING
   };
 
+  // TODO: Handle more than just permissions
+  onChange = (event) => {
+    const { onChange } = this.props,
+      canRead = event.target.value == 'on';
+
+    if (onChange && canRead) {
+      onChange({
+        permissions: canRead
+      });
+    }
+  }
+
   renderPermissions() {
     const { editing, permissions, propertyType } = this.props;
 
@@ -44,7 +57,7 @@ class PropertyType extends React.Component {
     if (editing.permissions) {
       // TODO: Support more than just read
       // TODO: Enforce entitySetId on edit
-      content = (<input type="checkbox" id={`ptp-${propertyType.id}`} defaultChecked={true}/>);
+      content = (<input type="checkbox" id={`ptp-${propertyType.id}`} onChange={this.onChange} defaultChecked={canRead}/>);
     } else if (!canRead) {
       content = (<FontAwesome name="lock"/>);
     }
@@ -116,8 +129,26 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
+  const { entitySetId, propertyTypeId } = ownProps;
+
+  let onChange;
+  if (entitySetId) {
+    onChange = (property) => {
+      const canRead = property.permissions;
+
+      if (canRead) {
+        const request = {
+          aclKey: [entitySetId, propertyTypeId],
+          permissions: ["READ"]
+        };
+        dispatch(PermissionsActionFactory.requestPermissionsRequest([request]));
+      }
+    }
+  }
+
   return {
+    onChange
   }
 }
 

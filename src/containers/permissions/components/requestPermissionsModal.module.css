@@ -22,7 +22,6 @@
     display: flex;
     flex-wrap: wrap;
     font-size: 14px;
-    margin-bottom: 20px
 }
 
 .rqm :global .propertyTypeDescription, .rqm :global .propertyTypeListHeader {

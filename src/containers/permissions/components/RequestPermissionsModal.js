@@ -22,10 +22,6 @@ class RequestPermissions extends React.Component {
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string),
   };
 
-  onSubmit = () => {
-
-  };
-
   render() {
     const { propertyTypeIds, entitySet, entitySetId, show, onHide } = this.props;
 
@@ -40,11 +36,10 @@ class RequestPermissions extends React.Component {
           <Modal.Title>{ title }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={this.onSubmit} className={styles.rqm}>
+          <div className={styles.rqm}>
             <h2 className={styles.subtitle}>Select properties you want access to:</h2>
             <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} editing={PROPERTY_TYPE_EDITING}/>
-            <Button type="submit" bsStyle="primary" className={styles.submit}>Request Permissions</Button>
-          </form>
+          </div>
         </Modal.Body>
       </Modal>
     );

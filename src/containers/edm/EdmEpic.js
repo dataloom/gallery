@@ -6,7 +6,7 @@ import { normalize } from 'normalizr';
 
 import { DataModels, EntityDataModelApi } from 'loom-data';
 
-import * as EdmApi from './EdmApi';
+import * as EdmApi from '../Api';
 import * as EdmStorage from './EdmStorage';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
