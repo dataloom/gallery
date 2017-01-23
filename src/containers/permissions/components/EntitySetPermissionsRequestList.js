@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { createStatusAsyncReference } from '../PermissionsStorage';
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
+import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
 import { AsyncReferencePropType, STATUS as ASYNC_STATUS } from '../../async/AsyncStorage';
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
 import styles from './permissions.module.css';
@@ -29,13 +30,31 @@ class EntitySetPermissionsRequestList extends React.Component {
     loadStatuses(aclKeys);
   }
 
-  renderContent(statuses) {
+  renderContent = (statuses) => {
     const fulfilledStatuses = statuses.filter(status => status !== ASYNC_STATUS.NOT_FOUND);
     if (fulfilledStatuses.length == 0) {
       return null;
     }
     const statusesByPrincipalId = groupBy(statuses, (status) => status.principal.id);
-    return <div>hello world</div>
+
+    const { entitySetId } = this.props;
+    const entitySetPermissionsRequests = Object.keys(statusesByPrincipalId)
+        .map(principalId => {
+          return (
+            <EntitySetPermissionsRequest
+              entitySetId={entitySetId}
+              principalId={principalId}
+              statuses={statusesByPrincipalId[principalId]}
+              key={principalId}
+            />
+          );
+        });
+    return (
+      <div>
+        <h2 className={styles.permissionRequestListTitle}>Permission Requests</h2>
+        {entitySetPermissionsRequests}
+      </div>
+    );
   }
 
   render() {

@@ -38,3 +38,60 @@
 .rqm :global .propertyTypePermissions {
     margin: 0 4px 1px 0;
 }
+
+/* Permission Request */
+.permissionRequestList {
+    width: 100%;
+}
+.permissionRequestListTitle {
+    font-size: 16px;
+    font-weight: 600;
+}
+.permissionsRequest {
+    width: 100%;
+    background: #ffffff;
+}
+
+.permissionRequestHeader {
+    width: 100%;
+    display: flex;
+    border-left: solid 5px #4203c5;
+    height: 60px;
+}
+.permissionRequestTitle {
+    padding-left: 15px;
+    align-self: center;
+}
+.approveButton, .rejectButton {
+    width: 60px;
+    background: #ffffff;
+    color: #b2bac0;
+    border: none;
+    border-left: solid 1px #dbe4ea;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+.approveButton:hover, .rejectButton:hover {
+    background: #dbe4ea;
+}
+.approveButton :global .fa, .rejectButton :global .fa {
+    display: block;
+    font-size: 25px;
+    margin-bottom: 2px;
+}
+.approveButton {
+    margin-left: auto;
+}
+.approveButton :global .fa {
+    color: #3fada0;
+}
+.rejectButton :global .fa {
+    color: #f9376d;
+}
+
+.permissionRequestBody {
+    display: none;
+}
+.open .permissionRequestBody {
+    display: flex;
+}

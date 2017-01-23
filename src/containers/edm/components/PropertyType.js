@@ -157,7 +157,7 @@ function mapStateToProps(state, ownProps) {
 
   const { entitySetId, propertyTypeId } = ownProps;
 
-  let { permissions, propertyType } = ownProps
+  let { permissions, propertyType } = ownProps;
 
   if (!permissions && entitySetId) {
     // TODO: Make permissions handle async states properly
