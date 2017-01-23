@@ -15,7 +15,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
-import { configure as edmApiConfigure } from '../../containers/edm/EdmApi';
+import { configure as edmApiConfigure } from '../../containers/Api';
 
 import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';

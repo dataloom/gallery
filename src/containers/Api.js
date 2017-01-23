@@ -26,3 +26,8 @@ export function edmQuery(queryParams:EdmQueryParam[]) {
   return axiosInstance.post('/datastore/edm', queryParams)
     .then(response => response.data);
 }
+
+export function permissionsRequest(requests) {
+  return axiosInstance.put('/datastore/requests', requests)
+    .then(response => response.data);
+}

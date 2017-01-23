@@ -1,7 +1,7 @@
 /* @flow */
 import { Map } from 'immutable';
 import type { EdmObjectReference } from './EdmStorage';
-import type { EdmQueryParam } from './EdmApi';
+import type { EdmQueryParam } from '../Api';
 import * as actionTypes from './EdmActionTypes';
 
 export function updateNormalizedData(normalizedData: Map<string, Map<string, *>>) {

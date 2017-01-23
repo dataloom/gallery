@@ -16,6 +16,7 @@ import {
 
 import initializeReduxStore from './core/redux/ReduxStore';
 import makeRoutes from './core/router/Routes';
+import './core/styles/global/index.css';
 
 const reduxStore = initializeReduxStore();
 const routes = makeRoutes();

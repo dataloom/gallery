@@ -21,6 +21,11 @@
   text-align: center;
 }
 
+.instructionsBox:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .instructionsTitle {
   width: 100%;
   font-weight: bold;
