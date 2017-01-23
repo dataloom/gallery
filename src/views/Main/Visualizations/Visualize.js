@@ -28,15 +28,12 @@ export class Visualize extends React.Component {
   constructor(props) {
     super(props);
     let entitySetId;
-    let entityTypeId;
     const query = props.location.query;
-    if (query.setId !== undefined && query.typeId !== undefined) {
+    if (query.setId !== undefined) {
       entitySetId = query.setId;
-      entityTypeId = query.typeId;
     }
     this.state = {
       entitySetId,
-      entityTypeId,
       title: StringConsts.EMPTY,
       properties: [],
       numberProps: [],
@@ -49,17 +46,15 @@ export class Visualize extends React.Component {
 
   componentDidMount() {
     if (this.state.entitySetId !== undefined) {
-      this.loadEntitySetTitle();
+      this.loadEntitySetDetails();
     }
-    this.loadPropertiesIfEntitySetChosen();
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.entitySetId !== this.state.entitySetId) {
       if (this.state.entitySetId !== undefined) {
-        this.loadEntitySetTitle();
+        this.loadEntitySetDetails();
       }
-      this.loadPropertiesIfEntitySetChosen();
     }
   }
 
@@ -67,7 +62,7 @@ export class Visualize extends React.Component {
     const propertyTypeIds = propertyTypes.map((propertyType) => {
       return propertyType.id;
     });
-    return DataApi.getSelectedEntitySetData(this.state.entitySetId, [], propertyTypeIds)
+    return DataApi.getEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
       return data;
     });
@@ -107,22 +102,18 @@ export class Visualize extends React.Component {
     });
   }
 
-  loadPropertiesIfEntitySetChosen = () => {
-    const { entitySetId, entityTypeId } = this.state;
-    if (entitySetId !== undefined && entityTypeId !== undefined) {
-      this.loadEntitySetType();
-    }
-  }
-
-  loadEntitySetTitle = () => {
+  loadEntitySetDetails = () => {
     EntityDataModelApi.getEntitySet(this.state.entitySetId)
     .then((entitySet) => {
-      this.setState({ title: entitySet.title });
+      this.setState({
+        title: entitySet.title
+      });
+      this.loadEntitySetType(entitySet.entityTypeId);
     });
   }
 
-  loadEntitySetType = () => {
-    EntityDataModelApi.getEntityType(this.state.entityTypeId)
+  loadEntitySetType = (entityTypeId) => {
+    EntityDataModelApi.getEntityType(entityTypeId)
     .then((entityType) => {
       this.loadProperties(entityType.properties);
     });
@@ -200,11 +191,8 @@ export class Visualize extends React.Component {
     );
   }
 
-  displayEntitySet = (entitySetId, entityTypeId) => {
-    this.setState({
-      entitySetId,
-      entityTypeId
-    });
+  displayEntitySet = (entitySetId) => {
+    this.setState({ entitySetId });
   }
 
   renderVisualization = () => {
@@ -243,15 +231,20 @@ export class Visualize extends React.Component {
 
   renderEntitySetVisualizationList = () => {
     return (
-      <div className={styles.container}>
-        <EntitySetVisualizationList displayEntitySetFn={this.displayEntitySet} />
+      <div>
+        <Page.Header>
+          <Page.Title>Choose an entity set to visualize</Page.Title>
+        </Page.Header>
+        <Page.Body>
+          <EntitySetVisualizationList displayEntitySetFn={this.displayEntitySet} />
+        </Page.Body>
       </div>
     );
   }
 
   render() {
-    const { entitySetId, entityTypeId } = this.state;
-    const content = (entitySetId === undefined || entityTypeId === undefined) ?
+    const { entitySetId } = this.state;
+    const content = (entitySetId === undefined) ?
       this.renderEntitySetVisualizationList() : this.renderVisualization();
     return (
       <Page>

@@ -1,0 +1,45 @@
+/* Default Styles */
+:global .propertyTypeStyleDefault:global.propertyTypeList {
+    display: table;
+    width: 100%;
+    font-size: 16px;
+}
+
+:global .propertyTypeStyleDefault :global .propertyTypeListHeader,
+:global .propertyTypeStyleDefault :global .propertyType {
+    display: table-row;
+}
+:global .propertyTypeStyleDefault :global .propertyTypeListHeader {
+    font-weight: 600;
+}
+
+:global .propertyTypeStyleDefault :global .propertyType:nth-child(even) > div {
+    background: #f3f5f7;
+}
+:global .propertyTypeStyleDefault :global .propertyTypePermissions,
+:global .propertyTypeStyleDefault :global .propertyTypeTitle,
+:global .propertyTypeStyleDefault :global .propertyTypeDescription,
+:global .propertyTypeStyleDefault :global .propertyTypeListPermissions,
+:global .propertyTypeStyleDefault :global .propertyTypeListTitle,
+:global .propertyTypeStyleDefault :global .propertyTypeListDescription {
+    display: table-cell;
+    padding: 15px;
+}
+:global .propertyTypeStyleDefault :global .propertyTypeTitle,
+:global .propertyTypeStyleDefault :global .propertyTypeListTitle {
+    padding-left: 0;
+}
+:global .propertyTypeStyleDefault :global .propertyTypePermissions,
+:global .propertyTypeStyleDefault :global .propertyTypeListPermissions {
+    padding: 0 2px 0 15px;
+    width:15px;
+}
+:global .propertyTypeStyleDefault :global .propertyTypeTitle,
+:global .propertyTypeStyleDefault :global .propertyTypeListTitle {
+    border-right: 1px solid #c9cfd3;
+    width: 180px
+}
+:global .propertyTypeStyleDefault :global .propertyTypeDescription,
+:global .propertyTypeStyleDefault :global .propertyTypeListDescription {
+    text-align: justify;
+}

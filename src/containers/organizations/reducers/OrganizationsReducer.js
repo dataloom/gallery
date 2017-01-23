@@ -5,17 +5,11 @@
 import Immutable from 'immutable';
 
 import {
+  DataModels,
   Types
 } from 'loom-data';
 
-import {
-  FETCH_ORG_REQUEST,
-  FETCH_ORG_FAILURE,
-  FETCH_ORG_SUCCESS,
-  FETCH_ORGS_REQUEST,
-  FETCH_ORGS_FAILURE,
-  FETCH_ORGS_SUCCESS
-} from '../actions/OrganizationsActionTypes';
+import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 
 import {
   CHECK_AUTHORIZATION_RESOLVE
@@ -26,7 +20,13 @@ import {
 } from '../../../components/asynccontent/AsyncContent';
 
 const {
-  PermissionTypes
+  Principal,
+  PrincipalBuilder
+} = DataModels;
+
+const {
+  PermissionTypes,
+  PrincipalTypes
 } = Types;
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
@@ -43,10 +43,10 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
 
   switch (action.type) {
 
-    case FETCH_ORG_REQUEST:
+    case OrgsActionTypes.FETCH_ORG_REQUEST:
       return state.set('isFetchingOrg', true);
 
-    case FETCH_ORGS_REQUEST:
+    case OrgsActionTypes.FETCH_ORGS_REQUEST:
       return state
         .set('isFetchingOrgs', true)
         .set('asyncState', Immutable.fromJS({
@@ -54,7 +54,7 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
           errorMessage: ''
         }));
 
-    case FETCH_ORG_SUCCESS: {
+    case OrgsActionTypes.FETCH_ORG_SUCCESS: {
 
       const org = action.organization;
       return state
@@ -62,7 +62,7 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
         .setIn(['organizations', org.id], Immutable.fromJS(org));
     }
 
-    case FETCH_ORGS_SUCCESS: {
+    case OrgsActionTypes.FETCH_ORGS_SUCCESS: {
 
       const orgs = {};
       action.organizations.forEach((org) => {
@@ -79,15 +79,15 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
         }));
     }
 
-    case FETCH_ORG_FAILURE:
-    case FETCH_ORGS_FAILURE:
+    case OrgsActionTypes.FETCH_ORG_FAILURE:
+    case OrgsActionTypes.FETCH_ORGS_FAILURE:
       return INITIAL_STATE
         .set('asyncState', Immutable.fromJS({
           status: ASYNC_STATUS.ERROR,
           errorMessage: 'Failed to load Organizations'
         }));
 
-    case CHECK_AUTHORIZATION_RESOLVE: {
+    case OrgsActionTypes.CHECK_AUTHORIZATION_RESOLVE: {
 
       let newState :Map<*, *> = state;
 
@@ -108,6 +108,38 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
         const orgDeco = org.set('isOwner', (auth.permissions[PermissionTypes.OWNER] === true));
         newState = newState.setIn(['organizations', orgId], orgDeco);
       });
+
+      return newState;
+    }
+
+    case OrgsActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
+
+      const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
+      const newRolePrincipal :Principal = (new PrincipalBuilder())
+        .setType(PrincipalTypes.ROLE)
+        .setId(action.role)
+        .build();
+
+      const newRoles = currentRoles.push(Immutable.fromJS(JSON.parse(newRolePrincipal.valueOf())));
+      const newState = state.setIn(['organizations', action.orgId, 'roles'], newRoles);
+
+      return newState;
+    }
+
+    case OrgsActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
+
+      const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
+
+      const index = currentRoles.findIndex((role) => {
+        return role.get('id') === action.role;
+      });
+
+      if (index < 0) {
+        return state;
+      }
+
+      const newRoles = currentRoles.delete(index);
+      const newState = state.setIn(['organizations', action.orgId, 'roles'], newRoles);
 
       return newState;
     }

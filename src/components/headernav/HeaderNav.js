@@ -41,9 +41,6 @@ class HeaderNav extends React.Component {
             <div className={styles.headerNavItem}>
               { greeting }
             </div>
-            <div className={`${settingsNavItemClassNames}`}>
-              <Link to={`/${PageConsts.SETTINGS}`} className={styles.headerNavLink}>Settings</Link>
-            </div>
             <div className={styles.headerNavItem}>
               <Link
                   to={`/${PageConsts.LOGIN}`}

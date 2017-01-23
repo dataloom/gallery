@@ -55,3 +55,81 @@
 .orgJoinButton {
   align-self: center;
 }
+
+.rolesTable {
+  background-color: white;
+}
+
+.roleRowWrapper {
+  padding: 0;
+}
+
+.roleRow {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+}
+
+.roleRowItem {
+  padding: 10px 15px;
+  border-left: 1px solid #dddddd;
+}
+
+.roleRowItem button {
+  border: none;
+  background-color: transparent;
+}
+
+.roleRowItem button:focus {
+  outline: 0;
+}
+
+.roleRowItemId {
+  border: none;
+  flex: 10 0 auto;
+}
+
+.roleRowItemEdit {
+  color: #1976d2;
+}
+
+.roleRowItemEdit:hover {
+  cursor: pointer;
+}
+
+.roleRowItemDelete {
+  color: #e53935;
+}
+
+.roleRowItemDelete:hover {
+  cursor: pointer;
+}
+
+.roleRowItemAdd {
+  border: none;
+  padding: 0 15px;
+  flex: 1 0 auto;
+}
+
+.roleRowItemAddInput {
+  color: #43a047;
+  margin: 0;
+}
+
+.roleRowItemAddInput input {
+  border: 0;
+  box-shadow: none;
+  padding: 0 !important;
+}
+
+.roleRowItemAddInput input:focus {
+  border: 0;
+  box-shadow: none;
+}
+
+.roleRowItemAddButton {
+  color: #43a047;
+}

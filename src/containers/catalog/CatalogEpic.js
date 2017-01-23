@@ -3,16 +3,15 @@ import { normalize } from 'normalizr';
 import Immutable from 'immutable';
 import { Observable } from 'rxjs';
 
-import { SearchApi } from 'loom-data';
+import { SearchApi, DataModel } from 'loom-data';
 
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
-import type { EntitySet } from '../../components/entityset/EntitySetStorage';
 import { EntitySetNschema } from '../edm/EdmStorage';
 
 // TODO: Move processing and storage into EDM
-function convertSearchResult(rawResult): EntitySet {
+function convertSearchResult(rawResult):DataModel.EntitySet {
   return rawResult.entitySet
 }
 

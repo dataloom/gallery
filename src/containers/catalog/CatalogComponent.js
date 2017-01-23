@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
 
 import Page from '../../components/page/Page';
-import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
+import { EntitySetPropType } from '../edm/EdmModel';
 import { EntitySetNschema } from '../edm/EdmStorage';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../securableobject/SecurableObjectSearch';

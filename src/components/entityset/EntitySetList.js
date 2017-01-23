@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import EntitySet from './EntitySet';
-import { EntitySetPropType } from './EntitySetStorage';
+import { EntitySetPropType } from '../../containers/edm/EdmModel';
 import styles from './entityset.module.css';
 
 export default class EntitySetList extends React.Component {

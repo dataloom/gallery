@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 
 import {
@@ -12,7 +13,8 @@ import {
   Types,
   AuthorizationApi,
   OrganizationApi,
-  PermissionsApi
+  PermissionsApi,
+  PrincipalsApi
 } from 'loom-data';
 
 import {
@@ -24,7 +26,8 @@ import {
   InputGroup,
   Label,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  Table
 } from 'react-bootstrap';
 
 import {
@@ -43,8 +46,9 @@ import styles from '../styles/orgs.module.css';
 
 import {
   fetchOrgRequest,
-  fetchOrgSuccess,
-  fetchOrgFailure
+  joinOrgRequest,
+  addRoleToOrgRequest,
+  removeRoleFromOrgRequest
 } from '../actions/OrganizationsActionFactory';
 
 const {
@@ -57,7 +61,6 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
   const emptyOrg = Immutable.fromJS({});
 
   return {
-    isFetchingOrg: state.getIn(['organizations', 'isFetchingOrg']),
     organization: state.getIn(['organizations', 'organizations', orgId], emptyOrg)
   };
 }
@@ -66,8 +69,9 @@ function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
     fetchOrgRequest,
-    fetchOrgSuccess,
-    fetchOrgFailure
+    joinOrgRequest,
+    addRoleToOrgRequest,
+    removeRoleFromOrgRequest
   };
 
   return {
@@ -78,16 +82,15 @@ function mapDispatchToProps(dispatch :Function) {
 class OrganizationDetails extends React.Component {
 
   state :{
-    isInvalidEmail :boolean
+    isInvalidEmail :boolean,
+    newRoleValue :string
   }
 
   static propTypes = {
     actions: React.PropTypes.shape({
       fetchOrgRequest: React.PropTypes.func.isRequired,
-      fetchOrgSuccess: React.PropTypes.func.isRequired,
-      fetchOrgFailure: React.PropTypes.func.isRequired
+      joinOrgRequest: React.PropTypes.func.isRequired
     }).isRequired,
-    isFetchingOrg: React.PropTypes.bool.isRequired,
     params: React.PropTypes.shape({
       orgId: React.PropTypes.string.isRequired
     }).isRequired,
@@ -99,30 +102,12 @@ class OrganizationDetails extends React.Component {
     super(props);
 
     this.state = {
-      isInvalidEmail: false
+      isInvalidEmail: false,
+      newRoleValue: ''
     };
   }
 
-  componentDidMount() {
-
-    if (this.props.organization.isEmpty()) {
-
-      this.props.actions.fetchOrgRequest();
-
-      OrganizationApi.getOrganization(this.props.params.orgId)
-        .then((response) => {
-          this.props.actions.fetchOrgSuccess(response);
-          hashHistory.push('/org');
-        })
-        .catch(() => {
-          this.props.actions.fetchOrgFailure();
-        });
-    }
-
-    PermissionsApi.getAcl([this.props.params.orgId]);
-  }
-
-  getOrgTitleSection = () => {
+  renderOrgTitleSection = () => {
 
     return (
       <div className={classnames(styles.orgTitleSectionWrapper)}>
@@ -142,11 +127,24 @@ class OrganizationDetails extends React.Component {
         </div>
         {
           this.props.organization.get('isOwner') === false
-            ? <Button className={classnames(styles.orgJoinButton)}>Request to Join</Button>
+            ? this.renderJoinOrgButton()
             : null
         }
       </div>
     );
+  }
+
+  renderJoinOrgButton = () => {
+
+    // TODO: wire up join button
+    // return (
+    //   <Button
+    //       className={classnames(styles.orgJoinButton)}
+    //       onClick={this.props.actions.joinOrgRequest}>
+    //     Request to Join
+    //   </Button>
+    // );
+    return null;
   }
 
   renderInvitationSection = () => {
@@ -188,24 +186,119 @@ class OrganizationDetails extends React.Component {
     );
   }
 
+  onChangeNewRoleInput = (event) => {
+
+    this.setState({
+      newRoleValue: event.target.value
+    });
+  }
+
+  onKeyPressNewRoleInput = (event) => {
+
+    if (event.key === 'Enter') {
+      this.addNewRole();
+    }
+  }
+
+  addNewRole = () => {
+
+    this.props.actions.addRoleToOrgRequest(
+      this.props.organization.get('id'),
+      this.state.newRoleValue
+    );
+
+    this.setState({
+      newRoleValue: ''
+    });
+  }
+
+  renderRolesSection = () => {
+
+    const orgRolesList :List<*> = this.props.organization.get('roles', Immutable.List());
+
+    const roleListItems = orgRolesList.map((role) => {
+      return (
+        <ListGroupItem key={role.get('id')} className={classnames(styles.roleRowWrapper)}>
+          <ul className={classnames(styles.roleRow)}>
+            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
+              { role.get('id') }
+            </li>
+            {
+              this.props.organization.get('isOwner') === true
+                ? (
+                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                    <button
+                        onClick={() => {
+                          this.props.actions.removeRoleFromOrgRequest(
+                            this.props.organization.get('id'),
+                            role.get('id')
+                          );
+                        }}>
+                      <FontAwesome name="minus-square-o" />
+                    </button>
+                  </li>
+                )
+              : null
+            }
+          </ul>
+        </ListGroupItem>
+      );
+    });
+
+    const addRoleListItem = (
+      <ListGroupItem key={'addNewRole'} className={classnames(styles.roleRowWrapper)}>
+        <ul className={classnames(styles.roleRow)}>
+          <li className={classnames(styles.roleRowItem, styles.roleRowItemAdd)}>
+            <FormGroup bsSize="small" className={classnames(styles.roleRowItemAddInput)}>
+              <FormControl
+                  type="text"
+                  placeholder="Add new role..."
+                  value={this.state.newRoleValue}
+                  onChange={this.onChangeNewRoleInput}
+                  onKeyPress={this.onKeyPressNewRoleInput} />
+            </FormGroup>
+          </li>
+          <li className={classnames(styles.roleRowItem, styles.roleRowItemAddButton)}>
+            <button onClick={this.addNewRole}>
+              <FontAwesome name="plus-square-o" />
+            </button>
+          </li>
+        </ul>
+      </ListGroupItem>
+    );
+
+    const roleListGroup = (
+      <ListGroup>
+        { roleListItems }
+        {
+          this.props.organization.get('isOwner') === true
+           ? addRoleListItem
+           : null
+        }
+      </ListGroup>
+    );
+
+    return (
+      <div className={styles.detailSection}>
+        <h4>Roles</h4>
+        { roleListGroup }
+      </div>
+    );
+  }
+
   render() {
 
     return (
       <div className={classnames(styles.flexComponent)}>
         <div className={classnames(styles.flexComponent, styles.detailSection)}>
-          { this.getOrgTitleSection() }
+          { this.renderOrgTitleSection() }
           <h4>
             { this.props.organization.get('description') }
           </h4>
         </div>
         { this.renderInvitationSection() }
         { this.renderDomainsSection() }
-        <div className={styles.detailSection}>
-          <h4>Requests</h4>
-        </div>
-        <div className={styles.detailSection}>
-          <h4>Users</h4>
-        </div>
+        { this.renderRolesSection() }
       </div>
     );
   }

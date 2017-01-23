@@ -13,9 +13,9 @@ import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySet
 import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
-import UserRoleConsts from '../../utils/Consts/UserRoleConsts';
+import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
-import { configure as edmApiConfigure } from '../../containers/edm/EdmApi';
+import { configure as edmApiConfigure } from '../../containers/Api';
 
 import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -45,13 +45,13 @@ const requireAuth = (nextState, replace) => {
 
 const requireAdmin = (nextState, replace) => {
   requireAuth(nextState, replace);
-  if (!auth.getProfile().roles.includes(UserRoleConsts.ADMIN)) {
+  if (!auth.getProfile().roles.includes(ADMIN)) {
     replace({ pathname: `/${PageConsts.HOME}` });
   }
 };
 
 const isAdmin = () => {
-  return (auth.loggedIn() && auth.getProfile().roles.includes(UserRoleConsts.ADMIN));
+  return (auth.loggedIn() && auth.getProfile().hasOwnProperty('roles') && auth.getProfile().roles.includes(ADMIN));
 };
 
 const getName = () => {

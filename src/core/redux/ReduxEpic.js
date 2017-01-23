@@ -12,7 +12,7 @@ import EdmEpic from '../../containers/edm/EdmEpic';
 import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
 
 import CreateOrganizationEpic from '../../containers/organizations/epics/CreateOrganizationEpic';
-import * as OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
+import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
 
 export default function reduxEpic() {
   return combineEpics(
@@ -22,6 +22,6 @@ export default function reduxEpic() {
     PermissionsEpic,
 
     CreateOrganizationEpic,
-    OrganizationsEpic.fetchOrgsEpic
+    OrganizationsEpic
   );
 }

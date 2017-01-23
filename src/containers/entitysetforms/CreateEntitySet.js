@@ -8,7 +8,7 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as actionFactories from './CreateEntitySetActionFactories';
 import { getEdmObjectsShallow } from '../edm/EdmStorage';
-import { EntityTypePropType } from '../../components/entityset/EntitySetStorage';
+import { EntityTypePropType } from '../edm/EdmModel';
 
 class CreateEntitySet extends React.Component {
   static propTypes = {

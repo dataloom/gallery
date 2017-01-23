@@ -7,10 +7,10 @@ import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
-import PropertyTypeList from '../../components/propertytype/PropertyTypeList';
-import ActionDropdown from '../../components/entityset/ActionDropdown';
+import PropertyTypeList from '../edm/components/PropertyTypeList';
+import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-import { EntitySetPropType } from '../../components/entityset/EntitySetStorage';
+import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import styles from './entitysetdetail.module.css';
 
@@ -36,7 +36,7 @@ class EntitySetDetailComponent extends React.Component {
 
         <div className={styles.controls}>
           { entitySetPermissions.OWNER ? <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button> : ''}
-          <ActionDropdown entitySet={entitySet}/>
+          <ActionDropdown entitySetId={entitySet.id}/>
         </div>
       </div>
     );
@@ -52,7 +52,15 @@ class EntitySetDetailComponent extends React.Component {
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
 
           <AsyncContent {...this.props.asyncState} content={() => {
-            return (<PropertyTypeList propertyTypes={this.props.entitySet.entityType.properties}/>);
+            // TODO: Remove when removing denormalization
+            const propertyTypeIds = this.props.entitySet.entityType.properties.map(property => property.id);
+            return (
+                <PropertyTypeList
+                  entitySetId={this.props.entitySet.id}
+                  propertyTypeIds={propertyTypeIds}
+                  className="propertyTypeStyleDefault"
+                />
+              );
           }}/>
 
         </Page.Body>
