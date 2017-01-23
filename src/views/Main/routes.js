@@ -97,7 +97,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
-      <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth}/>
+      <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>

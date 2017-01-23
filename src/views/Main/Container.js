@@ -7,7 +7,7 @@ import HeaderNav from '../../components/headernav/HeaderNav';
 import SideNav from '../../components/sidenav/SideNav';
 import RequestPermissionsModal from '../../containers/permissions/components/RequestPermissionsModal';
 
-export class Container extends React.Component {
+class Container extends React.Component {
   static contextTypes = {
     router: PropTypes.object
   };
@@ -59,7 +59,7 @@ export class Container extends React.Component {
 
     return (
       <div className={styles.appWrapper}>
-        <RequestPermissionsModal/>
+        <RequestPermissionsModal />
         <HeaderNav auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
         <div className={styles.appBody}>
           <SideNav name={this.state.name} />
@@ -74,8 +74,12 @@ export class Container extends React.Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    loadPropertyTypes: () => { dispatch(edmActionFactories.allPropertyTypesRequest()); },
-    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
+    loadPropertyTypes: () => {
+      dispatch(edmActionFactories.allPropertyTypesRequest());
+    },
+    loadEntityTypes: () => {
+      dispatch(edmActionFactories.allEntityTypesRequest());
+    }
   };
 }
 
