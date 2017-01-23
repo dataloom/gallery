@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import groupBy from 'lodash/groupBy';
 
-/* User */
 import { createStatusAsyncReference } from '../PermissionsStorage';
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
@@ -27,15 +27,16 @@ class EntitySetPermissionsRequest extends React.Component {
     loadStatuses(aclKeys);
   }
 
+  renderContent(statuses) {
+    const statusesByPrincipalId = groupBy(statuses, (status) => status.principal.id);
+
+  }
+
   render() {
     const { statusReferences } = this.props;
 
     return (
-      <div>
-        <div className={styles.requestHeader}>
-          <AsyncContentListComponent references={statusReferences} render={this.renderUser}/>
-        </div>
-      </div>
+      <AsyncContentListComponent references={statusReferences} render={this.renderContent}/>
     );
   }
 }
