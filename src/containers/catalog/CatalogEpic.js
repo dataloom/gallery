@@ -8,7 +8,8 @@ import { SearchApi, DataModel } from 'loom-data';
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
-import { EntitySetNschema } from '../edm/EdmStorage';
+import { EntitySetNschema, createEntitySetReference } from '../edm/EdmStorage';
+import { combineEpics } from 'redux-observable';
 
 // TODO: Move processing and storage into EDM
 function convertSearchResult(rawResult):DataModel.EntitySet {
@@ -40,4 +41,24 @@ function searchCatalogEpic(action$) {
     .mergeMap(searchCatalog);
 }
 
-export default searchCatalogEpic;
+function popularEntitySetsEpic(action$) {
+  return action$.ofType(actionTypes.POPULAR_ENTITY_SETS_REQUEST)
+    .mergeMap(action => {
+      return Observable.from(SearchApi.getPopularEntitySet())
+      .map(result => normalize(result, [EntitySetNschema]))
+      .map(Immutable.fromJS)
+      .flatMap(normalizedData => {
+        return [
+          edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
+          actionFactories.popularEntitySetsResolve(normalizedData.get('result').map(createEntitySetReference))
+        ]
+      })
+      // Error Handling
+      .catch(error => {
+        console.error(error);
+        return Observable.of(actionFactories.popularEntitySetsReject("Error loading popular entity sets"))
+      });
+    });
+}
+
+export default combineEpics(searchCatalogEpic, popularEntitySetsEpic);
