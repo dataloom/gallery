@@ -14,6 +14,7 @@ import createEntitySetReducer from '../../containers/entitysetforms/CreateEntity
 import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import usersReducer from '../../containers/organizations/reducers/UsersReducer';
+import asyncReducer from '../../containers/async/AsyncReducer';
 
 export default function reduxReducer() {
 
@@ -25,6 +26,7 @@ export default function reduxReducer() {
     createEntitySet: createEntitySetReducer,
     securableObject: securableObjectReducer,
     permissions: permissionReducer,
-    users: usersReducer
+    users: usersReducer,
+    async: asyncReducer
   });
 }

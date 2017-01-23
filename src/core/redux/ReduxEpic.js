@@ -14,6 +14,7 @@ import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
 import CreateOrganizationEpic from '../../containers/organizations/epics/CreateOrganizationEpic';
 import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
 import UsersEpic from '../../containers/organizations/epics/UsersEpic';
+import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 
 export default function reduxEpic() {
   return combineEpics(
@@ -21,6 +22,7 @@ export default function reduxEpic() {
     CreateEntitySetEpic,
     EdmEpic,
     PermissionsEpic,
+    PrincipalsEpic,
 
     CreateOrganizationEpic,
     OrganizationsEpic,

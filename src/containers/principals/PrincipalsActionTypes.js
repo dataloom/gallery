@@ -1,0 +1,5 @@
+export const LOAD_PRINCIPAL_DETAILS = 'LOAD_PRINCIPAL_DETAILS';
+
+export default {
+  LOAD_PRINCIPAL_DETAILS
+}
