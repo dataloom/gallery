@@ -1,7 +1,7 @@
 /* @flow */
 import {
   LOAD_PRINCIPAL_DETAILS,
-
+  LOAD_ALL_USERS
 } from './PrincipalsActionTypes';
 
 export function loadPrincipalDetails(id :string) {
@@ -11,6 +11,14 @@ export function loadPrincipalDetails(id :string) {
   }
 }
 
+export function loadAllUsers() {
+  return {
+    type: LOAD_ALL_USERS
+  }
+}
+
+
 export default {
-  loadPrincipalDetails
+  loadPrincipalDetails,
+  loadAllUsers
 }
