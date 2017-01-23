@@ -10,7 +10,8 @@ import Select from 'react-select';
 import classnames from 'classnames';
 
 import {
-  DataModels
+  DataModels,
+  PrincipalsApi
 } from 'loom-data';
 
 import {
@@ -51,6 +52,10 @@ import {
   addMemberToOrgRequest,
   removeMemberFromOrgRequest
 } from '../actions/OrganizationsActionFactory';
+
+import {
+  setUserRolesRequest
+} from '../actions/UsersActionFactory';
 
 const {
   Organization
@@ -96,7 +101,8 @@ function mapDispatchToProps(dispatch :Function) {
     addRoleToOrgRequest,
     removeRoleFromOrgRequest,
     addMemberToOrgRequest,
-    removeMemberFromOrgRequest
+    removeMemberFromOrgRequest,
+    setUserRolesRequest
   };
 
   return {
@@ -111,7 +117,7 @@ class OrganizationDetails extends React.Component {
     newDomainValue :string,
     newRoleValue :string,
     newMemberValue :?Object,
-    newMemberRoles :Object[]
+    newMemberRoles :string[]
   }
 
   static propTypes = {
@@ -431,13 +437,29 @@ class OrganizationDetails extends React.Component {
 
   addNewMember = () => {
 
+    if (!this.state.newMemberValue || !this.state.newMemberRoles || this.state.newMemberRoles.length === 0) {
+      return;
+    }
+
+    const userId = this.state.newMemberValue.value;
+
     this.props.actions.addMemberToOrgRequest(
       this.props.organization.get('id'),
-      this.state.newMemberValue.value
+      userId
+    );
+
+    const roles = this.state.newMemberRoles.map((obj) => {
+      return obj.value;
+    });
+
+    this.props.actions.setUserRolesRequest(
+      userId,
+      roles
     );
 
     this.setState({
-      newMemberValue: null
+      newMemberValue: null,
+      newMemberRoles: []
     });
   }
 
@@ -449,7 +471,7 @@ class OrganizationDetails extends React.Component {
     const selectRolesOptions = orgRolesList.map((role) => {
       return {
         label: role.get('id'),
-        value: role
+        value: role.get('id')
       };
     }).toJS();
 

@@ -25,3 +25,26 @@ export function fetchAllUsersFailure() :Object {
     type: UsersActionTypes.FETCH_ALL_USERS_FAILURE
   };
 }
+
+export function setUserRolesRequest(userId :UUID, roles :string[]) :Object {
+
+  return {
+    type: UsersActionTypes.SET_USER_ROLES_REQUEST,
+    userId,
+    roles
+  };
+}
+
+export function setUserRolesSuccess() :Object {
+
+  return {
+    type: UsersActionTypes.SET_USER_ROLES_SUCCESS
+  };
+}
+
+export function setUserRolesFailure() :Object {
+
+  return {
+    type: UsersActionTypes.SET_USER_ROLES_FAILURE
+  };
+}

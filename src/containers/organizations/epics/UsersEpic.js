@@ -3,7 +3,6 @@
  */
 
 import {
-  Types,
   PrincipalsApi
 } from 'loom-data';
 
@@ -17,10 +16,6 @@ import {
 
 import * as UsersActionTypes from '../actions/UsersActionTypes';
 import * as UsersActionFactory from '../actions/UsersActionFactory';
-
-const {
-  PrincipalTypes
-} = Types;
 
 /*
  * TODO: need a pattern for chaining API calls in the Observables world
@@ -49,6 +44,35 @@ function fetchAllUsersEpic(action$ :Observable<Action>) :Observable<Action> {
     .mergeMap(fetchAllUsers);
 }
 
+function setUserRoles(action :Action) :Observable<Action> {
+
+  const {
+    userId,
+    roles
+  } = action;
+
+  return Observable
+    .from(PrincipalsApi.setUserRoles(userId, roles))
+    .mergeMap(() => {
+      return Observable.of(
+        UsersActionFactory.setUserRolesSuccess()
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        UsersActionFactory.setUserRolesFailure()
+      );
+    });
+}
+
+function setUserRolesEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(UsersActionTypes.SET_USER_ROLES_REQUEST)
+    .mergeMap(setUserRoles);
+}
+
 export default combineEpics(
-  fetchAllUsersEpic
+  fetchAllUsersEpic,
+  setUserRolesEpic
 );
