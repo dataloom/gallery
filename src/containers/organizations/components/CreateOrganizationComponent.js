@@ -137,7 +137,7 @@ class CreateOrganization extends React.Component {
     this.props.onCreate();
   }
 
-  onChangeDomainTag = (value :Array<Object>) => {
+  onChangeDomainTag = (value :Object[]) => {
 
     this.setState({
       domains: value
@@ -188,11 +188,6 @@ class CreateOrganization extends React.Component {
               onChange={this.handleOnChangeVisibility}>
             { this.getVisibilityOptions() }
           </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <Checkbox disabled>Google Apps Auth</Checkbox>
-          <Checkbox disabled>Username - Password</Checkbox>
-          <Checkbox disabled>LDAP</Checkbox>
         </FormGroup>
         <Button
             className={styles.createOrgSubmit}
