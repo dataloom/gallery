@@ -50,6 +50,10 @@
 .permissionsRequest {
     width: 100%;
     background: #ffffff;
+    margin-top: 5px;
+}
+.permissionsRequest:first-child {
+    margin-top: 0;
 }
 
 .permissionRequestHeader {
@@ -57,6 +61,7 @@
     display: flex;
     border-left: solid 5px #4203c5;
     height: 60px;
+    font-size: 14px;
 }
 .permissionRequestTitle {
     padding-left: 15px;
@@ -91,7 +96,34 @@
 
 .permissionRequestBody {
     display: none;
+    border-top: solid 1px #dbe4ea;
+    padding: 20px 30px;
+
 }
 .open .permissionRequestBody {
     display: flex;
+    flex-wrap: wrap;
+}
+.permissionRequestBody .subtitle {
+    font-size: 16px;
+}
+.permissionRequestBody label {
+    display: inherit;
+    margin: inherit;
+    font-weight: inherit;
+}
+.permissionRequestBody :global .propertyTypeList {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+.permissionRequestBody :global .propertyType {
+    width: 33%;
+    display: flex;
+    align-items: center;
+    margin-top: 10px
+}
+.permissionRequestBody :global .propertyTypePermissions {
+    margin: 0 4px 1px 0;
 }

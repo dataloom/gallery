@@ -71,8 +71,7 @@ class EntitySetPermissionsRequest extends React.Component {
         <div className={styles.permissionRequestHeader} onClick={this.toggleBody}>
           <div className={styles.permissionRequestTitle}>
             <span className={styles.principalName}>{ principal.get('nickname') } </span>
-            requested permission on
-            <span className={styles.entitySetTitle}> { entitySet.title }</span>
+            requested permission
           </div>
           <button className={styles.approveButton}>
             <FontAwesome name="thumbs-o-up"/>
@@ -86,7 +85,7 @@ class EntitySetPermissionsRequest extends React.Component {
 
         <div className={styles.permissionRequestBody}>
           <div className={styles.subtitle}>Properties requested:</div>
-          <div className={styles.propertyList}>{ content }</div>
+          <div className="propertyTypeList">{ content }</div>
         </div>
       </div>
     );
