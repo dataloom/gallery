@@ -16,19 +16,42 @@ import {
 
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
+import AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
-  deserializeAuthorization
+  deserializeAuthorization,
+  createStatusAsyncReference
 } from './PermissionsStorage';
 
 import type {
   AccessCheck,
-  PermissionsRequest
+  PermissionsRequest,
+  AclKey
 } from './PermissionsStorage'
 
 import {
-  permissionsRequest
+  permissionsRequest,
+  getStatus
 } from '../Api';
+
+function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
+  return Observable.merge(
+    Observable.from(aclKeys.map(createStatusAsyncReference))
+      .map(AsyncActionFactory.asyncReferenceLoading),
+
+    Observable.from(getStatus(reqStatus, aclKeys))
+      .mergeMap(x => x)
+      .map(status => {
+        const reference = createStatusAsyncReference(status.aclKey);
+        return AsyncActionFactory.updateAsyncReference(reference, status);
+      })
+  );
+}
+
+function loadStatusesEpic(action$) {
+  return action$.ofType(PermissionsActionTypes.LOAD_STATUSES)
+    .mergeMap(action => loadStatuses(action.reqStatus, action.aclKeys));
+}
 
 function requestPermissions(requests :PermissionsRequest[]) :Observable<Action> {
   return Observable
@@ -69,4 +92,4 @@ function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action>
     .mergeMap(authorizationCheck);
 }
 
-export default combineEpics(authorizationCheckEpic, requestPermissionsEpic);
+export default combineEpics(authorizationCheckEpic, requestPermissionsEpic, loadStatusesEpic);

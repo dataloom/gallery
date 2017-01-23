@@ -57,7 +57,7 @@ class PropertyType extends React.Component {
         permissions: canRead
       });
     }
-  }
+  };
 
   renderPermissions() {
     const { editing, permissions, propertyType } = this.props;
@@ -156,16 +156,21 @@ function mapStateToProps(state, ownProps) {
     permissionsState = state.get('permissions');
 
   const { entitySetId, propertyTypeId } = ownProps;
-  const reference = createPropertyTypeReference(propertyTypeId);
 
-  let permissions;
-  if (entitySetId) {
+  let { permissions, propertyType } = ownProps
+
+  if (!permissions && entitySetId) {
     // TODO: Make permissions handle async states properly
     permissions = getPermissions(permissionsState, [entitySetId, propertyTypeId]);
   }
 
+  if (!propertyType) {
+    const reference = createPropertyTypeReference(propertyTypeId);
+    propertyType = getEdmObjectSilent(normalizedData.toJS(), reference, null);
+  }
+
   return {
-    propertyType: getEdmObjectSilent(normalizedData.toJS(), reference, null),
+    propertyType,
     permissions
   };
 }
