@@ -6,7 +6,6 @@ import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
 import styles from '../styles.module.css';
-import Utils from '../../../../utils/Utils';
 
 const views = {
   GLOBAL: 0,
@@ -71,7 +70,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.loadAcls();
+    this.loadAcls(false);
   }
 
   loadAllUsersAndRoles = () => {
@@ -238,9 +237,7 @@ export class PermissionsPanel extends React.Component {
         </div>
         <div className={styles.spacerSmall} />
         <button
-            onClick={() => {
-              this.updateGlobalPermissions();
-            }}
+            onClick={this.updateGlobalPermissions}
             className={styles.simpleButton}>Save changes</button>
       </div>
     );
