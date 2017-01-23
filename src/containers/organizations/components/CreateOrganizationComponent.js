@@ -131,9 +131,13 @@ class CreateOrganization extends React.Component {
       .build();
 
     this.props.actions.createNewOrgRequest(org);
+
+    // TODO: need to add some kind of indication that the form is submitting, show an error if something went wrong,
+    // hide the form on success, and update the list of organizations
+    this.props.onCreate();
   }
 
-  onChangeDomainTag = (value :Array<Object>) => {
+  onChangeDomainTag = (value :Object[]) => {
 
     this.setState({
       domains: value
@@ -184,11 +188,6 @@ class CreateOrganization extends React.Component {
               onChange={this.handleOnChangeVisibility}>
             { this.getVisibilityOptions() }
           </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <Checkbox disabled>Google Apps Auth</Checkbox>
-          <Checkbox disabled>Username - Password</Checkbox>
-          <Checkbox disabled>LDAP</Checkbox>
         </FormGroup>
         <Button
             className={styles.createOrgSubmit}
