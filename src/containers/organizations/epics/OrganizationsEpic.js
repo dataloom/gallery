@@ -173,6 +173,62 @@ export function removeRoleFromOrgEpic(action$ :Observable<Action>) :Observable<A
     .mergeMap(removeRoleFromOrg);
 }
 
+function addMemberToOrg(action :Action) :Observable<Action> {
+
+  const {
+    orgId,
+    member
+  } = action;
+
+  return Observable
+    .from(OrganizationsApi.addPrincipal(orgId, PrincipalTypes.USER, member))
+    .mergeMap(() => {
+      return Observable.of(
+        OrgsActionFactory.addMemberToOrgSuccess(orgId, member)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.addMemberToOrgFailure()
+      );
+    });
+}
+
+export function addMemberToOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.ADD_MEMBER_TO_ORG_REQUEST)
+    .mergeMap(addMemberToOrg);
+}
+
+function removeMemberFromOrg(action :Action) :Observable<Action> {
+
+  const {
+    orgId,
+    member
+  } = action;
+
+  return Observable
+    .from(OrganizationsApi.removePrincipal(orgId, PrincipalTypes.USER, member))
+    .mergeMap(() => {
+      return Observable.of(
+        OrgsActionFactory.removeMemberFromOrgSuccess(orgId, member)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.removeMemberFromOrgFailure()
+      );
+    });
+}
+
+export function removeMemberFromOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST)
+    .mergeMap(removeMemberFromOrg);
+}
+
 export default combineEpics(
   fetchOrgsEpic,
   addDomainToOrgEpic,

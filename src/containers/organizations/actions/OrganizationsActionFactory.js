@@ -200,3 +200,53 @@ export function removeRoleFromOrgFailure() :Object {
     type: OrgsActionTypes.REMOVE_ROLE_FROM_ORG_FAILURE
   };
 }
+
+export function addMemberToOrgRequest(orgId :UUID, member :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_REQUEST,
+    orgId,
+    member
+  };
+}
+
+export function addMemberToOrgSuccess(orgId :UUID, member :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS,
+    orgId,
+    member
+  };
+}
+
+export function addMemberToOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_FAILURE
+  };
+}
+
+export function removeMemberFromOrgRequest(orgId :UUID, member :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST,
+    orgId,
+    member
+  };
+}
+
+export function removeMemberFromOrgSuccess(orgId :UUID, member :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS,
+    orgId,
+    member
+  };
+}
+
+export function removeMemberFromOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_FAILURE
+  };
+}
