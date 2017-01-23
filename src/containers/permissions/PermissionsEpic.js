@@ -19,6 +19,10 @@ import * as PermissionsActionFactory from './PermissionsActionFactory';
 import AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
+  STATUS as ASYNC_STATUS
+} from '../async/AsyncStorage';
+
+import {
   deserializeAuthorization,
   createStatusAsyncReference
 } from './PermissionsStorage';
@@ -35,15 +39,22 @@ import {
 } from '../Api';
 
 function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
+  const references = aclKeys.map(createStatusAsyncReference);
   return Observable.merge(
-    Observable.from(aclKeys.map(createStatusAsyncReference))
+    Observable.from(references)
       .map(AsyncActionFactory.asyncReferenceLoading),
 
     Observable.from(getStatus(reqStatus, aclKeys))
-      .mergeMap(x => x)
-      .map(status => {
-        const reference = createStatusAsyncReference(status.aclKey);
-        return AsyncActionFactory.updateAsyncReference(reference, status);
+      .mergeMap(statuses => {
+        const statusByReference = {};
+        statuses.forEach(status => {
+          statusByReference[createStatusAsyncReference(status.aclKey)] = status;
+        });
+        return references.map(reference => {
+          const status = statusByReference[reference];
+          const value = status ? status : ASYNC_STATUS.NOT_FOUND;
+          return AsyncActionFactory.updateAsyncReference(reference, value);
+        });
       })
   );
 }

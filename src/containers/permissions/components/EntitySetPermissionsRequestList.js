@@ -1,18 +1,20 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import groupBy from 'lodash/groupBy';
+import classNames from 'classnames';
 
 import { createStatusAsyncReference } from '../PermissionsStorage';
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
-import { AsyncReferencePropType } from '../../async/AsyncStorage';
+import { AsyncReferencePropType, STATUS as ASYNC_STATUS } from '../../async/AsyncStorage';
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
-import styles from './requestPermissionsModal.module.css';
+import styles from './permissions.module.css';
 
-class EntitySetPermissionsRequest extends React.Component {
+class EntitySetPermissionsRequestList extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    className: PropTypes.string,
 
     // Loaders
     loadStatuses: PropTypes.func.isRequired,
@@ -28,15 +30,21 @@ class EntitySetPermissionsRequest extends React.Component {
   }
 
   renderContent(statuses) {
+    const fulfilledStatuses = statuses.filter(status => status !== ASYNC_STATUS.NOT_FOUND);
+    if (fulfilledStatuses.length == 0) {
+      return null;
+    }
     const statusesByPrincipalId = groupBy(statuses, (status) => status.principal.id);
-
+    return <div>hello world</div>
   }
 
   render() {
-    const { statusReferences } = this.props;
+    const { statusReferences, className } = this.props;
 
     return (
-      <AsyncContentListComponent references={statusReferences} render={this.renderContent}/>
+      <div className={classNames(styles.permissionRequestList, className)}>
+        <AsyncContentListComponent references={statusReferences} render={this.renderContent}/>
+      </div>
     );
   }
 }
@@ -61,4 +69,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EntitySetPermissionsRequest);
+export default connect(mapStateToProps, mapDispatchToProps)(EntitySetPermissionsRequestList);
