@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
-import { PermissionsApi } from 'loom-data';
+import { PermissionsApi, EntityDataModelApi, SearchApi } from 'loom-data';
 import { Promise } from 'bluebird';
+import Page from '../../../components/page/Page';
+import EntitySetList from '../../../components/entityset/EntitySetList';
 import StringConsts from '../../../utils/Consts/StringConsts';
 import UserRoleConsts from '../../../utils/Consts/UserRoleConsts';
 import ActionConsts from '../../../utils/Consts/ActionConsts';
@@ -23,13 +25,26 @@ export class Home extends React.Component {
       resolved: {},
       requests: [],
       loadRequestsError: false,
-      respondToRequestError: false
+      respondToRequestError: false,
+      entitySets: []
     };
   }
 
   componentDidMount() {
-    setTimeout(this.props.updateTopbarFn, 300);
+    this.loadEntitySets();
     // this.loadRequestStatuses();
+  }
+
+  loadEntitySets = () => {
+    EntityDataModelApi.getAllEntitySets().then((entitySetIds) => {
+      Promise.map(entitySetIds, (entitySetId) => {
+        console.log(entitySetId);
+        return EntityDataModelApi.getEntitySet(entitySetId);
+      }).then((entitySets) => {
+        console.log(entitySets);
+        this.setState({ entitySets });
+      })
+    });
   }
 
   shouldShow = {
@@ -170,14 +185,18 @@ export class Home extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <h2 className={styles.sectionHeader}>Pending Action Items</h2>
+      <Page>
+        <Page.Header>
+          <Page.Title>
+            Welcome to Loom!
+          </Page.Title>
           <div className={this.errorClass[this.state.loadRequestsError]}>Unable to load permissions requests.</div>
           {this.renderAllRequests()}
-        </div>
-        <div className={styles.spacer} />
-      </div>
+        </Page.Header>
+        <Page.Body>
+          <EntitySetList entitySets={this.state.entitySets} />
+        </Page.Body>
+      </Page>
     );
   }
 }

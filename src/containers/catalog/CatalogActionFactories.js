@@ -22,3 +22,23 @@ export function catalogSearchReject(errorMessage:string) {
     errorMessage
   };
 }
+
+export function popularEntitySetsRequest() {
+  return {
+    type: actionTypes.POPULAR_ENTITY_SETS_REQUEST
+  }
+}
+
+export function popularEntitySetsResolve(references:EdmObjectReference[]) {
+  return {
+    type: actionTypes.POPULAR_ENTITY_SETS_RESOLVE,
+    references
+  }
+}
+
+export function popularEntitySetsReject(errorMessage:string) {
+  return {
+    type: actionTypes.POPULAR_ENTITY_SETS_REJECT,
+    errorMessage
+  }
+}

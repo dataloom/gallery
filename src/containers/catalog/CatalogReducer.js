@@ -10,7 +10,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
   },
-  entitySetIds: []
+  entitySetIds: [],
+  popularEntitySetReferences: []
 });
 
 export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, action:Object) {
@@ -39,6 +40,33 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
           errorMessage: ''
         },
         entitySetIds: action.entitySetIds
+      });
+
+    case actionTypes.POPULAR_ENTITY_SETS_REQUEST:
+      return state.merge({
+        asyncState: {
+          status: ASYNC_STATUS.LOADING,
+          errorMessage: ''
+        },
+        popularEntitySetReferences: []
+      });
+
+    case actionTypes.POPULAR_ENTITY_SETS_REJECT:
+      return state.merge({
+        asyncState: {
+          status: ASYNC_STATUS.ERROR,
+          errorMessage: action.errorMessage
+        },
+        popularEntitySetReferences: []
+      });
+
+    case actionTypes.POPULAR_ENTITY_SETS_RESOLVE:
+      return state.merge({
+        asyncState: {
+          status: ASYNC_STATUS.SUCCESS,
+          errorMessage: ''
+        },
+        popularEntitySetReferences: action.references
       });
 
     default:
