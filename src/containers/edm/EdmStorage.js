@@ -55,6 +55,16 @@ export function createEntitySetReference(id:string) {
   }
 }
 
+export function createEntityTypeReference(id:string) {
+  if (!id) {
+    throw new Error('"id" can\'t be null');
+  }
+  return {
+    id,
+    collection: COLLECTIONS.ENTITY_SET
+  }
+}
+
 export function createAsyncReferenceFromEdmReference(edmReferece :EdmObjectReference) :AsyncReference {
   return {
     id: edmReferece.id,
@@ -95,6 +105,26 @@ export function getEdmObject(normalizedData:Object, reference:EdmObjectReference
     throw new Error(`Invalid reference: ${referenceToString(reference)}`);
   } else {
     return edmObject;
+  }
+}
+
+export function getShallowEdmObjectSilent(normalizedData:Object, reference:EdmObjectReference, badReferenceValue:* = BAD_REFERENCE) {
+  if (!reference) {
+    throw new Error('"reference" can\'t be null');
+  }
+  if (!normalizedData) {
+    throw new Error('"normalizedData" can\'t be null');
+  }
+
+  if (!(reference.collection in normalizedData)) {
+    return BAD_REFERENCE;
+  }
+
+  const collection = normalizedData[reference.collection];
+  if (reference.id in collection) {
+    return collection[reference.id];
+  } else {
+    return badReferenceValue;
   }
 }
 
