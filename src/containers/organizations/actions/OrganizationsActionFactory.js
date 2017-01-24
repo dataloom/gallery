@@ -33,7 +33,6 @@ export function fetchOrgFailure() :Object {
   };
 }
 
-
 export function fetchOrgsRequest() :Object {
 
   return {
@@ -101,6 +100,56 @@ export function joinOrgFailure() :Object {
   };
 }
 
+export function addDomainToOrgRequest(orgId :UUID, emailDomain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_REQUEST,
+    orgId,
+    emailDomain
+  };
+}
+
+export function addDomainToOrgSuccess(orgId :UUID, emailDomain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS,
+    orgId,
+    emailDomain
+  };
+}
+
+export function addDomainToOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_FAILURE
+  };
+}
+
+export function removeDomainFromOrgRequest(orgId :UUID, emailDomain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST,
+    orgId,
+    emailDomain
+  };
+}
+
+export function removeDomainFromOrgSuccess(orgId :UUID, emailDomain :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS,
+    orgId,
+    emailDomain
+  };
+}
+
+export function removeDomainFromOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_FAILURE
+  };
+}
+
 export function addRoleToOrgRequest(orgId :UUID, role :string) :Object {
 
   return {
@@ -148,5 +197,55 @@ export function removeRoleFromOrgFailure() :Object {
 
   return {
     type: OrgsActionTypes.REMOVE_ROLE_FROM_ORG_FAILURE
+  };
+}
+
+export function addMemberToOrgRequest(orgId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_REQUEST,
+    orgId,
+    memberId
+  };
+}
+
+export function addMemberToOrgSuccess(orgId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS,
+    orgId,
+    memberId
+  };
+}
+
+export function addMemberToOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_FAILURE
+  };
+}
+
+export function removeMemberFromOrgRequest(orgId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST,
+    orgId,
+    memberId
+  };
+}
+
+export function removeMemberFromOrgSuccess(orgId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS,
+    orgId,
+    memberId
+  };
+}
+
+export function removeMemberFromOrgFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_FAILURE
   };
 }
