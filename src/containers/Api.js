@@ -41,7 +41,6 @@ export function getStatus(reqStatus, aclKeys) {
 export function updateStatuses(statuses) {
   return Observable.from(statuses)
     .map(status => {
-      debugger;
       return axiosInstance.patch('/datastore/requests', [status])
         .then(response => status)
         .catch(console.error);
