@@ -13,6 +13,8 @@ import StringConsts from '../../../utils/Consts/StringConsts';
 import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
 import styles from './styles.module.css';
 
+const MAX_POINTS_TO_DISPLAY = 1000;
+
 const chartTypes = {
   LINE_CHART: VisualizationConsts.LINE_CHART,
   SCATTER_CHART: VisualizationConsts.SCATTER_CHART,
@@ -64,6 +66,13 @@ export class Visualize extends React.Component {
     });
     return DataApi.getEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
+      if (data.length > MAX_POINTS_TO_DISPLAY) {
+        const frequencyToAccept = data.length / MAX_POINTS_TO_DISPLAY;
+        const filteredData = data.filter((point, index) => {
+          return (index % frequencyToAccept === 0);
+        });
+        return filteredData;
+      }
       return data;
     });
   }
