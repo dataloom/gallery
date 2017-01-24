@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FontAwesome from 'react-fontawesome';
@@ -120,7 +120,7 @@ class PropertyType extends React.Component {
   renderManagePermissions() {
     if (this.props.permissions.OWNER) {
       return (<Button
-          bsStyle="primary"
+          bsStyle="info"
           onClick={this.setEditingPermissions}
           className={styles.control}>Manage Permissions</Button>);
     }
@@ -128,14 +128,21 @@ class PropertyType extends React.Component {
   }
 
   renderPermissionsPanel() {
-    if (this.state.editingPermissions) {
-      return (<PermissionsPanel
-          entitySetId={this.props.entitySetId}
-          propertyTypeId={this.props.propertyTypeId}
-          propertyTypeTitle={this.props.propertyType.title}
-          exitPanel={this.closePermissionsPanel} />);
-    }
-    return null;
+    if (!this.props.propertyType) return null;
+    return (
+      <Modal
+          show={this.state.editingPermissions}
+          onHide={this.closePermissionsPanel}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage permissions for property type: {this.props.propertyType.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PermissionsPanel
+              entitySetId={this.props.entitySetId}
+              propertyTypeId={this.props.propertyTypeId} />
+        </Modal.Body>
+      </Modal>
+    );
   }
 
   render() {

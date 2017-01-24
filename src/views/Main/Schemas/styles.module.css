@@ -153,22 +153,6 @@
   padding-top: 10px;
 }
 
-.panelContainer {
-  position: fixed;
-  left: 100px;
-  right: 100px;
-  top: 80px;
-  bottom: 40px;
-  text-align: center;
-  background: #fff !important;
-  -webkit-box-shadow: 0 0 5px 2px #eee;
-  -moz-box-shadow: 0 0 5px 2px #eee;
-  box-shadow: 0 0 5px 2px #eee;
-  border: 1px solid #e3e3e3;
-  text-align: center;
-  z-index: 1;
-}
-
 .permissionsBodyContainer {
   margin: 0 auto;
   height: 200px;

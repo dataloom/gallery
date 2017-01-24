@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -53,7 +53,7 @@ class EntitySetDetailComponent extends React.Component {
 
         <div className={styles.controls}>
           { entitySetPermissions.OWNER ? <Button
-              bsStyle="primary"
+              bsStyle="info"
               onClick={this.setEditingPermissions}
               className={styles.control}>Manage Permissions</Button> : ''}
           <ActionDropdown entitySetId={entitySet.id} />
@@ -65,10 +65,19 @@ class EntitySetDetailComponent extends React.Component {
   };
 
   renderPermissionsPanel = () => {
-    return (this.state.editingPermissions) ? <PermissionsPanel
-        entitySetTitle={this.props.entitySet.title}
-        entitySetId={this.props.entitySet.id}
-        exitPanel={this.closePermissionsPanel} /> : null;
+    if (!this.props.entitySet) return null;
+    return (
+      <Modal
+          show={this.state.editingPermissions}
+          onHide={this.closePermissionsPanel}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage permissions for entity set: {this.props.entitySet.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PermissionsPanel entitySetId={this.props.entitySet.id} />
+        </Modal.Body>
+      </Modal>
+    );
   }
 
   closePermissionsPanel = () => {
