@@ -15,7 +15,6 @@ import securableObjectReducer from '../../containers/securableobject/SecurableOb
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
 import usersReducer from '../../containers/organizations/reducers/UsersReducer';
-import asyncReducer from '../../containers/async/AsyncReducer';
 
 export default function reduxReducer() {
 

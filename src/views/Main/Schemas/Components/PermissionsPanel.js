@@ -42,11 +42,8 @@ const permissionOptions = {
 
 export class PermissionsPanel extends React.Component {
   static propTypes = {
-    exitPanel: PropTypes.func.isRequired,
     entitySetId: PropTypes.string,
-    entitySetTitle: PropTypes.string,
     propertyTypeId: PropTypes.string,
-    propertyTypeTitle: PropTypes.string
   }
 
   constructor(props) {
@@ -156,11 +153,6 @@ export class PermissionsPanel extends React.Component {
     false: styles.hidden
   }
 
-  getTitleText = () => {
-    const { propertyTypeTitle, entitySetTitle } = this.props;
-    return (propertyTypeTitle) ? `property type: ${propertyTypeTitle}` : `entity set: ${entitySetTitle}`;
-  }
-
   switchView = (view) => {
     this.setState({
       view,
@@ -226,7 +218,7 @@ export class PermissionsPanel extends React.Component {
       };
     });
     return (
-      <div className={styles.viewWrapper}>
+      <div>
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
         <div>Choose the default permissions for all authenticated users:</div>
         <div className={styles.spacerSmall} />
@@ -425,8 +417,7 @@ export class PermissionsPanel extends React.Component {
 
   render() {
     return (
-      <div className={styles.panelContainer}>
-        <div className={styles.panelTitle}>Set permissions for {this.getTitleText()}</div>
+      <div>
         <div className={styles.edmNavbarContainer}>
           <div className={styles.edmNavbar}>
             {this.renderViewButton(views.GLOBAL)}
@@ -441,7 +432,6 @@ export class PermissionsPanel extends React.Component {
         <div className={this.shouldShowError[this.state.updateError]}>
           Unable to save changes.
         </div>
-        <button className={styles.cancelButton} onClick={this.props.exitPanel}>x</button>
       </div>
     );
   }

@@ -15,7 +15,6 @@ import CreateOrganizationEpic from '../../containers/organizations/epics/CreateO
 import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
 import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 import UsersEpic from '../../containers/organizations/epics/UsersEpic';
-import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 
 export default function reduxEpic() {
   return combineEpics(
