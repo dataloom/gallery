@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import groupBy from 'lodash/groupBy';
 import classNames from 'classnames';
 
-import { createStatusAsyncReference } from '../PermissionsStorage';
+import { createStatusAsyncReference, RequestStatus } from '../PermissionsStorage';
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
 import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
@@ -31,11 +31,11 @@ class EntitySetPermissionsRequestList extends React.Component {
   }
 
   renderContent = (statuses) => {
-    const fulfilledStatuses = statuses.filter(status => status !== ASYNC_STATUS.NOT_FOUND);
-    if (fulfilledStatuses.length == 0) {
+    const openStatuses = statuses.filter(status => status.status === RequestStatus.SUBMITTED);
+    if (openStatuses.length == 0) {
       return null;
     }
-    const statusesByPrincipalId = groupBy(fulfilledStatuses, (status) => status.principal.id);
+    const statusesByPrincipalId = groupBy(openStatuses, (status) => status.principal.id);
 
     const { entitySetId } = this.props;
     const entitySetPermissionsRequests = Object.keys(statusesByPrincipalId)
