@@ -56,15 +56,7 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
     Observable.from(references)
       .map(AsyncActionFactory.asyncReferenceLoading),
 
-    Observable.of([{
-      aclKey: aclKeys[0],
-      principal: {
-        type: 'USER',
-        id: 'auth0|57e4b2d8d9d1d194778fd5b6'
-      },
-      permissions: ['READ'],
-      status: 'SUBMITTED'
-    }])
+    Observable.from(Api.getStatus(reqStatus, aclKeys))
       .mergeMap(statuses => {
         const statusByReferenceId = {};
         statuses.forEach(status => {
