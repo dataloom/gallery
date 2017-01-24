@@ -1,6 +1,7 @@
 /* @flow */
 import { PropTypes } from 'react';
 import { Map } from 'immutable';
+import type { AsyncReference } from '../async/AsyncStorage';
 
 export const ALL_PERMISSIONS = Object.freeze(['DISCOVER', 'LINK', 'READ', 'WRITE', 'OWNER']);
 
@@ -49,6 +50,41 @@ export const AuthorizationPropType = PropTypes.shape({
 export type PermissionsRequest = {
   aclKey :AclKey,
   permissions :string[]
+};
+
+export type Principal = {
+  type :string,
+  id :string
+};
+export const PrincipalPropType = PropTypes.shape({
+  type: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired
+});
+
+export const RequestStatus = Object.freeze({
+  SUBMITTED: 'SUBMITTED',
+  APPROVED: 'APPROVED',
+  DECLINED: 'DECLINED'
+});
+export type Status = {
+  aclKey :AclKey,
+  principal :Principal,
+  permissions :string[],
+  status :string
+}
+export const StatusPropType = PropTypes.shape({
+  aclKey: AclKeyPropType.isRequired,
+  principal: PrincipalPropType.isRequired,
+  permissions: PropTypes.arrayOf(PropTypes.oneOf('SUBMITTED', 'APPROVED', 'DECLINED')).isRequired,
+  status: PropTypes.string.isRequired
+});
+
+/* Async Stuff */
+export function createStatusAsyncReference(aclKey :AclKey) :AsyncReference {
+  return {
+    id: aclKey.join('/'),
+    namespace: 'permissions.status'
+  }
 }
 
 /* Utility Functions */

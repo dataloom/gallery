@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import * as actionFactory from '../PermissionsActionFactory';
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
-import styles from './requestPermissionsModal.module.css';
+import styles from './permissions.module.css';
 
 const PROPERTY_TYPE_EDITING = {
   permissions: true

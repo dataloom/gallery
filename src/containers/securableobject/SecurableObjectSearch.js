@@ -61,8 +61,9 @@ class SecurableObjectSearch extends React.Component {
     });
   };
 
-  onSubmit = () => {
-    const { keyword, propertyTypeIds, entityTypeId} = this.state;
+  onSubmit = (e) => {
+    e.preventDefault();
+    const { keyword, propertyTypeIds, entityTypeId } = this.state;
     const filterParams = {};
 
     if (keyword) {

@@ -56,15 +56,15 @@
   align-self: center;
 }
 
-.rolesTable {
-  background-color: white;
+.orgDetailsListGroup {
+  width: 500px;
 }
 
-.roleRowWrapper {
+.orgDetailsListGroupItem {
   padding: 0;
 }
 
-.roleRow {
+.listGroupItemRow {
   list-style-type: none;
   display: flex;
   flex-direction: row;
@@ -73,17 +73,17 @@
   padding: 0;
 }
 
-.roleRowItem {
+.listGroupItemRowItem {
   padding: 10px 15px;
-  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
 }
 
-.roleRowItem button {
+.listGroupItemRowItem button {
   border: none;
   background-color: transparent;
 }
 
-.roleRowItem button:focus {
+.listGroupItemRowItem button:focus {
   outline: 0;
 }
 
@@ -117,6 +117,8 @@
 .roleRowItemAddInput {
   color: #43a047;
   margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .roleRowItemAddInput input {
@@ -132,4 +134,145 @@
 
 .roleRowItemAddButton {
   color: #43a047;
+}
+
+.addMemberWrapper {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addMemberMemberSelectWrapper {
+  min-width: 500px;
+  flex: 1 0 auto;
+}
+
+.addMemberRoleSelectWrapper {
+  width: 200px;
+  padding: 0 20px;
+  flex: 1 0 auto;
+}
+
+.membersRolesContainer {
+  float: left;
+  min-width: 300px;
+  margin-left: 50px;
+}
+
+.membersListGroupItemRowItem {
+  display: flex;
+  flex: 1 0 auto;
+  align-self: stretch;
+}
+
+.membersListGroupItemRowItem button {
+  border: none;
+  background-color: transparent;
+  padding: 0 15px;
+  flex: 1 0 auto;
+  text-align: left;
+}
+
+.membersListGroupItemRowItem button:focus {
+  outline: 0;
+}
+
+.membersListGroupItemRowItem button:hover {
+  background-color: #f5f5f5;
+}
+
+.membersListGroupItemRowItem.selected {
+  background-color: #f5f5f5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.orgDetailsMembersRoles {
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 auto;
+}
+
+.membersWrapper, .rolesWrapper {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+}
+
+.addMemberSelect {
+  width: 500px;
+}
+
+.setMemberRoleSelect {
+  width: 300px;
+}
+
+.memberListContainer {
+  width: 500px;
+  margin-top: 20px;
+}
+
+.roleListContainer {
+  width: 300px;
+  margin-top: 20px;
+}
+
+.membersListGroup {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+.membersListGroupItem {
+  padding: 0;
+  border-left: none;
+  border-right: none;
+}
+
+.membersListGroupItem:first-child {
+  border-top: none;
+}
+
+.membersListGroupItem:last-child {
+  border-bottom: none;
+}
+
+.orgRoleButton {
+  color: white;
+  background-color: #4203c5;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 5px 50px 5px 0px;
+}
+
+.orgRoleSplitButtonDelete {
+  border: none;
+  border-right: 1px solid #ffffff;
+  background-color: transparent;
+  padding: 4px 12px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  display: inline-block;
+}
+
+.orgRoleSplitButtonDelete:focus {
+  outline: 0;
+}
+
+.orgRoleSplitButtonText {
+  padding: 6px 12px;
+  display: inline-block;
 }

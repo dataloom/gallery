@@ -16,25 +16,71 @@ import {
 
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
+import AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
-  deserializeAuthorization
+  STATUS as ASYNC_STATUS
+} from '../async/AsyncStorage';
+
+import {
+  deserializeAuthorization,
+  createStatusAsyncReference
 } from './PermissionsStorage';
 
 import type {
   AccessCheck,
-  PermissionsRequest
+  PermissionsRequest,
+  AclKey,
+  Status
 } from './PermissionsStorage'
 
-import {
-  permissionsRequest
-} from '../Api';
+import Api from '../Api';
+
+function updateStatuses(statuses :Status[]) {
+  return Observable.from(Api.updateStatuses(statuses))
+    .mergeMap(response => {
+      const tuples = statuses.map(status => [createStatusAsyncReference(status.aclKey), status]);
+      return tuples.map(tuple => AsyncActionFactory.updateAsyncReference(tuple[0], tuple[1]));
+    });
+}
+
+function updateStatusesEpic(action$) {
+  return action$.ofType(PermissionsActionTypes.UPDATE_STATUSES)
+    .pluck('statuses')
+    .mergeMap(updateStatuses)
+}
+
+function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
+  const references = aclKeys.map(createStatusAsyncReference);
+  return Observable.merge(
+    Observable.from(references)
+      .map(AsyncActionFactory.asyncReferenceLoading),
+
+    Observable.from(Api.getStatus(reqStatus, aclKeys))
+      .mergeMap(statuses => {
+        const statusByReferenceId = {};
+        statuses.forEach(status => {
+          statusByReferenceId[createStatusAsyncReference(status.aclKey).id] = status;
+        });
+
+        return references.map(reference => {
+          const status = statusByReferenceId[reference.id];
+          const value = status ? status : ASYNC_STATUS.NOT_FOUND;
+          return AsyncActionFactory.updateAsyncReference(reference, value);
+        });
+      })
+  );
+}
+
+function loadStatusesEpic(action$) {
+  return action$.ofType(PermissionsActionTypes.LOAD_STATUSES)
+    .mergeMap(action => loadStatuses(action.reqStatus, action.aclKeys));
+}
 
 function requestPermissions(requests :PermissionsRequest[]) :Observable<Action> {
   return Observable
-    .of(requests)
-    // .from(permissionsRequest(requests))
-    .map(console.log);
+    .from(Api.permissionsRequest(requests))
+    .mapTo(PermissionsActionFactory.requestPermissionsResolve(requests));
 }
 
 function requestPermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
@@ -69,4 +115,4 @@ function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action>
     .mergeMap(authorizationCheck);
 }
 
-export default combineEpics(authorizationCheckEpic, requestPermissionsEpic);
+export default combineEpics(authorizationCheckEpic, requestPermissionsEpic, loadStatusesEpic, updateStatusesEpic);

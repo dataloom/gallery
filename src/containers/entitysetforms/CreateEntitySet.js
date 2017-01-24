@@ -60,14 +60,11 @@ class CreateEntitySet extends React.Component {
   onSubmit = () => {
     const { title, name, description, entityTypeId } = this.state;
 
-    const entityType = this.props.entityTypes.filter(entityType => entityType.id === entityTypeId)[0];
-
     this.props.onCreate({
       title,
       name,
       description,
-      entityTypeId,
-      type: entityType.type
+      entityTypeId
     });
   };
 

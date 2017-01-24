@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button, Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FontAwesome from 'react-fontawesome';
@@ -7,7 +8,9 @@ import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
+import { PermissionsPanel } from '../../../views/Main/Schemas/Components/PermissionsPanel';
 import ExpandableText from '../../../components/utils/ExpandableText';
+import styles from '../../entitysetdetail/entitysetdetail.module.css';
 // Default styles
 import './propertype.module.css';
 const MAX_DESCRIPTION_LENGTH = 300;
@@ -37,6 +40,13 @@ class PropertyType extends React.Component {
     editing: DEFAULT_EDITING
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      editingPermissions: false
+    };
+  }
+
   // TODO: Handle more than just permissions
   onChange = (event) => {
     const { onChange } = this.props,
@@ -47,7 +57,7 @@ class PropertyType extends React.Component {
         permissions: canRead
       });
     }
-  }
+  };
 
   renderPermissions() {
     const { editing, permissions, propertyType } = this.props;
@@ -99,12 +109,50 @@ class PropertyType extends React.Component {
     return (<div className="propertyTypeDescription">{content}</div>);
   }
 
+  setEditingPermissions = () => {
+    this.setState({ editingPermissions: true });
+  }
+
+  closePermissionsPanel = () => {
+    this.setState({ editingPermissions: false });
+  }
+
+  renderManagePermissions() {
+    if (this.props.permissions.OWNER) {
+      return (<Button
+          bsStyle="info"
+          onClick={this.setEditingPermissions}
+          className={styles.control}>Manage Permissions</Button>);
+    }
+    return null;
+  }
+
+  renderPermissionsPanel() {
+    if (!this.props.propertyType) return null;
+    return (
+      <Modal
+          show={this.state.editingPermissions}
+          onHide={this.closePermissionsPanel}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage permissions for property type: {this.props.propertyType.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PermissionsPanel
+              entitySetId={this.props.entitySetId}
+              propertyTypeId={this.props.propertyTypeId} />
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
   render() {
     return (
       <div className="propertyType">
         {this.renderPermissions()}
         {this.renderTitle()}
         {this.renderDescription()}
+        {this.renderManagePermissions()}
+        {this.renderPermissionsPanel()}
       </div>
     );
   }
@@ -115,16 +163,21 @@ function mapStateToProps(state, ownProps) {
     permissionsState = state.get('permissions');
 
   const { entitySetId, propertyTypeId } = ownProps;
-  const reference = createPropertyTypeReference(propertyTypeId);
 
-  let permissions;
-  if (entitySetId) {
+  let { permissions, propertyType } = ownProps;
+
+  if (!permissions && entitySetId) {
     // TODO: Make permissions handle async states properly
     permissions = getPermissions(permissionsState, [entitySetId, propertyTypeId]);
   }
 
+  if (!propertyType) {
+    const reference = createPropertyTypeReference(propertyTypeId);
+    propertyType = getEdmObjectSilent(normalizedData.toJS(), reference, null);
+  }
+
   return {
-    propertyType: getEdmObjectSilent(normalizedData.toJS(), reference, null),
+    propertyType,
     permissions
   };
 }
