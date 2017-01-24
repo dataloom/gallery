@@ -19,9 +19,11 @@
 :global .propertyTypeStyleDefault :global .propertyTypePermissions,
 :global .propertyTypeStyleDefault :global .propertyTypeTitle,
 :global .propertyTypeStyleDefault :global .propertyTypeDescription,
+:global .propertyTypeStyleDefault :global .propertyTypeControls,
 :global .propertyTypeStyleDefault :global .propertyTypeListPermissions,
 :global .propertyTypeStyleDefault :global .propertyTypeListTitle,
-:global .propertyTypeStyleDefault :global .propertyTypeListDescription {
+:global .propertyTypeStyleDefault :global .propertyTypeListDescription,
+:global .propertyTypeStyleDefault :global .propertyTypeListControls{
     display: table-cell;
     padding: 15px;
 }
@@ -42,4 +44,11 @@
 :global .propertyTypeStyleDefault :global .propertyTypeDescription,
 :global .propertyTypeStyleDefault :global .propertyTypeListDescription {
     text-align: justify;
+}
+:global .propertyTypeStyleDefault :global .propertyTypeControls {
+    padding: 0 15px;
+    width: 150px;
+}
+:global .propertyTypeStyleDefault :global .propertyTypeControls .btn {
+    margin-top: -4px;
 }
