@@ -13,13 +13,12 @@
     margin-left: auto;
 }
 
-.headerContent .controls .control {
+.managePermissions {
     display: block;
-    margin-bottom: 7px;
+    margin-top: 7px;
 }
-
-.headerContent .controls .control:last-child {
-    margin-bottom: 0;
+.actionDropdown {
+    width: 126px;
 }
 
 /* Body */
@@ -28,3 +27,4 @@
     font-size: 21px;
     font-weight: 600;
 }
+

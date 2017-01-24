@@ -119,14 +119,19 @@ class PropertyType extends React.Component {
 
   renderManagePermissions() {
     if (this.props.permissions.OWNER) {
-      return (<Button
-          bsStyle="info"
-          onClick={this.setEditingPermissions}
-          className={styles.control}>Manage Permissions</Button>);
+      return (
+        <div className="propertyTypeControls">
+          <Button
+            bsStyle="info"
+            onClick={this.setEditingPermissions}
+            className={styles.control}>Manage Permissions</Button>
+        </div>
+          );
     }
     return null;
   }
 
+  // TODO: Move to global permissions panel
   renderPermissionsPanel() {
     if (!this.props.propertyType) return null;
     return (
