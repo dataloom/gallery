@@ -57,7 +57,7 @@ class SecurableObjectSearch extends React.Component {
 
   onEntityTypeChange = (option) => {
     this.setState({
-      entityTypeId: option.value
+      entityTypeId: option ? option.value : null
     });
   };
 
