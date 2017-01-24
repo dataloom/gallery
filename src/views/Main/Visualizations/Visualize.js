@@ -68,10 +68,8 @@ export class Visualize extends React.Component {
     .then((data) => {
       if (data.length > MAX_POINTS_TO_DISPLAY) {
         const frequencyToAccept = data.length / MAX_POINTS_TO_DISPLAY;
-        let counter = 0;
-        const filteredData = data.filter(() => {
-          counter += 1;
-          return (counter % frequencyToAccept === 0);
+        const filteredData = data.filter((point, index) => {
+          return (index % frequencyToAccept === 0);
         });
         return filteredData;
       }
