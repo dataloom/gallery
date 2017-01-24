@@ -8,10 +8,11 @@ import { DataApi } from 'loom-data';
 
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
-import { getShallowEdmObjectSilent,
+import {
+  getShallowEdmObjectSilent,
   createEntitySetReference,
-  createEntityTypeReference,
-  createPropertyTypeReference } from '../../edm/EdmStorage';
+  createEntityTypeReference
+} from '../../edm/EdmStorage';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 
