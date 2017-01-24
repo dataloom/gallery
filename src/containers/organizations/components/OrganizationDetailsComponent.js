@@ -184,14 +184,13 @@ class OrganizationDetails extends React.Component {
   renderJoinOrgButton = () => {
 
     // TODO: wire up join button
-    // return (
-    //   <Button
-    //       className={classnames(styles.orgJoinButton)}
-    //       onClick={this.props.actions.joinOrgRequest}>
-    //     Request to Join
-    //   </Button>
-    // );
-    return null;
+    return (
+      <Button
+          className={classnames(styles.orgJoinButton)}
+          onClick={this.props.actions.joinOrgRequest}>
+        Request to Join
+      </Button>
+    );
   }
 
   renderInvitationSection = () => {
