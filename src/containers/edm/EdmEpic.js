@@ -58,7 +58,7 @@ function allEntityTypesEpic(action$) {
  */
 function referenceEpic(action$) {
   return action$.ofType(actionTypes.UPDATE_NORMALIZED_DATA)
-    .map(action => action.normalizedData)
+    .pluck('normalizedData')
     .flatMap(normalizedData => {
       const references = EdmStorage.getReferencesFromNormalizedData(normalizedData);
       return references.map(actionFactories.edmObjectResolve)
@@ -69,14 +69,6 @@ function referenceEpic(action$) {
 function loadEdm(edmQuery) {
   return Observable.from(EdmApi.edmQuery(edmQuery))
     .map(Immutable.fromJS)
-    .map(normalizedData => {
-      return normalizedData
-        .update(EdmStorage.COLLECTIONS.ENTITY_SET, (entitySetMap) => {
-          return entitySetMap.mapEntries(([id, entitySet]) => {
-            return [id, entitySet.set('entityType', entitySet.get('entityTypeId'))]
-          })
-        });
-    })
     .map(actionFactories.updateNormalizedData);
 }
 
