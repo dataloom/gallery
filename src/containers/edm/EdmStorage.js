@@ -61,7 +61,7 @@ export function createEntityTypeReference(id:string) {
   }
   return {
     id,
-    collection: COLLECTIONS.ENTITY_SET
+    collection: COLLECTIONS.ENTITY_TYPE
   }
 }
 
