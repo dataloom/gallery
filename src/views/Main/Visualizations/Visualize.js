@@ -67,7 +67,7 @@ export class Visualize extends React.Component {
     return DataApi.getEntitySetData(this.state.entitySetId, [], propertyTypeIds)
     .then((data) => {
       if (data.length > MAX_POINTS_TO_DISPLAY) {
-        const frequencyToAccept = data.length / MAX_POINTS_TO_DISPLAY;
+        const frequencyToAccept = Math.floor(data.length / MAX_POINTS_TO_DISPLAY);
         const filteredData = data.filter((point, index) => {
           return (index % frequencyToAccept === 0);
         });
