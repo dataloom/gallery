@@ -218,7 +218,7 @@ export class Visualize extends React.Component {
         visualization = <GeoContainer data={data} geoProps={geoProps} />;
         break;
       default:
-        visualization = null;
+        visualization = <div>There are no visualizations available for this entity set.</div>
     }
     return (
       <div>
