@@ -544,13 +544,19 @@ class OrganizationDetails extends React.Component {
       roleItems = selectedMemberOrgRoles.map((role :Immutable.Map) => {
         return (
           <div key={role.get('id')} className={classnames(styles.orgRoleButton)}>
-            <button
-                className={classnames(styles.orgRoleSplitButtonDelete)}
-                onClick={() => {
-                  this.removeRoleFromMember(role.get('id'));
-                }}>
-              <FontAwesome name="times" />
-            </button>
+            {
+              this.props.organization.get('isOwner') === false
+                ? null
+                : (
+                  <button
+                      className={classnames(styles.orgRoleSplitButtonDelete)}
+                      onClick={() => {
+                        this.removeRoleFromMember(role.get('id'));
+                      }}>
+                    <FontAwesome name="times" />
+                  </button>
+               )
+            }
             <span className={classnames(styles.orgRoleSplitButtonText)}>{ role.get('id') }</span>
           </div>
         );
