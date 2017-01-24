@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import * as actionFactory from '../PermissionsActionFactory';
