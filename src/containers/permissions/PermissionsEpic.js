@@ -38,9 +38,8 @@ import Api from '../Api';
 
 function updateStatuses(statuses :Status[]) {
   return Observable.from(Api.updateStatuses(statuses))
-    .mergeMap(response => {
-      const tuples = statuses.map(status => [createStatusAsyncReference(status.aclKey), status]);
-      return tuples.map(tuple => AsyncActionFactory.updateAsyncReference(tuple[0], tuple[1]));
+    .map(status => {
+      AsyncActionFactory.updateAsyncReference(createStatusAsyncReference(status.aclKey), status)
     });
 }
 
@@ -57,6 +56,36 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
       .map(AsyncActionFactory.asyncReferenceLoading),
 
     Observable.from(Api.getStatus(reqStatus, aclKeys))
+    //   Observable.of([
+    //     {
+    //       "aclKey": [
+    //         "c5c20cae-060b-4ae7-8d6a-95648ed60246",
+    //         "b43b8d12-12af-4356-8713-a9b7cb3876dc"
+    //       ],
+    //       "permissions": [
+    //         "READ"
+    //       ],
+    //       "principal": {
+    //         "id": "auth0|57e4b2d8d9d1d194778fd5b6",
+    //         "type": "USER"
+    //       },
+    //       "status": "SUBMITTED"
+    //     },
+    //     {
+    //       "aclKey": [
+    //         "c5c20cae-060b-4ae7-8d6a-95648ed60246",
+    //         "34fd7582-90e5-4663-96c5-65dfe7ea9648"
+    //       ],
+    //       "permissions": [
+    //         "READ"
+    //       ],
+    //       "principal": {
+    //         "id": "auth0|57e4b2d8d9d1d194778fd5b6",
+    //         "type": "USER"
+    //       },
+    //       "status": "SUBMITTED"
+    //     }
+    //   ])
       .mergeMap(statuses => {
         const statusByReferenceId = {};
         statuses.forEach(status => {

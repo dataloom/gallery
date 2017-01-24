@@ -2,6 +2,7 @@
 // TODO: Remove once loom-data-js upgrades
 
 import Axios from 'axios';
+import { Observable } from 'rxjs';
 
 let axiosInstance;
 
@@ -38,8 +39,13 @@ export function getStatus(reqStatus, aclKeys) {
 }
 
 export function updateStatuses(statuses) {
-  return axiosInstance.patch('/datastore/requests', statuses)
-    .then(response => response.data);
+  return Observable.from(statuses)
+    .map(status => {
+      debugger;
+      return axiosInstance.patch('/datastore/requests', [status])
+        .then(response => status)
+        .catch(console.error);
+    });
 }
 
 export function createEntitySets(entitySets) {
