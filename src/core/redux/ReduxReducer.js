@@ -13,6 +13,7 @@ import organizationsReducer from '../../containers/organizations/reducers/Organi
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
 import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
+import asyncReducer from '../../containers/async/AsyncReducer';
 import usersReducer from '../../containers/organizations/reducers/UsersReducer';
 
 export default function reduxReducer() {
@@ -25,6 +26,7 @@ export default function reduxReducer() {
     createEntitySet: createEntitySetReducer,
     securableObject: securableObjectReducer,
     permissions: permissionReducer,
+    async: asyncReducer,
     users: usersReducer
   });
 }
