@@ -1,5 +1,7 @@
 import { schema, denormalize } from 'normalizr';
 
+import { AsyncReference } from '../async/AsyncStorage';
+
 /* Collections */
 export const COLLECTIONS = Object.freeze({
   PROPERTY_TYPE: 'propertyTypes',
@@ -50,6 +52,13 @@ export function createEntitySetReference(id:string) {
   return {
     id,
     collection: COLLECTIONS.ENTITY_SET
+  }
+}
+
+export function createAsyncReferenceFromEdmReference(edmReferece :EdmObjectReference) :AsyncReference {
+  return {
+    id: edmReferece.id,
+    namespace: edmReferece.collection
   }
 }
 

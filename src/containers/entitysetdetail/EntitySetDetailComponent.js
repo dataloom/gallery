@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
@@ -19,8 +20,12 @@ import styles from './entitysetdetail.module.css';
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
+
+    // Async content
     entitySet: EntitySetPropType,
     entitySetPermissions: PermissionsPropType.isRequired,
+
+    // Loading
     loadEntitySet: PropTypes.func.isRequired
   };
 
@@ -53,6 +58,8 @@ class EntitySetDetailComponent extends React.Component {
               className={styles.control}>Manage Permissions</Button> : ''}
           <ActionDropdown entitySetId={entitySet.id} />
         </div>
+
+        <EntitySetPermissionsRequestList entitySetId={entitySet.id} propertyTypeIds={entitySet.entityType.properties.map(p => p.id)} />
       </div>
     );
   };
@@ -76,10 +83,10 @@ class EntitySetDetailComponent extends React.Component {
         </Page.Header>
         <Page.Body>
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-
           <AsyncContent {...this.props.asyncState} content={() => {
             // TODO: Remove when removing denormalization
             const propertyTypeIds = this.props.entitySet.entityType.properties.map(property => property.id);
+
             return (
               <PropertyTypeList
                   entitySetId={this.props.entitySet.id}

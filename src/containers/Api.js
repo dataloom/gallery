@@ -22,7 +22,7 @@ export type EdmQueryParam = {
   include:string[]
 }
 
-export function edmQuery(queryParams:EdmQueryParam[]) {
+export function edmQuery(queryParams :EdmQueryParam[]) {
   return axiosInstance.post('/datastore/edm', queryParams)
     .then(response => response.data);
 }
@@ -30,4 +30,27 @@ export function edmQuery(queryParams:EdmQueryParam[]) {
 export function permissionsRequest(requests) {
   return axiosInstance.put('/datastore/requests', requests)
     .then(response => response.data);
+}
+
+export function getStatus(reqStatus, aclKeys) {
+  return axiosInstance.post(`/datastore/requests/${reqStatus}`, aclKeys)
+    .then(response => response.data);
+}
+
+export function updateStatuses(statuses) {
+  return axiosInstance.patch('/datastore/requests', statuses)
+    .then(response => response.data);
+}
+
+export function createEntitySets(entitySets) {
+  return axiosInstance.post('/datastore/edm/entity/set', entitySets)
+    .then(response => response.data);
+}
+
+export default {
+  edmQuery,
+  permissionsRequest,
+  getStatus,
+  updateStatuses,
+  createEntitySets
 }

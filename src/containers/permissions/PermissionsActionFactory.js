@@ -9,17 +9,21 @@ import {
   REQUEST_PERMISSIONS_MODAL_SHOW,
   REQUEST_PERMISSIONS_MODAL_HIDE,
   REQUEST_PERMISSIONS_REQUEST,
-  REQUEST_PERMISSIONS_REJECT,
-  REQUEST_PERMISSIONS_RESOLVE
+  REQUEST_PERMISSIONS_RESOLVE,
+  LOAD_STATUSES,
+  UPDATE_STATUSES
 } from './PermissionsActionTypes';
 
 import {
-  ALL_PERMISSIONS
+  ALL_PERMISSIONS,
+  RequestStatus,
+  Status
 } from './PermissionsStorage';
 
 import type {
   Authorization,
-  PermissionsRequest
+  PermissionsRequest,
+  AclKey
 } from './PermissionsStorage';
 
 export function checkAuthorizationRequest(accessChecks :Object[]) :Object {
@@ -86,5 +90,19 @@ export function requestPermissionsResolve(requests :PermissionsRequest[]) {
   return {
     type: REQUEST_PERMISSIONS_RESOLVE,
     requests
+  }
+}
+
+export function loadOpenStatusesRequest(aclKeys :AclKey[]) {
+  return {
+    type: LOAD_STATUSES,
+    aclKeys,
+    reqStatus: RequestStatus.SUBMITTED
+  }
+}
+export function updateStatusesStatusesRequest(statuses :Status[]) {
+  return {
+    type: UPDATE_STATUSES,
+    statuses
   }
 }
