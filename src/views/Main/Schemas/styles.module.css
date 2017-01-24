@@ -160,7 +160,7 @@
   top: 80px;
   bottom: 40px;
   text-align: center;
-  background: #fff;
+  background: #fff !important;
   -webkit-box-shadow: 0 0 5px 2px #eee;
   -moz-box-shadow: 0 0 5px 2px #eee;
   box-shadow: 0 0 5px 2px #eee;
@@ -183,18 +183,19 @@
   position: absolute;
   vertical-align: middle;
   font-size: 20px;
+  color: #ffffff;
   right: 15px;
   top: 15px;
   width: 25px;
   height: 25px;
-  background: #d1d6da;
+  background: #404345;
   border-radius: 3px;
   border: 0;
   padding-bottom: 15px;
 }
 
 .cancelButton:hover {
-  background: #d8dcdf;
+  background: #333435;
 }
 
 .panelTitle {

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { PermissionsApi, PrincipalsApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
@@ -169,7 +170,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   getClassName = (view) => {
-    return (view === this.state.view) ? `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
+    return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
   getPanelViewContents = () => {
@@ -212,7 +213,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   buttonStyle = (view, viewState) => {
-    return (view === viewState) ? `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
+    return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
   getGlobalView = () => {
@@ -227,7 +228,7 @@ export class PermissionsPanel extends React.Component {
     return (
       <div className={styles.viewWrapper}>
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
-        <div>Choose the default permissions for everyone:</div>
+        <div>Choose the default permissions for all authenticated users:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
           <Select
@@ -236,9 +237,9 @@ export class PermissionsPanel extends React.Component {
               value={this.state.globalValue} />
         </div>
         <div className={styles.spacerSmall} />
-        <button
-            onClick={this.updateGlobalPermissions}
-            className={styles.simpleButton}>Save changes</button>
+        <Button
+            bsStyle="primary"
+            onClick={this.updateGlobalPermissions}>Save changes</Button>
       </div>
     );
   }
@@ -267,7 +268,9 @@ export class PermissionsPanel extends React.Component {
           onClick={() => {
             fn(permission);
           }}
-          className={this.buttonStyle(permission, currView)}>{permission}</button>
+          className={this.buttonStyle(permission, currView)}>
+        <div className={styles.edmNavItemText}>{permission}</div>
+      </button>
     );
   }
 
@@ -319,11 +322,12 @@ export class PermissionsPanel extends React.Component {
               options={roleOptions}
               onChange={this.handleNewRoleChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-          <button
-              className={`${styles.simpleButton} ${styles.spacerMargin}`}
+            <Button
+              bsStyle="primary"
+              className={`${styles.spacerMargin}`}
               onClick={() => {
                 this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
-              }}>Save</button>
+              }}>Save</Button>
         </div>
       </div>
     );
@@ -396,11 +400,12 @@ export class PermissionsPanel extends React.Component {
               options={emailOptions}
               onChange={this.handleNewEmailChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-          <button
-              className={`${styles.simpleButton} ${styles.spacerMargin}`}
+            <Button
+              bsStyle="primary"
+              className={`${styles.spacerMargin}`}
               onClick={() => {
                 this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
-              }}>Save</button>
+              }}>Save</Button>
         </div>
       </div>
     );
@@ -412,7 +417,9 @@ export class PermissionsPanel extends React.Component {
           onClick={() => {
             this.switchView(view);
           }}
-          className={this.getClassName(view)}>{viewLabels[view]}</button>
+          className={this.getClassName(view)}>
+        <div className={styles.edmNavItemText}>{viewLabels[view]}</div>
+      </button>
     );
   }
 
