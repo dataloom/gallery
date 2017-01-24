@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../edm/EdmModel';
-import { getEdmObjectSilent } from '../edm/EdmStorage';
+import { getShallowEdmObjectSilent } from '../edm/EdmStorage';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import WelcomeInstructionsBox from './WelcomeInstructionsBox';
 import EntitySetList from '../../components/entityset/EntitySetList';
@@ -81,7 +81,7 @@ function mapStateToProps(state) {
   const normalizedData = state.get('normalizedData').toJS();
 
   const entitySets = catalog.popularEntitySetReferences.map((reference) => {
-    return getEdmObjectSilent(normalizedData, reference, null);
+    return getShallowEdmObjectSilent(normalizedData, reference, null);
   }).filter((entitySet) => {
     return entitySet;
   });

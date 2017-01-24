@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { SplitButton, Button, MenuItem } from 'react-bootstrap';
+import { SplitButton, MenuItem } from 'react-bootstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -8,7 +8,10 @@ import { DataApi } from 'loom-data';
 
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
-import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
+import { getShallowEdmObjectSilent,
+  createEntitySetReference,
+  createEntityTypeReference,
+  createPropertyTypeReference } from '../../edm/EdmStorage';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 
@@ -94,14 +97,18 @@ function mapStateToProps(state, ownProps) {
 
   let propertyTypePermissions,
     entityTypeId;
-  // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
+  // TODO: remove denormalization and replace with AsyncReferences
   const reference = createEntitySetReference(entitySetId);
-  const entitySet = getEdmObjectSilent(normalizedData, reference, null);
-  if (entitySet && entitySet.entityType) {
-    entityTypeId = entitySet.entityType.id;
-    propertyTypePermissions = entitySet.entityType.properties.map(property => {
-      return getPermissions(permissions, [entitySetId, property.id])
-    });
+  const entitySet = getShallowEdmObjectSilent(normalizedData, reference, null);
+  if (entitySet) {
+    entityTypeId = entitySet.entityTypeId;
+    const etReference = createEntityTypeReference(entityTypeId);
+    const entityType = getShallowEdmObjectSilent(normalizedData, etReference, null);
+    if (entityType) {
+      propertyTypePermissions = entityType.properties.map(id => {
+        return getPermissions(permissions, [entitySetId, id]);
+      });
+    }
   }
 
   return {
