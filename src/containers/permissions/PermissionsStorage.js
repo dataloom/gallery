@@ -75,7 +75,7 @@ export type Status = {
 export const StatusPropType = PropTypes.shape({
   aclKey: AclKeyPropType.isRequired,
   principal: PrincipalPropType.isRequired,
-  permissions: PropTypes.arrayOf(PropTypes.oneOf('SUBMITTED', 'APPROVED', 'DECLINED')).isRequired,
+  permissions: PropTypes.arrayOf(PropTypes.oneOf(['SUBMITTED', 'APPROVED', 'DECLINED'])).isRequired,
   status: PropTypes.string.isRequired
 });
 
