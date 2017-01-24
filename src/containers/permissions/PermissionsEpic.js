@@ -79,9 +79,8 @@ function loadStatusesEpic(action$) {
 
 function requestPermissions(requests :PermissionsRequest[]) :Observable<Action> {
   return Observable
-    .of(requests)
-    // .from(permissionsRequest(requests))
-    .map(console.log);
+    .from(Api.permissionsRequest(requests))
+    .mapTo(PermissionsActionFactory.requestPermissionsResolve(requests));
 }
 
 function requestPermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
