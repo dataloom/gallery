@@ -10,12 +10,14 @@ import {
   REQUEST_PERMISSIONS_MODAL_HIDE,
   REQUEST_PERMISSIONS_REQUEST,
   REQUEST_PERMISSIONS_RESOLVE,
-  LOAD_STATUSES
+  LOAD_STATUSES,
+  UPDATE_STATUSES
 } from './PermissionsActionTypes';
 
 import {
   ALL_PERMISSIONS,
-  RequestStatus
+  RequestStatus,
+  Status
 } from './PermissionsStorage';
 
 import type {
@@ -96,5 +98,11 @@ export function loadOpenStatusesRequest(aclKeys :AclKey[]) {
     type: LOAD_STATUSES,
     aclKeys,
     reqStatus: RequestStatus.SUBMITTED
+  }
+}
+export function updateStatusesStatusesRequest(statuses :Status[]) {
+  return {
+    type: UPDATE_STATUSES,
+    statuses
   }
 }

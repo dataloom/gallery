@@ -37,7 +37,20 @@ export function getStatus(reqStatus, aclKeys) {
     .then(response => response.data);
 }
 
+export function updateStatuses(statuses) {
+  return axiosInstance.patch('/datastore/requests', statuses)
+    .then(response => response.data);
+}
+
 export function createEntitySets(entitySets) {
   return axiosInstance.post('/datastore/edm/entity/set', entitySets)
     .then(response => response.data);
+}
+
+export default {
+  edmQuery,
+  permissionsRequest,
+  getStatus,
+  updateStatuses,
+  createEntitySets
 }

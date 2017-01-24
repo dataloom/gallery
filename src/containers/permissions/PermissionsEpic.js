@@ -30,13 +30,25 @@ import {
 import type {
   AccessCheck,
   PermissionsRequest,
-  AclKey
+  AclKey,
+  Status
 } from './PermissionsStorage'
 
-import {
-  permissionsRequest,
-  getStatus
-} from '../Api';
+import Api from '../Api';
+
+function updateStatuses(statuses :Status[]) {
+  return Observable.from(Api.updateStatuses(statuses))
+    .mergeMap(response => {
+      const tuples = statuses.map(status => [createStatusAsyncReference(status.aclKey), status]);
+      return tuples.map(tuple => AsyncActionFactory.updateAsyncReference(tuple[0], tuple[1]));
+    });
+}
+
+function updateStatusesEpic(action$) {
+  return action$.ofType(PermissionsActionTypes.UPDATE_STATUSES)
+    .pluck('statuses')
+    .mergeMap(updateStatuses)
+}
 
 function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
   const references = aclKeys.map(createStatusAsyncReference);
@@ -112,4 +124,4 @@ function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action>
     .mergeMap(authorizationCheck);
 }
 
-export default combineEpics(authorizationCheckEpic, requestPermissionsEpic, loadStatusesEpic);
+export default combineEpics(authorizationCheckEpic, requestPermissionsEpic, loadStatusesEpic, updateStatusesEpic);

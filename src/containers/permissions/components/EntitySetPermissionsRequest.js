@@ -5,11 +5,11 @@ import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 
 import { EntitySetPropType } from '../../edm/EdmModel';
-import { StatusPropType } from '../PermissionsStorage'
+import { StatusPropType, RequestStatus } from '../PermissionsStorage'
 import { createPrincipalReference } from '../../principals/PrincipalsStorage';
 import PrincipalActionsFactory from '../../principals/PrincipalsActionFactory';
 import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
-
+import * as PermissionsActionFactory from '../PermissionsActionFactory';
 
 import { AsyncReferencePropType } from '../../async/AsyncStorage';
 import AsyncContentComponent from '../../async/components/AsyncContentComponent';
@@ -21,6 +21,8 @@ class EntitySetPermissionsRequest extends React.Component {
     entitySetId: PropTypes.string.isRequired,
     statuses: PropTypes.arrayOf(StatusPropType).isRequired,
 
+    // Saving
+    updateStatuses: PropTypes.func.isRequired,
     // Loaders
     loadPrincipal: PropTypes.func.isRequired,
 
@@ -40,9 +42,21 @@ class EntitySetPermissionsRequest extends React.Component {
     this.props.loadPrincipal(this.props.principalId);
   }
 
+  approve = () => {
+    const { statuses, updateStatuses } = this.props;
+    const updatedStatuses = statuses.map(status => Object.assign({}, status, {status: RequestStatus.APPROVED }));
+    updateStatuses(updatedStatuses);
+  };
+
+  deny = () => {
+    const { statuses, updateStatuses } = this.props;
+    const updatedStatuses = statuses.map(status => Object.assign({}, status, {status: RequestStatus.DECLINED }));
+    updateStatuses(updatedStatuses);
+  };
+
   renderProperty(principalId, propertyType, requestedRead) {
     return (
-      <div className="propertyType">
+      <div className="propertyType" key={propertyType.id}>
         <div className="propertyTypePermissions">
           <input type="checkbox" id={`ptr-${principalId}-${propertyType.id}`} checked={requestedRead}/>
         </div>
@@ -74,11 +88,11 @@ class EntitySetPermissionsRequest extends React.Component {
             requested permission on
             <a onClick={this.toggleBody}> { statuses.length } properties</a>
           </div>
-          <button className={styles.approveButton}>
+          <button className={styles.approveButton} onClick={this.approve}>
             <FontAwesome name="thumbs-o-up"/>
             Allow
           </button>
-          <button className={styles.rejectButton}>
+          <button className={styles.rejectButton} onClick={this.deny}>
             <FontAwesome name="thumbs-o-down"/>
             Deny
           </button>
@@ -122,6 +136,9 @@ function mapDispatchToProps(dispatch) {
   return {
     loadPrincipal: (principalId) => {
       dispatch(PrincipalActionsFactory.loadPrincipalDetails(principalId));
+    },
+    updateStatuses: (statuses) => {
+      dispatch(PermissionsActionFactory.updateStatusesStatusesRequest(statuses))
     }
   };
 }
