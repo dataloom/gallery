@@ -56,10 +56,6 @@
   align-self: center;
 }
 
-.rolesTable {
-  background-color: white;
-}
-
 .roleRowWrapper {
   padding: 0;
 }
@@ -117,6 +113,8 @@
 .roleRowItemAddInput {
   color: #43a047;
   margin: 0;
+  display: flex;
+  align-items: center;
 }
 
 .roleRowItemAddInput input {
@@ -132,4 +130,22 @@
 
 .roleRowItemAddButton {
   color: #43a047;
+}
+
+.addMemberWrapper {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.addMemberMemberSelectWrapper {
+  min-width: 500px;
+  flex: 1 0 auto;
+}
+
+.addMemberRoleSelectWrapper {
+  width: 200px;
+  padding: 0 20px;
+  flex: 1 0 auto;
 }

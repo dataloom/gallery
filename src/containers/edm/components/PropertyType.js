@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import FontAwesome from 'react-fontawesome';
@@ -7,7 +8,9 @@ import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
+import { PermissionsPanel } from '../../../views/Main/Schemas/Components/PermissionsPanel';
 import ExpandableText from '../../../components/utils/ExpandableText';
+import styles from '../../entitysetdetail/entitysetdetail.module.css';
 // Default styles
 import './propertype.module.css';
 const MAX_DESCRIPTION_LENGTH = 300;
@@ -36,6 +39,13 @@ class PropertyType extends React.Component {
   static defaultProps = {
     editing: DEFAULT_EDITING
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      editingPermissions: false
+    };
+  }
 
   // TODO: Handle more than just permissions
   onChange = (event) => {
@@ -99,12 +109,43 @@ class PropertyType extends React.Component {
     return (<div className="propertyTypeDescription">{content}</div>);
   }
 
+  setEditingPermissions = () => {
+    this.setState({ editingPermissions: true });
+  }
+
+  closePermissionsPanel = () => {
+    this.setState({ editingPermissions: false });
+  }
+
+  renderManagePermissions() {
+    if (this.props.permissions.OWNER) {
+      return (<Button
+          bsStyle="primary"
+          onClick={this.setEditingPermissions}
+          className={styles.control}>Manage Permissions</Button>);
+    }
+    return null;
+  }
+
+  renderPermissionsPanel() {
+    if (this.state.editingPermissions) {
+      return (<PermissionsPanel
+          entitySetId={this.props.entitySetId}
+          propertyTypeId={this.props.propertyTypeId}
+          propertyTypeTitle={this.props.propertyType.title}
+          exitPanel={this.closePermissionsPanel} />);
+    }
+    return null;
+  }
+
   render() {
     return (
       <div className="propertyType">
         {this.renderPermissions()}
         {this.renderTitle()}
         {this.renderDescription()}
+        {this.renderManagePermissions()}
+        {this.renderPermissionsPanel()}
       </div>
     );
   }

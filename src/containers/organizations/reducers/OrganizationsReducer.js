@@ -10,10 +10,7 @@ import {
 } from 'loom-data';
 
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
-
-import {
-  CHECK_AUTHORIZATION_RESOLVE
-} from '../../permissions/PermissionsActionTypes';
+import * as PermissionsActionTypes from '../../permissions/PermissionsActionTypes';
 
 import {
   ASYNC_STATUS
@@ -87,7 +84,7 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
           errorMessage: 'Failed to load Organizations'
         }));
 
-    case OrgsActionTypes.CHECK_AUTHORIZATION_RESOLVE: {
+    case PermissionsActionTypes.CHECK_AUTHORIZATION_RESOLVE: {
 
       let newState :Map<*, *> = state;
 
@@ -112,25 +109,51 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
       return newState;
     }
 
+    case OrgsActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
+      const newEmails :List<string> = currentEmails.push(action.emailDomain);
+      return state.setIn(['organizations', orgId, 'emails'], newEmails);
+    }
+
+    case OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
+
+      const index :number = currentEmails.findIndex((email) => {
+        return email === action.emailDomain;
+      });
+
+      if (index < 0) {
+        return state;
+      }
+
+      const newEmails :List<string> = currentEmails.delete(index);
+      return state.setIn(['organizations', orgId, 'emails'], newEmails);
+    }
+
     case OrgsActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
 
-      const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
       const newRolePrincipal :Principal = (new PrincipalBuilder())
         .setType(PrincipalTypes.ROLE)
         .setId(action.role)
         .build();
 
-      const newRoles = currentRoles.push(Immutable.fromJS(JSON.parse(newRolePrincipal.valueOf())));
-      const newState = state.setIn(['organizations', action.orgId, 'roles'], newRoles);
-
-      return newState;
+      const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
+      // TODO: fix this conversion hell
+      const newRoles :List<Principal> = currentRoles.push(
+        Immutable.fromJS(JSON.parse(newRolePrincipal.valueOf()))
+      );
+      return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
     }
 
     case OrgsActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
 
       const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
 
-      const index = currentRoles.findIndex((role) => {
+      const index :number = currentRoles.findIndex((role) => {
         return role.get('id') === action.role;
       });
 
@@ -138,10 +161,41 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
         return state;
       }
 
-      const newRoles = currentRoles.delete(index);
-      const newState = state.setIn(['organizations', action.orgId, 'roles'], newRoles);
+      const newRoles :List<Principal> = currentRoles.delete(index);
+      return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
+    }
 
-      return newState;
+    case OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      const newMemberPrincipal :Principal = (new PrincipalBuilder())
+        .setType(PrincipalTypes.USER)
+        .setId(action.memberId)
+        .build();
+
+      const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
+      // TODO: fix this conversion hell
+      const newMembers :List<Principal> = currentMembers.push(
+        Immutable.fromJS(JSON.parse(newMemberPrincipal.valueOf()))
+      );
+      return state.setIn(['organizations', orgId, 'members'], newMembers);
+    }
+
+    case OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
+
+      const index :number = currentMembers.findIndex((member) => {
+        return member.get('id') === action.memberId;
+      });
+
+      if (index < 0) {
+        return state;
+      }
+
+      const newMembers :List<Principal> = currentMembers.delete(index);
+      return state.setIn(['organizations', action.orgId, 'members'], newMembers);
     }
 
     default:

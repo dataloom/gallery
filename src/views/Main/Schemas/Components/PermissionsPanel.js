@@ -1,33 +1,30 @@
 import React, { PropTypes } from 'react';
-import Dropdown from 'react-dropdown';
+import { Button } from 'react-bootstrap';
 import Select from 'react-select';
-import { PermissionsApi, UsersApi } from 'loom-data';
+import { PermissionsApi, PrincipalsApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
-import UserRoleConsts from '../../../../utils/Consts/UserRoleConsts';
+import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
 import styles from '../styles.module.css';
-import Utils from '../../../../utils/Utils';
 
 const views = {
   GLOBAL: 0,
   ROLES: 1,
-  DOMAIN: 2,
-  EMAILS: 3
+  EMAILS: 2
 };
 
 const permissionLevels = {
   hidden: [],
-  discover: [Permission.DISCOVER],
-  read: [Permission.DISCOVER, Permission.READ],
-  write: [Permission.DISCOVER, Permission.READ, Permission.WRITE]
+  discover: [Permission.DISCOVER.name],
+  read: [Permission.DISCOVER.name, Permission.READ.name],
+  write: [Permission.DISCOVER.name, Permission.READ.name, Permission.WRITE.name]
 };
 
 const viewLabels = {
   0: 'Everyone',
   1: 'Roles',
-  2: 'My Domain',
-  3: 'Emails'
+  2: 'Emails'
 };
 
 const accessOptions = {
@@ -45,15 +42,16 @@ const permissionOptions = {
 
 export class PermissionsPanel extends React.Component {
   static propTypes = {
-    entitySetName: PropTypes.string,
-    propertyTypeName: PropTypes.string,
-    propertyTypeNamespace: PropTypes.string,
-    exitPanel: PropTypes.func
+    exitPanel: PropTypes.func.isRequired,
+    entitySetId: PropTypes.string,
+    entitySetTitle: PropTypes.string,
+    propertyTypeId: PropTypes.string,
+    propertyTypeTitle: PropTypes.string
   }
 
   constructor(props) {
     super(props);
-    const options = (this.props.propertyTypeName === undefined) ?
+    const options = (this.props.propertyTypeId === undefined) ?
       Object.keys(accessOptions) : Object.keys(permissionOptions);
     this.state = {
       view: views.GLOBAL,
@@ -66,30 +64,31 @@ export class PermissionsPanel extends React.Component {
       emailsView: accessOptions.Write,
       newRoleValue: '',
       newEmailValue: '',
-      allUsersList: {},
+      allUsersById: {},
       allRolesList: new Set(),
       loadUsersError: false
     };
   }
 
   componentDidMount() {
-    this.loadAcls();
+    this.loadAcls(false);
   }
 
   loadAllUsersAndRoles = () => {
-    const allUsersList = {};
+    let allUsersById = {};
     const allRolesList = new Set();
-    UsersApi.getAllUsers()
+    const myId = JSON.parse(localStorage.profile).user_id;
+    PrincipalsApi.getAllUsers()
     .then((users) => {
+      allUsersById = users;
       Object.keys(users).forEach((userId) => {
-        const user = users[userId];
-        if (user.email && user.email !== undefined) allUsersList[user.email] = userId;
-        user.roles.forEach((role) => {
-          if (role !== UserRoleConsts.AUTHENTICATED_USER) allRolesList.add(role);
+        users[userId].roles.forEach((role) => {
+          if (role !== AUTHENTICATED_USER) allRolesList.add(role);
         });
       });
+      allUsersById[myId] = null;
       this.setState({
-        allUsersList,
+        allUsersById,
         allRolesList,
         loadUsersError: false
       });
@@ -98,27 +97,29 @@ export class PermissionsPanel extends React.Component {
     });
   }
 
-  getPermission(permissions) {
+  getPermission = (permissions) => {
     if (permissions.includes(permissionOptions.Write.toUpperCase())) return permissionOptions.Write;
     if (permissions.includes(permissionOptions.Read.toUpperCase())) return permissionOptions.Read;
     return permissionOptions.Discover;
   }
 
-  updateStateAcls = (acls, updateSuccess) => {
+  updateStateAcls = (aces, updateSuccess) => {
     let globalValue = accessOptions[0];
     const roleAcls = { Discover: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Read: [], Write: [] };
-    acls.forEach((acl) => {
-      if (acl.principal.type === UserRoleConsts.ROLE) {
-        if (acl.principal.name === UserRoleConsts.AUTHENTICATED_USER) {
-          globalValue = this.getPermission(acl.permissions);
+    aces.forEach((ace) => {
+      if (ace.permissions.length > 0) {
+        if (ace.principal.type === ROLE) {
+          if (ace.principal.id === AUTHENTICATED_USER) {
+            globalValue = this.getPermission(ace.permissions);
+          }
+          else {
+            roleAcls[this.getPermission(ace.permissions)].push(ace.principal.id);
+          }
         }
         else {
-          roleAcls[this.getPermission(acl.permissions)].push(acl.principal.name);
+          userAcls[this.getPermission(ace.permissions)].push(ace.principal.id);
         }
-      }
-      else {
-        userAcls[this.getPermission(acl.permissions)].push(acl.principal.name);
       }
     });
     this.setState({
@@ -133,27 +134,16 @@ export class PermissionsPanel extends React.Component {
   }
 
   loadAcls = (updateSuccess) => {
-    const { propertyTypeName, propertyTypeNamespace, entitySetName } = this.props;
+    const { propertyTypeId, entitySetId } = this.props;
+    const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
     this.loadAllUsersAndRoles();
-    if (propertyTypeName) {
-      const fqn = Utils.getFqnObj(propertyTypeNamespace, propertyTypeName);
-      PermissionsApi.getOwnerAclsForPropertyTypeInEntitySet(entitySetName, fqn)
-      .then((acls) => {
-        this.updateStateAcls(acls, updateSuccess);
-      }).catch(() => {
-        this.setState({
-          updateError: true
-        });
-      });
-    }
-    else {
-      PermissionsApi.getOwnerAclsForEntitySet(entitySetName)
-      .then((acls) => {
-        this.updateStateAcls(acls, updateSuccess);
-      }).catch(() => {
-        this.setState({ updateError: true });
-      });
-    }
+    PermissionsApi.getAcl(aclKey)
+    .then((acls) => {
+      this.updateStateAcls(acls.aces, updateSuccess);
+    }).catch(() => {
+      this.setState({ updateError: true });
+    });
   }
 
   shouldShowSuccess = {
@@ -167,11 +157,8 @@ export class PermissionsPanel extends React.Component {
   }
 
   getTitleText = () => {
-    const { propertyTypeName, propertyTypeNamespace, entitySetName } = this.props;
-    if (propertyTypeName) {
-      return `property type: ${propertyTypeNamespace}.${propertyTypeName}`;
-    }
-    return `entity set: ${entitySetName}`;
+    const { propertyTypeTitle, entitySetTitle } = this.props;
+    return (propertyTypeTitle) ? `property type: ${propertyTypeTitle}` : `entity set: ${entitySetTitle}`;
   }
 
   switchView = (view) => {
@@ -183,34 +170,31 @@ export class PermissionsPanel extends React.Component {
   }
 
   getClassName = (view) => {
-    return (view === this.state.view) ? `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
+    return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
   getPanelViewContents = () => {
     switch (this.state.view) {
-      case views.GLOBAL:
-        return this.getGlobalView();
       case views.ROLES:
         return this.getRolesView();
-      case views.DOMAIN:
-        return this.getDomainView();
       case views.EMAILS:
         return this.getEmailsView();
+      case views.GLOBAL:
       default:
         return this.getGlobalView();
     }
   }
 
   updatePermissions(action, principal, view) {
-    const { entitySetName, propertyTypeName, propertyTypeNamespace } = this.props;
-    const name = entitySetName;
+    const { entitySetId, propertyTypeId } = this.props;
     const permissions = (action === ActionConsts.REMOVE) ?
       [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
-    const updateFn = (propertyTypeName) ?
-      PermissionsApi.updateAclsForPropertyTypesInEntitySets : PermissionsApi.updateAclsForEntitySets;
-    const req = { principal, action, name, permissions };
-    if (propertyTypeName) req.property = Utils.getFqnObj(propertyTypeNamespace, propertyTypeName);
-    updateFn([req])
+    const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
+    const aces = [{ principal, permissions }];
+    const acl = { aclKey, aces };
+    const req = { action, acl };
+    PermissionsApi.updateAcl(req)
     .then(() => {
       this.loadAcls(true);
     }).catch(() => {
@@ -221,7 +205,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissions = () => {
-    this.updateRoles(ActionConsts.SET, UserRoleConsts.AUTHENTICATED_USER, this.state.globalValue);
+    this.updateRoles(ActionConsts.SET, AUTHENTICATED_USER, this.state.globalValue);
   }
 
   updateDropdownValue = (e) => {
@@ -229,29 +213,33 @@ export class PermissionsPanel extends React.Component {
   }
 
   buttonStyle = (view, viewState) => {
-    return (view === viewState) ? `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
+    return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
   getGlobalView = () => {
-    const options = (this.props.propertyTypeName === undefined) ?
+    const optionNames = (this.props.propertyTypeId === undefined) ?
       Object.keys(accessOptions) : Object.keys(permissionOptions);
+    const options = optionNames.map((name) => {
+      return {
+        value: name,
+        label: name
+      };
+    });
     return (
       <div className={styles.viewWrapper}>
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
-        <div>Choose the default permissions for everyone:</div>
+        <div>Choose the default permissions for all authenticated users:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
-          <Dropdown
+          <Select
               options={options}
               onChange={this.updateDropdownValue}
               value={this.state.globalValue} />
         </div>
         <div className={styles.spacerSmall} />
-        <button
-            onClick={() => {
-              this.updateGlobalPermissions();
-            }}
-            className={styles.simpleButton}>Save changes</button>
+        <Button
+            bsStyle="primary"
+            onClick={this.updateGlobalPermissions}>Save changes</Button>
       </div>
     );
   }
@@ -262,8 +250,8 @@ export class PermissionsPanel extends React.Component {
 
   updateRoles = (action, role, view) => {
     const principal = {
-      type: UserRoleConsts.ROLE,
-      name: role
+      type: ROLE,
+      id: role
     };
     this.updatePermissions(action, principal, view);
   }
@@ -274,13 +262,15 @@ export class PermissionsPanel extends React.Component {
   }
 
   viewPermissionTypeButton = (permission, fn, currView) => {
-    if (permission === accessOptions.Hidden && this.props.propertyTypeName !== undefined) return null;
+    if (permission === accessOptions.Hidden && this.props.propertyTypeId !== undefined) return null;
     return (
       <button
           onClick={() => {
             fn(permission);
           }}
-          className={this.buttonStyle(permission, currView)}>{permission}</button>
+          className={this.buttonStyle(permission, currView)}>
+        <div className={styles.edmNavItemText}>{permission}</div>
+      </button>
     );
   }
 
@@ -332,35 +322,13 @@ export class PermissionsPanel extends React.Component {
               options={roleOptions}
               onChange={this.handleNewRoleChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-          <button
-              className={`${styles.simpleButton} ${styles.spacerMargin}`}
+            <Button
+              bsStyle="primary"
+              className={`${styles.spacerMargin}`}
               onClick={() => {
                 this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
-              }}>Save</button>
+              }}>Save</Button>
         </div>
-      </div>
-    );
-  }
-
-  getDomainView = () => {
-    const options = (this.props.propertyTypeName === undefined) ?
-      Object.keys(accessOptions) : Object.keys(permissionOptions);
-    return (
-      <div className={styles.viewWrapper}>
-        <div>Choose the default permissions for all users in your domain:</div>
-        <div className={styles.spacerSmall} />
-        <div className={styles.dropdownWrapper}>
-          <Dropdown
-              options={options}
-              onChange={this.onSelect}
-              value={options[0]} />
-        </div>
-        <div className={styles.spacerSmall} />
-        <button
-            onClick={() => {
-              this.updateGlobalPermissions(views.DOMAIN);
-            }}
-            className={styles.simpleButton}>Save changes</button>
       </div>
     );
   }
@@ -369,10 +337,10 @@ export class PermissionsPanel extends React.Component {
     this.setState({ emailsView: newView });
   }
 
-  updateEmails = (action, email, view) => {
+  updateEmails = (action, userId, view) => {
     const principal = {
-      type: UserRoleConsts.USER,
-      id: this.state.allUsersList[email]
+      type: USER,
+      id: userId
     };
     this.updatePermissions(action, principal, view);
   }
@@ -382,36 +350,34 @@ export class PermissionsPanel extends React.Component {
     this.setState({ newEmailValue });
   }
 
-  getEmailOptions = (emailList) => {
+  getEmailOptions = (userIdList) => {
     const emailOptions = [];
-    const emailOptionList = Object.keys(this.state.allUsersList);
-    emailList.forEach((email) => {
-      if (emailOptionList.includes(email)) {
-        const index = emailOptionList.indexOf(email);
-        emailOptionList.splice(index, 1);
+    Object.keys(this.state.allUsersById).forEach((id) => {
+      if (!userIdList.includes(id) && this.state.allUsersById[id] && this.state.allUsersById[id].email) {
+        emailOptions.push({ label: this.state.allUsersById[id].email, value: id });
       }
-    });
-    emailOptionList.forEach((email) => {
-      emailOptions.push({ value: email, label: email });
     });
     return emailOptions;
   }
 
   getEmailsView = () => {
     const { userAcls, emailsView, newEmailValue } = this.state;
-    const emailList = userAcls[emailsView];
-    const emailOptions = this.getEmailOptions(emailList);
-    const hiddenBody = emailList.map((email) => {
+    const userIdList = userAcls[emailsView].filter((userId) => {
+      return (this.state.allUsersById[userId] && this.state.allUsersById[userId].email);
+    });
+
+    const emailOptions = this.getEmailOptions(userIdList);
+    const emailListBody = userIdList.map((userId) => {
       return (
-        <div className={styles.tableRows} key={emailList.indexOf(email)}>
+        <div className={styles.tableRows} key={userId}>
           <div className={styles.inline}>
             <button
                 onClick={() => {
-                  this.updateEmails(ActionConsts.REMOVE, email, emailsView);
+                  this.updateEmails(ActionConsts.REMOVE, userId, emailsView);
                 }}
                 className={styles.deleteButton}>-</button>
           </div>
-          <div className={`${styles.inline} ${styles.padLeft}`}>{email}</div>
+          <div className={`${styles.inline} ${styles.padLeft}`}>{this.state.allUsersById[userId].email}</div>
         </div>
       );
     });
@@ -426,7 +392,7 @@ export class PermissionsPanel extends React.Component {
           {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
-          {hiddenBody}
+          {emailListBody}
         </div>
         <div className={styles.inline}>
           <Select
@@ -434,11 +400,12 @@ export class PermissionsPanel extends React.Component {
               options={emailOptions}
               onChange={this.handleNewEmailChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-          <button
-              className={`${styles.simpleButton} ${styles.spacerMargin}`}
+            <Button
+              bsStyle="primary"
+              className={`${styles.spacerMargin}`}
               onClick={() => {
                 this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
-              }}>Save</button>
+              }}>Save</Button>
         </div>
       </div>
     );
@@ -450,7 +417,9 @@ export class PermissionsPanel extends React.Component {
           onClick={() => {
             this.switchView(view);
           }}
-          className={this.getClassName(view)}>{viewLabels[view]}</button>
+          className={this.getClassName(view)}>
+        <div className={styles.edmNavItemText}>{viewLabels[view]}</div>
+      </button>
     );
   }
 

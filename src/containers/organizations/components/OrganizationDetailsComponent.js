@@ -6,14 +6,11 @@ import React from 'react';
 
 import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
+import Select from 'react-select';
 import classnames from 'classnames';
 
 import {
   DataModels,
-  Types,
-  AuthorizationApi,
-  OrganizationApi,
-  PermissionsApi,
   PrincipalsApi
 } from 'loom-data';
 
@@ -26,8 +23,7 @@ import {
   InputGroup,
   Label,
   ListGroup,
-  ListGroupItem,
-  Table
+  ListGroupItem
 } from 'react-bootstrap';
 
 import {
@@ -44,12 +40,22 @@ import {
 
 import styles from '../styles/orgs.module.css';
 
+import Utils from '../../../utils/Utils';
+
 import {
   fetchOrgRequest,
   joinOrgRequest,
+  addDomainToOrgRequest,
+  removeDomainFromOrgRequest,
   addRoleToOrgRequest,
-  removeRoleFromOrgRequest
+  removeRoleFromOrgRequest,
+  addMemberToOrgRequest,
+  removeMemberFromOrgRequest
 } from '../actions/OrganizationsActionFactory';
+
+import {
+  setUserRolesRequest
+} from '../actions/UsersActionFactory';
 
 const {
   Organization
@@ -58,10 +64,30 @@ const {
 function mapStateToProps(state :Map<*, *>, ownProps :Object) {
 
   const orgId :string = ownProps.params.orgId;
-  const emptyOrg = Immutable.fromJS({});
+  const emptyMap = Immutable.fromJS({});
+
+  const users = state.getIn(['users', 'users'], emptyMap);
+  const selectMemberOptions = users.map((user) => {
+
+    const nickname = user.get('nickname');
+    const username = user.get('username');
+    const email = user.get('email');
+
+    let label = nickname || username;
+    if (email) {
+      label = `${label} - ${email}`;
+    }
+
+    return {
+      value: user.get('user_id'),
+      label
+    };
+  }).valueSeq().toJS();
 
   return {
-    organization: state.getIn(['organizations', 'organizations', orgId], emptyOrg)
+    organization: state.getIn(['organizations', 'organizations', orgId], emptyMap),
+    selectMemberOptions,
+    users
   };
 }
 
@@ -70,8 +96,13 @@ function mapDispatchToProps(dispatch :Function) {
   const actions = {
     fetchOrgRequest,
     joinOrgRequest,
+    addDomainToOrgRequest,
+    removeDomainFromOrgRequest,
     addRoleToOrgRequest,
-    removeRoleFromOrgRequest
+    removeRoleFromOrgRequest,
+    addMemberToOrgRequest,
+    removeMemberFromOrgRequest,
+    setUserRolesRequest
   };
 
   return {
@@ -83,13 +114,22 @@ class OrganizationDetails extends React.Component {
 
   state :{
     isInvalidEmail :boolean,
-    newRoleValue :string
+    newDomainValue :string,
+    newRoleValue :string,
+    newMemberValue :?Object,
+    newMemberRoles :string[]
   }
 
   static propTypes = {
     actions: React.PropTypes.shape({
       fetchOrgRequest: React.PropTypes.func.isRequired,
-      joinOrgRequest: React.PropTypes.func.isRequired
+      joinOrgRequest: React.PropTypes.func.isRequired,
+      addDomainToOrgRequest: React.PropTypes.func.isRequired,
+      removeDomainFromOrgRequest: React.PropTypes.func.isRequired,
+      addRoleToOrgRequest: React.PropTypes.func.isRequired,
+      removeRoleFromOrgRequest: React.PropTypes.func.isRequired,
+      addMemberToOrgRequest: React.PropTypes.func.isRequired,
+      removeMemberFromOrgRequest: React.PropTypes.func.isRequired
     }).isRequired,
     params: React.PropTypes.shape({
       orgId: React.PropTypes.string.isRequired
@@ -103,7 +143,10 @@ class OrganizationDetails extends React.Component {
 
     this.state = {
       isInvalidEmail: false,
-      newRoleValue: ''
+      newDomainValue: '',
+      newRoleValue: '',
+      newMemberValue: null,
+      newMemberRoles: []
     };
   }
 
@@ -168,20 +211,111 @@ class OrganizationDetails extends React.Component {
     );
   }
 
+  onChangeNewDomainInput = (event) => {
+
+    this.setState({
+      newDomainValue: event.target.value
+    });
+  }
+
+  onKeyPressNewDomainInput = (event) => {
+
+    if (event.key === 'Enter') {
+      this.addNewDomain();
+    }
+  }
+
+  addNewDomain = () => {
+
+    if (!Utils.isValidEmail(`test@${this.state.newDomainValue}`)) {
+      console.log('TODO: show an error message to the user that the email is invalid');
+      return;
+    }
+
+    this.props.actions.addDomainToOrgRequest(
+      this.props.organization.get('id'),
+      this.state.newDomainValue
+    );
+
+    this.setState({
+      newDomainValue: ''
+    });
+  }
+
+
   renderDomainsSection = () => {
 
-    const domains = this.props.organization.get('emails', []).map((domain :string) => {
+    const orgDomainsList :List<*> = this.props.organization.get('emails', Immutable.List());
+
+    const domainListItems = orgDomainsList.map((domain) => {
       return (
-        <ListGroupItem key={domain}>{ domain }</ListGroupItem>
+        <ListGroupItem key={domain} className={classnames(styles.roleRowWrapper)}>
+          <ul className={classnames(styles.roleRow)}>
+            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
+              { domain }
+            </li>
+            {
+              this.props.organization.get('isOwner') === true
+                ? (
+                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                    <button
+                        onClick={() => {
+                          this.props.actions.removeDomainFromOrgRequest(
+                            this.props.organization.get('id'),
+                            domain
+                          );
+                        }}>
+                      <FontAwesome name="minus-square-o" />
+                    </button>
+                  </li>
+                )
+              : null
+            }
+          </ul>
+        </ListGroupItem>
       );
     });
 
+    const addDomainListItem = (
+      <ListGroupItem key={'addNewDomain'} className={classnames(styles.roleRowWrapper)}>
+        <ul className={classnames(styles.roleRow)}>
+          <li className={classnames(styles.roleRowItem, styles.roleRowItemAdd)}>
+            <FormGroup bsSize="small" className={classnames(styles.roleRowItemAddInput)}>
+              <FormControl
+                  type="text"
+                  placeholder="Add new domain..."
+                  value={this.state.newDomainValue}
+                  onChange={this.onChangeNewDomainInput}
+                  onKeyPress={this.onKeyPressNewDomainInput} />
+            </FormGroup>
+          </li>
+          <li className={classnames(styles.roleRowItem, styles.roleRowItemAddButton)}>
+            <button onClick={this.addNewDomain}>
+              <FontAwesome name="plus-square-o" />
+            </button>
+          </li>
+        </ul>
+      </ListGroupItem>
+    );
+
+    const domainsListGroup = (
+      <ListGroup>
+        { domainListItems }
+        {
+          this.props.organization.get('isOwner') === true
+           ? addDomainListItem
+           : null
+        }
+      </ListGroup>
+    );
+
     return (
-      <div className={classnames(styles.detailSection, styles.domains)}>
+      <div className={styles.detailSection}>
         <h4>Domains</h4>
-        <ListGroup>
-          { domains }
-        </ListGroup>
+        <h5>
+          { 'Users from these domains will automatically be approved when requesting to join this organization.' }
+        </h5>
+        { domainsListGroup }
       </div>
     );
   }
@@ -267,7 +401,7 @@ class OrganizationDetails extends React.Component {
       </ListGroupItem>
     );
 
-    const roleListGroup = (
+    const rolesListGroup = (
       <ListGroup>
         { roleListItems }
         {
@@ -281,7 +415,154 @@ class OrganizationDetails extends React.Component {
     return (
       <div className={styles.detailSection}>
         <h4>Roles</h4>
-        { roleListGroup }
+        <h5>You will be able to use the Roles below to manage permissions on Entity Sets that you own.</h5>
+        { rolesListGroup }
+      </div>
+    );
+  }
+
+  onChangeNewMemberRoles = (roles :Object[]) => {
+
+    this.setState({
+      newMemberRoles: roles
+    });
+  }
+
+  onChangeNewMemberSelect = (member) => {
+
+    this.setState({
+      newMemberValue: member
+    });
+  }
+
+  addNewMember = () => {
+
+    if (!this.state.newMemberValue || !this.state.newMemberRoles || this.state.newMemberRoles.length === 0) {
+      return;
+    }
+
+    const userId = this.state.newMemberValue.value;
+
+    this.props.actions.addMemberToOrgRequest(
+      this.props.organization.get('id'),
+      userId
+    );
+
+    const roles = this.state.newMemberRoles.map((obj) => {
+      return obj.value;
+    });
+
+    this.props.actions.setUserRolesRequest(
+      userId,
+      roles
+    );
+
+    this.setState({
+      newMemberValue: null,
+      newMemberRoles: []
+    });
+  }
+
+  renderMembersSection =() => {
+
+    const orgRolesList :List<*> = this.props.organization.get('roles', Immutable.List());
+    const orgMembersList :List<*> = this.props.organization.get('members', Immutable.List());
+
+    const selectRolesOptions = orgRolesList.map((role) => {
+      return {
+        label: role.get('id'),
+        value: role.get('id')
+      };
+    }).toJS();
+
+    const memberListItems = orgMembersList.map((member) => {
+
+      const user :Immutable.Map<string, Object> = this.props.users.get(member.get('id'), Immutable.Map());
+      if (user.isEmpty()) {
+        return null;
+      }
+
+      // TODO: refactor
+      const nickname = user.get('nickname');
+      const username = user.get('username');
+      const email = user.get('email');
+
+      let label = nickname || username;
+      if (email) {
+        label = `${label} - ${email}`;
+      }
+
+      return (
+        <ListGroupItem key={user.get('user_id')} className={classnames(styles.roleRowWrapper)}>
+          <ul className={classnames(styles.roleRow)}>
+            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
+              { label }
+            </li>
+            {
+              this.props.organization.get('isOwner') === true
+                ? (
+                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                    <button
+                        onClick={() => {
+                          this.props.actions.removeMemberFromOrgRequest(
+                            this.props.organization.get('id'),
+                            user.get('user_id')
+                          );
+                        }}>
+                      <FontAwesome name="minus-square-o" />
+                    </button>
+                  </li>
+                )
+              : null
+            }
+          </ul>
+        </ListGroupItem>
+      );
+    });
+
+    const addMemberForm = (
+      <div className={classnames(styles.addMemberWrapper)}>
+        <div className={classnames(styles.addMemberMemberSelectWrapper)}>
+          <Select
+              className={classnames(styles.addMemberMemberSelect)}
+              placeholder="Add new member..."
+              options={this.props.selectMemberOptions}
+              value={this.state.newMemberValue}
+              onChange={this.onChangeNewMemberSelect} />
+        </div>
+        <div className={classnames(styles.addMemberRoleSelectWrapper)}>
+          <Select
+              className={classnames(styles.addMemberRoleSelect)}
+              multi
+              placeholder="Select roles..."
+              options={selectRolesOptions}
+              value={this.state.newMemberRoles}
+              onChange={this.onChangeNewMemberRoles} />
+        </div>
+        <div>
+          <Button bsStyle="primary" onClick={this.addNewMember}>
+            Add Member
+          </Button>
+        </div>
+      </div>
+    );
+
+    const membersListGroup = (
+      <ListGroup>
+        { memberListItems }
+      </ListGroup>
+    );
+
+    return (
+      <div className={styles.detailSection}>
+        <h4>Members</h4>
+        <h5>{ 'These users are members of this orgnization.' }</h5>
+        {
+          this.props.organization.get('isOwner') === true
+          ? addMemberForm
+          : null
+        }
+        { membersListGroup }
       </div>
     );
   }
@@ -296,9 +577,10 @@ class OrganizationDetails extends React.Component {
             { this.props.organization.get('description') }
           </h4>
         </div>
-        { this.renderInvitationSection() }
         { this.renderDomainsSection() }
         { this.renderRolesSection() }
+        { this.renderMembersSection() }
+        <div style={{ margin: '50px 0' }} />
       </div>
     );
   }
