@@ -25,11 +25,6 @@
     border: solid 2pt #a3a8ab;
 }
 
-.Select.is-open .Select-control
-{
-    border-bottom: 0;
-}
-
 .Select-menu-outer {
     border-top-width: 1pt;
 }

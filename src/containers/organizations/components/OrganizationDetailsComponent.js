@@ -23,7 +23,8 @@ import {
   InputGroup,
   Label,
   ListGroup,
-  ListGroupItem
+  ListGroupItem,
+  Panel
 } from 'react-bootstrap';
 
 import {
@@ -54,7 +55,8 @@ import {
 } from '../actions/OrganizationsActionFactory';
 
 import {
-  setUserRolesRequest
+  addRoleToUserRequest,
+  removeRoleFromUserRequest
 } from '../actions/UsersActionFactory';
 
 const {
@@ -67,6 +69,7 @@ function mapStateToProps(state :Map<*, *>, ownProps :Object) {
   const emptyMap = Immutable.fromJS({});
 
   const users = state.getIn(['users', 'users'], emptyMap);
+
   const selectMemberOptions = users.map((user) => {
 
     const nickname = user.get('nickname');
@@ -102,7 +105,8 @@ function mapDispatchToProps(dispatch :Function) {
     removeRoleFromOrgRequest,
     addMemberToOrgRequest,
     removeMemberFromOrgRequest,
-    setUserRolesRequest
+    addRoleToUserRequest,
+    removeRoleFromUserRequest
   };
 
   return {
@@ -116,8 +120,7 @@ class OrganizationDetails extends React.Component {
     isInvalidEmail :boolean,
     newDomainValue :string,
     newRoleValue :string,
-    newMemberValue :?Object,
-    newMemberRoles :string[]
+    selectedMemberId :string
   }
 
   static propTypes = {
@@ -129,7 +132,9 @@ class OrganizationDetails extends React.Component {
       addRoleToOrgRequest: React.PropTypes.func.isRequired,
       removeRoleFromOrgRequest: React.PropTypes.func.isRequired,
       addMemberToOrgRequest: React.PropTypes.func.isRequired,
-      removeMemberFromOrgRequest: React.PropTypes.func.isRequired
+      removeMemberFromOrgRequest: React.PropTypes.func.isRequired,
+      addRoleToUserRequest: React.PropTypes.func.isRequired,
+      removeRoleFromUserRequest: React.PropTypes.func.isRequired
     }).isRequired,
     params: React.PropTypes.shape({
       orgId: React.PropTypes.string.isRequired
@@ -145,8 +150,7 @@ class OrganizationDetails extends React.Component {
       isInvalidEmail: false,
       newDomainValue: '',
       newRoleValue: '',
-      newMemberValue: null,
-      newMemberRoles: []
+      selectedMemberId: ''
     };
   }
 
@@ -245,19 +249,16 @@ class OrganizationDetails extends React.Component {
 
   renderDomainsSection = () => {
 
-    const orgDomainsList :List<*> = this.props.organization.get('emails', Immutable.List());
+    const orgDomainsList :Immutable.List = this.props.organization.get('emails', Immutable.List());
 
     const domainListItems = orgDomainsList.map((domain) => {
       return (
-        <ListGroupItem key={domain} className={classnames(styles.roleRowWrapper)}>
-          <ul className={classnames(styles.roleRow)}>
-            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
-              { domain }
-            </li>
+        <ListGroupItem key={domain} className={classnames(styles.orgDetailsListGroupItem)}>
+          <ul className={classnames(styles.listGroupItemRow)}>
             {
               this.props.organization.get('isOwner') === true
                 ? (
-                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                  <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemDelete)}>
                     <button
                         onClick={() => {
                           this.props.actions.removeDomainFromOrgRequest(
@@ -271,15 +272,23 @@ class OrganizationDetails extends React.Component {
                 )
               : null
             }
+            <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemId)}>
+              { domain }
+            </li>
           </ul>
         </ListGroupItem>
       );
     });
 
     const addDomainListItem = (
-      <ListGroupItem key={'addNewDomain'} className={classnames(styles.roleRowWrapper)}>
-        <ul className={classnames(styles.roleRow)}>
-          <li className={classnames(styles.roleRowItem, styles.roleRowItemAdd)}>
+      <ListGroupItem key={'addNewDomain'} className={classnames(styles.orgDetailsListGroupItem)}>
+        <ul className={classnames(styles.listGroupItemRow)}>
+          <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemAddButton)}>
+            <button onClick={this.addNewDomain}>
+              <FontAwesome name="plus-square-o" />
+            </button>
+          </li>
+          <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemAdd)}>
             <FormGroup bsSize="small" className={classnames(styles.roleRowItemAddInput)}>
               <FormControl
                   type="text"
@@ -289,17 +298,12 @@ class OrganizationDetails extends React.Component {
                   onKeyPress={this.onKeyPressNewDomainInput} />
             </FormGroup>
           </li>
-          <li className={classnames(styles.roleRowItem, styles.roleRowItemAddButton)}>
-            <button onClick={this.addNewDomain}>
-              <FontAwesome name="plus-square-o" />
-            </button>
-          </li>
         </ul>
       </ListGroupItem>
     );
 
     const domainsListGroup = (
-      <ListGroup>
+      <ListGroup className={classnames(styles.orgDetailsListGroup)}>
         { domainListItems }
         {
           this.props.organization.get('isOwner') === true
@@ -348,19 +352,16 @@ class OrganizationDetails extends React.Component {
 
   renderRolesSection = () => {
 
-    const orgRolesList :List<*> = this.props.organization.get('roles', Immutable.List());
+    const orgRolesList :Immutable.List = this.props.organization.get('roles', Immutable.List());
 
     const roleListItems = orgRolesList.map((role) => {
       return (
-        <ListGroupItem key={role.get('id')} className={classnames(styles.roleRowWrapper)}>
-          <ul className={classnames(styles.roleRow)}>
-            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
-              { role.get('id') }
-            </li>
+        <ListGroupItem key={role.get('id')} className={classnames(styles.orgDetailsListGroupItem)}>
+          <ul className={classnames(styles.listGroupItemRow)}>
             {
               this.props.organization.get('isOwner') === true
                 ? (
-                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                  <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemDelete)}>
                     <button
                         onClick={() => {
                           this.props.actions.removeRoleFromOrgRequest(
@@ -374,15 +375,23 @@ class OrganizationDetails extends React.Component {
                 )
               : null
             }
+            <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemId)}>
+              { role.get('id') }
+            </li>
           </ul>
         </ListGroupItem>
       );
     });
 
     const addRoleListItem = (
-      <ListGroupItem key={'addNewRole'} className={classnames(styles.roleRowWrapper)}>
-        <ul className={classnames(styles.roleRow)}>
-          <li className={classnames(styles.roleRowItem, styles.roleRowItemAdd)}>
+      <ListGroupItem key={'addNewRole'} className={classnames(styles.orgDetailsListGroupItem)}>
+        <ul className={classnames(styles.listGroupItemRow)}>
+          <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemAddButton)}>
+            <button onClick={this.addNewRole}>
+              <FontAwesome name="plus-square-o" />
+            </button>
+          </li>
+          <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemAdd)}>
             <FormGroup bsSize="small" className={classnames(styles.roleRowItemAddInput)}>
               <FormControl
                   type="text"
@@ -392,17 +401,12 @@ class OrganizationDetails extends React.Component {
                   onKeyPress={this.onKeyPressNewRoleInput} />
             </FormGroup>
           </li>
-          <li className={classnames(styles.roleRowItem, styles.roleRowItemAddButton)}>
-            <button onClick={this.addNewRole}>
-              <FontAwesome name="plus-square-o" />
-            </button>
-          </li>
         </ul>
       </ListGroupItem>
     );
 
     const rolesListGroup = (
-      <ListGroup>
+      <ListGroup className={classnames(styles.orgDetailsListGroup)}>
         { roleListItems }
         {
           this.props.organization.get('isOwner') === true
@@ -421,66 +425,71 @@ class OrganizationDetails extends React.Component {
     );
   }
 
-  onChangeNewMemberRoles = (roles :Object[]) => {
+  addMemberToOrg = (rsOptionSelected) => {
 
-    this.setState({
-      newMemberRoles: roles
-    });
-  }
-
-  onChangeNewMemberSelect = (member) => {
-
-    this.setState({
-      newMemberValue: member
-    });
-  }
-
-  addNewMember = () => {
-
-    if (!this.state.newMemberValue || !this.state.newMemberRoles || this.state.newMemberRoles.length === 0) {
+    if (!rsOptionSelected || !rsOptionSelected.value) {
       return;
     }
 
-    const userId = this.state.newMemberValue.value;
+    const userId = rsOptionSelected.value;
 
     this.props.actions.addMemberToOrgRequest(
       this.props.organization.get('id'),
       userId
     );
+  }
 
-    const roles = this.state.newMemberRoles.map((obj) => {
-      return obj.value;
-    });
+  addRoleToMember = (rsOptionSelected) => {
 
-    this.props.actions.setUserRolesRequest(
-      userId,
-      roles
-    );
+    if (!rsOptionSelected || !rsOptionSelected.value) {
+      return;
+    }
+
+    const userId = this.state.selectedMemberId;
+    const roleId = rsOptionSelected.value;
+    this.props.actions.addRoleToUserRequest(userId, roleId);
+  }
+
+  removeRoleFromMember = (role :string) => {
+
+    if (!role) {
+      return;
+    }
+
+    const userId = this.state.selectedMemberId;
+    this.props.actions.removeRoleFromUserRequest(userId, role);
+  }
+
+  setSelectedMemberId = (userId :string) => {
 
     this.setState({
-      newMemberValue: null,
-      newMemberRoles: []
+      selectedMemberId: userId
     });
   }
 
   renderMembersSection =() => {
 
-    const orgRolesList :List<*> = this.props.organization.get('roles', Immutable.List());
-    const orgMembersList :List<*> = this.props.organization.get('members', Immutable.List());
+    const selectedMember :Immutable.Map = this.props.users.get(
+      this.state.selectedMemberId,
+      Immutable.Map()
+    );
 
-    const selectRolesOptions = orgRolesList.map((role) => {
+    const orgRolesList :Immutable.List = this.props.organization.get('roles', Immutable.List());
+    const rsOptionsRoles = orgRolesList.map((role) => {
       return {
         label: role.get('id'),
         value: role.get('id')
       };
     }).toJS();
 
-    const memberListItems = orgMembersList.map((member) => {
+    const orgMembersList :Immutable.List = this.props.organization.get('members', Immutable.List());
+    const orgMembers :Immutable.List = orgMembersList.filter((member) => {
+      return this.props.users.has(member.get('id'));
+    });
+
+    const memberListGroupItems :Immutable.List = orgMembers.map((member) => {
 
       const user :Immutable.Map<string, Object> = this.props.users.get(member.get('id'), Immutable.Map());
-      if (user.isEmpty()) {
-        return null;
-      }
 
       // TODO: refactor
       const nickname = user.get('nickname');
@@ -492,16 +501,15 @@ class OrganizationDetails extends React.Component {
         label = `${label} - ${email}`;
       }
 
+      const isSelected = this.state.selectedMemberId === user.get('user_id');
+
       return (
-        <ListGroupItem key={user.get('user_id')} className={classnames(styles.roleRowWrapper)}>
-          <ul className={classnames(styles.roleRow)}>
-            <li className={classnames(styles.roleRowItem, styles.roleRowItemId)}>
-              { label }
-            </li>
+        <ListGroupItem key={user.get('user_id')} className={classnames(styles.membersListGroupItem)}>
+          <ul className={classnames(styles.listGroupItemRow)}>
             {
               this.props.organization.get('isOwner') === true
                 ? (
-                  <li className={classnames(styles.roleRowItem, styles.roleRowItemDelete)}>
+                  <li className={classnames(styles.listGroupItemRowItem, styles.roleRowItemDelete)}>
                     <button
                         onClick={() => {
                           this.props.actions.removeMemberFromOrgRequest(
@@ -515,54 +523,104 @@ class OrganizationDetails extends React.Component {
                 )
               : null
             }
+            <li className={classnames(styles.membersListGroupItemRowItem, (isSelected) ? styles.selected : '')}>
+              <button
+                  onClick={() => {
+                    this.setSelectedMemberId(user.get('user_id'));
+                  }}>
+                { label }
+              </button>
+            </li>
           </ul>
         </ListGroupItem>
       );
     });
 
-    const addMemberForm = (
-      <div className={classnames(styles.addMemberWrapper)}>
-        <div className={classnames(styles.addMemberMemberSelectWrapper)}>
-          <Select
-              className={classnames(styles.addMemberMemberSelect)}
-              placeholder="Add new member..."
-              options={this.props.selectMemberOptions}
-              value={this.state.newMemberValue}
-              onChange={this.onChangeNewMemberSelect} />
-        </div>
-        <div className={classnames(styles.addMemberRoleSelectWrapper)}>
-          <Select
-              className={classnames(styles.addMemberRoleSelect)}
-              multi
-              placeholder="Select roles..."
-              options={selectRolesOptions}
-              value={this.state.newMemberRoles}
-              onChange={this.onChangeNewMemberRoles} />
-        </div>
-        <div>
-          <Button bsStyle="primary" onClick={this.addNewMember}>
-            Add Member
-          </Button>
-        </div>
+    let roleItems :Immutable.List = Immutable.List();
+    if (!selectedMember.isEmpty()) {
+      const selectedMemberRoles :Immutable.List = selectedMember.get('roles', Immutable.List());
+      const selectedMemberOrgRoles = orgRolesList.filter((role :Immutable.Map) => {
+        return selectedMemberRoles.includes(role.get('id'));
+      });
+      roleItems = selectedMemberOrgRoles.map((role :Immutable.Map) => {
+        return (
+          <div key={role.get('id')} className={classnames(styles.orgRoleButton)}>
+            <button
+                className={classnames(styles.orgRoleSplitButtonDelete)}
+                onClick={() => {
+                  this.removeRoleFromMember(role.get('id'));
+                }}>
+              <FontAwesome name="times" />
+            </button>
+            <span className={classnames(styles.orgRoleSplitButtonText)}>{ role.get('id') }</span>
+          </div>
+        );
+      });
+    }
+
+    const memberListContainer = (
+      <div className={classnames(styles.memberListContainer)}>
+        {
+          memberListGroupItems.isEmpty()
+            ? null
+            : (
+              <ListGroup className={classnames(styles.membersListGroup)}>
+                { memberListGroupItems }
+              </ListGroup>
+            )
+        }
       </div>
     );
 
-    const membersListGroup = (
-      <ListGroup>
-        { memberListItems }
-      </ListGroup>
+    const roleListContainer = (
+      <div className={classnames(styles.roleListContainer)}>
+        {
+          roleItems.isEmpty()
+            ? null
+            : (
+              <div>
+                { roleItems }
+              </div>
+            )
+        }
+      </div>
     );
 
     return (
       <div className={styles.detailSection}>
         <h4>Members</h4>
         <h5>{ 'These users are members of this orgnization.' }</h5>
-        {
-          this.props.organization.get('isOwner') === true
-          ? addMemberForm
-          : null
-        }
-        { membersListGroup }
+
+        <div className={classnames(styles.orgDetailsMembersRoles)}>
+          <div className={classnames(styles.membersWrapper)}>
+            {
+              this.props.organization.get('isOwner') === false
+                ? null
+                : (
+                  <Select
+                      className={classnames(styles.addMemberSelect)}
+                      placeholder="Add new member..."
+                      options={this.props.selectMemberOptions}
+                      onChange={this.addMemberToOrg} />
+                )
+            }
+            { memberListContainer }
+          </div>
+          <div className={classnames(styles.rolesWrapper)}>
+            {
+              this.props.organization.get('isOwner') === false || selectedMember.isEmpty()
+                ? null
+                : (
+                  <Select
+                      className={classnames(styles.setMemberRoleSelect)}
+                      placeholder="Select roles..."
+                      options={rsOptionsRoles}
+                      onChange={this.addRoleToMember} />
+                )
+            }
+            { roleListContainer }
+          </div>
+        </div>
       </div>
     );
   }

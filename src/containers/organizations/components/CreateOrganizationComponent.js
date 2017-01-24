@@ -189,14 +189,16 @@ class CreateOrganization extends React.Component {
             { this.getVisibilityOptions() }
           </FormControl>
         </FormGroup>
-        <Button
-            className={styles.createOrgSubmit}
-            type="submit"
-            bsStyle="primary"
-            onClick={this.onClickCreate}>
-          Create Organization
-        </Button>
-        <Button onClick={this.props.onCancel}>Cancel</Button>
+        <FormGroup style={{ marginTop: '20px', marginBottom: '20px' }}>
+          <Button
+              className={styles.createOrgSubmit}
+              type="submit"
+              bsStyle="primary"
+              onClick={this.onClickCreate}>
+            Create Organization
+          </Button>
+          <Button onClick={this.props.onCancel}>Cancel</Button>
+        </FormGroup>
       </div>
     );
   }
