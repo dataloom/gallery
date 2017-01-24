@@ -39,12 +39,7 @@ export function getStatus(reqStatus, aclKeys) {
 }
 
 export function updateStatuses(statuses) {
-  return Observable.from(statuses)
-    .map(status => {
-      return axiosInstance.patch('/datastore/requests', [status])
-        .then(response => status)
-        .catch(console.error);
-    });
+    return axiosInstance.patch('/datastore/requests', statuses)
 }
 
 export function createEntitySets(entitySets) {
