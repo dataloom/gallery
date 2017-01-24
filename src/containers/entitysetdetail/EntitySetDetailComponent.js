@@ -1,13 +1,15 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
+import { PermissionsPanel } from '../../views/Main/Schemas/Components/PermissionsPanel';
 import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { EntitySetPropType } from '../edm/EdmModel';
@@ -18,10 +20,25 @@ import styles from './entitysetdetail.module.css';
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
+
+    // Async content
     entitySet: EntitySetPropType,
     entitySetPermissions: PermissionsPropType.isRequired,
+
+    // Loading
     loadEntitySet: PropTypes.func.isRequired
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      editingPermissions: false
+    };
+  }
+
+  setEditingPermissions = () => {
+    this.setState({ editingPermissions: true });
+  }
 
   renderHeaderContent = () => {
     const { entitySet, entitySetPermissions } = this.props;
@@ -35,12 +52,37 @@ class EntitySetDetailComponent extends React.Component {
         </div>
 
         <div className={styles.controls}>
-          { entitySetPermissions.OWNER ? <Button bsStyle="primary" className={styles.control}>Manage Permissions</Button> : ''}
-          <ActionDropdown entitySetId={entitySet.id}/>
+          { entitySetPermissions.OWNER ? <Button
+              bsStyle="info"
+              onClick={this.setEditingPermissions}
+              className={styles.control}>Manage Permissions</Button> : ''}
+          <ActionDropdown entitySetId={entitySet.id} />
         </div>
+
+        <EntitySetPermissionsRequestList entitySetId={entitySet.id} propertyTypeIds={entitySet.entityType.properties.map(p => p.id)} />
       </div>
     );
   };
+
+  renderPermissionsPanel = () => {
+    if (!this.props.entitySet) return null;
+    return (
+      <Modal
+          show={this.state.editingPermissions}
+          onHide={this.closePermissionsPanel}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage permissions for entity set: {this.props.entitySet.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PermissionsPanel entitySetId={this.props.entitySet.id} />
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  closePermissionsPanel = () => {
+    this.setState({ editingPermissions: false });
+  }
 
   render() {
     return (
@@ -50,18 +92,18 @@ class EntitySetDetailComponent extends React.Component {
         </Page.Header>
         <Page.Body>
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-
           <AsyncContent {...this.props.asyncState} content={() => {
             // TODO: Remove when removing denormalization
             const propertyTypeIds = this.props.entitySet.entityType.properties.map(property => property.id);
+
             return (
-                <PropertyTypeList
+              <PropertyTypeList
                   entitySetId={this.props.entitySet.id}
                   propertyTypeIds={propertyTypeIds}
-                  className="propertyTypeStyleDefault"
-                />
-              );
-          }}/>
+                  className="propertyTypeStyleDefault" />
+            );
+          }} />
+          {this.renderPermissionsPanel()}
 
         </Page.Body>
       </Page>

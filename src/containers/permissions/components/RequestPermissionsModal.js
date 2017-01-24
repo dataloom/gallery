@@ -6,7 +6,7 @@ import * as actionFactory from '../PermissionsActionFactory';
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
-import styles from './requestPermissionsModal.module.css';
+import styles from './permissions.module.css';
 
 const PROPERTY_TYPE_EDITING = {
   permissions: true

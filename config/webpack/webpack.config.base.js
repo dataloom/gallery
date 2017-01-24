@@ -37,7 +37,7 @@ const BABEL_LOADER = {
 
 const CSS_LOADER = {
   loader: ExtractTextPlugin.extract(
-    'css-loader?modules&importLoader=1!postcss-loader?config=config/postcss/postcss.config.js'
+    'css-loader?modules&localIdentName=[local]--[hash:base64:5]&importLoader=1!postcss-loader?config=config/postcss/postcss.config.js'
   ),
   test: /\.css$/,
   exclude: /src\/core\/styles\/global\/.*\.css/

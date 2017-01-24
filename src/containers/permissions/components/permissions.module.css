@@ -1,0 +1,129 @@
+.rqm {
+    padding: 0 20px 15px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.rqm .subtitle {
+    font-size: 16px;
+    margin: 10px 0 0 ;
+}
+.rqm .submit {
+    margin-left: auto;
+}
+
+.rqm label {
+    display: inherit;
+    margin: inherit;
+    font-weight: inherit;
+}
+
+.rqm :global .propertyTypeList {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+
+.rqm :global .propertyTypeDescription, .rqm :global .propertyTypeListHeader {
+    display: none;
+}
+
+.rqm :global .propertyType {
+    width: 33%;
+    display: flex;
+    align-items: center;
+    margin-top: 10px
+}
+
+.rqm :global .propertyTypePermissions {
+    margin: 0 4px 1px 0;
+}
+
+/* Permission Request */
+.permissionRequestList {
+    width: 100%;
+}
+.permissionRequestListTitle {
+    font-size: 16px;
+    font-weight: 600;
+}
+.permissionsRequest {
+    width: 100%;
+    background: #ffffff;
+    margin-top: 5px;
+}
+.permissionsRequest:first-child {
+    margin-top: 0;
+}
+
+.permissionRequestHeader {
+    width: 100%;
+    display: flex;
+    border-left: solid 5px #4203c5;
+    height: 60px;
+    font-size: 14px;
+}
+.permissionRequestTitle {
+    padding-left: 15px;
+    align-self: center;
+}
+.approveButton, .rejectButton {
+    width: 60px;
+    background: #ffffff;
+    color: #b2bac0;
+    border: none;
+    border-left: solid 1px #dbe4ea;
+    text-transform: uppercase;
+    font-size: 10px;
+}
+.approveButton:hover, .rejectButton:hover {
+    background: #dbe4ea;
+}
+.approveButton :global .fa, .rejectButton :global .fa {
+    display: block;
+    font-size: 25px;
+    margin-bottom: 2px;
+}
+.approveButton {
+    margin-left: auto;
+}
+.approveButton :global .fa {
+    color: #3fada0;
+}
+.rejectButton :global .fa {
+    color: #f9376d;
+}
+
+.permissionRequestBody {
+    display: none;
+    border-top: solid 1px #dbe4ea;
+    padding: 20px 30px;
+
+}
+.open .permissionRequestBody {
+    display: flex;
+    flex-wrap: wrap;
+}
+.permissionRequestBody .subtitle {
+    font-size: 16px;
+}
+.permissionRequestBody label {
+    display: inherit;
+    margin: inherit;
+    font-weight: inherit;
+}
+.permissionRequestBody :global .propertyTypeList {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+.permissionRequestBody :global .propertyType {
+    width: 33%;
+    display: flex;
+    align-items: center;
+    margin-top: 10px
+}
+.permissionRequestBody :global .propertyTypePermissions {
+    margin: 0 4px 1px 0;
+}
