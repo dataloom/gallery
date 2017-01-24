@@ -37,9 +37,11 @@ import type {
 import Api from '../Api';
 
 function updateStatuses(statuses :Status[]) {
-  return Observable.from(Api.updateStatuses(statuses))
-    .map(status => {
-      AsyncActionFactory.updateAsyncReference(createStatusAsyncReference(status.aclKey), status)
+  return Observable.from(statuses)
+    .mergeMap(status => {
+      return Observable.from(Api.updateStatuses([status]))
+        .mapTo(AsyncActionFactory.updateAsyncReference(createStatusAsyncReference(status.aclKey), status))
+        .catch(console.error);
     });
 }
 
@@ -56,48 +58,48 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
       .map(AsyncActionFactory.asyncReferenceLoading),
 
     Observable.from(Api.getStatus(reqStatus, aclKeys))
-    //   Observable.of([
-    //     {
-    //       "aclKey": [
-    //         "c5c20cae-060b-4ae7-8d6a-95648ed60246",
-    //         "b43b8d12-12af-4356-8713-a9b7cb3876dc"
-    //       ],
-    //       "permissions": [
-    //         "READ"
-    //       ],
-    //       "principal": {
-    //         "id": "auth0|57e4b2d8d9d1d194778fd5b6",
-    //         "type": "USER"
-    //       },
-    //       "status": "SUBMITTED"
+    // Observable.of([
+    //   {
+    //     "aclKey": [
+    //       "c5c20cae-060b-4ae7-8d6a-95648ed60246",
+    //       "b43b8d12-12af-4356-8713-a9b7cb3876dc"
+    //     ],
+    //     "permissions": [
+    //       "READ"
+    //     ],
+    //     "principal": {
+    //       "id": "auth0|57e4b2d8d9d1d194778fd5b6",
+    //       "type": "USER"
     //     },
-    //     {
-    //       "aclKey": [
-    //         "c5c20cae-060b-4ae7-8d6a-95648ed60246",
-    //         "34fd7582-90e5-4663-96c5-65dfe7ea9648"
-    //       ],
-    //       "permissions": [
-    //         "READ"
-    //       ],
-    //       "principal": {
-    //         "id": "auth0|57e4b2d8d9d1d194778fd5b6",
-    //         "type": "USER"
-    //       },
-    //       "status": "SUBMITTED"
-    //     }
-    //   ])
-      .mergeMap(statuses => {
-        const statusByReferenceId = {};
-        statuses.forEach(status => {
-          statusByReferenceId[createStatusAsyncReference(status.aclKey).id] = status;
-        });
+    //     "status": "SUBMITTED"
+    //   },
+    //   {
+    //     "aclKey": [
+    //       "c5c20cae-060b-4ae7-8d6a-95648ed60246",
+    //       "34fd7582-90e5-4663-96c5-65dfe7ea9648"
+    //     ],
+    //     "permissions": [
+    //       "READ"
+    //     ],
+    //     "principal": {
+    //       "id": "auth0|57e4b2d8d9d1d194778fd5b6",
+    //       "type": "USER"
+    //     },
+    //     "status": "SUBMITTED"
+    //   }
+    // ])
+    .mergeMap(statuses => {
+      const statusByReferenceId = {};
+      statuses.forEach(status => {
+        statusByReferenceId[createStatusAsyncReference(status.aclKey).id] = status;
+      });
 
-        return references.map(reference => {
-          const status = statusByReferenceId[reference.id];
-          const value = status ? status : ASYNC_STATUS.NOT_FOUND;
-          return AsyncActionFactory.updateAsyncReference(reference, value);
-        });
-      })
+      return references.map(reference => {
+        const status = statusByReferenceId[reference.id];
+        const value = status ? status : ASYNC_STATUS.NOT_FOUND;
+        return AsyncActionFactory.updateAsyncReference(reference, value);
+      });
+    })
   );
 }
 
