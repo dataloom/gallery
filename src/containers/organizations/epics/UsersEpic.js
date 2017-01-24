@@ -44,35 +44,65 @@ function fetchAllUsersEpic(action$ :Observable<Action>) :Observable<Action> {
     .mergeMap(fetchAllUsers);
 }
 
-function setUserRoles(action :Action) :Observable<Action> {
+function addRoleToUser(action :Action) :Observable<Action> {
 
   const {
     userId,
-    roles
+    role
   } = action;
 
   return Observable
-    .from(PrincipalsApi.setUserRoles(userId, roles))
+    .from(PrincipalsApi.addRoleToUser(userId, role))
     .mergeMap(() => {
       return Observable.of(
-        UsersActionFactory.setUserRolesSuccess()
+        UsersActionFactory.addRoleToUserSuccess(userId, role)
       );
     })
     .catch(() => {
       return Observable.of(
-        UsersActionFactory.setUserRolesFailure()
+        UsersActionFactory.addRoleToUserFailure()
       );
     });
 }
 
-function setUserRolesEpic(action$ :Observable<Action>) :Observable<Action> {
+function addRoleToUserEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
-    .ofType(UsersActionTypes.SET_USER_ROLES_REQUEST)
-    .mergeMap(setUserRoles);
+    .ofType(UsersActionTypes.ADD_ROLE_TO_USER_REQUEST)
+    .mergeMap(addRoleToUser);
+}
+
+
+function removeRoleFromUser(action :Action) :Observable<Action> {
+
+  const {
+    userId,
+    role
+  } = action;
+
+  return Observable
+    .from(PrincipalsApi.removeRoleFromUser(userId, role))
+    .mergeMap(() => {
+      return Observable.of(
+        UsersActionFactory.removeRoleFromUserSuccess(userId, role)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        UsersActionFactory.removeRoleFromUserFailure()
+      );
+    });
+}
+
+function removeRoleFromUserEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(UsersActionTypes.REMOVE_ROLE_FROM_USER_REQUEST)
+    .mergeMap(removeRoleFromUser);
 }
 
 export default combineEpics(
   fetchAllUsersEpic,
-  setUserRolesEpic
+  addRoleToUserEpic,
+  removeRoleFromUserEpic
 );

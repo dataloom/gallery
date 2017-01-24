@@ -26,25 +26,52 @@ export function fetchAllUsersFailure() :Object {
   };
 }
 
-export function setUserRolesRequest(userId :UUID, roles :string[]) :Object {
+export function addRoleToUserRequest(userId :UUID, role :string) :Object {
 
   return {
-    type: UsersActionTypes.SET_USER_ROLES_REQUEST,
+    type: UsersActionTypes.ADD_ROLE_TO_USER_REQUEST,
     userId,
-    roles
+    role
   };
 }
 
-export function setUserRolesSuccess() :Object {
+export function addRoleToUserSuccess(userId :UUID, role :string) :Object {
 
   return {
-    type: UsersActionTypes.SET_USER_ROLES_SUCCESS
+    type: UsersActionTypes.ADD_ROLE_TO_USER_SUCCESS,
+    userId,
+    role
   };
 }
 
-export function setUserRolesFailure() :Object {
+export function addRoleToUserFailure() :Object {
 
   return {
-    type: UsersActionTypes.SET_USER_ROLES_FAILURE
+    type: UsersActionTypes.ADD_ROLE_TO_USER_FAILURE
+  };
+}
+
+export function removeRoleFromUserRequest(userId :UUID, role :string) :Object {
+
+  return {
+    type: UsersActionTypes.REMOVE_ROLE_FROM_USER_REQUEST,
+    userId,
+    role
+  };
+}
+
+export function removeRoleFromUserSuccess(userId :UUID, role :string) :Object {
+
+  return {
+    type: UsersActionTypes.REMOVE_ROLE_FROM_USER_SUCCESS,
+    userId,
+    role
+  };
+}
+
+export function removeRoleFromUserFailure() :Object {
+
+  return {
+    type: UsersActionTypes.REMOVE_ROLE_FROM_USER_FAILURE
   };
 }
