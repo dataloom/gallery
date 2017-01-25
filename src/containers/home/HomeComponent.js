@@ -80,11 +80,14 @@ function mapStateToProps(state) {
   const catalog = state.get('catalog').toJS();
   const normalizedData = state.get('normalizedData').toJS();
 
-  const entitySets = catalog.popularEntitySetReferences.map((reference) => {
-    return getShallowEdmObjectSilent(normalizedData, reference, null);
-  }).filter((entitySet) => {
-    return entitySet;
-  });
+  let entitySets = [];
+  if (catalog && catalog.popularEntitySetReferences) {
+    entitySets = catalog.popularEntitySetReferences.map((reference) => {
+      return getShallowEdmObjectSilent(normalizedData, reference, null);
+    }).filter((entitySet) => {
+      return entitySet;
+    });
+  }
 
   return {
     asyncState: catalog.asyncState,

@@ -105,7 +105,7 @@ function mapStateToProps(state, ownProps) {
     entityTypeId = entitySet.entityTypeId;
     const etReference = createEntityTypeReference(entityTypeId);
     const entityType = getShallowEdmObjectSilent(normalizedData, etReference, null);
-    if (entityType) {
+    if (entityType && entityType.properties) {
       propertyTypePermissions = entityType.properties.map(id => {
         return getPermissions(permissions, [entitySetId, id]);
       });
