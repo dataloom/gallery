@@ -57,7 +57,7 @@ function mapStateToProps(state) {
     // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
     const reference = createEntitySetReference(entitySetId);
     entitySet = getEdmObjectSilent(normalizedData, reference, null);
-    if (entitySet) {
+    if (entitySet && entitySet.entityType) {
       propertyTypeIds = entitySet.entityType.properties.map(property => property.id);
     }
   }
