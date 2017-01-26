@@ -107,27 +107,31 @@ export class EntitySetVisualizationList extends React.Component {
     });
   }
 
+  renderEntitySetList = () => {
+    const entitySetList = (this.state.entitySets.length === 0) ?
+      <p>You do not have access to any visualizable entity sets.</p> :
+      this.state.entitySets.map((entitySet) => {
+        return (
+          <button
+              onClick={() => {
+                this.props.displayEntitySetFn(entitySet.id);
+              }}
+              className={styles.listItemButton}
+              key={entitySet.id} >
+            <div className={styles.entitySetTitle}>{entitySet.title}</div>
+            <div className={styles.entitySetFqn}>{entitySet.description}</div>
+          </button>
+        );
+      });
+    return (<div>{entitySetList}</div>);
+  }
+
   render() {
-    const entitySetList = this.state.entitySets.map((entitySet) => {
-      return (
-        <button
-            onClick={() => {
-              this.props.displayEntitySetFn(entitySet.id);
-            }}
-            className={styles.listItemButton}
-            key={entitySet.id} >
-          <div className={styles.entitySetTitle}>{entitySet.title}</div>
-          <div className={styles.entitySetFqn}>{entitySet.description}</div>
-        </button>
-      );
-    });
     return (
       <AsyncContent
           status={this.state.asyncStatus}
           errorMessage="Unable to load entity sets."
-          content={() => {
-            return (<div>{entitySetList}</div>);
-          }} />
+          content={this.renderEntitySetList} />
     );
   }
 }
