@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
+import AsyncContent, { AsyncStatePropType } from '../../../components/asynccontent/AsyncContent';
 import * as actionFactory from '../PermissionsActionFactory';
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
@@ -19,6 +20,7 @@ class RequestPermissions extends React.Component {
     onHide: PropTypes.func.isRequired,
     entitySetId: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
+    asyncStatus: PropTypes.symbol.isRequired,
     //Async Objects
     entitySet: EntitySetPropType,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string),
@@ -46,8 +48,10 @@ class RequestPermissions extends React.Component {
     onSubmit(entitySetId, pidToPermissions);
   };
 
+
+
   render() {
-    const { propertyTypeIds, entitySet, entitySetId, show, onHide } = this.props;
+    const { propertyTypeIds, entitySet, entitySetId, show, onHide, asyncStatus } = this.props;
 
     let title;
     if (entitySet) {
@@ -60,16 +64,23 @@ class RequestPermissions extends React.Component {
           <Modal.Title>{ title }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form className={styles.rqm} onSubmit={this.onSubmit}>
-            <h2 className={styles.subtitle}>Select properties you want access to:</h2>
-            <PropertyTypeList
-              entitySetId={entitySetId}
-              propertyTypeIds={propertyTypeIds}
-              editing={PROPERTY_TYPE_EDITING}
-              onChange={this.onChange}
-            />
-            <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
-          </form>
+          <AsyncContent
+            status={asyncStatus}
+            pendingContent={
+              <form className={styles.rqm} onSubmit={this.onSubmit}>
+                <h2 className={styles.subtitle}>Select properties you want access to:</h2>
+                <PropertyTypeList
+                  entitySetId={entitySetId}
+                  propertyTypeIds={propertyTypeIds}
+                  editing={PROPERTY_TYPE_EDITING}
+                  onChange={this.onChange}
+                />
+                <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
+              </form>
+            }
+            content={<Alert bsStyle="success">Request made</Alert>}
+            errorMessage="Failed to make request"
+          />
         </Modal.Body>
       </Modal>
     );
@@ -96,7 +107,8 @@ function mapStateToProps(state) {
     propertyTypeIds,
     entitySetId,
     entitySet,
-    show: permissions.getIn(['requestPermissionsModal', 'show'])
+    show: permissions.getIn(['requestPermissionsModal', 'show']),
+    asyncStatus: permissions.getIn(['requestPermissionsModal', 'asyncStatus'])
   };
 }
 
