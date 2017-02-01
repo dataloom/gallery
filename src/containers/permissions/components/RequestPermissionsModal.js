@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 import * as actionFactory from '../PermissionsActionFactory';
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
@@ -103,9 +104,15 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     onHide: () => { dispatch(actionFactory.requestPermissionsModalHide()); },
-    onSubmit: (entitySetId, propertyTypeIdsToChanges) => {
-      console.log(entitySetId);
-      console.log(propertyTypeIdsToChanges);
+    onSubmit: (entitySetId, pidsToPermissions) => {
+      const authnRequests = Object.keys(pidsToPermissions).map(pid => {
+        const permissions = classnames(pidsToPermissions[pid]).split(' ');
+        return {
+          aclKey: [entitySetId, pid],
+          permissions
+        }
+      });
+      dispatch(actionFactory.submitAuthNRequest(authnRequests))
     }
   };
 }

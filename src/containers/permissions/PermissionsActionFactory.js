@@ -8,8 +8,9 @@ import {
   CHECK_AUTHORIZATION_REJECT,
   REQUEST_PERMISSIONS_MODAL_SHOW,
   REQUEST_PERMISSIONS_MODAL_HIDE,
+  REQUEST_PERMISSIONS_MODAL_SUCCESS,
+  REQUEST_PERMISSIONS_MODAL_FAILURE,
   SUBMIT_AUTHN_REQUEST,
-  REQUEST_PERMISSIONS_RESOLVE,
   LOAD_STATUSES,
   UPDATE_STATUSES
 } from './PermissionsActionTypes';
@@ -74,17 +75,21 @@ export function requestPermissionsModalHide() {
   }
 }
 
+export function requestPermissionsModalSuccess() {
+  return {
+    type: REQUEST_PERMISSIONS_MODAL_SUCCESS
+  }
+}
+
+export function requestPermissionsModalError() {
+  return {
+    type: REQUEST_PERMISSIONS_MODAL_FAILURE
+  }
+}
 
 export function submitAuthNRequest(requests :AuthNRequest[]) {
   return {
     type: SUBMIT_AUTHN_REQUEST,
-    requests
-  }
-}
-
-export function requestPermissionsResolve(requests :AuthNRequest[]) {
-  return {
-    type: REQUEST_PERMISSIONS_RESOLVE,
     requests
   }
 }

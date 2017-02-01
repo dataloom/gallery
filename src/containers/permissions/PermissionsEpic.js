@@ -109,17 +109,20 @@ function loadStatusesEpic(action$) {
     .mergeMap(action => loadStatuses(action.reqStatus, action.aclKeys));
 }
 
-function requestPermissions(requests :AuthNRequest[]) :Observable<Action> {
+function submitAuthnRequest(requests :AuthNRequest[]) :Observable<Action> {
   return Observable
     .from(Api.permissionsRequest(requests))
-    .mapTo(PermissionsActionFactory.requestPermissionsResolve(requests));
+    .mapTo(PermissionsActionFactory.requestPermissionsModalSuccess())
+    .catch(e => {
+      return Observable.of(PermissionsActionFactory.requestPermissionsModalError())
+    });
 }
 
-function requestPermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
+function submitAuthnRequestEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
     .ofType(PermissionsActionTypes.SUBMIT_AUTHN_REQUEST)
     .pluck('requests')
-    .mergeMap(requestPermissions);
+    .mergeMap(submitAuthnRequest);
 }
 
 // TODO: Move entirely to async container and take *huge* advantage of caching
@@ -169,4 +172,4 @@ function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action>
     .mergeMap(authorizationCheck);
 }
 
-export default combineEpics(authorizationCheckEpic, requestPermissionsEpic, loadStatusesEpic, updateStatusesEpic);
+export default combineEpics(authorizationCheckEpic, submitAuthnRequestEpic, loadStatusesEpic, updateStatusesEpic);
