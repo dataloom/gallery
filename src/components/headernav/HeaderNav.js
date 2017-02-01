@@ -21,7 +21,7 @@ class HeaderNav extends React.Component {
 
   render() {
 
-    const greeting = (this.props.name !== undefined && this.props.name.length)
+    const greeting = (this.props.name && this.props.name.length)
       ? `Hi, ${this.props.name}!`
       : 'Hi!';
 
