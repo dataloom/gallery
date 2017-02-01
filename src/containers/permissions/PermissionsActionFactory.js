@@ -17,7 +17,8 @@ import {
 import {
   ALL_PERMISSIONS,
   RequestStatus,
-  Status
+  Status,
+  AccessCheck
 } from './PermissionsStorage';
 
 import type {
@@ -26,7 +27,7 @@ import type {
   AclKey
 } from './PermissionsStorage';
 
-export function checkAuthorizationRequest(accessChecks :Object[]) :Object {
+export function checkAuthorizationRequest(accessChecks :AccessCheck[]) :Object {
 
   return {
     type: CHECK_AUTHORIZATION_REQUEST,
@@ -40,7 +41,7 @@ export function checkAuthorizationResolve(authorizations :Authorization[]) :Obje
     authorizations
   };
 }
-export function checkAuthorizationReject(accessChecks :Object[], errorMessage :string) :Object {
+export function checkAuthorizationReject(accessChecks :AccessCheck[], errorMessage :string) :Object {
 
   return {
     type: CHECK_AUTHORIZATION_REJECT,

@@ -24,7 +24,8 @@ import {
 
 import {
   deserializeAuthorization,
-  createStatusAsyncReference
+  createStatusAsyncReference,
+  createAuthnAsyncReference
 } from './PermissionsStorage';
 
 import type {
@@ -121,20 +122,42 @@ function requestPermissionsEpic(action$ :Observable<Action>) :Observable<Action>
     .mergeMap(requestPermissions);
 }
 
-// TODO: Save property types
+// TODO: Move entirely to async container and take *huge* advantage of caching
 function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
 
-  return Observable
-    .from(AuthorizationApi.checkAuthorizations(accessChecks))
-    .map((authorizations) => {
-      return authorizations.map(deserializeAuthorization);
-    })
-    .map(PermissionsActionFactory.checkAuthorizationResolve)
-    .catch(() => {
-      return Observable.of(
-        PermissionsActionFactory.checkAuthorizationReject(accessChecks, 'Error loading authorizations')
-      );
-    });
+  const references = accessChecks.map(check => {
+    return createAuthnAsyncReference(check.aclKey);
+  });
+
+  return Observable.merge(
+    Observable
+      .from(references)
+      .map(AsyncActionFactory.asyncReferenceLoading),
+
+    Observable
+      .from(AuthorizationApi.checkAuthorizations(accessChecks))
+      .map((authorizations) => {
+        return authorizations.map(deserializeAuthorization);
+      })
+      .mergeMap(authorizations => {
+        // Async
+        const actions = authorizations.map(authn => {
+          return AsyncActionFactory.updateAsyncReference(createAuthnAsyncReference(authn.aclKey), authn);
+        });
+        // Old Code
+        actions.push(PermissionsActionFactory.checkAuthorizationResolve(authorizations));
+        return actions;
+      })
+      .catch(() => {
+        // Async
+        const actions = references.map(reference => {
+          return AsyncActionFactory.asyncReferenceError(reference, "Error loading authorization");
+        });
+        // Old Code
+        actions.push(PermissionsActionFactory.checkAuthorizationReject(accessChecks, 'Error loading authorizations'));
+        return Observable.from(actions);
+      })
+  );
 }
 
 // TODO: Cancellation and Error handling

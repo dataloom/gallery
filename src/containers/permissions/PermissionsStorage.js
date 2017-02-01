@@ -84,7 +84,14 @@ export function createStatusAsyncReference(aclKey :AclKey) :AsyncReference {
   return {
     id: aclKey.join('/'),
     namespace: 'permissions.status'
-  }
+  };
+}
+
+export function createAuthnAsyncReference(aclKey :AclKey) :AsyncReference {
+  return {
+    id: aclKey.join('/'),
+    namespace: 'permissions.authn'
+  };
 }
 
 /* Utility Functions */
