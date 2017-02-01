@@ -16,6 +16,7 @@ import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
 import { configure as edmApiConfigure } from '../../containers/Api';
+import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
 import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -56,28 +57,11 @@ const isAdmin = () => {
 
 const getName = () => {
 
-  let displayName;
   if (auth.loggedIn()) {
-    const profile = auth.getProfile();
-
-    if (profile.hasOwnProperty('given_name')) {
-      displayName = profile.given_name;
-    }
-    else if (profile.hasOwnProperty('name')) {
-      displayName = profile.name;
-    }
-    else if (profile.hasOwnProperty('nickname')) {
-      displayName = profile.nickname;
-    }
-    else if (profile.hasOwnProperty('email')) {
-      displayName = profile.email;
-    }
-    else {
-      displayName = StringConsts.EMPTY;
-    }
+    return getDisplayName(auth.getProfile());
+  } else {
+    return null;
   }
-
-  return displayName;
 };
 
 const getProfileStatus = () => {
