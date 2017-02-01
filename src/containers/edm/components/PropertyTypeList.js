@@ -11,6 +11,7 @@ class PropertyTypeList extends React.Component {
     className: PropTypes.string,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
     editing: EditingPropType,
+    onChange: PropTypes.func,
     // Implies permissions view
     entitySetId: PropTypes.string,
     loadPermissions: PropTypes.func.isRequired
@@ -25,11 +26,19 @@ class PropertyTypeList extends React.Component {
   }
 
   renderContent() {
-    const { propertyTypeIds, entitySetId, editing } = this.props;
+    const { propertyTypeIds, entitySetId, editing, onChange } = this.props;
 
     if (propertyTypeIds.length > 0) {
       return propertyTypeIds.map((id) => {
-        return (<PropertyType entitySetId={entitySetId} editing={editing} propertyTypeId={id} key={id}/>);
+        return (
+          <PropertyType
+            entitySetId={entitySetId}
+            editing={editing}
+            propertyTypeId={id}
+            key={id}
+            onChange={onChange}
+          />
+        );
       });
     } else {
       return (<em>No property types</em>);

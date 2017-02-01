@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Modal } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
 import * as actionFactory from '../PermissionsActionFactory';
@@ -17,9 +17,32 @@ class RequestPermissions extends React.Component {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
     entitySetId: PropTypes.string,
+    onSubmit: PropTypes.func.isRequired,
     //Async Objects
     entitySet: EntitySetPropType,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string),
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      pidToPermissions: {}
+    }
+  }
+
+  onChange = (propertyTypeId, delta) => {
+    const { pidToPermissions} = this.state;
+    const newPermissions = Object.assign({}, pidToPermissions);
+    newPermissions[propertyTypeId] = delta.permissions;
+
+    this.setState({ pidToPermissions: newPermissions });
+  };
+
+  onSubmit = (event) => {
+    event.preventDefault();
+    const { pidToPermissions } = this.state;
+    const { entitySetId, onSubmit } = this.props;
+    onSubmit(entitySetId, pidToPermissions);
   };
 
   render() {
@@ -36,10 +59,16 @@ class RequestPermissions extends React.Component {
           <Modal.Title>{ title }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className={styles.rqm}>
+          <form className={styles.rqm} onSubmit={this.onSubmit}>
             <h2 className={styles.subtitle}>Select properties you want access to:</h2>
-            <PropertyTypeList entitySetId={entitySetId} propertyTypeIds={propertyTypeIds} editing={PROPERTY_TYPE_EDITING}/>
-          </div>
+            <PropertyTypeList
+              entitySetId={entitySetId}
+              propertyTypeIds={propertyTypeIds}
+              editing={PROPERTY_TYPE_EDITING}
+              onChange={this.onChange}
+            />
+            <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
+          </form>
         </Modal.Body>
       </Modal>
     );
@@ -73,7 +102,11 @@ function mapStateToProps(state) {
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
-    onHide: () => { dispatch(actionFactory.requestPermissionsModalHide()); }
+    onHide: () => { dispatch(actionFactory.requestPermissionsModalHide()); },
+    onSubmit: (entitySetId, propertyTypeIdsToChanges) => {
+      console.log(entitySetId);
+      console.log(propertyTypeIdsToChanges);
+    }
   };
 }
 

@@ -127,3 +127,7 @@
 .permissionRequestBody :global .propertyTypePermissions {
     margin: 0 4px 1px 0;
 }
+
+.submitButton {
+    margin: 15px 0 0 auto;
+}
