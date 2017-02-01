@@ -8,7 +8,7 @@ import {
   CHECK_AUTHORIZATION_REJECT,
   REQUEST_PERMISSIONS_MODAL_SHOW,
   REQUEST_PERMISSIONS_MODAL_HIDE,
-  REQUEST_PERMISSIONS_REQUEST,
+  SUBMIT_AUTHN_REQUEST,
   REQUEST_PERMISSIONS_RESOLVE,
   LOAD_STATUSES,
   UPDATE_STATUSES
@@ -23,7 +23,7 @@ import {
 
 import type {
   Authorization,
-  PermissionsRequest,
+  AuthNRequest,
   AclKey
 } from './PermissionsStorage';
 
@@ -74,20 +74,15 @@ export function requestPermissionsModalHide() {
   }
 }
 
-export function requestPermissionsRequest(requests :PermissionsRequest[]) {
+
+export function submitAuthNRequest(requests :AuthNRequest[]) {
   return {
-    type: REQUEST_PERMISSIONS_REQUEST,
+    type: SUBMIT_AUTHN_REQUEST,
     requests
   }
 }
-export function requestPermissionsReject(requests :PermissionsRequest[], errorMessage :string) {
-  return {
-    type: REQUEST_PERMISSIONS_RESOLVE,
-    requests,
-    errorMessage
-  }
-}
-export function requestPermissionsResolve(requests :PermissionsRequest[]) {
+
+export function requestPermissionsResolve(requests :AuthNRequest[]) {
   return {
     type: REQUEST_PERMISSIONS_RESOLVE,
     requests

@@ -30,7 +30,7 @@ import {
 
 import type {
   AccessCheck,
-  PermissionsRequest,
+  AuthNRequest,
   AclKey,
   Status
 } from './PermissionsStorage'
@@ -109,7 +109,7 @@ function loadStatusesEpic(action$) {
     .mergeMap(action => loadStatuses(action.reqStatus, action.aclKeys));
 }
 
-function requestPermissions(requests :PermissionsRequest[]) :Observable<Action> {
+function requestPermissions(requests :AuthNRequest[]) :Observable<Action> {
   return Observable
     .from(Api.permissionsRequest(requests))
     .mapTo(PermissionsActionFactory.requestPermissionsResolve(requests));
@@ -117,7 +117,7 @@ function requestPermissions(requests :PermissionsRequest[]) :Observable<Action> 
 
 function requestPermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
-    .ofType(PermissionsActionTypes.REQUEST_PERMISSIONS_REQUEST)
+    .ofType(PermissionsActionTypes.SUBMIT_AUTHN_REQUEST)
     .pluck('requests')
     .mergeMap(requestPermissions);
 }
