@@ -47,7 +47,7 @@ export const AuthorizationPropType = PropTypes.shape({
   permissions: PermissionsPropType
 });
 
-export type PermissionsRequest = {
+export type AuthNRequest = {
   aclKey :AclKey,
   permissions :string[]
 };

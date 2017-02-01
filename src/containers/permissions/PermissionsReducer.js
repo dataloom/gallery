@@ -2,14 +2,17 @@
 import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from './PermissionsActionTypes';
+import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
 
 export const LOADING_ERROR = Symbol('loading error');
+
 
 const INITIAL_STATE:Map<*, *> = fromJS({
   authorizations: {},
   requestPermissionsModal: {
     show: false,
-    entitySetId: null
+    entitySetId: null,
+    asyncStatus: ASYNC_STATUS.PENDING
   }
 });
 
@@ -34,13 +37,29 @@ export default function reducer(state:Map<*, *> = INITIAL_STATE, action:Object) 
     case actionTypes.REQUEST_PERMISSIONS_MODAL_SHOW:
       return state.mergeIn(['requestPermissionsModal'], {
         show: true,
-        entitySetId: action.entitySetId
+        entitySetId: action.entitySetId,
+        saveState: ASYNC_STATUS.PENDING
       });
 
     case actionTypes.REQUEST_PERMISSIONS_MODAL_HIDE:
       return state.mergeIn(['requestPermissionsModal'], {
         show: false
         // Don't set entitySetId to false. Allows modal to fade away with content
+      });
+
+    case actionTypes.SUBMIT_AUTHN_REQUEST:
+      return state.mergeIn(['requestPermissionsModal'], {
+        asyncStatus: ASYNC_STATUS.LOADING
+      });
+
+    case actionTypes.REQUEST_PERMISSIONS_MODAL_SUCCESS:
+      return state.mergeIn(['requestPermissionsModal'], {
+        asyncStatus: ASYNC_STATUS.SUCCESS
+      });
+
+    case actionTypes.REQUEST_PERMISSIONS_MODAL_FAILURE:
+      return state.mergeIn(['requestPermissionsModal'], {
+        asyncStatus: ASYNC_STATUS.ERROR
       });
 
     default:
