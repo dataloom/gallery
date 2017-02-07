@@ -4,30 +4,17 @@
 
 import React from 'react';
 
-import Immutable from 'immutable';
-
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
-
 import ContentContainer from '../../../components/applayout/ContentContainer';
 import ContentSection from '../../../components/applayout/ContentSection';
 import ContentHeaderSection from '../../../components/applayout/ContentHeaderSection';
 
 import OrganizationsHeaderComponent from './OrganizationsHeaderComponent';
-import OrganizationsListComponent from './OrganizationsListComponent';
 
-function mapStateToProps(state :Immutable.Map<*, *>) {
+export default class OrganizationsContainer extends React.Component {
 
-  return {};
-}
-
-function mapDispatchToProps(dispatch :Function) {
-
-  return {};
-}
-
-class OrganizationsContainer extends React.Component {
+  static propTypes = {
+    children: React.PropTypes.node.isRequired
+  }
 
   render() {
 
@@ -37,12 +24,10 @@ class OrganizationsContainer extends React.Component {
           <OrganizationsHeaderComponent />
         </ContentHeaderSection>
         <ContentSection>
-          <OrganizationsListComponent />
+          { React.Children.toArray(this.props.children) }
         </ContentSection>
       </ContentContainer>
     );
   }
 
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(OrganizationsContainer);

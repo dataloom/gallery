@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { IndexRedirect, IndexRoute, Route } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
@@ -20,6 +20,7 @@ import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
+import OrganizationsListComponent from '../../containers/organizations/components/OrganizationsListComponent';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
@@ -83,6 +84,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
       <Route path={PageConsts.ORG} component={OrganizationsContainerComponent} onEnter={requireAuth}>
+        <IndexRoute component={OrganizationsListComponent} />
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
