@@ -84,15 +84,14 @@ class EntitySetPermissionsRequest extends React.Component {
     this.setState({ selectedProperties });
   }
 
-  renderProperty(principalId, propertyType) {
-    const checked = this.state.selectedProperties.has(propertyType.id);
+  renderProperty(principalId, propertyType, defaultChecked) {
     return (
       <div className="propertyType" key={propertyType.id}>
         <div className="propertyTypePermissions">
           <input
               type="checkbox"
               id={`ptr-${principalId}-${propertyType.id}`}
-              defaultChecked={checked}
+              defaultChecked={defaultChecked}
               onClick={(e) => {
                 this.toggleCheckbox(e.target.checked, propertyType.id);
               }}
