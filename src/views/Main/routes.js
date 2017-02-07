@@ -19,7 +19,7 @@ import { configure as edmApiConfigure } from '../../containers/Api';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
-import OrganizationDetailsComponent from '../../containers/organizations/components/details/OrganizationDetailsComponent';
+import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
