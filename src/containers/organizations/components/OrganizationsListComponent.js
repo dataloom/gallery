@@ -19,7 +19,7 @@ function mapDispatchToProps(dispatch :Function) {
   return {};
 }
 
-class OrganizationDetailsComponent extends React.Component {
+class OrganizationsListComponent extends React.Component {
 
   render() {
 
@@ -29,4 +29,4 @@ class OrganizationDetailsComponent extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrganizationDetailsComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(OrganizationsListComponent);

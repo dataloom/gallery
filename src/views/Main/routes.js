@@ -18,8 +18,8 @@ import StringConsts from '../../utils/Consts/StringConsts';
 import { configure as edmApiConfigure } from '../../containers/Api';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
-import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
-import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
+import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
+import OrganizationDetailsComponent from '../../containers/organizations/components/details/OrganizationDetailsComponent';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
@@ -82,7 +82,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
-      <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
+      <Route path={PageConsts.ORG} component={OrganizationsContainerComponent} onEnter={requireAuth}>
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
