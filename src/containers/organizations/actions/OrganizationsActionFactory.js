@@ -55,6 +55,29 @@ export function fetchOrgsFailure() :Object {
   };
 }
 
+export function searchOrgsRequest(searchQuery :string) :Object {
+
+  return {
+    type: OrgsActionTypes.SEARCH_ORGS_REQUEST,
+    searchQuery
+  };
+}
+
+export function searchOrgsSuccess(searchResults :any) :Object {
+
+  return {
+    type: OrgsActionTypes.SEARCH_ORGS_SUCCESS,
+    searchResults
+  };
+}
+
+export function searchOrgsFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.SEARCH_ORGS_FAILURE
+  };
+}
+
 export function createNewOrgRequest(org :Organization) :Object {
 
   return {
