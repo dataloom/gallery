@@ -36,30 +36,67 @@ class EntitySetPermissionsRequest extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { open: false };
+    const selectedProperties = new Set();
+    props.statuses.forEach((status) => {
+      selectedProperties.add(status.aclKey[1]);
+    });
+    this.state = {
+      open: false,
+      selectedProperties
+    };
   }
 
   componentDidMount() {
     this.props.loadPrincipal(this.props.principalId);
   }
 
+  sendUpdateRequests = (requestStatus) => {
+    const { updateStatuses, statuses } = this.props;
+    const { selectedProperties } = this.state;
+    if (statuses.length > 0) {
+      const updatedStatuses = [];
+      const defaultStatus = statuses[0];
+      selectedProperties.forEach((propertyTypeId) => {
+        const updatedStatus = Object.assign({}, defaultStatus, { status: requestStatus });
+        updatedStatus.aclKey[1] = propertyTypeId;
+        updatedStatuses.push(updatedStatus);
+      });
+      updateStatuses(updatedStatuses);
+    }
+  }
+
   approve = () => {
-    const { statuses, updateStatuses } = this.props;
-    const updatedStatuses = statuses.map(status => Object.assign({}, status, {status: RequestStatus.APPROVED }));
-    updateStatuses(updatedStatuses);
+    this.sendUpdateRequests(RequestStatus.APPROVED);
   };
 
   deny = () => {
-    const { statuses, updateStatuses } = this.props;
-    const updatedStatuses = statuses.map(status => Object.assign({}, status, {status: RequestStatus.DECLINED }));
-    updateStatuses(updatedStatuses);
+    this.sendUpdateRequests(RequestStatus.DECLINED);
   };
 
-  renderProperty(principalId, propertyType, requestedRead) {
+  toggleCheckbox = (checked, propertyTypeId) => {
+    const selectedProperties = new Set(this.state.selectedProperties);
+    if (checked) {
+      selectedProperties.add(propertyTypeId);
+    }
+    else {
+      selectedProperties.delete(propertyTypeId);
+    }
+    this.setState({ selectedProperties });
+  }
+
+  renderProperty(principalId, propertyType) {
+    const checked = this.state.selectedProperties.has(propertyType.id);
     return (
       <div className="propertyType" key={propertyType.id}>
         <div className="propertyTypePermissions">
-          <input type="checkbox" id={`ptr-${principalId}-${propertyType.id}`} checked={requestedRead}/>
+          <input
+              type="checkbox"
+              id={`ptr-${principalId}-${propertyType.id}`}
+              defaultChecked={checked}
+              onClick={(e) => {
+                this.toggleCheckbox(e.target.checked, propertyType.id);
+              }}
+          />
         </div>
         <div className="propertyTypeTitle">
           <label htmlFor={`ptr-${principalId}-${propertyType.id}`}>{propertyType.title}</label>
