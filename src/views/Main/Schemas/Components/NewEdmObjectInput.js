@@ -20,6 +20,7 @@ const INITIAL_STATE = {
   typeName: StringConsts.EMPTY,
   typeNamespace: StringConsts.EMPTY,
   datatype: StringConsts.EMPTY,
+  pii: false,
   editing: false,
   error: false
 };
@@ -143,6 +144,7 @@ export class NewEdmObjectInput extends React.Component {
           .setDescription(this.state[DESCRIPTION_FIELD])
           .setDataType(this.state.datatype)
           .build();
+        propertyType.piiField = this.state.pii;
         return EntityDataModelApi.createPropertyType(propertyType);
       }
       default:
@@ -222,11 +224,36 @@ export class NewEdmObjectInput extends React.Component {
             {this.renderInputField('Namespace', NAMESPACE_FIELD)}
             {this.renderInputField('Name', NAME_FIELD)}
             {this.renderInputField('Description', DESCRIPTION_FIELD)}
+            {this.renderPiiDropdown()}
           </div>
         );
       default:
         return null;
     }
+  }
+
+  renderPiiDropdown = () => {
+    const options = [
+      { value: true, label: 'True' },
+      { value: false, label: 'False' }
+    ];
+    return (
+      <div>
+        <div>PII</div>
+        <div className={styles.spacerMini} />
+        <Select
+            value={this.state.pii}
+            onChange={this.handlePiiChange}
+            options={options}
+            className={styles.piiSelect} />
+        <div className={styles.spacerSmall} />
+      </div>
+    );
+  }
+
+  handlePiiChange = (e) => {
+    const newValue = (e && e !== undefined) ? e.value : false;
+    this.setState({ pii: newValue });
   }
 
   renderInputFqnAutosuggest = () => {
