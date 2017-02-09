@@ -31,8 +31,6 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
   },
-  isFetchingOrg: false,
-  isFetchingOrgs: false,
   organizations: {}
 });
 
@@ -41,11 +39,8 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
   switch (action.type) {
 
     case OrgsActionTypes.FETCH_ORG_REQUEST:
-      return state.set('isFetchingOrg', true);
-
     case OrgsActionTypes.FETCH_ORGS_REQUEST:
       return state
-        .set('isFetchingOrgs', true)
         .set('asyncState', Immutable.fromJS({
           status: ASYNC_STATUS.LOADING,
           errorMessage: ''
@@ -55,7 +50,6 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
 
       const org = action.organization;
       return state
-        .set('isFetchingOrg', false)
         .setIn(['organizations', org.id], Immutable.fromJS(org));
     }
 
@@ -68,7 +62,6 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
       });
 
       return state
-        .set('isFetchingOrgs', false)
         .set('organizations', Immutable.fromJS(orgs))
         .set('asyncState', Immutable.fromJS({
           status: ASYNC_STATUS.SUCCESS,
