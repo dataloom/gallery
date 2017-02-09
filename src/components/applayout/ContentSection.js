@@ -6,11 +6,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import StyledStackedFlexContainer from '../flex/StyledStackedFlexContainer';
+import StyledFlexContainerStacked from '../flex/StyledFlexContainerStacked';
+import StyledFlexContainerStackedCentered from '../flex/StyledFlexContainerStackedCentered';
 
-const FlexSection = styled(StyledStackedFlexContainer)`
-  align-items: center;
-  padding: 25px 0;
+const OuterSectionContainer = styled(StyledFlexContainerStackedCentered)`
   background-color: ${(props) => {
     return props.backgroundColor ? props.backgroundColor : 'transparent';
   }};
@@ -19,7 +18,8 @@ const FlexSection = styled(StyledStackedFlexContainer)`
   }}
 `;
 
-const FixedWidthFlexSection = styled(StyledStackedFlexContainer)`
+const InnerSectionContainer = styled(StyledFlexContainerStacked)`
+  padding: 20px 0;
   width: ${(props) => {
     return props.width ? props.width : '1000px';
   }};
@@ -43,13 +43,13 @@ export default class ContentSection extends React.Component {
   render() {
 
     return (
-      <FlexSection
+      <OuterSectionContainer
           backgroundColor={this.props.styles.backgroundColor}
           borderBottom={this.props.styles.borderBottom}>
-        <FixedWidthFlexSection width={this.props.styles.width}>
+        <InnerSectionContainer width={this.props.styles.width}>
           { React.Children.toArray(this.props.children) }
-        </FixedWidthFlexSection>
-      </FlexSection>
+        </InnerSectionContainer>
+      </OuterSectionContainer>
     );
   }
 }

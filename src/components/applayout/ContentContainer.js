@@ -6,9 +6,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import StyledStackedFlexContainer from '../flex/StyledStackedFlexContainer';
+import StyledFlexContainerStacked from '../flex/StyledFlexContainerStacked';
 
-const StackedFlexContainer = styled(StyledStackedFlexContainer)`
+const Container = styled(StyledFlexContainerStacked)`
   flex: 1 0 auto;
 `;
 
@@ -21,9 +21,9 @@ export default class ContentContainer extends React.Component {
   render() {
 
     return (
-      <StackedFlexContainer>
+      <Container>
         { React.Children.toArray(this.props.children) }
-      </StackedFlexContainer>
+      </Container>
     );
   }
 

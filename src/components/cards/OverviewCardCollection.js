@@ -6,7 +6,7 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import StyledStackedFlexContainer from '../flex/StyledStackedFlexContainer';
+import StyledFlexContainerStacked from '../flex/StyledFlexContainerStacked';
 
 export default class OverviewCardCollection extends React.Component {
 
@@ -17,9 +17,9 @@ export default class OverviewCardCollection extends React.Component {
   render() {
 
     return (
-      <StyledStackedFlexContainer>
+      <StyledFlexContainerStacked>
         { React.Children.toArray(this.props.children) }
-      </StyledStackedFlexContainer>
+      </StyledFlexContainerStacked>
     );
   }
 }

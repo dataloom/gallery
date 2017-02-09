@@ -7,9 +7,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import StyledFlexContainer from '../flex/StyledFlexContainer';
-import StyledStackedFlexContainer from '../flex/StyledStackedFlexContainer';
+import StyledFlexContainerStacked from '../flex/StyledFlexContainerStacked';
 
-const Card = styled(StyledStackedFlexContainer)`
+const Card = styled(StyledFlexContainerStacked)`
   background-color: #eceff1;
   border-radius: 8px;
   margin-bottom: 16px;
