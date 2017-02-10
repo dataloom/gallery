@@ -252,7 +252,7 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   handlePiiChange = (e) => {
-    const newValue = (e && e !== undefined) ? e.value : false;
+    const newValue = (e) ? e.value : false;
     this.setState({ pii: newValue });
   }
 
