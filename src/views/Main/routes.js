@@ -8,6 +8,7 @@ import { Login } from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
+import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
@@ -87,6 +88,7 @@ export const makeMainRoutes = () => {
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
+      <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
     </Route>
   );
 };
