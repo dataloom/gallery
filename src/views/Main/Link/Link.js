@@ -21,7 +21,8 @@ export class Link extends React.Component {
       newRow: true,
       editingPropertyType: '',
       editingEntitySets: [],
-      needsTwoEntitySetsError: false
+      needsTwoEntitySetsError: false,
+      loadEntitySetsError: false
     };
   }
 
@@ -42,6 +43,8 @@ export class Link extends React.Component {
         }
       });
       this.setState({ allEntitySets, entityTypeIdToEntitySet });
+    }).catch(() => {
+      this.setState({ loadEntitySetsError: true });
     });
   }
 
@@ -240,7 +243,10 @@ export class Link extends React.Component {
         editingPropertyType: '',
         editingEntitySets: [],
         links: [],
-        needsTwoEntitySetsError: false
+        needsTwoEntitySetsError: false,
+        loadEntitySetsError: false
+      }).catch(() => {
+        this.setState({ loadEntitySetsError: true });
       });
     });
   }
@@ -257,6 +263,8 @@ export class Link extends React.Component {
       return EntityDataModelApi.getEntityType(entityTypeId);
     }).then((entityTypes) => {
       this.loadPropertyTypes(entityTypes);
+    }).catch(() => {
+      this.setState({ loadEntitySetsError: true });
     });
   }
 
@@ -266,6 +274,13 @@ export class Link extends React.Component {
     });
     this.setState({ selectedEntitySetIds });
     this.loadPropertyTypesForSelectedEntitySets(selectedEntitySetIds);
+  }
+
+  renderLoadEntitySetsError = () => {
+    if (this.state.loadEntitySetsError) {
+      return (<div className={styles.error}>Unable to load entity sets.</div>);
+    }
+    return null;
   }
 
   renderChooseEntitySets = () => {
@@ -280,6 +295,7 @@ export class Link extends React.Component {
             options={entitySetOptions}
             multi
             onChange={this.onEntitySetAdded} />
+        {this.renderLoadEntitySetsError()}
       </div>
     );
   }
