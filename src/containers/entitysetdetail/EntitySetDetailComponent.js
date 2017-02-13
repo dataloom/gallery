@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -81,6 +82,15 @@ class EntitySetDetailComponent extends React.Component {
     );
   };
 
+  renderSearchEntitySet = () => {
+    if (!this.props.entitySet) return null;
+    return (
+      <Link to={`/search/${this.props.entitySet.id}`}>
+        Search this entity set
+      </Link>
+    );
+  }
+
   closePermissionsPanel = () => {
     this.setState({ editingPermissions: false });
   };
@@ -105,6 +115,7 @@ class EntitySetDetailComponent extends React.Component {
             );
           }} />
           {this.renderPermissionsPanel()}
+          {this.renderSearchEntitySet()}
 
         </Page.Body>
       </Page>
