@@ -11,13 +11,18 @@ export default class EntitySetDataSearch extends React.Component {
   static propTypes = {
     params: React.PropTypes.shape({
       entitySetId: React.PropTypes.string.isRequired
-    }).isRequired
+    }).isRequired,
+    location: React.PropTypes.shape({
+      query: React.PropTypes.shape({
+        searchTerm: React.PropTypes.string
+      })
+    })
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      searchTerm: '',
+      searchTerm: (props.location.query.searchTerm) ? props.location.query.searchTerm : '',
       searchResults: '',
       title: '',
       asyncStatus: ASYNC_STATUS.PENDING,
@@ -27,10 +32,10 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   componentDidMount() {
-    this.loadPropertyTypes();
+    this.loadPropertyTypes(this.props.location.query.searchTerm);
   }
 
-  loadPropertyTypes = () => {
+  loadPropertyTypes = (searchTerm) => {
     EntityDataModelApi.getEntitySet(this.props.params.entitySetId)
     .then((entitySet) => {
       EntityDataModelApi.getEntityType(entitySet.entityTypeId)
@@ -43,6 +48,9 @@ export default class EntitySetDataSearch extends React.Component {
             title: entitySet.title,
             loadError: false
           });
+          if (searchTerm) {
+            this.executeSearch(searchTerm);
+          }
         }).catch(() => {
           this.setState({ loadError: true });
         });
@@ -92,7 +100,7 @@ export default class EntitySetDataSearch extends React.Component {
       <Page>
         <Page.Header>
           <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
-          <EntitySetSearchBox onSubmit={this.onSearchSubmit} />
+          <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
         </Page.Header>
         <Page.Body>
           {this.renderErrorMessage()}

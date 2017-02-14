@@ -13,6 +13,7 @@ import {
   createEntitySetReference,
   createEntityTypeReference
 } from '../../edm/EdmStorage';
+import DropdownSearchBox from '../../../containers/entitysetsearch/DropdownSearchBox';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
@@ -80,7 +81,7 @@ class ActionDropdown extends React.Component {
             <MenuItem header>Download</MenuItem>
             <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
             <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
-            <MenuItem divider/>
+            <MenuItem divider />
             <li role="presentation">
               <Link
                 to={{
@@ -92,9 +93,12 @@ class ActionDropdown extends React.Component {
                 Visualize
               </Link>
             </li>
+
+            <MenuItem divider />
+            <DropdownSearchBox entitySetId={entitySetId} />
           </SplitButton>
         );
-      }}/>
+      }} />
     );
   }
 }
