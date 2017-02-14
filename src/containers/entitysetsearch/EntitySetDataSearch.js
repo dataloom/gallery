@@ -19,10 +19,11 @@ export default class EntitySetDataSearch extends React.Component {
     this.state = {
       searchTerm: '',
       searchResults: '',
+      title: '',
       asyncStatus: ASYNC_STATUS.PENDING,
       propertyTypes: [],
       loadError: false
-    }
+    };
   }
 
   componentDidMount() {
@@ -39,6 +40,7 @@ export default class EntitySetDataSearch extends React.Component {
         }).then((propertyTypes) => {
           this.setState({
             propertyTypes,
+            title: entitySet.title,
             loadError: false
           });
         }).catch(() => {
@@ -74,6 +76,10 @@ export default class EntitySetDataSearch extends React.Component {
     }
   }
 
+  renderEntitySetTitle = () => {
+    return (this.state.title.length > 0) ? `: ${this.state.title}` : '';
+  }
+
   renderErrorMessage = () => {
     if (this.state.loadError) {
       return <div className={styles.error}>Unable to load entity set info.</div>;
@@ -85,7 +91,7 @@ export default class EntitySetDataSearch extends React.Component {
     return (
       <Page>
         <Page.Header>
-          <Page.Title>Search entity set data</Page.Title>
+          <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
           <EntitySetSearchBox onSubmit={this.onSearchSubmit} />
         </Page.Header>
         <Page.Body>
