@@ -2,7 +2,8 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import Promise from 'bluebird';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi, LinkingApi } from 'loom-data';
+import DefineLinkedEntityType from './DefineLinkedEntityType';
 import Page from '../../../components/page/Page';
 import buttonStyles from '../../../core/styles/buttons.css';
 import styles from './styles.module.css';
@@ -18,11 +19,15 @@ export class Link extends React.Component {
       links: [],
       entityTypeIdToEntitySet: {},
       propertyTypeIdToEntityType: {},
-      newRow: true,
+      newRow: false,
       editingPropertyType: '',
       editingEntitySets: [],
       needsTwoEntitySetsError: false,
-      loadEntitySetsError: false
+      loadEntitySetsError: false,
+      linkingError: false,
+      linkingSuccess: false,
+      chooseLinks: false,
+      chooseLinkedEntityType: false
     };
   }
 
@@ -114,7 +119,7 @@ export class Link extends React.Component {
   }
 
   getPropertyTypeOptions() {
-    const availablePropertyTypes = this.state.availablePropertyTypes;
+    const availablePropertyTypes = Object.assign({}, this.state.availablePropertyTypes);
     this.state.links.forEach((link) => {
       delete availablePropertyTypes[link.propertyType.id];
     });
@@ -190,15 +195,36 @@ export class Link extends React.Component {
 
   renderNotEnoughEntitySetsError = () => {
     if (this.state.needsTwoEntitySetsError) {
-      return <div className={styles.error}>You must specify two or more entity sets to link on.</div>
+      return <div className={styles.error}>You must specify two or more entity sets to link on.</div>;
     }
+    return null;
+  }
+
+  chooseLinks = () => {
+    this.setState({
+      chooseLinks: true,
+      newRow: true
+    });
+  }
+
+  renderChooseLinksButton = () => {
+    if (this.state.selectedEntitySetIds.length < 2 || this.state.chooseLinks) return null;
+    return (
+      <div className={styles.createEntityTypeButtonContainer}>
+        <Button
+            bsStyle="primary"
+            onClick={this.chooseLinks}
+            className={styles.createEntityTypeButton}>
+          {'Define the links to join the entity sets'}</Button>
+      </div>
+    );
   }
 
   renderChooseLinks = () => {
-    if (this.state.selectedEntitySetIds.length < 2) return null;
+    if (!this.state.chooseLinks) return null;
     return (
       <div className={styles.linkSelection}>
-        <div className={styles.explanationText}>Choose property types to link.</div>
+        <div className={styles.explanationText}>Step 2. Choose property types to link.</div>
         <table className={styles.linkTable}>
           <tbody>
             <tr>
@@ -243,11 +269,12 @@ export class Link extends React.Component {
         editingPropertyType: '',
         editingEntitySets: [],
         links: [],
+        newRow: true,
         needsTwoEntitySetsError: false,
         loadEntitySetsError: false
-      }).catch(() => {
-        this.setState({ loadEntitySetsError: true });
       });
+    }).catch(() => {
+      this.setState({ loadEntitySetsError: true });
     });
   }
 
@@ -268,11 +295,16 @@ export class Link extends React.Component {
     });
   }
 
-  onEntitySetAdded = (options) => {
+  onSelectedEntitySetChange = (options) => {
     const selectedEntitySetIds = options.map((option) => {
       return option.value;
     });
-    this.setState({ selectedEntitySetIds });
+    const chooseLinks = (selectedEntitySetIds.length < 2) ? false : this.state.chooseLinks;
+    this.setState({
+      selectedEntitySetIds,
+      chooseLinks,
+      chooseLinkedEntityType: false
+    });
     this.loadPropertyTypesForSelectedEntitySets(selectedEntitySetIds);
   }
 
@@ -289,28 +321,101 @@ export class Link extends React.Component {
     });
     return (
       <div>
-        <div className={styles.explanationText}>Choose entity sets to link.</div>
+        <div className={styles.explanationText}>Step 1. Choose entity sets to link.</div>
         <Select
             value={this.state.selectedEntitySetIds}
             options={entitySetOptions}
             multi
-            onChange={this.onEntitySetAdded} />
+            onChange={this.onSelectedEntitySetChange} />
         {this.renderLoadEntitySetsError()}
       </div>
     );
   }
 
-  renderLinkButton = () => {
-    if (this.state.selectedEntitySetIds.length > 1 && this.state.links.length >= 1) {
+  renderDefineLinkedEntityTypeButton = () => {
+    if (this.state.selectedEntitySetIds.length > 1
+      && this.state.links.length >= 1
+      && !this.state.chooseLinkedEntityType) {
       return (
-        <Button bsStyle="primary" onClick={this.performLink} className={styles.linkButton}>Link</Button>
+        <div className={styles.createEntityTypeButtonContainer}>
+          <Button
+              bsStyle="primary"
+              onClick={this.chooseLinkedEntityType}
+              className={styles.createEntityTypeButton}>
+            {'Define the linked entity type to create'}</Button>
+        </div>
       );
     }
     return null;
   }
 
-  performLink = () => {
-    console.log('~~~~linking~~~~');
+  renderDefineLinkedEntityType = () => {
+    const linkedProps = this.state.links.map((link) => {
+      return link.propertyType.id;
+    });
+    if (this.state.chooseLinkedEntityType) {
+      return (
+        <DefineLinkedEntityType
+            linkedProps={linkedProps}
+            availablePropertyTypes={this.state.availablePropertyTypes}
+            linkFn={this.createLinkingEntityType} />
+      );
+    }
+    return null;
+  }
+
+  chooseLinkedEntityType = () => {
+    this.setState({ chooseLinkedEntityType: true });
+  }
+
+  performLink = (linkingEntityTypeId) => {
+    const linkingProperties = this.state.links.map((link) => {
+      const propertyMap = {};
+      link.entitySets.forEach((entitySet) => {
+        propertyMap[entitySet.id] = link.propertyType.id;
+      });
+      return propertyMap;
+    });
+    LinkingApi.linkEntitySets(linkingProperties, linkingEntityTypeId)
+    .then(() => {
+      this.setState({
+        linkingSuccess: true,
+        linkingError: false
+      });
+    }).catch(() => {
+      this.setState({
+        linkingError: true,
+        linkingSuccess: false
+      });
+    });
+  }
+
+  createLinkingEntityType = (entityType) => {
+    const entityTypeIds = [];
+    this.state.allEntitySets.forEach((entitySet) => {
+      if (this.state.selectedEntitySetIds.includes(entitySet.id)) {
+        entityTypeIds.push(entitySet.entityTypeId);
+      }
+    });
+    LinkingApi.createLinkingEntityType({ entityType, entityTypeIds })
+    .then((linkingEntityTypeId) => {
+      this.performLink(linkingEntityTypeId);
+    }).catch(() => {
+      this.setState({
+        linkingError: true,
+        linkingSuccess: false
+      });
+    });
+  }
+
+  renderLinkingStatus = () => {
+    if (this.state.linkingSuccess) {
+      return <div className={styles.success}>Success! Your linked entity set is being created.</div>;
+    }
+    else if (this.state.linkingError) {
+      return <div className={styles.error}>Unable to link entity sets.</div>;
+    }
+    return null;
   }
 
   render() {
@@ -321,8 +426,11 @@ export class Link extends React.Component {
         </Page.Header>
         <Page.Body>
           {this.renderChooseEntitySets()}
+          {this.renderChooseLinksButton()}
           {this.renderChooseLinks()}
-          {this.renderLinkButton()}
+          {this.renderDefineLinkedEntityTypeButton()}
+          {this.renderDefineLinkedEntityType()}
+          {this.renderLinkingStatus()}
         </Page.Body>
       </Page>
     );
