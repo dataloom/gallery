@@ -1,5 +1,6 @@
 import React from 'react';
-import axios from 'axios';
+import Promise from 'bluebird';
+import { SearchApi, EntityDataModelApi } from 'loom-data';
 import Page from '../../components/page/Page';
 import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
@@ -18,22 +19,44 @@ export default class EntitySetDataSearch extends React.Component {
     this.state = {
       searchTerm: '',
       searchResults: '',
-      asyncStatus: ASYNC_STATUS.PENDING
+      asyncStatus: ASYNC_STATUS.PENDING,
+      propertyTypes: [],
+      loadError: false
     }
   }
 
+  componentDidMount() {
+    this.loadPropertyTypes();
+  }
+
+  loadPropertyTypes = () => {
+    EntityDataModelApi.getEntitySet(this.props.params.entitySetId)
+    .then((entitySet) => {
+      EntityDataModelApi.getEntityType(entitySet.entityTypeId)
+      .then((entityType) => {
+        Promise.map(entityType.properties, (propertyId) => {
+          return EntityDataModelApi.getPropertyType(propertyId);
+        }).then((propertyTypes) => {
+          this.setState({
+            propertyTypes,
+            loadError: false
+          });
+        }).catch(() => {
+          this.setState({ loadError: true });
+        });
+      }).catch(() => {
+        this.setState({ loadError: true });
+      });
+    }).catch(() => {
+      this.setState({ loadError: true });
+    })
+  }
+
   executeSearch = (searchTerm) => {
-    axios({
-      method: 'post',
-      url: `http://localhost:8080/datastore/search/${this.props.params.entitySetId}`,
-      data: searchTerm,
-      headers: {
-        'Content-Type': 'application/json',
-        Authentication: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InN1cHBvcnRAa3J5cHRub3N0aWMuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiRGVtbyIsImFkbWluIiwiSkJJX09QUyIsIkF1dGhlbnRpY2F0ZWRVc2VyIiwidXNlciIsIkpCSV9BRE1JTiJdLCJvcmdhbml6YXRpb25zIjpbIjcyMTFiNmFlLTUzNzUtNDJkMi1iOTgwLTE4YjkyM2YzY2IyYiIsImFkbWluIiwiQXV0aGVudGljYXRlZFVzZXIiLCJ1c2VyIl19LCJuaWNrbmFtZSI6InN1cHBvcnQiLCJyb2xlcyI6WyJEZW1vIiwiYWRtaW4iLCJKQklfT1BTIiwiQXV0aGVudGljYXRlZFVzZXIiLCJ1c2VyIiwiSkJJX0FETUlOIl0sInVzZXJfaWQiOiJhdXRoMHw1N2U0YjJkOGQ5ZDFkMTk0Nzc4ZmQ1YjYiLCJpc3MiOiJodHRwczovL2xvb20uYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDU3ZTRiMmQ4ZDlkMWQxOTQ3NzhmZDViNiIsImF1ZCI6IlBUbXlFeGRCY2tIQWl5T2poNHcyTXFTSVVHV1dFZGY4IiwiZXhwIjoxNDg2OTgzNjIwLCJpYXQiOjE0ODY5NDc2MjB9.pRpt3TB0giowS-4w7zPoORsTApN9b16hGXXZ5_pYUvQ'
-      }
-    }).then((response) => {
+    SearchApi.searchEntitySetData(this.props.params.entitySetId, searchTerm)
+    .then((response) => {
       this.setState({
-        searchResults: response.data,
+        searchResults: response,
         asyncStatus: ASYNC_STATUS.SUCCESS
       });
     }).catch(() => {
@@ -42,11 +65,20 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   onSearchSubmit = (searchTerm) => {
-    this.executeSearch(searchTerm);
-    this.setState({
-      searchTerm,
-      asyncStatus: ASYNC_STATUS.LOADING
-    });
+    if (searchTerm.length >= 1) {
+      this.executeSearch(searchTerm);
+      this.setState({
+        searchTerm,
+        asyncStatus: ASYNC_STATUS.LOADING
+      });
+    }
+  }
+
+  renderErrorMessage = () => {
+    if (this.state.loadError) {
+      return <div className={styles.error}>Unable to load entity set info.</div>;
+    }
+    return null;
   }
 
   render() {
@@ -57,10 +89,15 @@ export default class EntitySetDataSearch extends React.Component {
           <EntitySetSearchBox onSubmit={this.onSearchSubmit} />
         </Page.Header>
         <Page.Body>
+          {this.renderErrorMessage()}
           <AsyncContent
               status={this.state.asyncStatus}
               pendingContent={<h2>Please run a search</h2>}
-              content={() => <EntitySetSearchResults results={this.state.searchResults} />} />
+              content={() => {
+                return (<EntitySetSearchResults
+                    results={this.state.searchResults}
+                    propertyTypes={this.state.propertyTypes} />);
+              }} />
         </Page.Body>
       </Page>
     );

@@ -28,7 +28,6 @@ export default class EntitySetSearchBox extends React.Component {
     return (
       <form onSubmit={this.onSubmit} className={styles.search}>
         <FormGroup className={styles.keyword}>
-          <ControlLabel>Keyword</ControlLabel>
           <InputGroup>
             <InputGroup.Addon><FontAwesome name="search" /></InputGroup.Addon>
             <FormControl
