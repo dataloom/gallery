@@ -4,6 +4,7 @@ import Select from 'react-select';
 import Promise from 'bluebird';
 import { EntityDataModelApi, LinkingApi } from 'loom-data';
 import DefineLinkedEntityType from './DefineLinkedEntityType';
+import DefineLinkedEntitySet from './DefineLinkedEntitySet';
 import Page from '../../../components/page/Page';
 import buttonStyles from '../../../core/styles/buttons.css';
 import styles from './styles.module.css';
@@ -27,7 +28,9 @@ export class Link extends React.Component {
       linkingError: false,
       linkingSuccess: false,
       chooseLinks: false,
-      chooseLinkedEntityType: false
+      chooseLinkedEntityType: false,
+      entityTypeCreated: false,
+      linkingEntityTypeId: ''
     };
   }
 
@@ -368,15 +371,22 @@ export class Link extends React.Component {
     this.setState({ chooseLinkedEntityType: true });
   }
 
-  performLink = (linkingEntityTypeId) => {
+  performLink = (name, title, description) => {
+    const entitySet = {
+      name,
+      title,
+      description,
+      entityTypeId: this.state.linkingEntityTypeId
+    }
     const linkingProperties = this.state.links.map((link) => {
       const propertyMap = {};
-      link.entitySets.forEach((entitySet) => {
-        propertyMap[entitySet.id] = link.propertyType.id;
+      link.entitySets.forEach((linkEntitySet) => {
+        propertyMap[linkEntitySet.id] = link.propertyType.id;
       });
       return propertyMap;
     });
-    LinkingApi.linkEntitySets(linkingProperties, linkingEntityTypeId)
+    const linkingEntitySet = { entitySet, linkingProperties }
+    LinkingApi.linkEntitySets(linkingEntitySet)
     .then(() => {
       this.setState({
         linkingSuccess: true,
@@ -399,9 +409,22 @@ export class Link extends React.Component {
     });
     LinkingApi.createLinkingEntityType({ entityType, entityTypeIds })
     .then((linkingEntityTypeId) => {
-      this.performLink(linkingEntityTypeId);
+      if (linkingEntityTypeId) {
+        this.setState({
+          entityTypeCreated: true,
+          linkingEntityTypeId
+        });
+      }
+      else {
+        this.setState({
+          entityTypeCreated: false,
+          linkingError: true,
+          linkingSuccess: false
+        });
+      }
     }).catch(() => {
       this.setState({
+        entityTypeCreated: false,
         linkingError: true,
         linkingSuccess: false
       });
@@ -419,19 +442,31 @@ export class Link extends React.Component {
   }
 
   render() {
-    return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Link</Page.Title>
-        </Page.Header>
-        <Page.Body>
+    let content;
+    if (this.state.linkingSuccess) {
+      content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
+    }
+    else if (this.state.entityTypeCreated) {
+      content = <DefineLinkedEntitySet linkFn={this.performLink} />;
+    }
+    else {
+      content = (
+        <div>
           {this.renderChooseEntitySets()}
           {this.renderChooseLinksButton()}
           {this.renderChooseLinks()}
           {this.renderDefineLinkedEntityTypeButton()}
           {this.renderDefineLinkedEntityType()}
           {this.renderLinkingStatus()}
-        </Page.Body>
+        </div>
+      );
+    }
+    return (
+      <Page>
+        <Page.Header>
+          <Page.Title>Link</Page.Title>
+        </Page.Header>
+        <Page.Body>{content}</Page.Body>
       </Page>
     );
   }

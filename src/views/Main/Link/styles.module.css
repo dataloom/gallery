@@ -45,7 +45,7 @@
   color: green;
 }
 
-.linkedEntityTypeContainer {
+.linkedDefinitionContainer {
   text-align: center;
 }
 
@@ -77,4 +77,20 @@
 
 .inputRow {
   margin: 10px 0;
+}
+
+.inputRowSet {
+  margin: 10px 0;
+  display: inline-block;
+}
+
+.inputLabel {
+  margin-right: 5px;
+}
+
+.linkingSuccessMsg {
+  font-size: 20px;
+  color: green;
+  font-weight: bold;
+  text-align: center;
 }

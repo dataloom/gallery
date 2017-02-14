@@ -252,7 +252,7 @@ export default class DefineLinkedEntityType extends React.Component {
       );
     });
     return (
-      <div className={styles.linkedEntityTypeContainer}>
+      <div className={styles.linkedDefinitionContainer}>
         <div className={styles.explanationText}>
           Step 3. Define the linked entity type for returning your results.</div>
         <br />
@@ -272,7 +272,7 @@ export default class DefineLinkedEntityType extends React.Component {
           <Button
               bsStyle="primary"
               onClick={this.link}
-              className={styles.linkButton}>LINK</Button>
+              className={styles.linkButton}>Create linked entity type</Button>
           {this.renderError()}
         </div>
       </div>
