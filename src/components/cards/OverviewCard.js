@@ -34,7 +34,7 @@ export default class OverviewCard extends React.Component {
 
   static propTypes = {
     title: React.PropTypes.string.isRequired,
-    description: React.PropTypes.string.isRequired,
+    description: React.PropTypes.string,
     actionControl: React.PropTypes.node
   };
 

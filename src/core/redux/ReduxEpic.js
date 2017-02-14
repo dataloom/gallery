@@ -11,7 +11,7 @@ import CreateEntitySetEpic from '../../containers/entitysetforms/CreateEntitySet
 import EdmEpic from '../../containers/edm/EdmEpic';
 import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
 
-import CreateOrganizationEpic from '../../containers/organizations/epics/CreateOrganizationEpic';
+import OrganizationEpic from '../../containers/organizations/epics/OrganizationEpic';
 import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
 import OrganizationsSearchEpic from '../../containers/organizations/epics/OrganizationsSearchEpic';
 import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
@@ -25,7 +25,7 @@ export default function reduxEpic() {
     PermissionsEpic,
     PrincipalsEpic,
 
-    CreateOrganizationEpic,
+    OrganizationEpic,
     OrganizationsEpic,
     OrganizationsSearchEpic,
     UsersEpic

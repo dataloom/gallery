@@ -29,6 +29,36 @@ const {
   PrincipalTypes
 } = Types;
 
+function fetchOrg(action :Action) :Observable<Action> {
+
+  const { orgId } = action;
+  return Observable
+    .from(OrganizationsApi.getOrganization(orgId))
+    .mergeMap((organization :Organization) => {
+      // TODO: PermissionsActionFactory.checkAuthorizationRequest
+      return Observable.of(
+        OrgsActionFactory.fetchOrgSuccess(organization)
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.fetchOrgFailure()
+      );
+    });
+}
+
+export function fetchOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.FETCH_ORG_REQUEST)
+    .mergeMap(fetchOrg)
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.fetchOrgFailure()
+      );
+    });
+}
+
 function fetchOrgs() :Observable<Action> {
 
   return Observable
@@ -58,7 +88,12 @@ export function fetchOrgsEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORGS_REQUEST)
-    .mergeMap(fetchOrgs);
+    .mergeMap(fetchOrgs)
+    .catch(() => {
+      return Observable.of(
+        OrgsActionFactory.fetchOrgsFailure()
+      );
+    });
 }
 
 function addDomainToOrg(action :Action) :Observable<Action> {
@@ -230,6 +265,7 @@ export function removeMemberFromOrgEpic(action$ :Observable<Action>) :Observable
 }
 
 export default combineEpics(
+  fetchOrgEpic,
   fetchOrgsEpic,
   addDomainToOrgEpic,
   removeDomainFromOrgEpic,

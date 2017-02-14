@@ -9,14 +9,13 @@ import {
   Types
 } from 'loom-data';
 
+import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as PermissionsActionTypes from '../../permissions/PermissionsActionTypes';
 
-import {
-  ASYNC_STATUS
-} from '../../../components/asynccontent/AsyncContent';
-
 const {
+  Organization,
+  OrganizationBuilder,
   Principal,
   PrincipalBuilder
 } = DataModels;
@@ -27,30 +26,37 @@ const {
 } = Types;
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
-  asyncState: {
-    status: ASYNC_STATUS.PENDING,
-    errorMessage: ''
-  },
+  isFetchingOrg: false,
+  isFetchingOrgs: false,
   organizations: {}
 });
 
-export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, action :Object) :Map<*, *> {
+export default function organizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
 
   switch (action.type) {
 
+    case 'LOCATION_CHANGE':
+      console.log('LOCATION_CHANGE', action);
+      return state;
+
     case OrgsActionTypes.FETCH_ORG_REQUEST:
+      return state.set('isFetchingOrg', true);
+
     case OrgsActionTypes.FETCH_ORGS_REQUEST:
-      return state
-        .set('asyncState', Immutable.fromJS({
-          status: ASYNC_STATUS.LOADING,
-          errorMessage: ''
-        }));
+      return state.set('isFetchingOrgs', true);
+
+    case OrgsActionTypes.FETCH_ORG_FAILURE:
+      return state.set('isFetchingOrg', false);
+
+    case OrgsActionTypes.FETCH_ORGS_FAILURE:
+      return state.set('isFetchingOrgs', false);
 
     case OrgsActionTypes.FETCH_ORG_SUCCESS: {
 
       const org = action.organization;
       return state
-        .setIn(['organizations', org.id], Immutable.fromJS(org));
+        .setIn(['organizations', org.id], Immutable.fromJS(org))
+        .set('isFetchingOrg', false);
     }
 
     case OrgsActionTypes.FETCH_ORGS_SUCCESS: {
@@ -63,19 +69,14 @@ export default function organizationsReducer(state :Map<*, *> = INITIAL_STATE, a
 
       return state
         .set('organizations', Immutable.fromJS(orgs))
-        .set('asyncState', Immutable.fromJS({
-          status: ASYNC_STATUS.SUCCESS,
-          errorMessage: ''
-        }));
+        .set('isFetchingOrgs', false);
     }
 
-    case OrgsActionTypes.FETCH_ORG_FAILURE:
-    case OrgsActionTypes.FETCH_ORGS_FAILURE:
-      return INITIAL_STATE
-        .set('asyncState', Immutable.fromJS({
-          status: ASYNC_STATUS.ERROR,
-          errorMessage: 'Failed to load Organizations'
-        }));
+    case OrgActionTypes.CREATE_ORG_SUCCESS: {
+
+      const organization :Organization = action.organization;
+      return state.setIn(['organizations', organization.id], Immutable.Map(organization));
+    }
 
     case PermissionsActionTypes.CHECK_AUTHORIZATION_RESOLVE: {
 

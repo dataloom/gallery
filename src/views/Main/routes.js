@@ -14,7 +14,6 @@ import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
-import StringConsts from '../../utils/Consts/StringConsts';
 import { configure as edmApiConfigure } from '../../containers/Api';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
@@ -83,7 +82,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
-      <Route path={PageConsts.ORG} component={OrganizationsContainerComponent} onEnter={requireAuth}>
+      <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
         <IndexRoute component={OrganizationsListComponent} />
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>

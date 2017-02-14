@@ -2,9 +2,7 @@
  * @flow
  */
 
-import {
-  combineReducers
-} from 'redux-immutable';
+import { combineReducers } from 'redux-immutable';
 
 import catalogReducer from '../../containers/catalog/CatalogReducer';
 import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
@@ -15,6 +13,7 @@ import securableObjectReducer from '../../containers/securableobject/SecurableOb
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
 import usersReducer from '../../containers/organizations/reducers/UsersReducer';
+import routerReducer from '../router/RouterReducer';
 
 export default function reduxReducer() {
 
@@ -27,6 +26,7 @@ export default function reduxReducer() {
     securableObject: securableObjectReducer,
     permissions: permissionReducer,
     users: usersReducer,
-    async: asyncReducer
+    async: asyncReducer,
+    router: routerReducer
   });
 }

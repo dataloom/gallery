@@ -8,20 +8,21 @@ import FontAwesome from 'react-fontawesome';
 import Immutable from 'immutable';
 import styled from 'styled-components';
 
-import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { hashHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 
+import Button from '../../../components/buttons/Button';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
-import StyledStackedFlexContainer from '../../../components/flex/StyledStackedFlexContainer';
+import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
 import {
   searchOrgsRequest
 } from '../actions/OrganizationsActionFactory';
 
 const Actions = styled(StyledFlexContainer)`
-  margin-top: 20px;
   align-items: center;
+  margin-top: 20px;
 `;
 
 const ActionSeparator = styled.span`
@@ -56,13 +57,12 @@ const SearchInput = styled.input`
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   flex: 1 0 auto;
-
   &:focus {
     outline: 0;
   }
 `;
 
-function mapStateToProps(state :Immutable.Map<*, *>) {
+function mapStateToProps(state :Immutable.Map) {
 
   return {};
 }
@@ -98,6 +98,12 @@ class OrganizationsHeaderComponent extends React.Component {
     this.state = {
       searchInputValue: ''
     };
+  }
+
+  onCreateNewOrganization = () => {
+
+    // TODO: routing paths need to go somewhere
+    hashHistory.push('/orgs/new');
   }
 
   search = (searchQuery :string) => {
@@ -143,35 +149,24 @@ class OrganizationsHeaderComponent extends React.Component {
             value={this.state.searchInputValue}
             onChange={this.handleOnChangeSearchInput}
             onKeyDown={this.handleOnKeyDownSearchInput} />
-        <Button
-            bsStyle="primary"
-            onClick={this.handleOnClickSearchButton}>
+        <Button onClick={this.handleOnClickSearchButton}>
           Search
         </Button>
       </SearchBox>
     );
   }
 
-  renderCreateOrganizationButton = () => {
-
-    return (
-      <Button bsStyle="primary" onClick={() => {}}>
-        Create New Organization
-      </Button>
-    );
-  }
-
   render() {
 
     return (
-      <StyledStackedFlexContainer>
+      <StyledFlexContainerStacked>
         <h1>Organizations</h1>
         <Actions>
           { this.renderSearch() }
           <ActionSeparator>OR</ActionSeparator>
-          { this.renderCreateOrganizationButton() }
+          <Button onClick={this.onCreateNewOrganization}>Create New Organization</Button>
         </Actions>
-      </StyledStackedFlexContainer>
+      </StyledFlexContainerStacked>
     );
   }
 }

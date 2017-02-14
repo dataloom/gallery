@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 
+import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import Button from '../../../components/buttons/Button';
 import OverviewCard from '../../../components/cards/OverviewCard';
 import OverviewCardCollection from '../../../components/cards/OverviewCardCollection';
@@ -18,11 +19,13 @@ import OverviewCardCollection from '../../../components/cards/OverviewCardCollec
 import { fetchOrgsRequest } from '../actions/OrganizationsActionFactory';
 import { fetchAllUsersRequest } from '../actions/UsersActionFactory';
 
-function mapStateToProps(state :Immutable.Map<*, *>) {
+function mapStateToProps(state :Immutable.Map) {
 
+  const isFetchingOrgs = state.getIn(['organizations', 'isFetchingOrgs']);
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map());
 
   return {
+    isFetchingOrgs,
     organizations
   };
 }
@@ -47,6 +50,7 @@ class OrganizationsListComponent extends React.Component {
       fetchOrgsRequest: React.PropTypes.func.isRequired,
       fetchAllUsersRequest: React.PropTypes.func.isRequired
     }).isRequired,
+    isFetchingOrgs: React.PropTypes.bool.isRequired,
     organizations: React.PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
@@ -59,12 +63,12 @@ class OrganizationsListComponent extends React.Component {
   renderOrganization = (organization :Immutable.Map) => {
 
     const viewOrgDetailsOnClick = () => {
-      hashHistory.push(`/org/${organization.get('id')}`);
+      hashHistory.push(`/orgs/${organization.get('id')}`);
     };
 
     const viewOrgDetailsButton = (
       <Button onClick={viewOrgDetailsOnClick}>
-        View Organization Details
+        View Organization
       </Button>
     );
 
@@ -106,6 +110,10 @@ class OrganizationsListComponent extends React.Component {
   render() {
 
     // TODO: async content loading
+
+    if (this.props.isFetchingOrgs) {
+      return <LoadingSpinner />;
+    }
 
     if (this.props.organizations.isEmpty()) {
       return this.renderNoOrganizations();

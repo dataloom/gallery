@@ -3,7 +3,6 @@ const CATALOG = 'catalog';
 const LOGIN = 'login';
 const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
-const ORG = 'org';
 const DATA_MODEL = 'datamodel';
 const DATASOURCES = 'datasources';
 
@@ -13,7 +12,6 @@ export default {
   LOGIN,
   SETTINGS,
   VISUALIZE,
-  ORG,
   DATA_MODEL,
   DATASOURCES
 };

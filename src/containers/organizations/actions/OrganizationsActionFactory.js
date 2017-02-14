@@ -78,29 +78,6 @@ export function searchOrgsFailure() :Object {
   };
 }
 
-export function createNewOrgRequest(org :Organization) :Object {
-
-  return {
-    type: OrgsActionTypes.CREATE_NEW_ORG_REQUEST,
-    org
-  };
-}
-
-export function createNewOrgSuccess(orgId :UUID) :Object {
-
-  return {
-    type: OrgsActionTypes.CREATE_NEW_ORG_SUCCESS,
-    orgId
-  };
-}
-
-export function createNewOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.CREATE_NEW_ORG_FAILURE
-  };
-}
-
 export function joinOrgRequest(orgId :UUID) :Object {
 
   return {

@@ -7,7 +7,9 @@ import React from 'react';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
-const ControlWrapper = styled.div.withConfig({ displayName: 'ControlWrapper' })`
+import { isNonEmptyString } from '../../utils/LangUtils';
+
+const ControlWrapper = styled.div`
   min-height: 30px;
   width: 100%;
   margin: 0;
@@ -50,7 +52,7 @@ const SaveIcon = styled(Icon)`
   visibility: visible;
 `;
 
-const TextControl = styled.div.withConfig({ displayName: 'TextControl' })`
+const TextControl = styled.div`
   border: 1px solid transparent;
   position: relative;
   font-size: ${(props) => {
@@ -126,12 +128,13 @@ const STYLE_MAP = {
 
 export default class EditableTextField extends React.Component {
 
+  // TODO: take in a prop that can disable the ability to edit altogether
   static propTypes = {
     type: React.PropTypes.string,
     size: React.PropTypes.string,
     placeholder: React.PropTypes.string,
-    value: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func.isRequired
+    value: React.PropTypes.string,
+    onChange: React.PropTypes.func
   };
 
   control :any
@@ -148,19 +151,31 @@ export default class EditableTextField extends React.Component {
     this.control = null;
     this.controlWrapper = null;
     this.state = {
-      editable: false,
-      controlValue: this.props.value
+      editable: !isNonEmptyString(this.props.value),
+      controlValue: isNonEmptyString(this.props.value) ? this.props.value : ''
     };
   }
 
   componentDidUpdate(prevProps :Object, prevState :Object) {
 
     if (this.state.editable && this.control) {
+      // BUG: if there's multiple InlineEditableControl components on the page, the focus might not be on the desired
+      // element. perhaps need to take in a prop to indicate focus
       this.control.focus();
     }
 
-    if (prevState.editable === true && this.state.editable === false) {
+    if (prevState.editable === true && this.state.editable === false && this.props.onChange) {
       this.props.onChange(this.state.controlValue);
+    }
+  }
+
+  componentWillReceiveProps(nextProps :Object) {
+
+    if (this.props.value !== nextProps.value) {
+      this.setState({
+        editable: !isNonEmptyString(nextProps.value),
+        controlValue: isNonEmptyString(nextProps.value) ? nextProps.value : ''
+      });
     }
   }
 
@@ -232,8 +247,10 @@ export default class EditableTextField extends React.Component {
   renderTextAreaControl = () => {
 
     if (this.state.editable) {
-      // +2 1px border
-      STYLE_MAP[this.props.size].height = `${Math.ceil(this.control.clientHeight) + 2}px`;
+      if (this.control) {
+        // +2 1px border
+        STYLE_MAP[this.props.size].height = `${Math.ceil(this.control.clientHeight) + 2}px`;
+      }
       return (
         <TextAreaControl
             styleMap={STYLE_MAP[this.props.size]}
