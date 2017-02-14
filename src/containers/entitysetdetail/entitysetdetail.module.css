@@ -28,3 +28,16 @@
     font-weight: 600;
 }
 
+.buttonWrapper {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.center {
+  display: inline-block;
+}
+
+.buttonLink, .buttonLink:hover, .buttonLink:visited, .buttonLink:active {
+  color: white;
+  text-decoration: none;
+}
