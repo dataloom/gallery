@@ -85,9 +85,13 @@ class EntitySetDetailComponent extends React.Component {
   renderSearchEntitySet = () => {
     if (!this.props.entitySet) return null;
     return (
-      <Link to={`/search/${this.props.entitySet.id}`}>
-        Search this entity set
-      </Link>
+      <div className={styles.buttonWrapper}>
+        <Button bsStyle="primary" className={styles.center}>
+          <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+            Search this entity set
+          </Link>
+        </Button>
+      </div>
     );
   }
 
