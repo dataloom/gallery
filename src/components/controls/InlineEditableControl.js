@@ -61,6 +61,9 @@ const TextControl = styled.div`
   line-height: ${(props) => {
     return props.styleMap.lineHeight;
   }};
+  margin: ${(props) => {
+    return props.styleMap.margin;
+  }};
   padding: ${(props) => {
     return props.styleMap.padding;
   }};
@@ -75,6 +78,9 @@ const TextInputControl = styled.input`
   }};
   line-height: ${(props) => {
     return props.styleMap.lineHeight;
+  }};
+  margin: ${(props) => {
+    return props.styleMap.margin;
   }};
   padding: ${(props) => {
     return props.styleMap.padding;
@@ -98,6 +104,9 @@ const TextAreaControl = styled.textarea`
   line-height: ${(props) => {
     return props.styleMap.lineHeight;
   }};
+  margin: ${(props) => {
+    return props.styleMap.margin;
+  }};
   padding: ${(props) => {
     return props.styleMap.padding;
   }};
@@ -111,94 +120,126 @@ const TYPES = {
   TEXA_AREA: 'textarea'
 };
 
+/*
+ * the negative margin-left is to adjust for the padding + border offset
+ */
 const STYLE_MAP = {
   medium: {
     fontSize: '20px',
     inputFontSize: '18px',
     lineHeight: '24px',
+    margin: '0 0 0 -13px',
     padding: '8px 12px'
   },
   xlarge: {
     fontSize: '32px',
     inputFontSize: '30px',
     lineHeight: '36px',
+    margin: '0 0 0 -13px',
     padding: '10px 12px'
   }
 };
 
-export default class EditableTextField extends React.Component {
+export default class InlineEditableControl extends React.Component {
 
   // TODO: take in a prop that can disable the ability to edit altogether
   static propTypes = {
-    type: React.PropTypes.string,
-    size: React.PropTypes.string,
+    type: React.PropTypes.string.isRequired,
+    size: React.PropTypes.string.isRequired,
+    style: React.PropTypes.object,
     placeholder: React.PropTypes.string,
     value: React.PropTypes.string,
     onChange: React.PropTypes.func
+  };
+
+  static defaultProps = {
+    style: {},
+    placeholder: '',
+    value: '',
+    onChange: () => {}
   };
 
   control :any
   controlWrapper :any
   state :{
     editable :boolean,
-    controlValue :string
+    currentValue :string,
+    previousValue :string
   }
 
   constructor(props :Object) {
 
     super(props);
 
+    const initialValue = isNonEmptyString(this.props.value) ? this.props.value : '';
+    const initializeAsEditable = !isNonEmptyString(initialValue);
+
     this.control = null;
     this.controlWrapper = null;
+
     this.state = {
-      editable: !isNonEmptyString(this.props.value),
-      controlValue: isNonEmptyString(this.props.value) ? this.props.value : ''
+      editable: initializeAsEditable,
+      currentValue: initialValue,
+      previousValue: initialValue
     };
   }
 
   componentDidUpdate(prevProps :Object, prevState :Object) {
 
-    if (this.state.editable && this.control) {
+    console.log('InlineEditableControl.componentDidUpdate()');
+    console.log('prevState', prevState);
+    console.log('thisState', this.state);
+
+    if (this.control
+        && prevState.editable === false
+        && this.state.editable === true) {
       // BUG: if there's multiple InlineEditableControl components on the page, the focus might not be on the desired
       // element. perhaps need to take in a prop to indicate focus
       this.control.focus();
     }
 
-    if (prevState.editable === true && this.state.editable === false && this.props.onChange) {
-      this.props.onChange(this.state.controlValue);
+    // going from editable to not editable should invoke the onChange callback only if the value actually changed
+    if (prevState.previousValue !== this.state.currentValue
+        && prevState.editable === true
+        && this.state.editable === false) {
+      this.props.onChange(this.state.currentValue);
     }
   }
 
   componentWillReceiveProps(nextProps :Object) {
 
     if (this.props.value !== nextProps.value) {
+      const newValue = isNonEmptyString(nextProps.value) ? nextProps.value : '';
+      const initializeAsEditable = !isNonEmptyString(newValue);
       this.setState({
-        editable: !isNonEmptyString(nextProps.value),
-        controlValue: isNonEmptyString(nextProps.value) ? nextProps.value : ''
+        editable: initializeAsEditable,
+        currentValue: newValue,
+        previousValue: newValue
       });
     }
   }
 
-  toggleEditMode = () => {
+  toggleEditable = () => {
 
-    if (!this.state.controlValue) {
+    if (!this.state.currentValue) {
       return;
     }
 
     this.setState({
-      editable: !this.state.editable
+      editable: !this.state.editable,
+      previousValue: this.state.currentValue
     });
   }
 
   handleOnBlur = () => {
 
-    this.toggleEditMode();
+    this.toggleEditable();
   }
 
   handleOnChange = (event :SyntheticInputEvent) => {
 
     this.setState({
-      controlValue: event.target.value
+      currentValue: event.target.value
     });
   }
 
@@ -207,7 +248,7 @@ export default class EditableTextField extends React.Component {
     switch (event.keyCode) {
       case 13: // 'Enter' key code
       case 27: // 'Esc' key code
-        this.toggleEditMode();
+        this.toggleEditable();
         break;
       default:
         break;
@@ -221,7 +262,7 @@ export default class EditableTextField extends React.Component {
         <TextInputControl
             styleMap={STYLE_MAP[this.props.size]}
             placeholder={this.props.placeholder}
-            value={this.state.controlValue}
+            value={this.state.currentValue}
             onBlur={this.handleOnBlur}
             onChange={this.handleOnChange}
             onKeyDown={this.handleOnKeyDown}
@@ -235,11 +276,11 @@ export default class EditableTextField extends React.Component {
       <TextControl
           className="control"
           styleMap={STYLE_MAP[this.props.size]}
-          onClick={this.toggleEditMode}
+          onClick={this.toggleEditable}
           innerRef={(element) => {
             this.control = element;
           }}>
-        { this.state.controlValue }
+        { this.state.currentValue }
       </TextControl>
     );
   }
@@ -255,7 +296,7 @@ export default class EditableTextField extends React.Component {
         <TextAreaControl
             styleMap={STYLE_MAP[this.props.size]}
             placeholder={this.props.placeholder}
-            value={this.state.controlValue}
+            value={this.state.currentValue}
             onBlur={this.handleOnBlur}
             onChange={this.handleOnChange}
             onKeyDown={this.handleOnKeyDown}
@@ -269,11 +310,11 @@ export default class EditableTextField extends React.Component {
       <TextControl
           className="control"
           styleMap={STYLE_MAP[this.props.size]}
-          onClick={this.toggleEditMode}
+          onClick={this.toggleEditable}
           innerRef={(element) => {
             this.control = element;
           }}>
-        { this.state.controlValue }
+        { this.state.currentValue }
       </TextControl>
     );
   };
@@ -283,14 +324,14 @@ export default class EditableTextField extends React.Component {
     let button;
     if (this.state.editable) {
       button = (
-        <SaveIcon className="icon" onClick={this.toggleEditMode}>
+        <SaveIcon className="icon" onClick={this.toggleEditable}>
           <FontAwesome name="check" />
         </SaveIcon>
       );
     }
     else {
       button = (
-        <EditIcon className="icon" onClick={this.toggleEditMode}>
+        <EditIcon className="icon" onClick={this.toggleEditable}>
           <FontAwesome name="pencil" />
         </EditIcon>
       );
@@ -311,6 +352,7 @@ export default class EditableTextField extends React.Component {
 
     return (
       <ControlWrapper
+          style={this.props.style}
           styleMap={STYLE_MAP[this.props.size]}
           innerRef={(element) => {
             this.controlWrapper = element;
