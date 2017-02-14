@@ -13,7 +13,8 @@
 .explanationText {
   font-size: 16px;
   font-weight: bold;
-  padding: 10px 0;
+  padding: 40px 0 20px 0;
+  text-align: center;
 }
 
 .linkBox {
@@ -25,10 +26,71 @@
   margin-left: 10px;
 }
 
-.linkButton {
+.createEntityTypeButtonContainer {
+  width: 100%;
+  text-align: center;
+}
+
+.createEntityTypeButton {
   margin-top: 30px;
+  text-align: center;
+  display: inline-block;
 }
 
 .error {
   color: red;
+}
+
+.success {
+  color: green;
+}
+
+.linkedDefinitionContainer {
+  text-align: center;
+}
+
+.entityTypeTableWrapper {
+  display: inline-block;
+}
+
+.tableCell {
+    padding: 5px 10px;
+    color: #767a7c;
+    border: 1px solid #d1d6da;
+    height: 30px;
+    min-width: 200px;
+    text-align: center;
+}
+
+.linkButton {
+  margin: 10px 0;
+}
+
+.inputBox {
+  margin-left: 5px;
+}
+
+.longInputBox {
+  width: 300px;
+  float: right;
+}
+
+.inputRow {
+  margin: 10px 0;
+}
+
+.inputRowSet {
+  margin: 10px 0;
+  display: inline-block;
+}
+
+.inputLabel {
+  margin-right: 5px;
+}
+
+.linkingSuccessMsg {
+  font-size: 20px;
+  color: green;
+  font-weight: bold;
+  text-align: center;
 }
