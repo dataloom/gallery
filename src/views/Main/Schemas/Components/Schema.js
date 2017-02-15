@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react';
+import { SplitButton, MenuItem } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import { PropertyList } from './PropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
-import FileService from '../../../../utils/FileService';
 import { EntityTypeFqnList } from './EntityTypeFqnList';
-import { DropdownButton } from './DropdownButton';
 import styles from '../styles.module.css';
 
 export class Schema extends React.Component {
@@ -19,31 +18,8 @@ export class Schema extends React.Component {
   constructor() {
     super();
     this.state = {
-      error: styles.hidden,
-      disableJson: false
+      error: false
     };
-  }
-
-  handleClick = () => {
-    this.setState({ disableJson: true });
-    this.downloadFile(FileConsts.JSON);
-  }
-
-  downloadFile = (datatype) => {
-    FileService.saveFile(this.props.schema, this.props.schema.fqn.name, datatype, this.enableButton);
-  }
-
-  displayError = () => {
-    this.setState({
-      error: styles.errorMsg,
-      disableJson: false
-    });
-  }
-
-  enableButton = (datatype) => {
-    if (datatype === FileConsts.JSON) {
-      this.setState({ disableJson: false });
-    }
   }
 
   updateSchema = (newTypeUuid, action, type) => {
@@ -51,23 +27,40 @@ export class Schema extends React.Component {
       return EntityDataModelApi.updateSchema(this.props.schema.fqn, action, newTypeUuid, [])
       .then(() => {
         this.props.updateFn();
+        this.setState({ error: false });
+      }).catch(() => {
+        this.setState({ error: true });
       });
     }
     return EntityDataModelApi.updateSchema(this.props.schema.fqn, action, [], newTypeUuid)
     .then(() => {
       this.props.updateFn();
+      this.setState({ error: false });
+    }).catch(() => {
+      this.setState({ error: true });
     });
+  }
+
+  renderError() {
+    if (this.state.error) {
+      return (<div className={styles.errorMsg}>Unable to update schema.</div>);
+    }
+    return null;
   }
 
   render() {
     const { schema, allEntityTypeNamespaces, allPropNamespaces } = this.props;
-    const options = [FileConsts.JSON];
     return (
       <div>
         <div className={styles.name}>{`${schema.fqn.namespace}.${schema.fqn.name}`}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
-          <DropdownButton downloadFn={this.downloadFile} options={options} />
+          <SplitButton bsStyle="primary" title="Download options" pullRight>
+            <MenuItem eventKey="1" href={EntityDataModelApi.getSchemaFileUrl(schema.fqn, FileConsts.YAML)}>
+                Download as .yaml</MenuItem>
+            <MenuItem eventKey="1" href={EntityDataModelApi.getSchemaFileUrl(schema.fqn, FileConsts.JSON)}>
+                Download as .json</MenuItem>
+          </SplitButton>
         </div>
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
@@ -81,7 +74,7 @@ export class Schema extends React.Component {
             updateFn={this.updateSchema}
             allPropNamespaces={allPropNamespaces}
             editingPermissions={false} />
-        <div className={this.state.error}>Unable to download {name}</div>
+        {this.renderError()}
         <div className={styles.spacerBig} />
         <hr />
       </div>
