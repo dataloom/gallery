@@ -60,24 +60,27 @@ function getUniqueId() {
   return idCounter;
 }
 
+/*
+ * TODO: allow for a max count before scrollbar
+ */
+
 export default class SimpleListGroupControl extends React.Component {
 
-  // TODO: take in a prop that can disable the ability to edit altogether
   static propTypes = {
-    style: React.PropTypes.object,
     placeholder: React.PropTypes.string,
     values: React.PropTypes.oneOfType([
       React.PropTypes.arrayOf(React.PropTypes.string),
       React.PropTypes.instanceOf(Immutable.List)
     ]).isRequired,
     isValid: React.PropTypes.func,
+    viewOnly: React.PropTypes.bool,
     onAdd: React.PropTypes.func,
     onRemove: React.PropTypes.func
   };
 
   static defaultProps = {
-    style: {},
     placeholder: '',
+    viewOnly: false,
     isValid: () => {},
     onAdd: () => {},
     onRemove: () => {}
@@ -143,6 +146,10 @@ export default class SimpleListGroupControl extends React.Component {
 
   renderAddItemControl = () => {
 
+    if (this.props.viewOnly) {
+      return null;
+    }
+
     return (
       <ListItemWrapper>
         <AddItemInput
@@ -165,13 +172,19 @@ export default class SimpleListGroupControl extends React.Component {
           <ListItemValue>
             { value }
           </ListItemValue>
-          <ListItemButton
-              className="remove"
-              onClick={() => {
-                this.removeItem(value);
-              }}>
-            <FontAwesome name="minus" />
-          </ListItemButton>
+          {
+            this.props.viewOnly
+              ? null
+              : (
+                <ListItemButton
+                    className="remove"
+                    onClick={() => {
+                      this.removeItem(value);
+                    }}>
+                  <FontAwesome name="minus" />
+                </ListItemButton>
+              )
+          }
         </ListItemWrapper>
       );
     });

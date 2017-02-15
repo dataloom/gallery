@@ -10,11 +10,13 @@ import styled from 'styled-components';
 import { isNonEmptyString } from '../../utils/LangUtils';
 
 const ControlWrapper = styled.div`
-  min-height: 30px;
-  width: 100%;
+  display: inline-flex;
   margin: 0;
   padding: 0;
-  display: inline-flex;
+  width: 100%;
+`;
+
+const EditableControlWrapper = styled(ControlWrapper)`
   &:hover {
     cursor: pointer;
     .control {
@@ -140,27 +142,30 @@ const STYLE_MAP = {
   }
 };
 
+/*
+ * TODO: explore how to handle children. for example, there's a use case where the non-edit view could display
+ *       a Badge inside TextControl
+ */
+
 export default class InlineEditableControl extends React.Component {
 
-  // TODO: take in a prop that can disable the ability to edit altogether
   static propTypes = {
     type: React.PropTypes.string.isRequired,
     size: React.PropTypes.string.isRequired,
-    style: React.PropTypes.object,
     placeholder: React.PropTypes.string,
     value: React.PropTypes.string,
+    viewOnly: React.PropTypes.bool,
     onChange: React.PropTypes.func
   };
 
   static defaultProps = {
-    style: {},
-    placeholder: '',
+    placeholder: 'Click to edit...',
     value: '',
+    viewOnly: false,
     onChange: () => {}
   };
 
   control :any
-  controlWrapper :any
   state :{
     editable :boolean,
     currentValue :string,
@@ -175,7 +180,6 @@ export default class InlineEditableControl extends React.Component {
     const initializeAsEditable = !isNonEmptyString(initialValue);
 
     this.control = null;
-    this.controlWrapper = null;
 
     this.state = {
       editable: initializeAsEditable,
@@ -217,6 +221,10 @@ export default class InlineEditableControl extends React.Component {
 
   toggleEditable = () => {
 
+    if (this.props.viewOnly) {
+      return;
+    }
+
     if (!isNonEmptyString(this.state.currentValue)) {
       return;
     }
@@ -253,7 +261,7 @@ export default class InlineEditableControl extends React.Component {
 
   renderTextControl = () => {
 
-    if (this.state.editable) {
+    if (!this.props.viewOnly && this.state.editable) {
       return (
         <TextInputControl
             styleMap={STYLE_MAP[this.props.size]}
@@ -276,14 +284,18 @@ export default class InlineEditableControl extends React.Component {
           innerRef={(element) => {
             this.control = element;
           }}>
-        { this.state.currentValue }
+        {
+          isNonEmptyString(this.state.currentValue)
+            ? this.state.currentValue
+            : this.props.placeholder
+        }
       </TextControl>
     );
   }
 
   renderTextAreaControl = () => {
 
-    if (this.state.editable) {
+    if (!this.props.viewOnly && this.state.editable) {
       if (this.control) {
         // +2 1px border
         STYLE_MAP[this.props.size].height = `${Math.ceil(this.control.clientHeight) + 2}px`;
@@ -310,52 +322,62 @@ export default class InlineEditableControl extends React.Component {
           innerRef={(element) => {
             this.control = element;
           }}>
-        { this.state.currentValue }
+        {
+          isNonEmptyString(this.state.currentValue)
+            ? this.state.currentValue
+            : this.props.placeholder
+        }
       </TextControl>
     );
   };
 
-  render() {
+  getControl = () => {
 
-    let button;
-    if (this.state.editable) {
-      button = (
+    switch (this.props.type) {
+      case TYPES.TEXT:
+        return this.renderTextControl();
+      case TYPES.TEXA_AREA:
+        return this.renderTextAreaControl();
+      default:
+        return this.renderTextControl();
+    }
+  }
+
+  getEditButton = () => {
+
+    if (!this.props.viewOnly && this.state.editable) {
+      return (
         <SaveIcon className="icon" onClick={this.toggleEditable}>
           <FontAwesome name="check" />
         </SaveIcon>
       );
     }
-    else {
-      button = (
-        <EditIcon className="icon" onClick={this.toggleEditable}>
-          <FontAwesome name="pencil" />
-        </EditIcon>
+
+    return (
+      <EditIcon className="icon" onClick={this.toggleEditable}>
+        <FontAwesome name="pencil" />
+      </EditIcon>
+    );
+  }
+
+  render() {
+
+    const control = this.getControl();
+    const editButton = this.getEditButton();
+
+    if (this.props.viewOnly) {
+      return (
+        <ControlWrapper>
+          { control }
+        </ControlWrapper>
       );
     }
 
-    let control;
-    switch (this.props.type) {
-      case TYPES.TEXT:
-        control = this.renderTextControl();
-        break;
-      case TYPES.TEXA_AREA:
-        control = this.renderTextAreaControl();
-        break;
-      default:
-        control = this.renderTextControl();
-        break;
-    }
-
     return (
-      <ControlWrapper
-          style={this.props.style}
-          styleMap={STYLE_MAP[this.props.size]}
-          innerRef={(element) => {
-            this.controlWrapper = element;
-          }}>
+      <EditableControlWrapper>
         { control }
-        { button }
-      </ControlWrapper>
+        { editButton }
+      </EditableControlWrapper>
     );
   }
 }
