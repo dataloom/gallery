@@ -1,17 +1,18 @@
 import React, { PropTypes } from 'react';
-import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import styles from '../securableobject/securableobject.module.css';
 
 export default class EntitySetSearchBox extends React.Component {
   static propTypes = {
-    onSubmit: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired,
+    initialSearch: PropTypes.string
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      searchTerm: ''
+      searchTerm: (props.initialSearch) ? props.initialSearch : ''
     };
   }
 
