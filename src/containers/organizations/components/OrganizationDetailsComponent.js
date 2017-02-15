@@ -18,21 +18,38 @@ import {
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import Button from '../../../components/buttons/Button';
 import InlineEditableControl from '../../../components/controls/InlineEditableControl';
+import SimpleListGroupControl from '../../../components/controls/SimpleListGroupControl';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 import StyledFlexContainerStackedLeftAligned from '../../../components/flex/StyledFlexContainerStackedLeftAligned';
+import Utils from '../../../utils/Utils';
 
 import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 
 import {
   createOrganizationRequest,
   updateOrganizationDescriptionRequest,
-  updateOrganizationTitleRequest
+  updateOrganizationTitleRequest,
+  addDomainToOrganizationRequest,
+  removeDomainFromOrganizationRequest,
+  addRoleToOrganizationRequest,
+  removeRoleFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
 import {
   fetchOrgRequest
 } from '../actions/OrganizationsActionFactory';
+
+const SectionHeading = styled.div`
+  margin: 50px 0 25px;
+  & > h3 {
+    margin: 0;
+    margin-bottom: 10px;
+  }
+  & > h5 {
+    margin: 0;
+  }
+`;
 
 const {
   Organization,
@@ -84,7 +101,11 @@ function mapDispatchToProps(dispatch :Function) {
     createOrganizationRequest,
     fetchOrgRequest,
     updateOrganizationDescriptionRequest,
-    updateOrganizationTitleRequest
+    updateOrganizationTitleRequest,
+    addDomainToOrganizationRequest,
+    removeDomainFromOrganizationRequest,
+    addRoleToOrganizationRequest,
+    removeRoleFromOrganizationRequest
   };
 
   return {
@@ -100,7 +121,11 @@ class OrganizationDetailsComponent extends React.Component {
       createOrganizationRequest: React.PropTypes.func.isRequired,
       fetchOrgRequest: React.PropTypes.func.isRequired,
       updateOrganizationDescriptionRequest: React.PropTypes.func.isRequired,
-      updateOrganizationTitleRequest: React.PropTypes.func.isRequired
+      updateOrganizationTitleRequest: React.PropTypes.func.isRequired,
+      addDomainToOrganizationRequest: React.PropTypes.func.isRequired,
+      removeDomainFromOrganizationRequest: React.PropTypes.func.isRequired,
+      addRoleToOrganizationRequest: React.PropTypes.func.isRequired,
+      removeRoleFromOrganizationRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isFetchingOrg: React.PropTypes.bool.isRequired,
     mode: React.PropTypes.string.isRequired,
@@ -196,6 +221,86 @@ class OrganizationDetailsComponent extends React.Component {
     );
   }
 
+  addDomain = (domain :string) => {
+
+    this.props.actions.addDomainToOrganizationRequest(this.props.organization.get('id'), domain);
+  }
+
+  removeDomain = (domain :string) => {
+
+    this.props.actions.removeDomainFromOrganizationRequest(this.props.organization.get('id'), domain);
+  }
+
+  isValidDomain = (domain :string) => {
+
+    return Utils.isValidEmail(`test@${domain}`);
+  }
+
+  renderOrganizationDomainsSection = () => {
+
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    const emailDomains :Immutable.List = this.props.organization.get('emails', Immutable.List());
+
+    return (
+      <StyledFlexContainerStacked>
+        <SectionHeading>
+          <h3>Domains</h3>
+          <h5>Users from these domains will automatically be approved when requesting to join this organization.</h5>
+        </SectionHeading>
+        <SimpleListGroupControl
+            placeholder="Add new domain..."
+            values={emailDomains}
+            isValid={this.isValidDomain}
+            onAdd={this.addDomain}
+            onRemove={this.removeDomain} />
+      </StyledFlexContainerStacked>
+    );
+  }
+
+  addRole = (role :string) => {
+
+    this.props.actions.addRoleToOrganizationRequest(this.props.organization.get('id'), role);
+  }
+
+  removeRole = (role :string) => {
+
+    this.props.actions.removeRoleFromOrganizationRequest(this.props.organization.get('id'), role);
+  }
+
+  isValidRole = (role :string) => {
+
+    return !!role;
+  }
+
+  renderOrganizationRolesSection = () => {
+
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    const roles :Immutable.List = this.props.organization.get('roles', Immutable.List()).map((role :Immutable.Map) => {
+      return role.get('id');
+    });
+
+    return (
+      <StyledFlexContainerStacked>
+        <SectionHeading>
+          <h3>Roles</h3>
+          <h5>You will be able to use the Roles below to manage permissions on Entity Sets that you own.</h5>
+        </SectionHeading>
+        <SimpleListGroupControl
+            placeholder="Add new role..."
+            values={roles}
+            isValid={this.isValidRole}
+            onAdd={this.addRole}
+            onRemove={this.removeRole} />
+      </StyledFlexContainerStacked>
+    );
+  }
+
   render() {
 
     console.log('OrganizationDetailsComponent.render()');
@@ -207,6 +312,8 @@ class OrganizationDetailsComponent extends React.Component {
     return (
       <StyledFlexContainerStacked>
         { this.renderOrganizationHeaderSection() }
+        { this.renderOrganizationDomainsSection() }
+        { this.renderOrganizationRolesSection() }
       </StyledFlexContainerStacked>
     );
   }

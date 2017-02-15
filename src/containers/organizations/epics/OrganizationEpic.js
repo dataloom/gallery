@@ -4,7 +4,8 @@
 
 import {
   DataModels,
-  OrganizationsApi,
+  Types,
+  OrganizationsApi
 } from 'loom-data';
 
 import { push, replace } from 'react-router-redux';
@@ -18,6 +19,11 @@ const {
   Organization,
   OrganizationBuilder
 } = DataModels;
+
+const {
+  PermissionTypes,
+  PrincipalTypes
+} = Types;
 
 function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
 
@@ -80,8 +86,89 @@ function updateOrganizationTitleEpic(action$ :Observable<Action>) :Observable<Ac
     });
 }
 
+
+function addDomainToOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.ADD_DOMAIN_TO_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.addAutoApprovedEmailDomain(action.orgId, action.emailDomain))
+        .map(() => {
+          return OrgActionFactory.addDomainToOrganizationSuccess(action.orgId, action.emailDomain);
+        });
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgActionFactory.addDomainToOrganizationFailure()
+      );
+    });
+}
+
+function removeDomainFromOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.removeAutoApprovedEmailDomain(action.orgId, action.emailDomain))
+        .map(() => {
+          return OrgActionFactory.removeDomainFromOrganizationSuccess(action.orgId, action.emailDomain);
+        });
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgActionFactory.removeDomainFromOrganizationFailure()
+      );
+    });
+}
+
+export function addRoleToOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.ADD_ROLE_TO_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.addPrincipal(action.orgId, PrincipalTypes.ROLE, action.role))
+        .mergeMap(() => {
+          return Observable.of(
+            OrgActionFactory.addRoleToOrganizationSuccess(action.orgId, action.role)
+          );
+        });
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgActionFactory.addRoleToOrganizationFailure()
+      );
+    });
+}
+
+export function removeRoleFromOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.REMOVE_ROLE_FROM_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.removePrincipal(action.orgId, PrincipalTypes.ROLE, action.role))
+        .mergeMap(() => {
+          return Observable.of(
+            OrgActionFactory.removeRoleFromOrganizationSuccess(action.orgId, action.role)
+          );
+        });
+    })
+    .catch(() => {
+      return Observable.of(
+        OrgActionFactory.removeRoleFromOrganizationFailure()
+      );
+    });
+}
+
 export default combineEpics(
   createNewOrganizationEpic,
   updateOrganizationDescriptionEpic,
-  updateOrganizationTitleEpic
+  updateOrganizationTitleEpic,
+  addDomainToOrganizationEpic,
+  removeDomainFromOrganizationEpic,
+  addRoleToOrganizationEpic,
+  removeRoleFromOrganizationEpic
 );

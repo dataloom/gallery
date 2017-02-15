@@ -186,10 +186,6 @@ export default class InlineEditableControl extends React.Component {
 
   componentDidUpdate(prevProps :Object, prevState :Object) {
 
-    console.log('InlineEditableControl.componentDidUpdate()');
-    console.log('prevState', prevState);
-    console.log('thisState', this.state);
-
     if (this.control
         && prevState.editable === false
         && this.state.editable === true) {
@@ -221,7 +217,7 @@ export default class InlineEditableControl extends React.Component {
 
   toggleEditable = () => {
 
-    if (!this.state.currentValue) {
+    if (!isNonEmptyString(this.state.currentValue)) {
       return;
     }
 

@@ -35,10 +35,6 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
   switch (action.type) {
 
-    case 'LOCATION_CHANGE':
-      console.log('LOCATION_CHANGE', action);
-      return state;
-
     case OrgsActionTypes.FETCH_ORG_REQUEST:
       return state.set('isFetchingOrg', true);
 
@@ -103,7 +99,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return newState;
     }
 
-    case OrgsActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {
+    case OrgActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {
 
       const orgId :string = action.orgId;
       const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
@@ -111,7 +107,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.setIn(['organizations', orgId, 'emails'], newEmails);
     }
 
-    case OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS: {
+    case OrgActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS: {
 
       const orgId :string = action.orgId;
       const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
@@ -128,7 +124,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.setIn(['organizations', orgId, 'emails'], newEmails);
     }
 
-    case OrgsActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
+    case OrgActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
 
       const newRolePrincipal :Principal = (new PrincipalBuilder())
         .setType(PrincipalTypes.ROLE)
@@ -143,7 +139,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
     }
 
-    case OrgsActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
+    case OrgActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
 
       const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
 
@@ -159,7 +155,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
     }
 
-    case OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS: {
+    case OrgActionTypes.ADD_MEMBER_TO_ORG_SUCCESS: {
 
       const orgId :string = action.orgId;
       const newMemberPrincipal :Principal = (new PrincipalBuilder())
@@ -175,7 +171,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.setIn(['organizations', orgId, 'members'], newMembers);
     }
 
-    case OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS: {
+    case OrgActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS: {
 
       const orgId :string = action.orgId;
       const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
