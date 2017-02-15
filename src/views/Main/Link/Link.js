@@ -359,7 +359,6 @@ export class Link extends React.Component {
     if (this.state.chooseLinkedEntityType) {
       return (
         <DefineLinkedEntityType
-            linkedProps={linkedProps}
             availablePropertyTypes={this.state.availablePropertyTypes}
             linkFn={this.createLinkingEntityType} />
       );
@@ -377,7 +376,7 @@ export class Link extends React.Component {
       title,
       description,
       entityTypeId: this.state.linkingEntityTypeId
-    }
+    };
     const linkingProperties = this.state.links.map((link) => {
       const propertyMap = {};
       link.entitySets.forEach((linkEntitySet) => {
@@ -385,7 +384,7 @@ export class Link extends React.Component {
       });
       return propertyMap;
     });
-    const linkingEntitySet = { entitySet, linkingProperties }
+    const linkingEntitySet = { entitySet, linkingProperties };
     LinkingApi.linkEntitySets(linkingEntitySet)
     .then(() => {
       this.setState({
@@ -400,7 +399,7 @@ export class Link extends React.Component {
     });
   }
 
-  createLinkingEntityType = (entityType) => {
+  createLinkingEntityType = (entityType, deidentified) => {
     const entityTypeIds = [];
     this.state.allEntitySets.forEach((entitySet) => {
       if (this.state.selectedEntitySetIds.includes(entitySet.id)) {
@@ -412,6 +411,7 @@ export class Link extends React.Component {
       if (linkingEntityTypeId) {
         this.setState({
           entityTypeCreated: true,
+          deidentified,
           linkingEntityTypeId
         });
       }
