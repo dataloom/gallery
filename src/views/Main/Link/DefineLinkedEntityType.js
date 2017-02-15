@@ -11,10 +11,13 @@ export default class DefineLinkedEntityType extends React.Component {
   }
 
   constructor(props) {
+    const selectedPropertyTypes = Object.keys(props.availablePropertyTypes).filter((id) => {
+      return (!props.availablePropertyTypes[id].piiField);
+    });
     super(props);
     this.state = {
       availablePropertyTypes: props.availablePropertyTypes,
-      selectedPropertyTypes: Object.keys(props.availablePropertyTypes),
+      selectedPropertyTypes,
       primaryKey: [],
       titleValue: '',
       namespaceValue: '',
@@ -23,14 +26,17 @@ export default class DefineLinkedEntityType extends React.Component {
       addPropValue: '',
       noPrimaryKeyError: false,
       noTypeOrTitleError: false,
-      deidentify: false
+      deidentify: true
     };
   }
 
   componentWillReceiveProps(newProps) {
+    const selectedPropertyTypes = Object.keys(newProps.availablePropertyTypes).filter((id) => {
+      return (!newProps.availablePropertyTypes[id].piiField);
+    });
     this.setState({
       availablePropertyTypes: newProps.availablePropertyTypes,
-      selectedPropertyTypes: Object.keys(newProps.availablePropertyTypes),
+      selectedPropertyTypes,
       primaryKey: [],
       addPropValue: '',
       noPrimaryKeyError: false
@@ -254,6 +260,7 @@ export default class DefineLinkedEntityType extends React.Component {
         <input
             id="deidentify"
             type="checkbox"
+            defaultChecked
             onChange={this.handleDeidentifyChange}
             className={styles.inputBox} />
       </div>
