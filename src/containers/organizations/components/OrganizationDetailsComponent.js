@@ -51,6 +51,10 @@ const SectionHeading = styled.div`
   }
 `;
 
+const ListGroupWrapper = styled.div`
+  width: 500px;
+`;
+
 const {
   Organization,
   OrganizationBuilder
@@ -69,7 +73,9 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
     return {
       isFetchingOrg: false,
       mode: MODES.CREATE,
-      organization: Immutable.Map(),
+      organization: Immutable.fromJS({
+        isOwner: true
+      }),
       organizationId: ''
     };
   }
@@ -195,19 +201,31 @@ class OrganizationDetailsComponent extends React.Component {
 
   renderOrganizationTitleSection = () => {
 
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+
     return (
       <InlineEditableControl
           type="text"
           size="xlarge"
           placeholder="Organization title..."
           value={this.props.organization.get('title')}
+          viewOnly={!isOwner}
           onChange={this.updateOrganizationTitle} />
     );
   }
 
   renderOrganizationDescriptionSection = () => {
 
+    // hide in create mode
     if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const description :string = this.props.organization.get('description');
+
+    // hide if there's no description and the viewer is not the owner
+    if (!isNonEmptyString(description) && !isOwner) {
       return null;
     }
 
@@ -216,7 +234,8 @@ class OrganizationDetailsComponent extends React.Component {
           type="textarea"
           size="medium"
           placeholder="Organization description..."
-          value={this.props.organization.get('description')}
+          value={description}
+          viewOnly={!isOwner}
           onChange={this.updateOrganizationDescription} />
     );
   }
@@ -242,7 +261,28 @@ class OrganizationDetailsComponent extends React.Component {
       return null;
     }
 
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
     const emailDomains :Immutable.List = this.props.organization.get('emails', Immutable.List());
+
+    let sectionContent;
+    if (emailDomains.isEmpty()) {
+      sectionContent = (
+        <span>No domains.</span>
+      );
+    }
+    else {
+      sectionContent = (
+        <ListGroupWrapper>
+          <SimpleListGroupControl
+              placeholder="Add new domain..."
+              values={emailDomains}
+              isValid={this.isValidDomain}
+              viewOnly={!isOwner}
+              onAdd={this.addDomain}
+              onRemove={this.removeDomain} />
+        </ListGroupWrapper>
+      );
+    }
 
     return (
       <StyledFlexContainerStacked>
@@ -250,12 +290,7 @@ class OrganizationDetailsComponent extends React.Component {
           <h3>Domains</h3>
           <h5>Users from these domains will automatically be approved when requesting to join this organization.</h5>
         </SectionHeading>
-        <SimpleListGroupControl
-            placeholder="Add new domain..."
-            values={emailDomains}
-            isValid={this.isValidDomain}
-            onAdd={this.addDomain}
-            onRemove={this.removeDomain} />
+        { sectionContent }
       </StyledFlexContainerStacked>
     );
   }
@@ -281,9 +316,30 @@ class OrganizationDetailsComponent extends React.Component {
       return null;
     }
 
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
     const roles :Immutable.List = this.props.organization.get('roles', Immutable.List()).map((role :Immutable.Map) => {
       return role.get('id');
     });
+
+    let sectionContent;
+    if (roles.isEmpty()) {
+      sectionContent = (
+        <span>No roles.</span>
+      );
+    }
+    else {
+      sectionContent = (
+        <ListGroupWrapper>
+          <SimpleListGroupControl
+              placeholder="Add new role..."
+              values={roles}
+              isValid={this.isValidRole}
+              viewOnly={!isOwner}
+              onAdd={this.addRole}
+              onRemove={this.removeRole} />
+        </ListGroupWrapper>
+      );
+    }
 
     return (
       <StyledFlexContainerStacked>
@@ -291,12 +347,7 @@ class OrganizationDetailsComponent extends React.Component {
           <h3>Roles</h3>
           <h5>You will be able to use the Roles below to manage permissions on Entity Sets that you own.</h5>
         </SectionHeading>
-        <SimpleListGroupControl
-            placeholder="Add new role..."
-            values={roles}
-            isValid={this.isValidRole}
-            onAdd={this.addRole}
-            onRemove={this.removeRole} />
+        { sectionContent }
       </StyledFlexContainerStacked>
     );
   }
