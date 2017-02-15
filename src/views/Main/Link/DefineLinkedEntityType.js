@@ -6,17 +6,18 @@ import styles from './styles.module.css';
 
 export default class DefineLinkedEntityType extends React.Component {
   static propTypes = {
-    linkedProps: PropTypes.array.isRequired,
     availablePropertyTypes: PropTypes.object.isRequired,
     linkFn: PropTypes.func.isRequired
   }
 
   constructor(props) {
+    const selectedPropertyTypes = Object.keys(props.availablePropertyTypes).filter((id) => {
+      return (!props.availablePropertyTypes[id].piiField);
+    });
     super(props);
     this.state = {
-      linkedProps: props.linkedProps,
       availablePropertyTypes: props.availablePropertyTypes,
-      selectedPropertyTypes: Object.keys(props.availablePropertyTypes),
+      selectedPropertyTypes,
       primaryKey: [],
       titleValue: '',
       namespaceValue: '',
@@ -24,15 +25,18 @@ export default class DefineLinkedEntityType extends React.Component {
       descriptionValue: '',
       addPropValue: '',
       noPrimaryKeyError: false,
-      noTypeOrTitleError: false
+      noTypeOrTitleError: false,
+      deidentify: true
     };
   }
 
   componentWillReceiveProps(newProps) {
+    const selectedPropertyTypes = Object.keys(newProps.availablePropertyTypes).filter((id) => {
+      return (!newProps.availablePropertyTypes[id].piiField);
+    });
     this.setState({
-      linkedProps: newProps.linkedProps,
       availablePropertyTypes: newProps.availablePropertyTypes,
-      selectedPropertyTypes: Object.keys(newProps.availablePropertyTypes),
+      selectedPropertyTypes,
       primaryKey: [],
       addPropValue: '',
       noPrimaryKeyError: false
@@ -50,7 +54,6 @@ export default class DefineLinkedEntityType extends React.Component {
   }
 
   renderDeleteButton = (propertyTypeId) => {
-    if (this.state.linkedProps.includes(propertyTypeId)) return null;
     return (
       <button
           className={buttonStyles.deleteButton}
@@ -91,9 +94,18 @@ export default class DefineLinkedEntityType extends React.Component {
     }
   }
 
+  getAvailablePropertyIds = () => {
+    const availablePropertyTypes = this.state.availablePropertyTypes;
+    const x = (!this.state.deidentify) ? Object.keys(availablePropertyTypes) :
+      Object.keys(availablePropertyTypes).filter((propertyTypeId) => {
+        return (!availablePropertyTypes[propertyTypeId].piiField);
+      });
+    return x;
+  }
+
   renderAddPropertyType = () => {
     const { availablePropertyTypes, selectedPropertyTypes } = this.state;
-    const availablePropertyIds = Object.keys(availablePropertyTypes);
+    const availablePropertyIds = this.getAvailablePropertyIds();
     if (availablePropertyIds.length === selectedPropertyTypes.length) return null;
     const deselectedProps = availablePropertyIds.filter((id) => {
       return (!selectedPropertyTypes.includes(id));
@@ -117,7 +129,15 @@ export default class DefineLinkedEntityType extends React.Component {
   }
 
   link = () => {
-    const { selectedPropertyTypes, primaryKey, titleValue, descriptionValue, nameValue, namespaceValue } = this.state;
+    const {
+      selectedPropertyTypes,
+      primaryKey,
+      titleValue,
+      descriptionValue,
+      nameValue,
+      namespaceValue,
+      deidentify
+    } = this.state;
     if (titleValue.length < 1 || namespaceValue.length < 1 || nameValue.length < 1) {
       this.setState({ noTypeOrTitleError: true });
     }
@@ -136,7 +156,7 @@ export default class DefineLinkedEntityType extends React.Component {
         properties: selectedPropertyTypes,
         schemas: []
       };
-      this.props.linkFn(entityType);
+      this.props.linkFn(entityType, deidentify);
       this.setState({
         noTypeOrTitleError: false,
         noPrimaryKeyError: false
@@ -216,6 +236,37 @@ export default class DefineLinkedEntityType extends React.Component {
     );
   }
 
+  handleDeidentifyChange = (e) => {
+    const selectedPropertyTypes = (!e.target.checked) ? this.state.selectedPropertyTypes :
+      this.state.selectedPropertyTypes.filter((propertyTypeId) => {
+        return (!this.state.availablePropertyTypes[propertyTypeId].piiField);
+      });
+
+    const primaryKey = (!e.target.checked) ? this.state.primaryKey : this.state.primaryKey.filter((propertyTypeId) => {
+      return (!this.state.availablePropertyTypes[propertyTypeId].piiField);
+    });
+
+    this.setState({
+      deidentify: e.target.checked,
+      selectedPropertyTypes,
+      primaryKey
+    });
+  }
+
+  renderDeidentify = () => {
+    return (
+      <div className={styles.inputRow}>
+        <label className={styles.inputLabel} htmlFor="deidentify">Deidentify: </label>
+        <input
+            id="deidentify"
+            type="checkbox"
+            defaultChecked
+            onChange={this.handleDeidentifyChange}
+            className={styles.inputBox} />
+      </div>
+    )
+  }
+
   renderInputFields = () => {
     return (
       <div>
@@ -223,6 +274,7 @@ export default class DefineLinkedEntityType extends React.Component {
         {this.renderNameField()}
         {this.renderTitleField()}
         {this.renderDescriptionField()}
+        {this.renderDeidentify()}
       </div>
     );
   }
