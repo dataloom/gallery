@@ -49,7 +49,7 @@ class PropertyTypeList extends React.Component {
     const { className } = this.props;
 
     return (
-      <div className={classnames("propertyTypeList", className)}>
+      <div className={classnames('propertyTypeList', className)}>
         <div className="propertyTypeListHeader">
           <div className="propertyTypeListPermissions"></div>
           <div className="propertyTypeTitle">Property Title</div>
