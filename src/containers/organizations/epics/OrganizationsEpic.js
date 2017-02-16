@@ -9,13 +9,9 @@ import {
   OrganizationsApi
 } from 'loom-data';
 
-import {
-  combineEpics
-} from 'redux-observable';
-
-import {
-  Observable
-} from 'rxjs';
+import { push } from 'react-router-redux';
+import { combineEpics } from 'redux-observable';
+import { Observable } from 'rxjs';
 
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as OrgsActionFactory from '../actions/OrganizationsActionFactory';

@@ -8,7 +8,7 @@ import {
   OrganizationsApi
 } from 'loom-data';
 
-import { push, replace } from 'react-router-redux';
+import { push } from 'react-router-redux';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
 

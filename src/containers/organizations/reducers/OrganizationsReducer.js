@@ -50,10 +50,9 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       // TODO: do merge if organization exists
 
-      console.log('FETCH_ORG_SUCCESS')
-      const org = action.organization;
+      const organization :Organization = action.organization;
       return state
-        .setIn(['organizations', org.id], Immutable.fromJS(org))
+        .setIn(['organizations', organization.id], Immutable.fromJS(organization))
         .set('isFetchingOrg', false);
     }
 
@@ -193,7 +192,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       }
 
       const newMembers :List<Principal> = currentMembers.delete(index);
-      return state.setIn(['organizations', action.orgId, 'members'], newMembers);
+      return state.setIn(['organizations', orgId, 'members'], newMembers);
     }
 
     default:
