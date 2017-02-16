@@ -210,3 +210,12 @@
 .permissionInputWidth {
   width: 300px;
 }
+
+.label {
+  margin-right: 5px;
+}
+
+.datatypeSelect {
+  width: 200px;
+  margin-top: 5px;
+}
