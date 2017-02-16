@@ -21,7 +21,6 @@ const {
 } = DataModels;
 
 const {
-  PermissionTypes,
   PrincipalTypes
 } = Types;
 
@@ -29,6 +28,7 @@ function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
 
   return action$
     .ofType(OrgActionTypes.CREATE_ORG_REQUEST)
+    // .delay(10000) // for testing
     .mergeMap((action :Action) => {
       return Observable
         .from(OrganizationsApi.createOrganization(action.organization))
@@ -38,15 +38,15 @@ function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
             .setTitle(action.organization.title)
             .build();
           return Observable.of(
-            OrgActionFactory.createOrganizationSuccess(org),
-            push(`/orgs/${orgId}`)
+            push(`/orgs/${orgId}`), // this must happen first, otherwise things break elsewhere
+            OrgActionFactory.createOrganizationSuccess(org)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.createOrganizationFailure()
           );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.createOrganizationFailure()
-      );
     });
 }
 
@@ -59,12 +59,12 @@ function updateOrganizationDescriptionEpic(action$ :Observable<Action>) :Observa
         .from(OrganizationsApi.updateDescription(action.organization.id, action.organization.description))
         .map(() => {
           return OrgActionFactory.updateOrganizationDescriptionSuccess();
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.updateOrganizationDescriptionFailure()
+          );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.updateOrganizationDescriptionFailure()
-      );
     });
 }
 
@@ -77,12 +77,12 @@ function updateOrganizationTitleEpic(action$ :Observable<Action>) :Observable<Ac
         .from(OrganizationsApi.updateTitle(action.organization.id, action.organization.title))
         .map(() => {
           return OrgActionFactory.updateOrganizationTitleSuccess();
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.updateOrganizationTitleFailure()
+          );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.updateOrganizationTitleFailure()
-      );
     });
 }
 
@@ -96,12 +96,12 @@ function addDomainToOrganizationEpic(action$ :Observable<Action>) :Observable<Ac
         .from(OrganizationsApi.addAutoApprovedEmailDomain(action.orgId, action.emailDomain))
         .map(() => {
           return OrgActionFactory.addDomainToOrganizationSuccess(action.orgId, action.emailDomain);
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.addDomainToOrganizationFailure()
+          );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.addDomainToOrganizationFailure()
-      );
     });
 }
 
@@ -114,12 +114,12 @@ function removeDomainFromOrganizationEpic(action$ :Observable<Action>) :Observab
         .from(OrganizationsApi.removeAutoApprovedEmailDomain(action.orgId, action.emailDomain))
         .map(() => {
           return OrgActionFactory.removeDomainFromOrganizationSuccess(action.orgId, action.emailDomain);
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.removeDomainFromOrganizationFailure()
+          );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.removeDomainFromOrganizationFailure()
-      );
     });
 }
 
@@ -134,12 +134,12 @@ export function addRoleToOrganizationEpic(action$ :Observable<Action>) :Observab
           return Observable.of(
             OrgActionFactory.addRoleToOrganizationSuccess(action.orgId, action.role)
           );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.addRoleToOrganizationFailure()
+          );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.addRoleToOrganizationFailure()
-      );
     });
 }
 
@@ -154,12 +154,12 @@ export function removeRoleFromOrganizationEpic(action$ :Observable<Action>) :Obs
           return Observable.of(
             OrgActionFactory.removeRoleFromOrganizationSuccess(action.orgId, action.role)
           );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.removeRoleFromOrganizationFailure()
+          );
         });
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgActionFactory.removeRoleFromOrganizationFailure()
-      );
     });
 }
 

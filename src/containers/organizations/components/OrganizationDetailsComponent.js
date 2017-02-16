@@ -37,7 +37,7 @@ import {
 } from '../actions/OrganizationActionFactory';
 
 import {
-  fetchOrgRequest
+  fetchOrganizationRequest
 } from '../actions/OrganizationsActionFactory';
 
 const SectionHeading = styled.div`
@@ -105,7 +105,7 @@ function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
     createOrganizationRequest,
-    fetchOrgRequest,
+    fetchOrganizationRequest,
     updateOrganizationDescriptionRequest,
     updateOrganizationTitleRequest,
     addDomainToOrganizationRequest,
@@ -125,7 +125,7 @@ class OrganizationDetailsComponent extends React.Component {
   static propTypes = {
     actions: React.PropTypes.shape({
       createOrganizationRequest: React.PropTypes.func.isRequired,
-      fetchOrgRequest: React.PropTypes.func.isRequired,
+      fetchOrganizationRequest: React.PropTypes.func.isRequired,
       updateOrganizationDescriptionRequest: React.PropTypes.func.isRequired,
       updateOrganizationTitleRequest: React.PropTypes.func.isRequired,
       addDomainToOrganizationRequest: React.PropTypes.func.isRequired,
@@ -144,7 +144,7 @@ class OrganizationDetailsComponent extends React.Component {
     console.log('OrganizationDetailsComponent.componentDidMount()');
 
     if ((this.props.mode === MODES.VIEW || this.props.mode === MODES.EDIT)) {
-      this.props.actions.fetchOrgRequest(this.props.organizationId);
+      this.props.actions.fetchOrganizationRequest(this.props.organizationId);
     }
   }
 
@@ -154,7 +154,7 @@ class OrganizationDetailsComponent extends React.Component {
 
     if ((nextProps.mode === MODES.VIEW || nextProps.mode === MODES.EDIT)) {
       if (this.props.organizationId !== nextProps.organizationId) {
-        this.props.actions.fetchOrgRequest(nextProps.organizationId);
+        this.props.actions.fetchOrganizationRequest(nextProps.organizationId);
       }
     }
   }
@@ -265,7 +265,7 @@ class OrganizationDetailsComponent extends React.Component {
     const emailDomains :Immutable.List = this.props.organization.get('emails', Immutable.List());
 
     let sectionContent;
-    if (emailDomains.isEmpty()) {
+    if (emailDomains.isEmpty() && !isOwner) {
       sectionContent = (
         <span>No domains.</span>
       );
@@ -322,7 +322,7 @@ class OrganizationDetailsComponent extends React.Component {
     });
 
     let sectionContent;
-    if (roles.isEmpty()) {
+    if (roles.isEmpty() && !isOwner) {
       sectionContent = (
         <span>No roles.</span>
       );

@@ -5,6 +5,7 @@
 import {
   DataModels,
   Types,
+  AuthorizationApi,
   OrganizationsApi
 } from 'loom-data';
 
@@ -18,143 +19,85 @@ import {
 
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as OrgsActionFactory from '../actions/OrganizationsActionFactory';
-import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 
-const {
-  Organization
-} = DataModels;
+const { Organization } = DataModels;
+const { PermissionTypes } = Types;
 
-const {
-  PermissionTypes,
-  PrincipalTypes
-} = Types;
+/*
+ * TODO: figure out how to set a timeout when loading takes too long, we terminate and dispatch fetchFailed actions
+ */
 
-function fetchOrg(action :Action) :Observable<Action> {
-
-  const { orgId } = action;
-  return Observable
-    .from(OrganizationsApi.getOrganization(orgId))
-    .mergeMap((organization :Organization) => {
-      // TODO: PermissionsActionFactory.checkAuthorizationRequest
-      return Observable.of(
-        OrgsActionFactory.fetchOrgSuccess(organization)
-      );
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgsActionFactory.fetchOrgFailure()
-      );
-    });
-}
-
-export function fetchOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORG_REQUEST)
-    .mergeMap(fetchOrg)
-    .catch(() => {
-      return Observable.of(
-        OrgsActionFactory.fetchOrgFailure()
-      );
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.getOrganization(action.orgId))
+        .mergeMap((organization :Organization) => {
+          return Observable.of(
+            OrgsActionFactory.fetchOrganizationSuccess(organization),
+            OrgsActionFactory.fetchOrganizationsAuthorizationsRequest([organization])
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgsActionFactory.fetchOrganizationFailure()
+          );
+        });
     });
 }
 
-function fetchOrgs() :Observable<Action> {
-
-  return Observable
-    .from(OrganizationsApi.getAllOrganizations())
-    .mergeMap((organizations :Organization[]) => {
-
-      const isOwnerAccessChecks = organizations.map((org :Organization) => {
-        return {
-          aclKey: [org.id],
-          permissions: [PermissionTypes.OWNER]
-        };
-      });
-
-      return Observable.of(
-        OrgsActionFactory.fetchOrgsSuccess(organizations),
-        PermissionsActionFactory.checkAuthorizationRequest(isOwnerAccessChecks)
-      );
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgsActionFactory.fetchOrgsFailure()
-      );
-    });
-}
-
-export function fetchOrgsEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORGS_REQUEST)
-    .mergeMap(fetchOrgs)
-    .catch(() => {
-      return Observable.of(
-        OrgsActionFactory.fetchOrgsFailure()
-      );
-    });
-}
-
-function addMemberToOrg(action :Action) :Observable<Action> {
-
-  const {
-    orgId,
-    memberId
-  } = action;
-
-  return Observable
-    .from(OrganizationsApi.addPrincipal(orgId, PrincipalTypes.USER, memberId))
     .mergeMap(() => {
-      return Observable.of(
-        OrgsActionFactory.addMemberToOrgSuccess(orgId, memberId)
-      );
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgsActionFactory.addMemberToOrgFailure()
-      );
+      return Observable
+        .from(OrganizationsApi.getAllOrganizations())
+        .mergeMap((organizations :Organization[]) => {
+          return Observable.of(
+            OrgsActionFactory.fetchOrganizationsSuccess(organizations),
+            OrgsActionFactory.fetchOrganizationsAuthorizationsRequest(organizations)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgsActionFactory.fetchOrganizationsFailure()
+          );
+        });
     });
 }
 
-export function addMemberToOrgEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchOrganizationsAuthorizationsEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
-    .ofType(OrgsActionTypes.ADD_MEMBER_TO_ORG_REQUEST)
-    .mergeMap(addMemberToOrg);
-}
-
-function removeMemberFromOrg(action :Action) :Observable<Action> {
-
-  const {
-    orgId,
-    memberId
-  } = action;
-
-  return Observable
-    .from(OrganizationsApi.removePrincipal(orgId, PrincipalTypes.USER, memberId))
-    .mergeMap(() => {
-      return Observable.of(
-        OrgsActionFactory.removeMemberFromOrgSuccess(orgId, memberId)
-      );
-    })
-    .catch(() => {
-      return Observable.of(
-        OrgsActionFactory.removeMemberFromOrgFailure()
-      );
+    .ofType(OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_REQUEST)
+    .mergeMap((action :Action) => {
+      const accessChecks = action.organizations.map((org :Organization) => {
+        return {
+          aclKey: [org.id],
+          permissions: Object.keys(PermissionTypes)
+        };
+      });
+      return Observable
+        .from(AuthorizationApi.checkAuthorizations(accessChecks))
+        .mergeMap((authorizations :Authorization[]) => {
+          return Observable.of(
+            OrgsActionFactory.fetchOrganizationsAuthorizationsSuccess(authorizations)
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            OrgsActionFactory.fetchOrganizationsAuthorizationsFailure()
+          );
+        });
     });
-}
-
-export function removeMemberFromOrgEpic(action$ :Observable<Action>) :Observable<Action> {
-
-  return action$
-    .ofType(OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST)
-    .mergeMap(removeMemberFromOrg);
 }
 
 export default combineEpics(
-  fetchOrgEpic,
-  fetchOrgsEpic,
-  addMemberToOrgEpic,
-  removeMemberFromOrgEpic
+  fetchOrganizationEpic,
+  fetchOrganizationsEpic,
+  fetchOrganizationsAuthorizationsEpic
 );

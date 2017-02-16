@@ -16,8 +16,7 @@ import Button from '../../../components/buttons/Button';
 import OverviewCard from '../../../components/cards/OverviewCard';
 import OverviewCardCollection from '../../../components/cards/OverviewCardCollection';
 
-import { fetchOrgsRequest } from '../actions/OrganizationsActionFactory';
-import { fetchAllUsersRequest } from '../actions/UsersActionFactory';
+import { fetchOrganizationsRequest } from '../actions/OrganizationsActionFactory';
 
 function mapStateToProps(state :Immutable.Map) {
 
@@ -33,8 +32,7 @@ function mapStateToProps(state :Immutable.Map) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
-    fetchOrgsRequest,
-    fetchAllUsersRequest
+    fetchOrganizationsRequest
   };
 
   return {
@@ -47,8 +45,7 @@ class OrganizationsListComponent extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
-      fetchOrgsRequest: React.PropTypes.func.isRequired,
-      fetchAllUsersRequest: React.PropTypes.func.isRequired
+      fetchOrganizationsRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isFetchingOrgs: React.PropTypes.bool.isRequired,
     organizations: React.PropTypes.instanceOf(Immutable.Map).isRequired
@@ -56,8 +53,7 @@ class OrganizationsListComponent extends React.Component {
 
   componentDidMount() {
 
-    this.props.actions.fetchOrgsRequest();
-    this.props.actions.fetchAllUsersRequest();
+    this.props.actions.fetchOrganizationsRequest();
   }
 
   renderOrganization = (organization :Immutable.Map) => {

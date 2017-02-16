@@ -15,7 +15,6 @@ import * as PermissionsActionTypes from '../../permissions/PermissionsActionType
 
 const {
   Organization,
-  OrganizationBuilder,
   Principal,
   PrincipalBuilder
 } = DataModels;
@@ -49,6 +48,9 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgsActionTypes.FETCH_ORG_SUCCESS: {
 
+      // TODO: do merge if organization exists
+
+      console.log('FETCH_ORG_SUCCESS')
       const org = action.organization;
       return state
         .setIn(['organizations', org.id], Immutable.fromJS(org))
@@ -61,6 +63,10 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       action.organizations.forEach((org) => {
         orgs[org.id] = org;
         orgs[org.id].isOwner = false;
+        orgs[org.id].permissions = {};
+        Object.keys(PermissionTypes).forEach((permissionType :Permission) => {
+          orgs[org.id].permissions[permissionType] = false;
+        });
       });
 
       return state
@@ -68,35 +74,37 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         .set('isFetchingOrgs', false);
     }
 
+    case OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_SUCCESS: {
+
+      let newState :Immutable.Map = state;
+
+      action.authorizations.forEach((authorization :Authorization) => {
+
+        if (!authorization.aclKey || authorization.aclKey.length !== 1) {
+          return;
+        }
+
+        const orgId :string = authorization.aclKey[0];
+        const organization :Immutable.Map = state.getIn(['organizations', orgId], Immutable.Map());
+
+        if (organization.isEmpty()) {
+          return;
+        }
+
+        const decoratedOrganization :Immutable.Map = organization
+          .set('isOwner', authorization.permissions[PermissionTypes.OWNER] === true)
+          .set('permissions', Immutable.fromJS(authorization.permissions))
+
+        newState = newState.setIn(['organizations', orgId], decoratedOrganization);
+      });
+
+      return newState;
+    }
+
     case OrgActionTypes.CREATE_ORG_SUCCESS: {
 
       const organization :Organization = action.organization;
       return state.setIn(['organizations', organization.id], Immutable.Map(organization));
-    }
-
-    case PermissionsActionTypes.CHECK_AUTHORIZATION_RESOLVE: {
-
-      let newState :Map<*, *> = state;
-
-      const authorizations = action.authorizations;
-      authorizations.forEach((auth) => {
-
-        if (!auth.aclKey || auth.aclKey.length !== 1) {
-          return;
-        }
-
-        const orgId = auth.aclKey[0];
-        const org = state.getIn(['organizations', orgId]);
-
-        if (!org) {
-          return;
-        }
-
-        const orgDeco = org.set('isOwner', (auth.permissions[PermissionTypes.OWNER] === true));
-        newState = newState.setIn(['organizations', orgId], orgDeco);
-      });
-
-      return newState;
     }
 
     case OrgActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {
