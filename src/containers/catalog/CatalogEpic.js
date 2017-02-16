@@ -27,9 +27,10 @@ function searchCatalog(filterParams) {
       actionFactories.catalogSearchResolve(normalizedData.get('result'))
     ])
     // Error Handling
-    .catch(error => {
-      console.error(error);
-      return Observable.of(actionFactories.catalogSearchReject("Error loading search results"))
+    .catch(() => {
+      return Observable.of(
+        actionFactories.catalogSearchReject('Error loading search results')
+      );
     });
 }
 
@@ -54,9 +55,10 @@ function popularEntitySetsEpic(action$) {
         ]
       })
       // Error Handling
-      .catch(error => {
-        console.error(error);
-        return Observable.of(actionFactories.popularEntitySetsReject("Error loading popular entity sets"))
+      .catch(() => {
+        return Observable.of(
+          actionFactories.popularEntitySetsReject('Error loading popular entity sets')
+        );
       });
     });
 }

@@ -154,7 +154,7 @@ function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
       .catch(() => {
         // Async
         const actions = references.map(reference => {
-          return AsyncActionFactory.asyncReferenceError(reference, "Error loading authorization");
+          return AsyncActionFactory.asyncReferenceError(reference, 'Error loading authorization');
         });
         // Old Code
         actions.push(PermissionsActionFactory.checkAuthorizationReject(accessChecks, 'Error loading authorizations'));
