@@ -45,7 +45,7 @@ export default class DropdownSearchBox extends React.Component {
     });
   }
 
-  onKeyUp = (e) => {
+  onKeyDown = (e) => {
     if (e.keyCode === 13) {
       this.submitSearch();
     }
@@ -62,7 +62,7 @@ export default class DropdownSearchBox extends React.Component {
         </div>
         <input
           onClick={this.handleClick}
-          onKeyUp={this.onKeyUp}
+          onKeyDown={this.onKeyDown}
           className={styles.searchBox}
           type="text"
           placeholder="Search entity set" />
