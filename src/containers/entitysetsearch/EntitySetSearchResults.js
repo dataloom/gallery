@@ -1,21 +1,34 @@
 import React, { PropTypes } from 'react';
 import { Table, Column, Cell } from 'fixed-data-table';
 import TextCell from './TextCell';
-import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
-const TABLE_HEIGHT = 500;
+const MAX_TABLE_HEIGHT = 500;
 const ROW_HEIGHT = 50;
+const TABLE_OFFSET = 2;
 
 export default class EntitySetSearchResults extends React.Component {
   static propTypes = {
-    results: PropTypes.array,
-    propertyTypes: PropTypes.array
+    results: PropTypes.array.isRequired,
+    propertyTypes: PropTypes.array.isRequired
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      results: props.results
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      results: nextProps.results
+    });
   }
 
   renderColumns = () => {
-    const columnWidth = TABLE_WIDTH / Object.keys(this.props.results[0]).length;
-    const propertyIds = Object.keys(this.props.results[0]);
+    const columnWidth = TABLE_WIDTH / Object.keys(this.state.results[0]).length;
+    const propertyIds = Object.keys(this.state.results[0]);
     return propertyIds.map((id) => {
       const title = this.props.propertyTypes.filter((propertyType) => {
         return propertyType.id === id;
@@ -25,7 +38,7 @@ export default class EntitySetSearchResults extends React.Component {
             key={id}
             header={<Cell>{title}</Cell>}
             cell={
-              <TextCell results={this.props.results} field={id} />
+              <TextCell results={this.state.results} field={id} />
             }
             width={columnWidth} />
       );
@@ -33,13 +46,14 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   renderResults = () => {
+    const tableHeight = Math.min(((this.state.results.length + 1) * ROW_HEIGHT) + TABLE_OFFSET, MAX_TABLE_HEIGHT);
     return (
       <Table
-          rowsCount={this.props.results.length}
+          rowsCount={this.state.results.length}
           rowHeight={ROW_HEIGHT}
           headerHeight={ROW_HEIGHT}
           width={TABLE_WIDTH}
-          height={TABLE_HEIGHT}>
+          height={tableHeight}>
         {this.renderColumns()}
       </Table>
     );
@@ -52,7 +66,7 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   render() {
-    const content = (this.props.results.length < 1) ? this.renderNoResults() : this.renderResults();
+    const content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderResults();
     return (
       <div>{content}</div>
     );
