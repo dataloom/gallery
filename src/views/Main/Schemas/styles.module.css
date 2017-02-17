@@ -141,6 +141,10 @@
   padding: 8px 10px;
 }
 
+.piiSelect {
+  width: 170px;
+}
+
 /* NameNamespaceAutosuggest */
 .entitySetInput {
   height: 40px;
@@ -205,4 +209,13 @@
 
 .permissionInputWidth {
   width: 300px;
+}
+
+.label {
+  margin-right: 5px;
+}
+
+.datatypeSelect {
+  width: 200px;
+  margin-top: 5px;
 }

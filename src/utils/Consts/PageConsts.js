@@ -5,6 +5,8 @@ const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
 const DATA_MODEL = 'datamodel';
 const DATASOURCES = 'datasources';
+const LINK = 'link';
+const SEARCH = 'search';
 
 export default {
   HOME,
@@ -13,5 +15,7 @@ export default {
   SETTINGS,
   VISUALIZE,
   DATA_MODEL,
-  DATASOURCES
+  DATASOURCES,
+  LINK,
+  SEARCH
 };

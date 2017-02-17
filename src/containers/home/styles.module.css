@@ -19,6 +19,7 @@
   -webkit-align-items: flex-start;
   align-items: flex-start;
   text-align: center;
+  width: 100%;
 }
 
 .instructionsBox:hover {
@@ -48,6 +49,7 @@
   color: #1879fb;
   padding: 20px;
   font-size: 14px;
+  width: 100%;
 }
 
 .getStartedMessage {

@@ -8,7 +8,9 @@ import { Login } from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
+import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
+import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
@@ -77,6 +79,7 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={HomeComponent} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
+      <Route path={`${PageConsts.SEARCH}/:entitySetId`} component={EntitySetDataSearch} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
@@ -88,6 +91,7 @@ export const makeMainRoutes = () => {
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
+      <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
     </Route>
   );
 };

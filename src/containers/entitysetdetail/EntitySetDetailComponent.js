@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -54,13 +55,22 @@ class EntitySetDetailComponent extends React.Component {
         <div className={styles.controls}>
           <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown, styles.control)} />
 
-          { entitySetPermissions.OWNER ? <Button
-              bsStyle="info"
-              onClick={this.setEditingPermissions}
-              className={styles.managePermissions}>Manage Permissions</Button> : ''}
+          {
+            entitySetPermissions.OWNER &&
+            <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
+              Manage Permissions
+            </Button>
+          }
         </div>
 
-        <EntitySetPermissionsRequestList entitySetId={entitySet.id} propertyTypeIds={entitySet.entityType.properties.map(p => p.id)} />
+        {
+          entitySetPermissions.OWNER &&
+          <EntitySetPermissionsRequestList
+              entitySetId={entitySet.id}
+              propertyTypeIds={entitySet.entityType.properties.map((p) => {
+                return p.id;
+              })} />
+        }
       </div>
     );
   };
@@ -80,6 +90,19 @@ class EntitySetDetailComponent extends React.Component {
       </Modal>
     );
   };
+
+  renderSearchEntitySet = () => {
+    if (!this.props.entitySet) return null;
+    return (
+      <div className={styles.buttonWrapper}>
+        <Button bsStyle="primary" className={styles.center}>
+          <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+            Search this entity set
+          </Link>
+        </Button>
+      </div>
+    );
+  }
 
   closePermissionsPanel = () => {
     this.setState({ editingPermissions: false });
@@ -105,6 +128,7 @@ class EntitySetDetailComponent extends React.Component {
             );
           }} />
           {this.renderPermissionsPanel()}
+          {this.renderSearchEntitySet()}
 
         </Page.Body>
       </Page>

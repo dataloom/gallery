@@ -18,7 +18,8 @@ const permissionLevels = {
   hidden: [],
   discover: [Permission.DISCOVER.name],
   read: [Permission.DISCOVER.name, Permission.READ.name],
-  write: [Permission.DISCOVER.name, Permission.READ.name, Permission.WRITE.name]
+  write: [Permission.DISCOVER.name, Permission.READ.name, Permission.WRITE.name],
+  owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
 };
 
 const viewLabels = {
@@ -31,13 +32,15 @@ const accessOptions = {
   Hidden: 'Hidden',
   Discover: 'Discover',
   Read: 'Read',
-  Write: 'Write'
+  Write: 'Write',
+  Owner: 'Owner'
 };
 
 const permissionOptions = {
   Discover: 'Discover',
   Read: 'Read',
-  Write: 'Write'
+  Write: 'Write',
+  Owner: 'Owner'
 };
 
 export class PermissionsPanel extends React.Component {
@@ -56,7 +59,7 @@ export class PermissionsPanel extends React.Component {
       updateError: false,
       globalValue: options[0],
       roleAcls: { Discover: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Read: [], Write: [] },
+      userAcls: { Discover: [], Read: [], Write: [], Owner: [] },
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
       newRoleValue: '',
@@ -95,6 +98,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   getPermission = (permissions) => {
+    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return permissionOptions.Owner;
     if (permissions.includes(permissionOptions.Write.toUpperCase())) return permissionOptions.Write;
     if (permissions.includes(permissionOptions.Read.toUpperCase())) return permissionOptions.Read;
     return permissionOptions.Discover;
@@ -103,7 +107,7 @@ export class PermissionsPanel extends React.Component {
   updateStateAcls = (aces, updateSuccess) => {
     let globalValue = accessOptions[0];
     const roleAcls = { Discover: [], Read: [], Write: [] };
-    const userAcls = { Discover: [], Read: [], Write: [] };
+    const userAcls = { Discover: [], Read: [], Write: [], Owner: [] };
     aces.forEach((ace) => {
       if (ace.permissions.length > 0) {
         if (ace.principal.type === ROLE) {
@@ -379,6 +383,7 @@ export class PermissionsPanel extends React.Component {
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load users.</div>
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
+          {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView)}
