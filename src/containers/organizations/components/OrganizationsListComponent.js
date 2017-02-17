@@ -14,9 +14,13 @@ import { bindActionCreators } from 'redux';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import Button from '../../../components/buttons/Button';
 import OverviewCard from '../../../components/cards/OverviewCard';
-import OverviewCardCollection from '../../../components/cards/OverviewCardCollection';
+import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
 import { fetchOrganizationsRequest } from '../actions/OrganizationsActionFactory';
+
+const OrgOverviewCardCollection = styled(StyledFlexContainerStacked)`
+  margin-bottom: 25px;
+`;
 
 function mapStateToProps(state :Immutable.Map) {
 
@@ -47,7 +51,6 @@ function mapDispatchToProps(dispatch :Function) {
     actions: bindActionCreators(actions, dispatch)
   };
 }
-
 
 class OrganizationsListComponent extends React.Component {
 
@@ -89,19 +92,48 @@ class OrganizationsListComponent extends React.Component {
 
   renderOrganizations = () => {
 
-    const orgOverviewCards = [];
+    const yourOrgs = [];
+    const otherOrgs = [];
 
     this.props.visibleOrganizationIds.forEach((orgId :UUID) => {
-      orgOverviewCards.push(
-        this.renderOrganization(this.props.organizations.get(orgId))
-      );
 
+      const organization :Immutable.Map = this.props.organizations.get(orgId, Immutable.Map());
+
+      if (organization.get('isOwner') === true) {
+        yourOrgs.push(this.renderOrganization(organization));
+      }
+      else {
+        otherOrgs.push(this.renderOrganization(organization));
+      }
     });
 
+    // TODO: this can be refactored
+
+    let yourOrgsOverviewCardCollection = null;
+    if (yourOrgs.length > 0) {
+      yourOrgsOverviewCardCollection = (
+        <OrgOverviewCardCollection>
+          <h2>Your Organizations</h2>
+          { yourOrgs }
+        </OrgOverviewCardCollection>
+      );
+    }
+
+    let otherOrgsOverviewCardCollection = null;
+    if (otherOrgs.length > 0) {
+      otherOrgsOverviewCardCollection = (
+        <OrgOverviewCardCollection>
+          <h2>Other Organizations</h2>
+          { otherOrgs }
+        </OrgOverviewCardCollection>
+      );
+    }
+
     return (
-      <OverviewCardCollection>
-        { orgOverviewCards }
-      </OverviewCardCollection>
+      <StyledFlexContainerStacked>
+        { yourOrgsOverviewCardCollection }
+        { otherOrgsOverviewCardCollection }
+      </StyledFlexContainerStacked>
     );
   }
 

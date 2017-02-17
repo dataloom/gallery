@@ -13,7 +13,6 @@ import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
 
 import OrganizationEpic from '../../containers/organizations/epics/OrganizationEpic';
 import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
-import OrganizationsSearchEpic from '../../containers/organizations/epics/OrganizationsSearchEpic';
 import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 import UsersEpic from '../../containers/organizations/epics/UsersEpic';
 
@@ -27,7 +26,6 @@ export default function reduxEpic() {
 
     OrganizationEpic,
     OrganizationsEpic,
-    OrganizationsSearchEpic,
     UsersEpic
   );
 }
