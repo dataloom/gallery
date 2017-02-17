@@ -55,13 +55,22 @@ class EntitySetDetailComponent extends React.Component {
         <div className={styles.controls}>
           <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown, styles.control)} />
 
-          { entitySetPermissions.OWNER ? <Button
-              bsStyle="info"
-              onClick={this.setEditingPermissions}
-              className={styles.managePermissions}>Manage Permissions</Button> : ''}
+          {
+            entitySetPermissions.OWNER &&
+            <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
+              Manage Permissions
+            </Button>
+          }
         </div>
 
-        <EntitySetPermissionsRequestList entitySetId={entitySet.id} propertyTypeIds={entitySet.entityType.properties.map(p => p.id)} />
+        {
+          entitySetPermissions.OWNER &&
+          <EntitySetPermissionsRequestList
+              entitySetId={entitySet.id}
+              propertyTypeIds={entitySet.entityType.properties.map((p) => {
+                return p.id;
+              })} />
+        }
       </div>
     );
   };
