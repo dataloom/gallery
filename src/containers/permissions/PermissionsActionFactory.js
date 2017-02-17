@@ -8,8 +8,9 @@ import {
   CHECK_AUTHORIZATION_REJECT,
   REQUEST_PERMISSIONS_MODAL_SHOW,
   REQUEST_PERMISSIONS_MODAL_HIDE,
-  REQUEST_PERMISSIONS_REQUEST,
-  REQUEST_PERMISSIONS_RESOLVE,
+  REQUEST_PERMISSIONS_MODAL_SUCCESS,
+  REQUEST_PERMISSIONS_MODAL_FAILURE,
+  SUBMIT_AUTHN_REQUEST,
   LOAD_STATUSES,
   UPDATE_STATUSES
 } from './PermissionsActionTypes';
@@ -17,16 +18,17 @@ import {
 import {
   ALL_PERMISSIONS,
   RequestStatus,
-  Status
+  Status,
+  AccessCheck
 } from './PermissionsStorage';
 
 import type {
   Authorization,
-  PermissionsRequest,
+  AuthNRequest,
   AclKey
 } from './PermissionsStorage';
 
-export function checkAuthorizationRequest(accessChecks :Object[]) :Object {
+export function checkAuthorizationRequest(accessChecks :AccessCheck[]) :Object {
 
   return {
     type: CHECK_AUTHORIZATION_REQUEST,
@@ -40,7 +42,7 @@ export function checkAuthorizationResolve(authorizations :Authorization[]) :Obje
     authorizations
   };
 }
-export function checkAuthorizationReject(accessChecks :Object[], errorMessage :string) :Object {
+export function checkAuthorizationReject(accessChecks :AccessCheck[], errorMessage :string) :Object {
 
   return {
     type: CHECK_AUTHORIZATION_REJECT,
@@ -73,22 +75,21 @@ export function requestPermissionsModalHide() {
   }
 }
 
-export function requestPermissionsRequest(requests :PermissionsRequest[]) {
+export function requestPermissionsModalSuccess() {
   return {
-    type: REQUEST_PERMISSIONS_REQUEST,
-    requests
+    type: REQUEST_PERMISSIONS_MODAL_SUCCESS
   }
 }
-export function requestPermissionsReject(requests :PermissionsRequest[], errorMessage :string) {
+
+export function requestPermissionsModalError() {
   return {
-    type: REQUEST_PERMISSIONS_RESOLVE,
-    requests,
-    errorMessage
+    type: REQUEST_PERMISSIONS_MODAL_FAILURE
   }
 }
-export function requestPermissionsResolve(requests :PermissionsRequest[]) {
+
+export function submitAuthNRequest(requests :AuthNRequest[]) {
   return {
-    type: REQUEST_PERMISSIONS_RESOLVE,
+    type: SUBMIT_AUTHN_REQUEST,
     requests
   }
 }

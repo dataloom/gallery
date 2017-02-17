@@ -20,9 +20,13 @@ const INITIAL_STATE = {
   typeName: StringConsts.EMPTY,
   typeNamespace: StringConsts.EMPTY,
   datatype: StringConsts.EMPTY,
+  pii: false,
   editing: false,
-  error: false
+  error: false,
+  phonetic: false
 };
+
+const STRING = 'String';
 
 export class NewEdmObjectInput extends React.Component {
 
@@ -84,8 +88,9 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   handleDatatypeChange = (e) => {
-    const newValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    this.setState({ datatype: newValue });
+    const datatype = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
+    const phonetic = (datatype === STRING) ? this.state.phonetic : false;
+    this.setState({ datatype, phonetic });
   }
 
   setEditing = () => {
@@ -143,6 +148,9 @@ export class NewEdmObjectInput extends React.Component {
           .setDescription(this.state[DESCRIPTION_FIELD])
           .setDataType(this.state.datatype)
           .build();
+        propertyType.piiField = this.state.pii;
+        propertyType.analyzer = (this.state.datatype === STRING && this.state.phonetic) ?
+          EdmConsts.ANALYZERS.metaphone : EdmConsts.ANALYZERS.standard;
         return EntityDataModelApi.createPropertyType(propertyType);
       }
       default:
@@ -222,11 +230,36 @@ export class NewEdmObjectInput extends React.Component {
             {this.renderInputField('Namespace', NAMESPACE_FIELD)}
             {this.renderInputField('Name', NAME_FIELD)}
             {this.renderInputField('Description', DESCRIPTION_FIELD)}
+            {this.renderPiiDropdown()}
           </div>
         );
       default:
         return null;
     }
+  }
+
+  renderPiiDropdown = () => {
+    const options = [
+      { value: true, label: 'True' },
+      { value: false, label: 'False' }
+    ];
+    return (
+      <div>
+        <div>PII</div>
+        <div className={styles.spacerMini} />
+        <Select
+            value={this.state.pii}
+            onChange={this.handlePiiChange}
+            options={options}
+            className={styles.piiSelect} />
+        <div className={styles.spacerSmall} />
+      </div>
+    );
+  }
+
+  handlePiiChange = (e) => {
+    const newValue = (e) ? e.value : false;
+    this.setState({ pii: newValue });
   }
 
   renderInputFqnAutosuggest = () => {
@@ -260,6 +293,21 @@ export class NewEdmObjectInput extends React.Component {
     );
   }
 
+  handlePhoneticChange = (e) => {
+    this.setState({ phonetic: e.target.checked });
+  }
+
+  renderAllowPhonetic = () => {
+    if (this.state.datatype !== STRING) return null;
+    return (
+      <div>
+        <label htmlFor="phonetic" className={styles.label}>Allow phonetic searches: </label>
+        <input type="checkbox" id="phonetic" onChange={this.handlePhoneticChange} />
+        <div className={styles.spacerSmall} />
+      </div>
+    );
+  }
+
   renderInputDatatypeAutosuggest = () => {
     if (this.props.edmType !== EdmConsts.PROPERTY_TYPE_TITLE) return null;
     return (
@@ -269,8 +317,10 @@ export class NewEdmObjectInput extends React.Component {
             value={this.state.datatype}
             onChange={this.handleDatatypeChange}
             options={EdmConsts.EDM_PRIMITIVE_TYPES}
-            placeholder="datatype" />
+            placeholder="datatype"
+            className={styles.datatypeSelect} />
         <div className={styles.spacerSmall} />
+        {this.renderAllowPhonetic()}
       </div>
     );
   }

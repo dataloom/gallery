@@ -47,7 +47,7 @@ export const AuthorizationPropType = PropTypes.shape({
   permissions: PermissionsPropType
 });
 
-export type PermissionsRequest = {
+export type AuthNRequest = {
   aclKey :AclKey,
   permissions :string[]
 };
@@ -84,7 +84,14 @@ export function createStatusAsyncReference(aclKey :AclKey) :AsyncReference {
   return {
     id: aclKey.join('/'),
     namespace: 'permissions.status'
-  }
+  };
+}
+
+export function createAuthnAsyncReference(aclKey :AclKey) :AsyncReference {
+  return {
+    id: aclKey.join('/'),
+    namespace: 'permissions.authn'
+  };
 }
 
 /* Utility Functions */

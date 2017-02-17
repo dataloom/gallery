@@ -8,7 +8,9 @@ import { Login } from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
+import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
+import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
@@ -16,6 +18,7 @@ import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import StringConsts from '../../utils/Consts/StringConsts';
 import { configure as edmApiConfigure } from '../../containers/Api';
+import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
 import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -56,28 +59,11 @@ const isAdmin = () => {
 
 const getName = () => {
 
-  let displayName;
   if (auth.loggedIn()) {
-    const profile = auth.getProfile();
-
-    if (profile.hasOwnProperty('given_name')) {
-      displayName = profile.given_name;
-    }
-    else if (profile.hasOwnProperty('name')) {
-      displayName = profile.name;
-    }
-    else if (profile.hasOwnProperty('nickname')) {
-      displayName = profile.nickname;
-    }
-    else if (profile.hasOwnProperty('email')) {
-      displayName = profile.email;
-    }
-    else {
-      displayName = StringConsts.EMPTY;
-    }
+    return getDisplayName(auth.getProfile());
+  } else {
+    return null;
   }
-
-  return displayName;
 };
 
 const getProfileStatus = () => {
@@ -93,6 +79,7 @@ export const makeMainRoutes = () => {
       <IndexRedirect to={`/${PageConsts.HOME}`} />
       <Route path={PageConsts.HOME} component={HomeComponent} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
+      <Route path={`${PageConsts.SEARCH}/:entitySetId`} component={EntitySetDataSearch} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
@@ -103,6 +90,7 @@ export const makeMainRoutes = () => {
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
+      <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
     </Route>
   );
 };
