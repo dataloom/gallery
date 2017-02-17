@@ -6,7 +6,8 @@ import {
   DataModels,
   Types,
   AuthorizationApi,
-  OrganizationsApi
+  OrganizationsApi,
+  SearchApi
 } from 'loom-data';
 
 import { push } from 'react-router-redux';
@@ -83,10 +84,30 @@ function fetchOrganizationsAuthorizationsEpic(action$ :Observable<Action>) :Obse
             OrgsActionFactory.fetchOrganizationsAuthorizationsSuccess(authorizations)
           );
         })
-        .catch((e) => {
-          console.error(e);
+        .catch(() => {
           return Observable.of(
             OrgsActionFactory.fetchOrganizationsAuthorizationsFailure()
+          );
+        });
+    });
+}
+
+function searchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgsActionTypes.SEARCH_ORGS_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(SearchApi.searchOrganizations(action.searchQuery))
+        .mergeMap((searchResults :Object[]) => {
+          // TODO: fetch any organizations from the search results that are not in the redux store
+          return Observable.of(
+            OrgsActionFactory.searchOrganizationsSuccess(searchResults)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgsActionFactory.searchOrganizationsFailure()
           );
         });
     });
@@ -95,5 +116,6 @@ function fetchOrganizationsAuthorizationsEpic(action$ :Observable<Action>) :Obse
 export default combineEpics(
   fetchOrganizationEpic,
   fetchOrganizationsEpic,
-  fetchOrganizationsAuthorizationsEpic
+  fetchOrganizationsAuthorizationsEpic,
+  searchOrganizationsEpic
 );

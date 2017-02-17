@@ -20,12 +20,20 @@ import { fetchOrganizationsRequest } from '../actions/OrganizationsActionFactory
 
 function mapStateToProps(state :Immutable.Map) {
 
-  const isFetchingOrgs = state.getIn(['organizations', 'isFetchingOrgs']);
-  const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map());
+  const isFetchingOrgs :boolean = state.getIn(['organizations', 'isFetchingOrgs']);
+  const isSearchingOrgs :boolean = state.getIn(['organizations', 'isSearchingOrgs']);
+
+  const organizations :Immutable.Map = state.getIn(['organizations', 'organizations'], Immutable.Map());
+  const visibleOrganizationIds :Immutable.Set = state.getIn(
+    ['organizations', 'visibleOrganizationIds'],
+    Immutable.Set()
+  );
 
   return {
     isFetchingOrgs,
-    organizations
+    isSearchingOrgs,
+    organizations,
+    visibleOrganizationIds
   };
 }
 
@@ -48,7 +56,9 @@ class OrganizationsListComponent extends React.Component {
       fetchOrganizationsRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isFetchingOrgs: React.PropTypes.bool.isRequired,
-    organizations: React.PropTypes.instanceOf(Immutable.Map).isRequired
+    isSearchingOrgs: React.PropTypes.bool.isRequired,
+    organizations: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    visibleOrganizationIds: React.PropTypes.instanceOf(Immutable.Set).isRequired
   };
 
   componentDidMount() {
@@ -81,10 +91,11 @@ class OrganizationsListComponent extends React.Component {
 
     const orgOverviewCards = [];
 
-    this.props.organizations.forEach((organization :Immutable.Map) => {
+    this.props.visibleOrganizationIds.forEach((orgId :UUID) => {
       orgOverviewCards.push(
-        this.renderOrganization(organization)
+        this.renderOrganization(this.props.organizations.get(orgId))
       );
+
     });
 
     return (
@@ -99,7 +110,7 @@ class OrganizationsListComponent extends React.Component {
     // TODO: need a better view when there's no organizations to show
 
     return (
-      <div>No Orgs</div>
+      <div>No organizations found.</div>
     );
   }
 
@@ -107,11 +118,11 @@ class OrganizationsListComponent extends React.Component {
 
     // TODO: async content loading
 
-    if (this.props.isFetchingOrgs) {
+    if (this.props.isFetchingOrgs || this.props.isSearchingOrgs) {
       return <LoadingSpinner />;
     }
 
-    if (this.props.organizations.isEmpty()) {
+    if (this.props.visibleOrganizationIds.isEmpty()) {
       return this.renderNoOrganizations();
     }
 

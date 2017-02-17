@@ -19,7 +19,7 @@ const OuterSectionContainer = styled(StyledFlexContainerStackedCentered)`
 `;
 
 const InnerSectionContainer = styled(StyledFlexContainerStacked)`
-  padding: 25px;
+  padding: 50px 25px;
   width: ${(props) => {
     return props.width ? props.width : '1000px';
   }};

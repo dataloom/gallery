@@ -20,16 +20,31 @@ const StyledButton = styled.button`
     background-color: #2e0289;
     border: 1px solid #2e0289;
   }
+  &:disabled {
+    cursor: default;
+    background-color: #2e0289;
+    border: 1px solid #2e0289;
+  }
 `;
 
 export default class Button extends React.Component {
 
   static propTypes = {
     children: React.PropTypes.node.isRequired,
+    disabled: React.PropTypes.bool,
     onClick: React.PropTypes.func
   };
 
   render() {
+
+    // TODO: this can be probably done better. look at react-bootstrap for inspiration
+    if (this.props.disabled) {
+      return (
+        <StyledButton disabled>
+          { React.Children.toArray(this.props.children) }
+        </StyledButton>
+      );
+    }
 
     return (
       <StyledButton onClick={this.props.onClick}>

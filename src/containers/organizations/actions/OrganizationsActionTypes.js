@@ -21,3 +21,5 @@ export const SEARCH_ORGS_FAILURE :string = 'SEARCH_ORGS_FAILURE';
 export const JOIN_ORG_REQUEST :string = 'JOIN_ORG_REQUEST';
 export const JOIN_ORG_SUCCESS :string = 'JOIN_ORG_SUCCESS';
 export const JOIN_ORG_FAILURE :string = 'JOIN_ORG_FAILURE';
+
+export const SHOW_ALL_ORGS :string = 'SHOW_ALL_ORGS';

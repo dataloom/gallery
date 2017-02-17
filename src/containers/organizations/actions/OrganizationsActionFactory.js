@@ -79,7 +79,7 @@ export function fetchOrganizationsAuthorizationsFailure() :Object {
 }
 
 
-export function searchOrgsRequest(searchQuery :string) :Object {
+export function searchOrganizationsRequest(searchQuery :string) :Object {
 
   return {
     type: OrgsActionTypes.SEARCH_ORGS_REQUEST,
@@ -87,7 +87,7 @@ export function searchOrgsRequest(searchQuery :string) :Object {
   };
 }
 
-export function searchOrgsSuccess(searchResults :any) :Object {
+export function searchOrganizationsSuccess(searchResults :any) :Object {
 
   return {
     type: OrgsActionTypes.SEARCH_ORGS_SUCCESS,
@@ -95,7 +95,7 @@ export function searchOrgsSuccess(searchResults :any) :Object {
   };
 }
 
-export function searchOrgsFailure() :Object {
+export function searchOrganizationsFailure() :Object {
 
   return {
     type: OrgsActionTypes.SEARCH_ORGS_FAILURE
@@ -121,5 +121,12 @@ export function joinOrgFailure() :Object {
 
   return {
     type: OrgsActionTypes.JOIN_ORG_FAILURE
+  };
+}
+
+export function showAllOrganizations() :Object {
+
+  return {
+    type: OrgsActionTypes.SHOW_ALL_ORGS
   };
 }

@@ -17,7 +17,8 @@ import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
 import {
-  searchOrgsRequest
+  searchOrganizationsRequest,
+  showAllOrganizations
 } from '../actions/OrganizationsActionFactory';
 
 const Actions = styled(StyledFlexContainer)`
@@ -64,13 +65,18 @@ const SearchInput = styled.input`
 
 function mapStateToProps(state :Immutable.Map) {
 
-  return {};
+  const isSearchingOrgs :boolean = state.getIn(['organizations', 'isSearchingOrgs']);
+
+  return {
+    isSearchingOrgs
+  };
 }
 
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
-    searchOrgsRequest
+    searchOrganizationsRequest,
+    showAllOrganizations
   };
 
   return {
@@ -87,8 +93,10 @@ class OrganizationsHeaderComponent extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
-      searchOrgsRequest: React.PropTypes.func.isRequired
-    }).isRequired
+      searchOrganizationsRequest: React.PropTypes.func.isRequired,
+      showAllOrganizations: React.PropTypes.func.isRequired
+    }).isRequired,
+    isSearchingOrgs: React.PropTypes.bool.isRequired
   };
 
   constructor(props) {
@@ -112,7 +120,7 @@ class OrganizationsHeaderComponent extends React.Component {
       return;
     }
 
-    this.props.actions.searchOrgsRequest(searchQuery);
+    this.props.actions.searchOrganizationsRequest(searchQuery);
   }
 
   handleOnClickSearchButton = () => {
@@ -138,6 +146,11 @@ class OrganizationsHeaderComponent extends React.Component {
     }
   }
 
+  handleOnClickShowAllButton = () => {
+
+    this.props.actions.showAllOrganizations();
+  }
+
   renderSearch = () => {
 
     return (
@@ -146,12 +159,12 @@ class OrganizationsHeaderComponent extends React.Component {
         <SearchInput
             type="text"
             placeholder="Search for an Organization"
+            disabled={this.props.isSearchingOrgs}
             value={this.state.searchInputValue}
             onChange={this.handleOnChangeSearchInput}
             onKeyDown={this.handleOnKeyDownSearchInput} />
-        <Button onClick={this.handleOnClickSearchButton}>
-          Search
-        </Button>
+        <Button disabled={this.props.isSearchingOrgs} onClick={this.handleOnClickSearchButton}>Search</Button>
+        <Button onClick={this.handleOnClickShowAllButton}>Show All</Button>
       </SearchBox>
     );
   }

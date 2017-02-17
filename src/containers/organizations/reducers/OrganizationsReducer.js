@@ -27,7 +27,9 @@ const {
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   isFetchingOrg: false,
   isFetchingOrgs: false,
-  organizations: {}
+  isSearchingOrgs: false,
+  organizations: Immutable.Map(),
+  visibleOrganizationIds: Immutable.Set()
 });
 
 export default function organizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
@@ -37,14 +39,20 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
     case OrgsActionTypes.FETCH_ORG_REQUEST:
       return state.set('isFetchingOrg', true);
 
-    case OrgsActionTypes.FETCH_ORGS_REQUEST:
-      return state.set('isFetchingOrgs', true);
-
     case OrgsActionTypes.FETCH_ORG_FAILURE:
       return state.set('isFetchingOrg', false);
 
+    case OrgsActionTypes.FETCH_ORGS_REQUEST:
+      return state.set('isFetchingOrgs', true);
+
     case OrgsActionTypes.FETCH_ORGS_FAILURE:
       return state.set('isFetchingOrgs', false);
+
+    case OrgsActionTypes.SEARCH_ORGS_REQUEST:
+      return state.set('isSearchingOrgs', true);
+
+    case OrgsActionTypes.SEARCH_ORGS_FAILURE:
+      return state.set('isSearchingOrgs', false);
 
     case OrgsActionTypes.FETCH_ORG_SUCCESS: {
 
@@ -68,8 +76,11 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         });
       });
 
+      const organizations :Immutable.Map = Immutable.fromJS(orgs);
+
       return state
-        .set('organizations', Immutable.fromJS(orgs))
+        .set('organizations', organizations)
+        .set('visibleOrganizationIds', Immutable.Set(organizations.keys()))
         .set('isFetchingOrgs', false);
     }
 
@@ -193,6 +204,25 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       const newMembers :List<Principal> = currentMembers.delete(index);
       return state.setIn(['organizations', orgId, 'members'], newMembers);
+    }
+
+    case OrgsActionTypes.SHOW_ALL_ORGS: {
+
+      const organizations :Immutable.Map = state.get('organizations');
+      return state.set('visibleOrganizationIds', Immutable.Set(organizations.keys()));
+    }
+
+    case OrgsActionTypes.SEARCH_ORGS_SUCCESS: {
+
+      const orgIds :Immutable.Set = Immutable.Set().withMutations((set :Immutable.Set) => {
+        action.searchResults.forEach((result :Object) => {
+          set.add(result.id);
+        });
+      });
+
+      return state
+        .set('visibleOrganizationIds', orgIds)
+        .set('isSearchingOrgs', false);
     }
 
     default:

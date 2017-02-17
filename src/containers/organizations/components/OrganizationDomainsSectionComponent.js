@@ -47,7 +47,7 @@ class OrganizationDomainsSectionComponent extends React.Component {
   static propTypes = {
     actions: React.PropTypes.shape({
       addDomainToOrganizationRequest: React.PropTypes.func.isRequired,
-      removeDomainFromOrganizationRequest: React.PropTypes.func.isRequired,
+      removeDomainFromOrganizationRequest: React.PropTypes.func.isRequired
     }).isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
   }
