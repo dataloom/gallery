@@ -55,10 +55,10 @@ export class Schema extends React.Component {
         <div className={styles.name}>{`${schema.fqn.namespace}.${schema.fqn.name}`}</div>
         <div className={styles.spacerMed} />
         <div className={styles.dropdownButtonContainer}>
-          <SplitButton bsStyle="primary" title="Download options" pullRight>
+          <SplitButton id="download-schema-button" bsStyle="primary" title="Download options" pullRight>
             <MenuItem eventKey="1" href={EntityDataModelApi.getSchemaFileUrl(schema.fqn, FileConsts.YAML)}>
                 Download as .yaml</MenuItem>
-            <MenuItem eventKey="1" href={EntityDataModelApi.getSchemaFileUrl(schema.fqn, FileConsts.JSON)}>
+            <MenuItem eventKey="2" href={EntityDataModelApi.getSchemaFileUrl(schema.fqn, FileConsts.JSON)}>
                 Download as .json</MenuItem>
           </SplitButton>
         </div>

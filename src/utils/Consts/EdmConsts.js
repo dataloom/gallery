@@ -63,6 +63,11 @@ const EDM_GEOGRAPHY_TYPES = [
   'GeographyCollection'
 ];
 
+const ANALYZERS = {
+  standard: 'STANDARD',
+  metaphone: 'METAPHONE'
+};
+
 export default {
   SCHEMA,
   ENTITY_SET,
@@ -74,5 +79,6 @@ export default {
   PROPERTY_TYPE,
   EDM_PRIMITIVE_TYPES,
   EDM_NUMBER_TYPES,
-  EDM_GEOGRAPHY_TYPES
+  EDM_GEOGRAPHY_TYPES,
+  ANALYZERS
 };
