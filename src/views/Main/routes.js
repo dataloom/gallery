@@ -73,13 +73,6 @@ const getProfileStatus = () => {
   };
 };
 
-//Bugfix for race conditions on Safari: redirect triggers before auth
-const checkToken = () => {
-  if (auth.loggedIn()) {
-    hashHistory.push('/' + PageConsts.HOME);
-  }
-}
-
 export const makeMainRoutes = () => {
   return (
     <Route path={'/'} component={Container} auth={auth} profileFn={getProfileStatus}>
@@ -95,7 +88,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
-      <Route path={PageConsts.LOGIN} component={Login} onChange={checkToken}/>
+      <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
     </Route>

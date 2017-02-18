@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { hashHistory } from 'react-router';
 
 import Auth0Lock from 'auth0-lock';
 
@@ -47,6 +48,10 @@ export default class AuthService extends EventEmitter {
         this.setProfile(profile);
       }
     });
+
+    //Bugfix for redirect race conditions in IE & Safari
+    //As soon as authentication is complete -> redirect to home
+    hashHistory.push('/home');
   }
 
   authorizationError(error) {
