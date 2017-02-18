@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { hashHistory, Route, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
@@ -32,6 +32,7 @@ const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DEV__);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
+  console.log('requireAuth');
   if (!auth.loggedIn()) {
     replace({ pathname: `/${PageConsts.LOGIN}` });
   }
@@ -58,7 +59,6 @@ const isAdmin = () => {
 };
 
 const getName = () => {
-
   if (auth.loggedIn()) {
     return getDisplayName(auth.getProfile());
   } else {
@@ -72,6 +72,13 @@ const getProfileStatus = () => {
     name: getName()
   };
 };
+
+//Bugfix for race conditions on Safari: redirect triggers before auth
+const checkToken = () => {
+  if (auth.loggedIn()) {
+    hashHistory.push('/' + PageConsts.HOME);
+  }
+}
 
 export const makeMainRoutes = () => {
   return (
@@ -88,7 +95,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
-      <Route path={PageConsts.LOGIN} component={Login} />
+      <Route path={PageConsts.LOGIN} component={Login} onChange={checkToken}/>
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
     </Route>
