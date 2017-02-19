@@ -13,8 +13,10 @@ import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 import StyledFlexContainerStackedLeftAligned from '../../../components/flex/StyledFlexContainerStackedLeftAligned';
 
+import OrganizationAddMembersSectionComponent from './OrganizationAddMembersSectionComponent';
 import OrganizationDescriptionSectionComponent from './OrganizationDescriptionSectionComponent';
 import OrganizationDomainsSectionComponent from './OrganizationDomainsSectionComponent';
+import OrganizationMembersSectionComponent from './OrganizationMembersSectionComponent';
 import OrganizationRolesSectionComponent from './OrganizationRolesSectionComponent';
 import OrganizationTitleSectionComponent from './OrganizationTitleSectionComponent';
 
@@ -90,16 +92,12 @@ class OrganizationDetailsComponent extends React.Component {
 
   componentDidMount() {
 
-    console.log('OrganizationDetailsComponent.componentDidMount()');
-
     if ((this.props.mode === MODES.VIEW || this.props.mode === MODES.EDIT)) {
       this.props.actions.fetchOrganizationRequest(this.props.organizationId);
     }
   }
 
   componentWillReceiveProps(nextProps :Object) {
-
-    console.log('OrganizationDetailsComponent.componentWillReceiveProps()');
 
     if ((nextProps.mode === MODES.VIEW || nextProps.mode === MODES.EDIT)) {
       if (this.props.organizationId !== nextProps.organizationId) {
@@ -122,7 +120,7 @@ class OrganizationDetailsComponent extends React.Component {
 
     return (
       <OrganizationTitleSectionComponent organization={this.props.organization} />
-    )
+    );
   }
 
   renderOrganizationDescriptionSection = () => {
@@ -159,9 +157,29 @@ class OrganizationDetailsComponent extends React.Component {
     );
   }
 
-  render() {
+  renderOrganizationMembersSection = () => {
 
-    console.log('OrganizationDetailsComponent.render()');
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    return (
+      <OrganizationMembersSectionComponent organization={this.props.organization} />
+    );
+  }
+
+  renderOrganizationAddMembersSection = () => {
+
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    return (
+      <OrganizationAddMembersSectionComponent organization={this.props.organization} />
+    );
+  }
+
+  render() {
 
     if (this.props.isFetchingOrg) {
       return <LoadingSpinner />;
@@ -172,6 +190,8 @@ class OrganizationDetailsComponent extends React.Component {
         { this.renderOrganizationHeaderSection() }
         { this.renderOrganizationDomainsSection() }
         { this.renderOrganizationRolesSection() }
+        { this.renderOrganizationMembersSection() }
+        { this.renderOrganizationAddMembersSection() }
       </StyledFlexContainerStacked>
     );
   }

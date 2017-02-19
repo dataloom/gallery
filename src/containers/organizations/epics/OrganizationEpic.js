@@ -28,7 +28,6 @@ function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
 
   return action$
     .ofType(OrgActionTypes.CREATE_ORG_REQUEST)
-    // .delay(10000) // for testing
     .mergeMap((action :Action) => {
       return Observable
         .from(OrganizationsApi.createOrganization(action.organization))
@@ -163,6 +162,46 @@ export function removeRoleFromOrganizationEpic(action$ :Observable<Action>) :Obs
     });
 }
 
+export function addMemberToOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.ADD_MEMBER_TO_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.addPrincipal(action.orgId, PrincipalTypes.USER, action.memberId))
+        .mergeMap(() => {
+          return Observable.of(
+            OrgActionFactory.addMemberToOrganizationSuccess(action.orgId, action.memberId)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.addMemberToOrganizationFailure()
+          );
+        });
+    });
+}
+
+export function removeMemberFromOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.removePrincipal(action.orgId, PrincipalTypes.USER, action.memberId))
+        .mergeMap(() => {
+          return Observable.of(
+            OrgActionFactory.removeMemberFromOrganizationSuccess(action.orgId, action.memberId)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.removeMemberFromOrganizationFailure()
+          );
+        });
+    });
+}
+
 export default combineEpics(
   createNewOrganizationEpic,
   updateOrganizationDescriptionEpic,
@@ -170,5 +209,7 @@ export default combineEpics(
   addDomainToOrganizationEpic,
   removeDomainFromOrganizationEpic,
   addRoleToOrganizationEpic,
-  removeRoleFromOrganizationEpic
+  removeRoleFromOrganizationEpic,
+  addMemberToOrganizationEpic,
+  removeMemberFromOrganizationEpic
 );

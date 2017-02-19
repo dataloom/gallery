@@ -16,7 +16,6 @@ const ListItemWrapper = styled.div`
   border: 1px solid #cfd8dc;
   display: flex;
   margin: -1px 0 0 0;
-  padding: 10px 12px;
   width: 100%;
   &:first-child {
     margin: 0;
@@ -27,6 +26,7 @@ const ListItemButton = styled.button`
   background: none;
   border: none;
   flex: 0;
+  margin: auto 12px;
   &.add {
     color: #39de9d;
   }
@@ -42,11 +42,13 @@ const ListItemValue = styled.span`
   background: none;
   border: none;
   flex: 1;
+  padding: 10px 12px;
 `;
 
 const AddItemInput = styled.input`
   border: none;
   margin: 0;
+  padding: 10px 12px;
   flex: 1;
   &:focus {
     outline: none;

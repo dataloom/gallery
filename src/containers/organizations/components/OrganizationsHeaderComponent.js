@@ -4,8 +4,8 @@
 
 import React from 'react';
 
-import FontAwesome from 'react-fontawesome';
 import Immutable from 'immutable';
+import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
@@ -120,6 +120,7 @@ class OrganizationsHeaderComponent extends React.Component {
       return;
     }
 
+    // TODO: also have to navigate to /orgs if not there
     this.props.actions.searchOrganizationsRequest(searchQuery);
   }
 
@@ -148,6 +149,7 @@ class OrganizationsHeaderComponent extends React.Component {
 
   handleOnClickShowAllButton = () => {
 
+    // TODO: also have to navigate to /orgs if not there
     this.props.actions.showAllOrganizations();
   }
 
