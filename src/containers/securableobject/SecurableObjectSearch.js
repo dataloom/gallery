@@ -14,7 +14,8 @@ import styles from './securableobject.module.css';
 export const FilterParamsPropType = PropTypes.shape({
   keyword: PropTypes.string,
   propertyTypeIds: PropTypes.arrayOf(React.PropTypes.string),
-  entityTypeId: PropTypes.string
+  entityTypeId: PropTypes.string,
+  page: PropTypes.string
 });
 
 class SecurableObjectSearch extends React.Component {
@@ -75,6 +76,7 @@ class SecurableObjectSearch extends React.Component {
     if (entityTypeId) {
       filterParams.entityTypeId = entityTypeId;
     }
+    filterParams.page = 1;
     this.props.onSubmit(filterParams);
   };
 
@@ -143,7 +145,7 @@ function mapStateToProps(state) {
     securableObject = state.get('securableObject').toJS();
   return {
     entityTypes: getEdmObjectsShallow(normalizedData, securableObject.entityTypeReferences),
-    propertyTypes: getEdmObjectsShallow(normalizedData, securableObject.propertyTypeReferences),
+    propertyTypes: getEdmObjectsShallow(normalizedData, securableObject.propertyTypeReferences)
   };
 }
 

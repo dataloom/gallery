@@ -18,13 +18,17 @@ function convertSearchResult(rawResult):DataModel.EntitySet {
 
 // TODO: Save property types
 function searchCatalog(filterParams) {
+  let numHits = 0;
   return Observable.from(SearchApi.search(filterParams))
-    .map(rawResult => rawResult.map(convertSearchResult))
+    .map(rawResult => {
+      numHits = rawResult.numHits;
+      return rawResult.hits.map(convertSearchResult);
+    })
     .map(result => normalize(result, [EntitySetNschema]))
     .map(Immutable.fromJS)
     .flatMap(normalizedData => [
       edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-      actionFactories.catalogSearchResolve(normalizedData.get('result'))
+      actionFactories.catalogSearchResolve(normalizedData.get('result'), numHits)
     ])
     // Error Handling
     .catch(error => {
