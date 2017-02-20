@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory, Route, IndexRedirect } from 'react-router';
+import { Route, IndexRedirect } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
