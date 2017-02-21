@@ -54,3 +54,30 @@
 .bottomSpacer {
   height: 30px;
 }
+
+.userRow {
+  margin-bottom: 50px;
+}
+
+.userProfile {
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.userProfileDetails {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.userProfileDetailItem {
+  margin: 3px 0;
+  font-size: 15px;
+}
+
+.userIcon {
+  max-height: 100px;
+  max-width: 100px;
+}
