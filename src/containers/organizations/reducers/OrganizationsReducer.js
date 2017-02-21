@@ -131,8 +131,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       const orgId :string = action.orgId;
       const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
-      const newEmails :List<string> = currentEmails.push(action.emailDomain);
-      return state.setIn(['organizations', orgId, 'emails'], newEmails);
+      const updatedEmails :List<string> = currentEmails.push(action.emailDomain);
+      return state.setIn(['organizations', orgId, 'emails'], updatedEmails);
     }
 
     case OrgActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS: {
@@ -148,8 +148,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const newEmails :List<string> = currentEmails.delete(index);
-      return state.setIn(['organizations', orgId, 'emails'], newEmails);
+      const updatedEmails :List<string> = currentEmails.delete(index);
+      return state.setIn(['organizations', orgId, 'emails'], updatedEmails);
     }
 
     case OrgActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
@@ -160,8 +160,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         .build();
 
       const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
-      const newRoles :List<Principal> = currentRoles.push(Immutable.Map(newRolePrincipal));
-      return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
+      const updatedRoles :List<Principal> = currentRoles.push(Immutable.Map(newRolePrincipal));
+      return state.setIn(['organizations', action.orgId, 'roles'], updatedRoles);
     }
 
     case OrgActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
@@ -176,8 +176,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const newRoles :List<Principal> = currentRoles.delete(index);
-      return state.setIn(['organizations', action.orgId, 'roles'], newRoles);
+      const updatedRoles :List<Principal> = currentRoles.delete(index);
+      return state.setIn(['organizations', action.orgId, 'roles'], updatedRoles);
     }
 
     case OrgActionTypes.ADD_MEMBER_TO_ORG_SUCCESS: {
@@ -189,8 +189,20 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         .build();
 
       const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
-      const newMembers :List<Principal> = currentMembers.push(Immutable.Map(newMemberPrincipal));
-      return state.setIn(['organizations', orgId, 'members'], newMembers);
+      const updatedMembers :List<Principal> = currentMembers.push(Immutable.Map(newMemberPrincipal));
+
+      // update users search results to remove the member just added
+      const usersSearchResults :Immutable.Map = state.get('usersSearchResults');
+      let updatedUserSearchResults :Immutable.Map = usersSearchResults;
+      if (!usersSearchResults.isEmpty()) {
+        updatedUserSearchResults = usersSearchResults.filter((user :Immutable.Map) => {
+          return user.get('user_id') !== action.memberId;
+        });
+      }
+
+      return state
+        .setIn(['organizations', orgId, 'members'], updatedMembers)
+        .set('usersSearchResults', updatedUserSearchResults);
     }
 
     case OrgActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS: {
@@ -206,8 +218,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const newMembers :List<Principal> = currentMembers.delete(index);
-      return state.setIn(['organizations', orgId, 'members'], newMembers);
+      const updatedMembers :List<Principal> = currentMembers.delete(index);
+      return state.setIn(['organizations', orgId, 'members'], updatedMembers);
     }
 
     case OrgsActionTypes.SHOW_ALL_ORGS: {
@@ -246,6 +258,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       if (state.get('isSearchingUsers') === false) {
         return state;
       }
+
+      // TODO: filter out search results that include members already part of the organization being viewed
 
       return state
         .set('usersSearchResults', Immutable.fromJS(action.searchResults))

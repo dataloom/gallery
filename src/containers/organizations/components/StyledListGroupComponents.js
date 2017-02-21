@@ -7,10 +7,9 @@ import React from 'react';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
-import StyledFlexContainer from '../flex/StyledFlexContainer';
+import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 
 export const StyledListItem = styled(StyledFlexContainer)`
-  align-items: center;
   background-color: #ffffff;
   border: 1px solid #cfd8dc;
   flex: 1 0 auto;
@@ -25,6 +24,15 @@ export const StyledElement = styled.span`
   background: none;
   border: none;
   display: flex;
+  flex: 1 0 auto;
+  margin: auto 5px;
+  padding: 10px 0;
+`;
+
+export const StyledIcon = styled.span`
+  background: none;
+  border: none;
+  display: flex;
   flex: 0;
   margin: auto 5px;
   padding: 10px 0;
@@ -34,7 +42,7 @@ export const StyledInput = styled.input`
   background: none;
   border: none;
   display: flex;
-  flex: 0;
+  flex: 1 0 auto;
   margin: auto 5px;
   padding: 10px 0;
   &:focus {
@@ -61,6 +69,10 @@ const StyledRemoveButton = styled(StyledButton)`
   color: #e91e63;
 `;
 
+const StyledSearchIcon = styled(StyledIcon)`
+  padding: 0;
+`;
+
 export const AddButton = (props :Object) => {
 
   return (
@@ -76,5 +88,14 @@ export const RemoveButton = (props :Object) => {
     <StyledRemoveButton onClick={props.onClick}>
       <FontAwesome name="minus" />
     </StyledRemoveButton>
+  );
+};
+
+export const SearchIcon = () => {
+
+  return (
+    <StyledSearchIcon>
+      <FontAwesome name="search" />
+    </StyledSearchIcon>
   );
 };

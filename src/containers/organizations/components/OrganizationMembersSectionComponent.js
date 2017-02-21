@@ -5,35 +5,77 @@
 import React from 'react';
 
 import Immutable from 'immutable';
-import styled from 'styled-components';
+
+import styled, {
+  css
+} from 'styled-components';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { DataModels } from 'loom-data';
+
+import StyledBadge from '../../../components/badges/StyledBadge';
+import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
 import StyledSectionHeading from './StyledSectionHeading';
+
+import * as OrgsUtils from '../utils/OrgsUtils';
 
 import {
   RemoveButton,
   StyledElement,
   StyledListItem
-} from '../../../components/controls/StyledListGroup';
+} from './StyledListGroupComponents';
 
 import {
-  fetchUsersRequest
+  fetchUsersRequest,
+  addRoleToUserRequest,
+  removeRoleFromUserRequest
 } from '../../principals/PrincipalsActionFactory';
 
 import {
   removeMemberFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
+const { Principal } = DataModels;
+
 const MemberListContainer = styled.div`
-  width: 500px;
+  width: 400px;
 `;
 
-const MemberLabel = styled(StyledElement)`
-  flex: 1 0 auto;
+const MemberRolesContainer = styled(StyledFlexContainerStacked)`
+  background-color: #ffffff;
+  border: 1px solid #cfd8dc;
+  margin-left: -1px;
+  min-width: 120px;
+  padding: 10px;
+`;
+
+const MemberListItem = styled(StyledListItem)`
+  background-color: ${(props :Object) => {
+    return props.selected ? '#f5f5f5' : 'transparent';
+  }};
+  &:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+`;
+
+const RoleBadge = styled(StyledBadge)`
+  margin: 5px auto;
+  width: 100%;
+  ${(props :Object) => {
+    if (props.selected) {
+      return css`
+        background-color: #4203c5;
+        border-color: #4203c5;
+        color: #ffffff;
+      `;
+    }
+    return '';
+  }}
 `;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
@@ -50,8 +92,6 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
     });
   });
 
-  console.log(members.toJS());
-
   return {
     members
   };
@@ -61,7 +101,9 @@ function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
     fetchUsersRequest,
-    removeMemberFromOrganizationRequest
+    removeMemberFromOrganizationRequest,
+    addRoleToUserRequest,
+    removeRoleFromUserRequest
   };
 
   return {
@@ -74,10 +116,27 @@ class OrganizationMembersSectionComponent extends React.Component {
   static propTypes = {
     actions: React.PropTypes.shape({
       fetchUsersRequest: React.PropTypes.func.isRequired,
-      removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired
+      removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
+      addRoleToUserRequest: React.PropTypes.func.isRequired,
+      removeRoleFromUserRequest: React.PropTypes.func.isRequired
     }).isRequired,
     members: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
+  }
+
+  state :{
+    selectedMemberId :string,
+    showMemberRoles :boolean
+  }
+
+  constructor(props :Object) {
+
+    super(props);
+
+    this.state = {
+      selectedMemberId: '',
+      showMemberRoles: false
+    };
   }
 
   componentDidMount() {
@@ -89,7 +148,6 @@ class OrganizationMembersSectionComponent extends React.Component {
       }).toJS();
 
     // TODO: figure out why componentDidMount() happens multiple times
-    console.log('OrganizationMembersSectionComponent.componentDidMount()');
     this.props.actions.fetchUsersRequest(memberIds);
   }
 
@@ -106,9 +164,145 @@ class OrganizationMembersSectionComponent extends React.Component {
     );
   }
 
-  render() {
+  handleOnClickShowMemberRoles = (userId :string) => {
+
+    if (this.state.selectedMemberId === userId) {
+      this.setState({
+        selectedMemberId: '',
+        showMemberRoles: false
+      });
+      return;
+    }
+
+    this.setState({
+      selectedMemberId: userId,
+      showMemberRoles: true
+    });
+  }
+
+  renderMemberListAndRoles = () => {
+
+    return (
+      <StyledFlexContainer>
+        { this.renderMemberList() }
+        { this.renderMemberRoles() }
+      </StyledFlexContainer>
+    );
+  }
+
+  renderMemberList = () => {
 
     const isOwner :boolean = this.props.organization.get('isOwner', false);
+
+    const memberList = [];
+    this.props.members.forEach((member :Immutable.Map) => {
+
+      const memberId :string = member.get('user_id');
+      const label :string = OrgsUtils.getUserNameLabelValue(member);
+
+      const memberListItem = (
+        <MemberListItem
+            key={memberId}
+            selected={this.state.selectedMemberId === memberId}>
+          <StyledElement
+              onClick={() => {
+                this.handleOnClickShowMemberRoles(memberId);
+              }}>
+            { label }
+          </StyledElement>
+          {
+            isOwner && (
+              <RemoveButton
+                  onClick={() => {
+                    this.handleOnClickRemoveUser(memberId);
+                  }} />
+            )
+          }
+        </MemberListItem>
+      );
+
+      memberList.push(memberListItem);
+    });
+
+    return (
+      <MemberListContainer>
+        { memberList }
+      </MemberListContainer>
+    );
+  }
+
+  addRoleToMember = (memberId :string, roleId :string) => {
+
+    if (!memberId || !roleId) {
+      // TODO: this shouldn't happen, how do we handle it?
+      return;
+    }
+
+    this.props.actions.addRoleToUserRequest(memberId, roleId);
+  }
+
+  removeRoleFromMember = (memberId :string, roleId :string) => {
+
+    if (!memberId || !roleId) {
+      // TODO: this shouldn't happen, how do we handle it?
+      return;
+    }
+
+    this.props.actions.removeRoleFromUserRequest(memberId, roleId);
+  }
+
+  renderMemberRoles = () => {
+
+    if (!this.state.showMemberRoles || !this.state.selectedMemberId) {
+      return null;
+    }
+
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const orgRolesPrincipals :Immutable.List<Principal> = this.props.organization.get('roles', Immutable.List());
+    if (orgRolesPrincipals.isEmpty()) {
+      // TODO: we need a better UX to handle this case
+      return (
+        <MemberRolesContainer>
+          <span>This organization does not have any roles.</span>
+        </MemberRolesContainer>
+      );
+    }
+
+    const memberRoles :Immutable.List<string> = this.props.members.getIn(
+      [this.state.selectedMemberId, 'roles'],
+      Immutable.List()
+    );
+
+    // TODO: add "..." when role names are too long
+    const memberRolesElements = orgRolesPrincipals.map((rolePrincipal :Immutable.Map<string, Principal>) => {
+      const memberHasRole :boolean = memberRoles.includes(rolePrincipal.get('id'));
+      return (
+        <RoleBadge
+            key={rolePrincipal.get('id')}
+            selected={memberHasRole}
+            onClick={() => {
+              if (isOwner) {
+                if (memberHasRole) {
+                  this.removeRoleFromMember(this.state.selectedMemberId, rolePrincipal.get('id'));
+                }
+                else {
+                  this.addRoleToMember(this.state.selectedMemberId, rolePrincipal.get('id'));
+                }
+              }
+            }}>
+          { rolePrincipal.get('id') }
+        </RoleBadge>
+      );
+    });
+
+    return (
+      <MemberRolesContainer>
+        { memberRolesElements }
+      </MemberRolesContainer>
+    );
+  }
+
+  render() {
 
     let sectionContent = [];
     if (this.props.members.isEmpty()) {
@@ -117,53 +311,11 @@ class OrganizationMembersSectionComponent extends React.Component {
       );
     }
     else {
-
-      const memberList = [];
-      this.props.members.forEach((member :Immutable.Map) => {
-
-        // TODO: refactor, same logic as OrganizationAddMembersSectionComponent
-        const memberId :string = member.get('user_id');
-        const nickname :string = member.get('nickname');
-        const username :string = member.get('username');
-        const email :string = member.get('email');
-
-        let label :string = nickname || username;
-
-        if (email) {
-          label = `${label} - ${email}`;
-        }
-
-        if (memberId.startsWith('auth0')) {
-          label = `${label} - Auth0`;
-        }
-        else if (memberId.startsWith('facebook')) {
-          label = `${label} - Facebook`;
-        }
-        else if (memberId.startsWith('google')) {
-          label = `${label} - Google`;
-        }
-
-        const memberListItem = (
-          <StyledListItem key={memberId}>
-            <MemberLabel>{ label }</MemberLabel>
-            {
-              isOwner && (
-                <RemoveButton
-                    onClick={() => {
-                      this.handleOnClickRemoveUser(memberId);
-                    }} />
-              )
-            }
-          </StyledListItem>
-        );
-
-        memberList.push(memberListItem);
-      });
-
       sectionContent = (
-        <MemberListContainer>
-          { memberList }
-        </MemberListContainer>
+        <StyledFlexContainer>
+          { this.renderMemberList() }
+          { this.renderMemberRoles() }
+        </StyledFlexContainer>
       );
     }
 

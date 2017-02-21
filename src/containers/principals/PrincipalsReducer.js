@@ -4,22 +4,7 @@
 
 import Immutable from 'immutable';
 
-import {
-  DataModels,
-  Types
-} from 'loom-data';
-
 import * as PrincipalsActionTypes from '../principals/PrincipalsActionTypes';
-
-const {
-  Principal,
-  PrincipalBuilder
-} = DataModels;
-
-const {
-  PrincipalTypes
-} = Types;
-
 
 const INITIAL_STATE :Immutable.Map = Immutable.fromJS({
   users: Immutable.Map()
@@ -60,6 +45,36 @@ export default function principalsReducer(state :Immutable.Map = INITIAL_STATE, 
       const updatedUsers :Immutable.Map = currentUsers.mergeDeep(usersSearchResults);
 
       return state.set('users', updatedUsers);
+    }
+
+    case PrincipalsActionTypes.ADD_ROLE_TO_USER_SUCCESS: {
+
+      const user :Immutable.Map = state.getIn(['users', action.userId], Immutable.Map());
+      if (user.isEmpty()) {
+        return state;
+      }
+
+      const currentRoles :Immutable.List = user.get('roles', Immutable.List());
+      const newRoles = currentRoles.push(action.roleId);
+      const newUser = user.set('roles', newRoles);
+      return state.setIn(['users', action.userId], newUser);
+    }
+
+    case PrincipalsActionTypes.REMOVE_ROLE_FROM_USER_SUCCESS: {
+
+      const user :Immutable.Map = state.getIn(['users', action.userId], Immutable.Map());
+      if (user.isEmpty()) {
+        return state;
+      }
+
+      const currentRoles :Immutable.List = user.get('roles', Immutable.List());
+      const index :number = currentRoles.findIndex((roleId :string) => {
+        return roleId === action.roleId;
+      });
+
+      const newRoles = currentRoles.delete(index);
+      const newUser = user.set('roles', newRoles);
+      return state.setIn(['users', action.userId], newUser);
     }
 
     default:

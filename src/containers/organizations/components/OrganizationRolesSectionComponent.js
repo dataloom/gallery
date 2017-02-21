@@ -10,9 +10,9 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import SimpleListGroupControl from '../../../components/controls/SimpleListGroupControl';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
+import SimpleListGroup from './SimpleListGroup';
 import StyledSectionHeading from './StyledSectionHeading';
 
 import {
@@ -20,8 +20,8 @@ import {
   removeRoleFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
-const ListGroupWrapper = styled.div`
-  width: 500px;
+const RolesListContainer = styled.div`
+  width: 400px;
 `;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
@@ -81,15 +81,15 @@ class OrganizationRolesSectionComponent extends React.Component {
     }
     else {
       sectionContent = (
-        <ListGroupWrapper>
-          <SimpleListGroupControl
+        <RolesListContainer>
+          <SimpleListGroup
               placeholder="Add new role..."
               values={roles}
               isValid={this.isValidRole}
               viewOnly={!isOwner}
               onAdd={this.addRole}
               onRemove={this.removeRole} />
-        </ListGroupWrapper>
+        </RolesListContainer>
       );
     }
 

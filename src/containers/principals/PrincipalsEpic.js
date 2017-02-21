@@ -128,10 +128,52 @@ function searchAllUsersEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
+function addRoleToUserEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(PrincipalsActionTypes.ADD_ROLE_TO_USER_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(PrincipalsApi.addRoleToUser(action.userId, action.roleId))
+        .mergeMap(() => {
+          return Observable.of(
+            PrincipalsActionFactory.addRoleToUserSuccess(action.userId, action.roleId)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            PrincipalsActionFactory.addRoleToUserFailure(action.userId, action.roleId)
+          );
+        });
+    });
+}
+
+function removeRoleFromUserEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(PrincipalsActionTypes.REMOVE_ROLE_FROM_USER_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(PrincipalsApi.removeRoleFromUser(action.userId, action.roleId))
+        .mergeMap(() => {
+          return Observable.of(
+            PrincipalsActionFactory.removeRoleFromUserSuccess(action.userId, action.roleId)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            PrincipalsActionFactory.removeRoleFromUserFailure(action.userId, action.roleId)
+          );
+        });
+    });
+}
+
 export default combineEpics(
   loadPrincipalEpic,
   fetchAllUsersEpic,
   fetchUsersEpic,
   fetchUserEpic,
-  searchAllUsersEpic
+  searchAllUsersEpic,
+  addRoleToUserEpic,
+  removeRoleFromUserEpic
 );

@@ -14,12 +14,15 @@ import { bindActionCreators } from 'redux';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
+import * as OrgsUtils from '../utils/OrgsUtils';
+
 import {
   AddButton,
+  SearchIcon,
   StyledElement,
   StyledInput,
   StyledListItem
-} from '../../../components/controls/StyledListGroup';
+} from './StyledListGroupComponents';
 
 import StyledSectionHeading from './StyledSectionHeading';
 
@@ -34,19 +37,11 @@ import {
 
 const SearchContainer = styled.div`
   min-height: 150px;
-  width: 500px;
+  width: 400px;
 `;
 
 const SearchSpinner = styled(StyledElement)`
   padding: 0;
-`;
-
-const SearchInput = styled(StyledInput)`
-  flex: 1 0 auto;
-`;
-
-const UserLabel = styled(StyledElement)`
-  flex: 1 0 auto;
 `;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
@@ -97,15 +92,18 @@ class OrganizationAddMembersSectionComponent extends React.Component {
 
   handleOnKeyDownSearchInput = (event) => {
 
-    console.log(event.target.value)
-
-    if (event.keyCode === 13) { // 'Enter' key code
-      this.search(event.target.value);
-    }
-    else if (event.keyCode === 8) { // 'Backspace' key code
-      if (event.target.value.length === 0 || event.target.value.length === 1) {
-        // TODO: clear search results
+    switch (event.keyCode) {
+      case 8: { // 'Backspace' key code
+        if (event.target.value.length === 0 || event.target.value.length === 1) {
+          // TODO: clear search results
+        }
+        break;
       }
+      case 13: // 'Enter' key code
+        this.search(event.target.value);
+        break;
+      default:
+        break;
     }
   }
 
@@ -114,8 +112,8 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     // TODO: think about refactoring into a shared styled compontent
     return (
       <StyledListItem>
-        <StyledElement><FontAwesome name="search" /></StyledElement>
-        <SearchInput
+        <SearchIcon />
+        <StyledInput
             type="text"
             placeholder="Search for users..."
             onKeyDown={this.handleOnKeyDownSearchInput} />
@@ -158,31 +156,12 @@ class OrganizationAddMembersSectionComponent extends React.Component {
 
     this.props.usersSearchResults.forEach((user :Immutable.Map) => {
 
-      // TODO: refactor
       const userId :string = user.get('user_id');
-      const nickname :string = user.get('nickname');
-      const username :string = user.get('username');
-      const email :string = user.get('email');
-
-      let label :string = nickname || username;
-
-      if (email) {
-        label = `${label} - ${email}`;
-      }
-
-      if (userId.startsWith('auth0')) {
-        label = `${label} - Auth0`;
-      }
-      else if (userId.startsWith('facebook')) {
-        label = `${label} - Facebook`;
-      }
-      else if (userId.startsWith('google')) {
-        label = `${label} - Google`;
-      }
+      const label = OrgsUtils.getUserNameLabelValue(user);
 
       const userListItem = (
         <StyledListItem key={userId}>
-          <UserLabel>{ label }</UserLabel>
+          <StyledElement>{ label }</StyledElement>
           <AddButton
               onClick={() => {
                 this.handleOnClickAddUser(userId);

@@ -5,55 +5,16 @@
 import React from 'react';
 
 import Immutable from 'immutable';
-import FontAwesome from 'react-fontawesome';
-import styled from 'styled-components';
 
-import StyledFlexContainerStackedLeftAligned from '../flex/StyledFlexContainerStackedLeftAligned';
+import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
-const ListItemWrapper = styled.div`
-  align-items: center;
-  background: none;
-  border: 1px solid #cfd8dc;
-  display: flex;
-  margin: -1px 0 0 0;
-  width: 100%;
-  &:first-child {
-    margin: 0;
-  }
-`;
-
-const ListItemButton = styled.button`
-  background: none;
-  border: none;
-  flex: 0;
-  margin: auto 12px;
-  &.add {
-    color: #39de9d;
-  }
-  &.remove {
-    color: #e91e63;
-  }
-  &:focus {
-    outline: none;
-  }
-`;
-
-const ListItemValue = styled.span`
-  background: none;
-  border: none;
-  flex: 1;
-  padding: 10px 12px;
-`;
-
-const AddItemInput = styled.input`
-  border: none;
-  margin: 0;
-  padding: 10px 12px;
-  flex: 1;
-  &:focus {
-    outline: none;
-  }
-`;
+import {
+  AddButton,
+  RemoveButton,
+  StyledElement,
+  StyledInput,
+  StyledListItem
+} from './StyledListGroupComponents';
 
 let idCounter = 0;
 function getUniqueId() {
@@ -66,7 +27,7 @@ function getUniqueId() {
  * TODO: allow for a max count before scrollbar
  */
 
-export default class SimpleListGroupControl extends React.Component {
+export default class SimpleListGroup extends React.Component {
 
   static propTypes = {
     placeholder: React.PropTypes.string,
@@ -146,23 +107,22 @@ export default class SimpleListGroupControl extends React.Component {
     }
   }
 
-  renderAddItemControl = () => {
+  renderAddItemInputBox = () => {
 
     if (this.props.viewOnly) {
       return null;
     }
 
     return (
-      <ListItemWrapper>
-        <AddItemInput
+      <StyledListItem>
+        <StyledInput
+            type="text"
             placeholder={this.props.placeholder}
             value={this.state.inputValue}
             onChange={this.handleOnChange}
             onKeyDown={this.handleOnKeyDown} />
-        <ListItemButton className="add" onClick={this.addItem}>
-          <FontAwesome name="plus" />
-        </ListItemButton>
-      </ListItemWrapper>
+        <AddButton onClick={this.addItem} />
+      </StyledListItem>
     );
   }
 
@@ -170,24 +130,19 @@ export default class SimpleListGroupControl extends React.Component {
 
     return this.props.values.map((value :string) => {
       return (
-        <ListItemWrapper key={`${value}_${getUniqueId()}`}>
-          <ListItemValue>
-            { value }
-          </ListItemValue>
+        <StyledListItem key={`${value}_${getUniqueId()}`}>
+          <StyledElement>{ value }</StyledElement>
           {
             this.props.viewOnly
               ? null
               : (
-                <ListItemButton
-                    className="remove"
+                <RemoveButton
                     onClick={() => {
                       this.removeItem(value);
-                    }}>
-                  <FontAwesome name="minus" />
-                </ListItemButton>
+                    }} />
               )
           }
-        </ListItemWrapper>
+        </StyledListItem>
       );
     });
   }
@@ -195,10 +150,10 @@ export default class SimpleListGroupControl extends React.Component {
   render() {
 
     return (
-      <StyledFlexContainerStackedLeftAligned>
-        { this.renderAddItemControl() }
+      <StyledFlexContainerStacked>
+        { this.renderAddItemInputBox() }
         { this.renderListItems() }
-      </StyledFlexContainerStackedLeftAligned>
+      </StyledFlexContainerStacked>
     );
   }
 }

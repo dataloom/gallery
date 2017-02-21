@@ -10,10 +10,10 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import SimpleListGroupControl from '../../../components/controls/SimpleListGroupControl';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 import Utils from '../../../utils/Utils';
 
+import SimpleListGroup from './SimpleListGroup';
 import StyledSectionHeading from './StyledSectionHeading';
 
 import {
@@ -21,8 +21,8 @@ import {
   removeDomainFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
-const ListGroupWrapper = styled.div`
-  width: 500px;
+const DomainsListContainer = styled.div`
+  width: 400px;
 `;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
@@ -81,15 +81,15 @@ class OrganizationDomainsSectionComponent extends React.Component {
     }
     else {
       sectionContent = (
-        <ListGroupWrapper>
-          <SimpleListGroupControl
+        <DomainsListContainer>
+          <SimpleListGroup
               placeholder="Add new domain..."
               values={emailDomains}
               isValid={this.isValidDomain}
               viewOnly={!isOwner}
               onAdd={this.addDomain}
               onRemove={this.removeDomain} />
-        </ListGroupWrapper>
+        </DomainsListContainer>
       );
     }
 
