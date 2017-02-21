@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
 import groupBy from 'lodash/groupBy';
 import FontAwesome from 'react-fontawesome';
@@ -57,8 +58,11 @@ class EntitySetPermissionsRequest extends React.Component {
       const updatedStatuses = [];
       const defaultStatus = statuses[0];
       selectedProperties.forEach((propertyTypeId) => {
-        const updatedStatus = Object.assign({}, defaultStatus, { status: requestStatus });
-        updatedStatus.aclKey[1] = propertyTypeId;
+        const updatedStatus :Object[] = Immutable
+          .fromJS(defaultStatus)
+          .set('status', requestStatus)
+          .setIn(['aclKey', 1], propertyTypeId)
+          .toJS();
         updatedStatuses.push(updatedStatus);
       });
       updateStatuses(updatedStatuses);
