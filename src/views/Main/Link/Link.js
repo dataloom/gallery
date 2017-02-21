@@ -406,7 +406,7 @@ export class Link extends React.Component {
         entityTypeIds.add(entitySet.entityTypeId);
       }
     });
-    LinkingApi.createLinkingEntityType({ entityType, entityTypeIds })
+    LinkingApi.createLinkingEntityType({ entityType, entityTypeIds, deidentified })
     .then((linkingEntityTypeId) => {
       if (linkingEntityTypeId) {
         this.setState({
