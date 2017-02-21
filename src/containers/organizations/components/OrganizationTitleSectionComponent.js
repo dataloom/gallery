@@ -58,7 +58,7 @@ const TitleSectionContainer = styled(StyledFlexContainer)`
 `;
 
 const VisibilityToggle = styled.div`
-  border: 1px solid #cfd8dc;
+  border: 1px solid #ffffff;
   margin-left: 10px;
   padding: 4px 8px;
   position: relative;
@@ -66,6 +66,7 @@ const VisibilityToggle = styled.div`
     return props.isPublic ? '#39de9d' : '#e91e63';
   }};
   &:hover {
+    border: 1px solid #cfd8dc;
     cursor: ${(props :Object) => {
       return props.isOwner ? 'pointer' : 'default';
     }};
