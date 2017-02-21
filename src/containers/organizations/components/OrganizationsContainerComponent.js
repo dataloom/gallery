@@ -10,7 +10,7 @@ import ContentHeaderSection from '../../../components/applayout/ContentHeaderSec
 
 import OrganizationsHeaderComponent from './OrganizationsHeaderComponent';
 
-export default class OrganizationsContainer extends React.Component {
+export default class OrganizationsContainerComponent extends React.Component {
 
   static propTypes = {
     children: React.PropTypes.node.isRequired

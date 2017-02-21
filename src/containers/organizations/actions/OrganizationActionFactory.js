@@ -8,6 +8,21 @@ import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 
 const { Organization } = DataModels;
 
+/*
+ * simple actions
+ */
+
+export function clearUserSearchResults() :Object {
+
+  return {
+    type: OrgActionTypes.CLEAR_USER_SEARCH_RESULTS
+  };
+}
+
+/*
+ * HTTP request actions
+ */
+
 export function createOrganizationRequest(organization :Organization) :Object {
 
   return {

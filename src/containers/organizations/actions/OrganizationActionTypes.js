@@ -2,6 +2,16 @@
  * @flow
  */
 
+/*
+ * simple actions
+ */
+
+export const CLEAR_USER_SEARCH_RESULTS :string = 'CLEAR_USER_SEARCH_RESULTS';
+
+/*
+ * HTTP request actions
+ */
+
 export const CREATE_ORG_REQUEST :string = 'CREATE_ORG_REQUEST';
 export const CREATE_ORG_SUCCESS :string = 'CREATE_ORG_SUCCESS';
 export const CREATE_ORG_FAILURE :string = 'CREATE_ORG_FAILURE';

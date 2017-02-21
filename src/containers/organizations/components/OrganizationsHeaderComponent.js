@@ -87,10 +87,6 @@ function mapDispatchToProps(dispatch :Function) {
 
 class OrganizationsHeaderComponent extends React.Component {
 
-  state :{
-    searchInputValue :string
-  }
-
   static propTypes = {
     actions: React.PropTypes.shape({
       searchOrganizationsRequest: React.PropTypes.func.isRequired,
@@ -98,6 +94,10 @@ class OrganizationsHeaderComponent extends React.Component {
     }).isRequired,
     isSearchingOrgs: React.PropTypes.bool.isRequired
   };
+
+  state :{
+    searchInputValue :string
+  }
 
   constructor(props) {
 

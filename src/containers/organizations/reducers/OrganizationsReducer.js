@@ -238,6 +238,11 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.set('visibleOrganizationIds', Immutable.Set(organizations.keys()));
     }
 
+    case OrgActionTypes.CLEAR_USER_SEARCH_RESULTS:
+      return state
+        .set('isSearchingUsers', false)
+        .set('usersSearchResults', Immutable.Map());
+
     case OrgsActionTypes.SEARCH_ORGS_SUCCESS: {
 
       const orgIds :Immutable.Set = Immutable.Set().withMutations((set :Immutable.Set) => {
@@ -328,12 +333,15 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
       // TODO: yuck!
-      let isPublic :boolean = false;
+      let isPublic :boolean = organization.get('isPublic');
       action.aclData.acl.aces.forEach((ace :Ace) => {
         if (ace.principal.id === AUTHENTICATED_USER) {
           ace.permissions.forEach((permission :string) => {
             if (permission === PermissionTypes.READ && action.aclData.action === ActionTypes.SET) {
               isPublic = true;
+            }
+            else if (permission === PermissionTypes.READ && action.aclData.action === ActionTypes.REMOVE) {
+              isPublic = false;
             }
           });
         }

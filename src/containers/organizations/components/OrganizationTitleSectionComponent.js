@@ -8,13 +8,13 @@ import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import {
   DataModels,
   Types
 } from 'loom-data';
-
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import InlineEditableControl from '../../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
@@ -78,7 +78,7 @@ const VisibilityToggleText = styled.span`
 
 const VisibilityToggleIcon = styled.span`
   position: absolute;
-  right: 10px;
+  right: 8px;
 `;
 
 function mapDispatchToProps(dispatch :Function) {
@@ -155,10 +155,11 @@ class OrganizationTitleSectionComponent extends React.Component {
 
   renderVisibilityToggle =() => {
 
+    const orgId :boolean = this.props.organization.get('id');
     const isOwner :boolean = this.props.organization.get('isOwner', false);
     const isPublic :boolean = this.props.organization.get('isPublic', false);
 
-    if (!isOwner) {
+    if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
     }
 

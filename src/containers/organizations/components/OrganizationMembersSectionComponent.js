@@ -13,7 +13,10 @@ import styled, {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { DataModels } from 'loom-data';
+import {
+  DataModels,
+  Types
+} from 'loom-data';
 
 import StyledBadge from '../../../components/badges/StyledBadge';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
@@ -30,6 +33,10 @@ import {
 } from './StyledListGroupComponents';
 
 import {
+  updateAclRequest
+} from '../../permissions/PermissionsActionFactory';
+
+import {
   fetchUsersRequest,
   addRoleToUserRequest,
   removeRoleFromUserRequest
@@ -39,7 +46,22 @@ import {
   removeMemberFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
-const { Principal } = DataModels;
+const {
+  Acl,
+  AclBuilder,
+  AclData,
+  AclDataBuilder,
+  Ace,
+  AceBuilder,
+  Principal,
+  PrincipalBuilder
+} = DataModels;
+
+const {
+  ActionTypes,
+  PermissionTypes,
+  PrincipalTypes
+} = Types;
 
 const MemberListContainer = styled.div`
   width: 400px;
@@ -110,7 +132,8 @@ function mapDispatchToProps(dispatch :Function) {
     fetchUsersRequest,
     removeMemberFromOrganizationRequest,
     addRoleToUserRequest,
-    removeRoleFromUserRequest
+    removeRoleFromUserRequest,
+    updateAclRequest
   };
 
   return {
@@ -125,7 +148,8 @@ class OrganizationMembersSectionComponent extends React.Component {
       fetchUsersRequest: React.PropTypes.func.isRequired,
       removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
       addRoleToUserRequest: React.PropTypes.func.isRequired,
-      removeRoleFromUserRequest: React.PropTypes.func.isRequired
+      removeRoleFromUserRequest: React.PropTypes.func.isRequired,
+      updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     members: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
@@ -158,7 +182,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     this.props.actions.fetchUsersRequest(memberIds);
   }
 
-  handleOnClickRemoveUser = (userId :string) => {
+  handleOnClickRemoveMember = (userId :string) => {
 
     if (!userId) {
       // TODO: this shouldn't happen, how do we handle it?
@@ -169,6 +193,28 @@ class OrganizationMembersSectionComponent extends React.Component {
       this.props.organization.get('id'),
       userId
     );
+
+    const principal :Principal = (new PrincipalBuilder())
+      .setType(PrincipalTypes.USER)
+      .setId(userId)
+      .build();
+
+    const ace :Ace = (new AceBuilder())
+      .setPermissions([PermissionTypes.READ])
+      .setPrincipal(principal)
+      .build();
+
+    const acl :Acl = (new AclBuilder())
+      .setAclKey([this.props.organization.get('id')])
+      .setAces([ace])
+      .build();
+
+    const aclData :AclData = (new AclDataBuilder())
+      .setAction(ActionTypes.REMOVE)
+      .setAcl(acl)
+      .build();
+
+    this.props.actions.updateAclRequest(aclData);
   }
 
   handleOnClickShowMemberRoles = (userId :string) => {
@@ -224,7 +270,7 @@ class OrganizationMembersSectionComponent extends React.Component {
             isOwner && (
               <RemoveButton
                   onClick={() => {
-                    this.handleOnClickRemoveUser(memberId);
+                    this.handleOnClickRemoveMember(memberId);
                   }} />
             )
           }

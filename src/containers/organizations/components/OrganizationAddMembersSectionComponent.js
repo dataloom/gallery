@@ -11,6 +11,11 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import {
+  DataModels,
+  Types
+} from 'loom-data';
+
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
@@ -28,12 +33,34 @@ import StyledSectionHeading from './StyledSectionHeading';
 
 import {
   addMemberToOrganizationRequest,
+  clearUserSearchResults,
   removeMemberFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
 import {
+  updateAclRequest
+} from '../../permissions/PermissionsActionFactory';
+
+import {
   searchAllUsersRequest
 } from '../../principals/PrincipalsActionFactory';
+
+const {
+  Acl,
+  AclBuilder,
+  AclData,
+  AclDataBuilder,
+  Ace,
+  AceBuilder,
+  Principal,
+  PrincipalBuilder
+} = DataModels;
+
+const {
+  ActionTypes,
+  PermissionTypes,
+  PrincipalTypes
+} = Types;
 
 const SearchContainer = styled.div`
   min-height: 150px;
@@ -44,7 +71,7 @@ const SearchSpinner = styled(StyledElement)`
   padding: 0;
 `;
 
-function mapStateToProps(state :Immutable.Map, ownProps :Object) {
+function mapStateToProps(state :Immutable.Map) {
 
   const isSearchingUsers :boolean = state.getIn(['organizations', 'isSearchingUsers']);
   const usersSearchResults :Immutable.Map = state.getIn(['organizations', 'usersSearchResults'], Immutable.Map());
@@ -59,8 +86,10 @@ function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
     addMemberToOrganizationRequest,
+    clearUserSearchResults,
     removeMemberFromOrganizationRequest,
-    searchAllUsersRequest
+    searchAllUsersRequest,
+    updateAclRequest
   };
 
   return {
@@ -73,12 +102,27 @@ class OrganizationAddMembersSectionComponent extends React.Component {
   static propTypes = {
     actions: React.PropTypes.shape({
       addMemberToOrganizationRequest: React.PropTypes.func.isRequired,
+      clearUserSearchResults: React.PropTypes.func.isRequired,
       removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
-      searchAllUsersRequest: React.PropTypes.func.isRequired
+      searchAllUsersRequest: React.PropTypes.func.isRequired,
+      updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isSearchingUsers: React.PropTypes.bool.isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     usersSearchResults: React.PropTypes.instanceOf(Immutable.Map).isRequired
+  }
+
+  state :{
+    searchInputValue :string
+  }
+
+  constructor(props :Object) {
+
+    super(props);
+
+    this.state = {
+      searchInputValue: ''
+    };
   }
 
   search = (searchQuery :string) => {
@@ -90,17 +134,27 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     this.props.actions.searchAllUsersRequest(searchQuery);
   }
 
+  handleOnChangeSearchInput = (event) => {
+
+    this.setState({
+      searchInputValue: event.target.value
+    });
+  }
+
   handleOnKeyDownSearchInput = (event) => {
 
     switch (event.keyCode) {
       case 8: { // 'Backspace' key code
-        if (event.target.value.length === 0 || event.target.value.length === 1) {
-          // TODO: clear search results
-        }
+        this.props.actions.clearUserSearchResults();
         break;
       }
       case 13: // 'Enter' key code
-        this.search(event.target.value);
+        if (event.target.value.length === 0) {
+          this.props.actions.clearUserSearchResults();
+        }
+        else {
+          this.search(event.target.value);
+        }
         break;
       default:
         break;
@@ -128,7 +182,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     );
   }
 
-  handleOnClickAddUser = (userId :string) => {
+  handleOnClickAddMember = (userId :string) => {
 
     if (!userId) {
       // TODO: this shouldn't happen, how do we handle it?
@@ -139,6 +193,28 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       this.props.organization.get('id'),
       userId
     );
+
+    const principal :Principal = (new PrincipalBuilder())
+      .setType(PrincipalTypes.USER)
+      .setId(userId)
+      .build();
+
+    const ace :Ace = (new AceBuilder())
+      .setPermissions([PermissionTypes.READ])
+      .setPrincipal(principal)
+      .build();
+
+    const acl :Acl = (new AclBuilder())
+      .setAclKey([this.props.organization.get('id')])
+      .setAces([ace])
+      .build();
+
+    const aclData :AclData = (new AclDataBuilder())
+      .setAction(ActionTypes.ADD)
+      .setAcl(acl)
+      .build();
+
+    this.props.actions.updateAclRequest(aclData);
   }
 
   renderSearchResults = () => {
@@ -164,7 +240,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
           <StyledElement>{ label }</StyledElement>
           <AddButton
               onClick={() => {
-                this.handleOnClickAddUser(userId);
+                this.handleOnClickAddMember(userId);
               }} />
         </StyledListItem>
       );
