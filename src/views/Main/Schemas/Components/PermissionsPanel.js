@@ -186,22 +186,24 @@ export class PermissionsPanel extends React.Component {
   }
 
   updatePermissions(action, principal, view) {
-    const { entitySetId, propertyTypeId } = this.props;
-    const permissions = (action === ActionConsts.REMOVE) ?
-      [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
-    const aclKey = [entitySetId];
-    if (propertyTypeId) aclKey.push(propertyTypeId);
-    const aces = [{ principal, permissions }];
-    const acl = { aclKey, aces };
-    const req = { action, acl };
-    PermissionsApi.updateAcl(req)
-    .then(() => {
-      this.loadAcls(true);
-    }).catch(() => {
-      this.setState({
-        updateError: true
+    if (principal.id.length !== 0) {
+      const { entitySetId, propertyTypeId } = this.props;
+      const permissions = (action === ActionConsts.REMOVE) ?
+        [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
+      const aclKey = [entitySetId];
+      if (propertyTypeId) aclKey.push(propertyTypeId);
+      const aces = [{ principal, permissions }];
+      const acl = { aclKey, aces };
+      const req = { action, acl };
+      PermissionsApi.updateAcl(req)
+      .then(() => {
+        this.loadAcls(true);
+      }).catch(() => {
+        this.setState({
+          updateError: true
+        });
       });
-    });
+    }
   }
 
   updateGlobalPermissions = () => {
