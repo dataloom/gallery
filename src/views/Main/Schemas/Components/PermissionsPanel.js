@@ -186,24 +186,22 @@ export class PermissionsPanel extends React.Component {
   }
 
   updatePermissions(action, principal, view) {
-    if (principal.id.length !== 0) {
-      const { entitySetId, propertyTypeId } = this.props;
-      const permissions = (action === ActionConsts.REMOVE) ?
-        [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
-      const aclKey = [entitySetId];
-      if (propertyTypeId) aclKey.push(propertyTypeId);
-      const aces = [{ principal, permissions }];
-      const acl = { aclKey, aces };
-      const req = { action, acl };
-      PermissionsApi.updateAcl(req)
-      .then(() => {
-        this.loadAcls(true);
-      }).catch(() => {
-        this.setState({
-          updateError: true
-        });
+    const { entitySetId, propertyTypeId } = this.props;
+    const permissions = (action === ActionConsts.REMOVE) ?
+      [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
+    const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
+    const aces = [{ principal, permissions }];
+    const acl = { aclKey, aces };
+    const req = { action, acl };
+    PermissionsApi.updateAcl(req)
+    .then(() => {
+      this.loadAcls(true);
+    }).catch(() => {
+      this.setState({
+        updateError: true
       });
-    }
+    });
   }
 
   updateGlobalPermissions = () => {
@@ -255,7 +253,11 @@ export class PermissionsPanel extends React.Component {
       type: ROLE,
       id: role
     };
-    this.updatePermissions(action, principal, view);
+
+    // Only if changes were made, save changes
+    if (role) {
+      this.updatePermissions(action, principal, view);
+    }
   }
 
   handleNewRoleChange = (e) => {
