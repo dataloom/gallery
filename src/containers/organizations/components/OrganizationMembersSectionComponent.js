@@ -57,10 +57,17 @@ const MemberListItem = styled(StyledListItem)`
   background-color: ${(props :Object) => {
     return props.selected ? '#f5f5f5' : 'transparent';
   }};
-  &:hover {
-    background-color: #f5f5f5;
-    cursor: pointer;
-  }
+  ${(props :Object) => {
+    if (props.isOwner) {
+      return css`
+        &:hover {
+          background-color: #f5f5f5;
+          cursor: pointer;
+        }
+      `;
+    }
+    return '';
+  }}
 `;
 
 const RoleBadge = styled(StyledBadge)`
@@ -203,10 +210,13 @@ class OrganizationMembersSectionComponent extends React.Component {
       const memberListItem = (
         <MemberListItem
             key={memberId}
+            isOwner={isOwner}
             selected={this.state.selectedMemberId === memberId}>
           <StyledElement
               onClick={() => {
-                this.handleOnClickShowMemberRoles(memberId);
+                if (isOwner) {
+                  this.handleOnClickShowMemberRoles(memberId);
+                }
               }}>
             { label }
           </StyledElement>
@@ -253,11 +263,12 @@ class OrganizationMembersSectionComponent extends React.Component {
 
   renderMemberRoles = () => {
 
-    if (!this.state.showMemberRoles || !this.state.selectedMemberId) {
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+
+    if (!isOwner || !this.state.showMemberRoles || !this.state.selectedMemberId) {
       return null;
     }
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
     const orgRolesPrincipals :Immutable.List<Principal> = this.props.organization.get('roles', Immutable.List());
     if (orgRolesPrincipals.isEmpty()) {
       // TODO: we need a better UX to handle this case

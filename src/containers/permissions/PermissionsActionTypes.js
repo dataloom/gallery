@@ -16,3 +16,11 @@ export const REQUEST_PERMISSIONS_RESOLVE :string = 'REQUEST_PERMISSIONS_RESOLVE'
 
 export const LOAD_STATUSES :string = 'LOAD_STATUSES';
 export const UPDATE_STATUSES :string = 'UPDATE_STATUSES';
+
+export const GET_ACL_REQUEST :string = 'GET_ACL_REQUEST';
+export const GET_ACL_SUCCESS :string = 'GET_ACL_SUCCESS';
+export const GET_ACL_FAILURE :string = 'GET_ACL_FAILURE';
+
+export const UPDATE_ACL_REQUEST :string = 'UPDATE_ACL_REQUEST';
+export const UPDATE_ACL_SUCCESS :string = 'UPDATE_ACL_SUCCESS';
+export const UPDATE_ACL_FAILURE :string = 'UPDATE_ACL_FAILURE';

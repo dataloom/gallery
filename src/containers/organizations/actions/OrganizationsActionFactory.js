@@ -26,10 +26,11 @@ export function fetchOrganizationSuccess(organization :Organization) :Object {
   };
 }
 
-export function fetchOrganizationFailure() :Object {
+export function fetchOrganizationFailure(orgId :UUID) :Object {
 
   return {
-    type: OrgsActionTypes.FETCH_ORG_FAILURE
+    type: OrgsActionTypes.FETCH_ORG_FAILURE,
+    orgId
   };
 }
 

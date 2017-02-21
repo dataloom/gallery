@@ -9,18 +9,23 @@ import {
   Types
 } from 'loom-data';
 
+import * as PermissionsActionTypes from '../../permissions/PermissionsActionTypes';
 import * as PrincipalsActionTypes from '../../principals/PrincipalsActionTypes';
 
 import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 
+import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
+
 const {
+  Ace,
   Organization,
   Principal,
   PrincipalBuilder
 } = DataModels;
 
 const {
+  ActionTypes,
   PermissionTypes,
   PrincipalTypes
 } = Types;
@@ -49,8 +54,12 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
     case OrgsActionTypes.FETCH_ORG_REQUEST:
       return state.set('isFetchingOrg', true);
 
-    case OrgsActionTypes.FETCH_ORG_FAILURE:
-      return state.set('isFetchingOrg', false);
+    case OrgsActionTypes.FETCH_ORG_FAILURE: {
+      // TODO: not sure if clearing the Organization data isright. re-evaluate this decision,
+      return state
+        .setIn(['organizations', action.orgId], Immutable.Map())
+        .set('isFetchingOrg', false);
+    }
 
     case OrgsActionTypes.FETCH_ORGS_REQUEST:
       return state.set('isFetchingOrgs', true);
@@ -80,6 +89,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       action.organizations.forEach((org) => {
         orgs[org.id] = org;
         orgs[org.id].isOwner = false;
+        orgs[org.id].isPublic = false;
         orgs[org.id].permissions = {};
         Object.keys(PermissionTypes).forEach((permissionType :Permission) => {
           orgs[org.id].permissions[permissionType] = false;
@@ -264,6 +274,73 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state
         .set('usersSearchResults', Immutable.fromJS(action.searchResults))
         .set('isSearchingUsers', false);
+    }
+
+    // it is possible to dispatch GET_ACL_REQUEST from anywhere in the app
+    // TODO: consider refactoring, as it is very similar to the PermissionsActionTypes.UPDATE_ACL_SUCCESS case
+    case PermissionsActionTypes.GET_ACL_SUCCESS: {
+
+      if (!action.aclKey || action.aclKey.length !== 1) {
+        return state;
+      }
+
+      const orgId :UUID = action.aclKey[0];
+      const organization :Immutable.Map = state.getIn(['organizations', orgId], Immutable.Map());
+
+      if (organization.isEmpty()) {
+        return state;
+      }
+
+      // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
+      // TODO: yuck!
+      let isPublic :boolean = false;
+      action.acl.aces.forEach((ace :Ace) => {
+        if (ace.principal.id === AUTHENTICATED_USER) {
+          ace.permissions.forEach((permission :string) => {
+            if (permission === PermissionTypes.READ) {
+              isPublic = true;
+            }
+          });
+        }
+      });
+
+      const decoratedOrganization :Immutable.Map = organization.set('isPublic', isPublic);
+      return state.setIn(['organizations', orgId], decoratedOrganization);
+    }
+
+    // it is possible to dispatch UPDATE_ACL_REQUEST from anywhere in the app
+    // TODO: consider refactoring, as it is very similar to the PermissionsActionTypes.GET_ACL_SUCCESS case
+    case PermissionsActionTypes.UPDATE_ACL_SUCCESS: {
+
+      if (!action.aclData
+          || !action.aclData.acl
+          || !action.aclData.acl.aclKey
+          || action.aclData.acl.aclKey.length !== 1) {
+        return state;
+      }
+
+      const orgId :UUID = action.aclData.acl.aclKey[0];
+      const organization :Immutable.Map = state.getIn(['organizations', orgId], Immutable.Map());
+
+      if (organization.isEmpty()) {
+        return state;
+      }
+
+      // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
+      // TODO: yuck!
+      let isPublic :boolean = false;
+      action.aclData.acl.aces.forEach((ace :Ace) => {
+        if (ace.principal.id === AUTHENTICATED_USER) {
+          ace.permissions.forEach((permission :string) => {
+            if (permission === PermissionTypes.READ && action.aclData.action === ActionTypes.SET) {
+              isPublic = true;
+            }
+          });
+        }
+      });
+
+      const decoratedOrganization :Immutable.Map = organization.set('isPublic', isPublic);
+      return state.setIn(['organizations', orgId], decoratedOrganization);
     }
 
     default:

@@ -3,7 +3,9 @@
  */
 
 import {
-  AuthorizationApi
+  AuthorizationApi,
+  PermissionsApi,
+  DataModels
 } from 'loom-data';
 
 import {
@@ -36,6 +38,8 @@ import type {
 } from './PermissionsStorage'
 
 import Api from '../Api';
+
+const { Acl } = DataModels;
 
 function updateStatuses(statuses :Status[]) {
   return Observable.from(statuses)
@@ -172,4 +176,56 @@ function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action>
     .mergeMap(authorizationCheck);
 }
 
-export default combineEpics(authorizationCheckEpic, submitAuthnRequestEpic, loadStatusesEpic, updateStatusesEpic);
+/*
+ * TODO: I don't understand the "reference" pattern, so I don't want to touch anything above so not to break anything,
+ * but PermissionsEpic seems like the correct place to put the rest of the PermissionsApi-related actions. I need to
+ * better understand how these references work to figure out whether or not to continue with that pattern.
+ */
+
+function getAclEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(PermissionsActionTypes.GET_ACL_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(PermissionsApi.getAcl(action.aclKey))
+        .mergeMap((acl :Acl) => {
+          return Observable.of(
+            PermissionsActionFactory.getAclSuccess(action.aclKey, acl)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            PermissionsActionFactory.getAclFailure(action.aclKey)
+          );
+        });
+    });
+}
+function updateAclEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(PermissionsActionTypes.UPDATE_ACL_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(PermissionsApi.updateAcl(action.aclData))
+        .mergeMap(() => {
+          return Observable.of(
+            PermissionsActionFactory.updateAclSuccess(action.aclData)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            PermissionsActionFactory.updateAclFailure(action.aclData)
+          );
+        });
+    });
+}
+
+export default combineEpics(
+  authorizationCheckEpic,
+  submitAuthnRequestEpic,
+  loadStatusesEpic,
+  updateStatusesEpic,
+  getAclEpic,
+  updateAclEpic
+);

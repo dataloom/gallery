@@ -5,16 +5,27 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
-import { DataModels } from 'loom-data';
+import {
+  DataModels,
+  Types
+} from 'loom-data';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import InlineEditableControl from '../../../components/controls/InlineEditableControl';
+import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 
 import { isNonEmptyString } from '../../../utils/LangUtils';
+import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
+
+import {
+  getAclRequest,
+  updateAclRequest
+} from '../../permissions/PermissionsActionFactory';
 
 import {
   createOrganizationRequest,
@@ -22,20 +33,61 @@ import {
 } from '../actions/OrganizationActionFactory';
 
 const {
+  Acl,
+  AclBuilder,
+  AclData,
+  AclDataBuilder,
+  Ace,
+  AceBuilder,
   Organization,
-  OrganizationBuilder
+  OrganizationBuilder,
+  Principal,
+  PrincipalBuilder
 } = DataModels;
 
-function mapStateToProps(state :Immutable.Map, ownProps :Object) {
+const {
+  ActionTypes,
+  PermissionTypes,
+  PrincipalTypes
+} = Types;
 
-  return {};
-}
+const TitleSectionContainer = styled(StyledFlexContainer)`
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const VisibilityToggle = styled.div`
+  border: 1px solid #cfd8dc;
+  margin-left: 10px;
+  padding: 4px 8px;
+  position: relative;
+  color: ${(props :Object) => {
+    return props.isPublic ? '#39de9d' : '#e91e63';
+  }};
+  &:hover {
+    cursor: ${(props :Object) => {
+      return props.isOwner ? 'pointer' : 'default';
+    }};
+  }
+`;
+
+const VisibilityToggleText = styled.span`
+  margin-right: 20px;
+`;
+
+const VisibilityToggleIcon = styled.span`
+  position: absolute;
+  right: 10px;
+`;
 
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
     createOrganizationRequest,
-    updateOrganizationTitleRequest
+    updateOrganizationTitleRequest,
+    updateAclRequest,
+    getAclRequest
   };
 
   return {
@@ -48,7 +100,9 @@ class OrganizationTitleSectionComponent extends React.Component {
   static propTypes = {
     actions: React.PropTypes.shape({
       createOrganizationRequest: React.PropTypes.func.isRequired,
-      updateOrganizationTitleRequest: React.PropTypes.func.isRequired
+      updateOrganizationTitleRequest: React.PropTypes.func.isRequired,
+      getAclRequest: React.PropTypes.func.isRequired,
+      updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
   }
@@ -73,20 +127,72 @@ class OrganizationTitleSectionComponent extends React.Component {
     }
   }
 
+  togglePublicVisibility = () => {
+
+    const principal :Principal = (new PrincipalBuilder())
+      .setType(PrincipalTypes.ROLE)
+      .setId(AUTHENTICATED_USER)
+      .build();
+
+    const ace :Ace = (new AceBuilder())
+      .setPermissions([PermissionTypes.READ])
+      .setPrincipal(principal)
+      .build();
+
+    const acl :Acl = (new AclBuilder())
+      .setAclKey([this.props.organization.get('id')])
+      .setAces([ace])
+      .build();
+
+    const isPublic :boolean = this.props.organization.get('isPublic', false);
+    const aclData :AclData = (new AclDataBuilder())
+      .setAction(isPublic ? ActionTypes.REMOVE : ActionTypes.SET)
+      .setAcl(acl)
+      .build();
+
+    this.props.actions.updateAclRequest(aclData);
+  }
+
+  renderVisibilityToggle =() => {
+
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isPublic :boolean = this.props.organization.get('isPublic', false);
+
+    if (!isOwner) {
+      return null;
+    }
+
+    return (
+      <VisibilityToggle isOwner={isOwner} isPublic={isPublic} onClick={this.togglePublicVisibility}>
+        <VisibilityToggleText>PUBLIC</VisibilityToggleText>
+        <VisibilityToggleIcon>
+          {
+            isPublic
+              ? <FontAwesome name="check" />
+              : <FontAwesome name="times" />
+          }
+        </VisibilityToggleIcon>
+      </VisibilityToggle>
+    );
+  }
+
   render() {
 
     const isOwner :boolean = this.props.organization.get('isOwner', false);
 
     return (
-      <InlineEditableControl
-          type="text"
-          size="xlarge"
-          placeholder="Organization title..."
-          value={this.props.organization.get('title')}
-          viewOnly={!isOwner}
-          onChange={this.updateOrganizationTitle} />
+      <TitleSectionContainer>
+        <InlineEditableControl
+            type="text"
+            size="xlarge"
+            placeholder="Organization title..."
+            value={this.props.organization.get('title')}
+            viewOnly={!isOwner}
+            onChange={this.updateOrganizationTitle} />
+        { this.renderVisibilityToggle() }
+      </TitleSectionContainer>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrganizationTitleSectionComponent);
+export default connect(null, mapDispatchToProps)(OrganizationTitleSectionComponent);

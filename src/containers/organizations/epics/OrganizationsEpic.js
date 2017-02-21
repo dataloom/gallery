@@ -10,9 +10,10 @@ import {
   SearchApi
 } from 'loom-data';
 
-import { push } from 'react-router-redux';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
+
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as OrgsActionFactory from '../actions/OrganizationsActionFactory';
@@ -34,12 +35,14 @@ function fetchOrganizationEpic(action$ :Observable<Action>) :Observable<Action> 
         .mergeMap((organization :Organization) => {
           return Observable.of(
             OrgsActionFactory.fetchOrganizationSuccess(organization),
-            OrgsActionFactory.fetchOrganizationsAuthorizationsRequest([organization])
+            OrgsActionFactory.fetchOrganizationsAuthorizationsRequest([organization]),
+            PermissionsActionFactory.getAclRequest([action.orgId])
           );
         })
         .catch(() => {
+          // TODO: navigate away from /orgs/{orgId}
           return Observable.of(
-            OrgsActionFactory.fetchOrganizationFailure()
+            OrgsActionFactory.fetchOrganizationFailure(action.orgId)
           );
         });
     });
