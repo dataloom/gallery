@@ -55,8 +55,9 @@
   height: 30px;
 }
 
-.userRow {
-  margin-bottom: 50px;
+.userListContainer {
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .userProfile {
@@ -80,4 +81,22 @@
 .userIcon {
   max-height: 100px;
   max-width: 100px;
+}
+
+.backButton {
+  margin-bottom: 15px;
+}
+
+.userListItem {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: left;
+
+}
+
+.userListItem:hover {
+  background: #f3f5f7;
 }

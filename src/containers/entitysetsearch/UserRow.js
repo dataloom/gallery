@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
 import TextCell from './TextCell';
 import userProfileImg from '../../images/user-profile-icon.png';
@@ -15,7 +16,10 @@ export default class UserRow extends React.Component {
     propertyTypes: PropTypes.array.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
-    dob: PropTypes.object
+    dob: PropTypes.object,
+    selectUserFn: PropTypes.func,
+    backFn: PropTypes.func,
+    userPage: PropTypes.bool
   }
 
   renderColumns = () => {
@@ -42,6 +46,7 @@ export default class UserRow extends React.Component {
   }
 
   renderTable = () => {
+    if (!this.props.userPage) return null;
     const tableHeight = (2 * ROW_HEIGHT) + TABLE_OFFSET;
     return (
       <Table
@@ -52,6 +57,21 @@ export default class UserRow extends React.Component {
           height={tableHeight}>
         {this.renderColumns()}
       </Table>
+    );
+  }
+
+  selectUser = () => {
+    if (this.props.userPage) return;
+    this.props.selectUserFn(this.props.row);
+  }
+
+  renderBackButton = () => {
+    if (!this.props.userPage) return null;
+    return (
+      <div>
+        <Button onClick={this.props.backFn} bsStyle="primary" className={styles.backButton}>Back to results</Button>
+        <br />
+      </div>
     );
   }
 
@@ -70,9 +90,13 @@ export default class UserRow extends React.Component {
     return <div className={styles.userProfileDetailItem}><b>Date of Birth:</b> {dobVal}</div>;
   }
 
+  getClassName = () => {
+    return (this.props.userPage) ? styles.userProfile : styles.userListItem;
+  }
+
   renderUserProfile = () => {
     return (
-      <div className={styles.userProfile}>
+      <div className={this.getClassName()} onClick={this.selectUser}>
         <img src={userProfileImg} className={styles.userIcon} role="presentation" />
         <div className={styles.userProfileDetails}>
           <div className={styles.userProfileDetailItem}><b>First Name:</b> {this.getFirstNameVal()}</div>
@@ -83,9 +107,14 @@ export default class UserRow extends React.Component {
     );
   }
 
+  getContainerClassName = () => {
+    return (this.props.userPage) ? '' : styles.userListContainer;
+  }
+
   render() {
     return (
-      <div className={styles.userRow}>
+      <div className={this.getContainerClassName()}>
+        {this.renderBackButton()}
         {this.renderUserProfile()}
         {this.renderTable()}
       </div>

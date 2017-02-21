@@ -39,7 +39,8 @@ export default class EntitySetDataSearch extends React.Component {
       title: '',
       asyncStatus: (props.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING,
       propertyTypes: [],
-      loadError: false
+      loadError: false,
+      hidePagination: false
     };
   }
 
@@ -134,9 +135,13 @@ export default class EntitySetDataSearch extends React.Component {
     this.routeToNewQueryParams(this.state.searchTerm, eventKey);
   }
 
+  hidePagination = (shouldHide) => {
+    this.setState({ hidePagination: shouldHide });
+  }
+
   renderPagination = () => {
     const activePage = parseInt(this.state.page, 10);
-    if (this.state.totalHits <= 0 || isNaN(activePage)) return null;
+    if (this.state.hidePagination || this.state.totalHits <= 0 || isNaN(activePage)) return null;
     const numPages = Math.ceil((1.0 * this.state.totalHits) / MAX_HITS);
     return (
       <div className={styles.paginationWrapper}>
@@ -169,7 +174,8 @@ export default class EntitySetDataSearch extends React.Component {
             propertyTypes={this.state.propertyTypes}
             firstName={firstName}
             lastName={lastName}
-            dob={dob} />
+            dob={dob}
+            hidePaginationFn={this.hidePagination} />
       );
     }
     return (

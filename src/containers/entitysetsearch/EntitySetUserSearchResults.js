@@ -7,13 +7,15 @@ export default class EntitySetUserSearchResults extends React.Component {
     propertyTypes: PropTypes.array.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
-    dob: PropTypes.object
+    dob: PropTypes.object,
+    hidePaginationFn: PropTypes.func
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      results: props.results
+      results: props.results,
+      selectedRow: undefined
     };
   }
 
@@ -23,7 +25,17 @@ export default class EntitySetUserSearchResults extends React.Component {
     });
   }
 
-  renderUserResults = () => {
+  onUserSelect = (row) => {
+    this.setState({ selectedRow: row });
+    this.props.hidePaginationFn(true);
+  }
+
+  onUserDeselect = () => {
+    this.setState({ selectedRow: undefined });
+    this.props.hidePaginationFn(false);
+  }
+
+  renderAllUserResults = () => {
     const firstNameId = this.props.firstName.id;
     const lastNameId = this.props.lastName.id;
     const resultRows = [];
@@ -37,11 +49,30 @@ export default class EntitySetUserSearchResults extends React.Component {
               propertyTypes={this.props.propertyTypes}
               firstName={this.props.firstName}
               lastName={this.props.lastName}
-              dob={this.props.dob} />
+              dob={this.props.dob}
+              selectUserFn={this.onUserSelect} />
         );
       }
     });
     return resultRows;
+  }
+
+  renderSingleUser = () => {
+    return (
+      <UserRow
+          row={this.state.selectedRow}
+          propertyTypes={this.props.propertyTypes}
+          firstName={this.props.firstName}
+          lastName={this.props.lastName}
+          dob={this.props.dob}
+          backFn={this.onUserDeselect}
+          userPage />
+    );
+  }
+
+  renderResults = () => {
+    if (this.state.selectedRow) return this.renderSingleUser()
+    return this.renderAllUserResults();
   }
 
   renderNoResults = () => {
@@ -51,7 +82,7 @@ export default class EntitySetUserSearchResults extends React.Component {
   }
 
   render() {
-    const content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderUserResults();
+    const content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderResults();
     return (
       <div>{content}</div>
     );
