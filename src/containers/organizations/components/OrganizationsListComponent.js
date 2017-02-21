@@ -98,14 +98,19 @@ class OrganizationsListComponent extends React.Component {
     this.props.visibleOrganizationIds.forEach((orgId :UUID) => {
 
       const organization :Immutable.Map = this.props.organizations.get(orgId, Immutable.Map());
-
-      if (organization.get('isOwner') === true) {
-        yourOrgs.push(this.renderOrganization(organization));
-      }
-      else {
-        otherOrgs.push(this.renderOrganization(organization));
+      if (!organization.isEmpty()) {
+        if (organization.get('isOwner') === true) {
+          yourOrgs.push(this.renderOrganization(organization));
+        }
+        else {
+          otherOrgs.push(this.renderOrganization(organization));
+        }
       }
     });
+
+    if (yourOrgs.length === 0 && otherOrgs.length === 0) {
+      return this.renderNoOrganizations();
+    }
 
     // TODO: this can be refactored
 
@@ -152,10 +157,6 @@ class OrganizationsListComponent extends React.Component {
 
     if (this.props.isFetchingOrgs || this.props.isSearchingOrgs) {
       return <LoadingSpinner />;
-    }
-
-    if (this.props.visibleOrganizationIds.isEmpty()) {
-      return this.renderNoOrganizations();
     }
 
     return this.renderOrganizations();

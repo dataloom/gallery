@@ -72,7 +72,6 @@ function fetchUsersEpic(action$ :Observable<Action>) :Observable<Action> {
         return Observable
           .from(PrincipalsApi.getUser(userId))
           .mergeMap((user :Object) => {
-            console.log('getUser()', userId, user);
             return Observable.of(
               PrincipalsActionFactory.fetchUserSuccess(user)
             );

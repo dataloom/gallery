@@ -120,8 +120,10 @@ class OrganizationsHeaderComponent extends React.Component {
       return;
     }
 
-    // TODO: also have to navigate to /orgs if not there
     this.props.actions.searchOrganizationsRequest(searchQuery);
+
+    // TODO: figure out how to correctly navigate to /orgs
+    hashHistory.push('/orgs');
   }
 
   handleOnClickSearchButton = () => {
@@ -149,8 +151,16 @@ class OrganizationsHeaderComponent extends React.Component {
 
   handleOnClickShowAllButton = () => {
 
-    // TODO: also have to navigate to /orgs if not there
+    // TODO: too much going on here... setting state, updating redux, navigating... this needs to be improved
+
+    this.setState({
+      searchInputValue: ''
+    });
+
     this.props.actions.showAllOrganizations();
+
+    // TODO: figure out how to correctly navigate to /orgs
+    hashHistory.push('/orgs');
   }
 
   renderSearch = () => {
