@@ -103,7 +103,7 @@ function searchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action
       // TODO: add paging support for Organizations search results
       const searchOptions = {
         start: 0,
-        maxHits: 100,
+        maxHits: 10,
         searchTerm: action.searchQuery
       };
       return Observable
