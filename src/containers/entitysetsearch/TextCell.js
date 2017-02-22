@@ -5,14 +5,15 @@ export default class TextCell extends React.Component {
   static propTypes = {
     results: PropTypes.array,
     rowIndex: PropTypes.number,
-    field: PropTypes.string
+    field: PropTypes.string,
+    formatValueFn: PropTypes.func
   }
 
   render() {
-    const { rowIndex, field, results } = this.props;
+    const { rowIndex, field, results } = this.props
     return (
       <Cell>
-        {results[rowIndex][field]}
+        {this.props.formatValueFn(results[rowIndex][field])}
       </Cell>
     );
   }

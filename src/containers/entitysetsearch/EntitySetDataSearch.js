@@ -139,6 +139,20 @@ export default class EntitySetDataSearch extends React.Component {
     this.setState({ hidePagination: shouldHide });
   }
 
+  formatValue = (rawValue) => {
+    if (rawValue instanceof Array) {
+      let formattedValue = '';
+      if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
+      if (rawValue.length > 1) {
+        for (let i = 1; i < rawValue.length; i += 1) {
+          formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
+        }
+      }
+      return formattedValue;
+    }
+    return rawValue;
+  }
+
   renderPagination = () => {
     const activePage = parseInt(this.state.page, 10);
     if (this.state.hidePagination || this.state.totalHits <= 0 || isNaN(activePage)) return null;
@@ -175,13 +189,15 @@ export default class EntitySetDataSearch extends React.Component {
             firstName={firstName}
             lastName={lastName}
             dob={dob}
-            hidePaginationFn={this.hidePagination} />
+            hidePaginationFn={this.hidePagination}
+            formatValueFn={this.formatValue} />
       );
     }
     return (
       <EntitySetSearchResults
           results={this.state.searchResults}
-          propertyTypes={this.state.propertyTypes} />
+          propertyTypes={this.state.propertyTypes}
+          formatValueFn={this.formatValue} />
     );
   }
 
