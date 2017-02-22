@@ -49,7 +49,7 @@ function searchCatalogEpic(action$) {
 function popularEntitySetsEpic(action$) {
   return action$.ofType(actionTypes.POPULAR_ENTITY_SETS_REQUEST)
     .mergeMap(action => {
-      return Observable.from(SearchApi.getPopularEntitySet())
+      return Observable.from(SearchApi.getPopularEntitySets())
       .map(result => normalize(result, [EntitySetNschema]))
       .map(Immutable.fromJS)
       .flatMap(normalizedData => {

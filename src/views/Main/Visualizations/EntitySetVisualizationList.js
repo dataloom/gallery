@@ -25,7 +25,7 @@ export class EntitySetVisualizationList extends React.Component {
   }
 
   getEntitySets = () => {
-    SearchApi.getPopularEntitySet()
+    SearchApi.getPopularEntitySets()
       .then((entitySets) => {
         this.getEntityTypes(entitySets)
         .then((idToEdmObjects) => {
