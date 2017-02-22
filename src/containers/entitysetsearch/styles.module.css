@@ -103,3 +103,8 @@
   background: #f3f5f7;
   cursor: pointer;
 }
+
+.textCell {
+  height: 40px;
+  overflow: auto;
+}
