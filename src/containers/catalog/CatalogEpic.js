@@ -19,7 +19,7 @@ function convertSearchResult(rawResult):DataModel.EntitySet {
 // TODO: Save property types
 function searchCatalog(filterParams) {
   let numHits = 0;
-  return Observable.from(SearchApi.search(filterParams))
+  return Observable.from(SearchApi.searchEntitySetMetaData(filterParams))
     .map(rawResult => {
       numHits = rawResult.numHits;
       return rawResult.hits.map(convertSearchResult);
