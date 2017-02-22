@@ -28,7 +28,11 @@ function allPropertyTypesEpic(action$) {
             actionFactories.allPropertyTypesResolve(references)
           ];
         })
-        .catch(error => actionFactories.allPropertyTypesReject("Failed to load Property Types"))
+        .catch(() => {
+          return Observable.of(
+            actionFactories.allPropertyTypesReject('Failed to load Property Types')
+          );
+        });
     });
 }
 
@@ -49,7 +53,11 @@ function allEntityTypesEpic(action$) {
             actionFactories.allEntityTypesResolve(references)
           ];
         })
-        .catch(error => actionFactories.allEntityTypesReject("Failed to load Entity Types"))
+        .catch(() => {
+          return Observable.of(
+            actionFactories.allEntityTypesReject('Failed to load Entity Types')
+          );
+        });
     });
 }
 

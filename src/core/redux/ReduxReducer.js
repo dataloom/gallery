@@ -2,9 +2,7 @@
  * @flow
  */
 
-import {
-  combineReducers
-} from 'redux-immutable';
+import { combineReducers } from 'redux-immutable';
 
 import catalogReducer from '../../containers/catalog/CatalogReducer';
 import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
@@ -13,8 +11,9 @@ import organizationsReducer from '../../containers/organizations/reducers/Organi
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
 import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
+import principalsReducer from '../../containers/principals/PrincipalsReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
-import usersReducer from '../../containers/organizations/reducers/UsersReducer';
+import routerReducer from '../router/RouterReducer';
 
 export default function reduxReducer() {
 
@@ -26,7 +25,8 @@ export default function reduxReducer() {
     createEntitySet: createEntitySetReducer,
     securableObject: securableObjectReducer,
     permissions: permissionReducer,
-    users: usersReducer,
-    async: asyncReducer
+    principals: principalsReducer,
+    async: asyncReducer,
+    router: routerReducer
   });
 }

@@ -75,7 +75,7 @@ export function createAsyncReferenceFromEdmReference(edmReferece :EdmObjectRefer
 /*
  ** Dereferencing
  */
-export const BAD_REFERENCE = Symbol("bad reference");
+export const BAD_REFERENCE = Symbol('bad reference');
 
 // TODO: Handle both immutable and mutable normalizedData
 export function getEdmObjectSilent(normalizedData:Object, reference:EdmObjectReference, badReferenceValue:* = BAD_REFERENCE) {

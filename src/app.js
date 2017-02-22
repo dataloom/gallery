@@ -1,29 +1,27 @@
 import 'babel-polyfill';
-// Needed by redux-observable
 import 'rxjs';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  Provider
-} from 'react-redux';
-
-import {
-  Router,
-  hashHistory
-} from 'react-router';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router';
 
 import initializeReduxStore from './core/redux/ReduxStore';
-import makeRoutes from './core/router/Routes';
+import initializeRouterHistory from './core/router/RouterHistory';
+
 import './core/styles/global/index.css';
 
+import { makeMainRoutes } from './views/Main/routes';
+
 const reduxStore = initializeReduxStore();
-const routes = makeRoutes();
+const routerHistory = initializeRouterHistory(reduxStore);
 
 ReactDOM.render(
   <Provider store={reduxStore}>
-    <Router history={hashHistory} routes={routes} />
+    <Router history={routerHistory}>
+      { makeMainRoutes() }
+    </Router>
   </Provider>,
   document.getElementById('app')
 );

@@ -30,7 +30,7 @@ function createEntitySet(entitySet) {
     // Error Handling
     .catch(error => {
       console.error(error);
-      return Observable.of(actionFactories.createEntitySetReject("Error saving entity set"))
+      return Observable.of(actionFactories.createEntitySetReject('Error saving entity set'))
     });
 }
 

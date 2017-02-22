@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { IndexRedirect, IndexRoute, Route } from 'react-router';
 import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
@@ -16,12 +16,12 @@ import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
-import StringConsts from '../../utils/Consts/StringConsts';
 import { configure as edmApiConfigure } from '../../containers/Api';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
-import OrganizationsComponent from '../../containers/organizations/components/OrganizationsComponent';
+import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
+import OrganizationsListComponent from '../../containers/organizations/components/OrganizationsListComponent';
 
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
@@ -84,7 +84,8 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
-      <Route path={PageConsts.ORG} component={OrganizationsComponent} onEnter={requireAuth}>
+      <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
+        <IndexRoute component={OrganizationsListComponent} />
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />

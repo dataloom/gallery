@@ -87,9 +87,10 @@
         "extensions": [".js", ".jsx"]
       }
     ],
-    "react/sort-comp": "off",
     "react/forbid-prop-types": "off",
     "react/jsx-indent-props": ["error", 4],
     "react/prefer-stateless-function": "warn",
+    "react/require-default-props": "warn",
+    "react/sort-comp": "off"
   }
 }

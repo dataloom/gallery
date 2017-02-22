@@ -9,9 +9,9 @@ import { EntitySetPropType } from '../../edm/EdmModel';
 import { StatusPropType, RequestStatus } from '../PermissionsStorage'
 import { createPrincipalReference } from '../../principals/PrincipalsStorage';
 import { getDisplayName } from '../../principals/PrincipalUtils';
-import PrincipalActionsFactory from '../../principals/PrincipalsActionFactory';
 import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
+import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
 
 import { AsyncReferencePropType } from '../../async/AsyncStorage';
 import AsyncContentComponent from '../../async/components/AsyncContentComponent';
@@ -176,7 +176,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return {
     loadPrincipal: (principalId) => {
-      dispatch(PrincipalActionsFactory.loadPrincipalDetails(principalId));
+      dispatch(PrincipalsActionFactory.loadPrincipalDetails(principalId));
     },
     updateStatuses: (statuses) => {
       dispatch(PermissionsActionFactory.updateStatusesStatusesRequest(statuses))
