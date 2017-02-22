@@ -69,6 +69,7 @@ const SearchContainer = styled.div`
 
 const SearchSpinner = styled(StyledElement)`
   padding: 0;
+  flex: 0;
 `;
 
 function mapStateToProps(state :Immutable.Map) {
