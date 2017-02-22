@@ -246,7 +246,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
     case OrgsActionTypes.SEARCH_ORGS_SUCCESS: {
 
       const orgIds :Immutable.Set = Immutable.Set().withMutations((set :Immutable.Set) => {
-        action.searchResults.forEach((result :Object) => {
+        action.searchResults.hits.forEach((result :Object) => {
           set.add(result.id);
         });
       });
