@@ -85,7 +85,7 @@ function filterParamsFromLocation(location) {
   let hasFilters = false;
 
   if (query.kw) {
-    filterParams.keyword = query.kw;
+    filterParams.searchTerm = query.kw;
     hasFilters = true;
   }
   if (query.eid) {
@@ -119,8 +119,8 @@ function locationFromFilterParams(filterParams) {
   const query = {};
   let hasFilters = false;
 
-  if (filterParams.keyword) {
-    query.kw = filterParams.keyword;
+  if (filterParams.searchTerm) {
+    query.kw = filterParams.searchTerm;
     hasFilters = true;
   }
   if (filterParams.entityTypeId) {

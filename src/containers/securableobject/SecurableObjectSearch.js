@@ -12,7 +12,7 @@ import styles from './securableobject.module.css';
 
 
 export const FilterParamsPropType = PropTypes.shape({
-  keyword: PropTypes.string,
+  searchTerm: PropTypes.string,
   propertyTypeIds: PropTypes.arrayOf(React.PropTypes.string),
   entityTypeId: PropTypes.string,
   page: PropTypes.string
@@ -33,7 +33,7 @@ class SecurableObjectSearch extends React.Component {
     super(props);
 
     this.state = Object.assign({
-      keyword: '',
+      searchTerm: '',
       propertyTypeIds: [],
       entityTypeId: ''
     }, this.props.filterParams);
@@ -44,9 +44,9 @@ class SecurableObjectSearch extends React.Component {
     this.props.loadPropertyTypes();
   }
 
-  onKeywordChange = (event) => {
+  onSearchTermChange = (event) => {
     this.setState({
-      keyword: event.target.value
+      searchTerm: event.target.value
     });
   };
 
@@ -64,11 +64,11 @@ class SecurableObjectSearch extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const { keyword, propertyTypeIds, entityTypeId } = this.state;
+    const { searchTerm, propertyTypeIds, entityTypeId } = this.state;
     const filterParams = {};
 
-    if (keyword) {
-      filterParams.keyword = keyword;
+    if (searchTerm) {
+      filterParams.searchTerm = searchTerm;
     }
     if (propertyTypeIds && propertyTypeIds.length > 0) {
       filterParams.propertyTypeIds = propertyTypeIds;
@@ -101,14 +101,14 @@ class SecurableObjectSearch extends React.Component {
   render() {
     return (
       <form onSubmit={this.onSubmit} className={classnames(this.props.className, styles.search)}>
-        <FormGroup className={styles.keyword}>
-          <ControlLabel>Keyword</ControlLabel>
+        <FormGroup className={styles.searchTerm}>
+          <ControlLabel>Search Term</ControlLabel>
           <InputGroup>
             <InputGroup.Addon><FontAwesome name="search"/></InputGroup.Addon>
             <FormControl
-              value={this.state.keyword}
+              value={this.state.searchTerm}
               type="text"
-              onChange={this.onKeywordChange}
+              onChange={this.onSearchTermChange}
             />
           </InputGroup>
         </FormGroup>
