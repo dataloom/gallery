@@ -101,4 +101,5 @@
 
 .userListItem:hover {
   background: #f3f5f7;
+  cursor: pointer;
 }
