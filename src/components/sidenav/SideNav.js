@@ -45,7 +45,7 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.VISUALIZE, 'Visualize', visualizeIcon) }
         {/* Hiding the Data Model link for the demo */}
         {/*{ this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }*/}
-        { this.getSideNavItemLayout(PageConsts.ORG, 'Organizations', organizationsIcon) }
+        { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
       </nav>
     );
   }

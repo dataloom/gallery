@@ -10,7 +10,7 @@ import * as OrgsActionTypes from './OrganizationsActionTypes';
 
 const Organization = DataModels.Organization;
 
-export function fetchOrgRequest(orgId :UUID) :Object {
+export function fetchOrganizationRequest(orgId :UUID) :Object {
 
   return {
     type: OrgsActionTypes.FETCH_ORG_REQUEST,
@@ -18,7 +18,7 @@ export function fetchOrgRequest(orgId :UUID) :Object {
   };
 }
 
-export function fetchOrgSuccess(organization :Organization) :Object {
+export function fetchOrganizationSuccess(organization :Organization) :Object {
 
   return {
     type: OrgsActionTypes.FETCH_ORG_SUCCESS,
@@ -26,21 +26,22 @@ export function fetchOrgSuccess(organization :Organization) :Object {
   };
 }
 
-export function fetchOrgFailure() :Object {
+export function fetchOrganizationFailure(orgId :UUID) :Object {
 
   return {
-    type: OrgsActionTypes.FETCH_ORG_FAILURE
+    type: OrgsActionTypes.FETCH_ORG_FAILURE,
+    orgId
   };
 }
 
-export function fetchOrgsRequest() :Object {
+export function fetchOrganizationsRequest() :Object {
 
   return {
     type: OrgsActionTypes.FETCH_ORGS_REQUEST
   };
 }
 
-export function fetchOrgsSuccess(organizations :Organization[]) :Object {
+export function fetchOrganizationsSuccess(organizations :Organization[]) :Object {
 
   return {
     type: OrgsActionTypes.FETCH_ORGS_SUCCESS,
@@ -48,33 +49,57 @@ export function fetchOrgsSuccess(organizations :Organization[]) :Object {
   };
 }
 
-export function fetchOrgsFailure() :Object {
+export function fetchOrganizationsFailure() :Object {
 
   return {
     type: OrgsActionTypes.FETCH_ORGS_FAILURE
   };
 }
 
-export function createNewOrgRequest(org :Organization) :Object {
+export function fetchOrganizationsAuthorizationsRequest(organizations :Organization[]) :Object {
 
   return {
-    type: OrgsActionTypes.CREATE_NEW_ORG_REQUEST,
-    org
+    type: OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_REQUEST,
+    organizations
   };
 }
 
-export function createNewOrgSuccess(orgId :UUID) :Object {
+export function fetchOrganizationsAuthorizationsSuccess(authorizations :Authorization[]) :Object {
 
   return {
-    type: OrgsActionTypes.CREATE_NEW_ORG_SUCCESS,
-    orgId
+    type: OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_SUCCESS,
+    authorizations
   };
 }
 
-export function createNewOrgFailure() :Object {
+export function fetchOrganizationsAuthorizationsFailure() :Object {
 
   return {
-    type: OrgsActionTypes.CREATE_NEW_ORG_FAILURE
+    type: OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_FAILURE
+  };
+}
+
+
+export function searchOrganizationsRequest(searchQuery :string) :Object {
+
+  return {
+    type: OrgsActionTypes.SEARCH_ORGS_REQUEST,
+    searchQuery
+  };
+}
+
+export function searchOrganizationsSuccess(searchResults :any) :Object {
+
+  return {
+    type: OrgsActionTypes.SEARCH_ORGS_SUCCESS,
+    searchResults
+  };
+}
+
+export function searchOrganizationsFailure() :Object {
+
+  return {
+    type: OrgsActionTypes.SEARCH_ORGS_FAILURE
   };
 }
 
@@ -100,152 +125,9 @@ export function joinOrgFailure() :Object {
   };
 }
 
-export function addDomainToOrgRequest(orgId :UUID, emailDomain :string) :Object {
+export function showAllOrganizations() :Object {
 
   return {
-    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_REQUEST,
-    orgId,
-    emailDomain
-  };
-}
-
-export function addDomainToOrgSuccess(orgId :UUID, emailDomain :string) :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS,
-    orgId,
-    emailDomain
-  };
-}
-
-export function addDomainToOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_DOMAIN_TO_ORG_FAILURE
-  };
-}
-
-export function removeDomainFromOrgRequest(orgId :UUID, emailDomain :string) :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST,
-    orgId,
-    emailDomain
-  };
-}
-
-export function removeDomainFromOrgSuccess(orgId :UUID, emailDomain :string) :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS,
-    orgId,
-    emailDomain
-  };
-}
-
-export function removeDomainFromOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_DOMAIN_FROM_ORG_FAILURE
-  };
-}
-
-export function addRoleToOrgRequest(orgId :UUID, role :string) :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_ROLE_TO_ORG_REQUEST,
-    orgId,
-    role
-  };
-}
-
-export function addRoleToOrgSuccess(orgId :UUID, role :string) :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_ROLE_TO_ORG_SUCCESS,
-    orgId,
-    role
-  };
-}
-
-export function addRoleToOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_ROLE_TO_ORG_FAILURE
-  };
-}
-
-export function removeRoleFromOrgRequest(orgId :UUID, role :string) :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_ROLE_FROM_ORG_REQUEST,
-    orgId,
-    role
-  };
-}
-
-export function removeRoleFromOrgSuccess(orgId :UUID, role :string) :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS,
-    orgId,
-    role
-  };
-}
-
-export function removeRoleFromOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_ROLE_FROM_ORG_FAILURE
-  };
-}
-
-export function addMemberToOrgRequest(orgId :UUID, memberId :string) :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_REQUEST,
-    orgId,
-    memberId
-  };
-}
-
-export function addMemberToOrgSuccess(orgId :UUID, memberId :string) :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_SUCCESS,
-    orgId,
-    memberId
-  };
-}
-
-export function addMemberToOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.ADD_MEMBER_TO_ORG_FAILURE
-  };
-}
-
-export function removeMemberFromOrgRequest(orgId :UUID, memberId :string) :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST,
-    orgId,
-    memberId
-  };
-}
-
-export function removeMemberFromOrgSuccess(orgId :UUID, memberId :string) :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS,
-    orgId,
-    memberId
-  };
-}
-
-export function removeMemberFromOrgFailure() :Object {
-
-  return {
-    type: OrgsActionTypes.REMOVE_MEMBER_FROM_ORG_FAILURE
+    type: OrgsActionTypes.SHOW_ALL_ORGS
   };
 }

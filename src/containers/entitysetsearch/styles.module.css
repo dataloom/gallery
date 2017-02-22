@@ -54,3 +54,52 @@
 .bottomSpacer {
   height: 30px;
 }
+
+.userListContainer {
+  margin-bottom: 10px;
+}
+
+.userProfile {
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.userProfileDetails {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+}
+
+.userProfileDetailItem {
+  margin: 3px 0;
+  font-size: 15px;
+}
+
+.userIcon {
+  max-height: 100px;
+  max-width: 100px;
+}
+
+.backButton {
+  margin-bottom: 15px;
+}
+
+.userListItem {
+  position: relative;
+  left: 50%;
+  margin-left: -170px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  text-align: left;
+
+}
+
+.userListItem:hover {
+  background: #f3f5f7;
+  cursor: pointer;
+}

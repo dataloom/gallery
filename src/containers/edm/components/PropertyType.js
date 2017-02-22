@@ -75,7 +75,7 @@ class PropertyType extends React.Component {
       content = (<FontAwesome name="lock"/>);
     }
 
-    const classes = classnames("propertyTypePermissions", {
+    const classes = classnames('propertyTypePermissions', {
       editing: editing.permissions
     });
     return (<div className={classes}>{content}</div>);

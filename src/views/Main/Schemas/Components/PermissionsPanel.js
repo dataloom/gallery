@@ -17,8 +17,9 @@ const views = {
 const permissionLevels = {
   hidden: [],
   discover: [Permission.DISCOVER.name],
-  read: [Permission.DISCOVER.name, Permission.READ.name],
-  write: [Permission.DISCOVER.name, Permission.READ.name, Permission.WRITE.name],
+  link: [Permission.DISCOVER.name, Permission.LINK.name],
+  read: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name],
+  write: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name],
   owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
 };
 
@@ -31,6 +32,7 @@ const viewLabels = {
 const accessOptions = {
   Hidden: 'Hidden',
   Discover: 'Discover',
+  Link: 'Link',
   Read: 'Read',
   Write: 'Write',
   Owner: 'Owner'
@@ -38,6 +40,7 @@ const accessOptions = {
 
 const permissionOptions = {
   Discover: 'Discover',
+  Link: 'Link',
   Read: 'Read',
   Write: 'Write',
   Owner: 'Owner'
@@ -58,8 +61,8 @@ export class PermissionsPanel extends React.Component {
       updateSuccess: false,
       updateError: false,
       globalValue: options[0],
-      roleAcls: { Discover: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Read: [], Write: [], Owner: [] },
+      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
+      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
       newRoleValue: '',
@@ -101,13 +104,14 @@ export class PermissionsPanel extends React.Component {
     if (permissions.includes(permissionOptions.Owner.toUpperCase())) return permissionOptions.Owner;
     if (permissions.includes(permissionOptions.Write.toUpperCase())) return permissionOptions.Write;
     if (permissions.includes(permissionOptions.Read.toUpperCase())) return permissionOptions.Read;
+    if (permissions.includes(permissionOptions.Link.toUpperCase())) return permissionOptions.Link;
     return permissionOptions.Discover;
   }
 
   updateStateAcls = (aces, updateSuccess) => {
     let globalValue = accessOptions[0];
-    const roleAcls = { Discover: [], Read: [], Write: [] };
-    const userAcls = { Discover: [], Read: [], Write: [], Owner: [] };
+    const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+    const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
     aces.forEach((ace) => {
       if (ace.permissions.length > 0) {
         if (ace.principal.type === ROLE) {
@@ -215,7 +219,7 @@ export class PermissionsPanel extends React.Component {
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId === undefined) ?
       Object.keys(accessOptions) : Object.keys(permissionOptions);
-    const options = optionNames.map((name) => {
+    const options = optionNames.filter(name => name !== accessOptions.Owner).map((name) => {
       return {
         value: name,
         label: name
@@ -249,7 +253,11 @@ export class PermissionsPanel extends React.Component {
       type: ROLE,
       id: role
     };
-    this.updatePermissions(action, principal, view);
+
+    // Only if changes were made, save changes
+    if (role) {
+      this.updatePermissions(action, principal, view);
+    }
   }
 
   handleNewRoleChange = (e) => {
@@ -307,6 +315,7 @@ export class PermissionsPanel extends React.Component {
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Link, this.changeRolesView, rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, rolesView)}
         </div>
         <div className={styles.permissionsBodyContainer}>
@@ -386,6 +395,7 @@ export class PermissionsPanel extends React.Component {
           {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Link, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView)}
         </div>
         <div className={styles.permissionsBodyContainer}>

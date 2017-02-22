@@ -5,6 +5,7 @@ import { SearchApi, EntityDataModelApi } from 'loom-data';
 import Page from '../../components/page/Page';
 import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
+import EntitySetUserSearchResults from './EntitySetUserSearchResults';
 import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 import styles from './styles.module.css';
 
@@ -38,7 +39,8 @@ export default class EntitySetDataSearch extends React.Component {
       title: '',
       asyncStatus: (props.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING,
       propertyTypes: [],
-      loadError: false
+      loadError: false,
+      hidePagination: false
     };
   }
 
@@ -133,9 +135,13 @@ export default class EntitySetDataSearch extends React.Component {
     this.routeToNewQueryParams(this.state.searchTerm, eventKey);
   }
 
+  hidePagination = (shouldHide) => {
+    this.setState({ hidePagination: shouldHide });
+  }
+
   renderPagination = () => {
     const activePage = parseInt(this.state.page, 10);
-    if (this.state.totalHits <= 0 || isNaN(activePage)) return null;
+    if (this.state.hidePagination || this.state.totalHits <= 0 || isNaN(activePage)) return null;
     const numPages = Math.ceil((1.0 * this.state.totalHits) / MAX_HITS);
     return (
       <div className={styles.paginationWrapper}>
@@ -152,6 +158,33 @@ export default class EntitySetDataSearch extends React.Component {
     );
   }
 
+  renderSearchResultType = () => {
+    let firstName;
+    let lastName;
+    let dob;
+    this.state.propertyTypes.forEach((propertyType) => {
+      if (propertyType.type.name.toLowerCase() === 'firstname') firstName = propertyType;
+      else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = propertyType;
+      else if (propertyType.type.name.toLowerCase() === 'dob') dob = propertyType;
+    });
+    if (firstName && lastName) {
+      return (
+        <EntitySetUserSearchResults
+            results={this.state.searchResults}
+            propertyTypes={this.state.propertyTypes}
+            firstName={firstName}
+            lastName={lastName}
+            dob={dob}
+            hidePaginationFn={this.hidePagination} />
+      );
+    }
+    return (
+      <EntitySetSearchResults
+          results={this.state.searchResults}
+          propertyTypes={this.state.propertyTypes} />
+    );
+  }
+
   render() {
     return (
       <Page>
@@ -164,11 +197,7 @@ export default class EntitySetDataSearch extends React.Component {
           <AsyncContent
               status={this.state.asyncStatus}
               pendingContent={<h2>Please run a search</h2>}
-              content={() => {
-                return (<EntitySetSearchResults
-                    results={this.state.searchResults}
-                    propertyTypes={this.state.propertyTypes} />);
-              }} />
+              content={this.renderSearchResultType} />
           {this.renderPagination()}
           <div className={styles.bottomSpacer} />
         </Page.Body>

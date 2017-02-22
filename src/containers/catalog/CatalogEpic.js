@@ -18,18 +18,23 @@ function convertSearchResult(rawResult):DataModel.EntitySet {
 
 // TODO: Save property types
 function searchCatalog(filterParams) {
-  return Observable.from(SearchApi.search(filterParams))
-    .map(rawResult => rawResult.map(convertSearchResult))
+  let numHits = 0;
+  return Observable.from(SearchApi.searchEntitySetMetaData(filterParams))
+    .map(rawResult => {
+      numHits = rawResult.numHits;
+      return rawResult.hits.map(convertSearchResult);
+    })
     .map(result => normalize(result, [EntitySetNschema]))
     .map(Immutable.fromJS)
     .flatMap(normalizedData => [
       edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-      actionFactories.catalogSearchResolve(normalizedData.get('result'))
+      actionFactories.catalogSearchResolve(normalizedData.get('result'), numHits)
     ])
     // Error Handling
-    .catch(error => {
-      console.error(error);
-      return Observable.of(actionFactories.catalogSearchReject("Error loading search results"))
+    .catch(() => {
+      return Observable.of(
+        actionFactories.catalogSearchReject('Error loading search results')
+      );
     });
 }
 
@@ -44,7 +49,7 @@ function searchCatalogEpic(action$) {
 function popularEntitySetsEpic(action$) {
   return action$.ofType(actionTypes.POPULAR_ENTITY_SETS_REQUEST)
     .mergeMap(action => {
-      return Observable.from(SearchApi.getPopularEntitySet())
+      return Observable.from(SearchApi.getPopularEntitySets())
       .map(result => normalize(result, [EntitySetNschema]))
       .map(Immutable.fromJS)
       .flatMap(normalizedData => {
@@ -54,9 +59,10 @@ function popularEntitySetsEpic(action$) {
         ]
       })
       // Error Handling
-      .catch(error => {
-        console.error(error);
-        return Observable.of(actionFactories.popularEntitySetsReject("Error loading popular entity sets"))
+      .catch(() => {
+        return Observable.of(
+          actionFactories.popularEntitySetsReject('Error loading popular entity sets')
+        );
       });
     });
 }

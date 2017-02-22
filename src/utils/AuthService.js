@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { hashHistory } from 'react-router';
 
 import Auth0Lock from 'auth0-lock';
 
@@ -6,6 +7,7 @@ import * as Cookies from 'js-cookie';
 
 import { isTokenExpired } from './jwtHelper';
 import img from '../images/kryptnostic-logo-big.png';
+import PageConsts from './Consts/PageConsts.js';
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain, isLocal) {
@@ -47,6 +49,10 @@ export default class AuthService extends EventEmitter {
         this.setProfile(profile);
       }
     });
+
+    //Bugfix for redirect race conditions in IE & Safari
+    //As soon as authentication is complete -> redirect to home
+    hashHistory.push('/' + PageConsts.HOME);
   }
 
   authorizationError(error) {
