@@ -253,7 +253,11 @@ export class PermissionsPanel extends React.Component {
       type: ROLE,
       id: role
     };
-    this.updatePermissions(action, principal, view);
+
+    // Only if changes were made, save changes
+    if (role) {
+      this.updatePermissions(action, principal, view);
+    }
   }
 
   handleNewRoleChange = (e) => {
