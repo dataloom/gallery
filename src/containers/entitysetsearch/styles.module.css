@@ -57,7 +57,6 @@
 
 .userListContainer {
   margin-bottom: 10px;
-  text-align: center;
 }
 
 .userProfile {
@@ -88,6 +87,9 @@
 }
 
 .userListItem {
+  position: relative;
+  left: 50%;
+  margin-left: -170px;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -99,4 +101,5 @@
 
 .userListItem:hover {
   background: #f3f5f7;
+  cursor: pointer;
 }
