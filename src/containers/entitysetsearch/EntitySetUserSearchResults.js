@@ -8,7 +8,8 @@ export default class EntitySetUserSearchResults extends React.Component {
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
     dob: PropTypes.object,
-    hidePaginationFn: PropTypes.func
+    hidePaginationFn: PropTypes.func,
+    formatValueFn: PropTypes.func
   }
 
   constructor(props) {
@@ -50,7 +51,8 @@ export default class EntitySetUserSearchResults extends React.Component {
               firstName={this.props.firstName}
               lastName={this.props.lastName}
               dob={this.props.dob}
-              selectUserFn={this.onUserSelect} />
+              selectUserFn={this.onUserSelect}
+              formatValueFn={this.props.formatValueFn} />
         );
       }
     });
@@ -66,7 +68,8 @@ export default class EntitySetUserSearchResults extends React.Component {
           lastName={this.props.lastName}
           dob={this.props.dob}
           backFn={this.onUserDeselect}
-          userPage />
+          userPage
+          formatValueFn={this.props.formatValueFn} />
     );
   }
 
