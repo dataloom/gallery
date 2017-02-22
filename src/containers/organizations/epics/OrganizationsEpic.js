@@ -100,8 +100,14 @@ function searchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action
   return action$
     .ofType(OrgsActionTypes.SEARCH_ORGS_REQUEST)
     .mergeMap((action :Action) => {
+      // TODO: add paging support for Organizations search results
+      const searchOptions = {
+        start: 0,
+        maxHits: 10,
+        searchTerm: action.searchQuery
+      };
       return Observable
-        .from(SearchApi.searchOrganizations(action.searchQuery))
+        .from(SearchApi.searchOrganizations(searchOptions))
         .mergeMap((searchResults :Object[]) => {
           // TODO: fetch any organizations from the search results that are not in the redux store
           return Observable.of(
