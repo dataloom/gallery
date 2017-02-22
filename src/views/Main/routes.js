@@ -58,7 +58,6 @@ const isAdmin = () => {
 };
 
 const getName = () => {
-
   if (auth.loggedIn()) {
     return getDisplayName(auth.getProfile());
   } else {
