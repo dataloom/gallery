@@ -24,15 +24,15 @@
     margin-left: auto;
 }
 
-/* Keyword */
-.search .keyword {
+/* Search Term */
+.search .searchTerm {
     margin-bottom: 15px;
 }
-.keyword :global .form-control {
+.searchTerm :global .form-control {
     padding-left: 0;
 }
 
-.keyword :global .input-group-addon {
+.searchTerm :global .input-group-addon {
     background: #ffffff;
 }
 
