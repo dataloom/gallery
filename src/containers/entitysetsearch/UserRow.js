@@ -19,7 +19,8 @@ export default class UserRow extends React.Component {
     dob: PropTypes.object,
     selectUserFn: PropTypes.func,
     backFn: PropTypes.func,
-    userPage: PropTypes.bool
+    userPage: PropTypes.bool,
+    formatValueFn: PropTypes.func
   }
 
   renderColumns = () => {
@@ -38,7 +39,7 @@ export default class UserRow extends React.Component {
             key={id}
             header={<Cell>{title}</Cell>}
             cell={
-              <TextCell results={[row]} field={id} />
+              <TextCell results={[row]} field={id} formatValueFn={this.props.formatValueFn} />
             }
             width={columnWidth} />
       );
@@ -76,18 +77,18 @@ export default class UserRow extends React.Component {
   }
 
   getFirstNameVal = () => {
-    return this.props.row[this.props.firstName.id];
+    return this.props.formatValueFn(this.props.row[this.props.firstName.id]);
   }
 
   getLastNameVal = () => {
-    return this.props.row[this.props.lastName.id];
+    return this.props.formatValueFn(this.props.row[this.props.lastName.id]);
   }
 
   renderDOB = () => {
     if (!this.props.dob) return null;
     const dobVal = this.props.row[this.props.dob.id];
     if (!dobVal) return null;
-    return <div className={styles.userProfileDetailItem}><b>Date of Birth:</b> {dobVal}</div>;
+    return <div className={styles.userProfileDetailItem}><b>Date of Birth:</b> {this.props.formatValueFn(dobVal)}</div>;
   }
 
   getClassName = () => {

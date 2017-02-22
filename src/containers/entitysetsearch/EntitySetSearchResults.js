@@ -10,7 +10,8 @@ const TABLE_OFFSET = 2;
 export default class EntitySetSearchResults extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
-    propertyTypes: PropTypes.array.isRequired
+    propertyTypes: PropTypes.array.isRequired,
+    formatValueFn: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -38,7 +39,7 @@ export default class EntitySetSearchResults extends React.Component {
             key={id}
             header={<Cell>{title}</Cell>}
             cell={
-              <TextCell results={this.state.results} field={id} />
+              <TextCell results={this.state.results} field={id} formatValueFn={this.props.formatValueFn} />
             }
             width={columnWidth} />
       );
