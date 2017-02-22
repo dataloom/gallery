@@ -39,7 +39,8 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
           status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
         },
-        entitySetIds: action.entitySetIds
+        entitySetIds: action.entitySetIds,
+        numHits: action.numHits
       });
 
     case actionTypes.POPULAR_ENTITY_SETS_REQUEST:

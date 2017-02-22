@@ -9,10 +9,11 @@ export function catalogSearchRequest(filterParams:Object) {
 }
 
 //TODO: Replace with EdmObjectReferences
-export function catalogSearchResolve(entitySetIds:string[]) {
+export function catalogSearchResolve(entitySetIds:string[], numHits:string) {
   return {
     type: actionTypes.CATALOG_SEARCH_RESOLVE,
-    entitySetIds
+    entitySetIds,
+    numHits
   };
 }
 

@@ -41,3 +41,8 @@
   color: white;
   text-decoration: none;
 }
+
+.error {
+  color: red;
+  text-align: center;
+}
