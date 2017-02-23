@@ -20,7 +20,7 @@ class CatalogComponent extends React.Component {
     entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
     onSubmitSearch: PropTypes.func.isRequired,
     filterParams: FilterParamsPropType,
-    numHits: PropTypes.string
+    numHits: PropTypes.number
   };
 
   componentDidMount() {
@@ -39,9 +39,8 @@ class CatalogComponent extends React.Component {
   renderPagination = () => {
     if (!this.props.filterParams || !this.props.filterParams.page || !this.props.numHits) return null;
     const activePage = parseInt(this.props.filterParams.page, 10);
-    const numHits = parseInt(this.props.numHits, 10);
-    if (isNaN(activePage) || isNaN(numHits)) return null;
-    const numPages = Math.ceil((1.0 * numHits) / MAX_HITS);
+    if (isNaN(activePage) || !this.props.numHits) return null;
+    const numPages = Math.ceil((1.0 * this.props.numHits) / MAX_HITS);
     return (
       <div className={styles.paginationWrapper}>
         <Pagination
