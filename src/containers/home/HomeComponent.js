@@ -53,7 +53,7 @@ class HomeComponent extends React.Component {
                 title="JOIN"
                 description="Find the organizations to which you belong or with the data you need and request access."
                 imgSrc={joinImg}
-                linkRoute={PageConsts.ORG} />
+                linkRoute={PageConsts.ORGS} />
             <WelcomeInstructionsBox
                 title="EXPLORE"
                 description="See the data available to you and download Excel and .JSON files to analyze each property."

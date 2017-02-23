@@ -7,6 +7,7 @@ const DATA_MODEL = 'datamodel';
 const DATASOURCES = 'datasources';
 const LINK = 'link';
 const SEARCH = 'search';
+const ORGS = 'orgs';
 
 export default {
   HOME,
@@ -17,5 +18,6 @@ export default {
   DATA_MODEL,
   DATASOURCES,
   LINK,
-  SEARCH
+  SEARCH,
+  ORGS
 };

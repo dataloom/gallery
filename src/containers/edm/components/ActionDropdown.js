@@ -22,7 +22,7 @@ import { AsyncReferencePropType } from '../../async/AsyncStorage';
 class ActionDropdown extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
-    propertyTypeAuthnReferences: PropTypes.arrayOf(AsyncReferencePropType).isRequired,
+    propertyTypeAuthnReferences: PropTypes.arrayOf(AsyncReferencePropType),
     showDetails: PropTypes.bool,
     className: PropTypes.string,
     onRequestPermissions: PropTypes.func.isRequired,
@@ -30,11 +30,25 @@ class ActionDropdown extends React.Component {
   };
 
   componentDidMount() {
-    const { loadPropertyTypeAuthns, propertyTypeAuthnReferences} = this.props;
-    const aclKeys = propertyTypeAuthnReferences.map(reference => {
-      return reference.id.split('/');
-    });
-    loadPropertyTypeAuthns(aclKeys);
+    this.loadPropertyTypeAuthnsIfPresent(this.props.propertyTypeAuthnReferences);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.propertyTypeAuthnReferences) {
+      this.loadPropertyTypeAuthnsIfPresent(nextProps.propertyTypeAuthnReferences);
+    }
+  }
+
+  loadPropertyTypeAuthnsIfPresent = (propertyTypeAuthnReferences) => {
+    if (propertyTypeAuthnReferences) {
+      let aclKeys;
+      if (propertyTypeAuthnReferences) {
+        aclKeys = propertyTypeAuthnReferences.map((reference) => {
+          return reference.id.split('/');
+        });
+        this.props.loadPropertyTypeAuthns(aclKeys);
+      }
+    }
   }
 
   canRequestPermissions(propertyTypeAuthn) {

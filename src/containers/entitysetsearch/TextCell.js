@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Cell } from 'fixed-data-table';
+import styles from './styles.module.css';
 
 export default class TextCell extends React.Component {
   static propTypes = {
@@ -13,7 +14,9 @@ export default class TextCell extends React.Component {
     const { rowIndex, field, results } = this.props
     return (
       <Cell>
-        {this.props.formatValueFn(results[rowIndex][field])}
+        <div className={styles.textCell}>
+          {this.props.formatValueFn(results[rowIndex][field])}
+        </div>
       </Cell>
     );
   }
