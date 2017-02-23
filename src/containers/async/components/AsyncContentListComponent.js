@@ -11,11 +11,11 @@ export const RENDER_STRATEGY = Object.freeze({
 
 class AsyncContentListComponent extends React.Component {
   static propTypes = {
-    references: PropTypes.arrayOf(AsyncReferencePropType).isRequired,
+    references: PropTypes.arrayOf(AsyncReferencePropType),
     render: PropTypes.func.isRequired,
     renderStrategy: PropTypes.oneOf([RENDER_STRATEGY.ALL]),
     // Literally anything
-    resolvedReferences: PropTypes.arrayOf(PropTypes.any).isRequired
+    resolvedReferences: PropTypes.arrayOf(PropTypes.any)
   };
 
   renderLoading() {
@@ -23,8 +23,9 @@ class AsyncContentListComponent extends React.Component {
   }
 
   shouldRender() {
-    const { resolvedReferences } = this.props;
+    const { references, resolvedReferences } = this.props;
     // TODO: Implement Any render strategy
+    if (!references || !resolvedReferences) return false;
     return resolvedReferences.every(reference => {
       return !(reference === STATUS.EMPTY_REFERENCE) && !(reference === STATUS.LOADING);
     })
@@ -33,7 +34,7 @@ class AsyncContentListComponent extends React.Component {
   render() {
     const {
       resolvedReferences,
-      render,
+      render
     } = this.props;
 
     if (this.shouldRender()) {
@@ -47,10 +48,12 @@ class AsyncContentListComponent extends React.Component {
 function mapStateToProps(state, ownProps) {
   const asyncContent = state.get('async'),
     { references } = ownProps;
-
-  return {
-    resolvedReferences: references.map(reference => resolveReference(asyncContent, reference))
+  if (references) {
+    return {
+      resolvedReferences: references.map(reference => resolveReference(asyncContent, reference))
+    }
   }
+  return {};
 }
 
 export default connect(mapStateToProps)(AsyncContentListComponent);
