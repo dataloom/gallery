@@ -5,6 +5,7 @@
 /* eslint-disable no-underscore-dangle, import/no-extraneous-dependencies, import/extensions */
 
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 import Webpack from 'webpack';
 
 import PACKAGE from '../../package.json';
@@ -92,6 +93,8 @@ const DEFINE_PLUGIN = new Webpack.DefinePlugin({
 
 const EXTRACT_TEXT_PLUGIN = new ExtractTextPlugin(`${APP_PATHS.REL.STATIC_CSS}/${APP_CONFIG.APP_CSS}`);
 
+const FAVICON_PLUGIN = new FaviconsWebpackPlugin('images/favicon.png');
+
 /*
  * base webpack config
  */
@@ -122,7 +125,8 @@ export default {
   plugins: [
     DEFINE_PLUGIN,
     EXTRACT_TEXT_PLUGIN,
-    BANNER_PLUGIN
+    BANNER_PLUGIN,
+    FAVICON_PLUGIN
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.css'],
