@@ -1,24 +1,40 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import { hashHistory } from 'react-router';
+
+import PageConsts from '../../../utils/Consts/PageConsts';
 import AuthService from '../../../utils/AuthService';
 import styles from './styles.module.css';
 
-// Blank component that triggers the login lock
-export class Login extends React.Component {
+export default class Login extends React.Component {
+
   static propTypes = {
-    auth: PropTypes.instanceOf(AuthService)
+    auth: React.PropTypes.instanceOf(AuthService)
   }
 
   componentDidMount() {
-    this.props.auth.login();
+
+    if (!this.props.auth.loggedIn()) {
+      this.props.auth.login();
+    }
+    else {
+      hashHistory.push(`/${PageConsts.HOME}`);
+    }
   }
 
   componentWillUnmount() {
+
     this.props.auth.hideLoginPrompt();
   }
 
   render() {
-    return <div className={styles.root} />;
+
+    return (
+      <div className={styles.root} />
+    );
   }
 }
-
-export default Login;

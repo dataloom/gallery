@@ -4,7 +4,7 @@ import Loom from 'loom-data';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
 import { DataModel } from './Schemas/DataModel';
-import { Login } from './Login/Login';
+import Login from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
 import { Visualize } from './Visualizations/Visualize';
