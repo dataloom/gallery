@@ -108,3 +108,18 @@
   height: 40px;
   overflow: auto;
 }
+
+.advancedSearchBox {
+  border-radius: 3px;
+  border: solid 2pt #a3a8ab;
+  font-weight: 400;
+  box-shadow: none !important;
+  margin-bottom: 10px;
+  height: 34px;
+  width: 100%;
+}
+
+.changeSearchView {
+  right: 0;
+  display: inline-block;
+}

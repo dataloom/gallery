@@ -4,6 +4,7 @@
 
 .form-group {
     margin-bottom: 0;
+    width: 100%;
 }
 
 .form-control {
@@ -14,6 +15,10 @@
 /* Input group */
 .input-group-addon {
     background: #ffffff;
+}
+
+.input-group {
+  width: 100%;
 }
 
 /* Components */
