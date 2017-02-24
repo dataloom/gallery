@@ -2,9 +2,10 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
 import Promise from 'bluebird';
-import { SearchApi, EntityDataModelApi } from 'loom-data';
+import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
+import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
-import EntitySetSearchBox from './EntitySetSearchBox';
+import AdvancedSearchBox from './AdvancedSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
 import EntitySetUserSearchResults from './EntitySetUserSearchResults';
 import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
@@ -12,7 +13,7 @@ import styles from './styles.module.css';
 
 const MAX_HITS = 50;
 
-export default class EntitySetDataSearch extends React.Component {
+export default class AdvancedDataSearch extends React.Component {
   static contextTypes = {
     router: PropTypes.object
   };
@@ -23,7 +24,6 @@ export default class EntitySetDataSearch extends React.Component {
     }).isRequired,
     location: PropTypes.shape({
       query: PropTypes.shape({
-        searchTerm: PropTypes.string,
         page: PropTypes.string
       }),
       key: PropTypes.string
@@ -33,56 +33,49 @@ export default class EntitySetDataSearch extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchTerm: (props.location.query.searchTerm) ? props.location.query.searchTerm : '',
       page: (props.location.query.page) ? props.location.query.page : 1,
       searchResults: [],
       totalHits: 0,
       title: '',
-      asyncStatus: (props.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING,
+      asyncStatus: ASYNC_STATUS.PENDING,
       propertyTypes: [],
       loadError: false,
-      hidePagination: false
+      hidePagination: false,
+      searches: {}
     };
   }
 
   componentDidMount() {
-    this.loadPropertyTypes(this.props.location.query.searchTerm);
+    this.loadPropertyIds();
   }
 
   componentWillReceiveProps(nextProps) {
+    const page = nextProps.location.query.page || 1;
     if (!this.props.location.key) {
       this.setState({
-        searchTerm: (nextProps.location.query.searchTerm) ? nextProps.location.query.searchTerm : '',
-        page: (nextProps.location.query.page) ? nextProps.location.query.page : 1,
+        page,
         searchResults: [],
         totalHits: 0,
-        asyncStatus: (nextProps.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING
+        asyncStatus: ASYNC_STATUS.PENDING
       });
-      if (nextProps.location.query.searchTerm) {
-        this.executeSearch(nextProps.location.query.searchTerm);
+      if (this.state.propertyTypes) {
+        const searches = this.getSearchesFromProps(nextProps, this.state.propertyTypes.map((propertyType) => {
+          return propertyType.id;
+        }));
+        if (Object.keys(searches).length > 0) {
+          this.setState({ searches });
+          this.executeSearch(searches, page);
+        }
       }
     }
   }
 
-  loadPropertyTypes = (searchTerm) => {
+  loadPropertyIds = () => {
     EntityDataModelApi.getEntitySet(this.props.params.entitySetId)
     .then((entitySet) => {
       EntityDataModelApi.getEntityType(entitySet.entityTypeId)
       .then((entityType) => {
-        Promise.map(entityType.properties, (propertyId) => {
-          return EntityDataModelApi.getPropertyType(propertyId);
-        }).then((propertyTypes) => {
-          this.setState({
-            propertyTypes,
-            title: entitySet.title,
-            loadError: false
-          });
-          if (searchTerm) {
-            this.executeSearch(searchTerm);
-          }
-        }).catch(() => {
-          this.setState({ loadError: true });
-        });
+        this.loadAuthorizedPropertyTypes(entitySet, entityType.properties);
       }).catch(() => {
         this.setState({ loadError: true });
       });
@@ -91,32 +84,75 @@ export default class EntitySetDataSearch extends React.Component {
     });
   }
 
-  executeSearch = (searchTerm) => {
-    const searchRequest = {
-      searchTerm,
-      start: ((this.state.page - 1) * 50),
-      maxHits: MAX_HITS
-    }
-    SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
+  loadAuthorizedPropertyTypes = (entitySet, propertyIds) => {
+    const accessChecks = propertyIds.map((propertyId) => {
+      return {
+        aclKey: [this.props.params.entitySetId, propertyId],
+        permissions: [Permission.READ.name]
+      };
+    });
+    const searches = this.getSearchesFromProps(this.props, propertyIds);
+    AuthorizationApi.checkAuthorizations(accessChecks)
     .then((response) => {
-      this.setState({
-        searchResults: response.hits,
-        totalHits: response.numHits,
-        asyncStatus: ASYNC_STATUS.SUCCESS
+      const propsWithReadAccess = [];
+      response.forEach((property) => {
+        if (property.permissions.READ) {
+          propsWithReadAccess.push(property.aclKey[1]);
+        }
+      });
+      const propertyTypePromises = propsWithReadAccess.map((propId) => {
+        return EntityDataModelApi.getPropertyType(propId);
+      });
+      Promise.all(propertyTypePromises)
+      .then((propertyTypes) => {
+        this.setState({
+          propertyTypes,
+          title: entitySet.title,
+          loadError: false,
+          searches
+        });
+        if (Object.keys(searches).length > 0 && Object.values(searches).length > 0) this.executeSearch(searches, this.state.page);
+      }).catch(() => {
+        this.setState({ loadError: true });
       });
     }).catch(() => {
-      this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
+      this.setState({ loadError: true });
     });
   }
 
-  onSearchSubmit = (searchTerm) => {
-    if (searchTerm.length >= 1) {
-      this.routeToNewQueryParams(searchTerm, 1);
+  getSearchesFromProps = (props, propertyIds) => {
+    const searches = {};
+    const query = props.location.query;
+    propertyIds.forEach((id) => {
+      if (query[id]) searches[id] = query[id];
+    });
+    return searches;
+  }
+
+  executeSearch = (searches, page) => {
+    if (Object.keys(searches).length >= 1 && Object.values(searches).length >= 1) {
+      const searchOptions = {
+        searchFields: searches,
+        start: ((page - 1) * 50),
+        maxHits: MAX_HITS
+      };
+      SearchApi.advancedSearchEntitySetData(this.props.params.entitySetId, searchOptions)
+      .then((response) => {
+        this.setState({
+          searchResults: response.hits,
+          totalHits: response.numHits,
+          asyncStatus: ASYNC_STATUS.SUCCESS,
+          searches,
+          page
+        });
+      }).catch(() => {
+        this.setState({ asyncStatus: ASYNC_STATUS.ERROR });
+      });
     }
   }
 
-  routeToNewQueryParams = (searchTerm, page) => {
-    const query = { searchTerm, page };
+  routeToNewQueryParams = (searches, page) => {
+    const query = Object.assign({}, searches, { page });
     const newLocation = Object.assign({}, this.props.location, { query });
     this.context.router.push(newLocation);
   }
@@ -133,7 +169,7 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   handlePageSelect = (eventKey) => {
-    this.routeToNewQueryParams(this.state.searchTerm, eventKey);
+    this.routeToNewQueryParams(this.state.searches, eventKey);
   }
 
   hidePagination = (shouldHide) => {
@@ -152,6 +188,12 @@ export default class EntitySetDataSearch extends React.Component {
       return formattedValue;
     }
     return rawValue;
+  }
+
+  onSearchSubmit = (searches) => {
+    if (Object.keys(searches).length >= 1) {
+      this.routeToNewQueryParams(searches, 1);
+    }
   }
 
   renderPagination = () => {
@@ -207,8 +249,11 @@ export default class EntitySetDataSearch extends React.Component {
       <Page>
         <Page.Header>
           <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
-          <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
-          <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
+          <AdvancedSearchBox
+              onSubmit={this.onSearchSubmit}
+              propertyTypes={this.state.propertyTypes}
+              initialSearches={this.state.searches} />
+          <Link to={`/search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Simple Search</Link>
         </Page.Header>
         <Page.Body>
           {this.renderErrorMessage()}
@@ -222,6 +267,5 @@ export default class EntitySetDataSearch extends React.Component {
       </Page>
     );
   }
-
 
 }
