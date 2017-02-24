@@ -40,8 +40,9 @@ export class Link extends React.Component {
 
   loadAllEntitySets = () => {
     EntityDataModelApi.getAllEntitySets()
-    .then((allEntitySets) => {
+    .then((allEntitySetsRaw) => {
       const entityTypeIdToEntitySet = {};
+      const allEntitySets = allEntitySetsRaw.filter(entitySet => entitySet);
       allEntitySets.forEach((entitySet) => {
         if (entityTypeIdToEntitySet[entitySet.entityTypeId]) {
           entityTypeIdToEntitySet[entitySet.entityTypeId].push(entitySet);
