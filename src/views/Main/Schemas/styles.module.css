@@ -219,3 +219,10 @@
   width: 200px;
   margin-top: 5px;
 }
+
+.globalLabel {
+  width: 60px;
+  font-size: 14px;
+  text-align: center;
+  margin-right: 10px;
+}
