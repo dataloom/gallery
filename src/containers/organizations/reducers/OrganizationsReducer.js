@@ -32,7 +32,7 @@ const {
 
 /*
  * TODO: we probably need a better pattern than "isSearchingUsers". as an example, this reducer will execute the
- * SEARCH_ALL_USERS_SUCCESS case since it is possible to dispatch SEARCH_ALL_USERS_REQUEST from anywhere in the app.
+ * search users success case since it is possible to dispatch the search users action from anywhere in the app.
  * I think we need a more intelligent approach to dispatching generic actions so that 1) they are specifically tied to
  * the container that is dispatching them, and 2) we avoid having the reducer handle a generic action.
  */
@@ -256,18 +256,18 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         .set('isSearchingOrgs', false);
     }
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_REQUEST:
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST:
       return state
         .set('isSearchingUsers', true)
         .set('usersSearchResults', Immutable.Map());
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_FAILURE:
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_FAILURE:
       return state
         .set('isSearchingUsers', false)
         .set('usersSearchResults', Immutable.Map());
 
     // TODO: probably need to break this out into its own reducer, along with the organizations earch
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_SUCCESS: {
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS: {
 
       // only update state if the users search request was dispatched by us
       if (state.get('isSearchingUsers') === false) {
