@@ -7,6 +7,7 @@ const DATA_MODEL = 'datamodel';
 const DATASOURCES = 'datasources';
 const LINK = 'link';
 const SEARCH = 'search';
+const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
 
 export default {
@@ -19,5 +20,6 @@ export default {
   DATASOURCES,
   LINK,
   SEARCH,
+  ADVANCED_SEARCH,
   ORGS
 };
