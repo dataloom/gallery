@@ -1,24 +1,13 @@
 /* Header */
-.headerContent {
-    display: flex;
-    flex-wrap: wrap;
-}
 .descriptionTitle {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 15px;
 }
 
-.headerContent .controls  {
-    margin-left: auto;
-}
-
 .managePermissions {
     display: block;
     margin-top: 7px;
-}
-.actionDropdown {
-    width: 126px;
 }
 
 /* Body */

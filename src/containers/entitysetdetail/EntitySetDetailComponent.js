@@ -2,8 +2,11 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
-import classnames from 'classnames';
-import { EntityDataModelApi } from 'loom-data';
+import styled from 'styled-components';
+
+import {
+  EntityDataModelApi
+} from 'loom-data';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -18,8 +21,18 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
-import { Permission } from '../../core/permissions/Permission';
 import styles from './entitysetdetail.module.css';
+
+import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
+import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
+
+const TitleControlsContainer = styled(StyledFlexContainer)`
+  justify-content: space-between;
+`;
+
+const ControlsContainer = styled(StyledFlexContainerStacked)`
+  align-items: flex-end;
+`;
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
@@ -50,24 +63,24 @@ class EntitySetDetailComponent extends React.Component {
     const { entitySet, entitySetPermissions } = this.props;
 
     return (
-      <div className={styles.headerContent}>
-        <div>
-          <Page.Title>{entitySet.title}</Page.Title>
-          <div className={styles.descriptionTitle}>About this data</div>
-          {entitySet.description}
-        </div>
+      <StyledFlexContainerStacked>
+        <TitleControlsContainer>
+          <div>
+            <Page.Title>{entitySet.title}</Page.Title>
+            <div className={styles.descriptionTitle}>About this data</div>
+            {entitySet.description}
+          </div>
 
-        <div className={styles.controls}>
-          <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown, styles.control)} />
-
-          {
-            entitySetPermissions.OWNER &&
-            <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
-              Manage Permissions
-            </Button>
-          }
-        </div>
-
+          <ControlsContainer>
+            <ActionDropdown entitySetId={entitySet.id} />
+            {
+              entitySetPermissions.OWNER &&
+              <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
+                Manage Permissions
+              </Button>
+            }
+          </ControlsContainer>
+        </TitleControlsContainer>
         {
           entitySetPermissions.OWNER &&
           <EntitySetPermissionsRequestList
@@ -76,7 +89,7 @@ class EntitySetDetailComponent extends React.Component {
                 return p.id;
               })} />
         }
-      </div>
+      </StyledFlexContainerStacked>
     );
   };
 
@@ -110,7 +123,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   deleteEntitySet = () => {
-    if (!this.props.entitySet) return null;
+    if (!this.props.entitySet) return;
     EntityDataModelApi.deleteEntitySet(this.props.entitySet.id)
     .then(() => {
       this.props.router.push(`/${PageConsts.HOME}`);
@@ -141,21 +154,24 @@ class EntitySetDetailComponent extends React.Component {
     return (
       <Page>
         <Page.Header>
-          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent}/>
+          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
         </Page.Header>
         <Page.Body>
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-          <AsyncContent {...this.props.asyncState} content={() => {
-            // TODO: Remove when removing denormalization
-            const propertyTypeIds = this.props.entitySet.entityType.properties.map(property => property.id);
-
-            return (
-              <PropertyTypeList
-                  entitySetId={this.props.entitySet.id}
-                  propertyTypeIds={propertyTypeIds}
-                  className="propertyTypeStyleDefault" />
-            );
-          }} />
+          <AsyncContent
+              {...this.props.asyncState}
+              content={() => {
+                // TODO: Remove when removing denormalization
+                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                  return property.id;
+                });
+                return (
+                  <PropertyTypeList
+                      entitySetId={this.props.entitySet.id}
+                      propertyTypeIds={propertyTypeIds}
+                      className="propertyTypeStyleDefault" />
+                );
+              }} />
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
           {this.renderDeleteEntitySet()}
@@ -171,17 +187,18 @@ class EntitySetDetailComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const entitySetDetail = state.get('entitySetDetail'),
-    normalizedData = state.get('normalizedData'),
-    permissions = state.get('permissions');
+  const entitySetDetail = state.get('entitySetDetail');
+  const normalizedData = state.get('normalizedData');
+  const permissions = state.get('permissions');
 
   let entitySet;
   let entitySetPermissions;
   const reference = entitySetDetail.get('entitySetReference');
   if (reference) {
     entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
-    entitySetPermissions = getPermissions(permissions, [entitySet.id])
-  } else {
+    entitySetPermissions = getPermissions(permissions, [entitySet.id]);
+  }
+  else {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
@@ -203,11 +220,11 @@ function mapDispatchToProps(dispatch, ownProps) {
         [{
           type: 'EntitySet',
           id,
-          'include': ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
     }
-  }
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EntitySetDetailComponent);
