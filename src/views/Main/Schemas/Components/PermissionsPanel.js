@@ -174,18 +174,6 @@ export class PermissionsPanel extends React.Component {
     });
   }
 
-
-
-
-
-/**************WORKSPACE*****************/
-  getClassName = (view, order) => {
-    var selectedClassName = this.getSelectedClassName(view);
-    var firstLastClassName = this.getFirstLastClassName(order);
-
-    return `${selectedClassName} ${firstLastClassName}`;
-  }
-
   getSelectedClassName = (view) => {
     return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
@@ -205,45 +193,12 @@ export class PermissionsPanel extends React.Component {
     return null;
   }
 
+  getClassName = (view, order) => {
+    var selectedClassName = this.getSelectedClassName(view);
+    var firstLastClassName = this.getFirstLastClassName(order);
 
-////////////
-
-
-  buttonStyle = (view, viewState, order) => {
-    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
-    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
-
-    return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
+    return `${selectedClassName} ${firstLastClassName}`;
   }
-
-  buttonSelectedStyle = (view, viewState) => {
-    return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
-  }
-
-  buttonFirstLastStyle = (order) => {
-    var firstLastClassName;
-    if (order) {
-      if (order === 'first') {
-        firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
-        firstLastClassName = styles.lastEdmButton;
-      };
-
-      return firstLastClassName;
-    }
-
-    return null;
-  }
-
-  /**************WORKSPACE*****************/
-
-
-
-
-
-
-
-
 
   getPanelViewContents = () => {
     switch (this.state.view) {
@@ -284,31 +239,31 @@ export class PermissionsPanel extends React.Component {
     this.setState({ globalValue: e.value });
   }
 
-  // buttonStyle = (view, viewState, order) => {
-  //   var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
-  //   var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
-  //
-  //   return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
-  // }
-  //
-  // buttonSelectedStyle = (view, viewState) => {
-  //   return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
-  // }
-  //
-  // buttonFirstLastStyle = (order) => {
-  //   var firstLastClassName;
-  //   if (order) {
-  //     if (order === 'first') {
-  //       firstLastClassName = styles.firstEdmButton;
-  //     } else if (order === 'last') {
-  //       firstLastClassName = styles.lastEdmButton;
-  //     };
-  //
-  //     return firstLastClassName;
-  //   }
-  //
-  //   return null;
-  // }
+  buttonStyle = (view, viewState, order) => {
+    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
+    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
+
+    return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
+  }
+
+  buttonSelectedStyle = (view, viewState) => {
+    return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
+  }
+
+  buttonFirstLastStyle = (order) => {
+    var firstLastClassName;
+    if (order) {
+      if (order === 'first') {
+        firstLastClassName = styles.firstEdmButton;
+      } else if (order === 'last') {
+        firstLastClassName = styles.lastEdmButton;
+      };
+
+      return firstLastClassName;
+    }
+
+    return null;
+  }
 
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId === undefined) ?
