@@ -51,6 +51,7 @@ class EntitySetDetailComponent extends React.Component {
     super(props);
     this.state = {
       editingPermissions: false,
+      confirmingDelete: false,
       deleteError: false
     };
   }
@@ -128,8 +129,19 @@ class EntitySetDetailComponent extends React.Component {
     .then(() => {
       this.props.router.push(`/${PageConsts.HOME}`);
     }).catch(() => {
-      this.setState({ deleteError: true });
+      this.setState({
+        confirmingDelete: false,
+        deleteError: true
+      });
     });
+  }
+
+  setConfirmingDelete = () => {
+    this.setState({ confirmingDelete: true });
+  }
+
+  cancelDelete = () => {
+    this.setState({ confirmingDelete: false });
   }
 
   renderDeleteEntitySet = () => {
@@ -140,11 +152,29 @@ class EntitySetDetailComponent extends React.Component {
         <Button
             bsStyle="danger"
             className={styles.center}
-            onClick={this.deleteEntitySet}>Delete this entity set</Button>
+            onClick={this.setConfirmingDelete}>Delete this entity set</Button>
         {error}
       </div>
     );
   }
+
+  renderConfirmDeleteModal = () => {
+    if (!this.props.entitySet) return null;
+    return (
+      <Modal
+          show={this.state.confirmingDelete}
+          onHide={this.cancelDelete}>
+        <Modal.Header closeButton>
+          <Modal.Title>Are you sure you want to delete {this.props.entitySet.title}?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className={styles.centerWrapper}>
+            <Button onClick={this.deleteEntitySet} bsStyle="danger">Confirm</Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  };
 
   closePermissionsPanel = () => {
     this.setState({ editingPermissions: false });
@@ -175,6 +205,7 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
           {this.renderDeleteEntitySet()}
+          {this.renderConfirmDeleteModal()}
 
         </Page.Body>
       </Page>
