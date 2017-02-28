@@ -4,7 +4,7 @@ const LOGIN = 'login';
 const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
 const DATA_MODEL = 'datamodel';
-const DATASOURCES = 'datasources';
+const DATASETS = 'datasets';
 const LINK = 'link';
 const SEARCH = 'search';
 const ADVANCED_SEARCH = 'advanced_search';
@@ -17,7 +17,7 @@ export default {
   SETTINGS,
   VISUALIZE,
   DATA_MODEL,
-  DATASOURCES,
+  DATASETS,
   LINK,
   SEARCH,
   ADVANCED_SEARCH,

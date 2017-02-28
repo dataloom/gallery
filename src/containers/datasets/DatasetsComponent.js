@@ -7,7 +7,7 @@ import Page from '../../components/page/Page';
 import CreateEntitySet from '../entitysetforms/CreateEntitySet';
 import styles from './datasets.module.css';
 
-class DatasourcesComponent extends React.Component {
+class DatasetsComponent extends React.Component {
   constructor(props) {
     super(props);
 
@@ -16,7 +16,7 @@ class DatasourcesComponent extends React.Component {
     }
   }
 
-  onAddDatasource = () => {
+  onAddDataset = () => {
     this.setState({
       isModalOpen: true
     });
@@ -32,17 +32,17 @@ class DatasourcesComponent extends React.Component {
     const { isModalOpen } = this.state;
 
     return (
-      <Page className={styles.datasources}>
+      <Page className={styles.datasets}>
         <Page.Header className={styles.pageHeader}>
-          <Page.Title className={styles.pageTitle}>Your datasources</Page.Title>
-          <Button bsStyle="primary" className={styles.control} onClick={this.onAddDatasource}>
-            <FontAwesome name="plus-circle" size="lg"/> Datasource
+          <Page.Title className={styles.pageTitle}>Your datasets</Page.Title>
+          <Button bsStyle="primary" className={styles.control} onClick={this.onAddDataset}>
+            <FontAwesome name="plus-circle" size="lg"/> Dataset
           </Button>
         </Page.Header>
 
         <Modal show={isModalOpen} onHide={this.closeModal} container={this}>
           <Modal.Header closeButton>
-            <Modal.Title>Create a datasource</Modal.Title>
+            <Modal.Title>Create a dataset</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <CreateEntitySet />
@@ -70,4 +70,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DatasourcesComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(DatasetsComponent);

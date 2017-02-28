@@ -14,7 +14,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 
 import homeIcon from '../../images/icon-nav-home.svg';
 import catalogIcon from '../../images/icon-nav-catalog.svg';
-import datasourcesIcon from '../../images/icon-nav-datasources.svg';
+import datasetsIcon from '../../images/icon-nav-datasets.svg';
 import visualizeIcon from '../../images/icon-nav-visualize.svg';
 import organizationsIcon from '../../images/icon-nav-organizations.svg';
 
@@ -41,7 +41,7 @@ class SideNav extends React.Component {
       <nav className={styles.sideNav}>
         { this.getSideNavItemLayout(PageConsts.HOME, 'Home', homeIcon) }
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', catalogIcon) }
-        { this.getSideNavItemLayout(PageConsts.DATASOURCES, 'Datasources', datasourcesIcon) }
+        { this.getSideNavItemLayout(PageConsts.DATASETS, 'Datasets', datasetsIcon) }
         { this.getSideNavItemLayout(PageConsts.VISUALIZE, 'Visualize', visualizeIcon) }
         {/* Hiding the Data Model link for the demo */}
         {/*{ this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }*/}

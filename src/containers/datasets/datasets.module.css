@@ -1,8 +1,8 @@
-.datasources {
+.datasets {
     position: relative;
 }
 
-.datasources :global .modal, .datasources :global .modal-backdrop {
+.datasets :global .modal, .datasets :global .modal-backdrop {
     position: absolute;
 }
 

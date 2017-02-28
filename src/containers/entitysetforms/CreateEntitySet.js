@@ -112,7 +112,7 @@ class CreateEntitySet extends React.Component {
   renderSuccess = () => {
     return (
       <Alert bsStyle="success">
-        Successfully saved Datasource
+        Successfully saved Dataset
       </Alert>
     );
   };

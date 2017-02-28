@@ -13,7 +13,7 @@ import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
 import AdvancedDataSearch from '../../containers/entitysetsearch/AdvancedDataSearch';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
-import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
+import DatasetsComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
@@ -85,7 +85,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
-      <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.DATASETS} component={DatasetsComponent} onEnter={requireAuth} />
       <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
         <IndexRoute component={OrganizationsListComponent} />
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
