@@ -16,7 +16,8 @@ class CreateEntitySet extends React.Component {
     onCreate: PropTypes.func.isRequired,
     loadEntityTypes: PropTypes.func.isRequired,
     entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
+    defaultContact: PropTypes.string
   };
 
   constructor(props) {
@@ -25,6 +26,7 @@ class CreateEntitySet extends React.Component {
       title: '',
       description: '',
       name: '',
+      contact: props.defaultContact,
       entityTypeId: null
     }
   }
@@ -50,6 +52,12 @@ class CreateEntitySet extends React.Component {
       description: event.target.value
     });
   };
+
+  onContactChange = (event) => {
+    this.setState({
+      contact: event.target.value
+    });
+  }
 
   onEntityTypeChange = (option) => {
     this.setState({
@@ -82,27 +90,34 @@ class CreateEntitySet extends React.Component {
       <form onSubmit={this.onSubmit} className={classnames(this.props.className)}>
         <FormGroup>
           <ControlLabel>Title</ControlLabel>
-          <FormControl type="text" onChange={this.onTitleChange}/>
+          <FormControl type="text" onChange={this.onTitleChange} />
         </FormGroup>
 
 
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
-          <FormControl type="text" onChange={this.onNameChange}/>
+          <FormControl type="text" onChange={this.onNameChange} />
         </FormGroup>
 
         <FormGroup>
           <ControlLabel>Description</ControlLabel>
-          <FormControl componentClass="textarea" onChange={this.onDescriptionChange}/>
+          <FormControl componentClass="textarea" onChange={this.onDescriptionChange} />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Owner Contact</ControlLabel>
+          <FormControl
+              type="text"
+              value={this.state.contact}
+              onChange={this.onContactChange} />
         </FormGroup>
 
         <FormGroup>
           <ControlLabel>Entity type</ControlLabel>
           <Select
-            value={this.state.entityTypeId}
-            options={this.getEntityTypeOptions()}
-            onChange={this.onEntityTypeChange}
-          />
+              value={this.state.entityTypeId}
+              options={this.getEntityTypeOptions()}
+              onChange={this.onEntityTypeChange} />
         </FormGroup>
         <Button type="submit" bsStyle="primary">Create</Button>
       </form>
@@ -120,10 +135,9 @@ class CreateEntitySet extends React.Component {
   render() {
     return (
       <AsyncContent
-        {...this.props.createEntitySetAsyncState}
-        pendingContent={this.renderPending()}
-        content={this.renderSuccess}
-      />
+          {...this.props.createEntitySetAsyncState}
+          pendingContent={this.renderPending()}
+          content={this.renderSuccess} />
     );
   }
 }

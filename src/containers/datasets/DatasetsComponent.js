@@ -8,6 +8,10 @@ import CreateEntitySet from '../entitysetforms/CreateEntitySet';
 import styles from './datasets.module.css';
 
 class DatasetsComponent extends React.Component {
+  static propTypes = {
+    auth: PropTypes.object.isRequired
+  }
+
   constructor(props) {
     super(props);
 
@@ -28,6 +32,11 @@ class DatasetsComponent extends React.Component {
     });
   };
 
+  getDefaultContact = () => {
+    console.log(this.props.auth.getProfile().email)
+    return this.props.auth.getProfile().email || '';
+  }
+
   render() {
     const { isModalOpen } = this.state;
 
@@ -45,7 +54,7 @@ class DatasetsComponent extends React.Component {
             <Modal.Title>Create a dataset</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <CreateEntitySet />
+            <CreateEntitySet defaultContact={this.getDefaultContact()} />
           </Modal.Body>
         </Modal>
 
