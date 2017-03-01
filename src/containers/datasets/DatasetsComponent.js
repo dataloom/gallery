@@ -37,7 +37,7 @@ class DatasetsComponent extends React.Component {
     let defaultContact = '';
     if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
     if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
-    if (profile.email) defaultContact = defaultContact.concat(`[${profile.email}]`);
+    if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
     return defaultContact;
   }
 

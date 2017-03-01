@@ -66,13 +66,14 @@ class CreateEntitySet extends React.Component {
   };
 
   onSubmit = () => {
-    const { title, name, description, entityTypeId } = this.state;
+    const { title, name, description, entityTypeId, contact } = this.state;
 
     this.props.onCreate({
       title,
       name,
       description,
-      entityTypeId
+      entityTypeId,
+      contacts: [contact]
     });
   };
 

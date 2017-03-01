@@ -66,6 +66,8 @@ class EntitySetDetailComponent extends React.Component {
   renderHeaderContent = () => {
     const { entitySet, entitySetPermissions } = this.props;
 
+    const contactValue = (entitySet.contacts.length > 0) ? entitySet.contacts.join(', ') : 'none';
+
     return (
       <StyledFlexContainerStacked>
         <TitleControlsContainer>
@@ -73,6 +75,7 @@ class EntitySetDetailComponent extends React.Component {
             <Page.Title>{entitySet.title}</Page.Title>
             <div className={styles.descriptionTitle}>About this data</div>
             {entitySet.description}
+            <div className={styles.contacts}>Owner contact: {contactValue}</div>
           </div>
 
           <ControlsContainer>
