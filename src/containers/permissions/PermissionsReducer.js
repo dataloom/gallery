@@ -38,7 +38,7 @@ export default function reducer(state:Map<*, *> = INITIAL_STATE, action:Object) 
       return state.mergeIn(['requestPermissionsModal'], {
         show: true,
         entitySetId: action.entitySetId,
-        saveState: ASYNC_STATUS.PENDING
+        asyncStatus: ASYNC_STATUS.PENDING
       });
 
     case actionTypes.REQUEST_PERMISSIONS_MODAL_HIDE:

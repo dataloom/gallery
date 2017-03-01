@@ -93,6 +93,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
+      <Route path='*' component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
 };

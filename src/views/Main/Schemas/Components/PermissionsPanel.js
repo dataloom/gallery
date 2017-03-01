@@ -14,6 +14,11 @@ const views = {
   EMAILS: 2
 };
 
+const orders = {
+  FIRST: 'first',
+  LAST: 'last'
+}
+
 const permissionLevels = {
   hidden: [],
   discover: [Permission.DISCOVER.name],
@@ -175,8 +180,30 @@ export class PermissionsPanel extends React.Component {
     });
   }
 
-  getClassName = (view) => {
+  getSelectedClassName = (view) => {
     return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
+  }
+
+  getFirstLastClassName = (order) => {
+    var firstLastClassName;
+    if (order) {
+      if (order === 'first') {
+        firstLastClassName = styles.firstEdmButton;
+      } else if (order === 'last') {
+        firstLastClassName = styles.lastEdmButton;
+      };
+
+      return firstLastClassName;
+    }
+
+    return null;
+  }
+
+  getClassName = (view, order) => {
+    var selectedClassName = this.getSelectedClassName(view);
+    var firstLastClassName = this.getFirstLastClassName(order);
+
+    return `${selectedClassName} ${firstLastClassName}`;
   }
 
   getPanelViewContents = () => {
@@ -237,10 +264,32 @@ export class PermissionsPanel extends React.Component {
     this.setState({ globalValue: e.value });
   }
 
-  buttonStyle = (view, viewState) => {
+  buttonStyle = (view, viewState, order) => {
+    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
+    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
+
+    return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
+  }
+
+  buttonSelectedStyle = (view, viewState) => {
     return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
+  buttonFirstLastStyle = (order) => {
+    var firstLastClassName;
+    if (order) {
+      if (order === 'first') {
+        firstLastClassName = styles.firstEdmButton;
+      } else if (order === 'last') {
+        firstLastClassName = styles.lastEdmButton;
+      };
+
+      return firstLastClassName;
+    }
+
+    return null;
+  }
+  
   updateGlobalPermissionState = (permission, checked) => {
     const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
     if (checked) globalValue.push(permission);
@@ -304,14 +353,14 @@ export class PermissionsPanel extends React.Component {
     this.setState({ newRoleValue });
   }
 
-  viewPermissionTypeButton = (permission, fn, currView) => {
+  viewPermissionTypeButton = (permission, fn, currView, order) => {
     if (permission === accessOptions.Hidden && this.props.propertyTypeId !== undefined) return null;
     return (
       <button
           onClick={() => {
             fn(permission);
           }}
-          className={this.buttonStyle(permission, currView)}>
+          className={this.buttonStyle(permission, currView, order)}>
         <div className={styles.edmNavItemText}>{permission}</div>
       </button>
     );
@@ -352,10 +401,10 @@ export class PermissionsPanel extends React.Component {
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load roles.</div>
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
-          {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView, orders.FIRST)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Link, this.changeRolesView, rolesView)}
-          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, rolesView, orders.LAST)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {hiddenBody}
@@ -432,11 +481,11 @@ export class PermissionsPanel extends React.Component {
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load users.</div>
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
-          {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView, orders.FIRST)}
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Link, this.changeEmailsView, emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView, orders.LAST)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {emailListBody}
@@ -458,13 +507,13 @@ export class PermissionsPanel extends React.Component {
     );
   }
 
-  renderViewButton = (view) => {
+  renderViewButton = (view, order) => {
     return (
       <button
           onClick={() => {
             this.switchView(view);
           }}
-          className={this.getClassName(view)}>
+          className={this.getClassName(view, order)}>
         <div className={styles.edmNavItemText}>{viewLabels[view]}</div>
       </button>
     );
@@ -475,9 +524,9 @@ export class PermissionsPanel extends React.Component {
       <div>
         <div className={styles.edmNavbarContainer}>
           <div className={styles.edmNavbar}>
-            {this.renderViewButton(views.GLOBAL)}
+            {this.renderViewButton(views.GLOBAL, orders.FIRST)}
             {this.renderViewButton(views.ROLES)}
-            {this.renderViewButton(views.EMAILS)}
+            {this.renderViewButton(views.EMAILS, orders.LAST)}
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>

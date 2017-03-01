@@ -16,7 +16,8 @@ const INITIAL_STATE = {
   [NAMESPACE_FIELD]: StringConsts.EMPTY,
   [TITLE_FIELD]: StringConsts.EMPTY,
   [DESCRIPTION_FIELD]: StringConsts.EMPTY,
-  pKeysAdded: [],
+  propertyTypes: [],
+  pKeys: [],
   typeName: StringConsts.EMPTY,
   typeNamespace: StringConsts.EMPTY,
   datatype: StringConsts.EMPTY,
@@ -41,34 +42,37 @@ export class NewEdmObjectInput extends React.Component {
     this.state = INITIAL_STATE;
   }
 
-  addPKeyToList = () => {
-    const newPKeyIdList = this.props.namespaces[this.state.typeNamespace].filter((propObj) => {
+  addPropertyTypeToList = () => {
+    const newPropertyTypeIdList = this.props.namespaces[this.state.typeNamespace].filter((propObj) => {
       return (propObj.name === this.state.typeName);
     });
-    if (newPKeyIdList.length !== 1) {
+    if (newPropertyTypeIdList.length !== 1) {
       return;
     }
-    const newPKey = {
+    const newPropertyType = {
       type: {
         namespace: this.state.typeNamespace,
         name: this.state.typeName
       },
-      id: newPKeyIdList[0].id
+      id: newPropertyTypeIdList[0].id
     };
-    const pKeysAdded = this.state.pKeysAdded;
-    pKeysAdded.push(newPKey);
+    const propertyTypes = this.state.propertyTypes;
+    propertyTypes.push(newPropertyType);
     this.setState({
-      pKeysAdded,
+      propertyTypes,
       typeNamespace: StringConsts.EMPTY,
       typeName: StringConsts.EMPTY
     });
   }
 
-  removePKeyFromList = (pKeyToDelete) => {
-    const pKeysAdded = this.state.pKeysAdded.filter((pKey) => {
-      return (pKey.id !== pKeyToDelete.id);
+  removePropertyTypeFromList = (propertyTypeToDelete) => {
+    const propertyTypes = this.state.propertyTypes.filter((propertyType) => {
+      return propertyType.id !== propertyTypeToDelete.id;
     });
-    this.setState({ pKeysAdded });
+    const pKeys = this.state.pKeys.filter((pKey) => {
+      return pKey !== propertyTypeToDelete.id;
+    });
+    this.setState({ propertyTypes, pKeys });
   }
 
   handleInputChange = (e) => {
@@ -128,15 +132,15 @@ export class NewEdmObjectInput extends React.Component {
           }
         }]);
       case EdmConsts.ENTITY_TYPE_TITLE: {
-        const pKeys = this.state.pKeysAdded.map((pKey) => {
-          return pKey.id;
+        const propertyTypes = this.state.propertyTypes.map((propertyType) => {
+          return propertyType.id;
         });
         const entityType = new EntityTypeBuilder()
           .setType(fqn)
           .setTitle(this.state[TITLE_FIELD])
           .setDescription(this.state[DESCRIPTION_FIELD])
-          .setPropertyTypes(pKeys)
-          .setKey(pKeys)
+          .setPropertyTypes(propertyTypes)
+          .setKey(this.state.pKeys)
           .setSchemas([])
           .build();
         return EntityDataModelApi.createEntityType(entityType);
@@ -168,20 +172,41 @@ export class NewEdmObjectInput extends React.Component {
     );
   }
 
-  renderPKeysAdded = () => {
+  toggleCheckbox = (propertyTypeId) => {
+    const checked = !this.state.pKeys.includes(propertyTypeId);
+    const pKeys = this.state.pKeys.filter((id) => {
+      return id !== propertyTypeId;
+    });
+    if (checked) pKeys.push(propertyTypeId);
+    this.setState({ pKeys });
+  }
+
+  renderPrimaryKeyCheckbox = (propertyType) => {
+    return (
+      <input
+          type="checkbox"
+          checked={this.state.pKeys.includes(propertyType.id)}
+          onClick={() => {
+            this.toggleCheckbox(propertyType.id);
+          }} />
+    );
+  }
+
+  renderPropertyTypesAdded = () => {
     if (this.props.edmType !== EdmConsts.ENTITY_TYPE_TITLE) return null;
-    return this.state.pKeysAdded.map((pKey) => {
+    return this.state.propertyTypes.map((propertyType) => {
       return (
-        <tr key={`${pKey.type.namespace}.${pKey.type.name}`}>
+        <tr key={`${propertyType.type.namespace}.${propertyType.type.name}`}>
           <td>
             <button
                 className={styles.deleteButton}
                 onClick={() => {
-                  this.removePKeyFromList(pKey);
+                  this.removePropertyTypeFromList(propertyType);
                 }}>-</button>
           </td>
-          <td className={styles.tableCell}>{pKey.type.name}</td>
-          <td className={styles.tableCell}>{pKey.type.namespace}</td>
+          <td className={styles.tableCell}>{propertyType.type.name}</td>
+          <td className={styles.tableCell}>{propertyType.type.namespace}</td>
+          <td className={styles.tableCell}>{this.renderPrimaryKeyCheckbox(propertyType)}</td>
         </tr>
       );
     });
@@ -264,25 +289,26 @@ export class NewEdmObjectInput extends React.Component {
 
   renderInputFqnAutosuggest = () => {
     const { edmType, namespaces } = this.props;
-    const { pKeysAdded, typeName, typeNamespace } = this.state;
+    const { propertyTypes, typeName, typeNamespace } = this.state;
     if (edmType !== EdmConsts.ENTITY_TYPE_TITLE && edmType !== EdmConsts.ENTITY_SET_TITLE) return null;
-    const pKeyClassName = (edmType === EdmConsts.ENTITY_TYPE_TITLE) ? StringConsts.EMPTY : styles.hidden;
+    const propertyTypeClassName = (edmType === EdmConsts.ENTITY_TYPE_TITLE) ? StringConsts.EMPTY : styles.hidden;
     return (
       <div>
-        <div className={pKeyClassName}>Primary Key:</div>
+        <div className={propertyTypeClassName}>Property Types:</div>
         <table>
           <tbody>
-            <tr className={pKeyClassName}>
+            <tr className={propertyTypeClassName}>
               <th />
               <th className={styles.tableCell}>Name</th>
               <th className={styles.tableCell}>Namespace</th>
+              <th className={styles.tableCell}>Primary Key</th>
             </tr>
-            {this.renderPKeysAdded()}
+            {this.renderPropertyTypesAdded()}
             <NameNamespaceAutosuggest
                 namespaces={namespaces}
-                usedProperties={pKeysAdded}
+                usedProperties={propertyTypes}
                 noSaveButton={(edmType === EdmConsts.ENTITY_SET_TITLE)}
-                addProperty={this.addPKeyToList}
+                addProperty={this.addPropertyTypeToList}
                 onNameChange={this.handleTypeNameChange}
                 onNamespaceChange={this.handleTypeNamespaceChange}
                 initialName={typeName}

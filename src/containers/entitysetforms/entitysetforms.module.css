@@ -1,0 +1,15 @@
+.addDataForm {
+  overflow-y: auto;
+}
+
+.formButton {
+  margin-top: 5px;
+}
+
+.error {
+  color: red;
+}
+
+.centerContent {
+  text-align: center;
+}
