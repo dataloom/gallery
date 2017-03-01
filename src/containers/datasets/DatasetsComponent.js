@@ -33,8 +33,12 @@ class DatasetsComponent extends React.Component {
   };
 
   getDefaultContact = () => {
-    console.log(this.props.auth.getProfile().email)
-    return this.props.auth.getProfile().email || '';
+    const profile = this.props.auth.getProfile();
+    let defaultContact = '';
+    if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
+    if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
+    if (profile.email) defaultContact = defaultContact.concat(`[${profile.email}]`);
+    return defaultContact;
   }
 
   render() {
