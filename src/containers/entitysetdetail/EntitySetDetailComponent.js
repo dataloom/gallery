@@ -176,7 +176,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderAddDataButton = () => {
-    if (!this.props.entitySetPermissions.WRITE) return null;
+    if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
       <div className={styles.buttonWrapper}>
         <Button
