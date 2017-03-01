@@ -5,7 +5,6 @@
 import React from 'react';
 
 import Immutable from 'immutable';
-import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
@@ -42,7 +41,7 @@ import {
 } from '../../permissions/PermissionsActionFactory';
 
 import {
-  searchAllUsersRequest
+  searchAllUsersByEmailRequest
 } from '../../principals/PrincipalsActionFactory';
 
 const {
@@ -89,7 +88,7 @@ function mapDispatchToProps(dispatch :Function) {
     addMemberToOrganizationRequest,
     clearUserSearchResults,
     removeMemberFromOrganizationRequest,
-    searchAllUsersRequest,
+    searchAllUsersByEmailRequest,
     updateAclRequest
   };
 
@@ -105,7 +104,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       addMemberToOrganizationRequest: React.PropTypes.func.isRequired,
       clearUserSearchResults: React.PropTypes.func.isRequired,
       removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
-      searchAllUsersRequest: React.PropTypes.func.isRequired,
+      searchAllUsersByEmailRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isSearchingUsers: React.PropTypes.bool.isRequired,
@@ -132,7 +131,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       return;
     }
 
-    this.props.actions.searchAllUsersRequest(searchQuery);
+    this.props.actions.searchAllUsersByEmailRequest(searchQuery);
   }
 
   handleOnChangeSearchInput = (event) => {
@@ -170,7 +169,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
         <SearchIcon />
         <StyledInput
             type="text"
-            placeholder="Search for users..."
+            placeholder="Search users by email..."
             onKeyDown={this.handleOnKeyDownSearchInput} />
         {
           this.props.isSearchingUsers && (
@@ -264,7 +263,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       <StyledFlexContainerStacked>
         <StyledSectionHeading>
           <h3>Add Members</h3>
-          <h5>Search for users to add to this orgnization.</h5>
+          <h5>To add members to this organization, search for users by specifying their exact email.</h5>
         </StyledSectionHeading>
         <SearchContainer>
           { this.renderSearchBox() }
