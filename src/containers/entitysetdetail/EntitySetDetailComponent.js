@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
+import FontAwesome from 'react-fontawesome';
 
 import {
   EntityDataModelApi
@@ -16,6 +17,7 @@ import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../per
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
 import { PermissionsPanel } from '../../views/Main/Schemas/Components/PermissionsPanel';
+import AddDataForm from '../entitysetforms/AddDataForm';
 import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { EntitySetPropType } from '../edm/EdmModel';
@@ -52,6 +54,7 @@ class EntitySetDetailComponent extends React.Component {
     this.state = {
       editingPermissions: false,
       confirmingDelete: false,
+      addingData: false,
       deleteError: false
     };
   }
@@ -116,10 +119,30 @@ class EntitySetDetailComponent extends React.Component {
       <div className={styles.buttonWrapper}>
         <Button bsStyle="primary" className={styles.center}>
           <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
-            Search this entity set
+            <FontAwesome name="search" />
+            <span className={styles.buttonText}>Search this entity set</span>
           </Link>
         </Button>
       </div>
+    );
+  }
+
+  renderAddDataForm = () => {
+    if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
+    return (
+      <Modal
+          show={this.state.addingData}
+          onHide={this.closeAddDataModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add a new row of data to this entity set</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AddDataForm
+              entitySetId={this.props.entitySet.id}
+              primaryKey={this.props.entitySet.entityType.key}
+              propertyTypes={this.props.entitySet.entityType.properties} />
+        </Modal.Body>
+      </Modal>
     );
   }
 
@@ -144,6 +167,29 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ confirmingDelete: false });
   }
 
+  openAddDataModal = () => {
+    this.setState({ addingData: true });
+  }
+
+  closeAddDataModal = () => {
+    this.setState({ addingData: false });
+  }
+
+  renderAddDataButton = () => {
+    if (!this.props.entitySetPermissions.WRITE) return null;
+    return (
+      <div className={styles.buttonWrapper}>
+        <Button
+            bsStyle="success"
+            className={styles.center}
+            onClick={this.openAddDataModal}>
+          <FontAwesome name="plus" size="lg" />
+          <span className={styles.buttonText}>Add Data</span>
+        </Button>
+      </div>
+    );
+  }
+
   renderDeleteEntitySet = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     const error = (this.state.deleteError) ? <div className={styles.error}>Unable to delete entity set</div> : null;
@@ -152,7 +198,10 @@ class EntitySetDetailComponent extends React.Component {
         <Button
             bsStyle="danger"
             className={styles.center}
-            onClick={this.setConfirmingDelete}>Delete this entity set</Button>
+            onClick={this.setConfirmingDelete}>
+          <FontAwesome name="times" size="lg" />
+          <span className={styles.buttonText}>Delete this entity set</span>
+        </Button>
         {error}
       </div>
     );
@@ -187,6 +236,7 @@ class EntitySetDetailComponent extends React.Component {
           <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
         </Page.Header>
         <Page.Body>
+          {this.renderAddDataButton()}
           <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
           <AsyncContent
               {...this.props.asyncState}
@@ -202,6 +252,7 @@ class EntitySetDetailComponent extends React.Component {
                       className="propertyTypeStyleDefault" />
                 );
               }} />
+          {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
           {this.renderDeleteEntitySet()}

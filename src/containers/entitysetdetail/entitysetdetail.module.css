@@ -39,3 +39,7 @@
   color: red;
   text-align: center;
 }
+
+.buttonText {
+  margin-left: 5px;
+}
