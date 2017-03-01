@@ -14,12 +14,17 @@ const views = {
   EMAILS: 2
 };
 
+const orders = {
+  FIRST: 'first',
+  LAST: 'last'
+}
+
 const permissionLevels = {
   hidden: [],
   discover: [Permission.DISCOVER.name],
   link: [Permission.DISCOVER.name, Permission.LINK.name],
-  read: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name],
-  write: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name],
+  read: [Permission.DISCOVER.name, Permission.READ.name],
+  write: [Permission.DISCOVER.name, Permission.WRITE.name],
   owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
 };
 
@@ -60,7 +65,7 @@ export class PermissionsPanel extends React.Component {
       view: views.GLOBAL,
       updateSuccess: false,
       updateError: false,
-      globalValue: options[0],
+      globalValue: [],
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       rolesView: accessOptions.Write,
@@ -101,15 +106,17 @@ export class PermissionsPanel extends React.Component {
   }
 
   getPermission = (permissions) => {
-    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return permissionOptions.Owner;
-    if (permissions.includes(permissionOptions.Write.toUpperCase())) return permissionOptions.Write;
-    if (permissions.includes(permissionOptions.Read.toUpperCase())) return permissionOptions.Read;
-    if (permissions.includes(permissionOptions.Link.toUpperCase())) return permissionOptions.Link;
-    return permissionOptions.Discover;
+    const newPermissions = [];
+    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
+    if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
+    if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
+    if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
+    if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
+    return newPermissions;
   }
 
   updateStateAcls = (aces, updateSuccess) => {
-    let globalValue = accessOptions[0];
+    let globalValue = [];
     const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
     aces.forEach((ace) => {
@@ -119,11 +126,15 @@ export class PermissionsPanel extends React.Component {
             globalValue = this.getPermission(ace.permissions);
           }
           else {
-            roleAcls[this.getPermission(ace.permissions)].push(ace.principal.id);
+            this.getPermission(ace.permissions).forEach((permission) => {
+              roleAcls[permission].push(ace.principal.id);
+            });
           }
         }
         else {
-          userAcls[this.getPermission(ace.permissions)].push(ace.principal.id);
+          this.getPermission(ace.permissions).forEach((permission) => {
+            userAcls[permission].push(ace.principal.id);
+          });
         }
       }
     });
@@ -169,8 +180,30 @@ export class PermissionsPanel extends React.Component {
     });
   }
 
-  getClassName = (view) => {
+  getSelectedClassName = (view) => {
     return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
+  }
+
+  getFirstLastClassName = (order) => {
+    var firstLastClassName;
+    if (order) {
+      if (order === 'first') {
+        firstLastClassName = styles.firstEdmButton;
+      } else if (order === 'last') {
+        firstLastClassName = styles.lastEdmButton;
+      };
+
+      return firstLastClassName;
+    }
+
+    return null;
+  }
+
+  getClassName = (view, order) => {
+    var selectedClassName = this.getSelectedClassName(view);
+    var firstLastClassName = this.getFirstLastClassName(order);
+
+    return `${selectedClassName} ${firstLastClassName}`;
   }
 
   getPanelViewContents = () => {
@@ -185,12 +218,21 @@ export class PermissionsPanel extends React.Component {
     }
   }
 
-  updatePermissions(action, principal, view) {
+  getPermissionsFromView = (action, view) => {
+    return (action === ActionConsts.REMOVE) ? [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
+  }
+
+  updatePermissions(rawAction, principal, rawPermissions) {
     const { entitySetId, propertyTypeId } = this.props;
-    const permissions = (action === ActionConsts.REMOVE) ?
-      [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
+
+    let action = rawAction;
+    let permissions = rawPermissions;
+    if (action === ActionConsts.SET && permissions.length === 0) {
+      action = ActionConsts.REMOVE;
+      permissions = permissionLevels.owner;
+    }
     const aces = [{ principal, permissions }];
     const acl = { aclKey, aces };
     const req = { action, acl };
@@ -205,36 +247,81 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissions = () => {
-    this.updateRoles(ActionConsts.SET, AUTHENTICATED_USER, this.state.globalValue);
+    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
+    const selectedPermissions = this.state.globalValue.map((name) => {
+      return name.toUpperCase();
+    });
+
+    const principal = {
+      type: ROLE,
+      id: AUTHENTICATED_USER
+    };
+
+    this.updatePermissions(ActionConsts.SET, principal, selectedPermissions);
   }
 
   updateDropdownValue = (e) => {
     this.setState({ globalValue: e.value });
   }
 
-  buttonStyle = (view, viewState) => {
+  buttonStyle = (view, viewState, order) => {
+    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
+    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
+
+    return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
+  }
+
+  buttonSelectedStyle = (view, viewState) => {
     return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
-  getGlobalView = () => {
-    const optionNames = (this.props.propertyTypeId === undefined) ?
-      Object.keys(accessOptions) : Object.keys(permissionOptions);
-    const options = optionNames.filter(name => name !== accessOptions.Owner).map((name) => {
-      return {
-        value: name,
-        label: name
+  buttonFirstLastStyle = (order) => {
+    var firstLastClassName;
+    if (order) {
+      if (order === 'first') {
+        firstLastClassName = styles.firstEdmButton;
+      } else if (order === 'last') {
+        firstLastClassName = styles.lastEdmButton;
       };
-    });
+
+      return firstLastClassName;
+    }
+
+    return null;
+  }
+  
+  updateGlobalPermissionState = (permission, checked) => {
+    const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
+    if (checked) globalValue.push(permission);
+    this.setState({ globalValue });
+  }
+
+  getGlobalView = () => {
+    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
+    const options = optionNames
+      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Hidden)
+      .map((option) => {
+        const checkboxName = `global-${option}`;
+        return (
+          <div key={option}>
+            <label htmlFor={checkboxName} className={styles.globalLabel}>{option}</label>
+            <input
+                id={checkboxName}
+                type="checkbox"
+                checked={this.state.globalValue.includes(option)}
+                onChange={(e) => {
+                  this.updateGlobalPermissionState(option, e.target.checked);
+                }} />
+          </div>
+        );
+      });
     return (
       <div>
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
         <div>Choose the default permissions for all authenticated users:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
-          <Select
-              options={options}
-              onChange={this.updateDropdownValue}
-              value={this.state.globalValue} />
+          {options}
         </div>
         <div className={styles.spacerSmall} />
         <Button
@@ -256,7 +343,8 @@ export class PermissionsPanel extends React.Component {
 
     // Only if changes were made, save changes
     if (role) {
-      this.updatePermissions(action, principal, view);
+      const permissions = this.getPermissionsFromView(action, view);
+      this.updatePermissions(action, principal, permissions);
     }
   }
 
@@ -265,14 +353,14 @@ export class PermissionsPanel extends React.Component {
     this.setState({ newRoleValue });
   }
 
-  viewPermissionTypeButton = (permission, fn, currView) => {
+  viewPermissionTypeButton = (permission, fn, currView, order) => {
     if (permission === accessOptions.Hidden && this.props.propertyTypeId !== undefined) return null;
     return (
       <button
           onClick={() => {
             fn(permission);
           }}
-          className={this.buttonStyle(permission, currView)}>
+          className={this.buttonStyle(permission, currView, order)}>
         <div className={styles.edmNavItemText}>{permission}</div>
       </button>
     );
@@ -313,10 +401,10 @@ export class PermissionsPanel extends React.Component {
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load roles.</div>
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
-          {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView, orders.FIRST)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, rolesView)}
           {this.viewPermissionTypeButton(accessOptions.Link, this.changeRolesView, rolesView)}
-          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, rolesView)}
+          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, rolesView, orders.LAST)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {hiddenBody}
@@ -347,7 +435,8 @@ export class PermissionsPanel extends React.Component {
       type: USER,
       id: userId
     };
-    this.updatePermissions(action, principal, view);
+    const permissions = this.getPermissionsFromView(action, view);
+    this.updatePermissions(action, principal, permissions);
   }
 
   handleNewEmailChange = (e) => {
@@ -392,11 +481,11 @@ export class PermissionsPanel extends React.Component {
         <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load users.</div>
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
-          {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView, orders.FIRST)}
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, emailsView)}
           {this.viewPermissionTypeButton(accessOptions.Link, this.changeEmailsView, emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView)}
+          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView, orders.LAST)}
         </div>
         <div className={styles.permissionsBodyContainer}>
           {emailListBody}
@@ -418,13 +507,13 @@ export class PermissionsPanel extends React.Component {
     );
   }
 
-  renderViewButton = (view) => {
+  renderViewButton = (view, order) => {
     return (
       <button
           onClick={() => {
             this.switchView(view);
           }}
-          className={this.getClassName(view)}>
+          className={this.getClassName(view, order)}>
         <div className={styles.edmNavItemText}>{viewLabels[view]}</div>
       </button>
     );
@@ -435,9 +524,9 @@ export class PermissionsPanel extends React.Component {
       <div>
         <div className={styles.edmNavbarContainer}>
           <div className={styles.edmNavbar}>
-            {this.renderViewButton(views.GLOBAL)}
+            {this.renderViewButton(views.GLOBAL, orders.FIRST)}
             {this.renderViewButton(views.ROLES)}
-            {this.renderViewButton(views.EMAILS)}
+            {this.renderViewButton(views.EMAILS, orders.LAST)}
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>

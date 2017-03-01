@@ -1,24 +1,13 @@
 /* Header */
-.headerContent {
-    display: flex;
-    flex-wrap: wrap;
-}
 .descriptionTitle {
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 15px;
 }
 
-.headerContent .controls  {
-    margin-left: auto;
-}
-
 .managePermissions {
     display: block;
     margin-top: 7px;
-}
-.actionDropdown {
-    width: 126px;
 }
 
 /* Body */
@@ -37,6 +26,10 @@
   display: inline-block;
 }
 
+.centerWrapper {
+  text-align: center;
+}
+
 .buttonLink, .buttonLink:hover, .buttonLink:visited, .buttonLink:active {
   color: white;
   text-decoration: none;
@@ -45,4 +38,13 @@
 .error {
   color: red;
   text-align: center;
+}
+
+.buttonText {
+  margin-left: 5px;
+}
+
+.contacts {
+  margin-top: 15px;
+  font-style: italic;
 }

@@ -51,88 +51,12 @@
   margin: 10px;
 }
 
-/* Dropdown */
 .hidden {
   display: none;
 }
 
-.dropdownContainer {
-  position: relative;
-  color: #404446;
-}
-
 .buttonContainer {
   height: 30px;
-}
-
-.downloadButton {
-  background: #d1d6da;
-  height: 100%;
-  vertical-align: middle;
-  border: none;
-  width: 115px;
-  text-align: left;
-  padding-left: 10px;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  display: inline-block;
-}
-
-.singleOption {
-  text-align: center;
-  border-radius: 3px;
-}
-
-.downloadButton:hover, .downloadButtonSingle:hover {
-  background: #c7cbcf;
-}
-
-.dropdownButton {
-  display: inline-block;
-  background: #7d8082;
-  color: white;
-  font-size: 8px;
-  vertical-align: middle;
-  text-align: center;
-  height: 100%;
-  width: 20px;
-  border: none;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-
-.dropdownButton:hover {
-  background: #6b6e70;
-}
-
-.menuContainer {
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
-  margin-top: -1px;
-  max-height: 200px;
-  overflow-y: auto;
-  position: absolute;
-  top: 100%;
-  width: 115px;
-  right: 20px;
-  z-index: 1000;
-  -webkit-overflow-scrolling: touch;
-  text-align: left;
-}
-
-.requestingPermission {
-  width: 150px;
-}
-
-.menuOption {
-  box-sizing: border-box;
-  display: block;
-}
-
-.menuOption:hover {
-  background-color: #f2f9fc;
 }
 
 .menuOptionButton {
@@ -218,4 +142,11 @@
 .datatypeSelect {
   width: 200px;
   margin-top: 5px;
+}
+
+.globalLabel {
+  width: 60px;
+  font-size: 14px;
+  text-align: center;
+  margin-right: 10px;
 }

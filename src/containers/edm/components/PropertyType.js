@@ -48,6 +48,7 @@ class PropertyType extends React.Component {
   }
 
   // TODO: Handle more than just permissions
+  //THIS IS USED IN REQUEST PERMISSIONS MODAL
   onChange = (event) => {
     const { onChange, propertyTypeId, permissions } = this.props,
       canRead = event.target.value === 'on';
@@ -56,6 +57,7 @@ class PropertyType extends React.Component {
       const newPermissions = Object.assign({}, permissions, {
         READ: canRead
       });
+
       onChange(propertyTypeId, {
         permissions: newPermissions
       });
@@ -70,7 +72,7 @@ class PropertyType extends React.Component {
     if (editing.permissions) {
       // TODO: Support more than just read
       // TODO: Enforce entitySetId on edit
-      content = (<input type="checkbox" id={`ptp-${propertyType.id}`} onChange={this.onChange} defaultChecked={canRead}/>);
+      content = (<input type="checkbox" id={`ptp-${propertyType.id}`} onChange={this.onChange} defaultChecked={canRead} disabled={!!canRead}/>);
     } else if (!canRead) {
       content = (<FontAwesome name="lock"/>);
     }

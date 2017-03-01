@@ -11,8 +11,9 @@ import { Visualize } from './Visualizations/Visualize';
 import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
+import AdvancedDataSearch from '../../containers/entitysetsearch/AdvancedDataSearch';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
-import DatasourcesComponent from '../../containers/datasets/DatasetsComponent';
+import DatasetsComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
@@ -79,11 +80,12 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.HOME} component={HomeComponent} onEnter={requireAuth} />
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
       <Route path={`${PageConsts.SEARCH}/:entitySetId`} component={EntitySetDataSearch} onEnter={requireAuth} />
+      <Route path={`${PageConsts.ADVANCED_SEARCH}/:entitySetId`} component={AdvancedDataSearch} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
-      <Route path={PageConsts.DATASOURCES} component={DatasourcesComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.DATASETS} component={DatasetsComponent} onEnter={requireAuth} />
       <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
         <IndexRoute component={OrganizationsListComponent} />
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
@@ -91,6 +93,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
+      <Route path='*' component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
 };

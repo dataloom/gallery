@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { SplitButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -89,7 +89,7 @@ class ActionDropdown extends React.Component {
     return (
       <AsyncContentListComponent references={propertyTypeAuthnReferences} render={(propertyTypeAuthn) => {
         return (
-          <SplitButton pullRight title="Actions" bsStyle="primary" id="action-dropdown" className={classnames(this.props.className)}>
+          <DropdownButton pullRight title="Actions" bsStyle="primary" id="action-dropdown" className={classnames(this.props.className)}>
             {this.renderViewDetails()}
             {this.renderRequestPermissions(propertyTypeAuthn)}
             <MenuItem header>Download</MenuItem>
@@ -107,10 +107,9 @@ class ActionDropdown extends React.Component {
                 Visualize
               </Link>
             </li>
-
             <MenuItem divider />
             <DropdownSearchBox entitySetId={entitySetId} />
-          </SplitButton>
+          </DropdownButton>
         );
       }} />
     );

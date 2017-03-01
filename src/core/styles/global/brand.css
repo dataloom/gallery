@@ -91,6 +91,12 @@ fieldset[disabled] .btn-danger {
     background-color: #2e0289 !important;
 }
 
+.btn-primary.active,
+.btn-primary:active,
+.open>.dropdown-toggle.btn-primary {
+  background-color: #2e0289 !important;
+}
+
 .btn-primary.active.focus,
 .btn-primary.active:focus,
 .btn-primary.active:hover,

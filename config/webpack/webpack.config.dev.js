@@ -35,7 +35,8 @@ const plugins = [
   new Webpack.HotModuleReplacementPlugin(),
   new HtmlWebpackPlugin({
     inject: true,
-    template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
+    template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`,
+    favicon: `${APP_PATHS.ABS.SOURCE}/images/favicon.png`
   }),
   ...baseWebpackConfig.plugins
 ];

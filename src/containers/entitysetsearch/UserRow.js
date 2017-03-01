@@ -29,7 +29,7 @@ export default class UserRow extends React.Component {
       if (dob && id === dob.id) return false;
       return (id !== firstName.id && id !== lastName.id);
     });
-    const columnWidth = TABLE_WIDTH / propertyIds.length;
+    const columnWidth = (TABLE_WIDTH - 1) / propertyIds.length;
     return propertyIds.map((id) => {
       const title = propertyTypes.filter((propertyType) => {
         return propertyType.id === id;
