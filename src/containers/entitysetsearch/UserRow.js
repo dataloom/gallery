@@ -17,17 +17,48 @@ export default class UserRow extends React.Component {
     super(props);
 
     this.state = {
-      numRows: 1,
-      propertyIds: []
+      rowKeys: [],
+      propertyIds: [],
+      numRows: 1
     }
   }
 
   componentDidMount() {
-    const propertyIds = this.getPropertyIds();
-    this.setState({propertyIds});
+    this.setObjectKeys()
+      .then((res) => {
+        return this.setPropertyIds(res);
+      })
+      .then((res) => {
+        this.setNumRows(res);
+      })
+  }
 
-    const numRows = propertyIds.length;
-    this.setState({numRows});
+  setObjectKeys() {
+    const { row } = this.props;
+    const rowKeys = Object.keys(row);
+
+    return new Promise((resolve, reject) => {
+      this.setState({rowKeys}, () => {resolve(this.state.rowKeys)});
+    });
+  }
+
+  setPropertyIds(keys) {
+    const { propertyTypes, firstName, lastName, dob } = this.props;
+
+    const propertyIds = keys.filter((id) => {
+      if (dob && id === dob.id) return false;
+      return (id !== firstName.id && id !== lastName.id);
+    });
+
+    return new Promise((resolve, reject) => {
+      this.setState({propertyIds}, () => {
+        resolve(this.state.propertyIds);
+      });
+    });
+  }
+
+  setNumRows(propertyIds) {
+    this.setState({numRows: propertyIds.length});
   }
 
   renderTable = () => {
@@ -77,20 +108,10 @@ export default class UserRow extends React.Component {
     );
   }
 
-  getPropertyIds() {
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
-
-    const propertyIds = Object.keys(row).filter((id) => {
-      if (dob && id === dob.id) return false;
-      return (id !== firstName.id && id !== lastName.id);
-    });
-
-    return propertyIds;
-  }
-
   getPropertyTitles() {
     const { propertyTypes } = this.props;
-    var propertyIds = this.state.propertyIds;
+    const { propertyIds } = this.state;
+
     var headers = propertyIds.map((id) => {
       var property = propertyTypes.filter((propertyType) => {
         return propertyType.id === id;
@@ -103,7 +124,7 @@ export default class UserRow extends React.Component {
 
   getCellData(){
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    const propertyIds = this.state.propertyIds;
+    const { propertyIds } = this.state;
 
     return propertyIds.map((id) => {
       var formatValue = this.props.formatValueFn([row][0][id]);
