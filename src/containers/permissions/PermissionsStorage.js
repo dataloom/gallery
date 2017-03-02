@@ -49,7 +49,8 @@ export const AuthorizationPropType = PropTypes.shape({
 
 export type AuthNRequest = {
   aclKey :AclKey,
-  permissions :string[]
+  permissions :string[],
+  reason :string
 };
 
 export type Principal = {
