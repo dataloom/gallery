@@ -10,7 +10,7 @@ const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
 const PROPERTY_COLUMN_WIDTH = 200;
 const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
-const HEADERS = ['PROPERTY', 'DATA'];
+const HEADERS = ['Property', 'Data'];
 
 export default class UserRow extends React.Component {
   constructor(props) {
