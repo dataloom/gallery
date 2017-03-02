@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
-import TextCell from './TextCell';
+import UserTextCell from './UserTextCell';
 import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
 
@@ -67,7 +67,7 @@ export default class UserRow extends React.Component {
         key={0}
         header={header}
         cell={
-          <TextCell data={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
+          <UserTextCell data={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
         }
         width={PROPERTY_COLUMN_WIDTH}
       />
@@ -85,7 +85,7 @@ export default class UserRow extends React.Component {
         key={1}
         header={header}
         cell={
-          <TextCell data={'hey'} formatValueFn={this.props.formatValueFn} />
+          <UserTextCell data={'hey'} formatValueFn={this.props.formatValueFn} />
         }
         width={COLUMN_WIDTH}
       />
