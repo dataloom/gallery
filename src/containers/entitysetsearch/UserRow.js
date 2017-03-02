@@ -17,12 +17,16 @@ export default class UserRow extends React.Component {
     super(props);
 
     this.state = {
-      numRows: 1
+      numRows: 1,
+      propertyIds: []
     }
   }
 
   componentDidMount() {
-    const numRows = this.getPropertyIds().length;
+    const propertyIds = this.getPropertyIds();
+    this.setState({propertyIds});
+
+    const numRows = propertyIds.length;
     this.setState({numRows});
   }
 
@@ -86,7 +90,7 @@ export default class UserRow extends React.Component {
 
   getPropertyTitles() {
     const { propertyTypes } = this.props;
-    var propertyIds = this.getPropertyIds();
+    var propertyIds = this.state.propertyIds;
     var headers = propertyIds.map((id) => {
       var property = propertyTypes.filter((propertyType) => {
         return propertyType.id === id;
@@ -99,7 +103,7 @@ export default class UserRow extends React.Component {
 
   getCellData(){
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    const propertyIds = this.getPropertyIds();
+    const propertyIds = this.state.propertyIds;
 
     return propertyIds.map((id) => {
       var formatValue = this.props.formatValueFn([row][0][id]);
