@@ -10,8 +10,13 @@ export default class TextCell extends React.Component {
     formatValueFn: PropTypes.func
   }
 
+  componentDidMount() {
+    console.log('formatFn results:', this.props.formatValueFn(results[rowIndex][field]));
+
+  }
+
   render() {
-    const { rowIndex, field, results } = this.props
+    const { rowIndex, field, results } = this.props;
     return (
       <Cell>
         <div className={styles.textCell}>
