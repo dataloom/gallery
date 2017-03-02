@@ -17,13 +17,14 @@ export default class UserRow extends React.Component {
     super(props);
 
     this.state = {
-      numRows: 2
+      numRows: 1
     }
   }
 
   componentDidMount() {
     const numRows = this.getPropertyIds().length;
     console.log('numRows:', numRows);
+    this.setState({numRows});
   }
 
   static propTypes = {
@@ -54,21 +55,6 @@ export default class UserRow extends React.Component {
     );
   }
 
-  // renderColumns() {
-  //   const { row, propertyTypes, firstName, lastName, dob } = this.props;
-  //   console.log('row:', row);
-  //
-  //   const propertyTitles = this.getPropertyTitles();
-  //   const columnWidth = (TABLE_WIDTH - 1) / propertyIds.length;
-  //   const headers = ['PROPERTY', 'DATA'];
-  //
-  //   return (
-  //     <div key={i}>
-  //     {this.renderPropertyColumn()}
-  //     </div>
-  //   )
-  // }
-
   renderPropertyColumn() {
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
     const header = HEADERS[0];
@@ -81,7 +67,7 @@ export default class UserRow extends React.Component {
         key={0}
         header={header}
         cell={
-          <TextCell content={propertyTitle} formatValueFn={this.props.formatValueFn} />
+          <TextCell content={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
         }
         width={PROPERTY_COLUMN_WIDTH}
       />
@@ -110,6 +96,7 @@ export default class UserRow extends React.Component {
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
     console.log('PROPERTY TYPES:', propertyTypes);
     const propertyIds = this.getPropertyIds();
+    //TODO: Check what data value output is -> should be array of data
     const data = propertyIds.map((id) => {
       var dataContent = propertyTypes.filter((propertyType) => {
         return propertyType.id === id;
