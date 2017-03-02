@@ -13,6 +13,7 @@ import securableObjectReducer from '../../containers/securableobject/SecurableOb
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
+import datasetsReducer from '../../containers/datasets/DatasetsReducer';
 import routerReducer from '../router/RouterReducer';
 
 export default function reduxReducer() {
@@ -27,6 +28,7 @@ export default function reduxReducer() {
     permissions: permissionReducer,
     principals: principalsReducer,
     async: asyncReducer,
+    datasets: datasetsReducer,
     router: routerReducer
   });
 }
