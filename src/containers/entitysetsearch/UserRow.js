@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
-import UserTextCell from './UserTextCell';
+import TextCell from './TextCell';
+import PropertyTextCell from './PropertyTextCell';
 import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
 
@@ -23,7 +24,6 @@ export default class UserRow extends React.Component {
 
   componentDidMount() {
     const numRows = this.getPropertyIds().length;
-    console.log('numRows:', numRows);
     this.setState({numRows});
   }
 
@@ -59,15 +59,13 @@ export default class UserRow extends React.Component {
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
     const header = HEADERS[0];
     const propertyTitles = this.getPropertyTitles();
-    const propertyTitle = propertyTitles[0];
 
-    //TODO: how to handle rendering multiple cells in column?
     return (
       <Column
         key={0}
         header={header}
         cell={
-          <UserTextCell data={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
+          <PropertyTextCell data={propertyTitles} />
         }
         width={PROPERTY_COLUMN_WIDTH}
       />
@@ -75,34 +73,22 @@ export default class UserRow extends React.Component {
   }
 
   renderDataColumn() {
-    console.log('renderDataColumn');
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
     const header = HEADERS[1];
-    const data = this.getCellData();
+    const cellData = this.getCellData();
 
     return (
       <Column
-        key={1}
-        header={header}
-        cell={
-          <UserTextCell data={'hey'} formatValueFn={this.props.formatValueFn} />
-        }
-        width={COLUMN_WIDTH}
-      />
+          key={1}
+          header={<Cell>{header}</Cell>}
+          cell={
+            <PropertyTextCell data={cellData} formatValueFn={this.props.formatValueFn} />
+          }
+          width={COLUMN_WIDTH} />
     );
-  }
 
-  getCellData() {
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    console.log('PROPERTY TYPES:', propertyTypes);
-    const propertyIds = this.getPropertyIds();
-    //TODO: Check what data value output is -> should be array of data
-    const data = propertyIds.map((id) => {
-      var dataContent = propertyTypes.filter((propertyType) => {
-        return propertyType.id === id;
-      });
-      console.log('dataContent:', dataContent);
-    })
+    console.log('CELL DATA:', cellData);
+
   }
 
   getPropertyTitles() {
@@ -130,6 +116,29 @@ export default class UserRow extends React.Component {
     return propertyIds;
   }
 
+  formatValue(rawValue) {
+    if (rawValue instanceof Array) {
+      let formattedValue = '';
+      if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
+      if (rawValue.length > 1) {
+        for (let i = 1; i < rawValue.length; i += 1) {
+          formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
+        }
+      }
+      return formattedValue;
+    }
+    return rawValue;
+  }
+
+  getCellData(){
+    const { row, propertyTypes, firstName, lastName, dob } = this.props;
+    const propertyIds = this.getPropertyIds();
+
+    return propertyIds.map((id) => {
+      var formatValue = this.formatValue([row][0][id]);
+      return formatValue;
+    });
+  }
 
 
 
