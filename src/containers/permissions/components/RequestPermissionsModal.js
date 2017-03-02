@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Modal, Button, Alert } from 'react-bootstrap';
+import { Modal, Button, Alert, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -29,7 +29,8 @@ class RequestPermissions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pidToPermissions: {}
+      pidToPermissions: {},
+      reason: ''
     }
   }
 
@@ -43,12 +44,14 @@ class RequestPermissions extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    const { pidToPermissions } = this.state;
+    const { pidToPermissions, reason } = this.state;
     const { entitySetId, onSubmit } = this.props;
-    onSubmit(entitySetId, pidToPermissions);
+    onSubmit(entitySetId, pidToPermissions, reason);
   };
 
-
+  onReasonChange = (event) => {
+    this.setState({ reason: event.target.value });
+  }
 
   render() {
     const { propertyTypeIds, entitySet, entitySetId, show, onHide, asyncStatus } = this.props;
@@ -68,6 +71,10 @@ class RequestPermissions extends React.Component {
             status={asyncStatus}
             pendingContent={
               <form className={styles.rqm} onSubmit={this.onSubmit}>
+                <FormGroup>
+                  <ControlLabel>Reason for your request</ControlLabel>
+                  <FormControl componentClass="textarea" onChange={this.onReasonChange} />
+                </FormGroup>
                 <h2 className={styles.subtitle}>Select properties you want access to:</h2>
                 <PropertyTypeList
                   entitySetId={entitySetId}
@@ -116,12 +123,13 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     onHide: () => { dispatch(actionFactory.requestPermissionsModalHide()); },
-    onSubmit: (entitySetId, pidsToPermissions) => {
+    onSubmit: (entitySetId, pidsToPermissions, reason) => {
       const authnRequests = Object.keys(pidsToPermissions).map(pid => {
         const permissions = classnames(pidsToPermissions[pid]).split(' ');
         return {
           aclKey: [entitySetId, pid],
-          permissions
+          permissions,
+          reason
         }
       });
       dispatch(actionFactory.submitAuthNRequest(authnRequests))
