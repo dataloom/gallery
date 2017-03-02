@@ -8,9 +8,23 @@ import styles from './styles.module.css';
 const TABLE_WIDTH = 1000;
 const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
-const COLUMN_WIDTH = TABLE_WIDTH / 2;
+const PROPERTY_COLUMN_WIDTH = 200;
+const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH) / 2;
+const HEADERS = ['PROPERTY', 'DATA'];
 
 export default class UserRow extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      numRows: 2
+    }
+  }
+
+  componentDidMount() {
+    const numRows = this.getPropertyIds().length;
+    console.log('numRows:', numRows);
+  }
 
   static propTypes = {
     row: PropTypes.object.isRequired,
@@ -25,73 +39,64 @@ export default class UserRow extends React.Component {
   }
 
   renderTable() {
-    // this.renderPropertyColumn();
-
     if (!this.props.userPage) return null;
-    const tableHeight = (2 * ROW_HEIGHT) + TABLE_OFFSET;
+    const tableHeight = ((this.state.numRows + 1) * ROW_HEIGHT) + TABLE_OFFSET;
     return (
       <Table
-          rowsCount={1}
+          rowsCount={this.state.numRows}
           rowHeight={ROW_HEIGHT}
           headerHeight={ROW_HEIGHT}
           width={TABLE_WIDTH}
           height={tableHeight}>
-        {this.renderColumns()}
+        {this.renderPropertyColumn()}
+        {this.renderDataColumn()}
       </Table>
     );
   }
 
-  renderColumns() {
+  // renderColumns() {
+  //   const { row, propertyTypes, firstName, lastName, dob } = this.props;
+  //   console.log('row:', row);
+  //
+  //   const propertyTitles = this.getPropertyTitles();
+  //   const columnWidth = (TABLE_WIDTH - 1) / propertyIds.length;
+  //   const headers = ['PROPERTY', 'DATA'];
+  //
+  //   return (
+  //     <div key={i}>
+  //     {this.renderPropertyColumn()}
+  //     </div>
+  //   )
+  // }
+
+  renderPropertyColumn() {
     const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    const propertyIds = this.getPropertyIds();
+    const header = HEADERS[0];
     const propertyTitles = this.getPropertyTitles();
-    const columnWidth = (TABLE_WIDTH - 1) / propertyIds.length;
-    const headers = ['PROPERTY', 'DATA'];
+    const propertyTitle = propertyTitles[0];
 
-
-    var columns = propertyIds.map((id, i) => {
-      const title = propertyTitles[i];
-      const header = headers[i];
-      const propertyColumn = this.renderPropertyColumn(i, header);
-      const dataColumn = this.renderDataColumn(i, header);
-
-      return (
-        <div key={i}>
-        {propertyColumn}
-        {dataColumn}
-        </div>
-      )
-    });
-
-    return columns;
-  }
-
-  renderPropertyColumn(i, header) {
-    const propertyTitles = this.getPropertyTitles();
-    const cells = propertyTitles.map((title) => {
-      return (
-        <TextCell content={title} formatValueFn={this.props.formatValueFn} />
-      )
-    });
-
-    // how to handle rendering multiple cells in column?
+    //TODO: how to handle rendering multiple cells in column?
     return (
       <Column
-        key={i}
+        key={0}
         header={header}
         cell={
-          <TextCell content={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
+          <TextCell content={propertyTitle} formatValueFn={this.props.formatValueFn} />
         }
-        width={COLUMN_WIDTH}
+        width={PROPERTY_COLUMN_WIDTH}
       />
     )
   }
 
-  renderDataColumn(i, header) {
+  renderDataColumn() {
+    console.log('renderDataColumn');
+    const { row, propertyTypes, firstName, lastName, dob } = this.props;
+    const header = HEADERS[1];
+    const data = this.getCellData();
 
     return (
       <Column
-        key={i}
+        key={1}
         header={header}
         cell={
           <TextCell content={'hey'} formatValueFn={this.props.formatValueFn} />
@@ -99,6 +104,18 @@ export default class UserRow extends React.Component {
         width={COLUMN_WIDTH}
       />
     );
+  }
+
+  getCellData() {
+    const { row, propertyTypes, firstName, lastName, dob } = this.props;
+    console.log('PROPERTY TYPES:', propertyTypes);
+    const propertyIds = this.getPropertyIds();
+    const data = propertyIds.map((id) => {
+      var dataContent = propertyTypes.filter((propertyType) => {
+        return propertyType.id === id;
+      });
+      console.log('dataContent:', dataContent);
+    })
   }
 
   getPropertyTitles() {
