@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import Promise from 'bluebird';
 import { EntityDataModelApi, LinkingApi } from 'loom-data';
+import AuthService from '../../../utils/AuthService';
 import DefineLinkedEntityType from './DefineLinkedEntityType';
 import DefineLinkedEntitySet from './DefineLinkedEntitySet';
 import Page from '../../../components/page/Page';
@@ -11,8 +12,12 @@ import styles from './styles.module.css';
 
 export class Link extends React.Component {
 
-  constructor() {
-    super();
+  static propTypes = {
+    auth: PropTypes.instanceOf(AuthService)
+  }
+
+  constructor(props) {
+    super(props);
     this.state = {
       allEntitySets: [],
       selectedEntitySetIds: [],
@@ -368,11 +373,12 @@ export class Link extends React.Component {
     this.setState({ chooseLinkedEntityType: true });
   }
 
-  performLink = (name, title, description) => {
+  performLink = (name, title, description, contacts) => {
     const entitySet = {
       name,
       title,
       description,
+      contacts,
       entityTypeId: this.state.linkingEntityTypeId
     };
     const linkingProperties = this.state.links.map((link) => {
@@ -398,12 +404,13 @@ export class Link extends React.Component {
   }
 
   createLinkingEntityType = (entityType, deidentified) => {
-    const entityTypeIds = new Set();
+    let entityTypeIds = new Set();
     this.state.allEntitySets.forEach((entitySet) => {
       if (this.state.selectedEntitySetIds.includes(entitySet.id)) {
         entityTypeIds.add(entitySet.entityTypeId);
       }
     });
+    entityTypeIds = Array.from(entityTypeIds);
     LinkingApi.createLinkingEntityType({ entityType, entityTypeIds, deidentified })
     .then((linkingEntityTypeId) => {
       if (linkingEntityTypeId) {
@@ -439,13 +446,22 @@ export class Link extends React.Component {
     return null;
   }
 
+  getDefaultContact = () => {
+    const profile = this.props.auth.getProfile();
+    let defaultContact = '';
+    if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
+    if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
+    if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
+    return defaultContact;
+  }
+
   render() {
     let content;
     if (this.state.linkingSuccess) {
       content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
     }
     else if (this.state.entityTypeCreated) {
-      content = <DefineLinkedEntitySet linkFn={this.performLink} />;
+      content = <DefineLinkedEntitySet linkFn={this.performLink} defaultContact={this.getDefaultContact()} />;
     }
     else {
       content = (
