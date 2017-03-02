@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 import { Button, Modal, Pager } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import { getOwnedDatasetsIdsRequest } from './DatasetsActionFactory';
@@ -17,11 +18,11 @@ class DatasetsComponent extends React.Component {
     actions: PropTypes.shape({
       getOwnedDatasetsIdsRequest: PropTypes.func.isRequired
     }).isRequired,
-    ownedEntitySets: PropTypes.array.isRequired,
+    ownedEntitySets: PropTypes.instanceOf(Immutable.List).isRequired,
     asyncStatus: AsyncStatePropType.isRequired,
     finishedLoading: PropTypes.bool.isRequired,
     errorMessage: PropTypes.string.isRequired,
-    allPagingTokens: PropTypes.array.isRequired,
+    allPagingTokens: PropTypes.instanceOf(Immutable.List).isRequired,
     page: PropTypes.number.isRequired
   }
 
@@ -65,18 +66,18 @@ class DatasetsComponent extends React.Component {
   }
 
   goBack = () => {
-    this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens[this.props.page - 2]);
+    this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens.get(this.props.page - 2));
   }
 
   goForward = () => {
-    this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens[this.props.page]);
+    this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens.get(this.props.page));
   }
 
   renderPagination = () => {
-    if (this.props.allPagingTokens.length === 1 && this.props.finishedLoading) return null;
+    if (this.props.allPagingTokens.size === 1 && this.props.finishedLoading) return null;
     const canGoBack = this.props.page > 1;
-    let canGoForward = this.props.page < this.props.allPagingTokens.length;
-    if (this.props.page === this.props.allPagingTokens.length && !this.props.finishedLoading) canGoForward = true;
+    let canGoForward = this.props.page < this.props.allPagingTokens.size;
+    if (this.props.page === this.props.allPagingTokens.size && !this.props.finishedLoading) canGoForward = true;
     return (
       <Pager>
         <Pager.Item
@@ -132,16 +133,16 @@ class DatasetsComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const datasets = state.get('datasets').toJS();
-  const page = (datasets.pagingToken) ? datasets.allPagingTokens.indexOf(datasets.pagingToken)
-    : datasets.allPagingTokens.length;
+  const pagingToken = state.getIn(['datasets', 'pagingToken']);
+  const allPagingTokens = state.getIn(['datasets', 'allPagingTokens']);
+  const page = (pagingToken) ? allPagingTokens.indexOf(pagingToken) : allPagingTokens.size;
   return {
-    pagingToken: datasets.pagingToken,
-    ownedEntitySets: datasets.entitySets,
-    asyncStatus: datasets.asyncStatus,
-    finishedLoading: datasets.finishedLoading,
-    errorMessage: datasets.errorMessage,
-    allPagingTokens: datasets.allPagingTokens,
+    pagingToken,
+    ownedEntitySets: state.getIn(['datasets', 'entitySets']),
+    asyncStatus: state.getIn(['datasets', 'asyncStatus']),
+    finishedLoading: state.getIn(['datasets', 'finishedLoading']),
+    errorMessage: state.getIn(['datasets', 'errorMessage']),
+    allPagingTokens,
     page
   };
 }

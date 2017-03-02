@@ -15,8 +15,9 @@ function ownedDatasetsIdsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_OWNED_DATASETS_IDS_REQUEST)
     .mergeMap((action :Action) => {
-      return Observable.from(AuthorizationApi.getAccessibleObjects('EntitySet', Permission.OWNER.name, action.pagingToken))
-        .map(response => {
+      return Observable
+        .from(AuthorizationApi.getAccessibleObjects('EntitySet', Permission.OWNER.name, action.pagingToken))
+        .mergeMap((response) => {
           const edmDetailsSelectors = response.authorizedObjects.map((aclKey) => {
             return {
               type: 'EntitySet',
@@ -24,7 +25,10 @@ function ownedDatasetsIdsEpic(action$) {
               include: ['EntitySet']
             };
           });
-          return actionFactories.getOwnedDatasetsDetails(edmDetailsSelectors, response.pagingToken);
+          return Observable.of(
+            actionFactories.getOwnedDatasetsIdsResolve(),
+            actionFactories.getOwnedDatasetsDetailsRequest(edmDetailsSelectors, response.pagingToken)
+          );
         })
         // Error Handling
         .catch(error => {
@@ -39,7 +43,8 @@ function ownedDatasetsDetailsEpic(action$) {
     .ofType(actionTypes.GET_OWNED_DATASETS_DETAILS_REQUEST)
     .mergeMap((action :Action) => {
       let entitySets = [];
-      return Observable.from(EntityDataModelApi.getEntityDataModelProjection(action.edmDetailsSelectors))
+      return Observable
+        .from(EntityDataModelApi.getEntityDataModelProjection(action.edmDetailsSelectors))
         .map((response) => {
           entitySets = Object.values(response.entitySets);
           return normalize(entitySets, [EntitySetNschema]);
@@ -48,7 +53,7 @@ function ownedDatasetsDetailsEpic(action$) {
         .flatMap(normalizedData => {
           return [
             edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-            actionFactories.setOwnedDatasetsDetails(entitySets, action.pagingToken)
+            actionFactories.getOwnedDatasetsDetailsResolve(entitySets, action.pagingToken)
           ]
         })
         // Error Handling

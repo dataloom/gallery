@@ -8,6 +8,13 @@ export function getOwnedDatasetsIdsRequest(pagingToken :String) {
   return returnVal;
 }
 
+export function getOwnedDatasetsIdsResolve() {
+  return {
+    type: actionTypes.GET_OWNED_DATASETS_IDS_RESOLVE
+  };
+}
+
+
 export function getOwnedDatasetsIdsReject(errorMessage :string) {
   return {
     type: actionTypes.GET_OWNED_DATASETS_IDS_REJECT,
@@ -15,7 +22,7 @@ export function getOwnedDatasetsIdsReject(errorMessage :string) {
   };
 }
 
-export function getOwnedDatasetsDetails(edmDetailsSelectors :Array, pagingToken :String) {
+export function getOwnedDatasetsDetailsRequest(edmDetailsSelectors :Array, pagingToken :String) {
   return {
     type: actionTypes.GET_OWNED_DATASETS_DETAILS_REQUEST,
     edmDetailsSelectors,
@@ -23,7 +30,7 @@ export function getOwnedDatasetsDetails(edmDetailsSelectors :Array, pagingToken 
   };
 }
 
-export function setOwnedDatasetsDetails(ownedDatasets :Array, pagingToken :String) {
+export function getOwnedDatasetsDetailsResolve(ownedDatasets :Array, pagingToken :String) {
   return {
     type: actionTypes.GET_OWNED_DATASETS_DETAILS_RESOLVE,
     ownedDatasets,
