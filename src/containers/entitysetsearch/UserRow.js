@@ -67,7 +67,7 @@ export default class UserRow extends React.Component {
         key={0}
         header={header}
         cell={
-          <TextCell content={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
+          <TextCell data={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
         }
         width={PROPERTY_COLUMN_WIDTH}
       />
@@ -85,7 +85,7 @@ export default class UserRow extends React.Component {
         key={1}
         header={header}
         cell={
-          <TextCell content={'hey'} formatValueFn={this.props.formatValueFn} />
+          <TextCell data={'hey'} formatValueFn={this.props.formatValueFn} />
         }
         width={COLUMN_WIDTH}
       />
