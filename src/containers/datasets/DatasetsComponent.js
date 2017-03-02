@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Pager } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import { getOwnedDatasetsIdsRequest } from './DatasetsActionFactory';
 import Page from '../../components/page/Page';
@@ -20,7 +20,9 @@ class DatasetsComponent extends React.Component {
     ownedEntitySets: PropTypes.array.isRequired,
     asyncStatus: AsyncStatePropType.isRequired,
     finishedLoading: PropTypes.bool.isRequired,
-    errorMessage: PropTypes.string.isRequired
+    errorMessage: PropTypes.string.isRequired,
+    allPagingTokens: PropTypes.array.isRequired,
+    page: PropTypes.number.isRequired
   }
 
   constructor(props) {
@@ -62,12 +64,32 @@ class DatasetsComponent extends React.Component {
     }
   }
 
-  renderLoadMore = () => {
-    if (this.props.finishedLoading) return null;
+  goBack = () => {
+    this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens[this.props.page - 2]);
+  }
+
+  goForward = () => {
+    this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens[this.props.page]);
+  }
+
+  renderPagination = () => {
+    if (this.props.allPagingTokens.length === 1 && this.props.finishedLoading) return null;
+    const canGoBack = this.props.page > 1;
+    let canGoForward = this.props.page < this.props.allPagingTokens.length;
+    if (this.props.page === this.props.allPagingTokens.length && !this.props.finishedLoading) canGoForward = true;
     return (
-      <div className={styles.continueButtonContainer}>
-        <Button bsStyle="info" onClick={this.loadPage}>Load more datasets</Button>
-      </div>
+      <Pager>
+        <Pager.Item
+            previous
+            disabled={!canGoBack}
+            href="#"
+            onClick={this.goBack}>&larr; Previous</Pager.Item>
+        <Pager.Item
+            next
+            disabled={!canGoForward}
+            href="#"
+            onClick={this.goForward}>Next &rarr;</Pager.Item>
+      </Pager>
     );
   }
 
@@ -99,10 +121,10 @@ class DatasetsComponent extends React.Component {
               content={() => (
                 <div>
                   <EntitySetList entitySets={this.props.ownedEntitySets} />
-                  {this.renderLoadMore()}
                 </div>
               )}
           />
+          {this.renderPagination()}
         </Page.Body>
       </Page>
     );
@@ -111,12 +133,16 @@ class DatasetsComponent extends React.Component {
 
 function mapStateToProps(state) {
   const datasets = state.get('datasets').toJS();
+  const page = (datasets.pagingToken) ? datasets.allPagingTokens.indexOf(datasets.pagingToken)
+    : datasets.allPagingTokens.length;
   return {
     pagingToken: datasets.pagingToken,
     ownedEntitySets: datasets.entitySets,
     asyncStatus: datasets.asyncStatus,
     finishedLoading: datasets.finishedLoading,
-    errorMessage: datasets.errorMessage
+    errorMessage: datasets.errorMessage,
+    allPagingTokens: datasets.allPagingTokens,
+    page
   };
 }
 
