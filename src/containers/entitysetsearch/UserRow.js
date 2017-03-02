@@ -10,7 +10,7 @@ const TABLE_WIDTH = 1000;
 const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
 const PROPERTY_COLUMN_WIDTH = 200;
-const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH) / 2;
+const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
 const HEADERS = ['PROPERTY', 'DATA'];
 
 export default class UserRow extends React.Component {
@@ -86,9 +86,6 @@ export default class UserRow extends React.Component {
           }
           width={COLUMN_WIDTH} />
     );
-
-    console.log('CELL DATA:', cellData);
-
   }
 
   getPropertyTitles() {
@@ -112,7 +109,7 @@ export default class UserRow extends React.Component {
       if (dob && id === dob.id) return false;
       return (id !== firstName.id && id !== lastName.id);
     });
-    // console.log('propertyIds:', propertyIds);
+
     return propertyIds;
   }
 
@@ -139,9 +136,6 @@ export default class UserRow extends React.Component {
       return formatValue;
     });
   }
-
-
-
 
   selectUser = () => {
     if (this.props.userPage) return;
