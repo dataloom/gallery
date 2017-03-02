@@ -102,23 +102,9 @@ export default class UserRow extends React.Component {
     const propertyIds = this.getPropertyIds();
 
     return propertyIds.map((id) => {
-      var formatValue = this.formatValue([row][0][id]);
+      var formatValue = this.props.formatValueFn([row][0][id]);
       return formatValue;
     });
-  }
-
-  formatValue(rawValue) {
-    if (rawValue instanceof Array) {
-      let formattedValue = '';
-      if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
-      if (rawValue.length > 1) {
-        for (let i = 1; i < rawValue.length; i += 1) {
-          formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
-        }
-      }
-      return formattedValue;
-    }
-    return rawValue;
   }
 
   selectUser = () => {
