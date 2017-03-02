@@ -3,14 +3,17 @@ import { Observable } from 'rxjs';
 import { normalize } from 'normalizr';
 import Immutable from 'immutable';
 
-import { createEntitySets } from '../Api';
+import {
+  EntityDataModelApi
+} from 'loom-data';
+
 import * as actionTypes from './CreateEntitySetActionTypes';
 import * as actionFactories from './CreateEntitySetActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import { EntitySetNschema, COLLECTIONS } from '../edm/EdmStorage';
 
 function createEntitySet(entitySet) {
-  return Observable.from(createEntitySets([entitySet]))
+  return Observable.from(EntityDataModelApi.createEntitySets([entitySet]))
     .map(response => {
       return Object.assign({}, entitySet, {
         id: response[entitySet.name]
