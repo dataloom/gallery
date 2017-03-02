@@ -31,6 +31,7 @@ export default class UserRow extends React.Component {
       .then((res) => {
         this.setNumRows(res);
       })
+      .catch((err) => {console.log('Error:', err)});
   }
 
   setObjectKeys() {
@@ -38,7 +39,10 @@ export default class UserRow extends React.Component {
     const rowKeys = Object.keys(row);
 
     return new Promise((resolve, reject) => {
-      this.setState({rowKeys}, () => {resolve(this.state.rowKeys)});
+      this.setState({rowKeys}, () => {
+        resolve(this.state.rowKeys);
+        reject(new Error('Error setting rowKeys state.'));
+      });
     });
   }
 
@@ -53,6 +57,7 @@ export default class UserRow extends React.Component {
     return new Promise((resolve, reject) => {
       this.setState({propertyIds}, () => {
         resolve(this.state.propertyIds);
+        reject(new Error('Error setting propertyIds state.'));
       });
     });
   }
