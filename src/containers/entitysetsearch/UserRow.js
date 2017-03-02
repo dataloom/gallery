@@ -27,18 +27,6 @@ export default class UserRow extends React.Component {
     this.setState({numRows});
   }
 
-  static propTypes = {
-    row: PropTypes.object.isRequired,
-    propertyTypes: PropTypes.array.isRequired,
-    firstName: PropTypes.object.isRequired,
-    lastName: PropTypes.object.isRequired,
-    dob: PropTypes.object,
-    selectUserFn: PropTypes.func,
-    backFn: PropTypes.func,
-    userPage: PropTypes.bool,
-    formatValueFn: PropTypes.func
-  }
-
   renderTable() {
     if (!this.props.userPage) return null;
     const tableHeight = ((this.state.numRows + 1) * ROW_HEIGHT) + TABLE_OFFSET;
@@ -56,7 +44,6 @@ export default class UserRow extends React.Component {
   }
 
   renderPropertyColumn() {
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
     const header = HEADERS[0];
     const propertyTitles = this.getPropertyTitles();
 
@@ -73,7 +60,6 @@ export default class UserRow extends React.Component {
   }
 
   renderDataColumn() {
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
     const header = HEADERS[1];
     const cellData = this.getCellData();
 
@@ -82,24 +68,10 @@ export default class UserRow extends React.Component {
           key={1}
           header={<Cell>{header}</Cell>}
           cell={
-            <PropertyTextCell data={cellData} formatValueFn={this.props.formatValueFn} />
+            <PropertyTextCell data={cellData} />
           }
           width={COLUMN_WIDTH} />
     );
-  }
-
-  getPropertyTitles() {
-    const { propertyTypes } = this.props;
-    var propertyIds = this.getPropertyIds();
-    var headers = propertyIds.map((id) => {
-      var property = propertyTypes.filter((propertyType) => {
-        return propertyType.id === id;
-      });
-      var title = property[0].title;
-      return title;
-    });
-
-    return headers;
   }
 
   getPropertyIds() {
@@ -111,6 +83,29 @@ export default class UserRow extends React.Component {
     });
 
     return propertyIds;
+  }
+
+  getPropertyTitles() {
+    const { propertyTypes } = this.props;
+    var propertyIds = this.getPropertyIds();
+    var headers = propertyIds.map((id) => {
+      var property = propertyTypes.filter((propertyType) => {
+        return propertyType.id === id;
+      });
+      return property[0].title;
+    });
+
+    return headers;
+  }
+
+  getCellData(){
+    const { row, propertyTypes, firstName, lastName, dob } = this.props;
+    const propertyIds = this.getPropertyIds();
+
+    return propertyIds.map((id) => {
+      var formatValue = this.formatValue([row][0][id]);
+      return formatValue;
+    });
   }
 
   formatValue(rawValue) {
@@ -125,16 +120,6 @@ export default class UserRow extends React.Component {
       return formattedValue;
     }
     return rawValue;
-  }
-
-  getCellData(){
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    const propertyIds = this.getPropertyIds();
-
-    return propertyIds.map((id) => {
-      var formatValue = this.formatValue([row][0][id]);
-      return formatValue;
-    });
   }
 
   selectUser = () => {
@@ -196,5 +181,17 @@ export default class UserRow extends React.Component {
         {this.renderTable()}
       </div>
     );
+  }
+
+  static propTypes = {
+    row: PropTypes.object.isRequired,
+    propertyTypes: PropTypes.array.isRequired,
+    firstName: PropTypes.object.isRequired,
+    lastName: PropTypes.object.isRequired,
+    dob: PropTypes.object,
+    selectUserFn: PropTypes.func,
+    backFn: PropTypes.func,
+    userPage: PropTypes.bool,
+    formatValueFn: PropTypes.func
   }
 }
