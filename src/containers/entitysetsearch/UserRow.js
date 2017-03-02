@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
-import TextCell from './TextCell';
 import PropertyTextCell from './PropertyTextCell';
 import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
