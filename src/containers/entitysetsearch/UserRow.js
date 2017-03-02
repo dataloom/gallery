@@ -26,7 +26,7 @@ export default class UserRow extends React.Component {
     this.setState({numRows});
   }
 
-  renderTable() {
+  renderTable = () => {
     if (!this.props.userPage) return null;
     const tableHeight = ((this.state.numRows + 1) * ROW_HEIGHT) + TABLE_OFFSET;
     return (
