@@ -8,13 +8,6 @@ export function getOwnedDatasetsIdsRequest(pagingToken :String) {
   return returnVal;
 }
 
-export function setOwnedDatasetsIds(ownedDatasetIds :Array) {
-  return {
-    type: actionTypes.GET_OWNED_DATASETS_IDS_RESOLVE,
-    ownedDatasetIds
-  };
-}
-
 export function getOwnedDatasetsIdsReject(errorMessage :string) {
   return {
     type: actionTypes.GET_OWNED_DATASETS_IDS_REJECT,
@@ -42,11 +35,5 @@ export function getOwnedDatasetsDetailsReject(errorMessage :string) {
   return {
     type: actionTypes.GET_OWNED_DATASETS_DETAILS_REJECT,
     errorMessage
-  };
-}
-
-export function resetDatasetsPage() {
-  return {
-    type: actionTypes.RESET_DATASETS_PAGE
   };
 }
