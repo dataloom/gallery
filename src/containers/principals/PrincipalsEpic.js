@@ -107,21 +107,21 @@ function fetchUserEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
-function searchAllUsersEpic(action$ :Observable<Action>) :Observable<Action> {
+function searchAllUsersByEmailEpic(action$ :Observable<Action>) :Observable<Action> {
 
   return action$
-    .ofType(PrincipalsActionTypes.SEARCH_ALL_USERS_REQUEST)
+    .ofType(PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST)
     .mergeMap((action :Action) => {
       return Observable
-        .from(PrincipalsApi.searchAllUsers(action.searchQuery))
+        .from(PrincipalsApi.searchAllUsersByEmail(action.searchQuery))
         .mergeMap((searchResults :Object[]) => {
           return Observable.of(
-            PrincipalsActionFactory.searchAllUsersSuccess(searchResults)
+            PrincipalsActionFactory.searchAllUsersByEmailSuccess(searchResults)
           );
         })
         .catch(() => {
           return Observable.of(
-            PrincipalsActionFactory.searchAllUsersFailure()
+            PrincipalsActionFactory.searchAllUsersByEmailFailure()
           );
         });
     });
@@ -172,7 +172,7 @@ export default combineEpics(
   fetchAllUsersEpic,
   fetchUsersEpic,
   fetchUserEpic,
-  searchAllUsersEpic,
+  searchAllUsersByEmailEpic,
   addRoleToUserEpic,
   removeRoleFromUserEpic
 );
