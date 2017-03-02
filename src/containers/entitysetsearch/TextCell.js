@@ -11,13 +11,25 @@ export default class TextCell extends React.Component {
   }
 
   render() {
-    const { rowIndex, field, results } = this.props
-    return (
-      <Cell>
-        <div className={styles.textCell}>
-          {this.props.formatValueFn(results[rowIndex][field])}
-        </div>
-      </Cell>
-    );
+    const { rowIndex, field, results, content } = this.props;
+    console.log('results:', results);
+    if (rowIndex !== undefined && field !== undefined) {
+      return (
+        <Cell>
+          <div className={styles.textCell}>
+            {this.props.formatValueFn(results[rowIndex][field])}
+          </div>
+        </Cell>
+      );
+    } else if (content !== undefined) {
+      return (
+        <Cell>
+          <div className={styles.textCell}>
+            {this.props.formatValueFn(content)}
+          </div>
+        </Cell>
+      );
+    }
+
   }
 }

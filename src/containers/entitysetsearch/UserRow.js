@@ -8,6 +8,7 @@ import styles from './styles.module.css';
 const TABLE_WIDTH = 1000;
 const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
+const COLUMN_WIDTH = TABLE_WIDTH / 2;
 
 export default class UserRow extends React.Component {
 
@@ -23,30 +24,9 @@ export default class UserRow extends React.Component {
     formatValueFn: PropTypes.func
   }
 
-  renderColumns = () => {
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    const propertyIds = Object.keys(row).filter((id) => {
-      if (dob && id === dob.id) return false;
-      return (id !== firstName.id && id !== lastName.id);
-    });
-    const columnWidth = (TABLE_WIDTH - 1) / propertyIds.length;
-    return propertyIds.map((id) => {
-      const title = propertyTypes.filter((propertyType) => {
-        return propertyType.id === id;
-      })[0].title;
-      return (
-        <Column
-            key={id}
-            header={<Cell>{title}</Cell>}
-            cell={
-              <TextCell results={[row]} field={id} formatValueFn={this.props.formatValueFn} />
-            }
-            width={columnWidth} />
-      );
-    });
-  }
+  renderTable() {
+    // this.renderPropertyColumn();
 
-  renderTable = () => {
     if (!this.props.userPage) return null;
     const tableHeight = (2 * ROW_HEIGHT) + TABLE_OFFSET;
     return (
@@ -60,6 +40,95 @@ export default class UserRow extends React.Component {
       </Table>
     );
   }
+
+  renderColumns() {
+    const { row, propertyTypes, firstName, lastName, dob } = this.props;
+    const propertyIds = this.getPropertyIds();
+    const propertyTitles = this.getPropertyTitles();
+    const columnWidth = (TABLE_WIDTH - 1) / propertyIds.length;
+    const headers = ['PROPERTY', 'DATA'];
+
+
+    var columns = propertyIds.map((id, i) => {
+      const title = propertyTitles[i];
+      const header = headers[i];
+      const propertyColumn = this.renderPropertyColumn(i, header);
+      const dataColumn = this.renderDataColumn(i, header);
+
+      return (
+        <div key={i}>
+        {propertyColumn}
+        {dataColumn}
+        </div>
+      )
+    });
+
+    return columns;
+  }
+
+  renderPropertyColumn(i, header) {
+    const propertyTitles = this.getPropertyTitles();
+    const cells = propertyTitles.map((title) => {
+      return (
+        <TextCell content={title} formatValueFn={this.props.formatValueFn} />
+      )
+    });
+
+    // how to handle rendering multiple cells in column?
+    return (
+      <Column
+        key={i}
+        header={header}
+        cell={
+          <TextCell content={propertyTitles[0]} formatValueFn={this.props.formatValueFn} />
+        }
+        width={COLUMN_WIDTH}
+      />
+    )
+  }
+
+  renderDataColumn(i, header) {
+
+    return (
+      <Column
+        key={i}
+        header={header}
+        cell={
+          <TextCell content={'hey'} formatValueFn={this.props.formatValueFn} />
+        }
+        width={COLUMN_WIDTH}
+      />
+    );
+  }
+
+  getPropertyTitles() {
+    const { propertyTypes } = this.props;
+    var propertyIds = this.getPropertyIds();
+    var headers = propertyIds.map((id) => {
+      var property = propertyTypes.filter((propertyType) => {
+        return propertyType.id === id;
+      });
+      var title = property[0].title;
+      return title;
+    });
+
+    return headers;
+  }
+
+  getPropertyIds() {
+    const { row, propertyTypes, firstName, lastName, dob } = this.props;
+
+    const propertyIds = Object.keys(row).filter((id) => {
+      if (dob && id === dob.id) return false;
+      return (id !== firstName.id && id !== lastName.id);
+    });
+    // console.log('propertyIds:', propertyIds);
+    return propertyIds;
+  }
+
+
+
+
 
   selectUser = () => {
     if (this.props.userPage) return;
