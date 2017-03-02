@@ -4,15 +4,17 @@ import styles from './styles.module.css';
 
 export default class DefineLinkedEntitySet extends React.Component {
   static propTypes = {
-    linkFn: PropTypes.func.isRequired
+    linkFn: PropTypes.func.isRequired,
+    defaultContact: PropTypes.string.isRequired
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       name: '',
       title: '',
       description: '',
+      contact: props.defaultContact,
       noNameOrTitleError: false
     };
   }
@@ -27,6 +29,10 @@ export default class DefineLinkedEntitySet extends React.Component {
 
   handleDescriptionChange = (e) => {
     this.setState({ description: e.target.value });
+  }
+
+  handleContactChange = (e) => {
+    this.setState({ contact: e.target.value });
   }
 
   renderNameField = () => {
@@ -71,13 +77,27 @@ export default class DefineLinkedEntitySet extends React.Component {
     );
   }
 
+  renderContactField = () => {
+    return (
+      <div className={styles.inputRowSet}>
+        <label className={styles.inputLabel} htmlFor="contact">Contact:</label>
+        <input
+            id="contact"
+            type="text"
+            value={this.state.contact}
+            onChange={this.handleContactChange}
+            className={styles.longInputBox} />
+      </div>
+    );
+  }
+
   link = () => {
-    const { name, title, description } = this.state;
+    const { name, title, description, contact } = this.state;
     if (name.length < 1 || title.length < 1) {
       this.setState({ noNameOrTitleError: true });
     }
     else {
-      this.props.linkFn(name, title, description);
+      this.props.linkFn(name, title, description, [contact]);
       this.setState({ noNameOrTitleError: false });
     }
   }
@@ -103,9 +123,11 @@ export default class DefineLinkedEntitySet extends React.Component {
         <br />
         {this.renderDescriptionField()}
         <br />
+        {this.renderContactField()}
+        <br />
         {this.renderLinkButton()}
         {this.renderError()}
       </div>
-    )
+    );
   }
 }
