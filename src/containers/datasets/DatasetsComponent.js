@@ -5,6 +5,7 @@ import FontAwesome from 'react-fontawesome';
 
 import Page from '../../components/page/Page';
 import CreateEntitySet from '../entitysetforms/CreateEntitySet';
+import * as actionFactories from '../entitysetforms/CreateEntitySetActionFactories.js';
 import styles from './datasets.module.css';
 
 class DatasetsComponent extends React.Component {
@@ -29,6 +30,9 @@ class DatasetsComponent extends React.Component {
   closeModal = () => {
     this.setState({
       isModalOpen: false
+    }, () => {
+      // TODO: MAKE MORE DELAYED B/C VISIBLE ON CLOSE TRANSITION OR PLACE ELSEWHERE
+      this.props.resetCreateEntitySetAsyncState();
     });
   };
 
@@ -79,7 +83,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     onCreateEntityType: () => {},
-    loadEntityTypes: () => {}
+    loadEntityTypes: () => {},
+    resetCreateEntitySetAsyncState: () => { dispatch(actionFactories.createEntitySetReset()); }
   };
 }
 

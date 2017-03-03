@@ -30,6 +30,7 @@ export default class AsyncContent extends React.Component {
   };
 
   renderPending() {
+    console.log('renderPending, status:', this.props.status);
     if (this.props.pendingContent) {
       return this.props.pendingContent;
     } else {
@@ -38,12 +39,16 @@ export default class AsyncContent extends React.Component {
   }
 
   renderLoading() {
+    console.log('renderLoading', this.props.status);
+
     return (
       <LoadingSpinner />
     );
   }
 
   renderError() {
+    console.log('renderError', this.props.status);
+
     return (
       <Alert bsStyle="danger">
         <h4>Error</h4>
@@ -53,6 +58,8 @@ export default class AsyncContent extends React.Component {
   }
 
   renderContent() {
+    console.log('renderContent', this.props.status);
+
     const { content } = this.props;
     if (typeof content === 'function') {
       return content();
