@@ -29,7 +29,6 @@ class Container extends React.Component {
   }
 
   componentDidMount() {
-    console.log('state name:', this.state.name);
     if (this.props.route.auth.loggedIn()) {
       this.props.loadPropertyTypes();
       this.props.loadEntityTypes();
