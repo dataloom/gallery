@@ -4,9 +4,10 @@ import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import { normalize } from 'normalizr';
 
-import { DataModels, EntityDataModelApi } from 'loom-data';
+import {
+  EntityDataModelApi
+} from 'loom-data';
 
-import * as EdmApi from '../Api';
 import * as EdmStorage from './EdmStorage';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
@@ -75,7 +76,7 @@ function referenceEpic(action$) {
 
 // TODO: Cancellation and Error handling
 function loadEdm(edmQuery) {
-  return Observable.from(EdmApi.edmQuery(edmQuery))
+  return Observable.from(EntityDataModelApi.getEntityDataModelProjection(edmQuery))
     .map(Immutable.fromJS)
     .map(actionFactories.updateNormalizedData);
 }

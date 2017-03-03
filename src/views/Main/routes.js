@@ -17,7 +17,6 @@ import DatasetsComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
-import { configure as edmApiConfigure } from '../../containers/Api';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
@@ -42,8 +41,6 @@ const requireAuth = (nextState, replace) => {
     const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
     const baseUrl = (__DEV__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
-    // TODO: Remove once loom-data-js upgrades
-    edmApiConfigure(baseUrl, authToken);
   }
 };
 
