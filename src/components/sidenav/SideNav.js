@@ -17,6 +17,7 @@ import catalogIcon from '../../images/icon-nav-catalog.svg';
 import datasetsIcon from '../../images/icon-nav-datasets.svg';
 import visualizeIcon from '../../images/icon-nav-visualize.svg';
 import organizationsIcon from '../../images/icon-nav-organizations.svg';
+import FontAwesome from 'react-fontawesome';
 
 const HELP_URL = 'https://help.thedataloom.com/';
 
@@ -44,7 +45,7 @@ class SideNav extends React.Component {
       <div className={styles.sideNavItem}>
         <a href={route} target='_blank'>
           <div className={styles.sideNavItemIcon}>
-            <i className="fa fa-question-circle-o fa-2x" aria-hidden="true"></i>
+            <FontAwesome name="fa fa-question-circle-o fa-2x" aria-hidden="true" />
           </div>
           <div className={styles.sideNavItemText}>{ text }</div>
         </a>
