@@ -24,10 +24,11 @@ export default class UserRow extends React.Component {
   }
 
   componentDidMount() {
+    const propertyIds = this.getPropertyIds();
+
     this.setState({
-      propertyIds: this.getPropertyIds()
-    }, () => {
-      this.setState({numRows: this.state.propertyIds.length});
+      propertyIds,
+      numRows: propertyIds.length
     });
   }
 
