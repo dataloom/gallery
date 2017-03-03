@@ -22,6 +22,7 @@ class DatasetsComponent extends React.Component {
   }
 
   onAddDataset = () => {
+    this.props.resetCreateEntitySetAsyncState();
     this.setState({
       isModalOpen: true
     });
@@ -30,10 +31,7 @@ class DatasetsComponent extends React.Component {
   closeModal = () => {
     this.setState({
       isModalOpen: false
-    }, () => {
-      // TODO: MAKE MORE DELAYED B/C VISIBLE ON CLOSE TRANSITION OR PLACE ELSEWHERE
-      this.props.resetCreateEntitySetAsyncState();
-    });
+    })
   };
 
   getDefaultContact = () => {
