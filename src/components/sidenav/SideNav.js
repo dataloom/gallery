@@ -45,7 +45,7 @@ class SideNav extends React.Component {
       <div className={styles.sideNavItem}>
         <a href={route} target='_blank'>
           <div className={styles.sideNavItemIcon}>
-            <img src={imgSrc} className={styles.sideNavIcon} role="presentation" />
+            <i className="fa fa-question-circle-o fa-2x" aria-hidden="true"></i>
           </div>
           <div className={styles.sideNavItemText}>{ text }</div>
         </a>
