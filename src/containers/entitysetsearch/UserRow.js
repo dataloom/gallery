@@ -17,53 +17,30 @@ export default class UserRow extends React.Component {
     super(props);
 
     this.state = {
-      rowKeys: [],
+      rowKeys: Object.keys(props.row),
       propertyIds: [],
       numRows: 1
     }
   }
 
   componentDidMount() {
-    this.setObjectKeys()
-      .then((res) => {
-        return this.setPropertyIds(res);
-      })
-      .then((res) => {
-        this.setNumRows(res);
-      })
-      .catch((err) => {console.log('Error:', err)});
-  }
-
-  setObjectKeys() {
-    const { row } = this.props;
-    const rowKeys = Object.keys(row);
-
-    return new Promise((resolve, reject) => {
-      this.setState({rowKeys}, () => {
-        resolve(this.state.rowKeys);
-        reject(new Error('Error setting rowKeys state.'));
-      });
+    this.setState({
+      propertyIds: this.getPropertyIds()
+    }, () => {
+      this.setState({numRows: this.state.propertyIds.length});
     });
   }
 
-  setPropertyIds(keys) {
+  getPropertyIds() {
     const { propertyTypes, firstName, lastName, dob } = this.props;
+    const { rowKeys } = this.state;
 
-    const propertyIds = keys.filter((id) => {
+    const propertyIds = rowKeys.filter((id) => {
       if (dob && id === dob.id) return false;
       return (id !== firstName.id && id !== lastName.id);
     });
 
-    return new Promise((resolve, reject) => {
-      this.setState({propertyIds}, () => {
-        resolve(this.state.propertyIds);
-        reject(new Error('Error setting propertyIds state.'));
-      });
-    });
-  }
-
-  setNumRows(propertyIds) {
-    this.setState({numRows: propertyIds.length});
+    return propertyIds;
   }
 
   renderTable = () => {
