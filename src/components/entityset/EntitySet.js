@@ -23,6 +23,15 @@ export default class EntitySet extends React.Component {
       description = (<em>No description available</em>);
     }
 
+    let contact;
+    if (entitySet.contacts && entitySet.contacts.length) {
+      const formattedContacts = entitySet.contacts.join(', ');
+      contact = (<em className={styles.contacts}>{formattedContacts}</em>);
+    }
+    else {
+      contact = (<em className={styles.contacts}>No contact information available.</em>);
+    }
+
     return (
       <article className={styles.entitySet}>
         <header>
@@ -33,6 +42,7 @@ export default class EntitySet extends React.Component {
           <div className={styles.controls}>
             <ActionDropdown entitySetId={entitySet.id} showDetails={true} />
           </div>
+          {contact}
         </header>
         {description}
       </article>

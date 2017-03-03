@@ -8,6 +8,7 @@
 
 .entitySet header {
     display: flex;
+    flex-flow: row wrap;
     justify-content: space-between;
     margin-bottom: 17px;
 }
@@ -24,4 +25,10 @@
     font-size: 18px;
     margin-top: 4px;
 
+}
+
+.entitySet .contacts {
+  width: 100%;
+  flex: auto;
+  margin-top: -5px;
 }
