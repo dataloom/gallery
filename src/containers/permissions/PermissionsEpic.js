@@ -5,6 +5,7 @@
 import {
   AuthorizationApi,
   PermissionsApi,
+  RequestsApi,
   DataModels
 } from 'loom-data';
 
@@ -37,14 +38,12 @@ import type {
   Status
 } from './PermissionsStorage'
 
-import Api from '../Api';
-
 const { Acl } = DataModels;
 
 function updateStatuses(statuses :Status[]) {
   return Observable.from(statuses)
     .mergeMap(status => {
-      return Observable.from(Api.updateStatuses([status]))
+      return Observable.from(RequestsApi.updateRequestStatuses([status]))
         .mapTo(AsyncActionFactory.updateAsyncReference(createStatusAsyncReference(status.aclKey), status))
         .catch(console.error);
     });
@@ -62,7 +61,12 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
     Observable.from(references)
       .map(AsyncActionFactory.asyncReferenceLoading),
 
-    Observable.from(Api.getStatus(reqStatus, aclKeys))
+    Observable.from(
+      RequestsApi.getAllRequestStatuses({
+        state: reqStatus,
+        aclKeys
+      })
+    )
     // Observable.of([
     //   {
     //     "aclKey": [
@@ -115,7 +119,7 @@ function loadStatusesEpic(action$) {
 
 function submitAuthnRequest(requests :AuthNRequest[]) :Observable<Action> {
   return Observable
-    .from(Api.permissionsRequest(requests))
+    .from(RequestsApi.submitRequests(requests))
     .mapTo(PermissionsActionFactory.requestPermissionsModalSuccess())
     .catch(e => {
       return Observable.of(PermissionsActionFactory.requestPermissionsModalError())

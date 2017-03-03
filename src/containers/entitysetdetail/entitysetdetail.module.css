@@ -30,6 +30,10 @@
   text-align: center;
 }
 
+.actionDropdown {
+  width: 126px;
+}
+
 .buttonLink, .buttonLink:hover, .buttonLink:visited, .buttonLink:active {
   color: white;
   text-decoration: none;

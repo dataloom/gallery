@@ -86,8 +86,7 @@ export default class UserRow extends React.Component {
 
   renderDOB = () => {
     if (!this.props.dob) return null;
-    const dobVal = this.props.row[this.props.dob.id];
-    if (!dobVal) return null;
+    const dobVal = this.props.row[this.props.dob.id] || '';
     return <div className={styles.userProfileDetailItem}><b>Date of Birth:</b> {this.props.formatValueFn(dobVal)}</div>;
   }
 

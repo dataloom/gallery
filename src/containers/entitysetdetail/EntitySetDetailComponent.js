@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
+import classnames from 'classnames';
 
 import {
   EntityDataModelApi
@@ -79,7 +80,8 @@ class EntitySetDetailComponent extends React.Component {
           </div>
 
           <ControlsContainer>
-            <ActionDropdown entitySetId={entitySet.id} />
+
+            <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown)} />
             {
               entitySetPermissions.OWNER &&
               <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
