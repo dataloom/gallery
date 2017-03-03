@@ -18,3 +18,7 @@
 .control {
     height: 36px;
 }
+
+.continueButtonContainer {
+  text-align: center;
+}

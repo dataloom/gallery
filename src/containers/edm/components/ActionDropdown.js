@@ -1,10 +1,13 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import { DropdownButton, MenuItem } from 'react-bootstrap';
 import classnames from 'classnames';
+import { DataApi } from 'loom-data';
+import { SplitButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import { DataApi } from 'loom-data';
+import {
+  Link,
+  hashHistory
+} from 'react-router';
 
 import { createAuthnAsyncReference, createAccessCheck } from '../../permissions/PermissionsStorage';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
@@ -83,13 +86,28 @@ class ActionDropdown extends React.Component {
     }
   }
 
+  goToViewDetails = () => {
+
+    if (this.props.showDetails) {
+      hashHistory.push(`/entitysets/${this.props.entitySetId}`);
+    }
+  }
+
   render() {
     const { entitySetId, propertyTypeAuthnReferences } = this.props;
+
+    const title = (!this.props.showDetails) ? 'Actions' : 'View Details';
 
     return (
       <AsyncContentListComponent references={propertyTypeAuthnReferences} render={(propertyTypeAuthn) => {
         return (
-          <DropdownButton pullRight title="Actions" bsStyle="primary" id="action-dropdown" className={classnames(this.props.className)}>
+          <SplitButton
+              pullRight
+              title={title}
+              bsStyle="primary"
+              id="action-dropdown"
+              className={classnames(this.props.className)}
+              onClick={this.goToViewDetails}>
             {this.renderViewDetails()}
             {this.renderRequestPermissions(propertyTypeAuthn)}
             <MenuItem header>Download</MenuItem>
@@ -98,18 +116,18 @@ class ActionDropdown extends React.Component {
             <MenuItem divider />
             <li role="presentation">
               <Link
-                to={{
-                  pathname: `/${PageConsts.VISUALIZE}`,
-                  query: {
-                    setId: entitySetId
-                  }
-                }}>
+                  to={{
+                    pathname: `/${PageConsts.VISUALIZE}`,
+                    query: {
+                      setId: entitySetId
+                    }
+                  }}>
                 Visualize
               </Link>
             </li>
             <MenuItem divider />
             <DropdownSearchBox entitySetId={entitySetId} />
-          </DropdownButton>
+          </SplitButton>
         );
       }} />
     );

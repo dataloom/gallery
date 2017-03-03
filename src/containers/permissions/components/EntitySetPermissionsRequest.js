@@ -115,6 +115,15 @@ class EntitySetPermissionsRequest extends React.Component {
   renderContent = (principal) => {
     const { statuses, entitySet } = this.props;
     const propertyTypes = entitySet.entityType.properties;
+    const reasonList = new Set();
+    statuses.forEach((status) => {
+      reasonList.add(status.reason);
+    });
+
+    const reasons = [];
+    reasonList.forEach((reason) => {
+      reasons.push(<div key={reason} className={styles.requestMessage}>{reason}</div>);
+    });
 
     const statusByPropertyTypeId = groupBy(statuses, (status) => status.aclKey[1]);
     const content = propertyTypes.map(propertyType => {
@@ -140,6 +149,8 @@ class EntitySetPermissionsRequest extends React.Component {
         </div>
 
         <div className={styles.permissionRequestBody}>
+          <div className={styles.subtitle}>Message:</div>
+          {reasons}
           <div className={styles.subtitle}>Properties requested:</div>
           <div className="propertyTypeList">{ content }</div>
         </div>
