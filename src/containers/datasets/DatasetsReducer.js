@@ -6,7 +6,13 @@ import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
 
 export const LOADING_ERROR = Symbol('loading error');
 
-
+/*
+ * Note: the first paging token is null, which is why allPagingTokens contains a
+ * value of null. To load a page of entity set ids that you own, you must include
+ * a paging token in your request, and the response will include the next paging
+ * token. Subsequent paging tokens will be strings, and if null is returned, you
+ * have reached the last page.
+ */
 const INITIAL_STATE:Map<*, *> = fromJS({
   asyncStatus: ASYNC_STATUS.PENDING,
   authorizedObjects: Immutable.List(),
