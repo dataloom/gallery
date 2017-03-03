@@ -2,6 +2,7 @@
 import { normalize } from 'normalizr';
 import Immutable from 'immutable';
 import { Observable } from 'rxjs';
+import { combineEpics } from 'redux-observable';
 
 import { SearchApi, DataModel } from 'loom-data';
 
@@ -9,7 +10,6 @@ import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import { EntitySetNschema, createEntitySetReference } from '../edm/EdmStorage';
-import { combineEpics } from 'redux-observable';
 
 // TODO: Move processing and storage into EDM
 function convertSearchResult(rawResult):DataModel.EntitySet {
