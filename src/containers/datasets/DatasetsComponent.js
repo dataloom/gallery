@@ -155,7 +155,6 @@ function mapStateToProps(state) {
   };
 }
 
-// TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   const actions = {
     getOwnedDatasetsIdsRequest,
@@ -163,9 +162,6 @@ function mapDispatchToProps(dispatch) {
   };
 
   return {
-    // onCreateEntityType: () => {},
-    // loadEntityTypes: () => {},
-    // resetCreateEntitySetAsyncState: () => { dispatch(actionFactories.createEntitySetReset()); }
     actions: bindActionCreators(actions, dispatch)
   };
 }
