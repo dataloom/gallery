@@ -65,6 +65,11 @@ class DatasetsComponent extends React.Component {
     }
   }
 
+  /*
+   * This is "this.props.page - 2" because pages are 1-indexed, whereas this.props.allPagingTokens
+   * is 0-indexed. To go from page 2 to page 1, we need to use the paging token at index 0
+   * (i.e. "this.props.page - 2")
+   */
   goBack = () => {
     this.props.actions.getOwnedDatasetsIdsRequest(this.props.allPagingTokens.get(this.props.page - 2));
   }
