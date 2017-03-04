@@ -380,7 +380,7 @@ class OrganizationMembersSectionComponent extends React.Component {
       <StyledFlexContainerStacked>
         <StyledSectionHeading>
           <h3>Members</h3>
-          <h5>These users are members of this orgnization. Click on a member to view their roles.</h5>
+          <h5>These users are members of this organization. Click on a member to view their roles.</h5>
         </StyledSectionHeading>
         { sectionContent }
       </StyledFlexContainerStacked>
