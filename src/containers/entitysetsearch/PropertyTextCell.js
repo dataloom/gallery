@@ -2,20 +2,18 @@ import React, { PropTypes } from 'react';
 import { Cell } from 'fixed-data-table';
 import styles from './styles.module.css';
 
-export default class TextCell extends React.Component {
+export default class PropertyTextCell extends React.Component {
   static propTypes = {
-    results: PropTypes.array,
     rowIndex: PropTypes.number,
-    field: PropTypes.string,
-    formatValueFn: PropTypes.func
+    data: PropTypes.array
   }
 
   render() {
-    const { rowIndex, field, results } = this.props;
+    const { rowIndex, data } = this.props
     return (
       <Cell>
         <div className={styles.textCell}>
-          {this.props.formatValueFn(results[rowIndex][field])}
+          {data[rowIndex]}
         </div>
       </Cell>
     );
