@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import { Link, hashHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -58,6 +58,20 @@ class EntitySetDetailComponent extends React.Component {
       addingData: false,
       deleteError: false
     };
+  }
+
+  componentDidMount() {
+    this.props.loadEntitySet();
+  }
+
+  componentWillReceiveProps() {
+    if (this.props.entitySet !== undefined) {
+      localStorage.setItem('entitySet', JSON.stringify(this.props.entitySet));
+      const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+        return property.id;
+      });
+      localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
+    }
   }
 
   setEditingPermissions = () => {
@@ -180,6 +194,11 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
+  onAllPermissions = () => {
+    hashHistory.push(`/allpermissions`);
+    // hashHistory.push(`/entitysets/${this.props.entitySetId}/allpermissions`);
+  }
+
   renderAddDataButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
@@ -193,6 +212,20 @@ class EntitySetDetailComponent extends React.Component {
         </Button>
       </div>
     );
+  }
+
+  renderAllPermissions = () => {
+    if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
+    return (
+      <div className={styles.buttonWrapper} >
+        <Button
+          className={styles.center}
+          onClick={this.onAllPermissions}
+        >
+          <span className={styles.buttonText}>View all permissions</span>
+        </Button>
+      </div>
+    )
   }
 
   renderDeleteEntitySet = () => {
@@ -260,16 +293,12 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
+          {this.renderAllPermissions()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
-
         </Page.Body>
       </Page>
     );
-  }
-
-  componentDidMount() {
-    this.props.loadEntitySet();
   }
 }
 
