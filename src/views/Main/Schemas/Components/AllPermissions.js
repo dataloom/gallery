@@ -173,7 +173,6 @@ export default class AllPermissions extends React.Component {
   loadAcls = (updateSuccess) => {
     const { entitySetId } = this.state;
     const { propertyTypeId } = this.props;
-    // const { propertyTypeId, entitySetId } = this.props;
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
     this.loadAllUsersAndRoles();
@@ -207,8 +206,6 @@ export default class AllPermissions extends React.Component {
 
   getDataForTable = () => {
     const { allUsersById } = this.state;
-    // 1. Map property to 3 separate arrays for each property type -> fixed data table
-    // 2. Map each user info to new object in 1 data array -> react-table
     var tableData = {};
     tableData.userEmails = [];
     tableData.userRoles = [];
@@ -217,7 +214,6 @@ export default class AllPermissions extends React.Component {
     Object.keys(allUsersById).forEach((user) => {
       if (user && allUsersById[user]) {
         const userObject = allUsersById[user];
-        console.log('user object permissions:', userObject.permissions);
         if (userObject.email && userObject.permissions && userObject.permissions.length !== 0) {
           tableData.userEmails.push(userObject.email);
           tableData.userRoles.push(userObject.roles);
@@ -226,20 +222,6 @@ export default class AllPermissions extends React.Component {
 
       }
     })
-
-    // const tableData = [];
-    //
-    // Object.keys(allUsersById).forEach((user) => {
-    //   if (user && allUsersById[user]) {
-    //     const userObj = allUsersById[user];
-    //     var simpleUserObj = {};
-    //     simpleUserObj.userEmails = user.userEmails;
-    //     simpleUserObj.userRoles = user.userRoles;
-    //     simpleUserObj.userPermission = user.userPermissions;
-    //
-    //     tableData.push(simpleUserObj);
-    //   }
-    // });
 
     return tableData;
   }
@@ -259,42 +241,11 @@ export default class AllPermissions extends React.Component {
 
     };
 
-    // return (
-    //   <Table
-    //     rowHeight={50}
-    //     rowsCount={50}
-    //     width={1200}
-    //     height={1200}
-    //     headerHeight={50}
-    //     data={data}
-    //     className={styles.dataTable}>
-    //     <Column
-    //       header={<Cell>Email</Cell>}
-    //       data={data}
-    //       cell={<Cell>'hi'</Cell>}
-    //       width={200}
-    //     />
-    //     <Column
-    //       header={<Cell>Roles</Cell>}
-    //       data={data}
-    //       cell={<Cell>'hi'</Cell>}
-    //       width={500}
-    //     />
-    //     <Column
-    //       header={<Cell>Permissions</Cell>}
-    //       data={data}
-    //       cell={<Cell>'hi'</Cell>}
-    //       width={500}
-    //     />
-    //   </Table>
-    // )
-
-    console.log('DATA DATA DATA:', data);
     return (
       <Table
         rowHeight={50}
         rowsCount={numRows}
-        width={1200}
+        width={1000}
         height={tableHeight}
         headerHeight={50}
         data={data}
@@ -315,11 +266,10 @@ export default class AllPermissions extends React.Component {
           header={<Cell>Permissions</Cell>}
           data={data}
           cell={<DataCell data={data} property='userPermissions'/>}
-          width={500}
+          width={300}
         />
       </Table>
     )
-
   }
 
   getPermissionsFromView = (action, view) => {
@@ -329,7 +279,6 @@ export default class AllPermissions extends React.Component {
   updatePermissions(rawAction, principal, rawPermissions) {
     const { entitySetId } = this.state;
     const { propertyTypeId } = this.props;
-    // const { propertyTypeId, entitySetId } = this.props;
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
 
@@ -371,7 +320,7 @@ export default class AllPermissions extends React.Component {
     return(
       <Page>
         <Page.Header>
-          <h1>All Permissions</h1>
+        <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
           {this.renderTable()}
