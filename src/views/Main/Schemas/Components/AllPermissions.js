@@ -205,8 +205,8 @@ export default class AllPermissions extends React.Component {
         if (allUsersById[user].roles.length > 0) {
           Object.keys(roleAcls).forEach((permissionKey) => {
             allUsersById[user].roles.forEach((role) => {
-              if (roleAcls[permissionKey].indexOf(role) !== -1 && allUsersById[user].permissions.indexOf(role === -1)) {
-                allUsersById[user].permissions.push(role);
+              if (roleAcls[permissionKey].indexOf(role) !== -1 && allUsersById[user].permissions.indexOf(permissionKey) === -1) {
+                allUsersById[user].permissions.push(permissionKey);
               }
             })
           });
@@ -241,7 +241,14 @@ export default class AllPermissions extends React.Component {
   renderTable = () => {
     const data = this.getDataForTable();
     const numRows = data.length;
-    const tableHeight = (numRows + 1) * 50;
+    const tableHeight = () => {
+      if (numRows <= 10) {
+        console.log('less than 10');
+        return ((numRows + 1) * 50)
+      } else {
+        return (500)
+      }
+    }
 
     const DataCell = ({rowIndex, col, data}) => {
       var cellData = data[rowIndex][col];
@@ -259,7 +266,7 @@ export default class AllPermissions extends React.Component {
           rowHeight={50}
           rowsCount={numRows}
           width={1000}
-          height={tableHeight + 2}
+          height={tableHeight() + 2}
           headerHeight={50}
           data={data}
           className={styles.dataTable}>
@@ -341,6 +348,7 @@ export default class AllPermissions extends React.Component {
         <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
+          <h3>Individual Permissions</h3>
           {this.renderTable()}
         </Page.Body>
       </Page>
