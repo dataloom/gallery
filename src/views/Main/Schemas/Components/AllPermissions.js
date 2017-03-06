@@ -80,13 +80,17 @@ export default class AllPermissions extends React.Component {
       entitySetId: JSON.parse(localStorage.entitySet).id,
       propertyTypeIds: JSON.parse(localStorage.propertyTypeIds)
     };
+
+    this.getUserPermissions = this.getUserPermissions.bind(this);
   }
 
   componentDidMount() {
-    this.loadAcls(false, this.getUserPermissions);
+    this.loadAcls(false);
   }
 
   loadAllUsersAndRoles = () => {
+    // debugger;
+    console.log('LOADALLUSERSANDROLES');
     let allUsersById = {};
     const allRolesList = new Set();
     const myId = JSON.parse(localStorage.profile).user_id;
@@ -99,23 +103,26 @@ export default class AllPermissions extends React.Component {
         });
       });
       allUsersById[myId] = null;
-      this.setState({
-        allUsersById,
-        allRolesList,
-        loadUsersError: false
-      }, () => {console.log('ALL USERS, ALL ROLES:', this.state.allUsersById, this.state.allRolesList)});
-    }).catch(() => {
+
+      return new Promise((resolve, reject) => {
+        this.setState(
+          {
+            allUsersById,
+            allRolesList,
+            loadUsersError: false
+          },
+          () => {
+            resolve(this.state.allUsersById);
+          }
+        );
+      });
+    })
+    .then(() => {
+      this.getUserPermissions();
+    })
+    .catch(() => {
       this.setState({ loadUsersError: true });
     });
-  }
-
-  getUserPermissions() {
-
-    // for each userbyid
-      // add permissions array: users[userId].permissions = [];
-    //for each userAcl key, if there's a match, push userAcl key to permissions array;
-
-    //setstate
   }
 
   getPermission = (permissions) => {
@@ -129,6 +136,7 @@ export default class AllPermissions extends React.Component {
   }
 
   updateStateAcls = (aces, updateSuccess) => {
+    console.log('UPDATESTATEACLS, current userAcls:', this.state.userAcls);
     let globalValue = [];
     const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
@@ -162,7 +170,8 @@ export default class AllPermissions extends React.Component {
     }, () => {console.log('USERACLS, ROLESACLS:', this.state.userAcls, this.state.roleAcls)});
   }
 
-  loadAcls = (updateSuccess, cb) => {
+  loadAcls = (updateSuccess) => {
+    console.log('LOADACLS');
     const { entitySetId } = this.state;
     const { propertyTypeId } = this.props;
     // const { propertyTypeId, entitySetId } = this.props;
@@ -174,11 +183,33 @@ export default class AllPermissions extends React.Component {
     .then((acls) => {
       console.log('ACLS:', acls);
       this.updateStateAcls(acls.aces, updateSuccess);
-    }).catch(() => {
+    })
+    .catch(() => {
       this.setState({ updateError: true });
     });
+  }
 
-    cb();
+  getUserPermissions = () => {
+    const { allUsersById, userAcls } = this.state;
+    console.log('GETUSERPERMISSIONS, allusersbyid:', allUsersById);
+
+    Object.keys(allUsersById).forEach((user) => {
+      if (user && allUsersById[user]) {
+        console.log('USER:', user);
+        allUsersById[user].permissions = [];
+
+        Object.keys(userAcls).forEach((permissionKey) => {
+          if (userAcls[permissionKey].indexOf(user) !== -1) {
+            console.log('there is a match!');
+            allUsersById[user].permissions.push(permissionKey);
+          }
+        })
+      }
+    });
+
+    this.setState({allUsersById}, () => {
+      // debugger;
+      console.log('USERS AFTER GETPERMISSIONS:', this.state.allUsersById)});
   }
 
   shouldShowSuccess = {
