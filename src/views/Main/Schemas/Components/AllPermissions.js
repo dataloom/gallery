@@ -241,35 +241,43 @@ export default class AllPermissions extends React.Component {
 
     };
 
-    return (
-      <Table
-        rowHeight={50}
-        rowsCount={numRows}
-        width={1000}
-        height={tableHeight}
-        headerHeight={50}
-        data={data}
-        className={styles.dataTable}>
-        <Column
-          header={<Cell>Email</Cell>}
+    if (numRows > 0) {
+      return (
+        <Table
+          rowHeight={50}
+          rowsCount={numRows}
+          width={1000}
+          height={tableHeight}
+          headerHeight={50}
           data={data}
-          cell={<DataCell data={data} property='userEmails'/>}
-          width={200}
-        />
-        <Column
-          header={<Cell>Roles</Cell>}
-          data={data}
-          cell={<DataCell data={data} property='userRoles'/>}
-          width={500}
-        />
-        <Column
-          header={<Cell>Permissions</Cell>}
-          data={data}
-          cell={<DataCell data={data} property='userPermissions'/>}
-          width={300}
-        />
-      </Table>
-    )
+          className={styles.dataTable}>
+          <Column
+            header={<Cell>Email</Cell>}
+            data={data}
+            cell={<DataCell data={data} property='userEmails'/>}
+            width={200}
+          />
+          <Column
+            header={<Cell>Roles</Cell>}
+            data={data}
+            cell={<DataCell data={data} property='userRoles'/>}
+            width={500}
+          />
+          <Column
+            header={<Cell>Permissions</Cell>}
+            data={data}
+            cell={<DataCell data={data} property='userPermissions'/>}
+            width={300}
+          />
+        </Table>
+      )
+    } else {
+      return (
+        <div>No permissions granted</div>
+      )
+    }
+
+
   }
 
   getPermissionsFromView = (action, view) => {
