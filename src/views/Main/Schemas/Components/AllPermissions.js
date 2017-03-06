@@ -83,7 +83,7 @@ export default class AllPermissions extends React.Component {
   }
 
   componentDidMount() {
-    this.loadAcls(false);
+    this.loadAcls(false, this.getUserPermissions);
   }
 
   loadAllUsersAndRoles = () => {
@@ -97,7 +97,6 @@ export default class AllPermissions extends React.Component {
         users[userId].roles.forEach((role) => {
           if (role !== AUTHENTICATED_USER) allRolesList.add(role);
         });
-        users[userId].permissions = [];
       });
       allUsersById[myId] = null;
       this.setState({
@@ -108,6 +107,15 @@ export default class AllPermissions extends React.Component {
     }).catch(() => {
       this.setState({ loadUsersError: true });
     });
+  }
+
+  getUserPermissions() {
+
+    // for each userbyid
+      // add permissions array: users[userId].permissions = [];
+    //for each userAcl key, if there's a match, push userAcl key to permissions array;
+
+    //setstate
   }
 
   getPermission = (permissions) => {
@@ -154,7 +162,7 @@ export default class AllPermissions extends React.Component {
     }, () => {console.log('USERACLS, ROLESACLS:', this.state.userAcls, this.state.roleAcls)});
   }
 
-  loadAcls = (updateSuccess) => {
+  loadAcls = (updateSuccess, cb) => {
     const { entitySetId } = this.state;
     const { propertyTypeId } = this.props;
     // const { propertyTypeId, entitySetId } = this.props;
@@ -169,6 +177,8 @@ export default class AllPermissions extends React.Component {
     }).catch(() => {
       this.setState({ updateError: true });
     });
+
+    cb();
   }
 
   shouldShowSuccess = {
