@@ -7,6 +7,7 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
+import { Table, Column, Cell } from 'fixed-data-table';
 import styles from '../styles.module.css';
 
 const views = {
@@ -89,8 +90,6 @@ export default class AllPermissions extends React.Component {
   }
 
   loadAllUsersAndRoles = () => {
-    // debugger;
-    console.log('LOADALLUSERSANDROLES');
     let allUsersById = {};
     const allRolesList = new Set();
     const myId = JSON.parse(localStorage.profile).user_id;
@@ -136,7 +135,6 @@ export default class AllPermissions extends React.Component {
   }
 
   updateStateAcls = (aces, updateSuccess) => {
-    console.log('UPDATESTATEACLS, current userAcls:', this.state.userAcls);
     let globalValue = [];
     const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
@@ -167,11 +165,10 @@ export default class AllPermissions extends React.Component {
       newRoleValue: '',
       newEmailValue: '',
       updateError: false
-    }, () => {console.log('USERACLS, ROLESACLS:', this.state.userAcls, this.state.roleAcls)});
+    });
   }
 
   loadAcls = (updateSuccess) => {
-    console.log('LOADACLS');
     const { entitySetId } = this.state;
     const { propertyTypeId } = this.props;
     // const { propertyTypeId, entitySetId } = this.props;
@@ -181,7 +178,6 @@ export default class AllPermissions extends React.Component {
     // HERE IT CAN PERFORM LOGIC FOR BOTH ENTITY AND PROPERTY -> ADD METHODS TO 1. CREATE LIST OF ALL PROPERTIES AND 2. ADD PROPERTY ACES -> PASS INTO ALLPERMISSIONS
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
-      console.log('ACLS:', acls);
       this.updateStateAcls(acls.aces, updateSuccess);
     })
     .catch(() => {
@@ -191,81 +187,131 @@ export default class AllPermissions extends React.Component {
 
   getUserPermissions = () => {
     const { allUsersById, userAcls } = this.state;
-    console.log('GETUSERPERMISSIONS, allusersbyid:', allUsersById);
 
     Object.keys(allUsersById).forEach((user) => {
       if (user && allUsersById[user]) {
-        console.log('USER:', user);
         allUsersById[user].permissions = [];
 
         Object.keys(userAcls).forEach((permissionKey) => {
           if (userAcls[permissionKey].indexOf(user) !== -1) {
-            console.log('there is a match!');
             allUsersById[user].permissions.push(permissionKey);
           }
         })
       }
     });
 
-    this.setState({allUsersById}, () => {
-      // debugger;
-      console.log('USERS AFTER GETPERMISSIONS:', this.state.allUsersById)});
+    this.setState({allUsersById});
   }
 
-  shouldShowSuccess = {
-    true: styles.updateSuccess,
-    false: styles.hidden
+  getDataForTable = () => {
+    const { allUsersById } = this.state;
+    // 1. Map property to 3 separate arrays for each property type -> fixed data table
+    // 2. Map each user info to new object in 1 data array -> react-table
+    var tableData = {};
+    tableData.userEmails = [];
+    tableData.userRoles = [];
+    tableData.userPermissions = [];
+
+    Object.keys(allUsersById).forEach((user) => {
+      if (user && allUsersById[user]) {
+        const userObject = allUsersById[user];
+        tableData.userEmails.push(userObject.email);
+        tableData.userRoles.push(userObject.roles);
+        tableData.userPermissions.push(userObject.permissions);
+      }
+    })
+
+    // const tableData = [];
+    //
+    // Object.keys(allUsersById).forEach((user) => {
+    //   if (user && allUsersById[user]) {
+    //     const userObj = allUsersById[user];
+    //     var simpleUserObj = {};
+    //     simpleUserObj.userEmails = user.userEmails;
+    //     simpleUserObj.userRoles = user.userRoles;
+    //     simpleUserObj.userPermission = user.userPermissions;
+    //
+    //     tableData.push(simpleUserObj);
+    //   }
+    // });
+
+    return tableData;
   }
 
-  shouldShowError = {
-    true: styles.errorMsg,
-    false: styles.hidden
-  }
 
-  switchView = (view) => {
-    this.setState({
-      view,
-      updateSuccess: false,
-      updateError: false
-    });
-  }
+  renderTable = () => {
+    const data = this.getDataForTable();
+    const DataCell = ({rowIndex, property, data}) => {
 
-  getSelectedClassName = (view) => {
-    return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
-  }
+      return(
+        <Cell>
+          {data[property][rowIndex]}
+        </Cell>
+      );
 
-  getFirstLastClassName = (order) => {
-    var firstLastClassName;
-    if (order) {
-      if (order === 'first') {
-        firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
-        firstLastClassName = styles.lastEdmButton;
-      };
+    };
 
-      return firstLastClassName;
-    }
+    // return (
+    //   <Table
+    //     rowHeight={50}
+    //     rowsCount={50}
+    //     width={1200}
+    //     height={1200}
+    //     headerHeight={50}
+    //     data={data}
+    //     className={styles.dataTable}>
+    //     <Column
+    //       header={<Cell>Email</Cell>}
+    //       data={data}
+    //       cell={<Cell>'hi'</Cell>}
+    //       width={200}
+    //     />
+    //     <Column
+    //       header={<Cell>Roles</Cell>}
+    //       data={data}
+    //       cell={<Cell>'hi'</Cell>}
+    //       width={500}
+    //     />
+    //     <Column
+    //       header={<Cell>Permissions</Cell>}
+    //       data={data}
+    //       cell={<Cell>'hi'</Cell>}
+    //       width={500}
+    //     />
+    //   </Table>
+    // )
 
-    return null;
-  }
+    console.log('DATA DATA DATA:', data);
+    return (
+      <Table
+        rowHeight={50}
+        rowsCount={data.userEmails.length + 1}
+        width={1200}
+        height={1200}
+        headerHeight={50}
+        data={data}
+        className={styles.dataTable}>
+        <Column
+          header={<Cell>Email</Cell>}
+          data={data}
+          cell={<DataCell data={data} property='userEmails'/>}
+          width={200}
+        />
+        <Column
+          header={<Cell>Roles</Cell>}
+          data={data}
+          cell={<DataCell data={data} property='userRoles'/>}
+          width={500}
+        />
+        <Column
+          header={<Cell>Permissions</Cell>}
+          data={data}
+          cell={<DataCell data={data} property='userPermissions'/>}
+          width={500}
+        />
+      </Table>
+    )
 
-  getClassName = (view, order) => {
-    var selectedClassName = this.getSelectedClassName(view);
-    var firstLastClassName = this.getFirstLastClassName(order);
-
-    return `${selectedClassName} ${firstLastClassName}`;
-  }
-
-  getPanelViewContents = () => {
-    switch (this.state.view) {
-      case views.ROLES:
-        return this.getRolesView();
-      case views.EMAILS:
-        return this.getEmailsView();
-      case views.GLOBAL:
-      default:
-        return this.getGlobalView();
-    }
   }
 
   getPermissionsFromView = (action, view) => {
@@ -312,268 +358,12 @@ export default class AllPermissions extends React.Component {
     this.updatePermissions(ActionConsts.SET, principal, selectedPermissions);
   }
 
-  updateDropdownValue = (e) => {
-    this.setState({ globalValue: e.value });
-  }
-
-  buttonStyle = (view, viewState, order) => {
-    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
-    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
-
-    return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
-  }
-
-  buttonSelectedStyle = (view, viewState) => {
-    return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
-  }
-
-  buttonFirstLastStyle = (order) => {
-    var firstLastClassName;
-    if (order) {
-      if (order === 'first') {
-        firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
-        firstLastClassName = styles.lastEdmButton;
-      };
-
-      return firstLastClassName;
-    }
-
-    return null;
-  }
-
-  updateGlobalPermissionState = (permission, checked) => {
-    const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
-    if (checked) globalValue.push(permission);
-    this.setState({ globalValue });
-  }
-
-  getGlobalView = () => {
-    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
-    const options = optionNames
-      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden)
-      .map((option) => {
-        const checkboxName = `global-${option}`;
-        return (
-          <div key={option}>
-            <label htmlFor={checkboxName} className={styles.globalLabel}>{option}</label>
-            <input
-                id={checkboxName}
-                type="checkbox"
-                checked={this.state.globalValue.includes(option)}
-                onChange={(e) => {
-                  this.updateGlobalPermissionState(option, e.target.checked);
-                }} />
-          </div>
-        );
-      });
-    return (
-      <div>
-        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
-        <div>Choose the default permissions for all authenticated users:</div>
-        <div className={styles.spacerSmall} />
-        <div className={styles.dropdownWrapper}>
-          {options}
-        </div>
-        <div className={styles.spacerSmall} />
-        <Button
-            bsStyle="primary"
-            onClick={this.updateGlobalPermissions}>Save changes</Button>
-      </div>
-    );
-  }
-
-  changeRolesView = (newView) => {
-    this.setState({ rolesView: newView });
-  }
-
-  updateRoles = (action, role, view) => {
-    const principal = {
-      type: ROLE,
-      id: role
-    };
-
-    // Only if changes were made, save changes
-    if (role) {
-      const permissions = this.getPermissionsFromView(action, view);
-      this.updatePermissions(action, principal, permissions);
-    }
-  }
-
-  handleNewRoleChange = (e) => {
-    const newRoleValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    this.setState({ newRoleValue });
-  }
-
-  viewPermissionTypeButton = (permission, fn, currView, order) => {
-    if (permission === accessOptions.Hidden && this.props.propertyTypeId !== undefined) return null;
-    return (
-      <button
-          onClick={() => {
-            fn(permission);
-          }}
-          className={this.buttonStyle(permission, currView, order)}>
-        <div className={styles.edmNavItemText}>{permission}</div>
-      </button>
-    );
-  }
-
-  getRoleOptions = (roleList) => {
-    const roleOptionsSet = this.state.allRolesList;
-    const roleOptions = [];
-    roleList.forEach((role) => {
-      roleOptionsSet.delete(role);
-    });
-    roleOptionsSet.forEach((role) => {
-      roleOptions.push({ value: role, label: role });
-    });
-    return roleOptions;
-  }
-
-  getRolesView = () => {
-    const { roleAcls, rolesView, newRoleValue } = this.state;
-    const roleList = roleAcls[rolesView];
-    const roleOptions = this.getRoleOptions(roleList);
-    const hiddenBody = roleList.map((role) => {
-      return (
-        <div className={styles.tableRows} key={roleList.indexOf(role)}>
-          <div className={styles.inline}>
-            <button
-                onClick={() => {
-                  this.updateRoles(ActionConsts.REMOVE, role, rolesView);
-                }}
-                className={styles.deleteButton}>-</button>
-          </div>
-          <div className={`${styles.inline} ${styles.padLeft}`}>{role}</div>
-        </div>
-      );
-    });
-    return (
-      <div>
-        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load roles.</div>
-        <div>Choose default permissions for specific roles.</div>
-        <div className={`${styles.inline} ${styles.padTop}`}>
-          {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView, orders.FIRST)}
-          {this.viewPermissionTypeButton(accessOptions.Read, this.changeRolesView, rolesView)}
-          {this.viewPermissionTypeButton(accessOptions.Link, this.changeRolesView, rolesView)}
-          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeRolesView, rolesView, orders.LAST)}
-        </div>
-        <div className={styles.permissionsBodyContainer}>
-          {hiddenBody}
-        </div>
-        <div className={styles.inline}>
-          <Select
-              value={newRoleValue}
-              options={roleOptions}
-              onChange={this.handleNewRoleChange}
-              className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-            <Button
-              bsStyle="primary"
-              className={`${styles.spacerMargin}`}
-              onClick={() => {
-                this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
-              }}>Save</Button>
-        </div>
-      </div>
-    );
-  }
-
-  changeEmailsView = (newView) => {
-    this.setState({ emailsView: newView });
-  }
-
-  updateEmails = (action, userId, view) => {
-    const principal = {
-      type: USER,
-      id: userId
-    };
-    const permissions = this.getPermissionsFromView(action, view);
-    this.updatePermissions(action, principal, permissions);
-  }
-
-  handleNewEmailChange = (e) => {
-    const newEmailValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    this.setState({ newEmailValue });
-  }
-
-  getEmailOptions = (userIdList) => {
-    const emailOptions = [];
-    Object.keys(this.state.allUsersById).forEach((id) => {
-      if (!userIdList.includes(id) && this.state.allUsersById[id] && this.state.allUsersById[id].email) {
-        emailOptions.push({ label: this.state.allUsersById[id].email, value: id });
-      }
-    });
-    return emailOptions;
-  }
-
-  getEmailsView = () => {
-    const { userAcls, emailsView, newEmailValue } = this.state;
-    const userIdList = userAcls[emailsView].filter((userId) => {
-      return (this.state.allUsersById[userId] && this.state.allUsersById[userId].email);
-    });
-
-    const emailOptions = this.getEmailOptions(userIdList);
-    const emailListBody = userIdList.map((userId) => {
-      return (
-        <div className={styles.tableRows} key={userId}>
-          <div className={styles.inline}>
-            <button
-                onClick={() => {
-                  this.updateEmails(ActionConsts.REMOVE, userId, emailsView);
-                }}
-                className={styles.deleteButton}>-</button>
-          </div>
-          <div className={`${styles.inline} ${styles.padLeft}`}>{this.state.allUsersById[userId].email}</div>
-        </div>
-      );
-    });
-
-    return (
-      <div>
-        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load users.</div>
-        <div>Choose permissions for specific users.</div>
-        <div className={`${styles.padTop} ${styles.inline}`}>
-          {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView, orders.FIRST)}
-          {this.viewPermissionTypeButton(accessOptions.Write, this.changeEmailsView, emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Read, this.changeEmailsView, emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Link, this.changeEmailsView, emailsView)}
-          {this.viewPermissionTypeButton(accessOptions.Discover, this.changeEmailsView, emailsView, orders.LAST)}
-        </div>
-        <div className={styles.permissionsBodyContainer}>
-          {emailListBody}
-        </div>
-        <div className={styles.inline}>
-          <Select
-              value={newEmailValue}
-              options={emailOptions}
-              onChange={this.handleNewEmailChange}
-              className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-            <Button
-              bsStyle="primary"
-              className={`${styles.spacerMargin}`}
-              onClick={() => {
-                this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
-              }}>Save</Button>
-        </div>
-      </div>
-    );
-  }
-
-  renderViewButton = (view, order) => {
-    return (
-      <button
-          onClick={() => {
-            this.switchView(view);
-          }}
-          className={this.getClassName(view, order)}>
-        <div className={styles.edmNavItemText}>{viewLabels[view]}</div>
-      </button>
-    );
-  }
 
   render() {
     return(
-      <div>AllPermissions</div>
+      <div>AllPermissions
+        {this.renderTable()}
+      </div>
     )
   }
 }
