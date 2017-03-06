@@ -64,12 +64,13 @@ class EntitySetDetailComponent extends React.Component {
     this.props.loadEntitySet();
   }
 
-  componentWillReceiveProps() {
-    if (this.props.entitySet !== undefined) {
-      localStorage.setItem('entitySet', JSON.stringify(this.props.entitySet));
-      const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined ) {
+      const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
         return property.id;
       });
+
+      localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
       localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
     }
   }
