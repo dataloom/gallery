@@ -45,7 +45,7 @@ class SideNav extends React.Component {
       <div className={styles.sideNavItem}>
         <a href={route} target='_blank'>
           <div className={styles.sideNavItemIcon}>
-            <FontAwesome name="fa fa-flag fa-2x" aria-hidden="true" />
+            <FontAwesome name="flag" size="2x"/>
           </div>
           <div className={styles.sideNavItemText}>{ text }</div>
         </a>
