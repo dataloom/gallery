@@ -97,13 +97,14 @@ export default class AllPermissions extends React.Component {
         users[userId].roles.forEach((role) => {
           if (role !== AUTHENTICATED_USER) allRolesList.add(role);
         });
+        users[userId].permissions = [];
       });
       allUsersById[myId] = null;
       this.setState({
         allUsersById,
         allRolesList,
         loadUsersError: false
-      });
+      }, () => {console.log('ALL USERS, ALL ROLES:', this.state.allUsersById, this.state.allRolesList)});
     }).catch(() => {
       this.setState({ loadUsersError: true });
     });
@@ -150,7 +151,7 @@ export default class AllPermissions extends React.Component {
       newRoleValue: '',
       newEmailValue: '',
       updateError: false
-    });
+    }, () => {console.log('USERACLS, ROLESACLS:', this.state.userAcls, this.state.roleAcls)});
   }
 
   loadAcls = (updateSuccess) => {
@@ -163,6 +164,7 @@ export default class AllPermissions extends React.Component {
     // HERE IT CAN PERFORM LOGIC FOR BOTH ENTITY AND PROPERTY -> ADD METHODS TO 1. CREATE LIST OF ALL PROPERTIES AND 2. ADD PROPERTY ACES -> PASS INTO ALLPERMISSIONS
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
+      console.log('ACLS:', acls);
       this.updateStateAcls(acls.aces, updateSuccess);
     }).catch(() => {
       this.setState({ updateError: true });
