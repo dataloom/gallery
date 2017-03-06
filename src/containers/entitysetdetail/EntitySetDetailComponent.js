@@ -122,12 +122,12 @@ class EntitySetDetailComponent extends React.Component {
     if (!this.props.entitySet) return null;
     return (
       <div className={styles.buttonWrapper}>
-        <Button bsStyle="primary" className={styles.center}>
-          <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+        <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+          <Button bsStyle="primary" className={styles.center}>
             <FontAwesome name="search" />
             <span className={styles.buttonText}>Search this entity set</span>
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     );
   }
