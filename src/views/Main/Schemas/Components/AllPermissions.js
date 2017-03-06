@@ -187,17 +187,30 @@ export default class AllPermissions extends React.Component {
   }
 
   getUserPermissions = () => {
-    const { allUsersById, userAcls } = this.state;
+    const { allUsersById, userAcls, roleAcls } = this.state;
 
+    // For each user, add their permissions
     Object.keys(allUsersById).forEach((user) => {
       if (user && allUsersById[user]) {
         allUsersById[user].permissions = [];
 
+        // Add individual permissions
         Object.keys(userAcls).forEach((permissionKey) => {
           if (userAcls[permissionKey].indexOf(user) !== -1) {
             allUsersById[user].permissions.push(permissionKey);
           }
-        })
+        });
+
+        // Add any additional permissions based on user's roles' permissions
+        if (allUsersById[user].roles.length > 0) {
+          Object.keys(roleAcls).forEach((permissionKey) => {
+            allUsersById[user].roles.forEach((role) => {
+              if (roleAcls[permissionKey].indexOf(role) !== -1 && allUsersById[user].permissions.indexOf(role === -1)) {
+                allUsersById[user].permissions.push(role);
+              }
+            })
+          });
+        }
       }
     });
 
@@ -227,13 +240,11 @@ export default class AllPermissions extends React.Component {
 
   renderTable = () => {
     const data = this.getDataForTable();
-    console.log('RENDERTABLE DATA:', data);
     const numRows = data.length;
     const tableHeight = (numRows + 1) * 50;
 
     const DataCell = ({rowIndex, col, data}) => {
       var cellData = data[rowIndex][col];
-      console.log('CELL DATA:', cellData);
 
       return (
         <Cell>
@@ -277,8 +288,6 @@ export default class AllPermissions extends React.Component {
         <div>No permissions granted</div>
       )
     }
-
-
   }
 
   getPermissionsFromView = (action, view) => {
