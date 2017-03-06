@@ -206,22 +206,20 @@ export default class AllPermissions extends React.Component {
 
   getDataForTable = () => {
     const { allUsersById } = this.state;
-    var tableData = {};
-    tableData.userEmails = [];
-    tableData.userRoles = [];
-    tableData.userPermissions = [];
+    var tableData = [];
 
     Object.keys(allUsersById).forEach((user) => {
       if (user && allUsersById[user]) {
         const userObject = allUsersById[user];
+        var userData = [];
         if (userObject.email && userObject.permissions && userObject.permissions.length !== 0) {
-          tableData.userEmails.push(userObject.email);
-          tableData.userRoles.push(userObject.roles);
-          tableData.userPermissions.push(userObject.permissions);
+          var rolesStr = userObject.roles.join(', ');
+          var permissionsStr = userObject.permissions.join(', ');
+          userData.push(userObject.email, rolesStr, permissionsStr);
+          tableData.push(userData);
         }
-
       }
-    })
+    });
 
     return tableData;
   }
@@ -229,17 +227,20 @@ export default class AllPermissions extends React.Component {
 
   renderTable = () => {
     const data = this.getDataForTable();
-    const numRows = data.userEmails.length;
+    console.log('RENDERTABLE DATA:', data);
+    const numRows = data.length;
     const tableHeight = (numRows + 1) * 50;
-    const DataCell = ({rowIndex, property, data}) => {
 
-      return(
+    const DataCell = ({rowIndex, col, data}) => {
+      var cellData = data[rowIndex][col];
+      console.log('CELL DATA:', cellData);
+
+      return (
         <Cell>
-          {data[property][rowIndex]}
+          {cellData}
         </Cell>
       );
-
-    };
+    }
 
     if (numRows > 0) {
       return (
@@ -254,19 +255,19 @@ export default class AllPermissions extends React.Component {
           <Column
             header={<Cell>Email</Cell>}
             data={data}
-            cell={<DataCell data={data} property='userEmails'/>}
+            cell={<DataCell data={data} col={0}/>}
             width={200}
           />
           <Column
             header={<Cell>Roles</Cell>}
             data={data}
-            cell={<DataCell data={data} property='userRoles'/>}
+            cell={<DataCell data={data} col={1}/>}
             width={500}
           />
           <Column
             header={<Cell>Permissions</Cell>}
             data={data}
-            cell={<DataCell data={data} property='userPermissions'/>}
+            cell={<DataCell data={data} col={2}/>}
             width={300}
           />
         </Table>
