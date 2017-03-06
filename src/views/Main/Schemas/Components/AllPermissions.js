@@ -8,6 +8,8 @@ import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
 import { Table, Column, Cell } from 'fixed-data-table';
+import Page from '../../../../components/page/Page';
+import PageConsts from '../../../../utils/Consts/PageConsts';
 import styles from '../styles.module.css';
 
 const views = {
@@ -215,9 +217,13 @@ export default class AllPermissions extends React.Component {
     Object.keys(allUsersById).forEach((user) => {
       if (user && allUsersById[user]) {
         const userObject = allUsersById[user];
-        tableData.userEmails.push(userObject.email);
-        tableData.userRoles.push(userObject.roles);
-        tableData.userPermissions.push(userObject.permissions);
+        console.log('user object permissions:', userObject.permissions);
+        if (userObject.email && userObject.permissions && userObject.permissions.length !== 0) {
+          tableData.userEmails.push(userObject.email);
+          tableData.userRoles.push(userObject.roles);
+          tableData.userPermissions.push(userObject.permissions);
+        }
+
       }
     })
 
@@ -241,6 +247,8 @@ export default class AllPermissions extends React.Component {
 
   renderTable = () => {
     const data = this.getDataForTable();
+    const numRows = data.userEmails.length;
+    const tableHeight = (numRows + 1) * 50;
     const DataCell = ({rowIndex, property, data}) => {
 
       return(
@@ -285,9 +293,9 @@ export default class AllPermissions extends React.Component {
     return (
       <Table
         rowHeight={50}
-        rowsCount={data.userEmails.length + 1}
+        rowsCount={numRows}
         width={1200}
-        height={1200}
+        height={tableHeight}
         headerHeight={50}
         data={data}
         className={styles.dataTable}>
@@ -361,9 +369,14 @@ export default class AllPermissions extends React.Component {
 
   render() {
     return(
-      <div>AllPermissions
-        {this.renderTable()}
-      </div>
+      <Page>
+        <Page.Header>
+          <h1>All Permissions</h1>
+        </Page.Header>
+        <Page.Body>
+          {this.renderTable()}
+        </Page.Body>
+      </Page>
     )
   }
 }
