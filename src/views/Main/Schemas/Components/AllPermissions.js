@@ -247,7 +247,7 @@ export default class AllPermissions extends React.Component {
           rowHeight={50}
           rowsCount={numRows}
           width={1000}
-          height={tableHeight}
+          height={tableHeight + 2}
           headerHeight={50}
           data={data}
           className={styles.dataTable}>
