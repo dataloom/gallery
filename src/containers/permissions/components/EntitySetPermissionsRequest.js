@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import { EntitySetPropType } from '../../edm/EdmModel';
 import { StatusPropType, RequestStatus } from '../PermissionsStorage'
 import { createPrincipalReference } from '../../principals/PrincipalsStorage';
-import { getDisplayName } from '../../principals/PrincipalUtils';
+import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
 import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
 import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
@@ -134,7 +134,7 @@ class EntitySetPermissionsRequest extends React.Component {
       <div className={styles.permissionsRequest}>
         <div className={styles.permissionRequestHeader}>
           <div className={styles.permissionRequestTitle}>
-            <span className={styles.principalName}>{ getDisplayName(principal) } </span>
+            <span className={styles.principalName}>{ `${getDisplayName(principal)} (${getEmail(principal)})`} </span>
             requested permission on
             <a onClick={this.toggleBody}> { statuses.length } properties</a>
           </div>
