@@ -1,22 +1,18 @@
-/*
- * @flow
- */
-
-function ifElse(condition :boolean) :Function {
-  return (isTrue :any, isFalse :any) => {
+function ifElse(condition) {
+  return (isTrue, isFalse) => {
     return condition ? isTrue : isFalse;
   };
 }
 
-const BUILD :string = process.env.BUILD || 'development';
+const BUILD = process.env.BUILD || 'development';
 
-const isDev :boolean = BUILD === 'development';
-const isProd :boolean = BUILD === 'production';
+const isDev = BUILD === 'development';
+const isProd = BUILD === 'production';
 
-const ifDev :Function = ifElse(isDev);
-const ifProd :Function = ifElse(isProd);
+const ifDev = ifElse(isDev);
+const ifProd = ifElse(isProd);
 
-export {
+module.exports = {
   isDev,
   isProd,
   ifDev,

@@ -1,6 +1,8 @@
 const loaders = require('./loaders');
+const plugins = require('./plugins');
 
-exports = {
+
+module.exports = {
   module: {
     rules: [
       loaders.BABEL_LOADER,
@@ -11,4 +13,8 @@ exports = {
       loaders.MEDIA_URL_LOADER
     ]
   },
+  plugins: [
+    plugins.DEFINE_PLUGIN,
+    plugins.EXTRACT_TEXT_PLUGIN
+  ]
 };
