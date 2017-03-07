@@ -299,7 +299,7 @@ export class PermissionsPanel extends React.Component {
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const options = optionNames
-      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Hidden)
+      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden)
       .map((option) => {
         const checkboxName = `global-${option}`;
         return (

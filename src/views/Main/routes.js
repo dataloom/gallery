@@ -17,8 +17,8 @@ import DatasetsComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
-import { configure as edmApiConfigure } from '../../containers/Api';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
+import AllPermissions from './Schemas/Components/AllPermissions';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -42,8 +42,6 @@ const requireAuth = (nextState, replace) => {
     const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
     const baseUrl = (__DEV__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
-    // TODO: Remove once loom-data-js upgrades
-    edmApiConfigure(baseUrl, authToken);
   }
 };
 
@@ -93,6 +91,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
+      <Route path={'/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path='*' component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
