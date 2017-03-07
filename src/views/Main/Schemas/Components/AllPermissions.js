@@ -238,12 +238,11 @@ export default class AllPermissions extends React.Component {
   }
 
 
-  renderTable = () => {
+  renderTableIndividualPermissions = () => {
     const data = this.getDataForTable();
     const numRows = data.length;
     const tableHeight = () => {
       if (numRows <= 10) {
-        console.log('less than 10');
         return ((numRows + 1) * 50)
       } else {
         return (500)
@@ -297,6 +296,81 @@ export default class AllPermissions extends React.Component {
     }
   }
 
+  renderTableRolePermissions = () => {
+    const { roleAcls } = this.state;
+    var rolePermissions = {};
+    var tableData = [];
+    var numRows = 0;
+    const tableHeight = () => {
+      if (numRows <= 10) {
+        return ((numRows + 1) * 50)
+      } else {
+        return (500)
+      }
+    }
+
+    // Store all roles and their respective permissions
+    Object.keys(roleAcls).forEach((permission) => {
+      roleAcls[permission].forEach((role) => {
+        if (!rolePermissions.hasOwnProperty(role)) {
+          rolePermissions[role] = [];
+        }
+
+        if (rolePermissions[role].indexOf(permission) === -1) {
+          rolePermissions[role].push(permission);
+        }
+      })
+    });
+
+    // Format data for fixed-data-table
+    Object.keys(rolePermissions).forEach((key) => {
+      var row = [key];
+      var permissionsStr = rolePermissions[key].join(', ');
+      row.push(permissionsStr);
+      tableData.push(row);
+    });
+
+    numRows = tableData.length;
+
+    const DataCell = ({rowIndex, col, data}) => {
+      var cellData = '';
+      if (tableData.length !== 0) {
+        cellData = data[rowIndex][col];
+      }
+
+      return (
+        <Cell>
+          {cellData}
+        </Cell>
+      );
+    }
+
+    return (
+      <Table
+        rowHeight={50}
+        rowsCount={numRows}
+        width={1000}
+        height={tableHeight() + 2}
+        headerHeight={50}
+        data={tableData}
+        className={styles.dataTable}>
+        <Column
+          header={<Cell>Roles</Cell>}
+          data={tableData}
+          cell={<DataCell data={tableData} col={0}/>}
+          width={200}
+        />
+        <Column
+          header={<Cell>Permissions</Cell>}
+          data={tableData}
+          cell={<DataCell data={tableData} col={1}/>}
+          width={800}
+        />
+      </Table>
+    )
+  }
+
+
   getPermissionsFromView = (action, view) => {
     return (action === ActionConsts.REMOVE) ? [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
   }
@@ -348,8 +422,10 @@ export default class AllPermissions extends React.Component {
         <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
-          <h3>Individual Permissions</h3>
-          {this.renderTable()}
+          <h3>Entity: Individual Permissions</h3>
+          {this.renderTableIndividualPermissions()}
+          <h3>Entity: Role Permissions</h3>
+          {this.renderTableRolePermissions()}
         </Page.Body>
       </Page>
     )
