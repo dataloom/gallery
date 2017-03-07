@@ -157,12 +157,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-<<<<<<< HEAD
     getOwnedDatasetsIdsRequest,
     createEntitySetReset
-=======
-    getOwnedDatasetsIdsRequest
->>>>>>> develop
   };
 
   return {
