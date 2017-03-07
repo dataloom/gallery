@@ -22,14 +22,14 @@ npm install
 
 **Running locally**
 
-1. Run cassandra
+1. Run cassandra: `cassandra`
 2. Run elasticsearch with cluster name "loom_development"
 ```
 elasticsearch -E cluster.name=loom_development
 ```
 3. Run [conductor](https://github.com/dataloom/conductor) and [datastore](https://github.com/dataloom/datastore) from the outer directory they are contained in.
 ```
-./gradlew :kryptnostic-conductor:run
+./gradlew :conductor:run
 ./gradlew :datastore:run
 ```
 4. Run the server on http://localhost:9000/gallery/ within the gallery project.
