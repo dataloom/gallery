@@ -50,7 +50,7 @@ class DatasetsComponent extends React.Component {
   closeModal = () => {
     this.setState({
       isModalOpen: false
-    })
+    });
   };
 
   getDefaultContact = () => {
