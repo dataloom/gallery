@@ -2,7 +2,7 @@
  * @flow
  */
 
-import PACKAGE from '../package.json';
+const PACKAGE = require('../package.json');
 
 const BANNER = `
 ${PACKAGE.name} - v${PACKAGE.version}
@@ -16,7 +16,7 @@ const APP_INDEX_HTML = 'index.html';
 const APP_JS = 'app.js';
 const APP_CSS = 'app.css';
 
-export default {
+module.exports = {
   BANNER,
   APP_INDEX_HTML,
   APP_JS,
