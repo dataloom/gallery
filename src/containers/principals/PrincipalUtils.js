@@ -27,3 +27,12 @@ export function getDisplayName(principal) {
 
   return '';
 }
+
+export function getEmail(principal) {
+  const email = getProperty(principal, 'email');
+  if (email) {
+    return email;
+  }
+
+  return '';
+}
