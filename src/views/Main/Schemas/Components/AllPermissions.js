@@ -8,6 +8,7 @@ import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
 import { Table, Column, Cell } from 'fixed-data-table';
+import SampleBootstrapTable from './BootstrapTable';
 import Page from '../../../../components/page/Page';
 import PageConsts from '../../../../utils/Consts/PageConsts';
 import styles from '../styles.module.css';
@@ -217,7 +218,7 @@ export default class AllPermissions extends React.Component {
     this.setState({allUsersById});
   }
 
-  getDataForTable = () => {
+  getIndividualPermissions = () => {
     const { allUsersById } = this.state;
     var tableData = [];
 
@@ -239,7 +240,7 @@ export default class AllPermissions extends React.Component {
 
 
   renderTableIndividualPermissions = () => {
-    const data = this.getDataForTable();
+    const data = this.getIndividualPermissions();
     const numRows = data.length;
     const tableHeight = () => {
       if (numRows <= 10) {
@@ -370,51 +371,6 @@ export default class AllPermissions extends React.Component {
     )
   }
 
-
-  getPermissionsFromView = (action, view) => {
-    return (action === ActionConsts.REMOVE) ? [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
-  }
-
-  updatePermissions(rawAction, principal, rawPermissions) {
-    const { entitySetId } = this.state;
-    const { propertyTypeId } = this.props;
-    const aclKey = [entitySetId];
-    if (propertyTypeId) aclKey.push(propertyTypeId);
-
-    let action = rawAction;
-    let permissions = rawPermissions;
-    if (action === ActionConsts.SET && permissions.length === 0) {
-      action = ActionConsts.REMOVE;
-      permissions = permissionLevels.owner;
-    }
-    const aces = [{ principal, permissions }];
-    const acl = { aclKey, aces };
-    const req = { action, acl };
-    PermissionsApi.updateAcl(req)
-    .then(() => {
-      this.loadAcls(true);
-    }).catch(() => {
-      this.setState({
-        updateError: true
-      });
-    });
-  }
-
-  updateGlobalPermissions = () => {
-    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
-    const selectedPermissions = this.state.globalValue.map((name) => {
-      return name.toUpperCase();
-    });
-
-    const principal = {
-      type: ROLE,
-      id: AUTHENTICATED_USER
-    };
-
-    this.updatePermissions(ActionConsts.SET, principal, selectedPermissions);
-  }
-
-
   render() {
     return(
       <Page>
@@ -426,6 +382,8 @@ export default class AllPermissions extends React.Component {
           {this.renderTableIndividualPermissions()}
           <h3>Entity: Role Permissions</h3>
           {this.renderTableRolePermissions()}
+          <h3>Bootstrap</h3>
+          <SampleBootstrapTable />
         </Page.Body>
       </Page>
     )
