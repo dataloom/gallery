@@ -66,15 +66,17 @@ export class PermissionsPanel extends React.Component {
       updateSuccess: false,
       updateError: false,
       globalValue: [],
-      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
       newRoleValue: '',
       newEmailValue: '',
+      loadUsersError: false,
+
+      // Should be passed in via parent or redux
+      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
+      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       allUsersById: {},
-      allRolesList: new Set(),
-      loadUsersError: false
+      allRolesList: new Set()
     };
   }
 
@@ -82,6 +84,8 @@ export class PermissionsPanel extends React.Component {
     this.loadAcls(false);
   }
 
+
+//// MOVE TO ENTITYSETDETAIL B/C USED IN ALLPERMISSIONS /////
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
@@ -172,12 +176,47 @@ export class PermissionsPanel extends React.Component {
     false: styles.hidden
   }
 
-  switchView = (view) => {
-    this.setState({
-      view,
-      updateSuccess: false,
-      updateError: false
+
+
+
+
+  //// LOGIC FOR MODAL VIEW ONLY  ///////
+  updatePermissions(rawAction, principal, rawPermissions) {
+    const { entitySetId, propertyTypeId } = this.props;
+    const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
+
+    let action = rawAction;
+    let permissions = rawPermissions;
+    if (action === ActionConsts.SET && permissions.length === 0) {
+      action = ActionConsts.REMOVE;
+      permissions = permissionLevels.owner;
+    }
+    const aces = [{ principal, permissions }];
+    const acl = { aclKey, aces };
+    const req = { action, acl };
+    PermissionsApi.updateAcl(req)
+    .then(() => {
+      this.loadAcls(true);
+    }).catch(() => {
+      this.setState({
+        updateError: true
+      });
     });
+  }
+
+  updateGlobalPermissions = () => {
+    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
+    const selectedPermissions = this.state.globalValue.map((name) => {
+      return name.toUpperCase();
+    });
+
+    const principal = {
+      type: ROLE,
+      id: AUTHENTICATED_USER
+    };
+
+    this.updatePermissions(ActionConsts.SET, principal, selectedPermissions);
   }
 
   getSelectedClassName = (view) => {
@@ -218,48 +257,6 @@ export class PermissionsPanel extends React.Component {
     }
   }
 
-  getPermissionsFromView = (action, view) => {
-    return (action === ActionConsts.REMOVE) ? [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
-  }
-
-  updatePermissions(rawAction, principal, rawPermissions) {
-    const { entitySetId, propertyTypeId } = this.props;
-    const aclKey = [entitySetId];
-    if (propertyTypeId) aclKey.push(propertyTypeId);
-
-    let action = rawAction;
-    let permissions = rawPermissions;
-    if (action === ActionConsts.SET && permissions.length === 0) {
-      action = ActionConsts.REMOVE;
-      permissions = permissionLevels.owner;
-    }
-    const aces = [{ principal, permissions }];
-    const acl = { aclKey, aces };
-    const req = { action, acl };
-    PermissionsApi.updateAcl(req)
-    .then(() => {
-      this.loadAcls(true);
-    }).catch(() => {
-      this.setState({
-        updateError: true
-      });
-    });
-  }
-
-  updateGlobalPermissions = () => {
-    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
-    const selectedPermissions = this.state.globalValue.map((name) => {
-      return name.toUpperCase();
-    });
-
-    const principal = {
-      type: ROLE,
-      id: AUTHENTICATED_USER
-    };
-
-    this.updatePermissions(ActionConsts.SET, principal, selectedPermissions);
-  }
-
   updateDropdownValue = (e) => {
     this.setState({ globalValue: e.value });
   }
@@ -289,7 +286,7 @@ export class PermissionsPanel extends React.Component {
 
     return null;
   }
-  
+
   updateGlobalPermissionState = (permission, checked) => {
     const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
     if (checked) globalValue.push(permission);
@@ -333,6 +330,10 @@ export class PermissionsPanel extends React.Component {
 
   changeRolesView = (newView) => {
     this.setState({ rolesView: newView });
+  }
+
+  getPermissionsFromView = (action, view) => {
+    return (action === ActionConsts.REMOVE) ? [view.toUpperCase()] : permissionLevels[view.toLowerCase()];
   }
 
   updateRoles = (action, role, view) => {
@@ -517,6 +518,14 @@ export class PermissionsPanel extends React.Component {
         <div className={styles.edmNavItemText}>{viewLabels[view]}</div>
       </button>
     );
+  }
+
+  switchView = (view) => {
+    this.setState({
+      view,
+      updateSuccess: false,
+      updateError: false
+    });
   }
 
   render() {

@@ -70,6 +70,7 @@ class EntitySetDetailComponent extends React.Component {
         return property.id;
       });
 
+      // TODO: Move to redux
       localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
       localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
     }
