@@ -9,6 +9,7 @@ import Page from '../../components/page/Page';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import CreateEntitySet from '../entitysetforms/CreateEntitySet';
+import { createEntitySetReset } from '../entitysetforms/CreateEntitySetActionFactories.js';
 import styles from './datasets.module.css';
 
 class DatasetsComponent extends React.Component {
@@ -16,7 +17,8 @@ class DatasetsComponent extends React.Component {
     auth: PropTypes.object.isRequired,
     pagingToken: PropTypes.string,
     actions: PropTypes.shape({
-      getOwnedDatasetsIdsRequest: PropTypes.func.isRequired
+      getOwnedDatasetsIdsRequest: PropTypes.func.isRequired,
+      createEntitySetReset: PropTypes.func.isRequired
     }).isRequired,
     ownedEntitySets: PropTypes.instanceOf(Immutable.List).isRequired,
     asyncStatus: AsyncStatePropType.isRequired,
@@ -39,6 +41,7 @@ class DatasetsComponent extends React.Component {
   }
 
   onAddDataset = () => {
+    this.props.actions.createEntitySetReset();
     this.setState({
       isModalOpen: true
     });
@@ -152,10 +155,10 @@ function mapStateToProps(state) {
   };
 }
 
-// TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   const actions = {
-    getOwnedDatasetsIdsRequest
+    getOwnedDatasetsIdsRequest,
+    createEntitySetReset
   };
 
   return {

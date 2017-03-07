@@ -64,6 +64,13 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
           errorMessage: ''
         }
       });
+    case actionTypes.CREATE_ENTITY_SET_RESET:
+      return state.merge({
+        createEntitySetAsyncState: {
+          status: ASYNC_STATUS.PENDING,
+          errorMessage: ''
+        }
+      });
 
     default:
       return state;
