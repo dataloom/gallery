@@ -129,12 +129,13 @@ class EntitySetPermissionsRequest extends React.Component {
     const content = propertyTypes.map(propertyType => {
       return this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.id]);
     });
+    const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`
 
     return (
       <div className={styles.permissionsRequest}>
         <div className={styles.permissionRequestHeader}>
           <div className={styles.permissionRequestTitle}>
-            <span className={styles.principalName}>{ `${getDisplayName(principal)} (${getEmail(principal)})`} </span>
+            <span className={styles.principalName}>{principalDisplayName} </span>
             requested permission on
             <a onClick={this.toggleBody}> { statuses.length } properties</a>
           </div>
