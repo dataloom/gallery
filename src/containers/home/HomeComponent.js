@@ -7,7 +7,7 @@ import { getShallowEdmObjectSilent } from '../edm/EdmStorage';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import WelcomeInstructionsBox from './WelcomeInstructionsBox';
 import EntitySetList from '../../components/entityset/EntitySetList';
-import { popularEntitySetsRequest } from '../catalog/CatalogActionFactories';
+import { allEntitySetsRequest } from '../catalog/CatalogActionFactories';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import PageConsts from '../../utils/Consts/PageConsts';
 
@@ -31,7 +31,7 @@ class HomeComponent extends React.Component {
     this.props.loadEntityTypes();
   }
 
-  renderPopularEntitySets = () => {
+  renderAllEntitySets = () => {
     if (this.props.entitySets !== undefined && this.props.entitySets.length > 0) {
       return (<AsyncContent
           {...this.props.asyncState}
@@ -67,9 +67,9 @@ class HomeComponent extends React.Component {
           </div>
         </Page.Header>
         <Page.Body>
-          <div className={styles.getStartedMessage}>Get started by exploring our most popular entity sets
+          <div className={styles.getStartedMessage}>Get started by exploring entity sets you can view
           </div>
-          {this.renderPopularEntitySets()}
+          {this.renderAllEntitySets()}
         </Page.Body>
       </Page>
     );
@@ -81,8 +81,8 @@ function mapStateToProps(state) {
   const normalizedData = state.get('normalizedData').toJS();
 
   let entitySets = [];
-  if (catalog && catalog.popularEntitySetReferences) {
-    entitySets = catalog.popularEntitySetReferences.map((reference) => {
+  if (catalog && catalog.allEntitySetReferences) {
+    entitySets = catalog.allEntitySetReferences.map((reference) => {
       return getShallowEdmObjectSilent(normalizedData, reference, null);
     }).filter((entitySet) => {
       return entitySet;
@@ -98,7 +98,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     loadEntitySets: () => {
-      dispatch(popularEntitySetsRequest());
+      dispatch(allEntitySetsRequest());
     },
     loadPropertyTypes: () => {
       dispatch(edmActionFactories.allPropertyTypesRequest());

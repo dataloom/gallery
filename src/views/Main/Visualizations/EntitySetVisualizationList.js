@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import Promise from 'bluebird';
-import { AuthorizationApi, EntityDataModelApi, SearchApi } from 'loom-data';
+import { AuthorizationApi, EntityDataModelApi } from 'loom-data';
 import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import { Permission } from '../../../core/permissions/Permission';
@@ -25,7 +25,7 @@ export class EntitySetVisualizationList extends React.Component {
   }
 
   getEntitySets = () => {
-    SearchApi.getPopularEntitySets()
+    EntityDataModelApi.getAllEntitySets()
       .then((entitySets) => {
         this.getEntityTypes(entitySets)
         .then((idToEdmObjects) => {
