@@ -4,7 +4,7 @@ import Immutable from 'immutable';
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 
-import { SearchApi, DataModel } from 'loom-data';
+import { EntityDataModelApi, SearchApi, DataModel } from 'loom-data';
 
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
@@ -46,25 +46,25 @@ function searchCatalogEpic(action$) {
     .mergeMap(searchCatalog);
 }
 
-function popularEntitySetsEpic(action$) {
-  return action$.ofType(actionTypes.POPULAR_ENTITY_SETS_REQUEST)
+function allEntitySetsEpic(action$) {
+  return action$.ofType(actionTypes.ALL_ENTITY_SETS_REQUEST)
     .mergeMap(action => {
-      return Observable.from(SearchApi.getPopularEntitySets())
+      return Observable.from(EntityDataModelApi.getAllEntitySets())
       .map(result => normalize(result, [EntitySetNschema]))
       .map(Immutable.fromJS)
       .flatMap(normalizedData => {
         return [
           edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-          actionFactories.popularEntitySetsResolve(normalizedData.get('result').map(createEntitySetReference))
+          actionFactories.allEntitySetsResolve(normalizedData.get('result').map(createEntitySetReference))
         ]
       })
       // Error Handling
       .catch(() => {
         return Observable.of(
-          actionFactories.popularEntitySetsReject('Error loading popular entity sets')
+          actionFactories.allEntitySetsReject('Error loading entity sets')
         );
       });
     });
 }
 
-export default combineEpics(searchCatalogEpic, popularEntitySetsEpic);
+export default combineEpics(searchCatalogEpic, allEntitySetsEpic);
