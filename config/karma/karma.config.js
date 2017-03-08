@@ -38,7 +38,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       [require.resolve('babel-polyfill')]: ['webpack'],
-      [TEST_GLOB_PATH]: ['webpack']
+      [TEST_GLOB_PATH]: ['webpack', 'sourcemap']
     },
     webpack: require('../webpack/webpack.config.test'),
 

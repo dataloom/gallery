@@ -16,5 +16,6 @@ module.exports = {
   plugins: [
     plugins.DEFINE_PLUGIN,
     plugins.EXTRACT_TEXT_PLUGIN
-  ]
+  ],
+  devtool: 'inline-source-map'
 };
