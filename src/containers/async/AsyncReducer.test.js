@@ -13,6 +13,6 @@ describe('AsyncReducer', function() {
     const action = actionFactory.updateAsyncReference(reference, value);
 
     const newState = reducer(INITIAL_STATE, action);
-    expect(newState).to.have.deep.property('test.123', 'hello');
+    expect(newState).to.have.deep.property([reference.namespace, reference.id], value);
   });
 });
