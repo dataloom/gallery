@@ -148,7 +148,7 @@ function addRoleToUserEpic(action$ :Observable<Action>) :Observable<Action> {
 }
 
 function removeRoleFromUserEpic(action$ :Observable<Action>) :Observable<Action> {
-  
+
   return action$
     .ofType(PrincipalsActionTypes.REMOVE_ROLE_FROM_USER_REQUEST)
     .mergeMap((action :Action) => {
