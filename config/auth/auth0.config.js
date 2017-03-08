@@ -1,10 +1,16 @@
+/*
+ * @flow
+ */
+
 /* eslint-disable import/extensions */
 
-const isProd = require ('../env');
+import {
+  isProd
+} from '../env';
 
-exports.AUTH0_CLIENT_ID =
+export const AUTH0_CLIENT_ID :string =
   isProd
     ? 'KvwsETaUxuXVjW2cmz2LbdqXQBdYs6wH'
     : 'PTmyExdBckHAiyOjh4w2MqSIUGWWEdf8';
 
-exports.AUTH0_DOMAIN = 'loom.auth0.com';
+export const AUTH0_DOMAIN :string = 'loom.auth0.com';

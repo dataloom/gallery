@@ -4,15 +4,15 @@ function ifElse(condition) {
   };
 }
 
-const BUILD = process.env.BUILD || 'development';
+const BUILD :string = process.env.BUILD || 'development';
 
-const isDev = BUILD === 'development';
-const isProd = BUILD === 'production';
+const isDev :boolean = BUILD === 'development';
+const isProd :boolean = BUILD === 'production';
 
-const ifDev = ifElse(isDev);
-const ifProd = ifElse(isProd);
+const ifDev :Function = ifElse(isDev);
+const ifProd :Function = ifElse(isProd);
 
-module.exports = {
+export {
   isDev,
   isProd,
   ifDev,
