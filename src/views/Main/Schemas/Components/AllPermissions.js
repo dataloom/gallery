@@ -7,8 +7,6 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
-import { Table, Column, Cell } from 'fixed-data-table';
-import SampleBootstrapTable from './BootstrapTable';
 import ExpandableTable from './ExpandableTable';
 import Page from '../../../../components/page/Page';
 import PageConsts from '../../../../utils/Consts/PageConsts';
@@ -427,26 +425,10 @@ export default class AllPermissions extends React.Component {
         <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
-          <h3>Custom Table</h3>
+          <h3>Individual Permissions</h3>
           <ExpandableTable users={USERS} headers={HEADERS} />
         </Page.Body>
       </Page>
     )
   }
 }
-
-// <h3>Entity: Individual Permissions</h3>
-// {this.renderTableIndividualPermissions()}
-// <h3>Entity: Role Permissions</h3>
-// {this.renderTableRolePermissions()}
-
-// <h3>Custom Table 2</h3>
-// <table className={styles.expandableTable}>
-//   <thead>
-//     <tr><th>1</th><th>2</th></tr>
-//   </thead>
-//   <tbody>
-//     <tr><td>1</td><td>2</td></tr>
-//     <tr><td>1</td><td>2</td></tr>
-//   </tbody>
-// </table>

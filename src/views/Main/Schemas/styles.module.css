@@ -151,22 +151,6 @@
   margin-right: 10px;
 }
 
-.expandableTable {
-
-}
-
-.expandableRow {
-
-}
-
-.collapse {
-
-}
-
-.collapseOpen, .table:hover {
-  /*background: grey;*/
-}
-
 .roleRow {
   background: #f3f5f7;
 }
