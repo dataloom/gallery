@@ -2,7 +2,8 @@
 
 Gallery provides Loom's UI for interacting with the entity data model, as well as downloading and visualizing datasets.
 
-**Setup for Mac**
+
+##Setup for Mac
 
 1. Clone [gallery](https://github.com/kryptnostic/gallery), [conductor](https://github.com/dataloom/conductor), and [datastore](https://github.com/dataloom/datastore)
 2. Install cassandra version 3.9
@@ -20,9 +21,13 @@ cd gallery
 npm install
 ```
 
-**Running locally**
+###Running locally
+*Instructions assume your in [loom](https://github.com/dataloom/loom) root*
 
-1. Run cassandra: `cassandra`
+1. Run cassandra 
+```
+cassandra
+```
 2. Run elasticsearch with cluster name "loom_development"
 ```
 elasticsearch -E cluster.name=loom_development
@@ -36,7 +41,8 @@ elasticsearch -E cluster.name=loom_development
     * *Option 1:* Run normal dev server `cd gallery; npm run app`
     * *Option 2:* Run [webpack-dashboard](https://www.npmjs.com/package/webpack-dashboard) `cd gallery; npm run dev`
 
-**Building for prod**
+
+###Building for prod
 
 Run the prod build within the gallery project.
 ```
