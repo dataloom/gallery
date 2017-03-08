@@ -1,9 +1,5 @@
 import React, { PropTypes } from 'react';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import BSTable from 'react-bootstrap-table';
-// var ReactBsTable  = require('react-bootstrap-table');
-// var BootstrapTable = ReactBsTable.BootstrapTable;
-// var TableHeaderColumn = ReactBsTable.TableHeaderColumn;
+import { BootstrapTable, TableHeaderColumn, TableColumn, ExpandComponent } from 'react-bootstrap-table';
 
 export default class SampleBootstrapTable extends React.Component {
   constructor(props) {
@@ -11,49 +7,75 @@ export default class SampleBootstrapTable extends React.Component {
 
     this.state = {
       users: [{
-        // id: 0,
+        id: 0,
         email: 'corwin@thedataloom.com',
-        roles: ['admin', 'owner'],
-        entityPermissions: ['read', 'write', 'discover', 'link'],
-        propertyAPermissions: ['read', 'write'],
-        propertyBPermissions: [],
-        // expand: 'test'
+        role: 'all',
+        entityPermissions: 'Read, Write, Discover, Link',
+        propertyAPermissions: 'Read, Write',
+        propertyBPermissions: '-',
+        expand: [{
+          role: 'admin',
+          entityPermissions: 'Read, Write, Discover, Link',
+          propertyAPermissions: 'Read, Write',
+          propertyBPermissions: '-'
+        }, {
+          role: 'xyz',
+          entityPermissions: 'Read, Write',
+          propertyAPermissions: 'Read, Write',
+          propertyBPermissions: 'Read, Write'
+        }]
       }, {
-        // id: 1,
+        id: 1,
         email: 'matthew@thedataloom.com',
-        roles: ['xyz'],
+        role: 'all',
         entityPermissions: ['read', 'write'],
         propertyAPermissions: ['read'],
-        propertyBPermissions: ['read']
+        propertyBPermissions: ['read'],
+        expand: [{
+          role: 'role',
+          entityPermissions: ['read', 'write', 'discover', 'link'],
+          propertyAPermissions: ['read', 'write'],
+          propertyBPermissions: []
+        }]
       }, {
-        // id: 2,
+        id: 2,
         email: 'katherine@thedataloom.com',
-        roles: [],
+        role: 'all',
         entityPermissions: ['read'],
         propertyAPermissions: ['read'],
-        propertyBPermissions: ['read']
+        propertyBPermissions: ['read'],
+        expand: [{
+          role: 'role',
+          entityPermissions: ['read', 'write', 'discover', 'link'],
+          propertyAPermissions: ['read', 'write'],
+          propertyBPermissions: []
+        }]
       }]
     }
   }
 
   isExpandableRow(row) {
-    console.log('expandable called, row:', row);
-
-    if (row.id < 2) return true;
-    else return false;
+    return true;
   }
 
   expandComponent(row) {
-    console.log('expand called, row:', row);
-
     return (
-      <BSTable data={ row.expand } />
+      <BootstrapTable
+        data={row.expand}>
+        <TableHeaderColumn width='180' dataField='email' isKey ></TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='role'></TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='entityPermissions'></TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='propertyAPermissions'></TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='propertyBPermissions'></TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='propertyAPermissions'></TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='propertyBPermissions'></TableHeaderColumn>
+      </BootstrapTable>
     );
   }
 
   render() {
     const options = {
-      expandRowBgColor: 'rgb(242, 255, 163)'
+      expandRowBgColor: 'grey'
     };
 
     return(
@@ -63,15 +85,12 @@ export default class SampleBootstrapTable extends React.Component {
         options={options}
         expandableRow={ this.isExpandableRow }
         expandComponent={ this.expandComponent }
+        width='1400'
         striped
         hover>
         <TableHeaderColumn width='200' dataField='email' isKey>Emails</TableHeaderColumn>
-        <TableHeaderColumn width='200' dataField='roles'>Roles</TableHeaderColumn>
+        <TableHeaderColumn width='180' dataField='role'>Roles</TableHeaderColumn>
         <TableHeaderColumn width='200' dataField='entityPermissions'>Entity Permissions</TableHeaderColumn>
-        <TableHeaderColumn width='200' dataField='propertyAPermissions'>Property A Permissions</TableHeaderColumn>
-        <TableHeaderColumn width='200' dataField='propertyBPermissions'>Property B Permissions</TableHeaderColumn>
-        <TableHeaderColumn width='200' dataField='propertyAPermissions'>Property A Permissions</TableHeaderColumn>
-        <TableHeaderColumn width='200' dataField='propertyBPermissions'>Property B Permissions</TableHeaderColumn>
         <TableHeaderColumn width='200' dataField='propertyAPermissions'>Property A Permissions</TableHeaderColumn>
         <TableHeaderColumn width='200' dataField='propertyBPermissions'>Property B Permissions</TableHeaderColumn>
         <TableHeaderColumn width='200' dataField='propertyAPermissions'>Property A Permissions</TableHeaderColumn>

@@ -9,6 +9,7 @@ import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
 import { Table, Column, Cell } from 'fixed-data-table';
 import SampleBootstrapTable from './BootstrapTable';
+import ExpandableTable from './ExpandableTable';
 import Page from '../../../../components/page/Page';
 import PageConsts from '../../../../utils/Consts/PageConsts';
 import styles from '../styles.module.css';
@@ -55,6 +56,63 @@ const permissionOptions = {
   Write: 'Write',
   Owner: 'Owner'
 };
+
+var PRODUCTS = [
+  {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
+  {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
+  {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
+  {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
+  {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
+  {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
+];
+
+var HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions' ];
+
+var USERS = [{
+  id: 0,
+  email: 'corwin@thedataloom.com',
+  role: 'all',
+  entityPermissions: 'Read, Write, Discover, Link',
+  propertyAPermissions: 'Read, Write',
+  propertyBPermissions: '-',
+  expand: [{
+    role: 'admin',
+    entityPermissions: 'Read, Write, Discover, Link',
+    propertyAPermissions: 'Read, Write',
+    propertyBPermissions: '-'
+  }, {
+    role: 'xyz',
+    entityPermissions: 'Read, Write',
+    propertyAPermissions: 'Read, Write',
+    propertyBPermissions: 'Read, Write'
+  }]
+}, {
+  id: 1,
+  email: 'matthew@thedataloom.com',
+  role: 'all',
+  entityPermissions: ['read', 'write'],
+  propertyAPermissions: ['read'],
+  propertyBPermissions: ['read'],
+  expand: [{
+    role: 'role',
+    entityPermissions: ['read', 'write', 'discover', 'link'],
+    propertyAPermissions: ['read', 'write'],
+    propertyBPermissions: []
+  }]
+}, {
+  id: 2,
+  email: 'katherine@thedataloom.com',
+  role: 'all',
+  entityPermissions: ['read'],
+  propertyAPermissions: ['read'],
+  propertyBPermissions: ['read'],
+  expand: [{
+    role: 'role',
+    entityPermissions: ['read', 'write', 'discover', 'link'],
+    propertyAPermissions: ['read', 'write'],
+    propertyBPermissions: []
+  }]
+}]
 
 
 export default class AllPermissions extends React.Component {
@@ -378,14 +436,16 @@ export default class AllPermissions extends React.Component {
         <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
-          <h3>Entity: Individual Permissions</h3>
-          {this.renderTableIndividualPermissions()}
-          <h3>Entity: Role Permissions</h3>
-          {this.renderTableRolePermissions()}
-          <h3>Bootstrap</h3>
-          <SampleBootstrapTable />
+
+          <h3>Custom Table</h3>
+          <ExpandableTable users={USERS} headers={HEADERS} />
         </Page.Body>
       </Page>
     )
   }
 }
+
+// <h3>Entity: Individual Permissions</h3>
+// {this.renderTableIndividualPermissions()}
+// <h3>Entity: Role Permissions</h3>
+// {this.renderTableRolePermissions()}
