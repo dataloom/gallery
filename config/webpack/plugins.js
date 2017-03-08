@@ -1,25 +1,27 @@
-const Webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+import Webpack from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-const APP_CONFIG = require('../app.config');
-const APP_PATHS = require('../app.paths');
-const PACKAGE = require('../../package');
+import APP_CONFIG from '../app.config';
+import APP_PATHS from '../app.paths';
+import PACKAGE from '../../package';
 
-const AUTH0_CONFIG = require('../auth/auth0.config');
-const AUTH0_CLIENT_ID = AUTH0_CONFIG.AUTH0_CLIENT_ID,
-  AUTH0_DOMAIN = AUTH0_CONFIG.AUTH0_DOMAIN;
+import {
+  AUTH0_DOMAIN,
+  AUTH0_CLIENT_ID
+} from '../auth/auth0.config';
 
-const ENV = require('../env');
-const isDev = ENV.isDev,
-  isProd = ENV.isProd;
+import {
+  isDev,
+  isProd
+} from '../env';
 
 
-exports.BANNER_PLUGIN = new Webpack.BannerPlugin({
+export const BANNER_PLUGIN = new Webpack.BannerPlugin({
   banner: APP_CONFIG.BANNER,
   entryOnly: true
 });
 
-exports.DEFINE_PLUGIN = new Webpack.DefinePlugin({
+export const DEFINE_PLUGIN = new Webpack.DefinePlugin({
   __DEV__: JSON.stringify(isDev),
   __PROD__: JSON.stringify(isProd),
   __VERSION__: JSON.stringify(`v${PACKAGE.version}`),
@@ -27,4 +29,4 @@ exports.DEFINE_PLUGIN = new Webpack.DefinePlugin({
   __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN)
 });
 
-exports.EXTRACT_TEXT_PLUGIN = new ExtractTextPlugin(`${APP_PATHS.REL.STATIC_CSS}/${APP_CONFIG.APP_CSS}`);
+export const EXTRACT_TEXT_PLUGIN = new ExtractTextPlugin(`${APP_PATHS.REL.STATIC_CSS}/${APP_CONFIG.APP_CSS}`);

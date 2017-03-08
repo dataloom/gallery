@@ -4,9 +4,8 @@
 
 /* eslint-disable import/extensions */
 
-const path = require('path');
-
-const APP_CONFIG = require('./app.config.js');
+import path from 'path';
+import APP_CONFIG from './app.config.js';
 
 /*
  * absolute paths
@@ -34,7 +33,7 @@ const STATIC_CSS = path.join(STATIC, 'css');
 const STATIC_JS = path.join(STATIC, 'js');
 const STATIC_MEDIA = path.join(STATIC, 'media');
 
-module.exports = {
+export default {
   ABS: {
     APP_ENTRY,
     BUILD,

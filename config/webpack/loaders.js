@@ -1,7 +1,7 @@
-const APP_PATHS = require('../app.paths.js');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+import APP_PATHS from '../app.paths.js';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-exports.BABEL_LOADER = {
+export const BABEL_LOADER = {
   loader: 'babel-loader',
   test: /\.(js|jsx)$/,
   include: [
@@ -10,7 +10,7 @@ exports.BABEL_LOADER = {
   ]
 };
 
-exports.CSS_LOADER = {
+export const CSS_LOADER = {
   loader: ExtractTextPlugin.extract(
     'css-loader?modules&localIdentName=[local]--[hash:base64:5]&importLoader=1!postcss-loader?config=config/postcss/postcss.config.js'
   ),
@@ -18,7 +18,7 @@ exports.CSS_LOADER = {
   exclude: /src\/core\/styles\/global\/.*\.css/
 };
 
-exports.CSS_LOADER_GLOBALS = {
+export const CSS_LOADER_GLOBALS = {
   loader: ExtractTextPlugin.extract(
     'css-loader'
   ),
@@ -26,12 +26,12 @@ exports.CSS_LOADER_GLOBALS = {
   include: /src\/core\/styles\/global\/.*\.css/
 };
 
-exports.JSON_LOADER = {
+export const JSON_LOADER = {
   loader: 'json-loader',
   test: /\.json$/
 };
 
-exports.MEDIA_FILE_LOADER = {
+export const MEDIA_FILE_LOADER = {
   loader: 'file-loader',
   test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
   query: {
@@ -39,7 +39,7 @@ exports.MEDIA_FILE_LOADER = {
   }
 };
 
-exports.MEDIA_URL_LOADER = {
+export const MEDIA_URL_LOADER = {
   loader: 'url-loader',
   test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
   query: {
