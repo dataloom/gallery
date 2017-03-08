@@ -7,7 +7,8 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
-import ExpandableTable from './ExpandableTable';
+import UserPermissionsTable from './UserPermissionsTable';
+import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../../components/page/Page';
 import PageConsts from '../../../../utils/Consts/PageConsts';
 import styles from '../styles.module.css';
@@ -55,7 +56,7 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-var HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions' ];
+var U_HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions' ];
 
 var USERS = [{
   id: 0,
@@ -101,7 +102,14 @@ var USERS = [{
     propertyAPermissions: ['read', 'write'],
     propertyBPermissions: []
   }]
-}]
+}];
+
+var R_HEADERS = ['Roles', 'Permissions'];
+
+var ROLES = {
+  admin: 'Read, Write',
+  owner: 'All the things'
+};
 
 
 export default class AllPermissions extends React.Component {
@@ -168,6 +176,7 @@ export default class AllPermissions extends React.Component {
     })
     .then(() => {
       this.getUserPermissions();
+      this.getRolePermissions();
     })
     .catch(() => {
       this.setState({ loadUsersError: true });
@@ -236,128 +245,73 @@ export default class AllPermissions extends React.Component {
 
   getUserPermissions = () => {
     const { allUsersById, userAcls, roleAcls } = this.state;
+    var userPermissions = [];
 
     // For each user, add their permissions
-    Object.keys(allUsersById).forEach((user) => {
-      if (user && allUsersById[user]) {
-        allUsersById[user].permissions = [];
+    Object.keys(allUsersById).forEach((userId) => {
+      if (userId && allUsersById[userId]) {
+        var user = {
+          id: userId,
+          email: allUsersById[userId].email,
+          role: '(all)',
+          entityPermissions: [],
+          propertyPermissions: [],
+          expand: []
+        };
 
         // Add individual permissions
         Object.keys(userAcls).forEach((permissionKey) => {
-          if (userAcls[permissionKey].indexOf(user) !== -1) {
-            allUsersById[user].permissions.push(permissionKey);
+          if (userAcls[permissionKey].indexOf(userId) !== -1) {
+            user.entityPermissions.push(permissionKey);
           }
         });
 
         // Add any additional permissions based on user's roles' permissions
-        if (allUsersById[user].roles.length > 0) {
+        //TODO: CHECK WHY MORE PERMISSIONS ARE SHOWING UP THAN THE ENTITY ITSELF HAS... IS IT PULLING ALL PERMISSIONS ACROSS ENTITY SETS?
+        if (allUsersById[userId].roles.length > 0) {
           Object.keys(roleAcls).forEach((permissionKey) => {
-            allUsersById[user].roles.forEach((role) => {
-              if (roleAcls[permissionKey].indexOf(role) !== -1 && allUsersById[user].permissions.indexOf(permissionKey) === -1) {
-                allUsersById[user].permissions.push(permissionKey);
+            allUsersById[userId].roles.forEach((role) => {
+              if (roleAcls[permissionKey].indexOf(role) !== -1 && user.entityPermissions.indexOf(permissionKey) === -1) {
+                user.entityPermissions.push(permissionKey);
               }
             })
           });
         }
+
+        userPermissions.push(user);
       }
     });
 
-    this.setState({allUsersById});
+    this.setUserPermissions(userPermissions);
   }
 
-  getIndividualPermissions = () => {
-    const { allUsersById } = this.state;
-    var tableData = [];
-
-    Object.keys(allUsersById).forEach((user) => {
-      if (user && allUsersById[user]) {
-        const userObject = allUsersById[user];
-        var userData = [];
-        if (userObject.email && userObject.permissions && userObject.permissions.length !== 0) {
-          var rolesStr = userObject.roles.join(', ');
-          var permissionsStr = userObject.permissions.join(', ');
-          userData.push(userObject.email, rolesStr, permissionsStr);
-          tableData.push(userData);
-        }
-      }
-    });
-
-    return tableData;
+  setUserPermissions = (permissions) => {
+    // var formattedPermissions = [];
+    //
+    // permissions.forEach((i) => {
+    //   console.log('PERMISSIONs:', permissions);
+    //   console.log('PERMISSION:', permissions[i]);
+    //   if (permissions[i]) {
+    //     if (permissions[i].entityPermissions.length === 0) {
+    //       console.log('length = 0');
+    //       // formattedPermissions[i] = {permissions[i]};
+    //     } else {
+    //       console.log('length > 0');
+    //
+    //       // formattedPermissions[i].entityPermissions = formattedPermissions[i].entityPermissions.join(', ');
+    //     }
+    //   }
+    //
+    // });
+    //
+    // // this.setState({userPermissions: formattedPermissions}, () => {console.log('USERPERMISSIONS STATE:', this.state.userPermissions)});
   }
 
-
-  renderTableIndividualPermissions = () => {
-    const data = this.getIndividualPermissions();
-    const numRows = data.length;
-    const tableHeight = () => {
-      if (numRows <= 10) {
-        return ((numRows + 1) * 50)
-      } else {
-        return (500)
-      }
-    }
-
-    const DataCell = ({rowIndex, col, data}) => {
-      var cellData = data[rowIndex][col];
-
-      return (
-        <Cell>
-          {cellData}
-        </Cell>
-      );
-    }
-
-    if (numRows > 0) {
-      return (
-        <Table
-          rowHeight={50}
-          rowsCount={numRows}
-          width={1000}
-          height={tableHeight() + 2}
-          headerHeight={50}
-          data={data}
-          className={styles.dataTable}>
-          <Column
-            header={<Cell>Email</Cell>}
-            data={data}
-            cell={<DataCell data={data} col={0}/>}
-            width={200}
-          />
-          <Column
-            header={<Cell>Roles</Cell>}
-            data={data}
-            cell={<DataCell data={data} col={1}/>}
-            width={500}
-          />
-          <Column
-            header={<Cell>Permissions</Cell>}
-            data={data}
-            cell={<DataCell data={data} col={2}/>}
-            width={300}
-          />
-        </Table>
-      )
-    } else {
-      return (
-        <div>No permissions granted</div>
-      )
-    }
-  }
-
-  renderTableRolePermissions = () => {
+  getRolePermissions = () => {
     const { roleAcls } = this.state;
     var rolePermissions = {};
-    var tableData = [];
-    var numRows = 0;
-    const tableHeight = () => {
-      if (numRows <= 10) {
-        return ((numRows + 1) * 50)
-      } else {
-        return (500)
-      }
-    }
 
-    // Store all roles and their respective permissions
+    // Get all roles and their respective permissions
     Object.keys(roleAcls).forEach((permission) => {
       roleAcls[permission].forEach((role) => {
         if (!rolePermissions.hasOwnProperty(role)) {
@@ -370,52 +324,18 @@ export default class AllPermissions extends React.Component {
       })
     });
 
-    // Format data for fixed-data-table
-    Object.keys(rolePermissions).forEach((key) => {
-      var row = [key];
-      var permissionsStr = rolePermissions[key].join(', ');
-      row.push(permissionsStr);
-      tableData.push(row);
+    this.setRolePermissions(rolePermissions);
+  }
+
+  setRolePermissions = (permissions) => {
+    var formattedPermissions = {};
+
+    // Format data for table
+    Object.keys(permissions).forEach((permission) => {
+      formattedPermissions[permission] = permissions[permission].join(', ');
     });
 
-    numRows = tableData.length;
-
-    const DataCell = ({rowIndex, col, data}) => {
-      var cellData = '';
-      if (tableData.length !== 0) {
-        cellData = data[rowIndex][col];
-      }
-
-      return (
-        <Cell>
-          {cellData}
-        </Cell>
-      );
-    }
-
-    return (
-      <Table
-        rowHeight={50}
-        rowsCount={numRows}
-        width={1000}
-        height={tableHeight() + 2}
-        headerHeight={50}
-        data={tableData}
-        className={styles.dataTable}>
-        <Column
-          header={<Cell>Roles</Cell>}
-          data={tableData}
-          cell={<DataCell data={tableData} col={0}/>}
-          width={200}
-        />
-        <Column
-          header={<Cell>Permissions</Cell>}
-          data={tableData}
-          cell={<DataCell data={tableData} col={1}/>}
-          width={800}
-        />
-      </Table>
-    )
+    this.setState({rolePermissions: formattedPermissions});
   }
 
   render() {
@@ -426,7 +346,9 @@ export default class AllPermissions extends React.Component {
         </Page.Header>
         <Page.Body>
           <h3>Individual Permissions</h3>
-          <ExpandableTable users={USERS} headers={HEADERS} />
+          <UserPermissionsTable users={USERS} headers={U_HEADERS} />
+          <h3>Role Permissions</h3>
+          <RolePermissionsTable roles={this.state.rolePermissions} headers={R_HEADERS} />
         </Page.Body>
       </Page>
     )
