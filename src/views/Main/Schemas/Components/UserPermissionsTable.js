@@ -96,7 +96,7 @@ class SearchBar extends React.Component {
   }
 }
 
-export default class ExpandableTable extends React.Component {
+export default class UserPermissionsTable extends React.Component {
   getExpandableRows = () => {
     var rows = [];
     this.props.users.forEach(function(user) {
