@@ -5,6 +5,7 @@
 /* eslint-disable import/extensions */
 
 import path from 'path';
+
 import APP_CONFIG from './app.config.js';
 
 /*
