@@ -57,21 +57,12 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-var PRODUCTS = [
-  {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
-  {category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
-  {category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
-  {category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
-  {category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
-  {category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
-];
-
 var HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions' ];
 
 var USERS = [{
   id: 0,
   email: 'corwin@thedataloom.com',
-  role: 'all',
+  role: '-',
   entityPermissions: 'Read, Write, Discover, Link',
   propertyAPermissions: 'Read, Write',
   propertyBPermissions: '-',
@@ -89,7 +80,7 @@ var USERS = [{
 }, {
   id: 1,
   email: 'matthew@thedataloom.com',
-  role: 'all',
+  role: '-',
   entityPermissions: ['read', 'write'],
   propertyAPermissions: ['read'],
   propertyBPermissions: ['read'],
@@ -102,7 +93,7 @@ var USERS = [{
 }, {
   id: 2,
   email: 'katherine@thedataloom.com',
-  role: 'all',
+  role: '-',
   entityPermissions: ['read'],
   propertyAPermissions: ['read'],
   propertyBPermissions: ['read'],
@@ -436,7 +427,6 @@ export default class AllPermissions extends React.Component {
         <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
-
           <h3>Custom Table</h3>
           <ExpandableTable users={USERS} headers={HEADERS} />
         </Page.Body>
@@ -449,3 +439,14 @@ export default class AllPermissions extends React.Component {
 // {this.renderTableIndividualPermissions()}
 // <h3>Entity: Role Permissions</h3>
 // {this.renderTableRolePermissions()}
+
+// <h3>Custom Table 2</h3>
+// <table className={styles.expandableTable}>
+//   <thead>
+//     <tr><th>1</th><th>2</th></tr>
+//   </thead>
+//   <tbody>
+//     <tr><td>1</td><td>2</td></tr>
+//     <tr><td>1</td><td>2</td></tr>
+//   </tbody>
+// </table>

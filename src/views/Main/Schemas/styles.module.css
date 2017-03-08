@@ -150,3 +150,23 @@
   text-align: center;
   margin-right: 10px;
 }
+
+.expandableTable {
+
+}
+
+.expandableRow {
+
+}
+
+.collapse {
+
+}
+
+.collapseOpen, .collapseOpen:hover {
+  /*background: blue;*/
+}
+
+.roleRow {
+
+}
