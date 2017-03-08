@@ -1,6 +1,7 @@
 // Karma configuration
 
-const TEST_GLOB_PATH = '../../src/**/*.test.js';
+const TESTS_PATH = 'src/**/*.test.js';
+const TESTS_BOOTSTRAP_PATH = 'test/**/*.js';
 
 const ENV = process.env.TEST;
 
@@ -19,7 +20,7 @@ module.exports = function(config) {
     browsers,
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: '../..',
 
 
     // frameworks to use
@@ -30,7 +31,8 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       require.resolve('babel-polyfill'),
-      TEST_GLOB_PATH
+      TESTS_BOOTSTRAP_PATH,
+      TESTS_PATH
     ],
 
 
@@ -38,7 +40,8 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       [require.resolve('babel-polyfill')]: ['webpack'],
-      [TEST_GLOB_PATH]: ['webpack', 'sourcemap']
+      [TESTS_BOOTSTRAP_PATH]: ['webpack'],
+      [TESTS_PATH]: ['webpack', 'sourcemap']
     },
     webpack: require('../webpack/webpack.config.test'),
 

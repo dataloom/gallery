@@ -1,9 +1,9 @@
-import { expect } from 'chai';
 import reducer from './AsyncReducer';
 import * as actionFactory from './AsyncActionFactory';
 
 describe('AsyncReducer', function() {
-  const INITIAL_STATE = reducer();
+  const INITIAL_STATE = reducer(undefined, {type: 'none'});
+
   it('should update references', function() {
     const reference = {
       namespace: 'test',
@@ -12,5 +12,7 @@ describe('AsyncReducer', function() {
     const value = 'hello';
     const action = actionFactory.updateAsyncReference(reference, value);
 
+    const newState = reducer(INITIAL_STATE, action);
+    expect(newState).to.have.deep.property('test.123', 'hello');
   });
 });
