@@ -21,7 +21,9 @@ cd gallery
 npm install
 ```
 
+
 ###Running locally
+
 *Instructions assume your in [loom](https://github.com/dataloom/loom) root*
 
 1. Run cassandra 
@@ -40,6 +42,22 @@ elasticsearch -E cluster.name=loom_development
 4. Run the server on http://localhost:9000/gallery/ within the gallery project.
     * *Option 1:* Run normal dev server `cd gallery; npm run app`
     * *Option 2:* Run [webpack-dashboard](https://www.npmjs.com/package/webpack-dashboard) `cd gallery; npm run dev`
+
+
+###Tests
+
+Test suite is Karma, Mocha, Chai. The default test run - `npm test` - runs Karma with PhantomJS.
+
+**Writing Tests**
+
+To add a tests for `foo.js`, create a `foo.test.js` file adjacent to `foo.js`. The karma will automatically pick up and run it.
+
+If you're actively writing tests, you may want to debug them in a browser. 
+Karma supports running tests in a browser, and auto-reloading test code when it changes. 
+The following command starts Chrome and runs tests in the browser. You can debug it with Chrome dev tools.
+```
+npm run test:dev
+```
 
 
 ###Building for prod
