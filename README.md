@@ -59,6 +59,10 @@ The following command starts Chrome and runs tests in the browser. You can debug
 npm run test:dev
 ```
 
+**Adding Chai Plugins**
+
+To add a Chai plugin, add the import and call of `chai.use(plugin)` to `config/chai/plugins.config` 
+
 
 ###Building for prod
 
