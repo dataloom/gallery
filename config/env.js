@@ -1,3 +1,7 @@
+/*
+ * @flow
+ */
+
 function ifElse(condition) {
   return (isTrue, isFalse) => {
     return condition ? isTrue : isFalse;
