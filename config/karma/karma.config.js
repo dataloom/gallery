@@ -2,8 +2,21 @@
 
 const TEST_GLOB_PATH = '../../src/**/*.test.js';
 
+const ENV = process.env.TEST;
+
 module.exports = function(config) {
+  let autoWatch = false;
+  let browsers = ['PhantomJS'];
+
+  if (ENV === 'dev') {
+    autoWatch = true;
+    browsers = ['Chrome'];
+  }
+
   config.set({
+    autoWatch,
+    singleRun: !autoWatch,
+    browsers,
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -47,19 +60,6 @@ module.exports = function(config) {
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
-
-
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
-
-
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true,
 
     // Concurrency level
     // how many browser should be started simultaneous

@@ -115,13 +115,20 @@
     "flow": "flow check",
     "lint:js": "eslint --config .eslintrc src test",
     "lint:css": "echo \"Error: lint:css task not implemented\" && exit 1",
-    "test": "karma start config/karma/karma.conf"
+    "test": "karma start config/karma/karma.config.js",
+    "test:dev": "better-npm-run test:dev"
   },
   "betterScripts": {
     "build:prod": {
       "command": "webpack --config config/webpack/webpack.config.babel.js",
       "env": {
         "BUILD": "production"
+      }
+    },
+    "test:dev": {
+      "command": "karma start config/karma/karma.config.js",
+      "env": {
+        "TEST": "dev"
       }
     },
     "webpack-dashboard": {
