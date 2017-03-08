@@ -163,10 +163,10 @@
 
 }
 
-.collapseOpen, .collapseOpen:hover {
-  /*background: blue;*/
+.collapseOpen, .table:hover {
+  /*background: grey;*/
 }
 
 .roleRow {
-
+  background: #f3f5f7;
 }

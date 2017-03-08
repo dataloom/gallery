@@ -34,12 +34,13 @@ class UserRow extends React.Component {
 class RoleRow extends React.Component {
   getClassName = () => {
     // Probably want to set a classname that allows for hover behavior (expanded rows should not have hover state)
-    return this.props.isCollapsed ? `${styles.rowRow} ${styles.hidden}` : styles.rowRow;
+    return this.props.isCollapsed ? `${styles.roleRow} ${styles.hidden}` : `${styles.roleRow}`;
   }
 
   render() {
     return (
       <tr className={this.getClassName()}>
+        <td></td>
         <td>{this.props.role.role}</td>
         <td>{this.props.role.entityPermissions}</td>
         <td>{this.props.role.propertyAPermissions}</td>
@@ -49,7 +50,7 @@ class RoleRow extends React.Component {
   }
 }
 
-class TableBody extends React.Component {
+class ExpandableRow extends React.Component {
   constructor(props) {
     super(props);
 
@@ -59,31 +60,30 @@ class TableBody extends React.Component {
   }
 
   toggleCollapse = () => {
-    this.setState({isCollapsed: !this.state.isCollapsed}, () => {console.log('collapsed state:', this.state.isCollapsed)});
+    this.setState({isCollapsed: !this.state.isCollapsed});
   }
 
-  getRows = () => {
-    var rows = [];
-    var isCollapsed = this.state.isCollapsed;
-    var toggleCollapse = this.toggleCollapse;
-    this.props.users.forEach(function(user) {
-      rows.push(<UserRow user={user} isCollapsed={isCollapsed} toggleCollapse={toggleCollapse} key={user.id} />);
-      if (user.expand.length > 0) {
-        user.expand.forEach((role) => {
-          rows.push(<RoleRow role={role} isCollapsed={isCollapsed} key={`${user.id}-${role.role}`}  />)
-        })
-      }
-    });
-    return rows;
+  getRoleRows = () => {
+    var roleRows = [];
+
+    if (this.props.user.expand.length > 0) {
+      this.props.user.expand.forEach((role) => {
+        roleRows.push(<RoleRow role={role} isCollapsed={this.state.isCollapsed} key={`${this.props.user.id}-${role.role}`}  />)
+      })
+    }
+
+    return roleRows;
   }
 
   render() {
     return (
       <tbody>
-        {this.getRows()}
+      <UserRow user={this.props.user} isCollapsed={this.state.isCollapsed} toggleCollapse={this.toggleCollapse} key={this.props.user.id} />
+      {this.getRoleRows()}
       </tbody>
     );
   }
+
 }
 
 class SearchBar extends React.Component {
@@ -97,6 +97,15 @@ class SearchBar extends React.Component {
 }
 
 export default class ExpandableTable extends React.Component {
+  getExpandableRows = () => {
+    var rows = [];
+    this.props.users.forEach(function(user) {
+      rows.push(<ExpandableRow user={user} key={user.id} />);
+    });
+
+    return rows;
+  }
+
   render() {
     var headers = [];
     this.props.headers.forEach((header, i) => {
@@ -104,13 +113,13 @@ export default class ExpandableTable extends React.Component {
     });
 
     return (
-      <Table striped bordered hover responsive className={styles.expandableTable}>
+      <Table bordered responsive className={styles.expandableTable}>
         <thead>
           <tr>
             {headers}
           </tr>
         </thead>
-          <TableBody users={this.props.users} />
+          {this.getExpandableRows()}
       </Table>
     );
   }

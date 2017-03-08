@@ -62,7 +62,7 @@ var HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions'
 var USERS = [{
   id: 0,
   email: 'corwin@thedataloom.com',
-  role: '-',
+  role: '(all)',
   entityPermissions: 'Read, Write, Discover, Link',
   propertyAPermissions: 'Read, Write',
   propertyBPermissions: '-',
@@ -80,7 +80,7 @@ var USERS = [{
 }, {
   id: 1,
   email: 'matthew@thedataloom.com',
-  role: '-',
+  role: '(all)',
   entityPermissions: ['read', 'write'],
   propertyAPermissions: ['read'],
   propertyBPermissions: ['read'],
@@ -93,7 +93,7 @@ var USERS = [{
 }, {
   id: 2,
   email: 'katherine@thedataloom.com',
-  role: '-',
+  role: '(all)',
   entityPermissions: ['read'],
   propertyAPermissions: ['read'],
   propertyBPermissions: ['read'],
