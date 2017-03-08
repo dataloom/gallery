@@ -1,7 +1,7 @@
 // Karma configuration
 
 const TESTS_PATH = 'src/**/*.test.js';
-const TESTS_BOOTSTRAP_PATH = 'test/**/*.js';
+const CHAI_CONFIG_PATH = 'config/chai/*.js';
 
 const ENV = process.env.TEST;
 
@@ -31,7 +31,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       require.resolve('babel-polyfill'),
-      TESTS_BOOTSTRAP_PATH,
+      CHAI_CONFIG_PATH,
       TESTS_PATH
     ],
 
@@ -40,7 +40,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       [require.resolve('babel-polyfill')]: ['webpack'],
-      [TESTS_BOOTSTRAP_PATH]: ['webpack'],
+      [CHAI_CONFIG_PATH]: ['webpack'],
       [TESTS_PATH]: ['webpack', 'sourcemap']
     },
     webpack: require('../webpack/webpack.config.test'),
