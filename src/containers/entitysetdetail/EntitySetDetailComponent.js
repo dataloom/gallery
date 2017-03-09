@@ -71,8 +71,6 @@ class EntitySetDetailComponent extends React.Component {
       confirmingDelete: false,
       addingData: false,
       deleteError: false,
-      propertyTypeIds: [],
-      entitySetId: '',
       properties: {},
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
@@ -87,32 +85,20 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      console.log('PROPS;', nextProps);
+
       this.loadAcls(false, nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
         console.log('PROPERTY:', property);
         this.loadAcls(false, nextProps.entitySet.id, property);
-
       });
 
-      // TODO: use promise.all to wait for both to set state
-      // propertyTypeIds.forEach((id) => {
-      //   this.loadAcls(false, nextProps.entitySet.id, id);
-      // });
-
-      // this.setState({ propertyTypeIds }, () => {
-      //   // this.state.propertyTypeIds.forEach((id) => {
-      //   //   this.loadAcls(false, this.state.entitySetId, id);
-      //   // });
-      // });
-      // localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
-
-      // this.props.setPropertyTypeIds(propertyTypeIds);
+      // console.log('NEW PROPS FROM REDUX: PROPERTIES:', entityProperties);
     }
   }
 
   //////// PERMISSIONS LOGIC ///////////
-
   loadAcls = (updateSuccess, entitySetId, property) => {
     const aclKey = [entitySetId];
     if (property && property.id) aclKey.push(property.id);
@@ -120,12 +106,9 @@ class EntitySetDetailComponent extends React.Component {
 
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
-      if (property) {
-        this.updateStateAcls(acls.aces, updateSuccess, property);
-      }
-      else {
-        this.updateStateAcls(acls.aces, updateSuccess);
-      }
+      // property ? this.updateStateAcls(acls.aces, updateSuccess, property)
+      // : this.updateStateAcls(acls.aces, updateSuccess);
+      this.updateStateAcls(acls.aces, updateSuccess, property);
     })
     .catch(() => {
       this.setState({ updateError: true });
@@ -150,9 +133,6 @@ class EntitySetDetailComponent extends React.Component {
           allUsersById,
           allRolesList,
           loadUsersError: false
-        },
-        () => {
-          // console.log('allUsersById, allRolesList:', this.state.allUsersById, this.state.allRolesList);
         }
       );
     })
@@ -189,26 +169,49 @@ class EntitySetDetailComponent extends React.Component {
         }
       }
     });
-    const oldPropertyState = this.state.properties;
-    const newPropertyState = this.state.properties;
-    newPropertyState[property.id] = {
-      title: property.title,
-      roleAcls,
-      userAcls
-    };
 
-    this.setState({
-      oldPropertyState: newPropertyState,
-      globalValue,
-      roleAcls,
-      userAcls,
-      updateSuccess,
-      newRoleValue: '',
-      newEmailValue: '',
-      updateError: false
-    }, () => {
-      console.log('STATE AFTER UPDATEACLS', this.state);
-    });
+    if (property) {
+      /// SET REDUX STATE
+      // console.log('PROPERTY!!!!!!!', property);
+      const propertyAcls = {
+          id: property.id,
+          title: property.title,
+          roleAcls,
+          userAcls
+      };
+      this.props.setPropertyData(propertyAcls);
+
+
+      // SET LOCAL STATE
+      const oldPropertyState = this.state.properties;
+      const newPropertyState = this.state.properties;
+      newPropertyState[property.id] = {
+        title: property.title,
+        roleAcls,
+        userAcls
+      };
+      this.setState({
+        oldPropertyState: newPropertyState,
+        updateError: false
+      });
+    }
+    else {
+
+      // this.props.updateEntitySetAcls(acls);
+      this.setState({
+        globalValue,
+        roleAcls,
+        userAcls,
+        updateSuccess,
+        newRoleValue: '',
+        newEmailValue: '',
+        updateError: false
+      });
+
+      // TRY SETTING ENTITYSET props
+      // this.props.entitySet.roleAcls
+    }
+
   }
 
   getPermission = (permissions) => {
@@ -470,6 +473,7 @@ function mapStateToProps(state) {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
     entitySetPermissions,
+    entityProperties: entitySetDetail.properties
   };
 }
 
@@ -488,9 +492,9 @@ function mapDispatchToProps(dispatch, ownProps) {
         }]
       ));
     },
-    // setPropertyTypeIds: (ids) => {
-    //   dispatch(actionFactories.setPropertyTypeIds(ids));
-    // }
+    setPropertyData: (data) => {
+      dispatch(actionFactories.setPropertyData(data))
+    }
   };
 }
 

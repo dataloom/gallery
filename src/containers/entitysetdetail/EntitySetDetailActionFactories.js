@@ -6,3 +6,10 @@ export function entitySetDetailRequest(id) {
     id
   };
 }
+
+export function setPropertyData(data) {
+  return {
+    type: actionTypes.SET_PROPERTY_DATA,
+    data
+  };
+}
