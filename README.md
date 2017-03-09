@@ -24,7 +24,7 @@ npm install
 
 ###Running locally
 
-*Instructions assume your in [loom](https://github.com/dataloom/loom) root*
+*Instructions assume you're in [loom](https://github.com/dataloom/loom) root*
 
 1. Run cassandra 
 ```
