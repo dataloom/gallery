@@ -3,7 +3,7 @@ import { Modal, Button, Alert, FormGroup, ControlLabel, FormControl } from 'reac
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import AsyncContent, { AsyncStatePropType } from '../../../components/asynccontent/AsyncContent';
+import AsyncContent from '../../../components/asynccontent/AsyncContent';
 import * as actionFactory from '../PermissionsActionFactory';
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
@@ -21,9 +21,9 @@ export class RequestPermissionsModal extends React.Component {
     entitySetId: PropTypes.string,
     onSubmit: PropTypes.func.isRequired,
     asyncStatus: PropTypes.symbol.isRequired,
-    //Async Objects
+    // Async Objects
     entitySet: EntitySetPropType,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string),
+    propertyTypeIds: PropTypes.arrayOf(PropTypes.string)
   };
 
   constructor(props) {
@@ -31,11 +31,11 @@ export class RequestPermissionsModal extends React.Component {
     this.state = {
       pidToPermissions: {},
       reason: ''
-    }
+    };
   }
 
   onChange = (propertyTypeId, delta) => {
-    const { pidToPermissions} = this.state;
+    const { pidToPermissions } = this.state;
     const newPermissions = Object.assign({}, pidToPermissions);
     newPermissions[propertyTypeId] = delta.permissions;
 
@@ -68,26 +68,24 @@ export class RequestPermissionsModal extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <AsyncContent
-            status={asyncStatus}
-            pendingContent={
-              <form className={styles.rqm} onSubmit={this.onSubmit}>
-                <FormGroup>
-                  <ControlLabel>Reason for your request</ControlLabel>
-                  <FormControl componentClass="textarea" onChange={this.onReasonChange} />
-                </FormGroup>
-                <h2 className={styles.subtitle}>Select properties you want access to:</h2>
-                <PropertyTypeList
-                  entitySetId={entitySetId}
-                  propertyTypeIds={propertyTypeIds}
-                  editing={PROPERTY_TYPE_EDITING}
-                  onChange={this.onChange}
-                />
-                <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
-              </form>
-            }
-            content={<Alert bsStyle="success">Request made</Alert>}
-            errorMessage="Failed to make request"
-          />
+              status={asyncStatus}
+              pendingContent={
+                <form className={styles.rqm} onSubmit={this.onSubmit}>
+                  <FormGroup>
+                    <ControlLabel>Reason for your request</ControlLabel>
+                    <FormControl componentClass="textarea" onChange={this.onReasonChange} />
+                  </FormGroup>
+                  <h2 className={styles.subtitle}>Select properties you want access to:</h2>
+                  <PropertyTypeList
+                      entitySetId={entitySetId}
+                      propertyTypeIds={propertyTypeIds}
+                      editing={PROPERTY_TYPE_EDITING}
+                      onChange={this.onChange} />
+                  <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
+                </form>
+              }
+              content={<Alert bsStyle="success">Request made</Alert>}
+              errorMessage="Failed to make request" />
         </Modal.Body>
       </Modal>
     );
@@ -95,18 +93,21 @@ export class RequestPermissionsModal extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const normalizedData = state.get('normalizedData').toJS(),
-    permissions = state.get('permissions');
+  const normalizedData = state.get('normalizedData').toJS();
+  const permissions = state.get('permissions');
 
   const entitySetId = permissions.getIn(['requestPermissionsModal', 'entitySetId']);
-  let propertyTypeIds,
-    entitySet;
+  let propertyTypeIds;
+  let entitySet;
+
   if (entitySetId) {
     // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
     const reference = createEntitySetReference(entitySetId);
     entitySet = getEdmObjectSilent(normalizedData, reference, null);
     if (entitySet && entitySet.entityType) {
-      propertyTypeIds = entitySet.entityType.properties.map(property => property.id);
+      propertyTypeIds = entitySet.entityType.properties.map((property) => {
+        return property.id;
+      });
     }
   }
 
@@ -122,17 +123,19 @@ function mapStateToProps(state) {
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
   return {
-    onHide: () => { dispatch(actionFactory.requestPermissionsModalHide()); },
+    onHide: () => {
+      dispatch(actionFactory.requestPermissionsModalHide());
+    },
     onSubmit: (entitySetId, pidsToPermissions, reason) => {
-      const authnRequests = Object.keys(pidsToPermissions).map(pid => {
+      const authnRequests = Object.keys(pidsToPermissions).map((pid) => {
         const permissions = classnames(pidsToPermissions[pid]).split(' ');
         return {
           aclKey: [entitySetId, pid],
           permissions,
           reason
-        }
+        };
       });
-      dispatch(actionFactory.submitAuthNRequest(authnRequests))
+      dispatch(actionFactory.submitAuthNRequest(authnRequests));
     }
   };
 }
