@@ -5,10 +5,7 @@ import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
-
-import {
-  EntityDataModelApi
-} from 'loom-data';
+import { EntityDataModelApi, PermissionsApi, PrincipalsApi } from 'loom-data';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -24,8 +21,7 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
-import { PermissionsApi, PrincipalsApi } from 'loom-data';
-import { USER, ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
+import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import styles from './entitysetdetail.module.css';
 
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
@@ -80,7 +76,7 @@ class EntitySetDetailComponent extends React.Component {
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       allUsersById: {},
-      allRolesList: new Set(),
+      allRolesList: new Set()
     };
   }
 
@@ -90,24 +86,22 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined ) {
-      console.log('NEXTPROPS ENTITYSETID:', nextProps.entitySet);
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
       const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
         return property.id;
       });
 
       // TODO: Move to redux
       // TODO: use promise.all to wait for both to set state
-      this.setState({entitySetId: nextProps.entitySet.id}, () => {
-        console.log('STATE ENTITYSETID:', this.state.entitySetId);
+      this.setState({ entitySetId: nextProps.entitySet.id }, () => {
         this.loadAcls(false, this.state.entitySetId);
       });
-      this.setState({propertyTypeIds}, () => {
+      this.setState({ propertyTypeIds }, () => {
         // console.log('PROPERTY TYPE IDS:', this.state.propertyTypeIds);
         this.state.propertyTypeIds.forEach((id) => {
           // this.loadAcls(false, this.state.entitySetId, id);
-        })
-      })
+        });
+      });
       localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
       localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
 
@@ -117,107 +111,106 @@ class EntitySetDetailComponent extends React.Component {
     }
   }
 
-//////// PERMISSIONS LOGIC ///////////
+  //////// PERMISSIONS LOGIC ///////////
 
-loadAcls = (updateSuccess, entitySetId, propertyTypeId) => {
-  console.log('ENTITYSETID, PROPERTYTYPEID:', entitySetId, propertyTypeId);
-  const aclKey = [entitySetId];
-  if (propertyTypeId) aclKey.push(propertyTypeId);
-  this.loadAllUsersAndRoles();
-  // HERE IT CAN PERFORM LOGIC FOR BOTH ENTITY AND PROPERTY -> ADD METHODS TO 1. CREATE LIST OF ALL PROPERTIES AND 2. ADD PROPERTY ACES -> PASS INTO ALLPERMISSIONS
-  PermissionsApi.getAcl(aclKey)
-  .then((acls) => {
-    this.updateStateAcls(acls.aces, updateSuccess);
-  })
-  .catch(() => {
-    this.setState({ updateError: true });
-  });
-}
+  loadAcls = (updateSuccess, entitySetId, propertyTypeId) => {
+    console.log('ENTITYSETID, PROPERTYTYPEID:', entitySetId, propertyTypeId);
+    const aclKey = [entitySetId];
+    if (propertyTypeId) aclKey.push(propertyTypeId);
+    this.loadAllUsersAndRoles();
 
-loadAllUsersAndRoles = () => {
-  let allUsersById = {};
-  const allRolesList = new Set();
-  const myId = JSON.parse(localStorage.profile).user_id;
-  PrincipalsApi.getAllUsers()
-  .then((users) => {
-    allUsersById = users;
-    Object.keys(users).forEach((userId) => {
-      users[userId].roles.forEach((role) => {
-        if (role !== AUTHENTICATED_USER) allRolesList.add(role);
-      });
+    PermissionsApi.getAcl(aclKey)
+    .then((acls) => {
+      this.updateStateAcls(acls.aces, updateSuccess);
+    })
+    .catch(() => {
+      this.setState({ updateError: true });
     });
-    allUsersById[myId] = null;
-    this.setState(
-      {
-        allUsersById,
-        allRolesList,
-        loadUsersError: false
-      },
-      () => {
-        console.log('allUsersById, allRolesList:', this.state.allUsersById, this.state.allRolesList);
-      }
-    );
-  })
-  // ///////////TODO: REMOVE ONCE THIS LOGIC IS ON ESDC: CAN CALL ONCE ALLPERMISSIONS IS MOUNTED AND PROPS PASSED IN
-  // .then(() => {
-  //   this.getUserPermissions();
-  //   this.getRolePermissions();
-  // })
-  .catch(() => {
-    this.setState({ loadUsersError: true });
-  });
-}
+  }
 
-updateStateAcls = (aces, updateSuccess) => {
-  let globalValue = [];
-  const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-  const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-  aces.forEach((ace) => {
-    if (ace.permissions.length > 0) {
-      if (ace.principal.type === ROLE) {
-        if (ace.principal.id === AUTHENTICATED_USER) {
-          globalValue = this.getPermission(ace.permissions);
+  loadAllUsersAndRoles = () => {
+    let allUsersById = {};
+    const allRolesList = new Set();
+    const myId = JSON.parse(localStorage.profile).user_id;
+    PrincipalsApi.getAllUsers()
+    .then((users) => {
+      allUsersById = users;
+      Object.keys(users).forEach((userId) => {
+        users[userId].roles.forEach((role) => {
+          if (role !== AUTHENTICATED_USER) allRolesList.add(role);
+        });
+      });
+      allUsersById[myId] = null;
+      this.setState(
+        {
+          allUsersById,
+          allRolesList,
+          loadUsersError: false
+        },
+        () => {
+          console.log('allUsersById, allRolesList:', this.state.allUsersById, this.state.allRolesList);
+        }
+      );
+    })
+    // ///////////TODO: REMOVE ONCE THIS LOGIC IS ON ESDC: CAN CALL ONCE ALLPERMISSIONS IS MOUNTED AND PROPS PASSED IN
+    // .then(() => {
+    //   this.getUserPermissions();
+    //   this.getRolePermissions();
+    // })
+    .catch(() => {
+      this.setState({ loadUsersError: true });
+    });
+  }
+
+  updateStateAcls = (aces, updateSuccess) => {
+    let globalValue = [];
+    const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+    const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
+    aces.forEach((ace) => {
+      if (ace.permissions.length > 0) {
+        if (ace.principal.type === ROLE) {
+          if (ace.principal.id === AUTHENTICATED_USER) {
+            globalValue = this.getPermission(ace.permissions);
+          }
+          else {
+            this.getPermission(ace.permissions).forEach((permission) => {
+              roleAcls[permission].push(ace.principal.id);
+            });
+          }
         }
         else {
           this.getPermission(ace.permissions).forEach((permission) => {
-            roleAcls[permission].push(ace.principal.id);
+            userAcls[permission].push(ace.principal.id);
           });
         }
       }
-      else {
-        this.getPermission(ace.permissions).forEach((permission) => {
-          userAcls[permission].push(ace.principal.id);
-        });
-      }
-    }
-  });
+    });
 
-  this.setState({
-    globalValue,
-    roleAcls,
-    userAcls,
-    updateSuccess,
-    newRoleValue: '',
-    newEmailValue: '',
-    updateError: false
-  }, () => {
-    console.log('roleAcls, userAcls:', this.state.roleAcls, this.state.userAcls);
-  });
-}
+    this.setState({
+      globalValue,
+      roleAcls,
+      userAcls,
+      updateSuccess,
+      newRoleValue: '',
+      newEmailValue: '',
+      updateError: false
+    }, () => {
+      console.log('roleAcls, userAcls:', this.state.roleAcls, this.state.userAcls);
+    });
+  }
 
-getPermission = (permissions) => {
-  const newPermissions = [];
-  if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
-  if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
-  if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
-  if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
-  if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
-  return newPermissions;
-}
+  getPermission = (permissions) => {
+    const newPermissions = [];
+    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
+    if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
+    if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
+    if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
+    if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
+    return newPermissions;
+  }
 
 
-
-//////// VIEW LOGIC ///////////
+  //////// VIEW LOGIC ///////////
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
@@ -339,7 +332,7 @@ getPermission = (permissions) => {
   }
 
   onAllPermissions = () => {
-    hashHistory.push(`/allpermissions`);
+    hashHistory.push('/allpermissions');
     // hashHistory.push(`/entitysets/${this.props.entitySetId}/allpermissions`);
   }
 
@@ -363,13 +356,12 @@ getPermission = (permissions) => {
     return (
       <div className={styles.buttonWrapper} >
         <Button
-          className={styles.center}
-          onClick={this.onAllPermissions}
-        >
+            className={styles.center}
+            onClick={this.onAllPermissions}>
           <span className={styles.buttonText}>View all permissions</span>
         </Button>
       </div>
-    )
+    );
   }
 
   renderDeleteEntitySet = () => {

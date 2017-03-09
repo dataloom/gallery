@@ -1,42 +1,17 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
-import { Link } from 'react-router';
-import Select from 'react-select';
 import { PermissionsApi, PrincipalsApi } from 'loom-data';
-import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
-import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
+import { ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../../components/page/Page';
-import PageConsts from '../../../../utils/Consts/PageConsts';
 import styles from '../styles.module.css';
 
 const views = {
   GLOBAL: 0,
   ROLES: 1,
   EMAILS: 2
-};
-
-const orders = {
-  FIRST: 'first',
-  LAST: 'last'
-}
-
-const permissionLevels = {
-  hidden: [],
-  discover: [Permission.DISCOVER.name],
-  link: [Permission.DISCOVER.name, Permission.LINK.name],
-  read: [Permission.DISCOVER.name, Permission.READ.name],
-  write: [Permission.DISCOVER.name, Permission.WRITE.name],
-  owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
-};
-
-const viewLabels = {
-  0: 'Everyone',
-  1: 'Roles',
-  2: 'Emails'
 };
 
 const accessOptions = {
@@ -56,9 +31,9 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-var U_HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions' ];
+const U_HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions'];
 
-var USERS = [{
+const USERS = [{
   id: 0,
   email: 'corwin@thedataloom.com',
   role: '(all)',
@@ -104,13 +79,7 @@ var USERS = [{
   }]
 }];
 
-var R_HEADERS = ['Roles', 'Permissions'];
-
-var ROLES = {
-  admin: 'Read, Write',
-  owner: 'All the things'
-};
-
+const R_HEADERS = ['Roles', 'Permissions'];
 
 export default class AllPermissions extends React.Component {
   static propTypes = {
@@ -120,8 +89,7 @@ export default class AllPermissions extends React.Component {
 
   constructor(props) {
     super(props);
-    const options = (this.props.propertyTypeId === undefined) ?
-      Object.keys(accessOptions) : Object.keys(permissionOptions);
+
     this.state = {
       view: views.GLOBAL,
       updateSuccess: false,
@@ -164,7 +132,7 @@ export default class AllPermissions extends React.Component {
       });
       allUsersById[myId] = null;
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         this.setState(
           {
             allUsersById,
@@ -237,7 +205,7 @@ export default class AllPermissions extends React.Component {
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
     this.loadAllUsersAndRoles();
-    // HERE IT CAN PERFORM LOGIC FOR BOTH ENTITY AND PROPERTY -> ADD METHODS TO 1. CREATE LIST OF ALL PROPERTIES AND 2. ADD PROPERTY ACES -> PASS INTO ALLPERMISSIONS
+
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
       this.updateStateAcls(acls.aces, updateSuccess);
@@ -248,17 +216,16 @@ export default class AllPermissions extends React.Component {
   }
 
 
-
 ///////////////// LOGIC FOR ALLPERMISSIONS ////////////////////////
   getUserPermissions = () => {
     // const { allUsersById, userAcls, roleAcls } = this.props;
     const { allUsersById, userAcls, roleAcls } = this.state;
-    var userPermissions = [];
+    const userPermissions = [];
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
       if (userId && allUsersById[userId]) {
-        var user = {
+        const user = {
           id: userId,
           email: allUsersById[userId].email,
           role: '(all)',
@@ -284,7 +251,7 @@ export default class AllPermissions extends React.Component {
               if (roleAcls[permissionKey].indexOf(role) !== -1 && user.entityPermissions.indexOf(permissionKey) === -1) {
                 user.entityPermissions.push(permissionKey);
               }
-            })
+            });
           });
         }
 
@@ -296,7 +263,7 @@ export default class AllPermissions extends React.Component {
   }
 
   setUserPermissions = (permissions) => {
-    var formattedPermissions = permissions.slice();
+    const formattedPermissions = permissions.slice();
 
     // Format permissions for table
     formattedPermissions.forEach((permission) => {
@@ -310,13 +277,13 @@ export default class AllPermissions extends React.Component {
 
     });
 
-    this.setState({userPermissions: formattedPermissions});
+    this.setState({ userPermissions: formattedPermissions });
   }
 
   getRolePermissions = () => {
     // const { roleAcls } = this.props;
     const { roleAcls } = this.state;
-    var rolePermissions = {};
+    const rolePermissions = {};
 
     // Get all roles and their respective permissions
     Object.keys(roleAcls).forEach((permission) => {
@@ -328,28 +295,28 @@ export default class AllPermissions extends React.Component {
         if (rolePermissions[role].indexOf(permission) === -1) {
           rolePermissions[role].push(permission);
         }
-      })
+      });
     });
 
     this.setRolePermissions(rolePermissions);
   }
 
   setRolePermissions = (permissions) => {
-    var formattedPermissions = {};
+    const formattedPermissions = {};
 
     // Format data for table
     Object.keys(permissions).forEach((permission) => {
       formattedPermissions[permission] = permissions[permission].join(', ');
     });
 
-    this.setState({rolePermissions: formattedPermissions});
+    this.setState({ rolePermissions: formattedPermissions });
   }
 
   render() {
-    return(
+    return (
       <Page>
         <Page.Header>
-        <Page.Title>All Permissions</Page.Title>
+          <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
           <h3>Individual Permissions</h3>
@@ -358,6 +325,6 @@ export default class AllPermissions extends React.Component {
           <RolePermissionsTable roles={this.state.rolePermissions} headers={R_HEADERS} />
         </Page.Body>
       </Page>
-    )
+    );
   }
 }

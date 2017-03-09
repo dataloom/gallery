@@ -17,7 +17,7 @@ const views = {
 const orders = {
   FIRST: 'first',
   LAST: 'last'
-}
+};
 
 const permissionLevels = {
   hidden: [],
@@ -54,7 +54,7 @@ const permissionOptions = {
 export class PermissionsPanel extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string,
-    propertyTypeId: PropTypes.string,
+    propertyTypeId: PropTypes.string
   }
 
   constructor(props) {
@@ -177,9 +177,6 @@ export class PermissionsPanel extends React.Component {
   }
 
 
-
-
-
   //// LOGIC FOR MODAL VIEW ONLY  ///////
   updatePermissions(rawAction, principal, rawPermissions) {
     const { entitySetId, propertyTypeId } = this.props;
@@ -228,9 +225,10 @@ export class PermissionsPanel extends React.Component {
     if (order) {
       if (order === 'first') {
         firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
+      }
+      else if (order === 'last') {
         firstLastClassName = styles.lastEdmButton;
-      };
+      }
 
       return firstLastClassName;
     }
@@ -239,8 +237,8 @@ export class PermissionsPanel extends React.Component {
   }
 
   getClassName = (view, order) => {
-    var selectedClassName = this.getSelectedClassName(view);
-    var firstLastClassName = this.getFirstLastClassName(order);
+    const selectedClassName = this.getSelectedClassName(view);
+    const firstLastClassName = this.getFirstLastClassName(order);
 
     return `${selectedClassName} ${firstLastClassName}`;
   }
@@ -262,8 +260,8 @@ export class PermissionsPanel extends React.Component {
   }
 
   buttonStyle = (view, viewState, order) => {
-    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
-    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
+    const buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
+    const buttonFirstLastStyle = this.buttonFirstLastStyle(order);
 
     return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
   }
@@ -277,9 +275,10 @@ export class PermissionsPanel extends React.Component {
     if (order) {
       if (order === 'first') {
         firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
+      }
+      else if (order === 'last') {
         firstLastClassName = styles.lastEdmButton;
-      };
+      }
 
       return firstLastClassName;
     }
@@ -288,7 +287,9 @@ export class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissionState = (permission, checked) => {
-    const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
+    const globalValue = this.state.globalValue.filter((permissionOption) => {
+      return permissionOption !== permission;
+    });
     if (checked) globalValue.push(permission);
     this.setState({ globalValue });
   }
@@ -296,7 +297,9 @@ export class PermissionsPanel extends React.Component {
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const options = optionNames
-      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden)
+      .filter((name) => {
+        return name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden;
+      })
       .map((option) => {
         const checkboxName = `global-${option}`;
         return (
