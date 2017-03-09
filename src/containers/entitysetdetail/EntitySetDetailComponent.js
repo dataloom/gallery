@@ -73,6 +73,7 @@ class EntitySetDetailComponent extends React.Component {
       deleteError: false,
       propertyTypeIds: [],
       entitySetId: '',
+      properties: {},
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       allUsersById: {},
@@ -86,45 +87,45 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
-        return property.id;
-      });
-
-      // TODO: Move to redux
-      // TODO: use promise.all to wait for both to set state
-
-      this.setState({ propertyTypeIds }, () => {
-        this.state.propertyTypeIds.forEach((id) => {
-          // this.loadAcls(false, this.state.entitySetId, id);
-        });
-      });
-
-      localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
-
-      // Run loadAcls for entity set and each property
-      // refactor to take the id
-
-    }
-
-    // console.log('ENTITYSET OBJ id:', this.props.entitySet.id);
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      console.log('ENTITYSET OBJECT RECEIVED:', nextProps.entitySet);
       this.loadAcls(false, nextProps.entitySet.id);
-    }
 
+      nextProps.entitySet.entityType.properties.forEach((property) => {
+        console.log('PROPERTY:', property);
+        this.loadAcls(false, nextProps.entitySet.id, property);
+
+      });
+
+      // TODO: use promise.all to wait for both to set state
+      // propertyTypeIds.forEach((id) => {
+      //   this.loadAcls(false, nextProps.entitySet.id, id);
+      // });
+
+      // this.setState({ propertyTypeIds }, () => {
+      //   // this.state.propertyTypeIds.forEach((id) => {
+      //   //   this.loadAcls(false, this.state.entitySetId, id);
+      //   // });
+      // });
+      // localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
+
+      // this.props.setPropertyTypeIds(propertyTypeIds);
+    }
   }
 
   //////// PERMISSIONS LOGIC ///////////
 
-  loadAcls = (updateSuccess, entitySetId, propertyTypeId) => {
-    console.log('ENTITYSETID, PROPERTYTYPEID:', entitySetId, propertyTypeId);
+  loadAcls = (updateSuccess, entitySetId, property) => {
     const aclKey = [entitySetId];
-    if (propertyTypeId) aclKey.push(propertyTypeId);
+    if (property && property.id) aclKey.push(property.id);
     this.loadAllUsersAndRoles();
 
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
-      this.updateStateAcls(acls.aces, updateSuccess);
+      if (property) {
+        this.updateStateAcls(acls.aces, updateSuccess, property);
+      }
+      else {
+        this.updateStateAcls(acls.aces, updateSuccess);
+      }
     })
     .catch(() => {
       this.setState({ updateError: true });
@@ -151,7 +152,7 @@ class EntitySetDetailComponent extends React.Component {
           loadUsersError: false
         },
         () => {
-          console.log('allUsersById, allRolesList:', this.state.allUsersById, this.state.allRolesList);
+          // console.log('allUsersById, allRolesList:', this.state.allUsersById, this.state.allRolesList);
         }
       );
     })
@@ -165,7 +166,7 @@ class EntitySetDetailComponent extends React.Component {
     });
   }
 
-  updateStateAcls = (aces, updateSuccess) => {
+  updateStateAcls = (aces, updateSuccess, property) => {
     let globalValue = [];
     const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
@@ -188,8 +189,16 @@ class EntitySetDetailComponent extends React.Component {
         }
       }
     });
+    const oldPropertyState = this.state.properties;
+    const newPropertyState = this.state.properties;
+    newPropertyState[property.id] = {
+      title: property.title,
+      roleAcls,
+      userAcls
+    };
 
     this.setState({
+      oldPropertyState: newPropertyState,
       globalValue,
       roleAcls,
       userAcls,
@@ -198,7 +207,7 @@ class EntitySetDetailComponent extends React.Component {
       newEmailValue: '',
       updateError: false
     }, () => {
-      console.log('roleAcls, userAcls:', this.state.roleAcls, this.state.userAcls);
+      console.log('STATE AFTER UPDATEACLS', this.state);
     });
   }
 
@@ -478,7 +487,10 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
-    }
+    },
+    // setPropertyTypeIds: (ids) => {
+    //   dispatch(actionFactories.setPropertyTypeIds(ids));
+    // }
   };
 }
 
