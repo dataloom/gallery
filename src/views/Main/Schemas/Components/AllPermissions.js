@@ -144,6 +144,9 @@ export default class AllPermissions extends React.Component {
   }
 
   componentDidMount() {
+    // this.getUserPermissions();
+    // this.getRolePermissions();
+
     this.loadAcls(false);
   }
 
@@ -174,6 +177,7 @@ export default class AllPermissions extends React.Component {
         );
       });
     })
+    ///////////TODO: REMOVE ONCE THIS LOGIC IS ON ESDC: CAN CALL ONCE ALLPERMISSIONS IS MOUNTED AND PROPS PASSED IN
     .then(() => {
       this.getUserPermissions();
       this.getRolePermissions();
@@ -243,7 +247,11 @@ export default class AllPermissions extends React.Component {
     });
   }
 
+
+
+///////////////// LOGIC FOR ALLPERMISSIONS ////////////////////////
   getUserPermissions = () => {
+    // const { allUsersById, userAcls, roleAcls } = this.props;
     const { allUsersById, userAcls, roleAcls } = this.state;
     var userPermissions = [];
 
@@ -258,6 +266,8 @@ export default class AllPermissions extends React.Component {
           propertyPermissions: [],
           expand: []
         };
+
+        // TODO: FOR EACH PROPERTY, ADD PROPERTY KEY + VALUES (PERMISSIONS);
 
         // Add individual permissions
         Object.keys(userAcls).forEach((permissionKey) => {
@@ -304,6 +314,7 @@ export default class AllPermissions extends React.Component {
   }
 
   getRolePermissions = () => {
+    // const { roleAcls } = this.props;
     const { roleAcls } = this.state;
     var rolePermissions = {};
 

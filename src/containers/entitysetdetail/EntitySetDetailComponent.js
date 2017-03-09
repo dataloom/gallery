@@ -37,6 +37,11 @@ const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
 `;
 
+// TODO: GET PROPERTY PERMISSIONS ALONGSIDE ENTITY PERMISSIONS
+// Move permissions logic & state to here -> pass info down to children (AllPermissions, ManagePermissions modals)
+// AllPermissions props: userPermissions, rolePermissions
+// Logic for Entity & Property permissions:
+
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
@@ -56,12 +61,19 @@ class EntitySetDetailComponent extends React.Component {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false
+      deleteError: false,
+      propertyTypeIds: [],
+      entitySetId: '',
+      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
+      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
+      allUsersById: {},
+      allRolesList: new Set(),
     };
   }
 
   componentDidMount() {
     this.props.loadEntitySet();
+    this.loadAcls(false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -71,11 +83,114 @@ class EntitySetDetailComponent extends React.Component {
       });
 
       // TODO: Move to redux
+      this.setState({propertyTypeIds, entitySetId: nextProps.entitySet.id});
       localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
       localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
     }
   }
 
+//////// PERMISSIONS LOGIC ///////////
+loadAcls = (updateSuccess) => {
+  const { entitySetId } = this.state;
+  const { propertyTypeId } = this.props;
+  const aclKey = [entitySetId];
+  if (propertyTypeId) aclKey.push(propertyTypeId);
+  this.loadAllUsersAndRoles();
+  // HERE IT CAN PERFORM LOGIC FOR BOTH ENTITY AND PROPERTY -> ADD METHODS TO 1. CREATE LIST OF ALL PROPERTIES AND 2. ADD PROPERTY ACES -> PASS INTO ALLPERMISSIONS
+  PermissionsApi.getAcl(aclKey)
+  .then((acls) => {
+    this.updateStateAcls(acls.aces, updateSuccess);
+  })
+  .catch(() => {
+    this.setState({ updateError: true });
+  });
+}
+
+loadAllUsersAndRoles = () => {
+  let allUsersById = {};
+  const allRolesList = new Set();
+  const myId = JSON.parse(localStorage.profile).user_id;
+  PrincipalsApi.getAllUsers()
+  .then((users) => {
+    allUsersById = users;
+    Object.keys(users).forEach((userId) => {
+      users[userId].roles.forEach((role) => {
+        if (role !== AUTHENTICATED_USER) allRolesList.add(role);
+      });
+    });
+    allUsersById[myId] = null;
+
+    return new Promise((resolve, reject) => {
+      this.setState(
+        {
+          allUsersById,
+          allRolesList,
+          loadUsersError: false
+        },
+        // () => {
+        //   resolve(this.state.allUsersById);
+        // }
+      );
+    });
+  })
+  // ///////////TODO: REMOVE ONCE THIS LOGIC IS ON ESDC: CAN CALL ONCE ALLPERMISSIONS IS MOUNTED AND PROPS PASSED IN
+  // .then(() => {
+  //   this.getUserPermissions();
+  //   this.getRolePermissions();
+  // })
+  .catch(() => {
+    this.setState({ loadUsersError: true });
+  });
+}
+
+updateStateAcls = (aces, updateSuccess) => {
+  let globalValue = [];
+  const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+  const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
+  aces.forEach((ace) => {
+    if (ace.permissions.length > 0) {
+      if (ace.principal.type === ROLE) {
+        if (ace.principal.id === AUTHENTICATED_USER) {
+          globalValue = this.getPermission(ace.permissions);
+        }
+        else {
+          this.getPermission(ace.permissions).forEach((permission) => {
+            roleAcls[permission].push(ace.principal.id);
+          });
+        }
+      }
+      else {
+        this.getPermission(ace.permissions).forEach((permission) => {
+          userAcls[permission].push(ace.principal.id);
+        });
+      }
+    }
+  });
+
+  this.setState({
+    globalValue,
+    roleAcls,
+    userAcls,
+    updateSuccess,
+    newRoleValue: '',
+    newEmailValue: '',
+    updateError: false
+  });
+}
+
+getPermission = (permissions) => {
+  const newPermissions = [];
+  if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
+  if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
+  if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
+  if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
+  if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
+  return newPermissions;
+}
+
+
+
+//////// VIEW LOGIC ///////////
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
