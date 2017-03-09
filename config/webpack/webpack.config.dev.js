@@ -51,5 +51,6 @@ export default Object.assign({}, baseWebpackConfig, {
     port: DEV_SERVER_PORT,
     contentBase: APP_PATHS.ABS.BUILD,
     publicPath: baseWebpackConfig.output.publicPath
-  }
+  },
+  devtool: 'inline-source-map'
 });

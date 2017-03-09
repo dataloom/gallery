@@ -2,8 +2,8 @@
  * @flow
  */
 
-function ifElse(condition :boolean) :Function {
-  return (isTrue :any, isFalse :any) => {
+function ifElse(condition) {
+  return (isTrue, isFalse) => {
     return condition ? isTrue : isFalse;
   };
 }
@@ -16,9 +16,12 @@ const isProd :boolean = BUILD === 'production';
 const ifDev :Function = ifElse(isDev);
 const ifProd :Function = ifElse(isProd);
 
+const testProfile :string = process.env.TEST || 'default';
+
 export {
   isDev,
   isProd,
   ifDev,
-  ifProd
+  ifProd,
+  testProfile
 };

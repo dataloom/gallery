@@ -6,7 +6,7 @@
 
 import {
   isProd
-} from '../env.js';
+} from '../env';
 
 export const AUTH0_CLIENT_ID :string =
   isProd
