@@ -94,12 +94,11 @@ class EntitySetDetailComponent extends React.Component {
       // TODO: use promise.all to wait for both to set state
 
       this.setState({ propertyTypeIds }, () => {
-        // console.log('PROPERTY TYPE IDS:', this.state.propertyTypeIds);
         this.state.propertyTypeIds.forEach((id) => {
           // this.loadAcls(false, this.state.entitySetId, id);
         });
       });
-      localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
+
       localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
 
       // Run loadAcls for entity set and each property
@@ -107,8 +106,10 @@ class EntitySetDetailComponent extends React.Component {
 
     }
 
-    if (this.props.entitySetId === null && nextProps.entitySetId !== null) {
-      this.loadAcls(false, nextProps.entitySetId);
+    // console.log('ENTITYSET OBJ id:', this.props.entitySet.id);
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      console.log('ENTITYSET OBJECT RECEIVED:', nextProps.entitySet);
+      this.loadAcls(false, nextProps.entitySet.id);
     }
 
   }
@@ -460,7 +461,6 @@ function mapStateToProps(state) {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
     entitySetPermissions,
-    entitySetId: entitySetDetail.get('entitySetId')
   };
 }
 
