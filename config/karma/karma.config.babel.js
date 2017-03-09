@@ -3,17 +3,35 @@ import WEBPACK_CONFIG from '../webpack/webpack.config.test';
 const TESTS_PATH = 'src/**/*.test.js';
 const CHAI_CONFIG_PATH = 'config/chai/*.js';
 
-const ENV = process.env.TEST;
+import {
+  testProfile
+} from '../env';
+
+function getProfileOptions(profile) {
+
+  let autoWatch;
+  let browsers;
+
+  switch(profile) {
+    case 'dev':
+      autoWatch = true;
+      browsers = ['Chrome'];
+      break;
+
+    default:
+      autoWatch = false;
+      browsers = ['PhantomJS'];
+  }
+
+  return {
+    autoWatch,
+    browsers
+  }
+}
 
 export default function(config) {
 
-  let autoWatch = false;
-  let browsers = ['PhantomJS'];
-
-  if (ENV === 'dev') {
-    autoWatch = true;
-    browsers = ['Chrome'];
-  }
+  const { autoWatch, browsers } = getProfileOptions(testProfile);
 
   config.set({
 
