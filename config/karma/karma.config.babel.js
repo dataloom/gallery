@@ -106,7 +106,7 @@ export default function(config) {
      *
      * https://npmjs.org/browse/keyword/karma-reporter
      */
-    reporters: ['progress'],
+    reporters: ['mocha'],
 
     /*
      * possible values:
