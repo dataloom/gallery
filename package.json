@@ -89,6 +89,7 @@
     "flow-bin": "^0.39.0",
     "html-webpack-plugin": "^2.26.0",
     "karma": "^1.5.0",
+    "karma-bamboo-reporter": "^0.1.2",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-mocha": "^1.3.0",
@@ -118,7 +119,8 @@
     "lint:js": "eslint --config .eslintrc src test",
     "lint:css": "echo \"Error: lint:css task not implemented\" && exit 1",
     "test": "karma start config/karma/karma.config.js",
-    "test:dev": "better-npm-run test:dev"
+    "test:dev": "better-npm-run test:dev",
+    "test:bamboo": "better-npm-run test:bamboo"
   },
   "betterScripts": {
     "build:prod": {
@@ -131,6 +133,12 @@
       "command": "karma start config/karma/karma.config.js",
       "env": {
         "TEST": "dev"
+      }
+    },
+    "test:bamboo": {
+      "command": "karma start config/karma/karma.config.js",
+      "env": {
+        "TEST": "bamboo"
       }
     },
     "webpack-dashboard": {

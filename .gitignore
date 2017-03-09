@@ -1,5 +1,6 @@
 build
 node_modules
+mocha.json
 
 npm-debug.log
 .DS_Store
