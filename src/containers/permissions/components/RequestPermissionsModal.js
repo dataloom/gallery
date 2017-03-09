@@ -14,7 +14,7 @@ const PROPERTY_TYPE_EDITING = {
   permissions: true
 };
 
-class RequestPermissions extends React.Component {
+export class RequestPermissionsModal extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
@@ -51,7 +51,7 @@ class RequestPermissions extends React.Component {
 
   onReasonChange = (event) => {
     this.setState({ reason: event.target.value });
-  }
+  };
 
   render() {
     const { propertyTypeIds, entitySet, entitySetId, show, onHide, asyncStatus } = this.props;
@@ -137,4 +137,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestPermissions);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestPermissionsModal);
