@@ -286,25 +286,21 @@ export default class AllPermissions extends React.Component {
   }
 
   setUserPermissions = (permissions) => {
-    // var formattedPermissions = [];
-    //
-    // permissions.forEach((i) => {
-    //   console.log('PERMISSIONs:', permissions);
-    //   console.log('PERMISSION:', permissions[i]);
-    //   if (permissions[i]) {
-    //     if (permissions[i].entityPermissions.length === 0) {
-    //       console.log('length = 0');
-    //       // formattedPermissions[i] = {permissions[i]};
-    //     } else {
-    //       console.log('length > 0');
-    //
-    //       // formattedPermissions[i].entityPermissions = formattedPermissions[i].entityPermissions.join(', ');
-    //     }
-    //   }
-    //
-    // });
-    //
-    // // this.setState({userPermissions: formattedPermissions}, () => {console.log('USERPERMISSIONS STATE:', this.state.userPermissions)});
+    var formattedPermissions = permissions.slice();
+
+    // Format permissions for table
+    formattedPermissions.forEach((permission) => {
+      if (permission) {
+        if (permission.entityPermissions.length === 0) {
+          permission.entityPermissions = '-';
+        } else {
+          permission.entityPermissions = permission.entityPermissions.join(', ');
+        }
+      }
+
+    });
+
+    this.setState({userPermissions: formattedPermissions});
   }
 
   getRolePermissions = () => {
