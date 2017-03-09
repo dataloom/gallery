@@ -24,6 +24,8 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
+import { PermissionsApi, PrincipalsApi } from 'loom-data';
+import { USER, ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import styles from './entitysetdetail.module.css';
 
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
@@ -36,6 +38,15 @@ const TitleControlsContainer = styled(StyledFlexContainer)`
 const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
 `;
+
+const permissionOptions = {
+  Discover: 'Discover',
+  Link: 'Link',
+  Read: 'Read',
+  Write: 'Write',
+  Owner: 'Owner'
+};
+
 
 // TODO: GET PROPERTY PERMISSIONS ALONGSIDE ENTITY PERMISSIONS
 // Move permissions logic & state to here -> pass info down to children (AllPermissions, ManagePermissions modals)
@@ -57,6 +68,8 @@ class EntitySetDetailComponent extends React.Component {
 
   constructor(props) {
     super(props);
+
+    // TODO: UPDATE TO HOLD UNIQUE STATE FOR ENTITY SETS AND PROPERTIES
     this.state = {
       editingPermissions: false,
       confirmingDelete: false,
@@ -73,26 +86,41 @@ class EntitySetDetailComponent extends React.Component {
 
   componentDidMount() {
     this.props.loadEntitySet();
-    this.loadAcls(false);
+    // this.loadAcls(false);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined ) {
+      console.log('NEXTPROPS ENTITYSETID:', nextProps.entitySet);
       const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
         return property.id;
       });
 
       // TODO: Move to redux
-      this.setState({propertyTypeIds, entitySetId: nextProps.entitySet.id});
+      // TODO: use promise.all to wait for both to set state
+      this.setState({entitySetId: nextProps.entitySet.id}, () => {
+        console.log('STATE ENTITYSETID:', this.state.entitySetId);
+        this.loadAcls(false, this.state.entitySetId);
+      });
+      this.setState({propertyTypeIds}, () => {
+        // console.log('PROPERTY TYPE IDS:', this.state.propertyTypeIds);
+        this.state.propertyTypeIds.forEach((id) => {
+          // this.loadAcls(false, this.state.entitySetId, id);
+        })
+      })
       localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
       localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
+
+      // Run loadAcls for entity set and each property
+      // refactor to take the id
+
     }
   }
 
 //////// PERMISSIONS LOGIC ///////////
-loadAcls = (updateSuccess) => {
-  const { entitySetId } = this.state;
-  const { propertyTypeId } = this.props;
+
+loadAcls = (updateSuccess, entitySetId, propertyTypeId) => {
+  console.log('ENTITYSETID, PROPERTYTYPEID:', entitySetId, propertyTypeId);
   const aclKey = [entitySetId];
   if (propertyTypeId) aclKey.push(propertyTypeId);
   this.loadAllUsersAndRoles();
@@ -119,19 +147,16 @@ loadAllUsersAndRoles = () => {
       });
     });
     allUsersById[myId] = null;
-
-    return new Promise((resolve, reject) => {
-      this.setState(
-        {
-          allUsersById,
-          allRolesList,
-          loadUsersError: false
-        },
-        // () => {
-        //   resolve(this.state.allUsersById);
-        // }
-      );
-    });
+    this.setState(
+      {
+        allUsersById,
+        allRolesList,
+        loadUsersError: false
+      },
+      () => {
+        console.log('allUsersById, allRolesList:', this.state.allUsersById, this.state.allRolesList);
+      }
+    );
   })
   // ///////////TODO: REMOVE ONCE THIS LOGIC IS ON ESDC: CAN CALL ONCE ALLPERMISSIONS IS MOUNTED AND PROPS PASSED IN
   // .then(() => {
@@ -175,6 +200,8 @@ updateStateAcls = (aces, updateSuccess) => {
     newRoleValue: '',
     newEmailValue: '',
     updateError: false
+  }, () => {
+    console.log('roleAcls, userAcls:', this.state.roleAcls, this.state.userAcls);
   });
 }
 
