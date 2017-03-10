@@ -13,3 +13,10 @@ export function setPropertyData(data) {
     data
   };
 }
+
+export function setAllUsersById(data) {
+  return {
+    type: actionTypes.SET_ALL_USERS_BY_ID,
+    data
+  };
+}

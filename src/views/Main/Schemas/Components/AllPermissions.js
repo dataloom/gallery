@@ -6,6 +6,7 @@ import { ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConst
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../../components/page/Page';
+import { connect } from 'react-redux';
 import styles from '../styles.module.css';
 
 const views = {
@@ -81,7 +82,7 @@ const USERS = [{
 
 const R_HEADERS = ['Roles', 'Permissions'];
 
-export default class AllPermissions extends React.Component {
+class AllPermissions extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string,
     propertyTypeId: PropTypes.string,
@@ -228,7 +229,7 @@ export default class AllPermissions extends React.Component {
         const user = {
           id: userId,
           email: allUsersById[userId].email,
-          role: '(all)',
+          roles: [],
           entityPermissions: [],
           propertyPermissions: [],
           expand: []
@@ -328,3 +329,19 @@ export default class AllPermissions extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  const entitySetDetail = state.get('entitySetDetail');
+  console.log('ENTITYSETDETAIL props:', entitySetDetail.toJS());
+  return {
+    // properties w/ acls
+    // entity set w/ acls
+    // allusersbyid
+  }
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllPermissions);

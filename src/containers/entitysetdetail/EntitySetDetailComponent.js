@@ -84,7 +84,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log('nextprops:', nextProps);
+    // console.log('NEXTPROPS************:', nextProps);
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
       this.loadAcls(false, nextProps.entitySet.id);
 
@@ -122,6 +122,7 @@ class EntitySetDetailComponent extends React.Component {
         });
       });
       allUsersById[myId] = null;
+      this.props.setAllUsersById(allUsersById);
       this.setState(
         {
           allUsersById,
@@ -488,7 +489,10 @@ function mapDispatchToProps(dispatch, ownProps) {
       ));
     },
     setPropertyData: (data) => {
-      dispatch(actionFactories.setPropertyData(data))
+      dispatch(actionFactories.setPropertyData(data));
+    },
+    setAllUsersById: (data) => {
+      dispatch(actionFactories.setAllUsersById(data));
     }
   };
 }

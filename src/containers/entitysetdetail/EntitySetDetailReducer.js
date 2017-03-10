@@ -13,6 +13,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   // TODO: Move to object reference
   entitySetId: null,
   entitySetReference: null,
+  allUsersById: {},
   properties: {}
 });
 
@@ -40,6 +41,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         },
         entitySetReference: action.reference
       });
+    case actionTypes.SET_ALL_USERS_BY_ID:
+      return state.merge({
+        allUsersById: action.data
+      })
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
       var nestedState = {...stateJS,
@@ -56,6 +61,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return immutableNestedState;
 
       // TODO: REWORK TO USE GET/SET/MERGE IMMUTABLE METHODS...
+      // TRY WITH {} AROUND MERGE OBJECT
       // const property = {
       //   title: action.data.title,
       //   roleAcls: action.data.roleAcls,
