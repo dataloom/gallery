@@ -119,6 +119,14 @@ class AllPermissions extends React.Component {
     this.loadAcls(false);
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('PROPS!:', nextProps);
+
+    if (this.props.allUsersById === undefined && nextProps.allUsersById !== undefined) {
+      console.log('FINALLY! REDUX PROPS!:', nextProps);
+    }
+  }
+
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
@@ -220,7 +228,9 @@ class AllPermissions extends React.Component {
 ///////////////// LOGIC FOR ALLPERMISSIONS ////////////////////////
   getUserPermissions = () => {
     // const { allUsersById, userAcls, roleAcls } = this.props;
-    const { allUsersById, userAcls, roleAcls } = this.state;
+    const { userAcls, roleAcls } = this.state;
+    const { allUsersById } = this.props;
+    console.log('ALLUSERSBYID:', allUsersById);
     const userPermissions = [];
 
     // For each user, add their permissions
@@ -259,7 +269,6 @@ class AllPermissions extends React.Component {
         userPermissions.push(user);
       }
     });
-
     this.setUserPermissions(userPermissions);
   }
 
@@ -334,10 +343,8 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   console.log('ENTITYSETDETAIL props:', entitySetDetail.toJS());
   return {
-    // properties w/ acls
-    // entity set w/ acls
-    // allusersbyid
-  }
+    allUsersById: entitySetDetail.get('allUsersById').toJS()
+  };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
