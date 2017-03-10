@@ -11,12 +11,18 @@ function getProfileOptions(profile) {
 
   let autoWatch;
   let browsers;
+  let extraReporters = [];
 
   switch(profile) {
     case 'dev':
       autoWatch = true;
       browsers = ['Chrome'];
       break;
+
+    case 'bamboo':
+      autoWatch = false;
+      browsers = ['PhantomJS'];
+      extraReporters = ['bamboo'];
 
     default:
       autoWatch = false;
@@ -25,13 +31,14 @@ function getProfileOptions(profile) {
 
   return {
     autoWatch,
-    browsers
+    browsers,
+    extraReporters
   }
 }
 
 export default function(config) {
 
-  const { autoWatch, browsers } = getProfileOptions(testProfile);
+  const { autoWatch, browsers, extraReporters } = getProfileOptions(testProfile);
 
   config.set({
 
@@ -106,7 +113,7 @@ export default function(config) {
      *
      * https://npmjs.org/browse/keyword/karma-reporter
      */
-    reporters: ['progress'],
+    reporters: ['mocha', ...extraReporters],
 
     /*
      * possible values:
