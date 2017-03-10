@@ -24,6 +24,66 @@ export const DEFAULT_EDITING = {
 };
 
 /* Permissions */
+class PropertyTypePermissions extends React.Component {
+  static propTypes = {
+    permissions: PermissionsPropType
+  };
+
+  render() {
+    const { permissions } = this.props;
+    const canRead = permissions && permissions.READ;
+
+    return (
+      <div className="propertyTypePermissions">
+        { canRead ? null : <FontAwesome name="lock" />}
+      </div>
+    );
+  }
+}
+
+class PropertyTypeEditPermissions extends React.Component {
+  static propTypes = {
+    onChange: PropTypes.func.isRequired,
+    // Async Properties
+    propertyType: PropertyTypePropType,
+    permissions: PermissionsPropType
+  };
+
+  // TODO: Handle more than just read
+  // THIS IS USED IN REQUEST PERMISSIONS MODAL
+  onChange = (event) => {
+    const { onChange, propertyType, permissions } = this.props;
+    const canRead = event.target.value === 'on';
+
+    if (onChange && canRead) {
+      const newPermissions = Object.assign({}, permissions, {
+        READ: canRead
+      });
+
+      onChange(propertyType.id, {
+        permissions: newPermissions
+      });
+    }
+  };
+
+  render() {
+    const { permissions, propertyType } = this.props;
+
+    const canRead = permissions && permissions.READ;
+    // TODO: Support more than just read
+    // TODO: Enforce entitySetId on edit
+    return (
+      <div className="propertyTypePermissions editing">
+        <input
+            type="checkbox"
+            id={`ptp-${propertyType.id}`}
+            onChange={this.onChange}
+            defaultChecked={canRead}
+            disabled={!!canRead} />
+      </div>
+    );
+  }
+}
 
 /* Title */
 class PropertyTypeTitle extends React.Component {
@@ -143,48 +203,25 @@ class PropertyType extends React.Component {
     editing: DEFAULT_EDITING
   };
 
-  // TODO: Handle more than just permissions
-  //THIS IS USED IN REQUEST PERMISSIONS MODAL
-  onChange = (event) => {
-    const { onChange, propertyTypeId, permissions } = this.props,
-      canRead = event.target.value === 'on';
-
-    if (onChange && canRead) {
-      const newPermissions = Object.assign({}, permissions, {
-        READ: canRead
-      });
-
-      onChange(propertyTypeId, {
-        permissions: newPermissions
-      });
-    }
-  };
-
-  renderPermissions() {
-    const { editing, permissions, propertyType } = this.props;
-
-    let content;
-    const canRead = permissions && permissions.READ;
-    if (editing.permissions) {
-      // TODO: Support more than just read
-      // TODO: Enforce entitySetId on edit
-      content = (<input type="checkbox" id={`ptp-${propertyType.id}`} onChange={this.onChange} defaultChecked={canRead} disabled={!!canRead}/>);
-    } else if (!canRead) {
-      content = (<FontAwesome name="lock"/>);
-    }
-
-    const classes = classnames('propertyTypePermissions', {
-      editing: editing.permissions
-    });
-    return (<div className={classes}>{content}</div>);
-  }
-
   render() {
-    const { propertyType, entitySetId, permissions } = this.props;
+    const { propertyType, entitySetId, permissions, editing } = this.props;
+
+    let permissionsComponent;
+    if (editing.permissions) {
+      const { onChange } = this.props;
+      permissionsComponent = (
+        <PropertyTypeEditPermissions
+            onChange={onChange}
+            permissions={permissions}
+            propertyType={propertyType} />
+      );
+    } else {
+      permissionsComponent = (<PropertyTypePermissions permissions={permissions} />);
+    }
 
     return (
       <div className="propertyType">
-        {this.renderPermissions()}
+        { permissionsComponent }
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
         <PropertyTypeControls entitySetId={entitySetId} propertyType={propertyType} permissions={permissions} />
