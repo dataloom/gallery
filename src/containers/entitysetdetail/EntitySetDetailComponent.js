@@ -84,13 +84,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log('nextprops:', nextProps);
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      console.log('PROPS;', nextProps);
-
       this.loadAcls(false, nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
-        console.log('PROPERTY:', property);
         this.loadAcls(false, nextProps.entitySet.id, property);
       });
     }
@@ -104,8 +102,6 @@ class EntitySetDetailComponent extends React.Component {
 
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
-      // property ? this.updateStateAcls(acls.aces, updateSuccess, property)
-      // : this.updateStateAcls(acls.aces, updateSuccess);
       this.updateStateAcls(acls.aces, updateSuccess, property);
     })
     .catch(() => {
@@ -455,6 +451,7 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
+  console.log('entitysetdetailstate:', entitySetDetail.toJS());
 
   let entitySet;
   let entitySetPermissions;
@@ -471,7 +468,7 @@ function mapStateToProps(state) {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
     entitySetPermissions,
-    entityProperties: entitySetDetail.properties
+    entityProperties: entitySetDetail.get('properties').toJS()
   };
 }
 
