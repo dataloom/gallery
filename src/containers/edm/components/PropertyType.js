@@ -23,6 +23,49 @@ export const DEFAULT_EDITING = {
     permissions: false
 };
 
+/* Permissions */
+
+/* Title */
+class PropertyTypeTitle extends React.Component {
+  static propTypes = {
+    propertyType: PropertyTypePropType
+  };
+
+  render() {
+    const { propertyType } = this.props;
+    const content = propertyType === null ? null : propertyType.title;
+
+    return (
+      <div className="propertyTypeTitle">{content}</div>
+    );
+  }
+}
+
+/* Description */
+class PropertyTypeDescription extends React.Component {
+  static propTypes = {
+    propertyType: PropertyTypePropType
+  };
+
+  render() {
+    const { propertyType } = this.props;
+    let content;
+
+    if (propertyType) {
+      if (propertyType.description) {
+        content = (<ExpandableText text={propertyType.description} maxLength={MAX_DESCRIPTION_LENGTH} />);
+      } else {
+        content = (<em>No description</em>);
+      }
+    }
+
+    return (<div className="propertyTypeDescription">{content}</div>);
+  }
+}
+
+/* Controls */
+
+
 // TODO: Make PropertyType a container that takes a PropertyType reference
 class PropertyType extends React.Component {
   static propTypes = {
@@ -83,37 +126,6 @@ class PropertyType extends React.Component {
     return (<div className={classes}>{content}</div>);
   }
 
-  renderTitle() {
-    const { editing, propertyType } = this.props;
-
-    let content;
-    if (propertyType) {
-      if (editing.permissions) {
-        content = (
-          <label htmlFor={`ptp-${propertyType.id}`}>{propertyType.title}</label>
-        )
-      } else {
-        content = propertyType.title;
-      }
-    }
-    return (<div className="propertyTypeTitle">{content}</div>);
-  }
-
-  renderDescription() {
-    const { propertyType } = this.props;
-
-    let content;
-    if (propertyType) {
-      if (propertyType.description) {
-        content = (<ExpandableText text={propertyType.description} maxLength={MAX_DESCRIPTION_LENGTH}/>);
-      } else {
-        content = (<em>No description</em>);
-      }
-    }
-
-    return (<div className="propertyTypeDescription">{content}</div>);
-  }
-
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   }
@@ -156,11 +168,13 @@ class PropertyType extends React.Component {
   }
 
   render() {
+    const { propertyType } = this.props;
+
     return (
       <div className="propertyType">
         {this.renderPermissions()}
-        {this.renderTitle()}
-        {this.renderDescription()}
+        <PropertyTypeTitle propertyType={propertyType} />
+        <PropertyTypeDescription propertyType={propertyType} />
         {this.renderManagePermissions()}
         {this.renderPermissionsPanel()}
       </div>
