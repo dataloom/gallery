@@ -20,7 +20,7 @@ export const EditingPropType = PropTypes.shape({
 });
 
 export const DEFAULT_EDITING = {
-    permissions: false
+  permissions: false
 };
 
 /* Permissions */
@@ -64,6 +64,66 @@ class PropertyTypeDescription extends React.Component {
 }
 
 /* Controls */
+class PropertyTypeControls extends React.Component {
+  static propTypes = {
+    entitySetId: PropTypes.string.isRequired,
+
+    // Async Properties
+    propertyType: PropertyTypePropType,
+    permissions: PermissionsPropType
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      editingPermissions: false
+    };
+  }
+
+  render() {
+    if (this.props.permissions.OWNER) {
+      return (
+        <div className="propertyTypeControls">
+          <Button
+              bsStyle="info"
+              onClick={this.openPermissionsPanel}
+              className={styles.control}>Manage Permissions</Button>
+          { this.renderPermissionsPanel() }
+        </div>
+      );
+    }
+    return null;
+  }
+
+  // TODO: Move to global permissions panel
+  renderPermissionsPanel() {
+    const { propertyType, entitySetId } = this.props;
+
+    if (!propertyType) return null;
+    return (
+      <Modal
+          show={this.state.editingPermissions}
+          onHide={this.closePermissionsPanel}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage permissions for property type: {propertyType.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PermissionsPanel
+              entitySetId={entitySetId}
+              propertyTypeId={propertyType.id} />
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  openPermissionsPanel = () => {
+    this.setState({ editingPermissions: true });
+  };
+
+  closePermissionsPanel = () => {
+    this.setState({ editingPermissions: false });
+  };
+}
 
 
 // TODO: Make PropertyType a container that takes a PropertyType reference
@@ -82,13 +142,6 @@ class PropertyType extends React.Component {
   static defaultProps = {
     editing: DEFAULT_EDITING
   };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      editingPermissions: false
-    };
-  }
 
   // TODO: Handle more than just permissions
   //THIS IS USED IN REQUEST PERMISSIONS MODAL
@@ -126,57 +179,15 @@ class PropertyType extends React.Component {
     return (<div className={classes}>{content}</div>);
   }
 
-  setEditingPermissions = () => {
-    this.setState({ editingPermissions: true });
-  }
-
-  closePermissionsPanel = () => {
-    this.setState({ editingPermissions: false });
-  }
-
-  renderManagePermissions() {
-    if (this.props.permissions.OWNER) {
-      return (
-        <div className="propertyTypeControls">
-          <Button
-            bsStyle="info"
-            onClick={this.setEditingPermissions}
-            className={styles.control}>Manage Permissions</Button>
-        </div>
-          );
-    }
-    return null;
-  }
-
-  // TODO: Move to global permissions panel
-  renderPermissionsPanel() {
-    if (!this.props.propertyType) return null;
-    return (
-      <Modal
-          show={this.state.editingPermissions}
-          onHide={this.closePermissionsPanel}>
-        <Modal.Header closeButton>
-          <Modal.Title>Manage permissions for property type: {this.props.propertyType.title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <PermissionsPanel
-              entitySetId={this.props.entitySetId}
-              propertyTypeId={this.props.propertyTypeId} />
-        </Modal.Body>
-      </Modal>
-    );
-  }
-
   render() {
-    const { propertyType } = this.props;
+    const { propertyType, entitySetId, permissions } = this.props;
 
     return (
       <div className="propertyType">
         {this.renderPermissions()}
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
-        {this.renderManagePermissions()}
-        {this.renderPermissionsPanel()}
+        <PropertyTypeControls entitySetId={entitySetId} propertyType={propertyType} permissions={permissions} />
       </div>
     );
   }
