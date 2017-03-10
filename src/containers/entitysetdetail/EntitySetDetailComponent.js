@@ -93,8 +93,6 @@ class EntitySetDetailComponent extends React.Component {
         console.log('PROPERTY:', property);
         this.loadAcls(false, nextProps.entitySet.id, property);
       });
-
-      // console.log('NEW PROPS FROM REDUX: PROPERTIES:', entityProperties);
     }
   }
 

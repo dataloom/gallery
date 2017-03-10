@@ -31,7 +31,7 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-const U_HEADERS = ['Emails', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions'];
+const U_HEADERS = ['Users', 'Roles', 'Entity Permissions', 'Property A permissions', 'Property B Permissions'];
 
 const USERS = [{
   id: 0,

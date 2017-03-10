@@ -41,18 +41,17 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         entitySetReference: action.reference
       });
     case actionTypes.SET_PROPERTY_DATA:
-    console.log('HERE IM HERE, old state:', state.get('properties').toJS());
-      const oldPropertyState = state.get('properties').toJS();
-      const newPropertyState = state.get('properties').toJS();
-      newPropertyState[action.data.id] = {
-        title: action.data.title,
-        roleAcls: action.data.roleAcls,
-        userAcls: action.data.userAcls
+      const newState = { ...state,
+        properties: {
+          ...state.properties,
+          [action.data.id]: {
+            title: action.data.title,
+            roleAcls: action.data.roleAcls,
+            userAcls: action.data.userAcls
+          }
+        }
       };
-      console.log('ENTITY SET REQUEST NEW PROP STATE:', newPropertyState);
-        return state.merge({
-          oldPropertyState: newPropertyState
-        });
+      console.log('newState:', newState);
     default:
       return state;
   }
