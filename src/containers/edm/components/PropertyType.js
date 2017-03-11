@@ -1,13 +1,12 @@
 import React, { PropTypes } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import FontAwesome from 'react-fontawesome';
+import isFunction from 'lodash/isFunction';
 
 import { PropertyTypePropType } from '../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
-import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import { PermissionsPanel } from '../../../views/Main/Schemas/Components/PermissionsPanel';
 import ExpandableText from '../../../components/utils/ExpandableText';
 import styles from '../../entitysetdetail/entitysetdetail.module.css';
@@ -25,6 +24,41 @@ export const DEFAULT_EDITING = {
 
 /* Permissions */
 class PropertyTypePermissions extends React.Component {
+  static propTypes = {
+    editing: PropTypes.bool,
+    onChange: (props) => {
+      const { editing, onChange } = props;
+      if (editing && !isFunction(onChange)) {
+        throw new Error('If "editing" is true, "onChange" must be a function');
+      }
+    },
+    // Async Properties
+    propertyType: PropertyTypePropType,
+    permissions: PermissionsPropType
+  };
+
+  static defaultProps = {
+    onChange: () => {},
+    editing: false
+  };
+
+  render() {
+    const { permissions, editing } = this.props;
+
+    if (editing) {
+      const { propertyType, onChange } = this.props;
+      return (
+        <PropertyTypeEditPermissions
+            onChange={onChange}
+            permissions={permissions}
+            propertyType={propertyType} />);
+    } else {
+      return (<PropertyTypePermissionsStatic permissions={permissions} />);
+    }
+  }
+}
+
+class PropertyTypePermissionsStatic extends React.Component {
   static propTypes = {
     permissions: PermissionsPropType
   };
@@ -202,24 +236,15 @@ class PropertyType extends React.Component {
   };
 
   render() {
-    const { propertyType, entitySetId, permissions, editing } = this.props;
-
-    let permissionsComponent;
-    if (editing.permissions) {
-      const { onChange } = this.props;
-      permissionsComponent = (
-        <PropertyTypeEditPermissions
-            onChange={onChange}
-            permissions={permissions}
-            propertyType={propertyType} />
-      );
-    } else {
-      permissionsComponent = (<PropertyTypePermissions permissions={permissions} />);
-    }
+    const { propertyType, entitySetId, permissions, editing, onChange } = this.props;
 
     return (
       <div className="propertyType">
-        { permissionsComponent }
+        <PropertyTypePermissions
+            propertyType={propertyType}
+            permissions={permissions}
+            editing={editing.permissions}
+            onChange={onChange} />
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
         <PropertyTypeControls entitySetId={entitySetId} propertyType={propertyType} permissions={permissions} />
@@ -251,28 +276,5 @@ function mapStateToProps(state, ownProps) {
     permissions
   };
 }
-
-// function mapDispatchToProps(dispatch, ownProps) {
-//   const { entitySetId, propertyTypeId } = ownProps;
-//
-//   let onChange;
-//   if (entitySetId) {
-//     onChange = (property) => {
-//       const canRead = property.permissions;
-//
-//       if (canRead) {
-//         const request = {
-//           aclKey: [entitySetId, propertyTypeId],
-//           permissions: ["READ"]
-//         };
-//         dispatch(PermissionsActionFactory.requestPermissionsRequest([request]));
-//       }
-//     }
-//   }
-//
-//   return {
-//     onChange
-//   }
-// }
 
 export default connect(mapStateToProps)(PropertyType);
