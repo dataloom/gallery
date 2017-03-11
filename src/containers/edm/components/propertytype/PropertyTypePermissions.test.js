@@ -3,10 +3,10 @@ import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
 
 import '../../../../../config/chai/plugins.config';
-import { PropertyTypeEditPermissions } from './PropertyType';
+import { PropertyTypeEditPermissions } from './PropertyTypePermissions';
 
 
-describe('PropertyType', function() {
+describe('PropertyTypePermissions', function() {
   const propertyType = {
     id: 'abc',
     title: 'Test Property',
