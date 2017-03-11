@@ -53,11 +53,11 @@ export class PropertyTypeEditPermissions extends React.Component {
   // THIS IS USED IN REQUEST PERMISSIONS MODAL
   onChange = (event) => {
     const { onChange, propertyType, permissions } = this.props;
-    const canRead = event.target.value === 'on';
+    const checked = event.target.checked;
 
-    if (onChange && canRead) {
+    if (onChange && checked) {
       const newPermissions = Object.assign({}, permissions, {
-        READ: canRead
+        READ: checked
       });
 
       onChange(propertyType.id, {
