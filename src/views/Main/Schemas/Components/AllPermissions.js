@@ -164,8 +164,7 @@ class AllPermissions extends React.Component {
   }
 
   getRolePermissions = (set) => {
-    // const { roleAcls } = this.props;
-    const { roleAcls } = this.state;
+    const { roleAcls } = this.props;
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
