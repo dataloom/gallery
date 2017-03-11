@@ -48,6 +48,22 @@ describe('PropertyType', function() {
       });
     });
 
+    it('should emit permission without read when unchecked', function() {
+      const onChange = sinon.spy();
+      const wrapper = mount(
+        <PropertyTypeEditPermissions
+          onChange={onChange}
+          propertyType={propertyType}
+          permissions={permissionsWithRead} />
+      );
+
+      wrapper.find({ type: 'checkbox' }).simulate('change', { target: { checked: false } });
+
+      expect(onChange).to.have.been.calledWith(propertyType.id, {
+        permissions
+      });
+    });
+
     it('should render checked with read permission', function() {
       const onChange = sinon.spy();
 
