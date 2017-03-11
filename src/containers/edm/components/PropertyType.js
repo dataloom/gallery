@@ -55,15 +55,13 @@ export class PropertyTypeEditPermissions extends React.Component {
     const { onChange, propertyType, permissions } = this.props;
     const checked = event.target.checked;
 
-    if (onChange) {
-      const newPermissions = Object.assign({}, permissions, {
-        READ: checked
-      });
+    const newPermissions = Object.assign({}, permissions, {
+      READ: checked
+    });
 
-      onChange(propertyType.id, {
-        permissions: newPermissions
-      });
-    }
+    onChange(propertyType.id, {
+      permissions: newPermissions
+    });
   };
 
   render() {
