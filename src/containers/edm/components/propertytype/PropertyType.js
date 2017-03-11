@@ -4,14 +4,14 @@ import { connect } from 'react-redux';
 import FontAwesome from 'react-fontawesome';
 import isFunction from 'lodash/isFunction';
 
-import { PropertyTypePropType } from '../EdmModel';
-import { createPropertyTypeReference, getEdmObjectSilent } from '../EdmStorage';
-import { PermissionsPropType, getPermissions } from '../../permissions/PermissionsStorage';
-import { PermissionsPanel } from '../../../views/Main/Schemas/Components/PermissionsPanel';
-import ExpandableText from '../../../components/utils/ExpandableText';
-import styles from '../../entitysetdetail/entitysetdetail.module.css';
+import { PropertyTypePropType } from '../../EdmModel';
+import { createPropertyTypeReference, getEdmObjectSilent } from '../../EdmStorage';
+import { PermissionsPropType, getPermissions } from '../../../permissions/PermissionsStorage';
+import { PermissionsPanel } from '../../../../views/Main/Schemas/Components/PermissionsPanel';
+import ExpandableText from '../../../../components/utils/ExpandableText';
+import styles from '../../../entitysetdetail/entitysetdetail.module.css';
 // Default styles
-import './propertype.module.css';
+import '../propertype.module.css';
 const MAX_DESCRIPTION_LENGTH = 300;
 
 export const EditingPropType = PropTypes.shape({

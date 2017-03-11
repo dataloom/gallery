@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { expect } from 'chai';
 
-import '../../../../config/chai/plugins.config';
+import '../../../../../config/chai/plugins.config';
 import { PropertyTypeEditPermissions } from './PropertyType';
 
 

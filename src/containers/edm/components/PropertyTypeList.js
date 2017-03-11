@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import PropertyType, { EditingPropType, DEFAULT_EDITING } from './PropertyType';
+import PropertyType, { EditingPropType, DEFAULT_EDITING } from './propertytype/PropertyType';
 import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
 import { createAccessCheck } from '../../permissions/PermissionsStorage';
 
@@ -32,12 +32,11 @@ class PropertyTypeList extends React.Component {
       return propertyTypeIds.map((id) => {
         return (
           <PropertyType
-            entitySetId={entitySetId}
-            editing={editing}
-            propertyTypeId={id}
-            key={id}
-            onChange={onChange}
-          />
+              entitySetId={entitySetId}
+              editing={editing}
+              propertyTypeId={id}
+              key={id}
+              onChange={onChange} />
         );
       });
     } else {
@@ -51,10 +50,10 @@ class PropertyTypeList extends React.Component {
     return (
       <div className={classnames('propertyTypeList', className)}>
         <div className="propertyTypeListHeader">
-          <div className="propertyTypeListPermissions"></div>
+          <div className="propertyTypeListPermissions" />
           <div className="propertyTypeTitle">Property Title</div>
           <div className="propertyTypeListDescription">Description</div>
-          <div className="propertyTypeListControls"></div>
+          <div className="propertyTypeListControls" />
         </div>
         {this.renderContent()}
       </div>
@@ -67,7 +66,7 @@ function mapDispatchToProps(dispatch, ownProps) {
 
   let loadPermissions;
   if (entitySetId) {
-    const accessChecks = propertyTypeIds.map(id => {
+    const accessChecks = propertyTypeIds.map((id) => {
       return createAccessCheck([entitySetId, id]);
     });
     loadPermissions = () => {
@@ -79,7 +78,7 @@ function mapDispatchToProps(dispatch, ownProps) {
 
   return {
     loadPermissions
-  }
+  };
 }
 
 export default connect(null, mapDispatchToProps)(PropertyTypeList);
