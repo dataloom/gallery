@@ -45,6 +45,11 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.merge({
         allUsersById: action.data
       })
+    case actionTypes.SET_ENTITY_DATA:
+      return state.merge({
+        roleAcls: action.data.roleAcls,
+        userAcls: action.data.userAcls
+      })
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
       var nestedState = {...stateJS,

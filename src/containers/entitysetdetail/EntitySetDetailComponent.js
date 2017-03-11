@@ -166,8 +166,6 @@ class EntitySetDetailComponent extends React.Component {
     });
 
     if (property) {
-      /// SET REDUX STATE
-      // console.log('PROPERTY!!!!!!!', property);
       const propertyAcls = {
           id: property.id,
           title: property.title,
@@ -175,24 +173,14 @@ class EntitySetDetailComponent extends React.Component {
           userAcls
       };
       this.props.setPropertyData(propertyAcls);
-
-
-      // SET LOCAL STATE
-      const oldPropertyState = this.state.properties;
-      const newPropertyState = this.state.properties;
-      newPropertyState[property.id] = {
-        title: property.title,
-        roleAcls,
-        userAcls
-      };
-      this.setState({
-        oldPropertyState: newPropertyState,
-        updateError: false
-      });
     }
     else {
-
-      // this.props.updateEntitySetAcls(acls);
+      const entityAcls = {
+        userAcls,
+        roleAcls
+      }
+      // console.log('HERE ARE THE ENTITY ACLS:', entityAcls);
+      this.props.setEntityData(entityAcls);
       this.setState({
         globalValue,
         roleAcls,
@@ -202,9 +190,6 @@ class EntitySetDetailComponent extends React.Component {
         newEmailValue: '',
         updateError: false
       });
-
-      // TRY SETTING ENTITYSET props
-      // this.props.entitySet.roleAcls
     }
 
   }
@@ -452,7 +437,6 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
-  console.log('entitysetdetailstate:', entitySetDetail.toJS());
 
   let entitySet;
   let entitySetPermissions;
@@ -487,6 +471,9 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
+    },
+    setEntityData: (data) => {
+      dispatch(actionFactories.setEntityData(data));
     },
     setPropertyData: (data) => {
       dispatch(actionFactories.setPropertyData(data));

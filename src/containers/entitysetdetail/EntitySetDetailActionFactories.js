@@ -7,6 +7,13 @@ export function entitySetDetailRequest(id) {
   };
 }
 
+export function setEntityData(data) {
+  return {
+    type: actionTypes.SET_ENTITY_DATA,
+    data
+  };
+}
+
 export function setPropertyData(data) {
   return {
     type: actionTypes.SET_PROPERTY_DATA,

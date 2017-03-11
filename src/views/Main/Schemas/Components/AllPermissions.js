@@ -79,8 +79,15 @@ class AllPermissions extends React.Component {
     this.getEntityUserPermissions = this.getEntityUserPermissions.bind(this);
   }
 
+  componentDidMount() {
+    // console.log('CDM properties? ', this.props.properties);
+
+  }
+
   componentWillReceiveProps(nextProps) {
     console.log('PROPS!:', nextProps);
+    this.getEntityUserPermissions();
+    this.getRolePermissions();
 
     if (this.props.allUsersById === undefined && nextProps.allUsersById !== undefined) {
       console.log('WE GOT ALL THE USERS!');
@@ -100,9 +107,9 @@ class AllPermissions extends React.Component {
 
   getEntityUserPermissions = () => {
     const { userAcls, roleAcls } = this.props;
-    console.log('USERACLS, ROLEACLS:', userAcls, roleAcls);
     const { allUsersById } = this.props;
     const userPermissions = [];
+    console.log('userAcls, roleAcls, allUsersById:', userAcls, roleAcls, allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
@@ -118,17 +125,15 @@ class AllPermissions extends React.Component {
         // Add individual permissions
         Object.keys(userAcls).forEach((permissionKey) => {
           if (userAcls[permissionKey].indexOf(userId) !== -1) {
-            user.entityPermissions.push(permissionKey);
+            user.permissions.push(permissionKey);
           }
         });
 
-        // Add any additional permissions based on user's roles' permissions
-        //TODO: CHECK WHY MORE PERMISSIONS ARE SHOWING UP THAN THE ENTITY ITSELF HAS... IS IT PULLING ALL PERMISSIONS ACROSS ENTITY SETS?
         if (allUsersById[userId].roles.length > 0) {
           Object.keys(roleAcls).forEach((permissionKey) => {
             allUsersById[userId].roles.forEach((role) => {
-              if (roleAcls[permissionKey].indexOf(role) !== -1 && user.entityPermissions.indexOf(permissionKey) === -1) {
-                user.entityPermissions.push(permissionKey);
+              if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
+                user.permissions.push(permissionKey);
               }
             });
           });
@@ -137,7 +142,6 @@ class AllPermissions extends React.Component {
         userPermissions.push(user);
       }
     });
-    console.log('USER PERMISSIONS: ', userPermissions);
     this.setEntityUserPermissions(userPermissions);
   }
 
@@ -147,16 +151,16 @@ class AllPermissions extends React.Component {
     // Format permissions for table
     formattedPermissions.forEach((permission) => {
       if (permission) {
-        if (permission.entityPermissions.length === 0) {
-          permission.entityPermissions = '-';
+        if (permission.permissions.length === 0) {
+          permission.permissions = '-';
         } else {
-          permission.entityPermissions = permission.entityPermissions.join(', ');
+          permission.permissions = permission.permissions.join(', ');
         }
       }
 
     });
 
-    this.setState({ entityUserPermissions: formattedPermissions }, () => {console.log('ENTITY USER PERMISSIONS:', this.state.entityUserPermissions)});
+    this.setState({ entityUserPermissions: formattedPermissions });
   }
 
   getRolePermissions = (set) => {
@@ -211,7 +215,9 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   return {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
-    properties: entitySetDetail.get('properties').toJS()
+    properties: entitySetDetail.get('properties').toJS(),
+    userAcls: entitySetDetail.get('userAcls').toJS(),
+    roleAcls: entitySetDetail.get('roleAcls').toJS()
   };
 }
 
