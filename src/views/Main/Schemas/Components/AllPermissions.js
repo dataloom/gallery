@@ -156,8 +156,9 @@ class AllPermissions extends React.Component {
 
   }
 
-  getRolePermissions = (set) => {
-    const { roleAcls } = this.props;
+  getRolePermissions = (property) => {
+    const { roleAcls } = property ? property : this.props;
+    property ? console.log('WE GOTTA PROPERTY:', property) : null;
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
@@ -173,10 +174,10 @@ class AllPermissions extends React.Component {
       });
     });
 
-    this.setRolePermissions(rolePermissions);
+    this.setRolePermissions(rolePermissions, property);
   }
 
-  setRolePermissions = (permissions) => {
+  setRolePermissions = (permissions, property) => {
     const formattedPermissions = {};
 
     // Format data for table
@@ -184,7 +185,8 @@ class AllPermissions extends React.Component {
       formattedPermissions[permission] = permissions[permission].join(', ');
     });
 
-    this.setState({ entityRolePermissions: formattedPermissions });
+    // TODO: SET unique name for each property
+    property ? this.setState({ testPropertyRolePermissions: formattedPermissions }, () => {console.log('PROP ROLES SET:', this.state)}) : this.setState({ entityRolePermissions: formattedPermissions });
   }
 
   render() {
