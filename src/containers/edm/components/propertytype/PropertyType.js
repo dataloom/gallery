@@ -6,13 +6,13 @@ import { PropertyTypePropType } from '../../EdmModel';
 import { createPropertyTypeReference, getEdmObjectSilent } from '../../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../../permissions/PermissionsStorage';
 import { PermissionsPanel } from '../../../../views/Main/Schemas/Components/PermissionsPanel';
-import ExpandableText from '../../../../components/utils/ExpandableText';
-import styles from '../../../entitysetdetail/entitysetdetail.module.css';
 import PropertyTypePermissions from './PropertyTypePermissions';
+import PropertyTypeTitle from './PropertyTypeTitle';
+import PropertyTypeDescription from './PropertyTypeDescription';
+
+import styles from '../../../entitysetdetail/entitysetdetail.module.css';
 // Default styles
 import '../propertype.module.css';
-
-const MAX_DESCRIPTION_LENGTH = 300;
 
 export const EditingPropType = PropTypes.shape({
   permissions: PropTypes.bool
@@ -21,44 +21,6 @@ export const EditingPropType = PropTypes.shape({
 export const DEFAULT_EDITING = {
   permissions: false
 };
-
-/* Title */
-class PropertyTypeTitle extends React.Component {
-  static propTypes = {
-    propertyType: PropertyTypePropType
-  };
-
-  render() {
-    const { propertyType } = this.props;
-    const content = propertyType === null ? null : propertyType.title;
-
-    return (
-      <div className="propertyTypeTitle">{content}</div>
-    );
-  }
-}
-
-/* Description */
-class PropertyTypeDescription extends React.Component {
-  static propTypes = {
-    propertyType: PropertyTypePropType
-  };
-
-  render() {
-    const { propertyType } = this.props;
-    let content;
-
-    if (propertyType) {
-      if (propertyType.description) {
-        content = (<ExpandableText text={propertyType.description} maxLength={MAX_DESCRIPTION_LENGTH} />);
-      } else {
-        content = (<em>No description</em>);
-      }
-    }
-
-    return (<div className="propertyTypeDescription">{content}</div>);
-  }
-}
 
 /* Controls */
 class PropertyTypeControls extends React.Component {
@@ -159,8 +121,8 @@ class PropertyType extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const normalizedData = state.get('normalizedData'),
-    permissionsState = state.get('permissions');
+  const normalizedData = state.get('normalizedData');
+  const permissionsState = state.get('permissions');
 
   const { entitySetId, propertyTypeId } = ownProps;
 
