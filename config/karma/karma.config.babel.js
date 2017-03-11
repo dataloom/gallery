@@ -71,7 +71,7 @@ export default function(config) {
      *
      * https://npmjs.org/browse/keyword/karma-adapter
      */
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'sinon'],
 
     /*
      * a list of files to load in the browser
