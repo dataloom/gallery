@@ -23,9 +23,7 @@ class UserRow extends React.Component {
       <tr className={this.getClassName()} onClick={this.props.toggleCollapse}>
         <td>{this.props.user.email}</td>
         <td>{this.props.user.role}</td>
-        <td>{this.props.user.entityPermissions}</td>
-        <td>{this.props.user.propertyAPermissions}</td>
-        <td>{this.props.user.propertyBPermissions}</td>
+        <td>{this.props.user.permissions}</td>
       </tr>
     );
   }
@@ -42,9 +40,7 @@ class RoleRow extends React.Component {
       <tr className={this.getClassName()}>
         <td></td>
         <td>{this.props.role.role}</td>
-        <td>{this.props.role.entityPermissions}</td>
-        <td>{this.props.role.propertyAPermissions}</td>
-        <td>{this.props.role.propertyBPermissions}</td>
+        <td>{this.props.role.permissions}</td>
       </tr>
     );
   }
