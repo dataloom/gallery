@@ -7,6 +7,11 @@
  * Importing chai (or expect) either here or in tests will prevent the plugins from being applied.
  */
 
+import chai from 'chai';
 import chaiImmutable from 'chai-immutable';
+import chaiEnzyme from 'chai-enzyme';
+// import chaiSinon from 'chai-sinon';
 
 chai.use(chaiImmutable);
+chai.use(chaiEnzyme());
+// chai.use(chaiSinon);

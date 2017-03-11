@@ -41,7 +41,7 @@ class PropertyTypePermissions extends React.Component {
   }
 }
 
-class PropertyTypeEditPermissions extends React.Component {
+export class PropertyTypeEditPermissions extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     // Async Properties
