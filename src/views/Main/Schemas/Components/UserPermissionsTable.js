@@ -9,11 +9,19 @@ class UserRow extends React.Component {
     : `${styles.expandableRow} ${styles.collapseOpen}`;
   }
 
+  getRolesStr = () => {
+    if (this.props.user.roles.length > 0) {
+      return 'effective permissions';
+    } else {
+      return 'none';
+    }
+  }
+
   render() {
     return (
       <tr className={this.getClassName()} onClick={this.props.toggleCollapse}>
         <td>{this.props.user.email}</td>
-        <td>{this.props.user.role}</td>
+        <td>{this.getRolesStr()}</td>
         <td>{this.props.user.permissions}</td>
       </tr>
     );
@@ -84,6 +92,7 @@ class SearchBar extends React.Component {
 }
 
 export default class UserPermissionsTable extends React.Component {
+
   getExpandableRows = () => {
     const rows = [];
     this.props.users.forEach((user) => {
@@ -94,6 +103,8 @@ export default class UserPermissionsTable extends React.Component {
   }
 
   render() {
+    console.log('TABLE USER PERMISSIONS:', this.props.users);
+
     const headers = [];
     this.props.headers.forEach((header, i) => {
       headers.push(<th key={i}>{header}</th>);

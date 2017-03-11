@@ -73,10 +73,11 @@ class AllPermissions extends React.Component {
     super(props);
 
     this.state = {
-      entityUserPermissions: []
+      entityUserPermissions: [],
+      entityRolePermissions: []
     };
 
-    this.getEntityUserPermissions = this.getEntityUserPermissions.bind(this);
+    this.getUserPermissions = this.getUserPermissions.bind(this);
   }
 
   componentDidMount() {
@@ -85,28 +86,19 @@ class AllPermissions extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { properties } = this.props;
     console.log('PROPS!:', nextProps);
-    this.getEntityUserPermissions();
+    this.getUserPermissions();
     this.getRolePermissions();
-
-    if (this.props.allUsersById === undefined && nextProps.allUsersById !== undefined) {
-      console.log('WE GOT ALL THE USERS!');
-      this.getEntityUserPermissions();
-      this.getRolePermissions();
-    }
-
-    if (this.props.properties === undefined && nextProps.properties !== undefined) {
-      const { properties } = nextProps;
-      console.log('WE GOT THE PROPERTIES!!:', properties);
-      // Object.keys(properties).forEach((property) => {
-      //   this.getPropertyUserPermissions(property);
-      //   this.getPropertyRolePermissions(property);
-      // });
-    }
+    // console.log('props properties:');
+    Object.keys(properties).forEach((property) => {
+      this.getUserPermissions(properties[property]);
+      this.getRolePermissions(properties[property]);
+    })
   }
 
-  getEntityUserPermissions = () => {
-    const { userAcls, roleAcls } = this.props;
+  getUserPermissions = (property) => {
+    const { userAcls, roleAcls } = property ? property : this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
     console.log('userAcls, roleAcls, allUsersById:', userAcls, roleAcls, allUsersById);
@@ -142,10 +134,10 @@ class AllPermissions extends React.Component {
         userPermissions.push(user);
       }
     });
-    this.setEntityUserPermissions(userPermissions);
+    this.setEntityUserPermissions(userPermissions, property);
   }
 
-  setEntityUserPermissions = (permissions) => {
+  setEntityUserPermissions = (permissions, property) => {
     const formattedPermissions = permissions.slice();
 
     // Format permissions for table
@@ -159,8 +151,9 @@ class AllPermissions extends React.Component {
       }
 
     });
+    // property ? this.setState( {${property.title}: formattedPermissions} ) : this.setState( { entityUserPermissions: formattedPermissions } );
+    property ? this.setState({ testProperty: formattedPermissions }) : this.setState({ entityUserPermissions: formattedPermissions });
 
-    this.setState({ entityUserPermissions: formattedPermissions });
   }
 
   getRolePermissions = (set) => {
@@ -191,7 +184,7 @@ class AllPermissions extends React.Component {
       formattedPermissions[permission] = permissions[permission].join(', ');
     });
 
-    this.setState({ rolePermissions: formattedPermissions });
+    this.setState({ entityRolePermissions: formattedPermissions });
   }
 
   render() {
@@ -202,8 +195,11 @@ class AllPermissions extends React.Component {
         </Page.Header>
         <Page.Body>
           <h3>Entity Permissions</h3>
-          <UserPermissionsTable users={USERS} headers={U_HEADERS} />
-          <RolePermissionsTable roles={this.state.rolePermissions} headers={R_HEADERS} />
+          <UserPermissionsTable users={this.state.entityUserPermissions} headers={U_HEADERS} />
+          <RolePermissionsTable roles={this.state.entityRolePermissions} headers={R_HEADERS} />
+          <h3>Property A Permissions</h3>
+          <UserPermissionsTable users={this.state.entityUserPermissions} headers={U_HEADERS} />
+          <RolePermissionsTable roles={this.state.entityRolePermissions} headers={R_HEADERS} />
         </Page.Body>
       </Page>
     );
