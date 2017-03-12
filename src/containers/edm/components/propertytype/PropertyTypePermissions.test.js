@@ -1,9 +1,10 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 import { expect } from 'chai';
 
 import '../../../../../config/chai/plugins.config';
 import { PropertyTypeEditPermissions } from './PropertyTypePermissions';
+import { PERMISSIONS } from '../../../permissions/PermissionsStorage';
 
 
 describe('PropertyTypePermissions', function() {
@@ -34,7 +35,7 @@ describe('PropertyTypePermissions', function() {
     // TODO: Change to Permission statuses instead of permission objects
     it('should emit permission with read when checked', function() {
       const onChange = sinon.spy();
-      const wrapper = mount(
+      const wrapper = shallow(
         <PropertyTypeEditPermissions
             onChange={onChange}
             propertyType={propertyType}
@@ -43,25 +44,21 @@ describe('PropertyTypePermissions', function() {
 
       wrapper.find({ type: 'checkbox' }).simulate('change', { target: { checked: true } });
 
-      expect(onChange).to.have.been.calledWith(propertyType.id, {
-        permissions: permissionsWithRead
-      });
+      expect(onChange).to.have.been.calledWith(propertyType.id, [PERMISSIONS.READ]);
     });
 
     it('should emit permission without read when unchecked', function() {
       const onChange = sinon.spy();
-      const wrapper = mount(
+      const wrapper = shallow(
         <PropertyTypeEditPermissions
-          onChange={onChange}
-          propertyType={propertyType}
-          permissions={permissionsWithRead} />
+            onChange={onChange}
+            propertyType={propertyType}
+            permissions={permissionsWithRead} />
       );
 
       wrapper.find({ type: 'checkbox' }).simulate('change', { target: { checked: false } });
 
-      expect(onChange).to.have.been.calledWith(propertyType.id, {
-        permissions
-      });
+      expect(onChange).to.have.been.calledWith(propertyType.id, []);
     });
 
     it('should render checked with read permission', function() {

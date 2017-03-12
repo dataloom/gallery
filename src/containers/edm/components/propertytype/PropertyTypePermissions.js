@@ -3,7 +3,7 @@ import FontAwesome from 'react-fontawesome';
 import isFunction from 'lodash/isFunction';
 
 import { PropertyTypePropType } from '../../EdmModel';
-import { PermissionsPropType } from '../../../permissions/PermissionsStorage';
+import { PermissionsPropType, PERMISSIONS } from '../../../permissions/PermissionsStorage';
 
 export class PropertyTypePermissionsStatic extends React.Component {
   static propTypes = {
@@ -33,16 +33,15 @@ export class PropertyTypeEditPermissions extends React.Component {
   // TODO: Handle more than just read
   // THIS IS USED IN REQUEST PERMISSIONS MODAL
   onChange = (event) => {
-    const { onChange, propertyType, permissions } = this.props;
+    const { onChange, propertyType } = this.props;
     const checked = event.target.checked;
 
-    const newPermissions = Object.assign({}, permissions, {
-      READ: checked
-    });
+    const requestedPermissions = [];
+    if (checked) {
+      requestedPermissions.push(PERMISSIONS.READ);
+    }
 
-    onChange(propertyType.id, {
-      permissions: newPermissions
-    });
+    onChange(propertyType.id, requestedPermissions);
   };
 
   render() {
