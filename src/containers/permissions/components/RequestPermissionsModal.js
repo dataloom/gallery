@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
-import { Modal, Button, Alert, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
+import { Modal, Button, Alert, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import classnames from 'classnames';
+import map from 'lodash/map';
+import isEmpty from 'lodash/isEmpty';
 
 import AsyncContent from '../../../components/asynccontent/AsyncContent';
 import * as actionFactory from '../PermissionsActionFactory';
@@ -26,27 +29,41 @@ export class RequestPermissionsModal extends React.Component {
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string)
   };
 
+  // TODO: Move state to redux
   constructor(props) {
     super(props);
     this.state = {
-      pidToPermissions: {},
+      pidToPermissionsRequests: {},
       reason: ''
     };
   }
 
-  onChange = (propertyTypeId, delta) => {
-    const { pidToPermissions } = this.state;
-    const newPermissions = Object.assign({}, pidToPermissions);
-    newPermissions[propertyTypeId] = delta.permissions;
+  onChange = (propertyTypeId, requestedPermissions) => {
+    const { pidToPermissionsRequests } = this.state;
+    const newRequests = Object.assign({}, pidToPermissionsRequests);
 
-    this.setState({ pidToPermissions: newPermissions });
+    if (isEmpty(requestedPermissions)) {
+      delete newRequests[propertyTypeId];
+    } else {
+      newRequests[propertyTypeId] = requestedPermissions;
+    }
+
+    this.setState({ pidToPermissionsRequests: newRequests });
   };
 
   onSubmit = (event) => {
     event.preventDefault();
-    const { pidToPermissions, reason } = this.state;
+    const { pidToPermissionsRequests, reason } = this.state;
     const { entitySetId, onSubmit } = this.props;
-    onSubmit(entitySetId, pidToPermissions, reason);
+
+    const authNRequests = map(pidToPermissionsRequests, (permissions, pid) => {
+      return {
+        aclKey: [entitySetId, pid],
+        permissions,
+        reason
+      };
+    });
+    onSubmit(authNRequests);
   };
 
   onReasonChange = (event) => {
@@ -120,24 +137,11 @@ function mapStateToProps(state) {
   };
 }
 
-// TODO: Decide if/how to incorporate bindActionCreators
-function mapDispatchToProps(dispatch) {
-  return {
-    onHide: () => {
-      dispatch(actionFactory.requestPermissionsModalHide());
-    },
-    onSubmit: (entitySetId, pidsToPermissions, reason) => {
-      const authnRequests = Object.keys(pidsToPermissions).map((pid) => {
-        const permissions = classnames(pidsToPermissions[pid]).split(' ');
-        return {
-          aclKey: [entitySetId, pid],
-          permissions,
-          reason
-        };
-      });
-      dispatch(actionFactory.submitAuthNRequest(authnRequests));
-    }
-  };
+export function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    onHide: actionFactory.requestPermissionsModalHide,
+    onSubmit: actionFactory.submitAuthNRequest
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestPermissionsModal);
