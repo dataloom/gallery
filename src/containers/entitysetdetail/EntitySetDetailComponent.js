@@ -96,7 +96,9 @@ class EntitySetDetailComponent extends React.Component {
 
           <ControlsContainer>
 
-            <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown)} />
+            <div className={styles.actionDropdownWrapper}>
+              <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown)} />
+            </div>
             {
               entitySetPermissions.OWNER &&
               <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
