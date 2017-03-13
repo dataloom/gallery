@@ -75,26 +75,43 @@ class UserGroupRow extends React.Component {
   }
 
 }
-//
-// class SearchBar extends React.Component {
-//   render() {
-//     return (
-//       <form>
-//         <input type="text" placeholder="Search..." />
-//       </form>
-//     );
-//   }
-// }
+
+class SearchBar extends React.Component {
+
+  render() {
+    return (
+      <form>
+        <input type="text" placeholder="Search..." onChange={(e) => {this.props.onChange(e)}} />
+      </form>
+    );
+  }
+}
 
 export default class UserPermissionsTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      searchInput: ''
+    }
+  }
+
   getUserGroupRows = () => {
     const { rolePermissions } = this.props;
     const rows = [];
     this.props.userPermissions.forEach((user) => {
+      // if user.nickname || user.email contains query input, push; else continue
       rows.push(<UserGroupRow user={user} rolePermissions={rolePermissions} key={user.id} />);
     });
 
     return rows;
+  }
+
+  onSearchInput = (e) => {
+    e.preventDefault();
+    this.setState({searchInput: e.target.value}, () => {
+      console.log('search input:', this.state.searchInput);
+    });
   }
 
   render() {
@@ -104,14 +121,17 @@ export default class UserPermissionsTable extends React.Component {
     });
 
     return (
-      <Table bordered responsive className={styles.expandableTable}>
-        <thead>
-          <tr>
-            {headers}
-          </tr>
-        </thead>
-        {this.getUserGroupRows()}
-      </Table>
+      <div>
+        <SearchBar onChange={this.onSearchInput} />
+        <Table bordered responsive className={styles.expandableTable}>
+          <thead>
+            <tr>
+              {headers}
+            </tr>
+          </thead>
+          {this.getUserGroupRows()}
+        </Table>
+      </div>
     );
   }
 }
