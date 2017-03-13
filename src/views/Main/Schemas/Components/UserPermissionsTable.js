@@ -5,8 +5,8 @@ import styles from '../styles.module.css';
 class UserRow extends React.Component {
   getClassName = () => {
     // Probably want to set a classname that allows for hover behavior (expanded rows should not have hover state)
-    return this.props.isCollapsed ? `${styles.expandableRow} ${styles.collapse}`
-    : `${styles.expandableRow} ${styles.collapseOpen}`;
+    return this.props.isCollapsed ? `${styles.UserGroupRow} ${styles.collapse}`
+    : `${styles.UserGroupRow} ${styles.collapseOpen}`;
   }
 
   getRolesStr = () => {
@@ -29,74 +29,56 @@ class UserRow extends React.Component {
 }
 
 class RoleRow extends React.Component {
-  getClassName = () => {
-    // Probably want to set a classname that allows for hover behavior (expanded rows should not have hover state)
-    return this.props.isCollapsed ? `${styles.roleRow} ${styles.hidden}` : `${styles.roleRow}`;
-  }
-
   render() {
     return (
-      <tr className={this.getClassName()}>
+      <tr className={styles.roleRow}>
         <td />
-        <td>{this.props.role.role}</td>
-        <td>{this.props.role.permissions}</td>
+        <td>{this.props.role}</td>
+        <td>{this.props.permissions}</td>
       </tr>
     );
   }
 }
 
-class ExpandableRow extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isCollapsed: true
-    };
-  }
-
-  toggleCollapse = () => {
-    this.setState({ isCollapsed: !this.state.isCollapsed });
-  }
-
+class UserGroupRow extends React.Component {
   getRoleRows = () => {
+    const rolePermissions = this.props.rolePermissions;
     const roleRows = [];
-
-    if (this.props.user.expand.length > 0) {
-      this.props.user.expand.forEach((role) => {
-        roleRows.push(<RoleRow role={role} isCollapsed={this.state.isCollapsed} key={`${this.props.user.id}-${role.role}`} />);
+    if (this.props.user && this.props.user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
+      this.props.user.roles.forEach((role) => {
+        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${this.props.user.id}-${role}`} />);
       });
     }
-
     return roleRows;
   }
 
   render() {
     return (
       <tbody>
-        <UserRow user={this.props.user} isCollapsed={this.state.isCollapsed} toggleCollapse={this.toggleCollapse} key={this.props.user.id} />
+        <UserRow user={this.props.user} key={this.props.user.id} />
         {this.getRoleRows()}
       </tbody>
     );
   }
 
 }
-
-class SearchBar extends React.Component {
-  render() {
-    return (
-      <form>
-        <input type="text" placeholder="Search..." />
-      </form>
-    );
-  }
-}
+// 
+// class SearchBar extends React.Component {
+//   render() {
+//     return (
+//       <form>
+//         <input type="text" placeholder="Search..." />
+//       </form>
+//     );
+//   }
+// }
 
 export default class UserPermissionsTable extends React.Component {
-
-  getExpandableRows = () => {
+  getUserGroupRows = () => {
+    const { rolePermissions } = this.props;
     const rows = [];
-    this.props.users.forEach((user) => {
-      rows.push(<ExpandableRow user={user} key={user.id} />);
+    this.props.userPermissions.forEach((user) => {
+      rows.push(<UserGroupRow user={user} rolePermissions={rolePermissions} key={user.id} />);
     });
 
     return rows;
@@ -115,7 +97,7 @@ export default class UserPermissionsTable extends React.Component {
             {headers}
           </tr>
         </thead>
-        {this.getExpandableRows()}
+        {this.getUserGroupRows()}
       </Table>
     );
   }

@@ -9,31 +9,7 @@ import Page from '../../../../components/page/Page';
 import { connect } from 'react-redux';
 import styles from '../styles.module.css';
 
-const views = {
-  GLOBAL: 0,
-  ROLES: 1,
-  EMAILS: 2
-};
-
-const accessOptions = {
-  Hidden: 'Hidden',
-  Discover: 'Discover',
-  Link: 'Link',
-  Read: 'Read',
-  Write: 'Write',
-  Owner: 'Owner'
-};
-
-const permissionOptions = {
-  Discover: 'Discover',
-  Link: 'Link',
-  Read: 'Read',
-  Write: 'Write',
-  Owner: 'Owner'
-};
-
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
-
 const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
@@ -47,11 +23,6 @@ class AllPermissions extends React.Component {
     };
 
     this.getUserPermissions = this.getUserPermissions.bind(this);
-  }
-
-  componentDidMount() {
-    // console.log('CDM properties? ', this.props.properties);
-
   }
 
   componentWillReceiveProps(nextProps) {
@@ -69,7 +40,6 @@ class AllPermissions extends React.Component {
     const { userAcls, roleAcls } = property ? property : this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
-    // console.log('userAcls, roleAcls, allUsersById:', userAcls, roleAcls, allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
@@ -78,8 +48,7 @@ class AllPermissions extends React.Component {
           id: userId,
           email: allUsersById[userId].email,
           roles: [],
-          permissions: [],
-          expand: [] // set of {role, permissions}
+          permissions: []
         };
 
         // Add individual permissions
@@ -94,6 +63,9 @@ class AllPermissions extends React.Component {
             allUsersById[userId].roles.forEach((role) => {
               if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
                 user.permissions.push(permissionKey);
+              }
+              if (user.roles.indexOf(role) === -1 && role !== 'AuthenticatedUser') {
+                user.roles.push(role);
               }
             });
           });
@@ -112,7 +84,7 @@ class AllPermissions extends React.Component {
     formattedPermissions.forEach((user) => {
       if (user) {
         if (user.permissions.length === 0) {
-          user.permissions = '-';
+          user.permissions = 'none';
         } else {
           user.permissions = user.permissions.join(', ');
         }
@@ -124,19 +96,14 @@ class AllPermissions extends React.Component {
       propertyUserPermissions[property.title] = {};
       propertyUserPermissions[property.title].userPermissions = formattedPermissions;
 
-      this.setState({ propertyPermissions: propertyUserPermissions }, () => {
-        console.log('PROPERTY USER PERMISSIONS SET:', this.state);
-      });
+      this.setState({ propertyPermissions: propertyUserPermissions });
     } else {
-      this.setState({ entityUserPermissions: formattedPermissions }, () => {
-        console.log('ENTITY USER PERMISSIONS SET:', this.state);
-      });
+      this.setState({ entityUserPermissions: formattedPermissions });
     }
   }
 
   getRolePermissions = (property) => {
     const { roleAcls } = property ? property : this.props;
-    console.log('GETROLEPERMISSIONS roleAcls:', roleAcls);
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
@@ -156,7 +123,6 @@ class AllPermissions extends React.Component {
   }
 
   setRolePermissions = (permissions, property) => {
-    console.log('SET ROLE PERMISSIONS permissions, property', permissions, property);
     const formattedPermissions = {};
 
     // Format data for table
@@ -164,28 +130,24 @@ class AllPermissions extends React.Component {
       formattedPermissions[role] = permissions[role].join(', ');
     });
 
-    // TODO: SET unique name for each property
     if (property) {
       const propertyRolePermissions = this.state.propertyPermissions;
       propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
-      this.setState({ propertyPermissions: propertyRolePermissions }, () => {
-        console.log('PROPERTY ROLE PERMISSIONS SET:', this.state);
-      });
+      this.setState({ propertyPermissions: propertyRolePermissions });
     } else {
-      this.setState({ entityRolePermissions: formattedPermissions }, () => {
-        console.log('ENTITY ROLE PERMISSIONS SET:', this.state);
-      });
+      this.setState({ entityRolePermissions: formattedPermissions });
     }
   }
 
   renderPropertyTables() {
-    // for each property -> render title + user + role tables for the data
     const { propertyPermissions } = this.state;
     const tables = [];
+
     Object.keys(propertyPermissions).forEach((property) => {
+      const { userPermissions, rolePermissions } = propertyPermissions[property];
       const header = <h3>{property}</h3>;
-      const userTable = <UserPermissionsTable users={propertyPermissions[property].userPermissions} headers={U_HEADERS} />;
-      const roleTable = <RolePermissionsTable roles={propertyPermissions[property].rolePermissions} headers={R_HEADERS} />;
+      const userTable = <UserPermissionsTable userPermissions={userPermissions} rolePermissions={rolePermissions} headers={U_HEADERS} />;
+      const roleTable = <RolePermissionsTable rolePermissions={rolePermissions} headers={R_HEADERS} />;
       tables.push(header, userTable, roleTable);
     });
     return tables;
@@ -199,8 +161,8 @@ class AllPermissions extends React.Component {
         </Page.Header>
         <Page.Body>
           <h3>Entity Permissions</h3>
-          <UserPermissionsTable users={this.state.entityUserPermissions} headers={U_HEADERS} />
-          <RolePermissionsTable roles={this.state.entityRolePermissions} headers={R_HEADERS} />
+          <UserPermissionsTable userPermissions={this.state.entityUserPermissions} rolePermissions={this.state.entityRolePermissions} headers={U_HEADERS} />
+          <RolePermissionsTable rolePermissions={this.state.entityRolePermissions} headers={R_HEADERS} />
           {this.renderPropertyTables()}
         </Page.Body>
       </Page>

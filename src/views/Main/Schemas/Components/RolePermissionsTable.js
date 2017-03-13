@@ -4,12 +4,12 @@ import styles from '../styles.module.css';
 
 export default class RolePermissionsTable extends React.Component {
   getRows = () => {
-    const {roles} = this.props;
+    const {rolePermissions} = this.props;
     var rows = [];
 
-    if (roles) {
-      Object.keys(roles).forEach((role, i) => {
-        rows.push(<tr key={i}><td>{role}</td><td>{roles[role]}</td></tr>);
+    if (rolePermissions) {
+      Object.keys(rolePermissions).forEach((role, i) => {
+        rows.push(<tr key={i}><td>{role}</td><td>{rolePermissions[role]}</td></tr>);
       });
     }
     return rows;
