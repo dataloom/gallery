@@ -1,12 +1,8 @@
 import React, { PropTypes } from 'react';
-import { PermissionsApi, PrincipalsApi } from 'loom-data';
-import { Permission } from '../../../../core/permissions/Permission';
-import ActionConsts from '../../../../utils/Consts/ActionConsts';
-import { ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
+import { connect } from 'react-redux';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../../components/page/Page';
-import { connect } from 'react-redux';
 import styles from '../styles.module.css';
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
@@ -27,17 +23,20 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { properties } = this.props;
+
+    // Get user and role permissions for entity set
     this.getUserPermissions();
     this.getRolePermissions();
-    // console.log('props properties:');
+
+    // Get user and role permissions for each property
     Object.keys(properties).forEach((property) => {
-        this.getUserPermissions(properties[property]);
-        this.getRolePermissions(properties[property]);
-    })
+      this.getUserPermissions(properties[property]);
+      this.getRolePermissions(properties[property]);
+    });
   }
 
   getUserPermissions = (property) => {
-    const { userAcls, roleAcls } = property ? property : this.props;
+    const { userAcls, roleAcls } = property || this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
 
@@ -51,7 +50,7 @@ class AllPermissions extends React.Component {
           permissions: []
         };
 
-        // Add individual permissions
+        // Add any additional permissions based on the roles the user has
         Object.keys(userAcls).forEach((permissionKey) => {
           if (userAcls[permissionKey].indexOf(userId) !== -1) {
             user.permissions.push(permissionKey);
@@ -85,7 +84,8 @@ class AllPermissions extends React.Component {
       if (user) {
         if (user.permissions.length === 0) {
           user.permissions = 'none';
-        } else {
+        }
+        else {
           user.permissions = user.permissions.join(', ');
         }
       }
@@ -97,19 +97,20 @@ class AllPermissions extends React.Component {
       propertyUserPermissions[property.title].userPermissions = formattedPermissions;
 
       this.setState({ propertyPermissions: propertyUserPermissions });
-    } else {
+    }
+    else {
       this.setState({ entityUserPermissions: formattedPermissions });
     }
   }
 
   getRolePermissions = (property) => {
-    const { roleAcls } = property ? property : this.props;
+    const { roleAcls } = property || this.props;
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
     Object.keys(roleAcls).forEach((permission) => {
       roleAcls[permission].forEach((role) => {
-        if (!rolePermissions.hasOwnProperty(role)) {
+        if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
           rolePermissions[role] = [];
         }
 
@@ -134,7 +135,8 @@ class AllPermissions extends React.Component {
       const propertyRolePermissions = this.state.propertyPermissions;
       propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
       this.setState({ propertyPermissions: propertyRolePermissions });
-    } else {
+    }
+    else {
       this.setState({ entityRolePermissions: formattedPermissions });
     }
   }
@@ -146,8 +148,14 @@ class AllPermissions extends React.Component {
     Object.keys(propertyPermissions).forEach((property) => {
       const { userPermissions, rolePermissions } = propertyPermissions[property];
       const header = <h3>{property}</h3>;
-      const userTable = <UserPermissionsTable userPermissions={userPermissions} rolePermissions={rolePermissions} headers={U_HEADERS} />;
-      const roleTable = <RolePermissionsTable rolePermissions={rolePermissions} headers={R_HEADERS} />;
+      const userTable = (<UserPermissionsTable
+          userPermissions={userPermissions}
+          rolePermissions={rolePermissions}
+          headers={U_HEADERS} />);
+      const roleTable = (<RolePermissionsTable
+          rolePermissions={rolePermissions}
+          headers={R_HEADERS} />);
+
       tables.push(header, userTable, roleTable);
     });
     return tables;
@@ -161,8 +169,13 @@ class AllPermissions extends React.Component {
         </Page.Header>
         <Page.Body>
           <h3>Entity Permissions</h3>
-          <UserPermissionsTable userPermissions={this.state.entityUserPermissions} rolePermissions={this.state.entityRolePermissions} headers={U_HEADERS} />
-          <RolePermissionsTable rolePermissions={this.state.entityRolePermissions} headers={R_HEADERS} />
+          <UserPermissionsTable
+              userPermissions={this.state.entityUserPermissions}
+              rolePermissions={this.state.entityRolePermissions}
+              headers={U_HEADERS} />
+          <RolePermissionsTable
+              rolePermissions={this.state.entityRolePermissions}
+              headers={R_HEADERS} />
           {this.renderPropertyTables()}
         </Page.Body>
       </Page>

@@ -12,9 +12,9 @@ class UserRow extends React.Component {
   getRolesStr = () => {
     if (this.props.user.roles.length > 0) {
       return 'effective permissions';
-    } else {
-      return 'none';
     }
+
+    return 'none';
   }
 
   render() {
@@ -62,7 +62,7 @@ class UserGroupRow extends React.Component {
   }
 
 }
-// 
+//
 // class SearchBar extends React.Component {
 //   render() {
 //     return (
