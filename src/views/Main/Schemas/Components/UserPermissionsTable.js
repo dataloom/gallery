@@ -11,18 +11,11 @@ class UserRow extends React.Component {
     }
   }
 
-  getRolesStr = () => {
-    if (this.props.user.roles.length > 0) {
-      return 'effective permissions';
-    }
-    return 'none';
-  }
-
   render() {
     return (
       <tr className={styles.UserGroupRow} onClick={this.props.toggleCollapse}>
         <td>{this.getUserCellData()}</td>
-        <td>{this.getRolesStr()}</td>
+        <td>Effective permissions:</td>
         <td>{this.props.user.permissions}</td>
       </tr>
     );
