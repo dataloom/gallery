@@ -14,7 +14,8 @@ class PropertyTypeList extends React.Component {
     onChange: PropTypes.func,
     // Implies permissions view
     entitySetId: PropTypes.string,
-    loadPermissions: PropTypes.func.isRequired
+    loadPermissions: PropTypes.func.isRequired,
+    requestingPermissions: PropTypes.bool
   };
 
   static defaultProps = {
@@ -26,8 +27,7 @@ class PropertyTypeList extends React.Component {
   }
 
   renderContent() {
-    const { propertyTypeIds, entitySetId, editing, onChange } = this.props;
-
+    const { propertyTypeIds, entitySetId, editing, onChange, requestingPermissions } = this.props;
     if (propertyTypeIds.length > 0) {
       return propertyTypeIds.map((id) => {
         return (
@@ -36,7 +36,8 @@ class PropertyTypeList extends React.Component {
               editing={editing}
               propertyTypeId={id}
               key={id}
-              onChange={onChange} />
+              onChange={onChange}
+              requestingPermissions={requestingPermissions} />
         );
       });
     } else {

@@ -58,7 +58,8 @@ export default class RequestPermissionsForm extends React.Component {
             entitySetId={entitySetId}
             propertyTypeIds={propertyTypeIds}
             editing={PROPERTY_TYPE_EDITING}
-            onChange={onPermissionChange} />
+            onChange={onPermissionChange}
+            requestingPermissions />
         <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
       </form>
     );

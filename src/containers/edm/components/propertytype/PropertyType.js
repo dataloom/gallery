@@ -30,7 +30,9 @@ class PropertyType extends React.Component {
     entitySetId: PropTypes.string,
     // Async Properties
     propertyType: PropertyTypePropType,
-    permissions: PermissionsPropType
+    permissions: PermissionsPropType,
+    // TODO: Move display logic to CSS
+    requestingPermissions: PropTypes.bool
   };
 
   static defaultProps = {
@@ -38,7 +40,10 @@ class PropertyType extends React.Component {
   };
 
   render() {
-    const { propertyType, entitySetId, permissions, editing, onChange } = this.props;
+    const { propertyType, entitySetId, permissions, editing, onChange, requestingPermissions } = this.props;
+
+    const controls = requestingPermissions ? null : (
+      <PropertyTypeControls entitySetId={entitySetId} propertyType={propertyType} permissions={permissions} />);
 
     return (
       <div className="propertyType">
@@ -49,7 +54,7 @@ class PropertyType extends React.Component {
             onChange={onChange} />
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
-        <PropertyTypeControls entitySetId={entitySetId} propertyType={propertyType} permissions={permissions} />
+        { controls }
       </div>
     );
   }
