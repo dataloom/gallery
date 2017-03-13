@@ -39,7 +39,6 @@ class AllPermissions extends React.Component {
     const { userAcls, roleAcls } = property || this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
-    console.log('ALL USERS BY ID:', allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
@@ -121,6 +120,10 @@ class AllPermissions extends React.Component {
         }
       });
     });
+
+    if (!Object.keys(rolePermissions).hasOwnProperty('AuthenticatedUser')) {
+      rolePermissions.AuthenticatedUser = ['none'];
+    }
 
     this.setRolePermissions(rolePermissions, property);
   }
