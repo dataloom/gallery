@@ -13,7 +13,6 @@ class UserRow extends React.Component {
     if (this.props.user.roles.length > 0) {
       return 'effective permissions';
     }
-
     return 'none';
   }
 
@@ -29,12 +28,26 @@ class UserRow extends React.Component {
 }
 
 class RoleRow extends React.Component {
+  componentDidMount() {
+    const { permissions } = this.props;
+    console.log('PROPS PERMISSIONS:', permissions);
+
+  }
+
+  getPermissions = () => {
+
+    if (this.props.permissions) {
+      return this.props.permissions;
+    }
+    return 'none';
+  }
+
   render() {
     return (
       <tr className={styles.roleRow}>
         <td />
         <td>{this.props.role}</td>
-        <td>{this.props.permissions}</td>
+        <td>{this.getPermissions()}</td>
       </tr>
     );
   }
