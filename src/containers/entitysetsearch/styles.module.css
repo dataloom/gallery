@@ -1,3 +1,5 @@
+@import "../../core/styles/index.css";
+
 .search {
     color: #83858d;
     display: flex;
@@ -49,6 +51,11 @@
 
 .paginationWrapper {
   text-align: center;
+}
+
+.searchToggle {
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .bottomSpacer {
