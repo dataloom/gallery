@@ -2,7 +2,8 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
 import Promise from 'bluebird';
-import { SearchApi, EntityDataModelApi } from 'loom-data';
+import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
+import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
 import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
@@ -46,7 +47,7 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   componentDidMount() {
-    this.loadPropertyTypes(this.props.location.query.searchTerm);
+    this.loadPropertyTypeIds(this.props.location.query.searchTerm);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,30 +65,49 @@ export default class EntitySetDataSearch extends React.Component {
     }
   }
 
-  loadPropertyTypes = (searchTerm) => {
+  loadPropertyTypeIds = (searchTerm) => {
     EntityDataModelApi.getEntitySet(this.props.params.entitySetId)
     .then((entitySet) => {
       EntityDataModelApi.getEntityType(entitySet.entityTypeId)
       .then((entityType) => {
-        Promise.map(entityType.properties, (propertyId) => {
-          return EntityDataModelApi.getPropertyType(propertyId);
-        }).then((propertyTypes) => {
-          this.setState({
-            propertyTypes,
-            title: entitySet.title,
-            loadError: false
-          });
-          if (searchTerm) {
-            this.executeSearch(searchTerm);
-          }
-        }).catch(() => {
-          this.setState({ loadError: true });
-        });
+        this.loadPropertyTypes(entityType.properties, searchTerm, entitySet.title);
       }).catch(() => {
         this.setState({ loadError: true });
       });
     }).catch(() => {
       this.setState({ loadError: true });
+    });
+  }
+
+  loadPropertyTypes = (propertyTypeIds, searchTerm, title) => {
+    const accessChecks = propertyTypeIds.map((propertyId) => {
+      return {
+        aclKey: [this.props.params.entitySetId, propertyId],
+        permissions: [Permission.READ.name]
+      };
+    });
+    AuthorizationApi.checkAuthorizations(accessChecks)
+    .then((aces) => {
+      const authorizedPropertyTypeIds = [];
+      aces.forEach((ace) => {
+        if (ace.permissions.READ) {
+          authorizedPropertyTypeIds.push(ace.aclKey[1]);
+        }
+      });
+      Promise.map(authorizedPropertyTypeIds, (propertyId) => {
+        return EntityDataModelApi.getPropertyType(propertyId);
+      }).then((propertyTypes) => {
+        this.setState({
+          propertyTypes,
+          title,
+          loadError: false
+        });
+        if (searchTerm) {
+          this.executeSearch(searchTerm);
+        }
+      }).catch(() => {
+        this.setState({ loadError: true });
+      });
     });
   }
 
