@@ -125,15 +125,18 @@ class AllPermissions extends React.Component {
       propertyUserPermissions[property.title].userPermissions = formattedPermissions;
 
       this.setState({ propertyPermissions: propertyUserPermissions }, () => {
-        console.log('PROPERTY PERMISSIONS:', this.state.propertyPermissions);
+        console.log('PROPERTY USER PERMISSIONS SET:', this.state);
       });
     } else {
-      this.setState({ entityUserPermissions: formattedPermissions });
+      this.setState({ entityUserPermissions: formattedPermissions }, () => {
+        console.log('ENTITY USER PERMISSIONS SET:', this.state);
+      });
     }
   }
 
   getRolePermissions = (property) => {
     const { roleAcls } = property ? property : this.props;
+    console.log('GETROLEPERMISSIONS roleAcls:', roleAcls);
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
@@ -153,21 +156,26 @@ class AllPermissions extends React.Component {
   }
 
   setRolePermissions = (permissions, property) => {
+    console.log('SET ROLE PERMISSIONS permissions, property', permissions, property);
     const formattedPermissions = {};
 
     // Format data for table
-    Object.keys(permissions).forEach((permission) => {
-      formattedPermissions[permission] = permissions[permission].join(', ');
+    Object.keys(permissions).forEach((role) => {
+      formattedPermissions[role] = permissions[role].join(', ');
     });
 
     // TODO: SET unique name for each property
-    // if (property) {
-    //   const propertyRolePermissions = this.state.propertyPermissions;
-    //   propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
-    //   this.setState({ [property.title]: formattedPermissions }, () => {console.log('PROP ROLES SET:', this.state)})
-    // } else {
-    //   this.setState({ entityRolePermissions: formattedPermissions });
-    // }
+    if (property) {
+      const propertyRolePermissions = this.state.propertyPermissions;
+      propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
+      this.setState({ propertyPermissions: propertyRolePermissions }, () => {
+        console.log('PROPERTY ROLE PERMISSIONS SET:', this.state);
+      });
+    } else {
+      this.setState({ entityRolePermissions: formattedPermissions }, () => {
+        console.log('ENTITY ROLE PERMISSIONS SET:', this.state);
+      });
+    }
   }
 
   renderPropertyTables() {
