@@ -109,6 +109,7 @@
     "react-dom": "^15.4.2",
     "react-hot-loader": "^3.0.0-beta",
     "rimraf": "2.6.0",
+    "sinon": "^1.17.7",
     "style-loader": "^0.13.1",
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
