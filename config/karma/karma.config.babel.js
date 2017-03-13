@@ -13,7 +13,7 @@ function getProfileOptions(profile) {
   let browsers;
   let extraReporters = [];
 
-  switch(profile) {
+  switch (profile) {
     case 'dev':
       autoWatch = true;
       browsers = ['Chrome'];
@@ -23,6 +23,7 @@ function getProfileOptions(profile) {
       autoWatch = false;
       browsers = ['PhantomJS'];
       extraReporters = ['bamboo'];
+      break;
 
     default:
       autoWatch = false;
@@ -33,7 +34,7 @@ function getProfileOptions(profile) {
     autoWatch,
     browsers,
     extraReporters
-  }
+  };
 }
 
 export default function(config) {
@@ -70,7 +71,7 @@ export default function(config) {
      *
      * https://npmjs.org/browse/keyword/karma-adapter
      */
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha', 'sinon'],
 
     /*
      * a list of files to load in the browser
@@ -79,7 +80,6 @@ export default function(config) {
      */
     files: [
       require.resolve('babel-polyfill'),
-      CHAI_CONFIG_PATH,
       TESTS_PATH
     ],
 
@@ -92,7 +92,6 @@ export default function(config) {
      */
     preprocessors: {
       [require.resolve('babel-polyfill')]: ['webpack'],
-      [CHAI_CONFIG_PATH]: ['webpack'],
       [TESTS_PATH]: ['webpack', 'sourcemap']
     },
 

@@ -1,3 +1,6 @@
+import { expect } from 'chai';
+import '../../../config/chai/plugins.config';
+
 import reducer from './AsyncReducer';
 import * as actionFactory from './AsyncActionFactory';
 
