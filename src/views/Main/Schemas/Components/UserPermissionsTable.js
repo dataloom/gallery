@@ -103,8 +103,6 @@ export default class UserPermissionsTable extends React.Component {
   }
 
   render() {
-    console.log('TABLE USER PERMISSIONS:', this.props.users);
-
     const headers = [];
     this.props.headers.forEach((header, i) => {
       headers.push(<th key={i}>{header}</th>);

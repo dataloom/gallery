@@ -34,38 +34,6 @@ const permissionOptions = {
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 
-const USERS = [{
-  id: 0,
-  email: 'corwin@thedataloom.com',
-  role: '(all)',
-  permissions: 'Read, Write, Discover, Link',
-  expand: [{
-    role: 'admin',
-    permissions: 'Read, Write, Discover, Link'
-  }, {
-    role: 'xyz',
-    permissions: 'Read, Write'
-  }]
-}, {
-  id: 1,
-  email: 'matthew@thedataloom.com',
-  role: '(all)',
-  permissions: ['read', 'write'],
-  expand: [{
-    role: 'role',
-    permissions: ['read', 'write', 'discover', 'link']
-  }]
-}, {
-  id: 2,
-  email: 'katherine@thedataloom.com',
-  role: '(all)',
-  permissions: ['read'],
-  expand: [{
-    role: 'role',
-    permissions: ['read', 'write', 'discover', 'link']
-  }]
-}];
-
 const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
@@ -74,7 +42,8 @@ class AllPermissions extends React.Component {
 
     this.state = {
       entityUserPermissions: [],
-      entityRolePermissions: []
+      entityRolePermissions: [],
+      propertyPermissions: {}
     };
 
     this.getUserPermissions = this.getUserPermissions.bind(this);
@@ -87,13 +56,12 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { properties } = this.props;
-    console.log('PROPS!:', nextProps);
     this.getUserPermissions();
     this.getRolePermissions();
     // console.log('props properties:');
     Object.keys(properties).forEach((property) => {
-      this.getUserPermissions(properties[property]);
-      this.getRolePermissions(properties[property]);
+        this.getUserPermissions(properties[property]);
+        this.getRolePermissions(properties[property]);
     })
   }
 
@@ -101,7 +69,7 @@ class AllPermissions extends React.Component {
     const { userAcls, roleAcls } = property ? property : this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
-    console.log('userAcls, roleAcls, allUsersById:', userAcls, roleAcls, allUsersById);
+    // console.log('userAcls, roleAcls, allUsersById:', userAcls, roleAcls, allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
@@ -134,31 +102,38 @@ class AllPermissions extends React.Component {
         userPermissions.push(user);
       }
     });
-    this.setEntityUserPermissions(userPermissions, property);
+    this.setUserPermissions(userPermissions, property);
   }
 
-  setEntityUserPermissions = (permissions, property) => {
+  setUserPermissions = (permissions, property) => {
     const formattedPermissions = permissions.slice();
 
     // Format permissions for table
-    formattedPermissions.forEach((permission) => {
-      if (permission) {
-        if (permission.permissions.length === 0) {
-          permission.permissions = '-';
+    formattedPermissions.forEach((user) => {
+      if (user) {
+        if (user.permissions.length === 0) {
+          user.permissions = '-';
         } else {
-          permission.permissions = permission.permissions.join(', ');
+          user.permissions = user.permissions.join(', ');
         }
       }
-
     });
-    // property ? this.setState( {${property.title}: formattedPermissions} ) : this.setState( { entityUserPermissions: formattedPermissions } );
-    property ? this.setState({ testProperty: formattedPermissions }) : this.setState({ entityUserPermissions: formattedPermissions });
 
+    if (property) {
+      const stateProperties = this.state.propertyPermissions;
+      stateProperties[property.title] = {};
+      stateProperties[property.title].userPermissions = formattedPermissions;
+
+      this.setState({ propertyPermissions: stateProperties }, () => {
+        console.log('PROPERTY PERMISSIONS:', this.state.propertyPermissions);
+      });
+    } else {
+      this.setState({ entityUserPermissions: formattedPermissions });
+    }
   }
 
   getRolePermissions = (property) => {
     const { roleAcls } = property ? property : this.props;
-    property ? console.log('WE GOTTA PROPERTY:', property) : null;
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
@@ -186,7 +161,11 @@ class AllPermissions extends React.Component {
     });
 
     // TODO: SET unique name for each property
-    property ? this.setState({ testPropertyRolePermissions: formattedPermissions }, () => {console.log('PROP ROLES SET:', this.state)}) : this.setState({ entityRolePermissions: formattedPermissions });
+    // property ? this.setState({ [property.title]: formattedPermissions }, () => {console.log('PROP ROLES SET:', this.state)}) : this.setState({ entityRolePermissions: formattedPermissions });
+  }
+
+  renderPropertyTables() {
+    // for each property -> render title + user + role tables for the data
   }
 
   render() {
