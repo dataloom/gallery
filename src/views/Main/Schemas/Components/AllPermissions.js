@@ -37,6 +37,7 @@ class AllPermissions extends React.Component {
 
   getUserPermissions = (property) => {
     const { userAcls, roleAcls } = property || this.props;
+    console.log('USER ACLS, ROLE ACLS:', userAcls, roleAcls); // doesn't contain authenticateduser
     const { allUsersById } = this.props;
     const userPermissions = [];
 
@@ -48,7 +49,7 @@ class AllPermissions extends React.Component {
           nickname: allUsersById[userId].nickname,
           email: allUsersById[userId].email,
           roles: [],
-          permissions: []
+          permissions: [] // add from authenticateduser
         };
 
         // Add any additional permissions based on the roles the user has
@@ -70,6 +71,9 @@ class AllPermissions extends React.Component {
             });
           });
         }
+
+        // Add permissions for authenticatedusers / default
+          // for each permission that authenticated users has, if user doesn't yet have it: SQUISH IT!
 
         userPermissions.push(user);
       }
@@ -121,9 +125,14 @@ class AllPermissions extends React.Component {
       });
     });
 
-    if (!Object.keys(rolePermissions).hasOwnProperty('AuthenticatedUser')) {
-      rolePermissions.AuthenticatedUser = ['none'];
-    }
+    rolePermissions.AuthenticatedUser = this.props.globalValue;
+
+
+    // if (!Object.keys(rolePermissions).hasOwnProperty('AuthenticatedUser')) {
+    //   rolePermissions.AuthenticatedUser = ['none'];
+    // }
+    // else {
+    // }
 
     this.setRolePermissions(rolePermissions, property);
   }
@@ -194,7 +203,8 @@ function mapStateToProps(state) {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
     properties: entitySetDetail.get('properties').toJS(),
     userAcls: entitySetDetail.get('userAcls').toJS(),
-    roleAcls: entitySetDetail.get('roleAcls').toJS()
+    roleAcls: entitySetDetail.get('roleAcls').toJS(),
+    globalValue: entitySetDetail.get('globalValue').toJS()
   };
 }
 

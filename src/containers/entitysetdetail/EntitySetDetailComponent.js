@@ -77,6 +77,14 @@ class EntitySetDetailComponent extends React.Component {
       allUsersById: {},
       allRolesList: new Set()
     };
+// TODO: INITIALIZE SOME OF THESE IN STATE?
+    // globalValue,
+    // roleAcls,
+    // userAcls,
+    // updateSuccess,
+    // newRoleValue: '',
+    // newEmailValue: '',
+    // updateError: false
   }
 
   componentDidMount() {
@@ -177,7 +185,8 @@ class EntitySetDetailComponent extends React.Component {
     else {
       const entityAcls = {
         userAcls,
-        roleAcls
+        roleAcls,
+        globalValue
       }
       // console.log('HERE ARE THE ENTITY ACLS:', entityAcls);
       this.props.setEntityData(entityAcls);

@@ -14,6 +14,9 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
   entitySetReference: null,
   allUsersById: {},
+  roleAcls: {},
+  userAcls: {},
+  globalValue: [],
   properties: {}
 });
 
@@ -48,7 +51,8 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.SET_ENTITY_DATA:
       return state.merge({
         roleAcls: action.data.roleAcls,
-        userAcls: action.data.userAcls
+        userAcls: action.data.userAcls,
+        globalValue: action.data.globalValue
       });
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
