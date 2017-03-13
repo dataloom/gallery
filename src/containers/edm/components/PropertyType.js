@@ -33,7 +33,8 @@ class PropertyType extends React.Component {
     entitySetId: PropTypes.string,
     // Async Properties
     propertyType: PropertyTypePropType,
-    permissions: PermissionsPropType
+    permissions: PermissionsPropType,
+    requestingPermissions: PropTypes.bool
   };
 
   static defaultProps = {
@@ -123,7 +124,7 @@ class PropertyType extends React.Component {
   }
 
   renderManagePermissions() {
-    if (this.props.permissions.OWNER) {
+    if (this.props.permissions.OWNER && !this.props.requestingPermissions) {
       return (
         <div className="propertyTypeControls">
           <Button
