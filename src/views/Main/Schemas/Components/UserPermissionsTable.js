@@ -3,10 +3,12 @@ import { Table } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
 class UserRow extends React.Component {
-  getClassName = () => {
-    // Probably want to set a classname that allows for hover behavior (expanded rows should not have hover state)
-    return this.props.isCollapsed ? `${styles.UserGroupRow} ${styles.collapse}`
-    : `${styles.UserGroupRow} ${styles.collapseOpen}`;
+  getUserCellData = () => {
+    if (this.props.user.nickname) {
+      return `${this.props.user.nickname} (${this.props.user.email})`;
+    } else {
+      return this.props.user.email;
+    }
   }
 
   getRolesStr = () => {
@@ -18,8 +20,8 @@ class UserRow extends React.Component {
 
   render() {
     return (
-      <tr className={this.getClassName()} onClick={this.props.toggleCollapse}>
-        <td>{this.props.user.email}</td>
+      <tr className={styles.UserGroupRow} onClick={this.props.toggleCollapse}>
+        <td>{this.getUserCellData()}</td>
         <td>{this.getRolesStr()}</td>
         <td>{this.props.user.permissions}</td>
       </tr>
@@ -30,8 +32,6 @@ class UserRow extends React.Component {
 class RoleRow extends React.Component {
   componentDidMount() {
     const { permissions } = this.props;
-    console.log('PROPS PERMISSIONS:', permissions);
-
   }
 
   getPermissions = () => {

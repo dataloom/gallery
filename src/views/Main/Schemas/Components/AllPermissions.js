@@ -39,12 +39,14 @@ class AllPermissions extends React.Component {
     const { userAcls, roleAcls } = property || this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
+    console.log('ALL USERS BY ID:', allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
       if (userId && allUsersById[userId]) {
         const user = {
           id: userId,
+          nickname: allUsersById[userId].nickname,
           email: allUsersById[userId].email,
           roles: [],
           permissions: []
