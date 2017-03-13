@@ -81,6 +81,7 @@ class RequestPermissions extends React.Component {
                   propertyTypeIds={propertyTypeIds}
                   editing={PROPERTY_TYPE_EDITING}
                   onChange={this.onChange}
+                  requestingPermissions
                 />
                 <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
               </form>
