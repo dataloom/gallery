@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import '../../../../config/chai/plugins.config';
 
-import { RequestPermissionsModal, mapDispatchToProps } from './RequestPermissionsModal';
+import { mapDispatchToProps } from './RequestPermissionsModal';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
 
 
