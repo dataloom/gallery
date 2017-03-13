@@ -59,5 +59,8 @@ export default {
       APP_PATHS.ABS.SOURCE,
       APP_PATHS.ABS.NODE
     ]
+  },
+  node: {
+    net: 'empty'
   }
 };

@@ -4,31 +4,34 @@
 
 import { combineReducers } from 'redux-immutable';
 
+import asyncReducer from '../../containers/async/AsyncReducer';
 import catalogReducer from '../../containers/catalog/CatalogReducer';
-import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
-import edmReducer from '../../containers/edm/EdmReducer';
-import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
-import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+import datasetsReducer from '../../containers/datasets/DatasetsReducer';
+import edmReducer from '../../containers/edm/EdmReducer';
+import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
+import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
-import asyncReducer from '../../containers/async/AsyncReducer';
-import datasetsReducer from '../../containers/datasets/DatasetsReducer';
+import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+
+import neuronReducer from '../neuron/NeuronReducer';
 import routerReducer from '../router/RouterReducer';
 
 export default function reduxReducer() {
 
   return combineReducers({
+    async: asyncReducer,
     catalog: catalogReducer,
+    createEntitySet: createEntitySetReducer,
+    datasets: datasetsReducer,
     entitySetDetail: entitySetDetailReducer,
+    neuron: neuronReducer,
     normalizedData: edmReducer,
     organizations: organizationsReducer,
-    createEntitySet: createEntitySetReducer,
-    securableObject: securableObjectReducer,
     permissions: permissionReducer,
     principals: principalsReducer,
-    async: asyncReducer,
-    datasets: datasetsReducer,
-    router: routerReducer
+    router: routerReducer,
+    securableObject: securableObjectReducer
   });
 }
