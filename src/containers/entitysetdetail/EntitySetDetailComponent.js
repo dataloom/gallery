@@ -35,6 +35,7 @@ const TitleControlsContainer = styled(StyledFlexContainer)`
 
 const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
+  flex: 1 0 auto;
 `;
 
 class EntitySetDetailComponent extends React.Component {
