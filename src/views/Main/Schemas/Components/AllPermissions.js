@@ -120,11 +120,11 @@ class AllPermissions extends React.Component {
     });
 
     if (property) {
-      const stateProperties = this.state.propertyPermissions;
-      stateProperties[property.title] = {};
-      stateProperties[property.title].userPermissions = formattedPermissions;
+      const propertyUserPermissions = this.state.propertyPermissions;
+      propertyUserPermissions[property.title] = {};
+      propertyUserPermissions[property.title].userPermissions = formattedPermissions;
 
-      this.setState({ propertyPermissions: stateProperties }, () => {
+      this.setState({ propertyPermissions: propertyUserPermissions }, () => {
         console.log('PROPERTY PERMISSIONS:', this.state.propertyPermissions);
       });
     } else {
@@ -161,7 +161,13 @@ class AllPermissions extends React.Component {
     });
 
     // TODO: SET unique name for each property
-    // property ? this.setState({ [property.title]: formattedPermissions }, () => {console.log('PROP ROLES SET:', this.state)}) : this.setState({ entityRolePermissions: formattedPermissions });
+    // if (property) {
+    //   const propertyRolePermissions = this.state.propertyPermissions;
+    //   propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
+    //   this.setState({ [property.title]: formattedPermissions }, () => {console.log('PROP ROLES SET:', this.state)})
+    // } else {
+    //   this.setState({ entityRolePermissions: formattedPermissions });
+    // }
   }
 
   renderPropertyTables() {
