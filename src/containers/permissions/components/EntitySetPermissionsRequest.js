@@ -44,6 +44,7 @@ class EntitySetPermissionsRequest extends React.Component {
     });
     this.state = {
       open: false,
+      // TODO: Move to Redux
       selectedProperties
     };
   }
@@ -99,14 +100,13 @@ class EntitySetPermissionsRequest extends React.Component {
               defaultChecked={defaultChecked}
               onClick={(e) => {
                 this.toggleCheckbox(e.target.checked, propertyType.id);
-              }}
-          />
+              }} />
         </div>
         <div className="propertyTypeTitle">
           <label htmlFor={`ptr-${principalId}-${propertyType.id}`}>{propertyType.title}</label>
         </div>
       </div>
-    )
+    );
   }
 
   toggleBody = () => {
@@ -126,8 +126,10 @@ class EntitySetPermissionsRequest extends React.Component {
       reasons.push(<div key={reason} className={styles.requestMessage}>{reason}</div>);
     });
 
-    const statusByPropertyTypeId = groupBy(statuses, (status) => status.aclKey[1]);
-    const content = propertyTypes.map(propertyType => {
+    const statusByPropertyTypeId = groupBy(statuses, (status) => {
+      return status.aclKey[1];
+    });
+    const content = propertyTypes.map((propertyType) => {
       return this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.id]);
     });
     const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`
@@ -141,11 +143,11 @@ class EntitySetPermissionsRequest extends React.Component {
             <a onClick={this.toggleBody}> { statuses.length } properties</a>
           </div>
           <button className={styles.approveButton} onClick={this.approve}>
-            <FontAwesome name="thumbs-o-up"/>
+            <FontAwesome name="thumbs-o-up" />
             Allow
           </button>
           <button className={styles.rejectButton} onClick={this.deny}>
-            <FontAwesome name="thumbs-o-down"/>
+            <FontAwesome name="thumbs-o-down" />
             Deny
           </button>
         </div>
@@ -165,8 +167,8 @@ class EntitySetPermissionsRequest extends React.Component {
 
     return (
       // Hack to force re-rendering on state change
-      <div className={classnames({[styles.open]: this.state.open})}>
-        <AsyncContentComponent reference={principalReference} render={this.renderContent}/>
+      <div className={classnames({ [styles.open]: this.state.open })}>
+        <AsyncContentComponent reference={principalReference} render={this.renderContent} />
       </div>
     );
   }

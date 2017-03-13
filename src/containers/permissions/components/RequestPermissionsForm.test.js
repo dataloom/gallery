@@ -9,7 +9,7 @@ import RequestPermissionsForm from './RequestPermissionsForm';
 
 describe('RequestPermissionsForm', function() {
   const entitySetId = 'entity123';
-  const propertyTypeId = 'pid1'
+  const propertyTypeId = 'pid1';
   const propertyTypeIds = [propertyTypeId];
   const READ_PERMISSION_REQUESTED = ['READ'];
 
