@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 import groupBy from 'lodash/groupBy';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
@@ -67,7 +68,7 @@ class EntitySetPermissionsRequest extends React.Component {
       });
       updateStatuses(updatedStatuses);
     }
-  }
+  };
 
   approve = () => {
     this.sendUpdateRequests(RequestStatus.APPROVED);
@@ -86,7 +87,7 @@ class EntitySetPermissionsRequest extends React.Component {
       selectedProperties.delete(propertyTypeId);
     }
     this.setState({ selectedProperties });
-  }
+  };
 
   renderProperty(principalId, propertyType, defaultChecked) {
     return (
@@ -186,14 +187,10 @@ function mapStateToProps(state, ownProps) {
 
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
-  return {
-    loadPrincipal: (principalId) => {
-      dispatch(PrincipalsActionFactory.loadPrincipalDetails(principalId));
-    },
-    updateStatuses: (statuses) => {
-      dispatch(PermissionsActionFactory.updateStatusesStatusesRequest(statuses))
-    }
-  };
+  return bindActionCreators({
+    loadPrincipal: PrincipalsActionFactory.loadPrincipalDetails,
+    updateStatuses: PermissionsActionFactory.updateStatusesStatusesRequest
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EntitySetPermissionsRequest);
