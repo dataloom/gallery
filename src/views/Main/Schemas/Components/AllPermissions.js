@@ -36,7 +36,7 @@ class AllPermissions extends React.Component {
   }
 
   getUserPermissions = (property) => {
-    const { userAcls, roleAcls } = property || this.props;
+    const { userAcls, roleAcls, globalValue } = property || this.props;
     console.log('USER ACLS, ROLE ACLS:', userAcls, roleAcls); // doesn't contain authenticateduser
     const { allUsersById } = this.props;
     const userPermissions = [];
@@ -72,8 +72,14 @@ class AllPermissions extends React.Component {
           });
         }
 
-        // Add permissions for authenticatedusers / default
-          // for each permission that authenticated users has, if user doesn't yet have it: SQUISH IT!
+        // Add permissions based on default for all users
+        if (globalValue) {
+          globalValue.forEach((permission) => {
+            if (user.permissions.indexOf(permission) === -1) {
+              user.permissions.push(permission);
+            }
+          });
+        }
 
         userPermissions.push(user);
       }
