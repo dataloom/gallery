@@ -18,6 +18,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
+import AllPermissions from './Schemas/Components/AllPermissions';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -90,6 +91,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
+      <Route path={'/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path='*' component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );

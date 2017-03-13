@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import PropertyType, { EditingPropType, DEFAULT_EDITING } from './PropertyType';
+import PropertyType, { EditingPropType, DEFAULT_EDITING } from './propertytype/PropertyType';
 import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
 import { createAccessCheck } from '../../permissions/PermissionsStorage';
 
@@ -14,7 +14,8 @@ class PropertyTypeList extends React.Component {
     onChange: PropTypes.func,
     // Implies permissions view
     entitySetId: PropTypes.string,
-    loadPermissions: PropTypes.func.isRequired
+    loadPermissions: PropTypes.func.isRequired,
+    requestingPermissions: PropTypes.bool
   };
 
   static defaultProps = {
@@ -26,18 +27,17 @@ class PropertyTypeList extends React.Component {
   }
 
   renderContent() {
-    const { propertyTypeIds, entitySetId, editing, onChange } = this.props;
-
+    const { propertyTypeIds, entitySetId, editing, onChange, requestingPermissions } = this.props;
     if (propertyTypeIds.length > 0) {
       return propertyTypeIds.map((id) => {
         return (
           <PropertyType
-            entitySetId={entitySetId}
-            editing={editing}
-            propertyTypeId={id}
-            key={id}
-            onChange={onChange}
-          />
+              entitySetId={entitySetId}
+              editing={editing}
+              propertyTypeId={id}
+              key={id}
+              onChange={onChange}
+              requestingPermissions={requestingPermissions} />
         );
       });
     } else {
@@ -51,10 +51,10 @@ class PropertyTypeList extends React.Component {
     return (
       <div className={classnames('propertyTypeList', className)}>
         <div className="propertyTypeListHeader">
-          <div className="propertyTypeListPermissions"></div>
+          <div className="propertyTypeListPermissions" />
           <div className="propertyTypeTitle">Property Title</div>
           <div className="propertyTypeListDescription">Description</div>
-          <div className="propertyTypeListControls"></div>
+          <div className="propertyTypeListControls" />
         </div>
         {this.renderContent()}
       </div>
@@ -67,7 +67,7 @@ function mapDispatchToProps(dispatch, ownProps) {
 
   let loadPermissions;
   if (entitySetId) {
-    const accessChecks = propertyTypeIds.map(id => {
+    const accessChecks = propertyTypeIds.map((id) => {
       return createAccessCheck([entitySetId, id]);
     });
     loadPermissions = () => {
@@ -79,7 +79,7 @@ function mapDispatchToProps(dispatch, ownProps) {
 
   return {
     loadPermissions
-  }
+  };
 }
 
 export default connect(null, mapDispatchToProps)(PropertyTypeList);

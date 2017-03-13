@@ -33,7 +33,7 @@ export default function principalsReducer(state :Immutable.Map = INITIAL_STATE, 
       return state.set('users', updatedUsers);
     }
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_SUCCESS: {
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS: {
 
       const usersSearchResults :Immutable.Map = Immutable.Map().withMutations((map :Immutable.Map) => {
         Immutable.fromJS(action.searchResults).forEach((user :Immutable.Map) => {

@@ -21,3 +21,9 @@ export function createEntitySetResolve(reference:EdmObjectReference) {
     reference
   }
 }
+
+export function createEntitySetReset() {
+  return {
+    type: actionTypes.CREATE_ENTITY_SET_RESET,
+  }
+}

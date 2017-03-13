@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import { Link, hashHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -35,6 +35,7 @@ const TitleControlsContainer = styled(StyledFlexContainer)`
 
 const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
+  flex: 1 0 auto;
 `;
 
 class EntitySetDetailComponent extends React.Component {
@@ -58,6 +59,21 @@ class EntitySetDetailComponent extends React.Component {
       addingData: false,
       deleteError: false
     };
+  }
+
+  componentDidMount() {
+    this.props.loadEntitySet();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined ) {
+      const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
+        return property.id;
+      });
+
+      localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
+      localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
+    }
   }
 
   setEditingPermissions = () => {
@@ -122,12 +138,12 @@ class EntitySetDetailComponent extends React.Component {
     if (!this.props.entitySet) return null;
     return (
       <div className={styles.buttonWrapper}>
-        <Button bsStyle="primary" className={styles.center}>
-          <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+        <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+          <Button bsStyle="primary" className={styles.center}>
             <FontAwesome name="search" />
             <span className={styles.buttonText}>Search this entity set</span>
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -180,6 +196,11 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
+  onAllPermissions = () => {
+    hashHistory.push(`/allpermissions`);
+    // hashHistory.push(`/entitysets/${this.props.entitySetId}/allpermissions`);
+  }
+
   renderAddDataButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
@@ -193,6 +214,20 @@ class EntitySetDetailComponent extends React.Component {
         </Button>
       </div>
     );
+  }
+
+  renderAllPermissions = () => {
+    if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
+    return (
+      <div className={styles.buttonWrapper} >
+        <Button
+          className={styles.center}
+          onClick={this.onAllPermissions}
+        >
+          <span className={styles.buttonText}>View all permissions</span>
+        </Button>
+      </div>
+    )
   }
 
   renderDeleteEntitySet = () => {
@@ -260,16 +295,12 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
+          {this.renderAllPermissions()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
-
         </Page.Body>
       </Page>
     );
-  }
-
-  componentDidMount() {
-    this.props.loadEntitySet();
   }
 }
 

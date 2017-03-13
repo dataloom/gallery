@@ -2,7 +2,8 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
 import Promise from 'bluebird';
-import { SearchApi, EntityDataModelApi } from 'loom-data';
+import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
+import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
 import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
@@ -11,6 +12,10 @@ import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncC
 import styles from './styles.module.css';
 
 const MAX_HITS = 50;
+const views = {
+  PERSON: 'personView',
+  TABLE: 'tableView'
+};
 
 export default class EntitySetDataSearch extends React.Component {
   static contextTypes = {
@@ -41,12 +46,14 @@ export default class EntitySetDataSearch extends React.Component {
       asyncStatus: (props.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING,
       propertyTypes: [],
       loadError: false,
-      hidePagination: false
+      hidePagination: false,
+      personViewAvailable: false,
+      searchView: ''
     };
   }
 
   componentDidMount() {
-    this.loadPropertyTypes(this.props.location.query.searchTerm);
+    this.loadPropertyTypeIds(this.props.location.query.searchTerm);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,30 +71,63 @@ export default class EntitySetDataSearch extends React.Component {
     }
   }
 
-  loadPropertyTypes = (searchTerm) => {
+  loadPropertyTypeIds = (searchTerm) => {
     EntityDataModelApi.getEntitySet(this.props.params.entitySetId)
     .then((entitySet) => {
       EntityDataModelApi.getEntityType(entitySet.entityTypeId)
       .then((entityType) => {
-        Promise.map(entityType.properties, (propertyId) => {
-          return EntityDataModelApi.getPropertyType(propertyId);
-        }).then((propertyTypes) => {
-          this.setState({
-            propertyTypes,
-            title: entitySet.title,
-            loadError: false
-          });
-          if (searchTerm) {
-            this.executeSearch(searchTerm);
-          }
-        }).catch(() => {
-          this.setState({ loadError: true });
-        });
+        this.loadPropertyTypes(entityType.properties, searchTerm, entitySet.title);
       }).catch(() => {
         this.setState({ loadError: true });
       });
     }).catch(() => {
       this.setState({ loadError: true });
+    });
+  }
+
+  loadPropertyTypes = (propertyTypeIds, searchTerm, title) => {
+    const accessChecks = propertyTypeIds.map((propertyId) => {
+      return {
+        aclKey: [this.props.params.entitySetId, propertyId],
+        permissions: [Permission.READ.name]
+      };
+    });
+    AuthorizationApi.checkAuthorizations(accessChecks)
+    .then((aces) => {
+      const authorizedPropertyTypeIds = [];
+      aces.forEach((ace) => {
+        if (ace.permissions.READ) {
+          authorizedPropertyTypeIds.push(ace.aclKey[1]);
+        }
+      });
+      Promise.map(authorizedPropertyTypeIds, (propertyId) => {
+        return EntityDataModelApi.getPropertyType(propertyId);
+      }).then((propertyTypes) => {
+        let personViewAvailable = false;
+        let searchView = views.TABLE;
+        let firstName = false;
+        let lastName = false;
+        propertyTypes.forEach((propertyType) => {
+          if (propertyType.type.name.toLowerCase() === 'firstname') firstName = true;
+          else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = true;
+        });
+        if (firstName && lastName) {
+          personViewAvailable = true;
+          searchView = views.PERSON;
+        }
+        this.setState({
+          propertyTypes,
+          title,
+          loadError: false,
+          personViewAvailable,
+          searchView
+        });
+        if (searchTerm) {
+          this.executeSearch(searchTerm);
+        }
+      }).catch(() => {
+        this.setState({ loadError: true });
+      });
     });
   }
 
@@ -173,16 +213,55 @@ export default class EntitySetDataSearch extends React.Component {
     );
   }
 
+  toggleView = (searchView) => {
+    this.setState({ searchView });
+  }
+
+  renderToggleSearchView = () => {
+    if (this.state.searchResults.length && this.state.personViewAvailable) {
+      const personClass = (this.state.searchView === views.PERSON) ?
+        `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
+      const tableClass = (this.state.searchView === views.TABLE) ?
+        `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
+      return (
+        <div className={styles.searchToggle}>
+          <button
+              className={personClass}
+              onClick={() => {
+                this.toggleView(views.PERSON);
+              }}>Person View</button>
+          <button
+              className={tableClass}
+              onClick={() => {
+                this.toggleView(views.TABLE);
+              }}>Table View</button>
+        </div>
+      );
+    }
+    return null;
+  }
+
   renderSearchResultType = () => {
-    let firstName;
-    let lastName;
-    let dob;
-    this.state.propertyTypes.forEach((propertyType) => {
-      if (propertyType.type.name.toLowerCase() === 'firstname') firstName = propertyType;
-      else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = propertyType;
-      else if (propertyType.type.name.toLowerCase() === 'dob') dob = propertyType;
-    });
-    if (firstName && lastName) {
+    if (this.state.personViewAvailable && this.state.searchView === views.PERSON) {
+      let firstName;
+      let lastName;
+      let dob;
+      this.state.propertyTypes.forEach((propertyType) => {
+        if (propertyType.type.name.toLowerCase() === 'firstname') firstName = propertyType;
+        else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = propertyType;
+        else if (propertyType.type.name.toLowerCase() === 'dob') dob = propertyType;
+      });
+      let view = this.state.searchView;
+      if (!view.length) {
+        if (firstName && lastName) {
+          this.setState({ searchView: views.PERSON });
+          view = views.PERSON;
+        }
+        else {
+          this.setState({ searchView: views.TABLE });
+          view = views.TABLE;
+        }
+      }
       return (
         <EntitySetUserSearchResults
             results={this.state.searchResults}
@@ -212,6 +291,7 @@ export default class EntitySetDataSearch extends React.Component {
         </Page.Header>
         <Page.Body>
           {this.renderErrorMessage()}
+          {this.renderToggleSearchView()}
           <AsyncContent
               status={this.state.asyncStatus}
               pendingContent={<h2>Please run a search</h2>}
