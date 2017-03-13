@@ -46,4 +46,22 @@ describe('PermissionsReducer', function() {
     expect(state).to.not.have.deep.property(['requestPermissionsModal', 'pidToRequestedPermissions', pid]);
   });
 
+  it('should clear permissions request state on submit', function() {
+    const reason = 'reason';
+    const pid = 'abc';
+    const permissionsRequest = ['READ'];
+
+    let action = PermissionsActionFactory.requestPermissionsUpdateReason(reason);
+    let state = reducer(INITIAL_STATE, action);
+
+    action = PermissionsActionFactory.requestPermissionsUpdateRequest(pid, permissionsRequest);
+    state = reducer(state, action);
+
+    action = PermissionsActionFactory.submitAuthNRequest([]);
+    state = reducer(state, action);
+
+    expect(state).to.have.deep.property('requestPermissionsModal.reason').equal('');
+    expect(state).to.have.deep.property('requestPermissionsModal.pidToRequestedPermissions').and.to.be.empty;
+  });
+
 });

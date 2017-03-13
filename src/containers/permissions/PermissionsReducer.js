@@ -14,6 +14,7 @@ const INITIAL_STATE:Map<*, *> = fromJS({
     show: false,
     entitySetId: null,
     pidToRequestedPermissions: {},
+    reason: '',
     asyncStatus: ASYNC_STATUS.PENDING
   }
 });
@@ -76,6 +77,8 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
 
     case actionTypes.SUBMIT_AUTHN_REQUEST:
       return state.mergeIn(['requestPermissionsModal'], {
+        reason: '',
+        pidToRequestedPermissions: Map(),
         asyncStatus: ASYNC_STATUS.LOADING
       });
 
