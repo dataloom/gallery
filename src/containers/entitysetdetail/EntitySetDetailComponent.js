@@ -35,6 +35,7 @@ const TitleControlsContainer = styled(StyledFlexContainer)`
 
 const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
+  flex: 1 0 auto;
 `;
 
 class EntitySetDetailComponent extends React.Component {
@@ -96,9 +97,7 @@ class EntitySetDetailComponent extends React.Component {
 
           <ControlsContainer>
 
-            <div className={styles.actionDropdownWrapper}>
-              <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown)} />
-            </div>
+            <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown)} />
             {
               entitySetPermissions.OWNER &&
               <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
