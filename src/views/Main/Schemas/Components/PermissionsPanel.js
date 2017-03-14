@@ -7,6 +7,8 @@ import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
+import * as actionFactories from '../../../../containers/entitysetdetail/EntitySetDetailActionFactories';
+
 import styles from '../styles.module.css';
 
 const views = {
@@ -68,7 +70,7 @@ class PermissionsPanel extends React.Component {
       emailsView: accessOptions.Write,
 
       // REDUX
-      newRoleValue: '', // redux (esdc resets) props + dispatch
+      newRoleValue: '', // redux (esdc resets) props + dispatch NEXT UP: DISPATCH
       newEmailValue: '', // redux (esdc resets) props + dispatch
       // multiple calls at once
       updateSuccess: false, // now there are multiple: 1 for each E/P loaded. what happens? where is it shown? props + dispatch
@@ -183,7 +185,7 @@ class PermissionsPanel extends React.Component {
   }
 
   updatePermissions(rawAction, principal, rawPermissions) {
-    const { entitySetId, propertyTypeId } = this.props;
+    const { entitySetId, propertyTypeId } = this.props; // update?
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
 
@@ -359,6 +361,7 @@ class PermissionsPanel extends React.Component {
   handleNewRoleChange = (e) => {
     const newRoleValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
     this.setState({ newRoleValue });
+    this.props.setNewRoleValue(newRoleValue);
   }
 
   viewPermissionTypeButton = (permission, fn, currView, order) => {
@@ -571,7 +574,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   return {
-
+    setNewRoleValue: (value) => {
+      dispatch(actionFactories.setNewRoleValue(value));
+    }
   };
 }
 
