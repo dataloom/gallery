@@ -70,16 +70,17 @@ class PermissionsPanel extends React.Component {
       // REDUX
       newRoleValue: '', // redux (esdc resets) props + dispatch
       newEmailValue: '', // redux (esdc resets) props + dispatch
+      // multiple calls at once
       updateSuccess: false, // now there are multiple: 1 for each E/P loaded. what happens? where is it shown? props + dispatch
       updateError: false, // ditto ^^^ props + dispatch
-      loadUsersError: false, // props
       // specific to view
       globalValue: [], // specific to each E/P view. set on properties (as default). refactor to get w/ specific id. may need to separate use cases. props + dispatch
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] }, //  props. refactor to get w/ specific id
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
       // global
       allUsersById: {}, // DONE
-      allRolesList: new Set() // DONE
+      allRolesList: new Set(), // DONE
+      loadUsersError: false, // DONE
     };
   }
 
@@ -386,7 +387,8 @@ class PermissionsPanel extends React.Component {
   }
 
   getRolesView = () => {
-    const { roleAcls, rolesView, newRoleValue } = this.state;
+    const { roleAcls, rolesView } = this.state;
+    const { newRoleValue } = this.props;
     const roleList = roleAcls[rolesView];
     const roleOptions = this.getRoleOptions(roleList);
     const hiddenBody = roleList.map((role) => {
@@ -562,7 +564,8 @@ function mapStateToProps(state) {
   return {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
     allRolesList: entitySetDetail.get('allRolesList'),
-    loadUsersError: entitySetDetail.get('loadUsersError')
+    loadUsersError: entitySetDetail.get('loadUsersError'),
+    newRoleValue: entitySetDetail.get('newRoleValue')
   };
 }
 

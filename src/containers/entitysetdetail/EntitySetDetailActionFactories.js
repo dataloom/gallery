@@ -35,3 +35,10 @@ export function setLoadUsersError(bool) {
     bool
   };
 }
+
+export function setNewRoleValue(value) {
+  return {
+    type: actionTypes.SET_NEW_ROLE_VALUE,
+    value
+  };
+}

@@ -34,6 +34,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         entitySetId: action.id,
         entitySetReference: null
       });
+
     // TODO: Handle error case
     case edmActionTypes.EDM_OBJECT_RESOLVE:
       if (state.get('entitySetId') !== action.reference.id) {
@@ -46,21 +47,30 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         },
         entitySetReference: action.reference
       });
+
     case actionTypes.SET_ALL_USERS_AND_ROLES:
       return state.merge({
         allUsersById: action.users,
         allRolesList: action.roles
       });
+
     case actionTypes.SET_LOAD_USERS_ERROR:
       return state.merge({
         loadUsersError: action.bool
-      })
+      });
+
+    case actionTypes.SET_NEW_ROLE_VALUE:
+      return state.merge({
+        newRoleValue: action.value
+      });
+
     case actionTypes.SET_ENTITY_DATA:
       return state.merge({
         roleAcls: action.data.roleAcls,
         userAcls: action.data.userAcls,
         globalValue: action.data.globalValue
       });
+
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
       var nestedState = {...stateJS,

@@ -179,6 +179,10 @@ class EntitySetDetailComponent extends React.Component {
         globalValue
       };
       this.props.setEntityData(entityAcls);
+      this.props.setNewRoleValue('');
+      // this.props.setNewEmailValue(newEmailValue);
+      // this.props.setUpdateSuccess(updateSuccess);
+      // this.props.setUpdateError(updateError);
       this.setState({
         globalValue,
         roleAcls,
@@ -481,6 +485,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setLoadUsersError: (bool) => {
       dispatch(actionFactories.setLoadUsersError(bool));
+    },
+    setNewRoleValue: (value) => {
+      dispatch(actionFactories.setNewRoleValue(value));
     }
   };
 }
