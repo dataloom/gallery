@@ -88,6 +88,7 @@ export default class EntityTypeSearch extends React.Component {
   }
 
   newEntityTypeSuccess = () => {
+    this.closeModal();
     if (this.props.location.query.searchTerm) {
       this.executeSearch(this.props.location.query.searchTerm);
     }

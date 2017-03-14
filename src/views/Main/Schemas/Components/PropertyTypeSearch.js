@@ -88,6 +88,7 @@ export default class PropertyTypeSearch extends React.Component {
   }
 
   newPropertyTypeSuccess = () => {
+    this.closeModal();
     if (this.props.location.query.searchTerm) {
       this.executeSearch(this.props.location.query.searchTerm);
     }
