@@ -1,52 +1,43 @@
+import { RequestsApi } from 'loom-data';
 import { expect } from 'chai';
-import { ActionsObservable } from 'redux-observable/lib/ActionsObservable';
 import '../../../config/chai/plugins.config';
 
-import { RequestsApi } from 'loom-data';
+import testEpic from '../../../test/testEpic';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
-import { updateStatusesEpic, updateStatuses } from './PermissionsEpic';
+import PermissionsEpic from './PermissionsEpic';
 
 
 describe('PermissionsEpic', function() {
-  let server;
+  const status = {
+    status: 'APPROVED',
+    aclKey: ['abc', '123'],
+    permissions: ['READ'],
+    principal: {
+      type: 'principal-type',
+      id: 'principal-id'
+    }
+  };
 
-  before(function() {
-    server = sinon.fakeServer.create();
-    server.respondWith([200, { 'Content-Type': 'application/json' }, '']);
-  });
-  after(function () {
-    server.restore();
-  });
+  describe('updateStatuses', function() {
+    let updateRequestStatuses;
 
-  describe('updateStatusesEpic', function() {
-    const action = PermissionsActionFactory.updateStatusesRequest([status]);
+    before(function() {
+      updateRequestStatuses = sinon.stub(RequestsApi, 'updateRequestStatuses');
+      updateRequestStatuses.returns(Promise.resolve());
+    });
 
-    describe('updateStatuses', function() {
-      let status;
+    after(function() {
+      RequestsApi.updateRequestStatuses.restore();
+    });
 
-      before(function() {
-        status = {
-          status: 'APPROVED',
-          aclKey: ['abc', '123'],
-          permissions: ['READ'],
-          principal: {
-            type: 'principal-type',
-            id: 'principal-id'
-          }
-        };
-      });
+    it('should return statuses updateStatusesRequest', function(done) {
+      const action = PermissionsActionFactory.updateStatusesRequest([status]);
+      const expectedAction = PermissionsActionFactory.updateStatusSuccess(status);
 
-      it('should integrate with loom-data', function() {
-        const promise = RequestsApi.updateRequestStatuses([status]);
-        expect(promise).to.eventually.be.fulfilled;
-      });
-
-      it('should send status', function() {
-        const mockApi = sinon.stub(RequestsApi, 'updateRequestStatuses');
-        mockApi.returns(Promise.resolve());
-        const observable = updateStatuses([status]);
-
-        expect(mockApi).to.have.been.calledWith([status]);
+      testEpic(PermissionsEpic, 1, action, (actions) => {
+        expect(actions[0]).to.be.deep.equal(expectedAction);
+        expect(updateRequestStatuses).to.have.been.calledWith([status]);
+        done();
       });
     });
   });
