@@ -18,6 +18,8 @@ export default function neuronReducer(state :Map<*, *> = INITIAL_STATE, action :
     case NeuronActionTypes.NEURON_CONNECT_FAILURE:
     case NeuronActionTypes.NEURON_SUBSCRIBE_SUCCESS:
     case NeuronActionTypes.NEURON_SUBSCRIBE_FAILURE:
+    case NeuronActionTypes.NEURON_ON_MESSAGE:
+      console.log(action);
       return state;
 
     default:

@@ -68,30 +68,26 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>) :Observable<Act
 
   return action$
     .ofType(NeuronActionTypes.NEURON_SUBSCRIBE_REQUEST)
-    .mergeMap((action) => {
+    .mergeMap((action :Action) => {
       return Observable
         .create((observer :Observer) => {
-
           const subscription = stompClient.subscribe(`/topic/${action.topic}`, (frame :any) => {
             observer.next({
               frame
             });
           });
-
           observer.next({
             subscription
           });
         })
-        .mergeMap((frameOrSubscription :any) => {
-
-          if (frameOrSubscription.subscription) {
+        .mergeMap((message :any) => {
+          if (message.subscription) {
             return Observable.of(
-              NeuronActionFactory.neuronSubscribeSuccess(frameOrSubscription.subscription)
+              NeuronActionFactory.neuronSubscribeSuccess(message.subscription)
             );
           }
-
           return Observable.of(
-            NeuronActionFactory.neuronSignal(frameOrSubscription.frame)
+            NeuronActionFactory.neuronOnMessage(message.frame)
           );
         })
         .catch(() => {

@@ -43,10 +43,10 @@ export function neuronSubscribeFailure() :Object {
   };
 }
 
-export function neuronSignal(frame :any) :Object {
+export function neuronOnMessage(frame :any) :Object {
 
   return {
-    type: NeuronActionTypes.NEURON_SIGNAL,
+    type: NeuronActionTypes.NEURON_ON_MESSAGE,
     frame
   };
 }
