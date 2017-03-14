@@ -17,6 +17,8 @@ import {
   combineEpics
 } from 'redux-observable';
 
+import identity from 'lodash/identity';
+
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
 import * as AsyncActionFactory from '../async/AsyncActionFactory';
@@ -40,13 +42,13 @@ import type {
 
 const { Acl } = DataModels;
 
-export function updateStatuses(statuses :Status[]) {
+function updateStatuses(statuses :Status[]) {
   return Observable.from(RequestsApi.updateRequestStatuses(statuses))
-    .mapTo(statuses)
+    .mergeMapTo(statuses)
     .map(PermissionsActionFactory.updateStatusSuccess);
 }
 
-export function updateStatusesEpic(action$) {
+function updateStatusesEpic(action$) {
   return action$.ofType(PermissionsActionTypes.UPDATE_STATUSES)
     .pluck('statuses')
     .mergeMap(updateStatuses);
@@ -82,7 +84,7 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
 function loadStatusesEpic(action$) {
   return action$.ofType(PermissionsActionTypes.LOAD_STATUSES)
     .mergeMap((action) => {
-      return loadStatuses(action.reqStatus, action.aclKeys)
+      return loadStatuses(action.reqStatus, action.aclKeys);
     });
 }
 
