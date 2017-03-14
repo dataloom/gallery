@@ -70,8 +70,8 @@ class PermissionsPanel extends React.Component {
       emailsView: accessOptions.Write,
 
       // REDUX
-      newRoleValue: '', // DONE
-      newEmailValue: '', // redux (esdc resets) props + dispatch
+      newRoleValue: '', // DONE - TODO: fix clear bug
+      newEmailValue: '', // DONE - TODO: fix clear bug
       // multiple calls at once
       updateSuccess: false, // now there are multiple: 1 for each E/P loaded. what happens? where is it shown? props + dispatch
       updateError: false, // ditto ^^^ props + dispatch
@@ -198,6 +198,8 @@ class PermissionsPanel extends React.Component {
     const aces = [{ principal, permissions }];
     const acl = { aclKey, aces };
     const req = { action, acl };
+
+    // TODO: PASS IN LOADACLS AS CALLBACK FROM ESDC -> SHOULD FIX ROLE/EMAIL UPDATE ERROR
     PermissionsApi.updateAcl(req)
     .then(() => {
       this.loadAcls(true);
@@ -206,6 +208,9 @@ class PermissionsPanel extends React.Component {
         updateError: true
       });
     });
+
+    this.props.setNewRoleValue('');
+    this.props.setNewEmailValue('');
   }
 
   updateGlobalPermissions = () => {
@@ -360,7 +365,7 @@ class PermissionsPanel extends React.Component {
 
   handleNewRoleChange = (e) => {
     const newRoleValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    this.setState({ newRoleValue });
+    // this.setState({ newRoleValue });
     this.props.setNewRoleValue(newRoleValue);
   }
 
@@ -390,7 +395,7 @@ class PermissionsPanel extends React.Component {
   }
 
   getRolesView = () => {
-    const { roleAcls, rolesView } = this.state;
+    const { roleAcls, rolesView } = this.state; // PASS IN ROLEACLS AS PROPS
     const { newRoleValue } = this.props;
     const roleList = roleAcls[rolesView];
     const roleOptions = this.getRoleOptions(roleList);
@@ -453,7 +458,7 @@ class PermissionsPanel extends React.Component {
 
   handleNewEmailChange = (e) => {
     const newEmailValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    this.setState({ newEmailValue });
+    // this.setState({ newEmailValue });
     this.props.setNewEmailValue(newEmailValue);
   }
 
@@ -468,7 +473,7 @@ class PermissionsPanel extends React.Component {
   }
 
   getEmailsView = () => {
-    const { userAcls, emailsView } = this.state;
+    const { userAcls, emailsView } = this.state; // PASS IN USER ACLS AS PROPS
     const { newEmailValue } = this.props;
     const userIdList = userAcls[emailsView].filter((userId) => {
       return (this.props.allUsersById[userId] && this.props.allUsersById[userId].email);

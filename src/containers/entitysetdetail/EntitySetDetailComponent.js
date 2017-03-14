@@ -122,7 +122,6 @@ class EntitySetDetailComponent extends React.Component {
         });
       });
       allUsersById[myId] = null;
-      // this.props.setAllUsersById(allUsersById);
       this.props.setAllUsersAndRoles(allUsersById, allRolesList);
       this.props.setLoadUsersError(false);
       this.setState(
@@ -163,6 +162,11 @@ class EntitySetDetailComponent extends React.Component {
       }
     });
 
+    this.props.setNewRoleValue('');
+    this.props.setNewEmailValue('');
+    // this.props.setUpdateSuccess(updateSuccess);
+    // this.props.setUpdateError(updateError);
+
     if (property) {
       const propertyAcls = {
         id: property.id,
@@ -179,10 +183,6 @@ class EntitySetDetailComponent extends React.Component {
         globalValue
       };
       this.props.setEntityData(entityAcls);
-      this.props.setNewRoleValue('');
-      this.props.setNewEmailValue(newEmailValue);
-      // this.props.setUpdateSuccess(updateSuccess);
-      // this.props.setUpdateError(updateError);
       this.setState({
         globalValue,
         roleAcls,
