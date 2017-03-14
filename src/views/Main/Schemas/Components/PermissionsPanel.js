@@ -82,7 +82,6 @@ export class PermissionsPanel extends React.Component {
 
   componentDidMount() {
     this.loadAcls(false);
-    console.log('PP PROPS!', this.props);
   }
 
 
@@ -295,8 +294,6 @@ export class PermissionsPanel extends React.Component {
     this.setState({ globalValue });
   }
 
-
-// LOADUSERSERROR
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const options = optionNames
@@ -385,7 +382,6 @@ export class PermissionsPanel extends React.Component {
     return roleOptions;
   }
 
-//LOADUSERSERROR
   getRolesView = () => {
     const { roleAcls, rolesView, newRoleValue } = this.state;
     const roleList = roleAcls[rolesView];
@@ -423,7 +419,7 @@ export class PermissionsPanel extends React.Component {
               options={roleOptions}
               onChange={this.handleNewRoleChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-            <Button
+          <Button
               bsStyle="primary"
               className={`${styles.spacerMargin}`}
               onClick={() => {
@@ -462,7 +458,6 @@ export class PermissionsPanel extends React.Component {
     return emailOptions;
   }
 
-// LOADUSERSERROR
   getEmailsView = () => {
     const { userAcls, emailsView, newEmailValue } = this.state;
     const userIdList = userAcls[emailsView].filter((userId) => {
@@ -505,7 +500,7 @@ export class PermissionsPanel extends React.Component {
               options={emailOptions}
               onChange={this.handleNewEmailChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-            <Button
+          <Button
               bsStyle="primary"
               className={`${styles.spacerMargin}`}
               onClick={() => {

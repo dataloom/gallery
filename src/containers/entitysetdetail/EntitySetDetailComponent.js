@@ -43,12 +43,6 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-
-// TODO: GET PROPERTY PERMISSIONS ALONGSIDE ENTITY PERMISSIONS
-// Move permissions logic & state to here -> pass info down to children (AllPermissions, ManagePermissions modals)
-// AllPermissions props: userPermissions, rolePermissions
-// Logic for Entity & Property permissions:
-
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
@@ -65,7 +59,6 @@ class EntitySetDetailComponent extends React.Component {
   constructor(props) {
     super(props);
 
-    // TODO: UPDATE TO HOLD UNIQUE STATE FOR ENTITY SETS AND PROPERTIES
     this.state = {
       editingPermissions: false,
       confirmingDelete: false,
@@ -90,7 +83,6 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log('NEXTPROPS************:', nextProps);
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
       this.loadAcls(false, nextProps.entitySet.id);
 
@@ -138,11 +130,6 @@ class EntitySetDetailComponent extends React.Component {
         }
       );
     })
-    // ///////////TODO: REMOVE ONCE THIS LOGIC IS ON ESDC: CAN CALL ONCE ALLPERMISSIONS IS MOUNTED AND PROPS PASSED IN
-    // .then(() => {
-    //   this.getUserPermissions();
-    //   this.getRolePermissions();
-    // })
     .catch(() => {
       this.setState({ loadUsersError: true });
     });
@@ -187,7 +174,6 @@ class EntitySetDetailComponent extends React.Component {
         roleAcls,
         globalValue
       };
-      // console.log('HERE ARE THE ENTITY ACLS:', entityAcls);
       this.props.setEntityData(entityAcls);
       this.setState({
         globalValue,

@@ -37,7 +37,6 @@ class AllPermissions extends React.Component {
 
   getUserPermissions = (property) => {
     const { userAcls, roleAcls, globalValue } = property || this.props;
-    console.log('USER ACLS, ROLE ACLS:', userAcls, roleAcls); // doesn't contain authenticateduser
     const { allUsersById } = this.props;
     const userPermissions = [];
 
@@ -132,14 +131,6 @@ class AllPermissions extends React.Component {
     });
 
     rolePermissions.AuthenticatedUser = this.props.globalValue;
-
-
-    // if (!Object.keys(rolePermissions).hasOwnProperty('AuthenticatedUser')) {
-    //   rolePermissions.AuthenticatedUser = ['none'];
-    // }
-    // else {
-    // }
-
     this.setRolePermissions(rolePermissions, property);
   }
 

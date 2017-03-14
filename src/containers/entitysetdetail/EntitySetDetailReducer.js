@@ -69,17 +69,6 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       var immutableNestedState = Immutable.fromJS(nestedState);
       return immutableNestedState;
 
-      // TODO: REWORK TO USE GET/SET/MERGE IMMUTABLE METHODS...
-      // TRY WITH {} AROUND MERGE OBJECT
-      // const property = {
-      //   title: action.data.title,
-      //   roleAcls: action.data.roleAcls,
-      //   userAcls: action.data.userAcls
-      // };
-      // const properties = state.get('properties');
-      // const newProperties = properties.set(action.data.id, property);
-      //TODO: MERGE PROPERLY W/ STATE
-
     default:
       return state;
   }
