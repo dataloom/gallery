@@ -8,7 +8,7 @@ import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
 export const LOADING_ERROR = Symbol('loading error');
 
 
-const INITIAL_STATE:Map<*, *> = fromJS({
+const INITIAL_STATE :Map<*, *> = fromJS({
   authorizations: {},
   requestPermissionsModal: {
     show: false,
@@ -35,7 +35,7 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
       action.authorizations.forEach((authorization) => {
         authorizations = authorizations.setIn(
           authorization.aclKey.concat(['permissions']),
-          Map(authorization.permissions));
+          fromJS(authorization.permissions));
       });
       return state.set('authorizations', authorizations);
 
@@ -48,7 +48,9 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
 
     case actionTypes.REQUEST_PERMISSIONS_MODAL_HIDE:
       return state.mergeIn(['requestPermissionsModal'], {
-        show: false
+        show: false,
+        reason: '',
+        pidToRequestedPermissions: Map()
         // Don't set entitySetId to false. Allows modal to fade away with content
       });
 
