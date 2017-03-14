@@ -79,7 +79,7 @@ class PermissionsPanel extends React.Component {
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
       // global
       allUsersById: {}, // DONE
-      allRolesList: new Set() // props. check that it is the same across the enitty set
+      allRolesList: new Set() // DONE
     };
   }
 
@@ -320,7 +320,7 @@ class PermissionsPanel extends React.Component {
       });
     return (
       <div>
-        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load permissions.</div>
+        <div className={this.shouldShowError[this.props.loadUsersError]}>Unable to load permissions.</div>
         <div>Choose the default permissions for all authenticated users:</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownWrapper}>
@@ -405,7 +405,7 @@ class PermissionsPanel extends React.Component {
     });
     return (
       <div>
-        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load roles.</div>
+        <div className={this.shouldShowError[this.props.loadUsersError]}>Unable to load roles.</div>
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.viewPermissionTypeButton(accessOptions.Write, this.changeRolesView, rolesView, orders.FIRST)}
@@ -485,7 +485,7 @@ class PermissionsPanel extends React.Component {
 
     return (
       <div>
-        <div className={this.shouldShowError[this.state.loadUsersError]}>Unable to load users.</div>
+        <div className={this.shouldShowError[this.props.loadUsersError]}>Unable to load users.</div>
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
           {this.viewPermissionTypeButton(accessOptions.Owner, this.changeEmailsView, emailsView, orders.FIRST)}
@@ -561,7 +561,8 @@ function mapStateToProps(state) {
 
   return {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
-    allRolesList: entitySetDetail.get('allRolesList')
+    allRolesList: entitySetDetail.get('allRolesList'),
+    loadUsersError: entitySetDetail.get('loadUsersError')
   };
 }
 

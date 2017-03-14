@@ -15,6 +15,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetReference: null,
   allUsersById: {}, // check it's an object
   allRolesList: [],
+  loadUsersError: false,
   roleAcls: {},
   userAcls: {},
   globalValue: [],
@@ -50,6 +51,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         allUsersById: action.users,
         allRolesList: action.roles
       });
+    case actionTypes.SET_LOAD_USERS_ERROR:
+      return state.merge({
+        loadUsersError: action.bool
+      })
     case actionTypes.SET_ENTITY_DATA:
       return state.merge({
         roleAcls: action.data.roleAcls,

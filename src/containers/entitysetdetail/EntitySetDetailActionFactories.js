@@ -28,3 +28,10 @@ export function setAllUsersAndRoles(users, roles) {
     roles
   };
 }
+
+export function setLoadUsersError(bool) {
+  return {
+    type: actionTypes.SET_LOAD_USERS_ERROR,
+    bool
+  };
+}
