@@ -14,7 +14,7 @@ import EntitySetPermissionsRequestList from '../permissions/components/EntitySet
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
-import { PermissionsPanel } from '../../views/Main/Schemas/Components/PermissionsPanel';
+import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
 import AddDataForm from '../entitysetforms/AddDataForm';
 import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
@@ -341,7 +341,7 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderAllPermissions = () => {
+  renderAllPermissionsButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
       <div className={styles.buttonWrapper} >
@@ -419,7 +419,7 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
-          {this.renderAllPermissions()}
+          {this.renderAllPermissionsButton()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
         </Page.Body>

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { PermissionsApi, PrincipalsApi } from 'loom-data';
@@ -51,7 +52,8 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-export class PermissionsPanel extends React.Component {
+class PermissionsPanel extends React.Component {
+// export class PermissionsPanel extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string,
     propertyTypeId: PropTypes.string
@@ -66,17 +68,19 @@ export class PermissionsPanel extends React.Component {
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
 
-      // Should be passed in via parent or redux
-      newRoleValue: '',
-      newEmailValue: '',
-      updateSuccess: false,
-      updateError: false,
-      loadUsersError: false,
-      globalValue: [],
-      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
-      allUsersById: {},
-      allRolesList: new Set()
+      // REDUX
+      newRoleValue: '', // redux (esdc resets) props + dispatch
+      newEmailValue: '', // redux (esdc resets) props + dispatch
+      updateSuccess: false, // now there are multiple: 1 for each E/P loaded. what happens? where is it shown? props + dispatch
+      updateError: false, // ditto ^^^ props + dispatch
+      loadUsersError: false, // props
+      // specific to view
+      globalValue: [], // specific to each E/P view. set on properties (as default). refactor to get w/ specific id. may need to separate use cases. props + dispatch
+      roleAcls: { Discover: [], Link: [], Read: [], Write: [] }, //  props. refactor to get w/ specific id
+      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
+      // global
+      allUsersById: {}, // props
+      allRolesList: new Set() // props. check that it is the same across the enitty set
     };
   }
 
@@ -553,4 +557,17 @@ export class PermissionsPanel extends React.Component {
   }
 }
 
-export default PermissionsPanel;
+function mapStateToProps(state) {
+  const entitySetDetail = state.get('entitySetDetail');
+
+  return {
+    allUsersById: entitySetDetail.allUsersById
+  };
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+
+}
+
+// export default PermissionsPanel;
+export default connect(mapStateToProps, mapDispatchToProps)(PermissionsPanel);
