@@ -13,7 +13,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   // TODO: Move to object reference
   entitySetId: null,
   entitySetReference: null,
-  allUsersById: {},
+  allUsersById: {}, // check it's an object
+  allRolesList: [],
   roleAcls: {},
   userAcls: {},
   globalValue: [],
@@ -44,9 +45,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         },
         entitySetReference: action.reference
       });
-    case actionTypes.SET_ALL_USERS_BY_ID:
+    case actionTypes.SET_ALL_USERS_AND_ROLES:
       return state.merge({
-        allUsersById: action.data
+        allUsersById: action.users,
+        allRolesList: action.roles
       });
     case actionTypes.SET_ENTITY_DATA:
       return state.merge({

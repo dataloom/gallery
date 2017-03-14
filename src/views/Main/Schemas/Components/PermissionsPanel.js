@@ -374,7 +374,7 @@ class PermissionsPanel extends React.Component {
   }
 
   getRoleOptions = (roleList) => {
-    const roleOptionsSet = this.state.allRolesList;
+    const roleOptionsSet = this.props.allRolesList;
     const roleOptions = [];
     roleList.forEach((role) => {
       roleOptionsSet.delete(role);
@@ -560,7 +560,8 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
 
   return {
-    allUsersById: entitySetDetail.get('allUsersById').toJS()
+    allUsersById: entitySetDetail.get('allUsersById').toJS(),
+    allRolesList: entitySetDetail.get('allRolesList')
   };
 }
 

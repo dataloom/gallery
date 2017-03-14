@@ -21,9 +21,10 @@ export function setPropertyData(data) {
   };
 }
 
-export function setAllUsersById(data) {
+export function setAllUsersAndRoles(users, roles) {
   return {
-    type: actionTypes.SET_ALL_USERS_BY_ID,
-    data
+    type: actionTypes.SET_ALL_USERS_AND_ROLES,
+    users,
+    roles
   };
 }

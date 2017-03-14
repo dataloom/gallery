@@ -122,7 +122,8 @@ class EntitySetDetailComponent extends React.Component {
         });
       });
       allUsersById[myId] = null;
-      this.props.setAllUsersById(allUsersById);
+      // this.props.setAllUsersById(allUsersById);
+      this.props.setAllUsersAndRoles(allUsersById, allRolesList);
       this.setState(
         {
           allUsersById,
@@ -473,8 +474,8 @@ function mapDispatchToProps(dispatch, ownProps) {
     setPropertyData: (data) => {
       dispatch(actionFactories.setPropertyData(data));
     },
-    setAllUsersById: (data) => {
-      dispatch(actionFactories.setAllUsersById(data));
+    setAllUsersAndRoles: (users, roles) => {
+      dispatch(actionFactories.setAllUsersAndRoles(users, roles));
     }
   };
 }
