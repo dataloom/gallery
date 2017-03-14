@@ -1,60 +1,45 @@
 import React, { PropTypes } from 'react';
-import { Modal, Button, Alert, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
+import { Modal, Alert } from 'react-bootstrap';
 
-import AsyncContent, { AsyncStatePropType } from '../../../components/asynccontent/AsyncContent';
+import AsyncContent from '../../../components/asynccontent/AsyncContent';
 import * as actionFactory from '../PermissionsActionFactory';
-import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
-import styles from './permissions.module.css';
+import RequestPermissionsForm from './RequestPermissionsForm';
 
-const PROPERTY_TYPE_EDITING = {
-  permissions: true
-};
-
-class RequestPermissions extends React.Component {
+export class RequestPermissionsModal extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
-    onHide: PropTypes.func.isRequired,
     entitySetId: PropTypes.string,
+    reason: PropTypes.string,
+    pidToRequestedPermissions: PropTypes.instanceOf(Map),
+
     onSubmit: PropTypes.func.isRequired,
+    onReasonChange: PropTypes.func.isRequired,
+    onPermissionChange: PropTypes.func.isRequired,
+    onHide: PropTypes.func.isRequired,
+
     asyncStatus: PropTypes.symbol.isRequired,
-    //Async Objects
+    // Async Objects
     entitySet: EntitySetPropType,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string),
+    propertyTypeIds: PropTypes.arrayOf(PropTypes.string)
   };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      pidToPermissions: {},
-      reason: ''
-    }
-  }
-
-  onChange = (propertyTypeId, delta) => {
-    const { pidToPermissions} = this.state;
-    const newPermissions = Object.assign({}, pidToPermissions);
-    newPermissions[propertyTypeId] = delta.permissions;
-
-    this.setState({ pidToPermissions: newPermissions });
-  };
-
-  onSubmit = (event) => {
-    event.preventDefault();
-    const { pidToPermissions, reason } = this.state;
-    const { entitySetId, onSubmit } = this.props;
-    onSubmit(entitySetId, pidToPermissions, reason);
-  };
-
-  onReasonChange = (event) => {
-    this.setState({ reason: event.target.value });
-  }
 
   render() {
-    const { propertyTypeIds, entitySet, entitySetId, show, onHide, asyncStatus } = this.props;
+    const {
+      propertyTypeIds,
+      reason,
+      pidToRequestedPermissions,
+      onReasonChange,
+      onPermissionChange,
+      onSubmit,
+      entitySet,
+      entitySetId,
+      show,
+      onHide,
+      asyncStatus } = this.props;
 
     let title;
     if (entitySet) {
@@ -68,26 +53,19 @@ class RequestPermissions extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <AsyncContent
-            status={asyncStatus}
-            pendingContent={
-              <form className={styles.rqm} onSubmit={this.onSubmit}>
-                <FormGroup>
-                  <ControlLabel>Reason for your request</ControlLabel>
-                  <FormControl componentClass="textarea" onChange={this.onReasonChange} />
-                </FormGroup>
-                <h2 className={styles.subtitle}>Select properties you want access to:</h2>
-                <PropertyTypeList
-                  entitySetId={entitySetId}
-                  propertyTypeIds={propertyTypeIds}
-                  editing={PROPERTY_TYPE_EDITING}
-                  onChange={this.onChange}
-                />
-                <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
-              </form>
-            }
-            content={<Alert bsStyle="success">Request made</Alert>}
-            errorMessage="Failed to make request"
-          />
+              status={asyncStatus}
+              pendingContent={
+                <RequestPermissionsForm
+                    entitySetId={entitySetId}
+                    propertyTypeIds={propertyTypeIds}
+                    reason={reason}
+                    pidToRequestedPermissions={pidToRequestedPermissions}
+                    onReasonChange={onReasonChange}
+                    onPermissionChange={onPermissionChange}
+                    onSubmit={onSubmit} />
+              }
+              content={<Alert bsStyle="success">Request made</Alert>}
+              errorMessage="Failed to make request" />
         </Modal.Body>
       </Modal>
     );
@@ -95,46 +73,43 @@ class RequestPermissions extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const normalizedData = state.get('normalizedData').toJS(),
-    permissions = state.get('permissions');
+  const normalizedData = state.get('normalizedData').toJS();
+  const permissions = state.get('permissions');
 
   const entitySetId = permissions.getIn(['requestPermissionsModal', 'entitySetId']);
-  let propertyTypeIds,
-    entitySet;
+  let propertyTypeIds;
+  let entitySet;
+
   if (entitySetId) {
     // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
     const reference = createEntitySetReference(entitySetId);
     entitySet = getEdmObjectSilent(normalizedData, reference, null);
     if (entitySet && entitySet.entityType) {
-      propertyTypeIds = entitySet.entityType.properties.map(property => property.id);
+      propertyTypeIds = entitySet.entityType.properties.map((property) => {
+        return property.id;
+      });
     }
   }
 
+  const modalState = permissions.get('requestPermissionsModal');
   return {
     propertyTypeIds,
     entitySetId,
     entitySet,
-    show: permissions.getIn(['requestPermissionsModal', 'show']),
-    asyncStatus: permissions.getIn(['requestPermissionsModal', 'asyncStatus'])
+    pidToRequestedPermissions: modalState.get('pidToRequestedPermissions'),
+    reason: modalState.get('reason'),
+    show: modalState.get('show'),
+    asyncStatus: modalState.get('asyncStatus')
   };
 }
 
-// TODO: Decide if/how to incorporate bindActionCreators
-function mapDispatchToProps(dispatch) {
-  return {
-    onHide: () => { dispatch(actionFactory.requestPermissionsModalHide()); },
-    onSubmit: (entitySetId, pidsToPermissions, reason) => {
-      const authnRequests = Object.keys(pidsToPermissions).map(pid => {
-        const permissions = classnames(pidsToPermissions[pid]).split(' ');
-        return {
-          aclKey: [entitySetId, pid],
-          permissions,
-          reason
-        }
-      });
-      dispatch(actionFactory.submitAuthNRequest(authnRequests))
-    }
-  };
+export function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    onHide: actionFactory.requestPermissionsModalHide,
+    onSubmit: actionFactory.submitAuthNRequest,
+    onReasonChange: actionFactory.requestPermissionsUpdateReason,
+    onPermissionChange: actionFactory.requestPermissionsUpdateRequest
+  }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestPermissions);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestPermissionsModal);

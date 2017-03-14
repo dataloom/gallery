@@ -22,9 +22,9 @@ const orders = {
 const permissionLevels = {
   hidden: [],
   discover: [Permission.DISCOVER.name],
-  link: [Permission.DISCOVER.name, Permission.LINK.name],
-  read: [Permission.DISCOVER.name, Permission.READ.name],
-  write: [Permission.DISCOVER.name, Permission.WRITE.name],
+  link: [Permission.LINK.name],
+  read: [Permission.READ.name],
+  write: [Permission.WRITE.name],
   owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
 };
 

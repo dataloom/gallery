@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 import groupBy from 'lodash/groupBy';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
@@ -8,7 +9,7 @@ import classnames from 'classnames';
 import { EntitySetPropType } from '../../edm/EdmModel';
 import { StatusPropType, RequestStatus } from '../PermissionsStorage'
 import { createPrincipalReference } from '../../principals/PrincipalsStorage';
-import { getDisplayName } from '../../principals/PrincipalUtils';
+import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
 import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
 import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
@@ -43,6 +44,7 @@ class EntitySetPermissionsRequest extends React.Component {
     });
     this.state = {
       open: false,
+      // TODO: Move to Redux
       selectedProperties
     };
   }
@@ -67,7 +69,7 @@ class EntitySetPermissionsRequest extends React.Component {
       });
       updateStatuses(updatedStatuses);
     }
-  }
+  };
 
   approve = () => {
     this.sendUpdateRequests(RequestStatus.APPROVED);
@@ -86,7 +88,7 @@ class EntitySetPermissionsRequest extends React.Component {
       selectedProperties.delete(propertyTypeId);
     }
     this.setState({ selectedProperties });
-  }
+  };
 
   renderProperty(principalId, propertyType, defaultChecked) {
     return (
@@ -98,14 +100,13 @@ class EntitySetPermissionsRequest extends React.Component {
               defaultChecked={defaultChecked}
               onClick={(e) => {
                 this.toggleCheckbox(e.target.checked, propertyType.id);
-              }}
-          />
+              }} />
         </div>
         <div className="propertyTypeTitle">
           <label htmlFor={`ptr-${principalId}-${propertyType.id}`}>{propertyType.title}</label>
         </div>
       </div>
-    )
+    );
   }
 
   toggleBody = () => {
@@ -125,25 +126,28 @@ class EntitySetPermissionsRequest extends React.Component {
       reasons.push(<div key={reason} className={styles.requestMessage}>{reason}</div>);
     });
 
-    const statusByPropertyTypeId = groupBy(statuses, (status) => status.aclKey[1]);
-    const content = propertyTypes.map(propertyType => {
+    const statusByPropertyTypeId = groupBy(statuses, (status) => {
+      return status.aclKey[1];
+    });
+    const content = propertyTypes.map((propertyType) => {
       return this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.id]);
     });
+    const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`
 
     return (
       <div className={styles.permissionsRequest}>
         <div className={styles.permissionRequestHeader}>
           <div className={styles.permissionRequestTitle}>
-            <span className={styles.principalName}>{ getDisplayName(principal) } </span>
+            <span className={styles.principalName}>{principalDisplayName} </span>
             requested permission on
             <a onClick={this.toggleBody}> { statuses.length } properties</a>
           </div>
           <button className={styles.approveButton} onClick={this.approve}>
-            <FontAwesome name="thumbs-o-up"/>
+            <FontAwesome name="thumbs-o-up" />
             Allow
           </button>
           <button className={styles.rejectButton} onClick={this.deny}>
-            <FontAwesome name="thumbs-o-down"/>
+            <FontAwesome name="thumbs-o-down" />
             Deny
           </button>
         </div>
@@ -163,8 +167,8 @@ class EntitySetPermissionsRequest extends React.Component {
 
     return (
       // Hack to force re-rendering on state change
-      <div className={classnames({[styles.open]: this.state.open})}>
-        <AsyncContentComponent reference={principalReference} render={this.renderContent}/>
+      <div className={classnames({ [styles.open]: this.state.open })}>
+        <AsyncContentComponent reference={principalReference} render={this.renderContent} />
       </div>
     );
   }
@@ -185,14 +189,10 @@ function mapStateToProps(state, ownProps) {
 
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
-  return {
-    loadPrincipal: (principalId) => {
-      dispatch(PrincipalsActionFactory.loadPrincipalDetails(principalId));
-    },
-    updateStatuses: (statuses) => {
-      dispatch(PermissionsActionFactory.updateStatusesStatusesRequest(statuses))
-    }
-  };
+  return bindActionCreators({
+    loadPrincipal: PrincipalsActionFactory.loadPrincipalDetails,
+    updateStatuses: PermissionsActionFactory.updateStatusesStatusesRequest
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EntitySetPermissionsRequest);
