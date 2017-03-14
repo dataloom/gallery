@@ -80,7 +80,7 @@ export class EntityType extends React.Component {
         <div className={styles.description}>{entityType.description}</div>
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownButtonContainer}>
-          <Button pullRight bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
+          <Button bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
         </div>
         <div className={styles.spacerMed} />
         <PropertyList

@@ -3,7 +3,7 @@ import { FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import styles from '../../../../containers/securableobject/securableobject.module.css';
 
-export default class EntityTypeSearchBox extends React.Component {
+export default class DataModelSearchBox extends React.Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
     initialSearch: PropTypes.string

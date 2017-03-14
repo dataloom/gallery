@@ -3,7 +3,7 @@ import { hashHistory } from 'react-router';
 import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import EntityTypeSearch from './Components/EntityTypeSearch';
-import { PropertyTypeList } from './Components/PropertyTypeList';
+import PropertyTypeSearch from './Components/PropertyTypeSearch';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 
@@ -22,12 +22,6 @@ export class DataModel extends React.Component {
     isAdmin: PropTypes.bool
   };
 
-  constructor(props, context) {
-    super(props, context);
-    //const dataModelView = this.props.location.query.type || EdmConsts.ENTITY_TYPE;
-    //this.state = { dataModelView };
-  }
-
   componentDidMount() {
     if (!this.props.location.query.type) {
       this.changeDataModelView(EdmConsts.ENTITY_TYPE);
@@ -41,7 +35,7 @@ export class DataModel extends React.Component {
       case EdmConsts.SCHEMA:
         return (<SchemaList />);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeList />);
+        return (<PropertyTypeSearch location={this.props.location} />);
       case EdmConsts.ENTITY_TYPE:
       default:
         return (<EntityTypeSearch location={this.props.location} />);
@@ -49,7 +43,7 @@ export class DataModel extends React.Component {
   }
 
   changeDataModelView = (newView) => {
-    // this.props.updateTopbarFn();
+    this.props.updateTopbarFn();
     const query = { type: newView };
     const newLocation = Object.assign({}, this.props.location, { query });
     hashHistory.push(newLocation);

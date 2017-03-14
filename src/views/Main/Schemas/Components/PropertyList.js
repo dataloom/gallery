@@ -152,8 +152,6 @@ export class PropertyList extends React.Component {
     const properties = this.props.properties.map((property) => {
       return property.id;
     });
-    console.log('property ids')
-    console.log(properties);
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest

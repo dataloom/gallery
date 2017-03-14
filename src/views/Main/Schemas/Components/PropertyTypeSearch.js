@@ -5,12 +5,12 @@ import FontAwesome from 'react-fontawesome';
 import { SearchApi } from 'loom-data';
 import AsyncContent, { ASYNC_STATUS } from '../../../../components/asynccontent/AsyncContent';
 import DataModelSearchBox from './DataModelSearchBox';
-import EntityTypeSearchResults from './EntityTypeSearchResults';
+import PropertyTypeSearchResults from './PropertyTypeSearchResults';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
-export default class EntityTypeSearch extends React.Component {
+export default class PropertyTypeSearch extends React.Component {
 
   static contextTypes = {
     isAdmin: PropTypes.bool
@@ -65,7 +65,7 @@ export default class EntityTypeSearch extends React.Component {
   }
 
   executeSearch = (searchTerm) => {
-    SearchApi.searchEntityTypes({
+    SearchApi.searchPropertyTypes({
       searchTerm,
       start: 0,
       maxHits: 20
@@ -87,13 +87,13 @@ export default class EntityTypeSearch extends React.Component {
     false: styles.hidden
   }
 
-  newEntityTypeSuccess = () => {
+  newPropertyTypeSuccess = () => {
     if (this.props.location.query.searchTerm) {
       this.executeSearch(this.props.location.query.searchTerm);
     }
   }
 
-  onCreateEntityType = () => {
+  onCreatePropertyType = () => {
     this.setState({ isModalOpen: true });
   }
 
@@ -107,27 +107,26 @@ export default class EntityTypeSearch extends React.Component {
     hashHistory.push(newLocation);
   }
 
-  renderCreateEntityTypeButton = () => {
+  renderCreatePropertyTypeButton = () => {
     return (
       <div className={styles.createEdmObjectButtonWrapper}>
-        <Button bsStyle="primary" className={styles.control} onClick={this.onCreateEntityType}>
-          <FontAwesome name="plus-circle" size="lg" /> Entity Type
+        <Button bsStyle="primary" className={styles.control} onClick={this.onCreatePropertyType}>
+          <FontAwesome name="plus-circle" size="lg" /> Property Type
         </Button>
       </div>
     );
   }
 
-  renderCreateEntityTypeModal = () => {
+  renderCreatePropertyTypeModal = () => {
     return (
       <Modal show={this.state.isModalOpen} onHide={this.closeModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Create an entity type</Modal.Title>
+          <Modal.Title>Create a property type</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <NewEdmObjectInput
-              namespaces={this.state.allPropNamespaces}
-              createSuccess={this.newEntityTypeSuccess}
-              edmType={EdmConsts.ENTITY_TYPE_TITLE}
+              createSuccess={this.newPropertyTypeSuccess}
+              edmType={EdmConsts.PROPERTY_TYPE_TITLE}
               noButton />
         </Modal.Body>
       </Modal>
@@ -142,7 +141,7 @@ export default class EntityTypeSearch extends React.Component {
             pendingContent="Please run a search."
             content={() => {
               return (
-                <EntityTypeSearchResults
+                <PropertyTypeSearchResults
                     results={this.state.searchResults}
                     onUpdate={this.onUpdate} />
               );
@@ -159,8 +158,8 @@ export default class EntityTypeSearch extends React.Component {
 
     return (
       <div>
-        {this.renderCreateEntityTypeButton()}
-        {this.renderCreateEntityTypeModal()}
+        {this.renderCreatePropertyTypeButton()}
+        {this.renderCreatePropertyTypeModal()}
         <DataModelSearchBox
             initialSearch={initialSearch} onSubmit={this.onSearchSubmit} />
         {this.renderResults()}
