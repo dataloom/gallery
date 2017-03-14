@@ -63,16 +63,16 @@ export class PermissionsPanel extends React.Component {
       Object.keys(accessOptions) : Object.keys(permissionOptions);
     this.state = {
       view: views.GLOBAL,
-      updateSuccess: false,
-      updateError: false,
-      globalValue: [],
       rolesView: accessOptions.Write,
       emailsView: accessOptions.Write,
-      newRoleValue: '',
-      newEmailValue: '',
-      loadUsersError: false,
 
       // Should be passed in via parent or redux
+      newRoleValue: '',
+      newEmailValue: '',
+      updateSuccess: false,
+      updateError: false,
+      loadUsersError: false,
+      globalValue: [],
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       allUsersById: {},
@@ -82,10 +82,11 @@ export class PermissionsPanel extends React.Component {
 
   componentDidMount() {
     this.loadAcls(false);
+    console.log('PP PROPS!', this.props);
   }
 
 
-//// MOVE TO ENTITYSETDETAIL B/C USED IN ALLPERMISSIONS /////
+//// MOVE TO ENTITYSETDETAIL /////
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
@@ -154,7 +155,7 @@ export class PermissionsPanel extends React.Component {
   }
 
   loadAcls = (updateSuccess) => {
-    const { propertyTypeId, entitySetId } = this.props;
+    const { propertyTypeId, entitySetId } = this.props; //can stay as props
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
     this.loadAllUsersAndRoles();
@@ -166,6 +167,8 @@ export class PermissionsPanel extends React.Component {
     });
   }
 
+
+  //// LOGIC FOR MODAL VIEW ONLY  ///////
   shouldShowSuccess = {
     true: styles.updateSuccess,
     false: styles.hidden
@@ -176,8 +179,6 @@ export class PermissionsPanel extends React.Component {
     false: styles.hidden
   }
 
-
-  //// LOGIC FOR MODAL VIEW ONLY  ///////
   updatePermissions(rawAction, principal, rawPermissions) {
     const { entitySetId, propertyTypeId } = this.props;
     const aclKey = [entitySetId];
@@ -294,6 +295,8 @@ export class PermissionsPanel extends React.Component {
     this.setState({ globalValue });
   }
 
+
+// LOADUSERSERROR
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const options = optionNames
@@ -382,6 +385,7 @@ export class PermissionsPanel extends React.Component {
     return roleOptions;
   }
 
+//LOADUSERSERROR
   getRolesView = () => {
     const { roleAcls, rolesView, newRoleValue } = this.state;
     const roleList = roleAcls[rolesView];
@@ -458,6 +462,7 @@ export class PermissionsPanel extends React.Component {
     return emailOptions;
   }
 
+// LOADUSERSERROR
   getEmailsView = () => {
     const { userAcls, emailsView, newEmailValue } = this.state;
     const userIdList = userAcls[emailsView].filter((userId) => {

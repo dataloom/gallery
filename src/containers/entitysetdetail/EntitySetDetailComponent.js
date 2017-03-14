@@ -72,19 +72,17 @@ class EntitySetDetailComponent extends React.Component {
       addingData: false,
       deleteError: false,
       properties: {},
+      globalValue: [],
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
       allUsersById: {},
-      allRolesList: new Set()
+      allRolesList: new Set(),
+      newRoleValue: '',
+      newEmailValue: '',
+      updateSuccess: false,
+      updateError: false,
+      loadUsersError: false
     };
-// TODO: INITIALIZE SOME OF THESE IN STATE?
-    // globalValue,
-    // roleAcls,
-    // userAcls,
-    // updateSuccess,
-    // newRoleValue: '',
-    // newEmailValue: '',
-    // updateError: false
   }
 
   componentDidMount() {
@@ -116,6 +114,7 @@ class EntitySetDetailComponent extends React.Component {
       this.setState({ updateError: true });
     });
   }
+
 
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
@@ -175,10 +174,10 @@ class EntitySetDetailComponent extends React.Component {
 
     if (property) {
       const propertyAcls = {
-          id: property.id,
-          title: property.title,
-          roleAcls,
-          userAcls
+        id: property.id,
+        title: property.title,
+        roleAcls,
+        userAcls
       };
       this.props.setPropertyData(propertyAcls);
     }
@@ -187,7 +186,7 @@ class EntitySetDetailComponent extends React.Component {
         userAcls,
         roleAcls,
         globalValue
-      }
+      };
       // console.log('HERE ARE THE ENTITY ACLS:', entityAcls);
       this.props.setEntityData(entityAcls);
       this.setState({
