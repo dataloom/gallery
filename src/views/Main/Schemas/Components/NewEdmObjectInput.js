@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
-import { EntityDataModelApi, DataModels } from 'loom-data';
+import { EntityDataModelApi, DataModels, SearchApi } from 'loom-data';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -305,6 +305,7 @@ export class NewEdmObjectInput extends React.Component {
             </tr>
             {this.renderPropertyTypesAdded()}
             <NameNamespaceAutosuggest
+                searchFn={SearchApi.searchPropertyTypesByFQN}
                 usedProperties={usedProperties}
                 noSaveButton={(edmType === EdmConsts.ENTITY_SET_TITLE)}
                 addProperty={this.addPropertyTypeToList}

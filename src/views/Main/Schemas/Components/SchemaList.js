@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
+import { Button, Modal } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
 import { EntityDataModelApi } from 'loom-data';
-import { Promise } from 'bluebird';
 import { Schema } from './Schema';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -17,8 +18,7 @@ export class SchemaList extends React.Component {
     this.state = {
       schemas: [],
       loadSchemasError: false,
-      allPropNamespaces: {},
-      allEntityTypeNamespaces: {}
+      isModalOpen: false
     };
   }
 
@@ -36,86 +36,69 @@ export class SchemaList extends React.Component {
     .then((schemas) => {
       this.setState({
         schemas,
-        loadSchemasError: false
+        loadSchemasError: false,
+        isModalOpen: false
       });
     }).catch(() => {
       this.setState({ loadSchemasError: true });
     });
   }
 
+  onCreateSchema = () => {
+    this.setState({ isModalOpen: true });
+  }
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  }
 
   updateFn = () => {
-    Promise.join(
-      EntityDataModelApi.getAllSchemas(),
-      EntityDataModelApi.getAllPropertyTypes(),
-      EntityDataModelApi.getAllEntityTypes(),
-      (schemas, propertyTypes, entityTypes) => {
-        const allPropNamespaces = {};
-        const allEntityTypeNamespaces = {};
-        if (propertyTypes.length > 0) {
-          propertyTypes.forEach((prop) => {
-            const propObj = {
-              name: prop.type.name,
-              id: prop.id
-            };
-            if (allPropNamespaces[prop.type.namespace] === undefined) {
-              allPropNamespaces[prop.type.namespace] = [propObj];
-            }
-            else {
-              allPropNamespaces[prop.type.namespace].push(propObj);
-            }
-          });
-        }
-        if (entityTypes.length > 0) {
-          entityTypes.forEach((entityType) => {
-            const typeObj = {
-              name: entityType.type.name,
-              id: entityType.id
-            };
-            if (allEntityTypeNamespaces[entityType.type.namespace] === undefined) {
-              allEntityTypeNamespaces[entityType.type.namespace] = [typeObj];
-            }
-            else {
-              allEntityTypeNamespaces[entityType.type.namespace].push(typeObj);
-            }
-          });
-        }
-
-        this.setState({
-          schemas,
-          allPropNamespaces,
-          allEntityTypeNamespaces,
-          loadSchemasError: false
-        });
-      }
-    ).catch(() => {
+    EntityDataModelApi.getAllSchemas()
+    .then((schemas) => {
+      this.setState({ schemas });
+    }).catch(() => {
       this.setState({ loadSchemasError: true });
     });
   }
 
-  renderCreateNewSchema = () => {
-    if (!this.context.isAdmin) return null;
-    return <NewEdmObjectInput createSuccess={this.newSchemaSuccess} edmType={EdmConsts.SCHEMA_TITLE} />;
+  renderCreateSchemaModal = () => {
+    return (
+      <Modal show={this.state.isModalOpen} onHide={this.closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create a schema</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <NewEdmObjectInput
+              createSuccess={this.newSchemaSuccess}
+              edmType={EdmConsts.SCHEMA_TITLE}
+              noButton />
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  renderCreateSchemaButton = () => {
+    return (
+      <div className={styles.createEdmObjectButtonWrapper}>
+        <Button bsStyle="primary" className={styles.control} onClick={this.onCreateSchema}>
+          <FontAwesome name="plus-circle" size="lg" /> Schema
+        </Button>
+      </div>
+    );
   }
 
   render() {
-    const {
-      schemas,
-      allPropNamespaces,
-      allEntityTypeNamespaces,
-      loadSchemasError
-    } = this.state;
+    const { schemas, loadSchemasError } = this.state;
     const schemaList = schemas.map((schema) => {
       return (<Schema
           key={`${schema.fqn.namespace}.${schema.fqn.name}`}
           schema={schema}
-          updateFn={this.updateFn}
-          allPropNamespaces={allPropNamespaces}
-          allEntityTypeNamespaces={allEntityTypeNamespaces} />);
+          updateFn={this.updateFn} />);
     });
     return (
       <div>
-        {this.renderCreateNewSchema()}
+        {this.renderCreateSchemaButton()}
+        {this.renderCreateSchemaModal()}
         <div className={this.errorClass[loadSchemasError]}>Unable to load schemas.</div>
         {schemaList}
       </div>

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { EntityDataModelApi, SearchApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
@@ -9,8 +10,7 @@ import styles from '../styles.module.css';
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
     entityTypeFqns: PropTypes.array,
-    updateSchemaFn: PropTypes.func,
-    allEntityTypeNamespaces: PropTypes.object
+    updateSchemaFn: PropTypes.func
   }
 
   static contextTypes = {
@@ -52,16 +52,13 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   addEntityTypeToSchema = (namespace, name) => {
-    const entityTypeIdList = this.props.allEntityTypeNamespaces[namespace].filter((typeObj) => {
-      return (typeObj.name === name);
-    });
-    if (entityTypeIdList.length !== 1) {
+    EntityDataModelApi.getEntityTypeId({ namespace, name })
+    .then((entityTypeId) => {
+      this.props.updateSchemaFn([entityTypeId], ActionConsts.ADD, EdmConsts.ENTITY_TYPE);
+      this.updateFqns();
+    }).catch(() => {
       this.updateError();
-      return;
-    }
-    const entityTypeId = entityTypeIdList[0].id;
-    this.props.updateSchemaFn([entityTypeId], ActionConsts.ADD, EdmConsts.ENTITY_TYPE);
-    this.updateFqns();
+    });
   }
 
   renderAddNewRowButton = () => {
@@ -73,13 +70,13 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   renderNewRowInput = () => {
-    const { allEntityTypeNamespaces, entityTypeFqns } = this.props;
+    const entityTypeFqns = this.props.entityTypeFqns;
     if (!this.context.isAdmin) return null;
     const className = (this.state.newEntityTypeRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
+          searchFn={SearchApi.searchEntityTypesByFQN}
           className={className}
-          namespaces={allEntityTypeNamespaces}
           usedProperties={entityTypeFqns}
           addProperty={this.addEntityTypeToSchema} />
     );

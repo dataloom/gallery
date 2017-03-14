@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi, SearchApi } from 'loom-data';
 import { Property } from './Property';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -155,6 +155,7 @@ export class PropertyList extends React.Component {
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
+          searchFn={SearchApi.searchPropertyTypesByFQN}
           className={className}
           usedProperties={properties}
           addProperty={this.addProperty} />

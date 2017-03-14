@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
-import { SearchApi } from 'loom-data';
 import Utils from '../../../../utils/Utils';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class NameNamespaceAutosuggest extends React.Component {
   static propTypes = {
+    searchFn: PropTypes.func,
     usedProperties: PropTypes.array,
     className: PropTypes.string,
     addProperty: PropTypes.func,
@@ -76,7 +76,7 @@ export class NameNamespaceAutosuggest extends React.Component {
     const namespaceSet = new Set();
     const inputName = ((nameVal === undefined) ? StringConsts.EMPTY : nameVal).trim().toLowerCase();
     const inputNamespace = ((namespaceVal === undefined) ? StringConsts.EMPTY : namespaceVal).trim().toLowerCase();
-    return SearchApi.searchPropertyTypesByFQN({
+    return this.props.searchFn({
       namespace: inputNamespace,
       name: inputName,
       start: 0,
