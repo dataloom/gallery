@@ -53,7 +53,6 @@ const permissionOptions = {
 };
 
 class PermissionsPanel extends React.Component {
-// export class PermissionsPanel extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string,
     propertyTypeId: PropTypes.string
@@ -79,7 +78,7 @@ class PermissionsPanel extends React.Component {
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] }, //  props. refactor to get w/ specific id
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
       // global
-      allUsersById: {}, // props
+      allUsersById: {}, // DONE
       allRolesList: new Set() // props. check that it is the same across the enitty set
     };
   }
@@ -454,9 +453,9 @@ class PermissionsPanel extends React.Component {
 
   getEmailOptions = (userIdList) => {
     const emailOptions = [];
-    Object.keys(this.state.allUsersById).forEach((id) => {
-      if (!userIdList.includes(id) && this.state.allUsersById[id] && this.state.allUsersById[id].email) {
-        emailOptions.push({ label: this.state.allUsersById[id].email, value: id });
+    Object.keys(this.props.allUsersById).forEach((id) => {
+      if (!userIdList.includes(id) && this.props.allUsersById[id] && this.props.allUsersById[id].email) {
+        emailOptions.push({ label: this.props.allUsersById[id].email, value: id });
       }
     });
     return emailOptions;
@@ -465,7 +464,7 @@ class PermissionsPanel extends React.Component {
   getEmailsView = () => {
     const { userAcls, emailsView, newEmailValue } = this.state;
     const userIdList = userAcls[emailsView].filter((userId) => {
-      return (this.state.allUsersById[userId] && this.state.allUsersById[userId].email);
+      return (this.props.allUsersById[userId] && this.props.allUsersById[userId].email);
     });
 
     const emailOptions = this.getEmailOptions(userIdList);
@@ -479,7 +478,7 @@ class PermissionsPanel extends React.Component {
                 }}
                 className={styles.deleteButton}>-</button>
           </div>
-          <div className={`${styles.inline} ${styles.padLeft}`}>{this.state.allUsersById[userId].email}</div>
+          <div className={`${styles.inline} ${styles.padLeft}`}>{this.props.allUsersById[userId].email}</div>
         </div>
       );
     });
@@ -561,13 +560,14 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
 
   return {
-    allUsersById: entitySetDetail.allUsersById
+    allUsersById: entitySetDetail.get('allUsersById').toJS()
   };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
+  return {
 
+  };
 }
 
-// export default PermissionsPanel;
 export default connect(mapStateToProps, mapDispatchToProps)(PermissionsPanel);
