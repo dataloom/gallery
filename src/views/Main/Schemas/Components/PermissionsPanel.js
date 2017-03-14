@@ -70,7 +70,7 @@ class PermissionsPanel extends React.Component {
       emailsView: accessOptions.Write,
 
       // REDUX
-      newRoleValue: '', // redux (esdc resets) props + dispatch NEXT UP: DISPATCH
+      newRoleValue: '', // DONE
       newEmailValue: '', // redux (esdc resets) props + dispatch
       // multiple calls at once
       updateSuccess: false, // now there are multiple: 1 for each E/P loaded. what happens? where is it shown? props + dispatch
@@ -454,6 +454,7 @@ class PermissionsPanel extends React.Component {
   handleNewEmailChange = (e) => {
     const newEmailValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
     this.setState({ newEmailValue });
+    this.props.setNewEmailValue(newEmailValue);
   }
 
   getEmailOptions = (userIdList) => {
@@ -467,7 +468,8 @@ class PermissionsPanel extends React.Component {
   }
 
   getEmailsView = () => {
-    const { userAcls, emailsView, newEmailValue } = this.state;
+    const { userAcls, emailsView } = this.state;
+    const { newEmailValue } = this.props;
     const userIdList = userAcls[emailsView].filter((userId) => {
       return (this.props.allUsersById[userId] && this.props.allUsersById[userId].email);
     });
@@ -568,7 +570,8 @@ function mapStateToProps(state) {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
     allRolesList: entitySetDetail.get('allRolesList'),
     loadUsersError: entitySetDetail.get('loadUsersError'),
-    newRoleValue: entitySetDetail.get('newRoleValue')
+    newRoleValue: entitySetDetail.get('newRoleValue'),
+    newEmailValue: entitySetDetail.get('newEmailValue')
   };
 }
 
@@ -576,6 +579,9 @@ function mapDispatchToProps(dispatch, ownProps) {
   return {
     setNewRoleValue: (value) => {
       dispatch(actionFactories.setNewRoleValue(value));
+    },
+    setNewEmailValue: (value) => {
+      dispatch(actionFactories.setNewEmailValue(value));
     }
   };
 }

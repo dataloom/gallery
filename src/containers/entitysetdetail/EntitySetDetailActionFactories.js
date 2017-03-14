@@ -42,3 +42,10 @@ export function setNewRoleValue(value) {
     value
   };
 }
+
+export function setNewEmailValue(value) {
+  return {
+    type: actionTypes.SET_NEW_EMAIL_VALUE,
+    value
+  };
+}

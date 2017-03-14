@@ -19,7 +19,9 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   roleAcls: {},
   userAcls: {},
   globalValue: [],
-  properties: {}
+  properties: {},
+  newRoleValue: '',
+  newEmailValue: ''
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -62,6 +64,11 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.SET_NEW_ROLE_VALUE:
       return state.merge({
         newRoleValue: action.value
+      });
+
+    case actionTypes.SET_NEW_EMAIL_VALUE:
+      return state.merge({
+        newEmailValue: action.value
       });
 
     case actionTypes.SET_ENTITY_DATA:

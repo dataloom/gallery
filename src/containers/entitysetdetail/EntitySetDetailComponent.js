@@ -180,7 +180,7 @@ class EntitySetDetailComponent extends React.Component {
       };
       this.props.setEntityData(entityAcls);
       this.props.setNewRoleValue('');
-      // this.props.setNewEmailValue(newEmailValue);
+      this.props.setNewEmailValue(newEmailValue);
       // this.props.setUpdateSuccess(updateSuccess);
       // this.props.setUpdateError(updateError);
       this.setState({
@@ -488,6 +488,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setNewRoleValue: (value) => {
       dispatch(actionFactories.setNewRoleValue(value));
+    },
+    setNewEmailValue: (value) => {
+      dispatch(actionFactories.setNewEmailValue(value));
     }
   };
 }
