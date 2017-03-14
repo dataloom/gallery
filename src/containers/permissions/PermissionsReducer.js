@@ -35,7 +35,7 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
       action.authorizations.forEach((authorization) => {
         authorizations = authorizations.setIn(
           authorization.aclKey.concat(['permissions']),
-          Map(authorization.permissions));
+          fromJS(authorization.permissions));
       });
       return state.set('authorizations', authorizations);
 
