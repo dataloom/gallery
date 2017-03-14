@@ -40,16 +40,13 @@ import type {
 
 const { Acl } = DataModels;
 
-function updateStatuses(statuses :Status[]) {
-  return Observable.from(statuses)
-    .mergeMap((status) => {
-      return Observable.from(RequestsApi.updateRequestStatuses([status]))
-        .mapTo(AsyncActionFactory.updateAsyncReference(createStatusAsyncReference(status.aclKey), status))
-        .catch(console.error);
-    });
+export function updateStatuses(statuses :Status[]) {
+  return Observable.from(RequestsApi.updateRequestStatuses(statuses))
+    .mapTo(statuses)
+    .map(PermissionsActionFactory.updateStatusSuccess);
 }
 
-function updateStatusesEpic(action$) {
+export function updateStatusesEpic(action$) {
   return action$.ofType(PermissionsActionTypes.UPDATE_STATUSES)
     .pluck('statuses')
     .mergeMap(updateStatuses);
