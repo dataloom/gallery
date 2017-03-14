@@ -52,5 +52,5 @@ export default Object.assign({}, baseWebpackConfig, {
     contentBase: APP_PATHS.ABS.BUILD,
     publicPath: baseWebpackConfig.output.publicPath
   },
-  devtool: 'inline-source-map'
+  devtool: 'eval-source-map'
 });
