@@ -102,9 +102,7 @@ export default class UserPermissionsTable extends React.Component {
 
   onSearchInput = (e) => {
     e.preventDefault();
-    this.setState({searchInput: e.target.value}, () => {
-      console.log('search input:', this.state.searchInput);
-    });
+    this.setState({searchInput: e.target.value});
   }
 
   render() {
