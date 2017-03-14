@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import '../../../config/chai/plugins.config';
+import '../../../config/chai/chai.config';
 
 import * as PermissionsActionFactory from './PermissionsActionFactory';
 import reducer from './PermissionsReducer';

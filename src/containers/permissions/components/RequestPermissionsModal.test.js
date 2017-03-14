@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import '../../../../config/chai/plugins.config';
+import '../../../../config/chai/chai.config';
 
 import { mapDispatchToProps } from './RequestPermissionsModal';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
