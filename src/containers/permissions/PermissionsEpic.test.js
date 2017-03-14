@@ -1,6 +1,6 @@
 import { RequestsApi } from 'loom-data';
 import { expect } from 'chai';
-import '../../../config/chai/plugins.config';
+import '../../../config/chai/chai.config';
 
 import testEpic from '../../../test/testEpic';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
