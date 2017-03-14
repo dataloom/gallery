@@ -168,15 +168,15 @@ class AllPermissions extends React.Component {
     Object.keys(propertyPermissions).forEach((property) => {
       const { userPermissions, rolePermissions } = propertyPermissions[property];
       const header = <h3>{property}</h3>;
+      const roleTable = (<RolePermissionsTable
+          rolePermissions={rolePermissions}
+          headers={R_HEADERS} />);
       const userTable = (<UserPermissionsTable
           userPermissions={userPermissions}
           rolePermissions={rolePermissions}
           headers={U_HEADERS} />);
-      const roleTable = (<RolePermissionsTable
-          rolePermissions={rolePermissions}
-          headers={R_HEADERS} />);
 
-      tables.push(header, userTable, roleTable);
+      tables.push(header, roleTable, userTable);
     });
     return tables;
   }
@@ -189,13 +189,13 @@ class AllPermissions extends React.Component {
         </Page.Header>
         <Page.Body>
           <h3>Entity Permissions</h3>
+          <RolePermissionsTable
+              rolePermissions={this.state.entityRolePermissions}
+              headers={R_HEADERS} />
           <UserPermissionsTable
               userPermissions={this.state.entityUserPermissions}
               rolePermissions={this.state.entityRolePermissions}
               headers={U_HEADERS} />
-          <RolePermissionsTable
-              rolePermissions={this.state.entityRolePermissions}
-              headers={R_HEADERS} />
           {this.renderPropertyTables()}
         </Page.Body>
       </Page>

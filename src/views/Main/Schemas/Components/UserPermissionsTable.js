@@ -13,7 +13,7 @@ class UserRow extends React.Component {
 
   render() {
     return (
-      <tr className={styles.UserGroupRow} onClick={this.props.toggleCollapse}>
+      <tr className={styles.userRow}>
         <td>{this.getUserCellData()}</td>
         <td>Effective permissions:</td>
         <td>{this.props.user.permissions}</td>

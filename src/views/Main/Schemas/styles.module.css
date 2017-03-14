@@ -151,6 +151,16 @@
   margin-right: 10px;
 }
 
-.roleRow {
+.userRow td {
+  font-weight: bold;
   background: #f3f5f7;
+}
+
+.roleRow tr {
+  /*background: white;*/
+}
+
+th {
+  color: #fff;
+  background: #4203c5;
 }
