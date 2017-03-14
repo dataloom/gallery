@@ -8,7 +8,7 @@ import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
 export const LOADING_ERROR = Symbol('loading error');
 
 
-const INITIAL_STATE:Map<*, *> = fromJS({
+const INITIAL_STATE :Map<*, *> = fromJS({
   authorizations: {},
   requestPermissionsModal: {
     show: false,
