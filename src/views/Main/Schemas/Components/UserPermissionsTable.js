@@ -13,7 +13,7 @@ class UserRow extends React.Component {
 
   render() {
     return (
-      <tr className={styles.userRow}>
+      <tr className={styles.mainRow}>
         <td>{this.getUserCellData()}</td>
         <td>Effective permissions:</td>
         <td>{this.props.user.permissions}</td>
@@ -37,7 +37,7 @@ class RoleRow extends React.Component {
 
   render() {
     return (
-      <tr className={styles.roleRow}>
+      <tr className={styles.subRow}>
         <td />
         <td>{this.props.role}</td>
         <td>{this.getPermissions()}</td>

@@ -151,12 +151,12 @@
   margin-right: 10px;
 }
 
-.userRow td {
+.mainRow td {
   font-weight: bold;
   background: #f3f5f7;
 }
 
-.roleRow tr {
+.subRow tr {
   /*background: white;*/
 }
 
