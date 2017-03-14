@@ -12,10 +12,6 @@ export const AsyncReferencePropType = PropTypes.shape({
   id: PropTypes.string.isRequired
 });
 
-export function referenceOrObjectPropType(objectPropType) {
-  return PropTypes.oneOfType([PropTypes.instanceOf(AsyncReferencePropType), PropTypes.instanceOf(objectPropType)]);
-}
-
 /* Statuses */
 export const STATUS = Object.freeze({
   EMPTY_REFERENCE: Symbol('empty reference'),
@@ -44,8 +40,4 @@ export function resolveReference(asyncContent :Map<string, any>, reference :Asyn
   }
 
   return asyncContent.getIn(path);
-}
-
-export function resolveReferences(asyncContent :Map<string, any>, references :AsyncReference[]) :any[] {
-  return references.map(reference => resolveReference(asyncContent, reference));
 }
