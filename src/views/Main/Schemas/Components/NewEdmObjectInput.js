@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import { EntityDataModelApi, DataModels } from 'loom-data';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
@@ -33,35 +34,32 @@ export class NewEdmObjectInput extends React.Component {
 
   static propTypes = {
     createSuccess: PropTypes.func,
-    namespaces: PropTypes.object,
-    edmType: PropTypes.string
+    edmType: PropTypes.string,
+    noButton: PropTypes.bool
   }
 
-  constructor() {
-    super();
-    this.state = INITIAL_STATE;
+  constructor(props) {
+    super(props);
+    const state = INITIAL_STATE;
+    if (props.noButton) state.editing = true;
+    this.state = state;
   }
 
   addPropertyTypeToList = () => {
-    const newPropertyTypeIdList = this.props.namespaces[this.state.typeNamespace].filter((propObj) => {
-      return (propObj.name === this.state.typeName);
-    });
-    if (newPropertyTypeIdList.length !== 1) {
-      return;
-    }
-    const newPropertyType = {
-      type: {
-        namespace: this.state.typeNamespace,
-        name: this.state.typeName
-      },
-      id: newPropertyTypeIdList[0].id
+    const type = {
+      namespace: this.state.typeNamespace,
+      name: this.state.typeName
     };
-    const propertyTypes = this.state.propertyTypes;
-    propertyTypes.push(newPropertyType);
-    this.setState({
-      propertyTypes,
-      typeNamespace: StringConsts.EMPTY,
-      typeName: StringConsts.EMPTY
+    EntityDataModelApi.getPropertyTypeId(type)
+    .then((id) => {
+      const newPropertyType = { type, id };
+      const propertyTypes = this.state.propertyTypes;
+      propertyTypes.push(newPropertyType);
+      this.setState({
+        propertyTypes,
+        typeNamespace: StringConsts.EMPTY,
+        typeName: StringConsts.EMPTY
+      });
     });
   }
 
@@ -83,12 +81,11 @@ export class NewEdmObjectInput extends React.Component {
     });
   }
 
-  handleTypeNamespaceChange = (newValue) => {
-    this.setState({ typeNamespace: newValue });
-  }
-
-  handleTypeNameChange = (newValue) => {
-    this.setState({ typeName: newValue });
+  handleFQNChange = (newValue) => {
+    this.setState({
+      typeNamespace: newValue.namespace,
+      typeName: newValue.name
+    });
   }
 
   handleDatatypeChange = (e) => {
@@ -288,10 +285,13 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   renderInputFqnAutosuggest = () => {
-    const { edmType, namespaces } = this.props;
+    const { edmType } = this.props;
     const { propertyTypes, typeName, typeNamespace } = this.state;
     if (edmType !== EdmConsts.ENTITY_TYPE_TITLE && edmType !== EdmConsts.ENTITY_SET_TITLE) return null;
     const propertyTypeClassName = (edmType === EdmConsts.ENTITY_TYPE_TITLE) ? StringConsts.EMPTY : styles.hidden;
+    const usedProperties = propertyTypes.map((propertyType) => {
+      return propertyType.id;
+    });
     return (
       <div>
         <div className={propertyTypeClassName}>Property Types:</div>
@@ -305,12 +305,10 @@ export class NewEdmObjectInput extends React.Component {
             </tr>
             {this.renderPropertyTypesAdded()}
             <NameNamespaceAutosuggest
-                namespaces={namespaces}
-                usedProperties={propertyTypes}
+                usedProperties={usedProperties}
                 noSaveButton={(edmType === EdmConsts.ENTITY_SET_TITLE)}
                 addProperty={this.addPropertyTypeToList}
-                onNameChange={this.handleTypeNameChange}
-                onNamespaceChange={this.handleTypeNamespaceChange}
+                onFQNChange={this.handleFQNChange}
                 initialName={typeName}
                 initialNamespace={typeNamespace} />
           </tbody>
@@ -358,7 +356,7 @@ export class NewEdmObjectInput extends React.Component {
         {this.renderInputFieldsForEdmType()}
         {this.renderInputFqnAutosuggest()}
         {this.renderInputDatatypeAutosuggest()}
-        <button className={styles.genericButton} onClick={this.createNewEdmObject}>Create</button>
+        <Button bsStyle="primary" onClick={this.createNewEdmObject}>Create</Button>
       </div>
     );
   }

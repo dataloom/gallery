@@ -11,8 +11,7 @@ import styles from '../styles.module.css';
 export class EntityType extends React.Component {
   static propTypes = {
     entityType: PropTypes.object,
-    updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object
+    idToPropertyTypes: PropTypes.object
   }
 
   constructor() {
@@ -31,10 +30,20 @@ export class EntityType extends React.Component {
   }
 
   loadProperties = (propertyIds) => {
-    Promise.map(propertyIds, (propertyId) => {
-      return EntityDataModelApi.getPropertyType(propertyId);
-    }).then((properties) => {
-      this.setState({ properties });
+    const properties = propertyIds.map((id) => {
+      return this.props.idToPropertyTypes[id];
+    });
+    this.setState({ properties });
+  }
+
+  updateFn = () => {
+    EntityDataModelApi.getEntityType(this.props.entityType.id)
+    .then((entityType) => {
+      Promise.map(entityType.properties, (propertyId) => {
+        return EntityDataModelApi.getPropertyType(propertyId);
+      }).then((properties) => {
+        this.setState({ properties });
+      });
     });
   }
 
@@ -50,19 +59,19 @@ export class EntityType extends React.Component {
     if (action === ActionConsts.ADD) {
       EntityDataModelApi.addPropertyTypeToEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
-        this.props.updateFn();
+        this.updateFn();
       });
     }
     else if (action === ActionConsts.REMOVE) {
       EntityDataModelApi.removePropertyTypeFromEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
-        this.props.updateFn();
+        this.updateFn();
       });
     }
   }
 
   render() {
-    const { entityType, allPropNamespaces } = this.props;
+    const entityType = this.props.entityType;
     return (
       <div>
         <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
@@ -80,7 +89,6 @@ export class EntityType extends React.Component {
             entityTypeName={entityType.type.name}
             entityTypeNamespace={entityType.type.namespace}
             updateFn={this.updateEntityType}
-            allPropNamespaces={allPropNamespaces}
             editingPermissions={false} />
         <div className={styles.spacerBig} />
         <hr />

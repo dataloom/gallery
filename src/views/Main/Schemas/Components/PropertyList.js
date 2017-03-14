@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { EntityDataModelApi } from 'loom-data';
 import { Property } from './Property';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -13,7 +14,6 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
     isOwner: PropTypes.bool
@@ -70,16 +70,13 @@ export class PropertyList extends React.Component {
   }
 
   addProperty = (namespace, name) => {
-    const propIdList = this.props.allPropNamespaces[namespace].filter((propObj) => {
-      return (propObj.name === name);
-    });
-    if (propIdList.length !== 1) {
+    EntityDataModelApi.getPropertyTypeId({ namespace, name })
+    .then((id) => {
+      this.props.updateFn([id], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
+      this.updateFqns();
+    }).catch(() => {
       this.updateError();
-      return;
-    }
-    const propId = propIdList[0].id;
-    this.props.updateFn([propId], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
-    this.updateFqns();
+    });
   }
 
   verifyDelete = (property) => {
@@ -152,12 +149,15 @@ export class PropertyList extends React.Component {
 
   renderNewRowInput = () => {
     if (!this.context.isAdmin) return null;
-    const { properties, allPropNamespaces } = this.props;
+    const properties = this.props.properties.map((property) => {
+      return property.id;
+    });
+    console.log('property ids')
+    console.log(properties);
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
           className={className}
-          namespaces={allPropNamespaces}
           usedProperties={properties}
           addProperty={this.addProperty} />
     );

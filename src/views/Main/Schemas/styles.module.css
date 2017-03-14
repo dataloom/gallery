@@ -150,3 +150,9 @@
   text-align: center;
   margin-right: 10px;
 }
+
+.createEdmObjectButtonWrapper {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 10px;
+}

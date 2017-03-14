@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
+import { hashHistory } from 'react-router';
 import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
-import { EntityTypeList } from './Components/EntityTypeList';
+import EntityTypeSearch from './Components/EntityTypeSearch';
 import { PropertyTypeList } from './Components/PropertyTypeList';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
@@ -9,7 +10,12 @@ import EdmConsts from '../../../utils/Consts/EdmConsts';
 export class DataModel extends React.Component {
 
   static propTypes = {
-    updateTopbarFn: PropTypes.func
+    updateTopbarFn: PropTypes.func,
+    location: PropTypes.shape({
+      query: PropTypes.shape({
+        type: PropTypes.string
+      })
+    })
   }
 
   static childContextTypes = {
@@ -18,40 +24,44 @@ export class DataModel extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      dataModelView: EdmConsts.SCHEMA
-    };
+    //const dataModelView = this.props.location.query.type || EdmConsts.ENTITY_TYPE;
+    //this.state = { dataModelView };
   }
 
   componentDidMount() {
+    if (!this.props.location.query.type) {
+      this.changeDataModelView(EdmConsts.ENTITY_TYPE);
+    }
     this.props.updateTopbarFn();
   }
 
   getDataModelView() {
-    const view = this.state.dataModelView;
+    const view = this.props.location.query.type;
     switch (view) {
       case EdmConsts.SCHEMA:
         return (<SchemaList />);
-      case EdmConsts.ENTITY_TYPE:
-        return (<EntityTypeList />);
       case EdmConsts.PROPERTY_TYPE:
         return (<PropertyTypeList />);
+      case EdmConsts.ENTITY_TYPE:
       default:
-        return (<SchemaList />);
+        return (<EntityTypeSearch location={this.props.location} />);
     }
   }
 
   changeDataModelView = (newView) => {
-    this.props.updateTopbarFn();
-    this.setState({ dataModelView: newView });
+    // this.props.updateTopbarFn();
+    const query = { type: newView };
+    const newLocation = Object.assign({}, this.props.location, { query });
+    hashHistory.push(newLocation);
   }
 
   render() {
+    const view = this.props.location.query.type;
     return (
       <Page>
         <Page.Header>
           <Page.Title>Data model</Page.Title>
-          <DataModelToolbar changeView={this.changeDataModelView} />
+          <DataModelToolbar view={view} changeView={this.changeDataModelView} />
         </Page.Header>
         <Page.Body>
           {this.getDataModelView()}
