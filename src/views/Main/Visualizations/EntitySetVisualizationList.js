@@ -26,7 +26,8 @@ export class EntitySetVisualizationList extends React.Component {
 
   getEntitySets = () => {
     EntityDataModelApi.getAllEntitySets()
-      .then((entitySets) => {
+      .then((entitySetsRaw) => {
+        const entitySets = entitySetsRaw.filter(entitySet => entitySet);
         this.getEntityTypes(entitySets)
         .then((idToEdmObjects) => {
           this.loadVisualizableEntitySets(entitySets, idToEdmObjects.idToEntityType, idToEdmObjects.idToPropertyType);
