@@ -128,8 +128,7 @@ export default class EntityTypeSearch extends React.Component {
           <NewEdmObjectInput
               namespaces={this.state.allPropNamespaces}
               createSuccess={this.newEntityTypeSuccess}
-              edmType={EdmConsts.ENTITY_TYPE_TITLE}
-              noButton />
+              edmType={EdmConsts.ENTITY_TYPE_TITLE} />
         </Modal.Body>
       </Modal>
     );

@@ -127,8 +127,7 @@ export default class PropertyTypeSearch extends React.Component {
         <Modal.Body>
           <NewEdmObjectInput
               createSuccess={this.newPropertyTypeSuccess}
-              edmType={EdmConsts.PROPERTY_TYPE_TITLE}
-              noButton />
+              edmType={EdmConsts.PROPERTY_TYPE_TITLE} />
         </Modal.Body>
       </Modal>
     );

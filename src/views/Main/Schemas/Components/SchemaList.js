@@ -70,8 +70,7 @@ export class SchemaList extends React.Component {
         <Modal.Body>
           <NewEdmObjectInput
               createSuccess={this.newSchemaSuccess}
-              edmType={EdmConsts.SCHEMA_TITLE}
-              noButton />
+              edmType={EdmConsts.SCHEMA_TITLE} />
         </Modal.Body>
       </Modal>
     );

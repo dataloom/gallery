@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
+import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import Select from 'react-select';
 import { EntityDataModelApi, DataModels, SearchApi } from 'loom-data';
 import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
@@ -23,7 +23,6 @@ const INITIAL_STATE = {
   typeNamespace: StringConsts.EMPTY,
   datatype: StringConsts.EMPTY,
   pii: false,
-  editing: false,
   error: false,
   phonetic: false
 };
@@ -34,15 +33,12 @@ export class NewEdmObjectInput extends React.Component {
 
   static propTypes = {
     createSuccess: PropTypes.func,
-    edmType: PropTypes.string,
-    noButton: PropTypes.bool
+    edmType: PropTypes.string
   }
 
   constructor(props) {
     super(props);
-    const state = INITIAL_STATE;
-    if (props.noButton) state.editing = true;
-    this.state = state;
+    this.state = INITIAL_STATE;
   }
 
   addPropertyTypeToList = () => {
@@ -94,10 +90,6 @@ export class NewEdmObjectInput extends React.Component {
     this.setState({ datatype, phonetic });
   }
 
-  setEditing = () => {
-    this.setState({ editing: true });
-  }
-
   createNewEdmObject = () => {
     this.createNewObjectForEdmType()
     .then(() => {
@@ -119,15 +111,6 @@ export class NewEdmObjectInput extends React.Component {
       case EdmConsts.SCHEMA_TITLE: {
         return EntityDataModelApi.createEmptySchema(fqn);
       }
-      case EdmConsts.ENTITY_SET_TITLE:
-        return EntityDataModelApi.createEntitySets([{
-          name: this.state[NAME_FIELD],
-          title: this.state[TITLE_FIELD],
-          type: {
-            name: this.state.typeName,
-            namespace: this.state.typeNamespace
-          }
-        }]);
       case EdmConsts.ENTITY_TYPE_TITLE: {
         const propertyTypes = this.state.propertyTypes.map((propertyType) => {
           return propertyType.id;
@@ -157,16 +140,6 @@ export class NewEdmObjectInput extends React.Component {
       default:
         return Promise.resolve();
     }
-  }
-
-  renderButton = () => {
-    const className = (this.state.editing) ? styles.hidden : styles.genericButton;
-    return (
-      <button
-          onClick={this.setEditing}
-          className={className}>Create a new {this.props.edmType.toLowerCase()}
-      </button>
-    );
   }
 
   toggleCheckbox = (propertyTypeId) => {
@@ -211,18 +184,16 @@ export class NewEdmObjectInput extends React.Component {
 
   renderInputField = (fieldType, fieldName) => {
     return (
-      <div>
-        <div>{`${this.props.edmType} ${fieldType}`}</div>
-        <div className={styles.spacerMini} />
-        <input
+      <FormGroup>
+        <ControlLabel>{`${this.props.edmType} ${fieldType}`}</ControlLabel>
+        <FormControl
             type="text"
             value={this.state[fieldName]}
             name={fieldName}
             placeholder={fieldName}
-            onChange={this.handleInputChange}
-            className={styles.inputBox} />
+            onChange={this.handleInputChange} />
         <div className={styles.spacerSmall} />
-      </div>
+      </FormGroup>
     );
   }
 
@@ -351,9 +322,8 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   renderInput = () => {
-    const inputClassName = (this.state.editing) ? StringConsts.EMPTY : styles.hidden;
     return (
-      <div className={inputClassName}>
+      <div>
         {this.renderInputFieldsForEdmType()}
         {this.renderInputFqnAutosuggest()}
         {this.renderInputDatatypeAutosuggest()}
@@ -366,10 +336,13 @@ export class NewEdmObjectInput extends React.Component {
     const errorClassName = (this.state.error) ? styles.errorMsg : styles.hidden;
     return (
       <div>
-        {this.renderButton()}
-        {this.renderInput()}
+        <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }} >
+          {this.renderInput()}
+        </form>
         <div className={errorClassName}>Unable to create {this.props.edmType.toLowerCase()}.</div>
-        <div className={styles.spacerBig} />
       </div>
     );
   }
