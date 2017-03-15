@@ -174,9 +174,9 @@ export class NewEdmObjectInput extends React.Component {
                   this.removePropertyTypeFromList(propertyType);
                 }}>-</button>
           </td>
-          <td className={styles.tableCell}>{propertyType.type.name}</td>
-          <td className={styles.tableCell}>{propertyType.type.namespace}</td>
-          <td className={styles.tableCell}>{this.renderPrimaryKeyCheckbox(propertyType)}</td>
+          <td className={styles.newEdmCell}>{propertyType.type.name}</td>
+          <td className={styles.newEdmCell}>{propertyType.type.namespace}</td>
+          <td className={styles.newEdmCell}>{this.renderPrimaryKeyCheckbox(propertyType)}</td>
         </tr>
       );
     });
@@ -263,9 +263,9 @@ export class NewEdmObjectInput extends React.Component {
           <tbody>
             <tr className={propertyTypeClassName}>
               <th />
-              <th className={styles.tableCell}>Name</th>
-              <th className={styles.tableCell}>Namespace</th>
-              <th className={styles.tableCell}>Primary Key</th>
+              <th className={styles.newEdmCell}>Name</th>
+              <th className={styles.newEdmCell}>Namespace</th>
+              <th className={styles.newEdmCell}>Primary Key</th>
             </tr>
             {this.renderPropertyTypesAdded()}
             <NameNamespaceAutosuggest
