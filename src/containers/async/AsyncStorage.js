@@ -68,7 +68,7 @@ export function createCompleteValue(value :any) :AsyncValue {
     value
   };
 }
-export function createCompleteErrorValue(error :any) :AsyncValue {
+export function createErrorValue(error :any) :AsyncValue {
   return {
     state: STATE.ERROR,
     value: error

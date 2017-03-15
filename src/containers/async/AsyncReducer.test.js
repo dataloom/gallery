@@ -3,9 +3,10 @@ import '../../../config/chai/chai.config';
 
 import reducer from './AsyncReducer';
 import * as actionFactory from './AsyncActionFactory';
+import { createCompleteValue } from './AsyncStorage';
 
 describe('AsyncReducer', function() {
-  const INITIAL_STATE = reducer(undefined, {type: 'none'});
+  const INITIAL_STATE = reducer(undefined, { type: 'none' });
 
   it('should update references', function() {
     const reference = {
@@ -16,6 +17,7 @@ describe('AsyncReducer', function() {
     const action = actionFactory.updateAsyncReference(reference, value);
 
     const newState = reducer(INITIAL_STATE, action);
-    expect(newState).to.have.deep.property([reference.namespace, reference.id], value);
+    expect(newState).to.have.deep.property([reference.namespace, reference.id])
+      .deep.equals(createCompleteValue(value));
   });
 });
