@@ -13,7 +13,7 @@ export const AsyncReferencePropType = PropTypes.shape({
 });
 
 /* Statuses */
-export const STATUS = Object.freeze({
+export const STATE = Object.freeze({
   EMPTY_REFERENCE: Symbol('empty reference'),
   LOADING: Symbol('loading'),
   NOT_FOUND: Symbol('404'),
@@ -36,7 +36,7 @@ export function dereference(asyncContent :Map<string, any>, reference :AsyncRefe
   const path = getReferencePath(reference);
 
   if (!asyncContent.hasIn(path)) {
-    return STATUS.EMPTY_REFERENCE
+    return STATE.EMPTY_REFERENCE;
   }
 
   return asyncContent.getIn(path);

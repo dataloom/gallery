@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import LoadingSpinner from './LoadingSpinner';
-import { AsyncReferencePropType, STATUS, dereference } from '../AsyncStorage';
+import { AsyncReferencePropType, STATE, dereference } from '../AsyncStorage';
 
 export const RENDER_STRATEGY = Object.freeze({
   ALL: Symbol('all')
@@ -27,7 +27,7 @@ class AsyncContentListComponent extends React.Component {
     // TODO: Implement Any render strategy
     if (!references || !resolvedReferences) return false;
     return resolvedReferences.every(reference => {
-      return !(reference === STATUS.EMPTY_REFERENCE) && !(reference === STATUS.LOADING);
+      return !(reference === STATE.EMPTY_REFERENCE) && !(reference === STATE.LOADING);
     })
   }
 

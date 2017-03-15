@@ -22,7 +22,7 @@ import * as PermissionsActionFactory from './PermissionsActionFactory';
 import * as AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
-  STATUS as ASYNC_STATUS
+  STATE as ASYNC_STATUS
 } from '../async/AsyncStorage';
 
 import {

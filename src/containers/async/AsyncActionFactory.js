@@ -1,6 +1,6 @@
 import AsyncActionTypes from './AsyncActionTypes';
 import type { AsyncReference } from './AsyncStorage';
-import { STATUS } from './AsyncStorage';
+import { STATE } from './AsyncStorage';
 
 export function updateAsyncReference(reference :AsyncReference, value :any) {
   return {
@@ -15,7 +15,7 @@ export function asyncReferenceError(reference :AsyncReference, errorMessage :str
 }
 
 export function asyncReferenceLoading(reference :AsyncReference) {
-  return updateAsyncReference(reference, STATUS.LOADING);
+  return updateAsyncReference(reference, STATE.LOADING);
 }
 
 export default {
