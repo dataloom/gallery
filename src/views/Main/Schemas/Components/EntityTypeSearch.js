@@ -10,7 +10,7 @@ import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
-const MAX_HITS = 20;
+const MAX_HITS = 2;
 
 export default class EntityTypeSearch extends React.Component {
 
@@ -84,11 +84,6 @@ export default class EntityTypeSearch extends React.Component {
         asyncStatus: ASYNC_STATUS.ERROR
       });
     });
-  }
-
-  errorClass = {
-    true: styles.errorMsg,
-    false: styles.hidden
   }
 
   newEntityTypeSuccess = () => {

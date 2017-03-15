@@ -86,11 +86,6 @@ export default class PropertyTypeSearch extends React.Component {
     });
   }
 
-  errorClass = {
-    true: styles.errorMsg,
-    false: styles.hidden
-  }
-
   newPropertyTypeSuccess = () => {
     this.closeModal();
     if (this.props.location.query.searchTerm) {
