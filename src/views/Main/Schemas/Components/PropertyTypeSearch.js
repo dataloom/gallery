@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { hashHistory } from 'react-router';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Pagination } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import { SearchApi } from 'loom-data';
 import AsyncContent, { ASYNC_STATUS } from '../../../../components/asynccontent/AsyncContent';
@@ -9,6 +9,8 @@ import PropertyTypeSearchResults from './PropertyTypeSearchResults';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
+
+const MAX_HITS = 20;
 
 export default class PropertyTypeSearch extends React.Component {
 
@@ -55,20 +57,22 @@ export default class PropertyTypeSearch extends React.Component {
         asyncStatus: (nextProps.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING
       });
       if (nextProps.location.query.searchTerm) {
-        this.executeSearch(nextProps.location.query.searchTerm);
+        const page = nextProps.location.query.page || 1;
+        this.executeSearch(nextProps.location.query.searchTerm, page);
       }
     }
   }
 
   onUpdate = () => {
-    this.executeSearch(this.props.location.query.searchTerm);
+    this.executeSearch(this.props.location.query.searchTerm, this.state.page);
   }
 
-  executeSearch = (searchTerm) => {
+  executeSearch = (searchTerm, page) => {
     SearchApi.searchPropertyTypes({
       searchTerm,
-      start: 0,
-      maxHits: 20
+      page,
+      start: ((page - 1) * MAX_HITS),
+      maxHits: MAX_HITS
     }).then((response) => {
       this.setState({
         searchResults: response.hits,
@@ -90,7 +94,7 @@ export default class PropertyTypeSearch extends React.Component {
   newPropertyTypeSuccess = () => {
     this.closeModal();
     if (this.props.location.query.searchTerm) {
-      this.executeSearch(this.props.location.query.searchTerm);
+      this.executeSearch(this.props.location.query.searchTerm, this.state.page);
     }
   }
 
@@ -102,8 +106,9 @@ export default class PropertyTypeSearch extends React.Component {
     this.setState({ isModalOpen: false });
   }
 
-  onSearchSubmit = (searchTerm) => {
-    const query = Object.assign({}, this.props.location.query || {}, { searchTerm });
+  onSearchSubmit = (searchTerm, optionalPage) => {
+    const page = optionalPage || 1;
+    const query = Object.assign({}, this.props.location.query || {}, { searchTerm, page });
     const newLocation = Object.assign({}, this.props.location, { query });
     hashHistory.push(newLocation);
   }
@@ -150,6 +155,29 @@ export default class PropertyTypeSearch extends React.Component {
     return null;
   }
 
+  handlePageSelect = (eventKey) => {
+    this.onSearchSubmit(this.state.searchTerm, eventKey);
+  }
+
+  renderPagination = () => {
+    const activePage = parseInt(this.state.page, 10);
+    if (this.state.totalHits <= 0 || isNaN(activePage)) return null;
+    const numPages = Math.ceil((1.0 * this.state.totalHits) / MAX_HITS);
+    return (
+      <div className={styles.viewWrapper}>
+        <Pagination
+            prev
+            next
+            ellipsis
+            boundaryLinks
+            items={numPages}
+            maxButtons={5}
+            activePage={activePage}
+            onSelect={this.handlePageSelect} />
+      </div>
+    );
+  }
+
   render() {
     let initialSearch = '';
     if (this.props.location && this.props.location.query && this.props.location.query.searchTerm) {
@@ -163,6 +191,7 @@ export default class PropertyTypeSearch extends React.Component {
         <DataModelSearchBox
             initialSearch={initialSearch} onSubmit={this.onSearchSubmit} />
         {this.renderResults()}
+        {this.renderPagination()}
       </div>
     );
   }

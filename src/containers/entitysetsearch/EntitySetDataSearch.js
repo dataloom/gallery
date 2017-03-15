@@ -134,7 +134,7 @@ export default class EntitySetDataSearch extends React.Component {
   executeSearch = (searchTerm) => {
     const searchRequest = {
       searchTerm,
-      start: ((this.state.page - 1) * 50),
+      start: ((this.state.page - 1) * MAX_HITS),
       maxHits: MAX_HITS
     }
     SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
