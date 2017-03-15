@@ -25,7 +25,7 @@ function getReferencePath(reference :AsyncReference) {
   return [reference.namespace, reference.id];
 }
 
-export function resolveReference(asyncContent :Map<string, any>, reference :AsyncReference): any[] {
+export function dereference(asyncContent :Map<string, any>, reference :AsyncReference): any[] {
   if (!asyncContent) {
     throw new Error('"asyncContent" can\'t be null');
   }

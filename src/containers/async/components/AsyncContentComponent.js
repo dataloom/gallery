@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import LoadingSpinner from './LoadingSpinner';
-import { AsyncReferencePropType, STATUS, resolveReference } from '../AsyncStorage';
+import { AsyncReferencePropType, STATUS, dereference } from '../AsyncStorage';
 
 class AsyncContentComponent extends React.Component {
   static propTypes = {
@@ -49,7 +49,7 @@ function mapStateToProps(state, ownProps) {
     { reference } = ownProps;
 
   return {
-    resolvedReference: resolveReference(asyncContent, reference)
+    resolvedReference: dereference(asyncContent, reference)
   }
 }
 
