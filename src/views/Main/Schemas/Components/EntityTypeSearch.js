@@ -10,7 +10,7 @@ import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
-const MAX_HITS = 2;
+const MAX_HITS = 20;
 
 export default class EntityTypeSearch extends React.Component {
 
@@ -185,7 +185,8 @@ export default class EntityTypeSearch extends React.Component {
         {this.renderCreateEntityTypeButton()}
         {this.renderCreateEntityTypeModal()}
         <DataModelSearchBox
-            initialSearch={initialSearch} onSubmit={this.onSearchSubmit} />
+            initialSearch={initialSearch}
+            onSubmit={this.onSearchSubmit} />
         {this.renderResults()}
         {this.renderPagination()}
       </div>
