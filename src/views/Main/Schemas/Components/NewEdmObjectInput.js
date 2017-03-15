@@ -200,13 +200,6 @@ export class NewEdmObjectInput extends React.Component {
   renderInputFieldsForEdmType = () => {
     switch (this.props.edmType) {
       case EdmConsts.SCHEMA_TITLE:
-      case EdmConsts.ENTITY_SET_TITLE:
-        return (
-          <div>
-            {this.renderInputField('Name', NAME_FIELD)}
-            {this.renderInputField('Namespace', NAMESPACE_FIELD)}
-          </div>
-        );
       case EdmConsts.ENTITY_TYPE_TITLE:
         return (
           <div>
@@ -258,7 +251,7 @@ export class NewEdmObjectInput extends React.Component {
   renderInputFqnAutosuggest = () => {
     const { edmType } = this.props;
     const { propertyTypes, typeName, typeNamespace } = this.state;
-    if (edmType !== EdmConsts.ENTITY_TYPE_TITLE && edmType !== EdmConsts.ENTITY_SET_TITLE) return null;
+    if (edmType !== EdmConsts.ENTITY_TYPE_TITLE) return null;
     const propertyTypeClassName = (edmType === EdmConsts.ENTITY_TYPE_TITLE) ? StringConsts.EMPTY : styles.hidden;
     const usedProperties = propertyTypes.map((propertyType) => {
       return propertyType.id;
@@ -278,7 +271,6 @@ export class NewEdmObjectInput extends React.Component {
             <NameNamespaceAutosuggest
                 searchFn={SearchApi.searchPropertyTypesByFQN}
                 usedProperties={usedProperties}
-                noSaveButton={(edmType === EdmConsts.ENTITY_SET_TITLE)}
                 addProperty={this.addPropertyTypeToList}
                 onFQNChange={this.handleFQNChange}
                 initialName={typeName}

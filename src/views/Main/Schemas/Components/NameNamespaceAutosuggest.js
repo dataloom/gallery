@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
-import Utils from '../../../../utils/Utils';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
@@ -14,8 +13,7 @@ export class NameNamespaceAutosuggest extends React.Component {
     onNamespaceChange: PropTypes.func,
     onFQNChange: PropTypes.func,
     initialName: PropTypes.string,
-    initialNamespace: PropTypes.string,
-    noSaveButton: PropTypes.bool
+    initialNamespace: PropTypes.string
   }
 
   constructor(props) {
@@ -167,24 +165,12 @@ export class NameNamespaceAutosuggest extends React.Component {
     this.loadInitialSuggestionValues();
   }
 
-  shouldHideSaveButton = () => {
-    return (this.props.noSaveButton !== undefined && this.props.noSaveButton);
-  }
-
-  saveButtonClass = () => {
-    return (this.shouldHideSaveButton()) ? styles.hidden : StringConsts.EMPTY;
-  }
-
-  selectInputClassName = () => {
-    return (this.shouldHideSaveButton()) ? styles.entitySetInput : styles.tableCell;
-  }
-
   render() {
     const { nameVal, nameSuggestions, namespaceVal, namespaceSuggestions } = this.state;
     return (
       <tr className={this.props.className}>
         <td />
-        <td className={this.selectInputClassName()}>
+        <td className={styles.tableCell}>
           <Select
               options={nameSuggestions}
               value={nameVal}
@@ -193,7 +179,7 @@ export class NameNamespaceAutosuggest extends React.Component {
               onFocus={this.onFocus}
               placeholder="name" />
         </td>
-        <td className={this.selectInputClassName()}>
+        <td className={styles.tableCell}>
           <Select
               options={namespaceSuggestions}
               value={namespaceVal}
@@ -202,7 +188,7 @@ export class NameNamespaceAutosuggest extends React.Component {
               onFocus={this.onFocus}
               placeholder="namespace" />
         </td>
-        <td className={this.saveButtonClass()}>
+        <td>
           <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button>
         </td>
       </tr>

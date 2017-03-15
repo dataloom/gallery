@@ -9,10 +9,10 @@ export default class DataModelSearchBox extends React.Component {
     initialSearch: PropTypes.string
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      searchTerm: ''
+      searchTerm: (props.initialSearch) ? props.initialSearch : ''
     };
   }
 
