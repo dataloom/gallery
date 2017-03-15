@@ -8,6 +8,7 @@ export class LineChartContainer extends React.Component {
 
   static propTypes = {
     numberProps: PropTypes.array,
+    dateProps: PropTypes.array,
     data: PropTypes.array
   }
 
@@ -26,7 +27,7 @@ export class LineChartContainer extends React.Component {
   }
 
   handleXAxisPropChange = (e) => {
-    const xAxisProp = (e && e !== undefined) ? e.value : undefined;
+    const xAxisProp = (e) ? e.value : undefined;
     this.setState({
       xAxisProp,
       selectedYProps: []
@@ -47,19 +48,19 @@ export class LineChartContainer extends React.Component {
         <LineChartVisualization
             xProp={this.state.xAxisProp}
             yProps={this.state.selectedYProps}
+            allProps={this.props.numberProps.concat(this.props.dateProps)}
             data={this.props.data} />
       </div>
     );
   }
 
   render() {
-    const numberProps = this.props.numberProps;
-    if (numberProps.length <= 1) return null;
-    const xAxisProp = (this.state.xAxisProp !== undefined) ?
-      JSON.parse(this.state.xAxisProp) : null;
+    const { numberProps, dateProps } = this.props;
+    if (numberProps.length + dateProps.length <= 1) return null;
+    const xAxisProp = (this.state.xAxisProp) ? JSON.parse(this.state.xAxisProp) : null;
     const checkboxMsg = (xAxisProp) ? `Choose properties to plot against ${xAxisProp.title}` : '';
     const selectOptions = [];
-    const checkboxes = numberProps.map((prop) => {
+    const checkboxes = numberProps.concat(dateProps).map((prop) => {
       selectOptions.push({ label: prop.title, value: JSON.stringify(prop) });
       if (!xAxisProp || prop.id === xAxisProp.id) return null;
       return (

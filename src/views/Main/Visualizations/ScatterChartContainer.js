@@ -7,6 +7,7 @@ export class ScatterChartContainer extends React.Component {
 
   static propTypes = {
     numberProps: PropTypes.array,
+    dateProps: PropTypes.array,
     data: PropTypes.array
   }
 
@@ -19,7 +20,7 @@ export class ScatterChartContainer extends React.Component {
   }
 
   handleXAxisPropChange = (e) => {
-    const xAxisProp = (e && e !== undefined) ? e.value : undefined;
+    const xAxisProp = (e) ? e.value : undefined;
     this.setState({
       xAxisProp,
       yAxisProp: undefined
@@ -27,7 +28,7 @@ export class ScatterChartContainer extends React.Component {
   }
 
   handleYAxisPropChange = (e) => {
-    const yAxisProp = (e && e !== undefined) ? e.value : undefined;
+    const yAxisProp = (e) ? e.value : undefined;
     this.setState({ yAxisProp });
   }
 
@@ -43,12 +44,12 @@ export class ScatterChartContainer extends React.Component {
   }
 
   render() {
-    const numberProps = this.props.numberProps;
+    const { numberProps, dateProps } = this.props;
     const { xAxisProp, yAxisProp } = this.state;
-    if (numberProps.length <= 1) return null;
-    const xAxisPropJson = (xAxisProp !== undefined) ? JSON.parse(xAxisProp) : null;
+    if (numberProps.length + dateProps.length <= 1) return null;
+    const xAxisPropJson = (xAxisProp) ? JSON.parse(xAxisProp) : null;
     const yAxisOptions = [];
-    const xAxisOptions = numberProps.map((prop) => {
+    const xAxisOptions = numberProps.concat(dateProps).map((prop) => {
       if (!xAxisPropJson || xAxisPropJson.id !== prop.id) {
         yAxisOptions.push({ label: prop.title, value: JSON.stringify(prop) });
       }

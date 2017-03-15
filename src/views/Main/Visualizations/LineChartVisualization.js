@@ -8,8 +8,10 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import styles from './styles.module.css';
 import { DataModels } from 'loom-data';
+import * as formatter from './FormatUtils';
+import EdmConsts from '../../../utils/Consts/EdmConsts';
+import styles from './styles.module.css';
 
 const labelElementId = 'visualization_label';
 
@@ -18,6 +20,7 @@ export class LineChartVisualization extends React.Component {
   static propTypes = {
     xProp: PropTypes.string,
     yProps: PropTypes.array,
+    allProps: PropTypes.array,
     data: PropTypes.array
   }
 
@@ -32,18 +35,50 @@ export class LineChartVisualization extends React.Component {
     this.formatData();
   }
 
+  xFormatter = (value) => {
+    const xProp = JSON.parse(this.props.xProp);
+    let formattedValue = `${xProp.title}: `;
+    if (EdmConsts.EDM_DATE_TYPES.includes(xProp.datatype)) {
+      formattedValue = formattedValue.concat(formatter.formatDate(value));
+    }
+    else {
+      formattedValue = formattedValue.concat(value);
+    }
+    return formattedValue;
+  }
+
+  yFormatter = (value, title) => {
+    const yProps = this.props.yProps;
+    let formattedValue = value;
+    yProps.forEach((prop) => {
+      if (title === prop.title && EdmConsts.EDM_DATE_TYPES.includes(prop.datatype)) {
+        formattedValue = formatter.formatDate(value);
+      }
+    });
+    return formattedValue;
+  }
+
   formatData = () => {
     const formattedData = [];
+    const fqnIsDate = {};
+    this.props.allProps.forEach((prop) => {
+      fqnIsDate[`${prop.type.namespace}.${prop.type.name}`] = EdmConsts.EDM_DATE_TYPES.includes(prop.datatype);
+    });
     this.props.data.forEach((dataPoint) => {
       const formattedPoint = {};
       let isValidPoint = true;
       Object.keys(dataPoint).forEach((key) => {
-        const value = parseFloat(dataPoint[key][0]);
-        if (isNaN(value)) {
-          isValidPoint = false;
+        if (fqnIsDate[key]) {
+          formattedPoint[key] = new Date(dataPoint[key][0]).getTime();
         }
         else {
-          formattedPoint[key] = value;
+          const value = parseFloat(dataPoint[key][0]);
+          if (isNaN(value)) {
+            isValidPoint = false;
+          }
+          else {
+            formattedPoint[key] = value;
+          }
         }
       });
       if (isValidPoint) {
@@ -51,10 +86,6 @@ export class LineChartVisualization extends React.Component {
       }
     });
     this.setState({ formattedData });
-  }
-
-  updateMouseOverPoint = (label) => {
-    document.getElementById(labelElementId).innerHTML = label;
   }
 
   render() {
@@ -87,10 +118,11 @@ export class LineChartVisualization extends React.Component {
                 dataKey={xPropFqn}
                 name={xProp.title}
                 type="number"
-                domain={['dataMin', 'dataMax']} />
-            <YAxis />
+                domain={['dataMin', 'dataMax']}
+                tickFormatter={formatter.getTickFormatter([xProp])} />
+            <YAxis tickFormatter={formatter.getTickFormatter(this.props.yProps)} />
             <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} labelFormatter={this.xFormatter} formatter={this.yFormatter} />
             <Legend />
             {lines}
           </LineChart>

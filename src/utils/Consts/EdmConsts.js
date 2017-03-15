@@ -63,6 +63,10 @@ const EDM_GEOGRAPHY_TYPES = [
   'GeographyCollection'
 ];
 
+const EDM_DATE_TYPES = [
+  'Date'
+];
+
 const ANALYZERS = {
   standard: 'STANDARD',
   metaphone: 'METAPHONE'
@@ -80,5 +84,6 @@ export default {
   EDM_PRIMITIVE_TYPES,
   EDM_NUMBER_TYPES,
   EDM_GEOGRAPHY_TYPES,
+  EDM_DATE_TYPES,
   ANALYZERS
 };
