@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import '../../../config/chai/plugins.config';
+import '../../../config/chai/chai.config';
 
 import * as PermissionsActionFactory from './PermissionsActionFactory';
 import reducer from './PermissionsReducer';
@@ -44,6 +44,24 @@ describe('PermissionsReducer', function() {
     state = reducer(state, action);
 
     expect(state).to.not.have.deep.property(['requestPermissionsModal', 'pidToRequestedPermissions', pid]);
+  });
+
+  it('should clear permissions request state on modal close', function() {
+    const reason = 'reason';
+    const pid = 'abc';
+    const permissionsRequest = ['READ'];
+
+    let action = PermissionsActionFactory.requestPermissionsUpdateReason(reason);
+    let state = reducer(INITIAL_STATE, action);
+
+    action = PermissionsActionFactory.requestPermissionsUpdateRequest(pid, permissionsRequest);
+    state = reducer(state, action);
+
+    action = PermissionsActionFactory.requestPermissionsModalHide();
+    state = reducer(state, action);
+
+    expect(state).to.have.deep.property('requestPermissionsModal.reason').equal('');
+    expect(state).to.have.deep.property('requestPermissionsModal.pidToRequestedPermissions').and.to.be.empty;
   });
 
   it('should clear permissions request state on submit', function() {

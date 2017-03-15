@@ -36,5 +36,6 @@ const plugins = [
 
 export default Object.assign({}, baseWebpackConfig, {
   output,
-  plugins
+  plugins,
+  devtool: 'nosources-source-map'
 });
