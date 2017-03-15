@@ -75,7 +75,7 @@ class PermissionsPanel extends React.Component {
       // updateSuccess: false, //DONE
       // updateError: false, // DONE
       // specific to view
-      // globalValue: [], // specific to each E/P view. set on properties (as default). refactor to get w/ specific id. may need to separate use cases. props + dispatch
+      // globalValue: [], // DONE
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] }, //  props. refactor to get w/ specific id
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
       // global
@@ -155,6 +155,7 @@ class PermissionsPanel extends React.Component {
       newRoleValue: '',
       newEmailValue: '',
     });
+    this.props.setGlobalValue(globalValue);
     this.props.setUpdateSuccess(updateSuccess);
     this.props.setUpdateError(false);
   }
@@ -566,7 +567,6 @@ class PermissionsPanel extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  console.log('ownprops:', ownProps);
   const entitySetDetail = state.get('entitySetDetail');
 
   var globalValue = [];
@@ -576,6 +576,8 @@ function mapStateToProps(state, ownProps) {
   else {
     globalValue = entitySetDetail.get('globalValue').toJS();
   }
+
+  // console.log('MSTP global value:', globalValue);
 
   return {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
@@ -590,17 +592,19 @@ function mapStateToProps(state, ownProps) {
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  // let setGlobalValue;
-  // if (ownProps.propertyTypeId) {
-  //   setGlobalValue = (data) => {
-  //     dispatch(actionFactories.setPropertyGlobalValue(data));
-  //   };
-  // }
-  // else {
-  //   setGlobalValue = (data) => {
-  //     dispatch(actionFactories.setEntityGlobalValue(data));
-  //   }
-  // }
+  let setGlobalValue;
+  if (ownProps.propertyTypeId) {
+    setGlobalValue = (data) => {
+      // console.log('DATA bout to be updated:', data);
+      dispatch(actionFactories.setPropertyGlobalValue(ownProps.propertyTypeId, data));
+    };
+  }
+  else {
+    setGlobalValue = (data) => {
+      // console.log('DATA bout to be updated:', data);
+      dispatch(actionFactories.setEntityGlobalValue(data));
+    };
+  }
 
   return {
     setNewRoleValue: (value) => {
@@ -615,7 +619,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     setUpdateError: (bool) => {
       dispatch(actionFactories.setUpdateError(bool));
     },
-    // setGlobalValue: setGlobalValue; // conditionally determine proper function
+    setGlobalValue
   };
 }
 

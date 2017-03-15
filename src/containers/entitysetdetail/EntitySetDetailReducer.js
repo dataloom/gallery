@@ -90,6 +90,11 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         globalValue: action.data.globalValue
       });
 
+    case actionTypes.SET_ENTITY_GLOBAL_VALUE:
+      return state.merge({
+        globalValue: action.data
+      });
+
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
       var nestedState = {...stateJS,
@@ -116,7 +121,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
             globalValue: action.data
           }
         }
-      }
+      };
+      var immutableNestedState = Immutable.fromJS(nestedState);
+      return immutableNestedState;
 
     default:
       return state;

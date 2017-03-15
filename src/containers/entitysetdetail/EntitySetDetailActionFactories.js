@@ -14,6 +14,13 @@ export function setEntityData(data) {
   };
 }
 
+export function setEntityGlobalValue(data) {
+  return {
+    type: actionTypes.SET_ENTITY_GLOBAL_VALUE,
+    data
+  };
+}
+
 export function setPropertyData(data) {
   return {
     type: actionTypes.SET_PROPERTY_DATA,
