@@ -21,6 +21,14 @@ export function setPropertyData(data) {
   };
 }
 
+export function setPropertyGlobalValue(id, data) {
+  return {
+    type: actionTypes.SET_PROPERTY_GLOBAL_VALUE,
+    id,
+    data
+  };
+}
+
 export function setAllUsersAndRoles(users, roles) {
   return {
     type: actionTypes.SET_ALL_USERS_AND_ROLES,

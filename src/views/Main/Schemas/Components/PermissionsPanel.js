@@ -75,7 +75,7 @@ class PermissionsPanel extends React.Component {
       // updateSuccess: false, //DONE
       // updateError: false, // DONE
       // specific to view
-      globalValue: [], // specific to each E/P view. set on properties (as default). refactor to get w/ specific id. may need to separate use cases. props + dispatch
+      // globalValue: [], // specific to each E/P view. set on properties (as default). refactor to get w/ specific id. may need to separate use cases. props + dispatch
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] }, //  props. refactor to get w/ specific id
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
       // global
@@ -87,6 +87,7 @@ class PermissionsPanel extends React.Component {
 
   componentDidMount() {
     this.loadAcls(false);
+    console.log('PP PROPS:', this.props);
   }
 
 
@@ -148,7 +149,7 @@ class PermissionsPanel extends React.Component {
       }
     });
     this.setState({
-      globalValue,
+      // globalValue,
       roleAcls,
       userAcls,
       newRoleValue: '',
@@ -211,7 +212,7 @@ class PermissionsPanel extends React.Component {
 
   updateGlobalPermissions = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
-    const selectedPermissions = this.state.globalValue.map((name) => {
+    const selectedPermissions = this.props.globalValue.map((name) => {
       return name.toUpperCase();
     });
 
@@ -263,7 +264,8 @@ class PermissionsPanel extends React.Component {
   }
 
   updateDropdownValue = (e) => {
-    this.setState({ globalValue: e.value });
+    // this.setState({ globalValue: e.value });
+    this.props.setGlobalValue(e.value);
   }
 
   buttonStyle = (view, viewState, order) => {
@@ -294,11 +296,12 @@ class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissionState = (permission, checked) => {
-    const globalValue = this.state.globalValue.filter((permissionOption) => {
+    const globalValue = this.props.globalValue.filter((permissionOption) => {
       return permissionOption !== permission;
     });
     if (checked) globalValue.push(permission);
-    this.setState({ globalValue });
+    // this.setState({ globalValue });
+    this.props.setGlobalValue(globalValue);
   }
 
   getGlobalView = () => {
@@ -315,7 +318,7 @@ class PermissionsPanel extends React.Component {
             <input
                 id={checkboxName}
                 type="checkbox"
-                checked={this.state.globalValue.includes(option)}
+                checked={this.props.globalValue.includes(option)}
                 onChange={(e) => {
                   this.updateGlobalPermissionState(option, e.target.checked);
                 }} />
@@ -562,8 +565,17 @@ class PermissionsPanel extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  console.log('ownprops:', ownProps);
   const entitySetDetail = state.get('entitySetDetail');
+
+  var globalValue = [];
+  if (ownProps.propertyTypeId) {
+    globalValue = entitySetDetail.getIn(['properties', ownProps.propertyTypeId, 'globalValue']).toJS();
+  }
+  else {
+    globalValue = entitySetDetail.get('globalValue').toJS();
+  }
 
   return {
     allUsersById: entitySetDetail.get('allUsersById').toJS(),
@@ -572,11 +584,24 @@ function mapStateToProps(state) {
     newRoleValue: entitySetDetail.get('newRoleValue'),
     newEmailValue: entitySetDetail.get('newEmailValue'),
     updateSuccess: entitySetDetail.get('updateSuccess'),
-    updateError: entitySetDetail.get('updateError')
+    updateError: entitySetDetail.get('updateError'),
+    globalValue
   };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
+  // let setGlobalValue;
+  // if (ownProps.propertyTypeId) {
+  //   setGlobalValue = (data) => {
+  //     dispatch(actionFactories.setPropertyGlobalValue(data));
+  //   };
+  // }
+  // else {
+  //   setGlobalValue = (data) => {
+  //     dispatch(actionFactories.setEntityGlobalValue(data));
+  //   }
+  // }
+
   return {
     setNewRoleValue: (value) => {
       dispatch(actionFactories.setNewRoleValue(value));
@@ -589,7 +614,8 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setUpdateError: (bool) => {
       dispatch(actionFactories.setUpdateError(bool));
-    }
+    },
+    // setGlobalValue: setGlobalValue; // conditionally determine proper function
   };
 }
 

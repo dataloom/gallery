@@ -66,7 +66,6 @@ class EntitySetDetailComponent extends React.Component {
       addingData: false,
       deleteError: false,
       properties: {},
-      globalValue: [],
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }
     };
@@ -164,7 +163,8 @@ class EntitySetDetailComponent extends React.Component {
         id: property.id,
         title: property.title,
         roleAcls,
-        userAcls
+        userAcls,
+        globalValue
       };
       this.props.setPropertyData(propertyAcls);
     }
@@ -175,11 +175,6 @@ class EntitySetDetailComponent extends React.Component {
         globalValue
       };
       this.props.setEntityData(entityAcls);
-      this.setState({
-        globalValue,
-        roleAcls,
-        userAcls
-      });
     }
 
   }

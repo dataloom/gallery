@@ -73,13 +73,6 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         newEmailValue: action.value
       });
 
-    case actionTypes.SET_ENTITY_DATA:
-      return state.merge({
-        roleAcls: action.data.roleAcls,
-        userAcls: action.data.userAcls,
-        globalValue: action.data.globalValue
-      });
-
     case actionTypes.SET_UPDATE_SUCCESS:
       return state.merge({
         updateSuccess: action.bool
@@ -90,6 +83,13 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         updateError: action.bool
       });
 
+    case actionTypes.SET_ENTITY_DATA:
+      return state.merge({
+        roleAcls: action.data.roleAcls,
+        userAcls: action.data.userAcls,
+        globalValue: action.data.globalValue
+      });
+
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
       var nestedState = {...stateJS,
@@ -98,12 +98,25 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
           [action.data.id]: {
             title: action.data.title,
             roleAcls: action.data.roleAcls,
-            userAcls: action.data.userAcls
+            userAcls: action.data.userAcls,
+            globalValue: action.data.globalValue
           }
         }
       };
       var immutableNestedState = Immutable.fromJS(nestedState);
       return immutableNestedState;
+
+    case actionTypes.SET_PROPERTY_GLOBAL_VALUE:
+      var stateJS = state.toJS();
+      var nestedState = {...stateJS,
+        properties: {
+          ...stateJS.properties,
+          [action.id]: {
+            ...stateJS.properties[action.id],
+            globalValue: action.data
+          }
+        }
+      }
 
     default:
       return state;
