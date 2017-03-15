@@ -17,8 +17,6 @@ import {
   combineEpics
 } from 'redux-observable';
 
-import identity from 'lodash/identity';
-
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
 import * as AsyncActionFactory from '../async/AsyncActionFactory';
