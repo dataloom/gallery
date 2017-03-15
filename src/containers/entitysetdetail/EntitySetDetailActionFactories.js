@@ -49,3 +49,17 @@ export function setNewEmailValue(value) {
     value
   };
 }
+
+export function setUpdateSuccess(bool) {
+  return {
+    type: actionTypes.SET_UPDATE_SUCCESS,
+    bool
+  };
+}
+
+export function setUpdateError(bool) {
+  return {
+    type: actionTypes.SET_UPDATE_ERROR,
+    bool
+  };
+}

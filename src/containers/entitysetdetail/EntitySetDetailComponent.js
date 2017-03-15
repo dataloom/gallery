@@ -68,14 +68,7 @@ class EntitySetDetailComponent extends React.Component {
       properties: {},
       globalValue: [],
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] },
-      allUsersById: {},
-      allRolesList: new Set(),
-      newRoleValue: '',
-      newEmailValue: '',
-      updateSuccess: false,
-      updateError: false,
-      loadUsersError: false
+      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }
     };
   }
 
@@ -85,26 +78,26 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.loadAcls(false, nextProps.entitySet.id);
+      this.loadAcls(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
-        this.loadAcls(false, nextProps.entitySet.id, property);
+        this.loadAcls(nextProps.entitySet.id, property);
       });
     }
   }
 
   //////// PERMISSIONS LOGIC ///////////
-  loadAcls = (updateSuccess, entitySetId, property) => {
+  loadAcls = (entitySetId, property) => {
     const aclKey = [entitySetId];
     if (property && property.id) aclKey.push(property.id);
     this.loadAllUsersAndRoles();
 
     PermissionsApi.getAcl(aclKey)
     .then((acls) => {
-      this.updateStateAcls(acls.aces, updateSuccess, property);
+      this.updateStateAcls(acls.aces, property);
     })
     .catch(() => {
-      this.setState({ updateError: true });
+      this.props.setUpdateError(true);
     });
   }
 
@@ -138,7 +131,7 @@ class EntitySetDetailComponent extends React.Component {
     });
   }
 
-  updateStateAcls = (aces, updateSuccess, property) => {
+  updateStateAcls = (aces, property) => {
     let globalValue = [];
     const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
     const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
@@ -164,8 +157,7 @@ class EntitySetDetailComponent extends React.Component {
 
     this.props.setNewRoleValue('');
     this.props.setNewEmailValue('');
-    // this.props.setUpdateSuccess(updateSuccess);
-    // this.props.setUpdateError(updateError);
+    this.props.setUpdateError(false);
 
     if (property) {
       const propertyAcls = {
@@ -186,11 +178,7 @@ class EntitySetDetailComponent extends React.Component {
       this.setState({
         globalValue,
         roleAcls,
-        userAcls,
-        updateSuccess,
-        newRoleValue: '',
-        newEmailValue: '',
-        updateError: false
+        userAcls
       });
     }
 
@@ -491,6 +479,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setNewEmailValue: (value) => {
       dispatch(actionFactories.setNewEmailValue(value));
+    },
+    setUpdateError: (bool) => {
+      dispatch(actionFactories.setUpdateError(bool));
     }
   };
 }

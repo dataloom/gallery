@@ -70,19 +70,18 @@ class PermissionsPanel extends React.Component {
       emailsView: accessOptions.Write,
 
       // REDUX
-      newRoleValue: '', // DONE - TODO: fix clear bug
-      newEmailValue: '', // DONE - TODO: fix clear bug
-      // multiple calls at once
-      updateSuccess: false, // now there are multiple: 1 for each E/P loaded. what happens? where is it shown? props + dispatch
-      updateError: false, // ditto ^^^ props + dispatch
+      // newRoleValue: '', // DONE
+      // newEmailValue: '', // DONE
+      // updateSuccess: false, //DONE
+      // updateError: false, // DONE
       // specific to view
       globalValue: [], // specific to each E/P view. set on properties (as default). refactor to get w/ specific id. may need to separate use cases. props + dispatch
       roleAcls: { Discover: [], Link: [], Read: [], Write: [] }, //  props. refactor to get w/ specific id
       userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }, // props. refactor to get w/ specific id
       // global
-      allUsersById: {}, // DONE
-      allRolesList: new Set(), // DONE
-      loadUsersError: false, // DONE
+      // allUsersById: {}, // DONE
+      // allRolesList: new Set(), // DONE
+      // loadUsersError: false, // DONE
     };
   }
 
@@ -152,11 +151,11 @@ class PermissionsPanel extends React.Component {
       globalValue,
       roleAcls,
       userAcls,
-      updateSuccess,
       newRoleValue: '',
       newEmailValue: '',
-      updateError: false
     });
+    this.props.setUpdateSuccess(updateSuccess);
+    this.props.setUpdateError(false);
   }
 
   loadAcls = (updateSuccess) => {
@@ -168,7 +167,7 @@ class PermissionsPanel extends React.Component {
     .then((acls) => {
       this.updateStateAcls(acls.aces, updateSuccess);
     }).catch(() => {
-      this.setState({ updateError: true });
+      this.props.setUpdateError(true);
     });
   }
 
@@ -199,14 +198,11 @@ class PermissionsPanel extends React.Component {
     const acl = { aclKey, aces };
     const req = { action, acl };
 
-    // TODO: PASS IN LOADACLS AS CALLBACK FROM ESDC -> SHOULD FIX ROLE/EMAIL UPDATE ERROR
     PermissionsApi.updateAcl(req)
     .then(() => {
       this.loadAcls(true);
     }).catch(() => {
-      this.setState({
-        updateError: true
-      });
+      this.props.setUpdateError(true);
     });
 
     this.props.setNewRoleValue('');
@@ -365,7 +361,6 @@ class PermissionsPanel extends React.Component {
 
   handleNewRoleChange = (e) => {
     const newRoleValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    // this.setState({ newRoleValue });
     this.props.setNewRoleValue(newRoleValue);
   }
 
@@ -458,7 +453,6 @@ class PermissionsPanel extends React.Component {
 
   handleNewEmailChange = (e) => {
     const newEmailValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
-    // this.setState({ newEmailValue });
     this.props.setNewEmailValue(newEmailValue);
   }
 
@@ -540,10 +534,10 @@ class PermissionsPanel extends React.Component {
 
   switchView = (view) => {
     this.setState({
-      view,
-      updateSuccess: false,
-      updateError: false
+      view
     });
+    this.props.setUpdateSuccess(false);
+    this.props.setUpdateError(false);
   }
 
   render() {
@@ -557,10 +551,10 @@ class PermissionsPanel extends React.Component {
           </div>
         </div>
         <div className={styles.panelContents}>{this.getPanelViewContents()}</div>
-        <div className={this.shouldShowSuccess[this.state.updateSuccess]}>
+        <div className={this.shouldShowSuccess[this.props.updateSuccess]}>
           Your changes have been saved.
         </div>
-        <div className={this.shouldShowError[this.state.updateError]}>
+        <div className={this.shouldShowError[this.props.updateError]}>
           Unable to save changes.
         </div>
       </div>
@@ -576,7 +570,9 @@ function mapStateToProps(state) {
     allRolesList: entitySetDetail.get('allRolesList'),
     loadUsersError: entitySetDetail.get('loadUsersError'),
     newRoleValue: entitySetDetail.get('newRoleValue'),
-    newEmailValue: entitySetDetail.get('newEmailValue')
+    newEmailValue: entitySetDetail.get('newEmailValue'),
+    updateSuccess: entitySetDetail.get('updateSuccess'),
+    updateError: entitySetDetail.get('updateError')
   };
 }
 
@@ -587,6 +583,12 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setNewEmailValue: (value) => {
       dispatch(actionFactories.setNewEmailValue(value));
+    },
+    setUpdateSuccess: (bool) => {
+      dispatch(actionFactories.setUpdateSuccess(bool));
+    },
+    setUpdateError: (bool) => {
+      dispatch(actionFactories.setUpdateError(bool));
     }
   };
 }

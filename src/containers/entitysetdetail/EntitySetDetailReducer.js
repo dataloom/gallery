@@ -21,7 +21,9 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   globalValue: [],
   properties: {},
   newRoleValue: '',
-  newEmailValue: ''
+  newEmailValue: '',
+  updateSuccess: false,
+  updateError: false
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -76,6 +78,16 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         roleAcls: action.data.roleAcls,
         userAcls: action.data.userAcls,
         globalValue: action.data.globalValue
+      });
+
+    case actionTypes.SET_UPDATE_SUCCESS:
+      return state.merge({
+        updateSuccess: action.bool
+      });
+
+    case actionTypes.SET_UPDATE_ERROR:
+      return state.merge({
+        updateError: action.bool
       });
 
     case actionTypes.SET_PROPERTY_DATA:
