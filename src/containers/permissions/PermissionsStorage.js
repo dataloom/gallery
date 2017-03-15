@@ -14,13 +14,14 @@ export const PERMISSIONS = Object.freeze({
 export const ALL_PERMISSIONS = Object.freeze(objectValues(PERMISSIONS));
 
 // TODO: Switch Permissions to Immutable.Map when Components are switched to immutable
-export const DEFAULT_PERMISSIONS = Object.freeze({
-  DISCOVER: false,
-  LINK: false,
-  READ: false,
-  WRITE: false,
-  OWNER: false
-});
+export const DEFAULT_PERMISSIONS = ((permissions) => {
+
+  const defaultPermissions = {};
+  permissions.forEach((permission) => {
+    defaultPermissions[permission] = false;
+  });
+  return Object.freeze(defaultPermissions);
+})(ALL_PERMISSIONS);
 
 export type Permissions = {
   DISCOVER :boolean,
@@ -29,13 +30,14 @@ export type Permissions = {
   WRITE :boolean,
   OWNER :boolean
 };
-export const PermissionsPropType = PropTypes.shape({
-  DISCOVER: PropTypes.bool.isRequired,
-  LINK: PropTypes.bool.isRequired,
-  READ: PropTypes.bool.isRequired,
-  WRITE: PropTypes.bool.isRequired,
-  OWNER: PropTypes.bool.isRequired
-});
+export const PermissionsPropType = ((permissions) => {
+
+  const defaultPermissions = {};
+  permissions.forEach((permission) => {
+    defaultPermissions[permission] = PropTypes.bool.isRequired;
+  });
+  return PropTypes.shape(defaultPermissions);
+})(ALL_PERMISSIONS);
 
 export type AclKey = string[];
 export const AclKeyPropType = PropTypes.arrayOf(PropTypes.string);
