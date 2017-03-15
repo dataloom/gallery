@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button, ButtonGroup, ButtonToolbar, Modal } from 'react-bootstrap';
 import { EntityDataModelApi, SearchApi } from 'loom-data';
 import { Property } from './Property';
 import StringConsts from '../../../../utils/Consts/StringConsts';
@@ -110,24 +111,33 @@ export class PropertyList extends React.Component {
     });
   }
 
-  renderVerifyDeletePropertyBox = () => {
+  closeModal = () => {
+    this.setState({ verifyingDelete: false });
+  }
+
+  renderVerifyDeleteModal = () => {
     const { verifyingDelete, propertyToDelete } = this.state;
-    if (verifyingDelete) {
-      const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
-      const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
-      return (
-        <div className={styles.verifyDeleteContainer}>
-          <div className={styles.verifyDeleteText}>
+    if (!propertyToDelete) return null;
+    const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
+    const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
+    return (
+      <Modal show={verifyingDelete} onHide={this.closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Verify Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
             Are you sure you want to delete property type {prop} and all associated data from entity type {entityType}?
           </div>
           <div className={styles.buttonContainer}>
-            <button onClick={this.confirmDelete} className={styles.simpleButton}>Delete</button>
-            <button onClick={this.cancelDelete} className={styles.simpleButton}>Cancel</button>
+            <ButtonGroup >
+              <Button onClick={this.confirmDelete} bsStyle="danger">Delete</Button>
+              <Button onClick={this.cancelDelete} bsStyle="default">Cancel</Button>
+            </ButtonGroup>
           </div>
-        </div>
-      );
-    }
-    return null;
+        </Modal.Body>
+      </Modal>
+    );
   }
 
   isPrimaryKey = (prop) => {
@@ -194,7 +204,7 @@ export class PropertyList extends React.Component {
         </table>
         {this.renderNewRowButton()}
         <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
-        {this.renderVerifyDeletePropertyBox()}
+        {this.renderVerifyDeleteModal()}
       </div>
     );
   }
