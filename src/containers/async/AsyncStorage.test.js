@@ -120,7 +120,6 @@ describe('AsyncStorage', function() {
     });
   });
 
-
   describe('resolveReference', function() {
     it('should resolve value', function () {
       const expectedValue = createCompleteValue(6);

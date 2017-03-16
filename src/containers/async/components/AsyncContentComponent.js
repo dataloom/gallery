@@ -1,56 +1,125 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import toPairs from 'lodash/toPairs';
+import fromPairs from 'lodash/fromPairs';
+import values from 'lodash/values';
 
 import LoadingSpinner from './LoadingSpinner';
-import { AsyncReferencePropType, STATE, dereference } from '../AsyncStorage';
+import DefaultAsyncErrorComponent from './DefaultAsyncErrorComponent';
 
-class AsyncContentComponent extends React.Component {
+import {
+  dereference,
+  isReference,
+  isValue,
+  isEmptyValue,
+  isLoadingValue,
+  isErrorValue
+} from '../AsyncStorage';
+
+import type {
+  AsyncValue
+} from '../AsyncStorage';
+
+
+export class AsyncContentComponent extends React.Component {
   static propTypes = {
-    reference: AsyncReferencePropType.isRequired,
-    render: PropTypes.func.isRequired,
-    // Status renderers
-    referenceEmptyContent: PropTypes.node,
-    reference404Content: PropTypes.node,
-    reference403Content: PropTypes.node,
-    // Literally anything
-    resolvedReference: PropTypes.any
+    base: PropTypes.instanceOf(React.Component).isRequired,
+    baseChildren: PropTypes.arrayOf(PropTypes.element),
+    baseProps: PropTypes.object,
+    // State Components
+    errorComponent: PropTypes.func
   };
 
+  static defaultProps = {
+    baseProps: {},
+    baseChildren: [],
+    errorComponent: DefaultAsyncErrorComponent
+  };
+
+  renderEmpty() {
+    return this.renderLoading();
+  }
+
   renderLoading() {
-    return (<LoadingSpinner/>);
+    return (<LoadingSpinner />);
+  }
+
+  renderError(error :AsyncValue) {
+    const { errorComponent } = this.props;
+    return React.createElement(errorComponent, {
+      error: error.value
+    });
+  }
+
+  renderComplete() {
+    const { base, baseProps, baseChildren } = this.props;
+
+    const asyncProps = fromPairs(toPairs(baseProps)
+      .filter((value) => {
+        return !isValue(value);
+      })
+      .map(([name, prop]) => {
+        return [name, prop.value];
+      }));
+
+    const props = Object.assign({}, baseProps, asyncProps);
+    return React.createElement(base, props, baseChildren);
   }
 
   render() {
-    const {
-      resolvedReference,
-      render,
-      referenceEmptyContent,
-      reference404Content,
-      reference403Content
-    } = this.props;
+    const { baseProps } = this.props;
+    const asyncValues = values(baseProps).filter(isValue);
 
-    switch (resolvedReference) {
-      case STATE.EMPTY_REFERENCE:
-        return referenceEmptyContent ? referenceEmptyContent : this.renderLoading();
-      case STATE.LOADING:
-        return this.renderLoading();
-      case STATE.ACCESS_DENIED:
-        return reference403Content ? reference403Content : render(resolvedReference);
-      case STATE.NOT_FOUND:
-        return reference404Content ? reference404Content : render(resolvedReference);
-      default:
-        return render(resolvedReference);
+    if (asyncValues.some(isErrorValue)) {
+      const error = asyncValues.find(isErrorValue);
+      return this.renderError(error);
+
+    } else if (asyncValues.some(isLoadingValue)) {
+      return this.renderLoading();
+
+    } else if (asyncValues.some(isEmptyValue)) {
+      return this.renderEmpty();
+
+    } else {
+      return this.renderComplete();
     }
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const asyncContent = state.get('async'),
-    { reference } = ownProps;
+function dereferenceProps(asyncContent, props) {
+  if (props === null) {
+    return {};
+  }
+  const dereferencedPairs = toPairs(props).filter(([_, prop]) => {
+    return isReference(prop);
+  }).map(([name, reference]) => {
+    return [name, dereference(asyncContent, reference)];
+  });
+  return fromPairs(dereferencedPairs);
+}
+
+export function mapStateToProps(state, ownProps) {
+  const { baseProps } = ownProps;
+  const asyncValues = dereferenceProps(state.get('async'), baseProps);
+  const dereferencedBaseProps = Object.assign({}, baseProps, asyncValues);
 
   return {
-    resolvedReference: dereference(asyncContent, reference)
-  }
+    baseProps: dereferencedBaseProps
+  };
 }
 
 export default connect(mapStateToProps)(AsyncContentComponent);
+
+
+// export function createAsyncComponent(asyncContentElement) {
+//   const BaseComponent =
+//   return React.createClass({
+//     render: () => {
+//
+//     }
+//   });
+//
+//   asyncContentComponent.propTypes = ((propTypes) => {
+//     return propTypes.map(referenceOrValuePropType);
+//   })(PropertyTypeTitle.propTypes);
+// }

@@ -4,6 +4,7 @@ import { Map } from 'immutable';
 import isString from 'lodash/isString';
 import includes from 'lodash/includes';
 import isUndefined from 'lodash/isUndefined';
+import isEmpty from 'lodash/isEmpty';
 
 export const STATE = Object.freeze({
   EMPTY_REFERENCE: Symbol('empty reference'),
@@ -56,6 +57,22 @@ export function isCompleteValue(value :any) :boolean {
 }
 export function isErrorValue(value :any) :boolean {
   return isValue(value) && value.state === STATE.ERROR;
+}
+/*
+ * Async Reference
+ */
+export function createReference(namespace :string, id :string) {
+  if (!isString(namespace) && !isEmpty(namespace)) {
+    throw Error(`'namespace' must be non-empty string, received: "${namespace}"`);
+  }
+  if (!isString(id) && !isEmpty(id)) {
+    throw Error(`'id' must be non-empty string, received: "${id}"`);
+  }
+
+  return {
+    namespace,
+    id
+  };
 }
 
 /*
