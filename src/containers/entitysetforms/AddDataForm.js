@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import { Permission } from '../../core/permissions/Permission';
+import DatePicker from 'react-bootstrap-date-picker';
 import { AuthorizationApi, DataApi } from 'loom-data';
+import { Permission } from '../../core/permissions/Permission';
+import EdmConsts from '../../utils/Consts/EdmConsts';
 
 import styles from './entitysetforms.module.css';
 
@@ -112,14 +114,26 @@ export default class AddDataForm extends React.Component {
 
   renderPropertyTypeInputs = () => {
     return this.state.authorizedPropertyTypes.map((propertyType) => {
+      let input = (<FormControl
+          type="text"
+          onChange={(e) => {
+            this.updatePropertyTypeValue(propertyType.id, e.target.value);
+          }} />);
+      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+        const value = this.state.propValues[propertyType.id][0];
+        input = (
+          <DatePicker
+              id={`date-${propertyType.id}`}
+              value={value}
+              showTodayButton
+              onChange={(date) => {
+                this.updatePropertyTypeValue(propertyType.id, date);
+              }} />);
+      }
       return (
         <FormGroup key={propertyType.id}>
           <ControlLabel>{propertyType.title}</ControlLabel>
-          <FormControl
-              type="text"
-              onChange={(e) => {
-                this.updatePropertyTypeValue(propertyType.id, e.target.value);
-              }} />
+          {input}
         </FormGroup>
       );
     });

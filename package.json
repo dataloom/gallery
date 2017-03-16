@@ -47,6 +47,7 @@
     "normalizr": "^3.1.0",
     "react": "^15.4.0",
     "react-bootstrap": "^0.30.7",
+    "react-bootstrap-date-picker": "^4.0.0",
     "react-dom": "^15.4.0",
     "react-dropdown": "^1.1.0",
     "react-fontawesome": "^1.4.0",
