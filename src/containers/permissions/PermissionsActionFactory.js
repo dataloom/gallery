@@ -6,6 +6,9 @@ import { DataModels } from 'loom-data';
 
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 
+import { updateAsyncReference } from '../async/AsyncActionFactory';
+import { createStatusAsyncReference } from './PermissionsStorage';
+
 import {
   ALL_PERMISSIONS,
   RequestStatus,
@@ -112,11 +115,15 @@ export function loadOpenStatusesRequest(aclKeys :AclKey[]) {
     reqStatus: RequestStatus.SUBMITTED
   };
 }
-export function updateStatusesStatusesRequest(statuses :Status[]) {
+export function updateStatusesRequest(statuses :Status[]) {
   return {
     type: PermissionsActionTypes.UPDATE_STATUSES,
     statuses
   };
+}
+
+export function updateStatusSuccess(status :Status) {
+  return updateAsyncReference(createStatusAsyncReference(status.aclKey), status);
 }
 
 export function getAclRequest(aclKey :UUID[]) :Object {
