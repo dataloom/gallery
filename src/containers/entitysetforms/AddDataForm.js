@@ -73,7 +73,7 @@ export default class AddDataForm extends React.Component {
     const localDateTimes = {};
     authorizedPropertyTypes.forEach((propertyType) => {
       if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-        localDateTimes[propertyType.id] = [moment(propValues[propertyType.id]).format('YYYY-MM-DD')];
+        localDateTimes[propertyType.id] = [moment(propValues[propertyType.id]).format('YYYY-MM-DDThh:mm:ss')];
       }
     });
     const formattedValues = Object.assign({}, propValues, localDateTimes);
@@ -81,7 +81,6 @@ export default class AddDataForm extends React.Component {
       const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
       return btoa(utf8Val);
     }).join(',');
-    console.log(formattedValues);
     return { [entityKey]: formattedValues };
   }
 
