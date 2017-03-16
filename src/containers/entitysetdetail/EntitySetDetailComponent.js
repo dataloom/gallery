@@ -313,11 +313,6 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
-  onAllPermissions = () => {
-    hashHistory.push('/allpermissions');
-    // hashHistory.push(`/entitysets/${this.props.entitySetId}/allpermissions`);
-  }
-
   renderAddDataButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
@@ -333,14 +328,12 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderAllPermissionsLink = () => {
+  renderPermissionsSummaryLink = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
-      <div>
-        <Button
-            className={styles.center}
-            onClick={this.onAllPermissions}>
-          <span className={styles.buttonText}>View all permissions</span>
+      <div className={styles.buttonWrapper}>
+        <Button className={styles.center}>
+          <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>View Permissions Summary</Link>
         </Button>
       </div>
     );
@@ -411,9 +404,9 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
+          {this.renderPermissionsSummaryLink()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
-          <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>View Permissions Summary</Link>
         </Page.Body>
       </Page>
     );
