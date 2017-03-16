@@ -18,7 +18,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
-import AllPermissions from './Schemas/Components/AllPermissions';
+import AllPermissions from '../../containers/permissionssummary/components/AllPermissions';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';

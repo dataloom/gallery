@@ -150,17 +150,3 @@
   text-align: center;
   margin-right: 10px;
 }
-
-.mainRow {
-  font-weight: bold;
-  background: #f3f5f7;
-}
-
-.subRow {
-  /*background: white;*/
-}
-
-th {
-  color: #fff;
-  background: #4203c5;
-}

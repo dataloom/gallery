@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
-import Page from '../../../../components/page/Page';
+import Page from '../../../components/page/Page';
 import styles from '../styles.module.css';
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
@@ -29,8 +29,13 @@ class AllPermissions extends React.Component {
     this.getUserPermissions = this.getUserPermissions.bind(this);
   }
 
+  componentDidMount() {
+    // WHEN REDUX ACTIONS ARE HOOKED UP, EASY ENOUGH TO CALL AND RELOAD ALL DATA FOR ENTITY
+  }
+
   componentWillReceiveProps() {
     const { properties } = this.props;
+    console.log('PROPS PLEASE:', this.props);
 
     // Get user and role permissions for entity set
     this.getUserPermissions();
@@ -209,13 +214,14 @@ class AllPermissions extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const entitySetDetail = state.get('entitySetDetail');
+  const permissionsSummary = state.get('permissionsSummary');
+
   return {
-    allUsersById: entitySetDetail.get('allUsersById').toJS(),
-    properties: entitySetDetail.get('properties').toJS(),
-    userAcls: entitySetDetail.get('userAcls').toJS(),
-    roleAcls: entitySetDetail.get('roleAcls').toJS(),
-    globalValue: entitySetDetail.get('globalValue').toJS()
+    allUsersById: permissionsSummary.get('allUsersById').toJS(),
+    properties: permissionsSummary.get('properties').toJS(),
+    userAcls: permissionsSummary.get('userAcls').toJS(),
+    roleAcls: permissionsSummary.get('roleAcls').toJS(),
+    globalValue: permissionsSummary.get('globalValue').toJS()
   };
 }
 

@@ -11,6 +11,7 @@ import organizationsReducer from '../../containers/organizations/reducers/Organi
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
 import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
+import permissionsSummaryReducer from '../../containers/permissionssummary/PermissionsSummaryReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
 import datasetsReducer from '../../containers/datasets/DatasetsReducer';
@@ -26,6 +27,7 @@ export default function reduxReducer() {
     createEntitySet: createEntitySetReducer,
     securableObject: securableObjectReducer,
     permissions: permissionReducer,
+    permissionsSummary: permissionsSummaryReducer,
     principals: principalsReducer,
     async: asyncReducer,
     datasets: datasetsReducer,

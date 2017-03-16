@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Link, hashHistory } from 'react-router';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -10,6 +10,7 @@ import { EntityDataModelApi, PermissionsApi, PrincipalsApi } from 'loom-data';
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
@@ -417,11 +418,13 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
+  const permissionsSummary = state.get('permissionsSummary');
 
   let entitySet;
   let entitySetPermissions;
   const reference = entitySetDetail.get('entitySetReference');
   if (reference) {
+    console.log('normalized, ref:', normalizedData, reference);
     entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
     entitySetPermissions = getPermissions(permissions, [entitySet.id]);
   }
@@ -429,11 +432,13 @@ function mapStateToProps(state) {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
+  console.log('asyncState, properties', entitySetDetail.get('asyncState'), entitySetDetail.get('properties'));
+
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
     entitySetPermissions,
-    entityProperties: entitySetDetail.get('properties').toJS()
+    entityProperties: permissionsSummary.get('properties').toJS()
   };
 }
 
@@ -453,25 +458,25 @@ function mapDispatchToProps(dispatch, ownProps) {
       ));
     },
     setEntityData: (data) => {
-      dispatch(actionFactories.setEntityData(data));
+      dispatch(psActionFactories.setEntityData(data));
     },
     setPropertyData: (data) => {
-      dispatch(actionFactories.setPropertyData(data));
+      dispatch(psActionFactories.setPropertyData(data));
     },
     setAllUsersAndRoles: (users, roles) => {
-      dispatch(actionFactories.setAllUsersAndRoles(users, roles));
+      dispatch(psActionFactories.setAllUsersAndRoles(users, roles));
     },
     setLoadUsersError: (bool) => {
-      dispatch(actionFactories.setLoadUsersError(bool));
+      dispatch(psActionFactories.setLoadUsersError(bool));
     },
     setNewRoleValue: (value) => {
-      dispatch(actionFactories.setNewRoleValue(value));
+      dispatch(psActionFactories.setNewRoleValue(value));
     },
     setNewEmailValue: (value) => {
-      dispatch(actionFactories.setNewEmailValue(value));
+      dispatch(psActionFactories.setNewEmailValue(value));
     },
     setUpdateError: (bool) => {
-      dispatch(actionFactories.setUpdateError(bool));
+      dispatch(psActionFactories.setUpdateError(bool));
     }
   };
 }
