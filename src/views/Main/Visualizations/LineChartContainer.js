@@ -16,7 +16,7 @@ export class LineChartContainer extends React.Component {
     super();
     this.state = {
       xAxisProp: undefined,
-      selectedYProps: undefined
+      selectedYProps: []
     };
   }
 

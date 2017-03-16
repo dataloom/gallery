@@ -61,36 +61,31 @@ export class LineChartVisualization extends React.Component {
   formatData = () => {
     const formattedData = [];
     const fqnIsDate = {};
+    const fqnIsNumber = {};
     this.props.allProps.forEach((prop) => {
       fqnIsDate[`${prop.type.namespace}.${prop.type.name}`] = EdmConsts.EDM_DATE_TYPES.includes(prop.datatype);
+      fqnIsNumber[`${prop.type.namespace}.${prop.type.name}`] = EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype);
     });
     this.props.data.forEach((dataPoint) => {
       const formattedPoint = {};
       let isValidPoint = true;
       Object.keys(dataPoint).forEach((key) => {
-        if (fqnIsDate[key]) {
-          formattedPoint[key] = new Date(dataPoint[key][0]).getTime();
-        }
-        else {
-          const value = parseFloat(dataPoint[key][0]);
-          if (isNaN(value)) {
-            isValidPoint = false;
-          }
-          else {
-            formattedPoint[key] = value;
-          }
-        }
+        const isDate = fqnIsDate[key];
+        const isNum = fqnIsNumber[key];
+        let value = dataPoint[key][0];
+        if (isDate) value = new Date(value).getTime();
+        else if (isNum) value = parseFloat(value);
+        formattedPoint[key] = value;
+        if ((isNum || isDate) && isNaN(value)) isValidPoint = false;
       });
-      if (isValidPoint) {
-        formattedData.push(formattedPoint);
-      }
+      if (isValidPoint) formattedData.push(formattedPoint);
     });
     this.setState({ formattedData });
   }
 
   render() {
     const { FullyQualifiedName } = DataModels;
-    if (!this.props.xProp || !this.props.yProps) return null;
+    if (!this.props.xProp) return null;
 
     const xProp = JSON.parse(this.props.xProp);
     const xPropFqn = `${xProp.type.namespace}.${xProp.type.name}`;
