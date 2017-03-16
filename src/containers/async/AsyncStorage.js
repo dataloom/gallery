@@ -45,6 +45,18 @@ export function isValue(value :any) :boolean {
     includes(STATE, value.state) &&
     !isUndefined(value.value));
 }
+export function isEmptyValue(value :any) :boolean {
+  return isValue(value) && value.state === STATE.EMPTY_REFERENCE;
+}
+export function isLoadingValue(value :any) :boolean {
+  return isValue(value) && value.state === STATE.LOADING;
+}
+export function isCompleteValue(value :any) :boolean {
+  return isValue(value) && value.state === STATE.COMPLETE;
+}
+export function isErrorValue(value :any) :boolean {
+  return isValue(value) && value.state === STATE.ERROR;
+}
 
 /*
  * Async Values

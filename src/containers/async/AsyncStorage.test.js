@@ -7,8 +7,14 @@ import {
   isValue,
   dereference,
   resolveReference,
-  createCompleteValue,
   createEmptyValue,
+  isEmptyValue,
+  createCompleteValue,
+  isCompleteValue,
+  createLoadingValue,
+  isLoadingValue,
+  createErrorValue,
+  isErrorValue,
   STATE
 } from './AsyncStorage';
 
@@ -17,6 +23,7 @@ describe('AsyncStorage', function() {
     namespace: 'abc',
     id: '123'
   };
+
 
   describe('isReference', function() {
     it('should return true for reference', function() {
@@ -32,14 +39,10 @@ describe('AsyncStorage', function() {
     });
   });
 
+
   describe('isValue', function() {
-
     it('should return true for value', function () {
-      const value = {
-        state: STATE.EMPTY_REFERENCE,
-        value: null
-      };
-
+      const value = createEmptyValue();
       expect(isValue(value)).to.be.true;
     });
 
@@ -56,6 +59,7 @@ describe('AsyncStorage', function() {
         state: STATE.EMPTY_REFERENCE
       })).to.be.false;
     });
+
     it('should return false for state not in STATE', function() {
       expect(isValue({
         state: Symbol('hi'),
@@ -64,8 +68,60 @@ describe('AsyncStorage', function() {
     });
   });
 
-  describe('resolveReference', function() {
 
+  describe('isEmptyValue', function() {
+    it('should return true for error value', function() {
+      const value = createEmptyValue();
+      expect(isEmptyValue(value)).to.be.true;
+    });
+
+    it('should return false for error value', function() {
+      const value = createErrorValue('error');
+      expect(isEmptyValue(value)).to.be.false;
+    });
+  });
+
+
+  describe('isLoadingValue', function() {
+    it('should return true for error value', function() {
+      const value = createLoadingValue();
+      expect(isLoadingValue(value)).to.be.true;
+    });
+
+    it('should return false for error value', function() {
+      const value = createErrorValue('error');
+      expect(isLoadingValue(value)).to.be.false;
+    });
+  });
+
+
+  describe('isCompleteValue', function() {
+    it('should return true for error value', function() {
+      const value = createCompleteValue(5);
+      expect(isCompleteValue(value)).to.be.true;
+    });
+
+    it('should return false for error value', function() {
+      const value = createErrorValue('error');
+      expect(isCompleteValue(value)).to.be.false;
+    });
+  });
+
+
+  describe('isErrorValue', function() {
+    it('should return true for error value', function() {
+      const value = createErrorValue('error');
+      expect(isErrorValue(value)).to.be.true;
+    });
+
+    it('should return false for error value', function() {
+      const value = createCompleteValue("");
+      expect(isErrorValue(value)).to.be.false;
+    });
+  });
+
+
+  describe('resolveReference', function() {
     it('should resolve value', function () {
       const expectedValue = createCompleteValue(6);
       let asyncContent = fromJS({});
@@ -76,8 +132,8 @@ describe('AsyncStorage', function() {
     });
   });
 
-  describe('dereference', function() {
 
+  describe('dereference', function() {
     it('should return empty reference', function() {
       const asyncContent = fromJS({});
 
