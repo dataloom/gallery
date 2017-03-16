@@ -3,13 +3,18 @@ import { Table } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
 export default class RolePermissionsTable extends React.Component {
+  static propTypes = {
+    rolePermissions: PropTypes.object.isRequired,
+    headers: PropTypes.array.isRequired
+  }
+
   getRows = () => {
     const { rolePermissions } = this.props;
     const rows = [];
 
     if (rolePermissions) {
       Object.keys(rolePermissions).forEach((role, i) => {
-        var roleStr = role;
+        let roleStr = role;
         if (role === 'AuthenticatedUser') {
           roleStr = 'Default for all users';
         }
