@@ -142,7 +142,7 @@ export default class UserPermissionsTable extends React.Component {
     return (
       <div>
         <SearchBar onChange={this.onSearchInput} />
-        <Table bordered responsive className={styles.expandableTable}>
+        <Table bordered responsive className={styles.table}>
           <thead>
             <tr>
               {headers}

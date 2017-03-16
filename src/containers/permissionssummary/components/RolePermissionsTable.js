@@ -31,7 +31,7 @@ export default class RolePermissionsTable extends React.Component {
     });
 
     return (
-      <Table bordered responsive className={styles.expandableTable}>
+      <Table bordered responsive className={styles.table}>
         <thead>
           <tr>
             {headers}
