@@ -9,19 +9,27 @@ const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
+  static propTypes = {
+    properties: PropTypes.object.isRequired,
+    userAcls: PropTypes.object.isRequired,
+    roleAcls: PropTypes.object.isRequired,
+    globalValue: PropTypes.array.isRequired,
+    allUsersById: PropTypes.array.isRequired
+  }
+
   constructor(props) {
     super(props);
 
     this.state = {
       entityUserPermissions: [],
-      entityRolePermissions: [],
+      entityRolePermissions: {},
       propertyPermissions: {}
     };
 
     this.getUserPermissions = this.getUserPermissions.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     const { properties } = this.props;
 
     // Get user and role permissions for entity set
@@ -109,7 +117,9 @@ class AllPermissions extends React.Component {
       this.setState({ propertyPermissions: propertyUserPermissions });
     }
     else {
-      this.setState({ entityUserPermissions: formattedPermissions });
+      this.setState({ entityUserPermissions: formattedPermissions }, () => {
+        console.log('entityUserPermissions:', this.state.entityUserPermissions);
+      });
     }
   }
 
@@ -148,16 +158,20 @@ class AllPermissions extends React.Component {
       this.setState({ propertyPermissions: propertyRolePermissions });
     }
     else {
-      this.setState({ entityRolePermissions: formattedPermissions });
+      this.setState({ entityRolePermissions: formattedPermissions }, () => {
+        console.log('entityRolePermissions:', this.state.entityRolePermissions);
+      });
     }
   }
 
   renderPropertyTables() {
     const { propertyPermissions } = this.state;
+    console.log('propertyPermissions', propertyPermissions);
     const tables = [];
 
     Object.keys(propertyPermissions).forEach((property) => {
       const { userPermissions, rolePermissions } = propertyPermissions[property];
+      console.log('userPermissions, rolePermissions (by property):', propertyPermissions[property], userPermissions, rolePermissions);
       const header = <h3>{property}</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}
@@ -205,7 +219,7 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch) {
   return {
 
   };
