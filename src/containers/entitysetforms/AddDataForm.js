@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
+import moment from 'moment';
 import { AuthorizationApi, DataApi } from 'loom-data';
 import { Permission } from '../../core/permissions/Permission';
 import EdmConsts from '../../utils/Consts/EdmConsts';
@@ -68,12 +69,20 @@ export default class AddDataForm extends React.Component {
   }
 
   generateEntites = () => {
-    const propValues = this.state.propValues;
+    const { propValues, authorizedPropertyTypes } = this.state;
+    const localDateTimes = {};
+    authorizedPropertyTypes.forEach((propertyType) => {
+      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+        localDateTimes[propertyType.id] = [moment(propValues[propertyType.id]).format('YYYY-MM-DD')];
+      }
+    });
+    const formattedValues = Object.assign({}, propValues, localDateTimes);
     const entityKey = this.props.primaryKey.map((keyId) => {
-      const utf8Val = (propValues[keyId].length > 0) ? encodeURI(propValues[keyId][0]) : '';
+      const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
       return btoa(utf8Val);
     }).join(',');
-    return { [entityKey]: propValues };
+    console.log(formattedValues);
+    return { [entityKey]: formattedValues };
   }
 
   onSubmit = (e) => {
