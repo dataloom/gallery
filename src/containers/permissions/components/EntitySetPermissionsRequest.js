@@ -191,7 +191,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     loadPrincipal: PrincipalsActionFactory.loadPrincipalDetails,
-    updateStatuses: PermissionsActionFactory.updateStatusesStatusesRequest
+    updateStatuses: PermissionsActionFactory.updateStatusesRequest
   }, dispatch);
 }
 
