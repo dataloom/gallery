@@ -147,3 +147,7 @@
   font-size: 16px;
   padding: 10px;
 }
+
+.titleLink, .titleLink:hover {
+  color: inherit;
+}
