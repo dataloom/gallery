@@ -56,7 +56,7 @@ class RoleRow extends React.Component {
 class UserGroupRow extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
-    rolePermissions: PropTypes.object.isRequred
+    rolePermissions: PropTypes.object.isRequired
   }
 
   getRoleRows = () => {
@@ -93,7 +93,10 @@ class SearchBar extends React.Component {
   render() {
     return (
       <form>
-        <input type="text" placeholder="Search..." onChange={(e) => {this.props.onChange(e)}} />
+        <input
+            type="text" placeholder="Search..." onChange={(e) => {
+              this.props.onChange(e);
+            }} />
       </form>
     );
   }
@@ -111,12 +114,11 @@ export default class UserPermissionsTable extends React.Component {
 
     this.state = {
       searchInput: ''
-    }
+    };
   }
 
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
-    console.log('RECEIVED BY UPT: rolePermissions, userPermissions', rolePermissions, userPermissions);
     const rows = [];
     userPermissions.forEach((user) => {
       //TODO for search: if user.nickname || user.email contains query input, push; else continue
@@ -128,7 +130,7 @@ export default class UserPermissionsTable extends React.Component {
 
   onSearchInput = (e) => {
     e.preventDefault();
-    this.setState({searchInput: e.target.value});
+    this.setState({ searchInput: e.target.value });
   }
 
   render() {
