@@ -5,7 +5,10 @@ import { Map } from 'immutable';
 
 import '../../../../config/chai/chai.config';
 
-import { AsyncContentComponent, mapStateToProps } from './AsyncContentComponent';
+import {
+  AsyncContentComponent,
+  mapStateToProps
+} from './AsyncContentComponent';
 import DefaultAsyncErrorComponent from './DefaultAsyncErrorComponent';
 import LoadingSpinner from './LoadingSpinner';
 import {
@@ -154,7 +157,6 @@ describe('AsyncContentComponent', function() {
     expect(wrapper).to.contain(<LoadingSpinner />);
   });
 });
-
 
 describe('mapStateToProps', function() {
   it('should replace references with values', function() {

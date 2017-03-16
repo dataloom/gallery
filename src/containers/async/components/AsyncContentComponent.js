@@ -13,7 +13,8 @@ import {
   isValue,
   isEmptyValue,
   isLoadingValue,
-  isErrorValue
+  isErrorValue,
+  referenceOrValuePropType
 } from '../AsyncStorage';
 
 import type {
@@ -108,18 +109,23 @@ export function mapStateToProps(state, ownProps) {
   };
 }
 
-export default connect(mapStateToProps)(AsyncContentComponent);
+export const SmartAsyncContentComponent = connect(mapStateToProps)(AsyncContentComponent);
 
 
-// export function createAsyncComponent(asyncContentElement) {
-//   const BaseComponent =
-//   return React.createClass({
-//     render: () => {
-//
-//     }
-//   });
-//
-//   asyncContentComponent.propTypes = ((propTypes) => {
-//     return propTypes.map(referenceOrValuePropType);
-//   })(PropertyTypeTitle.propTypes);
-// }
+export function createAsyncComponent(baseComponent, errorComponent = DefaultAsyncErrorComponent) {
+  const propTypes = baseComponent.propTypes.map(referenceOrValuePropType);
+
+  return class extends React.Component {
+    static propTypes = propTypes;
+    static defaultProps = baseComponent.defaultProps;
+
+    render() {
+      const { children } = this.props;
+      return (
+        <SmartAsyncContentComponent
+            base={baseComponent}
+            baseChildren={children}
+            errorComponent={errorComponent} />);
+    }
+  };
+}
