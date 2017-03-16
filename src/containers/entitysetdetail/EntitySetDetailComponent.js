@@ -86,6 +86,8 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   //////// PERMISSIONS LOGIC ///////////
+
+  // REFACTOR ME FIRST
   loadAcls = (entitySetId, property) => {
     const aclKey = [entitySetId];
     if (property && property.id) aclKey.push(property.id);
@@ -104,8 +106,8 @@ class EntitySetDetailComponent extends React.Component {
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
-    const myId = JSON.parse(localStorage.profile).user_id;
-    PrincipalsApi.getAllUsers()
+    const myId = JSON.parse(localStorage.profile).user_id; // to reducer
+    PrincipalsApi.getAllUsers() // epic observable
     .then((users) => {
       allUsersById = users;
       Object.keys(users).forEach((userId) => {
@@ -331,10 +333,10 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderAllPermissionsButton = () => {
+  renderAllPermissionsLink = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
-      <div className={styles.buttonWrapper} >
+      <div>
         <Button
             className={styles.center}
             onClick={this.onAllPermissions}>
@@ -409,9 +411,9 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
-          {this.renderAllPermissionsButton()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
+          <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>View Permissions Summary</Link>
         </Page.Body>
       </Page>
     );
