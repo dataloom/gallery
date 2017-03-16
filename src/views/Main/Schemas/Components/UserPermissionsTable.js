@@ -3,12 +3,17 @@ import { Table } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
 class UserRow extends React.Component {
+  static propTypes = {
+    user: PropTypes.object.isRequired
+  }
+
   getUserCellData = () => {
     if (this.props.user.nickname) {
       return `${this.props.user.nickname} (${this.props.user.email})`;
-    } else {
-      return this.props.user.email;
     }
+
+    return this.props.user.email;
+
   }
 
   render() {
@@ -23,23 +28,25 @@ class UserRow extends React.Component {
 }
 
 class RoleRow extends React.Component {
-  componentDidMount() {
-    const { permissions } = this.props;
+  static propTypes = {
+    permissions: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired
   }
 
   getPermissions = () => {
-
-    if (this.props.permissions) {
-      return this.props.permissions;
+    const { permissions } = this.props;
+    if (permissions) {
+      return permissions;
     }
     return 'none';
   }
 
   render() {
+    const { role } = this.props;
     return (
       <tr className={styles.subRow}>
         <td />
-        <td>{this.props.role}</td>
+        <td>{role}</td>
         <td>{this.getPermissions()}</td>
       </tr>
     );
@@ -47,12 +54,21 @@ class RoleRow extends React.Component {
 }
 
 class UserGroupRow extends React.Component {
+  static propTypes = {
+    user: PropTypes.object.isRequired,
+    rolePermissions: PropTypes.object.isRequred
+  }
+
   getRoleRows = () => {
-    const rolePermissions = this.props.rolePermissions;
+    const { user, rolePermissions } = this.props;
     const roleRows = [];
-    if (this.props.user && this.props.user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
-      this.props.user.roles.forEach((role) => {
-        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${this.props.user.id}-${role}`} />);
+    if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
+      user.roles.forEach((role) => {
+        // TODO: FIGURE OUT WHY THIS IS SO OFTEN UNDEFINED
+        if (rolePermissions[role] === undefined) {
+          rolePermissions[role] = '';
+        }
+        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}`} />);
       });
     }
     return roleRows;
@@ -70,6 +86,9 @@ class UserGroupRow extends React.Component {
 }
 
 class SearchBar extends React.Component {
+  static propTypes = {
+    onChange: PropTypes.func.isRequired
+  }
 
   render() {
     return (
@@ -81,6 +100,12 @@ class SearchBar extends React.Component {
 }
 
 export default class UserPermissionsTable extends React.Component {
+  static propTypes = {
+    rolePermissions: PropTypes.object.isRequired,
+    userPermissions: PropTypes.array.isRequired,
+    headers: PropTypes.array.isRequired
+  }
+
   constructor(props) {
     super(props);
 
@@ -90,10 +115,11 @@ export default class UserPermissionsTable extends React.Component {
   }
 
   getUserGroupRows = () => {
-    const { rolePermissions } = this.props;
+    const { rolePermissions, userPermissions } = this.props;
+    console.log('RECEIVED BY UPT: rolePermissions, userPermissions', rolePermissions, userPermissions);
     const rows = [];
-    this.props.userPermissions.forEach((user) => {
-      // if user.nickname || user.email contains query input, push; else continue
+    userPermissions.forEach((user) => {
+      //TODO for search: if user.nickname || user.email contains query input, push; else continue
       rows.push(<UserGroupRow user={user} rolePermissions={rolePermissions} key={user.id} />);
     });
 
