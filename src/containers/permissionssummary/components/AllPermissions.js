@@ -55,7 +55,7 @@ class AllPermissions extends React.Component {
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
-      if (userId && allUsersById[userId] && allUsersById[userId].roles.length > 1) { // TODO: ADD CONDITIONAL FOR IF ALUSERSBYID[USERID].ROLES.LENGTH > 0
+      if (userId && allUsersById[userId]) {
         const user = {
           id: userId,
           nickname: allUsersById[userId].nickname,
@@ -71,7 +71,7 @@ class AllPermissions extends React.Component {
           }
         });
 
-        // if (allUsersById[userId].roles.length > 1) {
+        if (allUsersById[userId].roles.length > 1) {
           Object.keys(roleAcls).forEach((permissionKey) => {
             allUsersById[userId].roles.forEach((role) => {
               if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
@@ -82,7 +82,7 @@ class AllPermissions extends React.Component {
               }
             });
           });
-        // }
+        }
 
         // Add permissions based on default for all users
         if (globalValue) {
@@ -100,32 +100,42 @@ class AllPermissions extends React.Component {
   }
 
   setUserPermissions = (permissions, property) => {
-    const formattedPermissions = permissions.slice();
-
-    // Format permissions for table
-    formattedPermissions.forEach((user) => {
-      if (user) {
-        if (user.permissions.length === 0) {
-          user.permissions = 'none';
-        }
-        else {
-          user.permissions = user.permissions.join(', ');
-        }
-      }
-    });
-
     if (property) {
       const propertyUserPermissions = this.state.propertyPermissions;
       propertyUserPermissions[property.title] = {};
-      propertyUserPermissions[property.title].userPermissions = formattedPermissions;
+      propertyUserPermissions[property.title].userPermissions = permissions;
 
       this.setState({ propertyPermissions: propertyUserPermissions });                                  // -> REDUX
     }
     else {
-      this.setState({ entityUserPermissions: formattedPermissions }, () => {                              // -> REDUX
-        console.log('entityUserPermissions:', this.state.entityUserPermissions);
-      });
+      this.setState({ entityUserPermissions: permissions });
     }
+    // const formattedPermissions = permissions.slice();
+    //
+    // // Format permissions for table
+    // formattedPermissions.forEach((user) => {
+    //   if (user) {
+    //     if (user.permissions.length === 0) {
+    //       user.permissions = 'none';
+    //     }
+    //     else {
+    //       user.permissions = user.permissions.join(', ');
+    //     }
+    //   }
+    // });
+    //
+    // if (property) {
+    //   const propertyUserPermissions = this.state.propertyPermissions;
+    //   propertyUserPermissions[property.title] = {};
+    //   propertyUserPermissions[property.title].userPermissions = formattedPermissions;
+    //
+    //   this.setState({ propertyPermissions: propertyUserPermissions });                                  // -> REDUX
+    // }
+    // else {
+    //   this.setState({ entityUserPermissions: formattedPermissions }, () => {                              // -> REDUX
+    //     console.log('entityUserPermissions:', this.state.entityUserPermissions);
+    //   });
+    // }
   }
 
   getRolePermissions = (property) => {
@@ -150,23 +160,31 @@ class AllPermissions extends React.Component {
   }
 
   setRolePermissions = (permissions, property) => {
-    const formattedPermissions = {};
-
-    // Format data for table
-    Object.keys(permissions).forEach((role) => {
-      formattedPermissions[role] = permissions[role].join(', ');
-    });
-
     if (property) {
       const propertyRolePermissions = this.state.propertyPermissions;
-      propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
+      propertyRolePermissions[property.title].rolePermissions = permissions;
       this.setState({ propertyPermissions: propertyRolePermissions });                                  // -> REDUX
     }
     else {
-      this.setState({ entityRolePermissions: formattedPermissions }, () => {                              // -> REDUX
-        console.log('entityRolePermissions:', this.state.entityRolePermissions);
-      });
+      this.setState({ entityRolePermissions: permissions });
     }
+    // const formattedPermissions = {};
+    //
+    // // Format data for table
+    // Object.keys(permissions).forEach((role) => {
+    //   formattedPermissions[role] = permissions[role].join(', ');
+    // });
+    //
+    // if (property) {
+    //   const propertyRolePermissions = this.state.propertyPermissions;
+    //   propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
+    //   this.setState({ propertyPermissions: propertyRolePermissions });                                  // -> REDUX
+    // }
+    // else {
+    //   this.setState({ entityRolePermissions: formattedPermissions }, () => {                              // -> REDUX
+    //     console.log('entityRolePermissions:', this.state.entityRolePermissions);
+    //   });
+    // }
   }
 
   renderPropertyTables() {

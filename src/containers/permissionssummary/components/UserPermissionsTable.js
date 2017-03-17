@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { Table } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
@@ -76,7 +77,7 @@ class UserGroupRow extends React.Component {
 
   render() {
     return (
-      <tbody>
+      <tbody className={this.props.className}>
         <UserRow user={this.props.user} key={this.props.user.id} />
         {this.getRoleRows()}
       </tbody>
@@ -103,11 +104,12 @@ class SearchBar extends React.Component {
   }
 }
 
-export default class UserPermissionsTable extends React.Component {
+class UserPermissionsTable extends React.Component {
   static propTypes = {
     rolePermissions: PropTypes.object.isRequired,
     userPermissions: PropTypes.array.isRequired,
-    headers: PropTypes.array.isRequired
+    headers: PropTypes.array.isRequired,
+    globalValue: PropTypes.array.isRequired
   }
 
   constructor(props) {
@@ -118,12 +120,24 @@ export default class UserPermissionsTable extends React.Component {
     };
   }
 
+  componentWillReceiveProps() {
+    // console.log('UPT gv props:', this.props.globalValue);
+  }
+
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
     const rows = [];
     userPermissions.forEach((user) => {
       //TODO for search: if user.nickname || user.email contains query input, push; else continue
-      rows.push(<UserGroupRow user={user} rolePermissions={rolePermissions} key={user.id} />);
+      if (user.permissions.length > 0) {
+        user.permissions.forEach((permission) => {
+          if (this.props.globalValue.indexOf(permission) === -1) {
+            rows.push(<UserGroupRow user={user} rolePermissions={rolePermissions} key={user.id} />);
+            return;
+          }
+        });
+      }
+      rows.push(<UserGroupRow className={styles.hidden} user={user} rolePermissions={rolePermissions} key={user.id} />);
     });
 
     return rows;
@@ -140,6 +154,9 @@ export default class UserPermissionsTable extends React.Component {
       headers.push(<th key={i}>{header}</th>);
     });
 
+    // TODO: Add checkbox to show/hide all users (default: show only users with non-default permissions);
+    // TODO: Get globalValue from state
+
     return (
       <div>
         <Table bordered responsive className={styles.table}>
@@ -154,3 +171,13 @@ export default class UserPermissionsTable extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  const permissionsSummary = state.get('permissionsSummary');
+
+  return {
+    globalValue: permissionsSummary.get('globalValue').toJS()
+  }
+}
+
+export default connect(mapStateToProps)(UserPermissionsTable);
