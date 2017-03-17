@@ -11,6 +11,7 @@ import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
+import * as principalsActionFactory from '../principals/PrincipalsActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
@@ -74,6 +75,8 @@ class EntitySetDetailComponent extends React.Component {
 
   componentDidMount() {
     this.props.loadEntitySet();
+    //TEST - REMOVE
+    // this.props.testGetAllUsers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -84,6 +87,8 @@ class EntitySetDetailComponent extends React.Component {
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
+
+    console.log('ALL USERS? ', this.props.allUsers);
   }
 
   //////// PERMISSIONS LOGIC ///////////
@@ -110,6 +115,8 @@ class EntitySetDetailComponent extends React.Component {
     const myId = JSON.parse(localStorage.profile).user_id; // to reducer
     PrincipalsApi.getAllUsers() // epic observable
     .then((users) => {
+      console.log('USERS FROM EXISTING CALL:', users);
+
       allUsersById = users;
       Object.keys(users).forEach((userId) => {
         users[userId].roles.forEach((role) => {
@@ -438,7 +445,8 @@ function mapStateToProps(state) {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
     entitySetPermissions,
-    entityProperties: permissionsSummary.get('properties').toJS()
+    entityProperties: permissionsSummary.get('properties').toJS(),
+    // allUsers: permissionsSummary.get('users').toJS()
   };
 }
 
@@ -477,6 +485,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setUpdateError: (bool) => {
       dispatch(psActionFactories.setUpdateError(bool));
+    },
+    testGetAllUsers: () => {
+      dispatch(principalsActionFactory.fetchAllUsersRequest());
     }
   };
 }

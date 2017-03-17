@@ -20,7 +20,7 @@ class UserRow extends React.Component {
     return (
       <tr className={styles.mainRow}>
         <td>{this.getUserCellData()}</td>
-        <td>Effective permissions:</td>
+        <td></td>
         <td>{this.props.user.permissions}</td>
       </tr>
     );

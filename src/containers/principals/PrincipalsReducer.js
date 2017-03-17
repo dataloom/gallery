@@ -15,9 +15,11 @@ export default function principalsReducer(state :Immutable.Map = INITIAL_STATE, 
   switch (action.type) {
 
     case PrincipalsActionTypes.FETCH_USERS_SUCCESS: {
-
+      // TODO: set state with action.users
       // TODO: this needs to be implemented in PrincipalsEpic
-      return state;
+      return state.merge({
+        users: action.users
+      });
     }
 
     case PrincipalsActionTypes.FETCH_USER_SUCCESS: {
