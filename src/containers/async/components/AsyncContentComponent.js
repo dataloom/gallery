@@ -1,15 +1,13 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import toPairs from 'lodash/toPairs';
-import fromPairs from 'lodash/fromPairs';
-import values from 'lodash/values';
+import mapValues from 'lodash/mapValues';
+import flatMapDeep from 'lodash/flatMapDeep';
 
 import LoadingSpinner from './LoadingSpinner';
 import DefaultAsyncErrorComponent from './DefaultAsyncErrorComponent';
 
 import {
-  dereference,
-  isReference,
+  smartDereference,
   isValue,
   isEmptyValue,
   isLoadingValue,
@@ -55,54 +53,39 @@ export class AsyncContentComponent extends React.Component {
   renderComplete() {
     const { base, baseProps, baseChildren } = this.props;
 
-    const asyncProps = fromPairs(toPairs(baseProps)
-      .filter((value) => {
-        return !isValue(value);
-      })
-      .map(([name, prop]) => {
-        return [name, prop.value];
-      }));
+    const props = mapValues(baseProps, (prop) => {
+      return isValue(prop) ? prop.value : prop;
+    });
 
-    const props = Object.assign({}, baseProps, asyncProps);
     return React.createElement(base, props, baseChildren);
   }
 
   render() {
     const { baseProps } = this.props;
-    const asyncValues = values(baseProps).filter(isValue);
+    const asyncValues = flatMapDeep(baseProps).filter(isValue);
 
     if (asyncValues.some(isErrorValue)) {
       const error = asyncValues.find(isErrorValue);
       return this.renderError(error);
-
-    } else if (asyncValues.some(isLoadingValue)) {
-      return this.renderLoading();
-
-    } else if (asyncValues.some(isEmptyValue)) {
-      return this.renderEmpty();
-
-    } else {
-      return this.renderComplete();
     }
-  }
-}
+    else if (asyncValues.some(isLoadingValue)) {
+      return this.renderLoading();
+    }
+    else if (asyncValues.some(isEmptyValue)) {
+      return this.renderEmpty();
+    }
 
-function dereferenceProps(asyncContent, props) {
-  if (props === null) {
-    return {};
+    return this.renderComplete();
   }
-  const dereferencedPairs = toPairs(props).filter(([_, prop]) => {
-    return isReference(prop);
-  }).map(([name, reference]) => {
-    return [name, dereference(asyncContent, reference)];
-  });
-  return fromPairs(dereferencedPairs);
 }
 
 export function mapStateToProps(state, ownProps) {
   const { baseProps } = ownProps;
-  const asyncValues = dereferenceProps(state.get('async'), baseProps);
-  const dereferencedBaseProps = Object.assign({}, baseProps, asyncValues);
+  const asyncContent = state.get('async');
+
+  const dereferencedBaseProps = mapValues(baseProps, (value) => {
+    return smartDereference(asyncContent, value);
+  });
 
   return {
     baseProps: dereferencedBaseProps
@@ -112,13 +95,22 @@ export function mapStateToProps(state, ownProps) {
 export const SmartAsyncContentComponent = connect(mapStateToProps)(AsyncContentComponent);
 
 export function createAsyncComponent(baseComponent, errorComponent = DefaultAsyncErrorComponent) {
-  const propTypes = fromPairs(toPairs(baseComponent.propTypes).map(([name, propType]) => {
+  const propTypes = mapValues(baseComponent.propTypes, (propType, name) => {
     if (name === 'children') {
-      return [name, propType];
-    } else {
-      return [name, referenceOrValuePropType(propType)];
+      return propType;
     }
-  }));
+
+    if (propType === PropTypes.array || propType === PropTypes.array.isRequired) {
+      let newPropType = PropTypes.arrayOf(PropTypes.any);
+
+      if (propType === PropTypes.array.isRequired) {
+        newPropType = newPropType.isRequired;
+      }
+      return newPropType;
+    }
+
+    return referenceOrValuePropType(propType);
+  });
 
   return class extends React.Component {
     static propTypes = propTypes;

@@ -154,7 +154,7 @@ describe('AsyncStorage', function() {
   });
 
 
-  describe.only('smartDereference', function() {
+  describe('smartDereference', function() {
     it('should ignore non-reference objects', function() {
       const value = 5;
       expect(smartDereference(asyncContent, value)).to.equal(value);

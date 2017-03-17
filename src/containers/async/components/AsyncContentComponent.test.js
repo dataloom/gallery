@@ -80,7 +80,7 @@ describe('AsyncContentComponent', function() {
             foo: createCompleteValue(value)
           }} />);
 
-    expect(wrapper).to.contain(<TestComponent foo={value} />);
+    expect(wrapper).to.contain(<TestComponent foo={value} fiz={TestComponent.defaultProps.fiz} />);
   });
 
   it('should render multiple complete properties', function() {
@@ -157,84 +157,158 @@ describe('AsyncContentComponent', function() {
 
     expect(wrapper).to.contain(<LoadingSpinner />);
   });
-});
 
 
-describe('createAsyncComponent', function() {
-  it('should map propTypes', function() {
-    const asyncComponent = createAsyncComponent(TestComponent);
+  describe('deep rendering', function() {
+    it('should inspect arrays for references', function() {
+      class WithArray extends React.Component {
+        static propTypes = {
+          items: PropTypes.array
+        };
 
-    expect(asyncComponent).to.have.deep.property('propTypes.foo');
-    expect(asyncComponent).to.have.deep.property('propTypes.fiz');
-    expect(asyncComponent).to.have.deep.property('propTypes.children');
-  });
+        render() {
+          const { items } = this.props;
+          const content = items.map((item) => {
+            return (<span>{item}</span>);
+          });
 
-  it('should not make "children" propType async', function() {
-    const asyncComponent = createAsyncComponent(TestComponent);
-
-    expect(asyncComponent).to.have.deep.property('propTypes.children')
-      .equal(TestComponent.propTypes.children);
-  });
-
-  it('should map defaultProps', function() {
-    const asyncComponent = createAsyncComponent(TestComponent);
-    expect(asyncComponent).to.have.property('defaultProps')
-      .equal(TestComponent.defaultProps);
-  });
-
-  it('should include baseProperties', function() {
-    const AsyncComponent = createAsyncComponent(TestComponent);
-    const foo = 'foo';
-    const expectedProps = Object.assign({}, TestComponent.defaultProps, { foo });
-    delete expectedProps.children;
-    const wrapper = shallow(<AsyncComponent foo={foo} />);
-
-    expect(wrapper).to.have.prop('baseProps')
-      .deep.equal(expectedProps);
-  });
-
-  it('should include base', function() {
-    const AsyncComponent = createAsyncComponent(TestComponent);
-    const wrapper = shallow(<AsyncComponent />);
-
-    expect(wrapper).to.have.prop('base').equal(TestComponent);
-  });
-
-  it('should allow children', function() {
-    const AsyncComponent = createAsyncComponent(TestComponent);
-    const children = (<span>hello</span>);
-    const wrapper = shallow(<AsyncComponent>{children}</AsyncComponent>);
-
-    expect(wrapper).to.have.prop('baseChildren').equal(children);
-  });
-
-  it('should allow custom error component', function() {
-    const errorComponent = () => {};
-    const AsyncComponent = createAsyncComponent(TestComponent, errorComponent);
-    const wrapper = shallow(<AsyncComponent foo="hi" />);
-
-    expect(wrapper).to.have.prop('errorComponent').equal(errorComponent);
-  });
-});
-
-
-describe('mapStateToProps', function() {
-  it('should replace references with values', function() {
-    const reference = createReference('abc','123');
-    const value = createCompleteValue(5);
-    let async = Map();
-    async = resolveReference(async, reference, value);
-
-    const state = Map({
-      async
-    });
-
-    const mappedProps = mapStateToProps(state, {
-      baseProps: {
-        foo: reference
+          return (
+            <div>
+              {content}
+            </div>);
+        }
       }
+
+      const items = [1, createLoadingValue(), 3];
+      const wrapper = shallow(<AsyncContentComponent
+          base={WithArray}
+          baseProps={{
+            items
+          }} />);
+
+      expect(wrapper).to.contain(<LoadingSpinner />);
     });
 
-    expect(mappedProps).to.have.deep.property('baseProps.foo').equal(value);
+    // TODO: Support references in props
+    it.skip('should inspect objects for references', function() {
+      class WithArray extends React.Component {
+        static propTypes = {
+          items: PropTypes.object
+        };
+
+        render() {
+          const { items } = this.props;
+          const content = items.map((item) => {
+            return (<span>{item}</span>);
+          });
+
+          return (
+            <div>
+              {content}
+            </div>);
+        }
+      }
+
+      const items = {
+        val1: 1,
+        val2: createLoadingValue(),
+        val3: 3
+      };
+      const wrapper = shallow(<AsyncContentComponent
+          base={WithArray}
+          baseProps={{
+            items
+          }} />);
+
+      expect(wrapper).to.contain(<LoadingSpinner />);
+    });
   });
+
+
+  describe('createAsyncComponent', function() {
+
+    describe('propTypes', function() {
+      // TODO: properly map isRequired
+      it('should map', function() {
+        const asyncComponent = createAsyncComponent(TestComponent);
+
+        expect(asyncComponent).to.have.deep.property('propTypes.foo');
+        expect(asyncComponent).to.have.deep.property('propTypes.fiz');
+        expect(asyncComponent).to.have.deep.property('propTypes.children');
+      });
+
+      it('should not make "children" async', function() {
+        const asyncComponent = createAsyncComponent(TestComponent);
+
+        expect(asyncComponent).to.have.deep.property('propTypes.children')
+          .equal(TestComponent.propTypes.children);
+      });
+
+      // TODO: test mapping array
+    });
+
+
+    it('should map defaultProps', function() {
+      const asyncComponent = createAsyncComponent(TestComponent);
+      expect(asyncComponent).to.have.property('defaultProps')
+        .equal(TestComponent.defaultProps);
+    });
+
+    it('should include baseProperties', function() {
+      const AsyncComponent = createAsyncComponent(TestComponent);
+      const foo = 'foo';
+      const expectedProps = Object.assign({}, TestComponent.defaultProps, { foo });
+      delete expectedProps.children;
+      const wrapper = shallow(<AsyncComponent foo={foo} />);
+
+      expect(wrapper).to.have.prop('baseProps')
+        .deep.equal(expectedProps);
+    });
+
+    it('should include base', function() {
+      const AsyncComponent = createAsyncComponent(TestComponent);
+      const wrapper = shallow(<AsyncComponent />);
+
+      expect(wrapper).to.have.prop('base').equal(TestComponent);
+    });
+
+    it('should allow children', function() {
+      const AsyncComponent = createAsyncComponent(TestComponent);
+      const children = (<span>hello</span>);
+      const wrapper = shallow(<AsyncComponent>{children}</AsyncComponent>);
+
+      expect(wrapper).to.have.prop('baseChildren').equal(children);
+    });
+
+    it('should allow custom error component', function() {
+      const errorComponent = () => {};
+      const AsyncComponent = createAsyncComponent(TestComponent, errorComponent);
+      const wrapper = shallow(<AsyncComponent foo="hi" />);
+
+      expect(wrapper).to.have.prop('errorComponent').equal(errorComponent);
+    });
+  });
+
+
+  describe('mapStateToProps', function() {
+    it('should replace references with values', function() {
+      const reference = createReference('abc','123');
+      const value = createCompleteValue(5);
+      let async = Map();
+      async = resolveReference(async, reference, value);
+
+      const state = Map({
+        async
+      });
+
+      const mappedProps = mapStateToProps(state, {
+        baseProps: {
+          foo: reference
+        }
+      });
+
+      expect(mappedProps).to.have.deep.property('baseProps.foo').equal(value);
+    });
+  });
+
 });
