@@ -179,7 +179,7 @@ class OrganizationDetailsComponent extends React.Component {
     );
   }
 
-  renderLoadingSpinnerOverlay = () => {
+  renderLoadingSpinner = () => {
 
     return (
       <LoadingSpinnerWrapper>
@@ -194,7 +194,7 @@ class OrganizationDetailsComponent extends React.Component {
       return (
         <StyledFlexContainerStacked>
           { this.renderOrganizationTitleSection() }
-          { this.renderLoadingSpinnerOverlay() }
+          { this.renderLoadingSpinner() }
         </StyledFlexContainerStacked>
       );
     }
@@ -202,7 +202,7 @@ class OrganizationDetailsComponent extends React.Component {
     if (this.props.isFetchingOrg) {
       return (
         <StyledFlexContainerStacked>
-          { this.renderLoadingSpinnerOverlay() }
+          { this.renderLoadingSpinner() }
         </StyledFlexContainerStacked>
       );
     }
