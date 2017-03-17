@@ -22,7 +22,7 @@ import type {
 
 export class AsyncContentComponent extends React.Component {
   static propTypes = {
-    base: PropTypes.instanceOf(React.Component).isRequired,
+    base: PropTypes.oneOfType([React.Component]).isRequired,
     baseChildren: PropTypes.arrayOf(PropTypes.element),
     baseProps: PropTypes.object,
     // State Components
