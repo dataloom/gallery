@@ -40,6 +40,7 @@ export class Visualize extends React.Component {
       properties: [],
       numberProps: [],
       geoProps: [],
+      dateProps: [],
       currentView: undefined,
       data: [],
       asyncStatus: ASYNC_STATUS.LOADING
@@ -81,6 +82,7 @@ export class Visualize extends React.Component {
     let latProp = null;
     let longProp = null;
     const numberProps = [];
+    const dateProps = [];
     properties.forEach((prop) => {
       if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) {
         numberProps.push(prop);
@@ -92,15 +94,19 @@ export class Visualize extends React.Component {
           longProp = prop;
         }
       }
+      else if (EdmConsts.EDM_DATE_TYPES.includes(prop.datatype)) {
+        dateProps.push(prop);
+      }
     });
     const geoProps = (!latProp || !longProp) ? [] : [latProp, longProp];
-    const chartOptions = this.getAvailableVisualizations(numberProps, geoProps);
+    const chartOptions = this.getAvailableVisualizations(numberProps, geoProps, dateProps);
     const currentView = (chartOptions.length > 0) ? chartOptions[0] : undefined;
-    this.loadData(numberProps)
+    this.loadData(numberProps.concat(dateProps))
     .then((data) => {
       this.setState({
         properties,
         numberProps,
+        dateProps,
         geoProps,
         currentView,
         data,
@@ -166,11 +172,12 @@ export class Visualize extends React.Component {
     return (option === this.state.currentView) ? `${styles.optionButton} ${styles.selected}` : styles.optionButton;
   }
 
-  getAvailableVisualizations = (optionalNumberProps, optionalGeoProps) => {
-    const numberProps = (optionalNumberProps !== undefined) ? optionalNumberProps : this.state.numberProps;
-    const geoProps = (optionalGeoProps !== undefined) ? optionalGeoProps : this.state.geoProps;
+  getAvailableVisualizations = (optionalNumberProps, optionalGeoProps, optionalDateProps) => {
+    const numberProps = optionalNumberProps || this.state.numberProps;
+    const geoProps = optionalGeoProps || this.state.geoProps;
+    const dateProps = optionalDateProps || this.state.dateProps;
     const options = [];
-    if (numberProps.length > 1) {
+    if (numberProps.length + dateProps.length > 1) {
       options.push(chartTypes.SCATTER_CHART);
       options.push(chartTypes.LINE_CHART);
     }
@@ -205,14 +212,14 @@ export class Visualize extends React.Component {
   }
 
   renderVisualization = () => {
-    const { currentView, title, data, numberProps, geoProps } = this.state;
+    const { currentView, title, data, numberProps, dateProps, geoProps } = this.state;
     let visualization = null;
     switch (currentView) {
       case chartTypes.SCATTER_CHART:
-        visualization = <ScatterChartContainer data={data} numberProps={numberProps} />;
+        visualization = <ScatterChartContainer data={data} numberProps={numberProps} dateProps={dateProps} />;
         break;
       case chartTypes.LINE_CHART:
-        visualization = <LineChartContainer data={data} numberProps={numberProps} />;
+        visualization = <LineChartContainer data={data} numberProps={numberProps} dateProps={dateProps} />;
         break;
       case chartTypes.MAP_CHART:
         visualization = <GeoContainer data={data} geoProps={geoProps} />;

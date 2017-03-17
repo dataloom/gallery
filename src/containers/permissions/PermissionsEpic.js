@@ -43,7 +43,12 @@ const { Acl } = DataModels;
 function updateStatuses(statuses :Status[]) {
   return Observable.from(RequestsApi.updateRequestStatuses(statuses))
     .mergeMapTo(statuses)
-    .map(PermissionsActionFactory.updateStatusSuccess);
+    .map(PermissionsActionFactory.updateStatusSuccess)
+    .catch((e) => {
+      // TODO: add reall error handling: https://jira.thedataloom.com/browse/LOOMWEB-339
+      console.error(e);
+      return { type: 'noop' };
+    });
 }
 
 function updateStatusesEpic(action$) {

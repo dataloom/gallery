@@ -76,7 +76,7 @@ export class EntitySetVisualizationList extends React.Component {
   checkWhetherToDisplayEntitySet = (entitySet, idToEntityType, idToPropertyType) => {
     const accessChecks = [];
     idToEntityType[entitySet.entityTypeId].properties.forEach((propertyId) => {
-      if (EdmConsts.EDM_NUMBER_TYPES.includes(idToPropertyType[propertyId].datatype)) {
+      if (EdmConsts.EDM_NUMBER_TYPES.concat(EdmConsts.EDM_DATE_TYPES).includes(idToPropertyType[propertyId].datatype)) {
         accessChecks.push({
           aclKey: [entitySet.id, propertyId],
           permissions: [Permission.READ.name]
