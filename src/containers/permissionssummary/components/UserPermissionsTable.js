@@ -85,6 +85,7 @@ class UserGroupRow extends React.Component {
 
 }
 
+// TODO: Filter based on state's input
 class SearchBar extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired
@@ -141,7 +142,6 @@ export default class UserPermissionsTable extends React.Component {
 
     return (
       <div>
-        <SearchBar onChange={this.onSearchInput} />
         <Table bordered responsive className={styles.table}>
           <thead>
             <tr>
