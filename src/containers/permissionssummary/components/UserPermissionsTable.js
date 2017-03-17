@@ -134,12 +134,10 @@ class UserPermissionsTable extends React.Component {
   }
 
   componentWillReceiveProps() {
-    // console.log('UPT gv props:', this.props.globalValue);
   }
 
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
-    console.log('rolePermissions:', rolePermissions); // object w/ array values
     const rows = [];
     userPermissions.forEach((user) => {
 

@@ -4,21 +4,25 @@ import styles from '../styles.module.css';
 
 export default class RolePermissionsTable extends React.Component {
   static propTypes = {
-    rolePermissions: PropTypes.object.isRequired,
+    rolePermissions: PropTypes.object.isRequired, // fix formatting to empty string from earlier in the flow
     headers: PropTypes.array.isRequired
   }
 
   getRows = () => {
     const { rolePermissions } = this.props;
     const rows = [];
+    console.log('ROLE PERMISSIONS FOR ROLE ROW:', rolePermissions);
 
     if (rolePermissions) {
       Object.keys(rolePermissions).forEach((role, i) => {
+        const permissionsStr = rolePermissions[role].join(', ');
+
         let roleStr = role;
         if (role === 'AuthenticatedUser') {
           roleStr = 'Default for all users';
         }
-        rows.push(<tr className={styles.mainRow} key={i}><td>{roleStr}</td><td>{rolePermissions[role]}</td></tr>);
+
+        rows.push(<tr className={styles.mainRow} key={i}><td>{roleStr}</td><td>{permissionsStr}</td></tr>);
       });
     }
     return rows;

@@ -35,7 +35,6 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps() {
     const { properties } = this.props;
-    console.log('AP PROPS:', this.props);
 
     // Get user and role permissions for entity set
     this.getUserPermissions();
@@ -146,12 +145,10 @@ class AllPermissions extends React.Component {
 
   renderPropertyTables() {
     const { propertyPermissions } = this.state;
-    console.log('propertyPermissions', propertyPermissions);
     const tables = [];
 
     Object.keys(propertyPermissions).forEach((property) => {
       const { userPermissions, rolePermissions } = propertyPermissions[property];
-      console.log('userPermissions, rolePermissions (by property):', propertyPermissions[property], userPermissions, rolePermissions);
       const header = <h3>{property}</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}
