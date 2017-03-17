@@ -14,7 +14,18 @@ class UserRow extends React.Component {
     }
 
     return this.props.user.email;
+  }
 
+  getPermissionsStr = () => {
+    let formattedPermissions;
+    if (this.props.user.permissions.length === 0) {
+      formattedPermissions = 'none';
+    }
+    else {
+      formattedPermissions = this.props.user.permissions.join(', ');
+    }
+
+    return formattedPermissions;
   }
 
   render() {
@@ -22,7 +33,7 @@ class UserRow extends React.Component {
       <tr className={styles.mainRow}>
         <td>{this.getUserCellData()}</td>
         <td></td>
-        <td>{this.props.user.permissions}</td>
+        <td>{this.getPermissionsStr()}</td>
       </tr>
     );
   }
@@ -30,14 +41,14 @@ class UserRow extends React.Component {
 
 class RoleRow extends React.Component {
   static propTypes = {
-    permissions: PropTypes.string.isRequired,
+    permissions: PropTypes.object.isRequired,
     role: PropTypes.string.isRequired
   }
 
   getPermissions = () => {
     const { permissions } = this.props;
     if (permissions) {
-      return permissions;
+      return permissions.join(', ');
     }
     return 'none';
   }
@@ -104,6 +115,8 @@ class SearchBar extends React.Component {
   }
 }
 
+//TODO for search: if user.nickname || user.email contains query input, push; else continue
+//TODO:  Add checkbox to allow user to optionally view *all* user permissions w/o this filter
 class UserPermissionsTable extends React.Component {
   static propTypes = {
     rolePermissions: PropTypes.object.isRequired,
@@ -126,9 +139,11 @@ class UserPermissionsTable extends React.Component {
 
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
+    console.log('rolePermissions:', rolePermissions); // object w/ array values
     const rows = [];
     userPermissions.forEach((user) => {
-      //TODO for search: if user.nickname || user.email contains query input, push; else continue
+
+      // Hide rows where user has same permissions as the default permissions for authenticated users
       if (user.permissions.length > 0) {
         user.permissions.forEach((permission) => {
           if (this.props.globalValue.indexOf(permission) === -1) {
@@ -137,6 +152,7 @@ class UserPermissionsTable extends React.Component {
           }
         });
       }
+
       rows.push(<UserGroupRow className={styles.hidden} user={user} rolePermissions={rolePermissions} key={user.id} />);
     });
 
