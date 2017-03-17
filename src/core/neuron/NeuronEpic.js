@@ -44,7 +44,8 @@ export function initializeNeuron(reduxStore :any) {
       case SERVER_COMMANDS.CONNECTED:
         reduxStore.dispatch(NeuronActionFactory.neuronConnectSuccess(frame));
         // TODO: once connected, subscribe to the necessary topics/channels/notifications
-        // reduxStore.dispatch(NeuronActionFactory.neuronSubscribeRequest('ping'));
+        // reduxStore.dispatch(NeuronActionFactory.neuronSubscribeRequest('events'));
+        // reduxStore.dispatch(NeuronActionFactory.neuronSubscribeRequest('signals'));
         break;
 
       default:
@@ -98,6 +99,22 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>) :Observable<Act
     });
 }
 
+function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(NeuronActionTypes.NEURON_ON_MESSAGE)
+    .map((action :Action) => {
+      switch (action.frame.command) {
+        case SERVER_COMMANDS.MESSAGE:
+        default:
+          return {
+            type: 'NOOP'
+          };
+      }
+    });
+}
+
 export default combineEpics(
-  neuronSubscribeRequestEpic
+  neuronSubscribeRequestEpic,
+  neuronOnMessageEpic
 );
