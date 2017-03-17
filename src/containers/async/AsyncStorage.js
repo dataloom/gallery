@@ -32,9 +32,9 @@ export type AsyncValue = {
 };
 
 export function referenceOrValuePropType(propType) {
-  return PropTypes.onOfType([
+  return PropTypes.oneOfType([
     propType,
-    AsyncReference
+    AsyncReferencePropType
   ]);
 }
 

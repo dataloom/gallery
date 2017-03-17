@@ -111,9 +111,14 @@ export function mapStateToProps(state, ownProps) {
 
 export const SmartAsyncContentComponent = connect(mapStateToProps)(AsyncContentComponent);
 
-
 export function createAsyncComponent(baseComponent, errorComponent = DefaultAsyncErrorComponent) {
-  const propTypes = baseComponent.propTypes.map(referenceOrValuePropType);
+  const propTypes = fromPairs(toPairs(baseComponent.propTypes).map(([name, propType]) => {
+    if (name === 'children') {
+      return [name, propType];
+    } else {
+      return [name, referenceOrValuePropType(propType)];
+    }
+  }));
 
   return class extends React.Component {
     static propTypes = propTypes;
@@ -121,9 +126,13 @@ export function createAsyncComponent(baseComponent, errorComponent = DefaultAsyn
 
     render() {
       const { children } = this.props;
+      const baseProps = Object.assign({}, this.props);
+      delete baseProps.children;
+
       return (
         <SmartAsyncContentComponent
             base={baseComponent}
+            baseProps={baseProps}
             baseChildren={children}
             errorComponent={errorComponent} />);
     }

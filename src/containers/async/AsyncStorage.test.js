@@ -115,7 +115,7 @@ describe('AsyncStorage', function() {
     });
 
     it('should return false for error value', function() {
-      const value = createCompleteValue("");
+      const value = createCompleteValue('');
       expect(isErrorValue(value)).to.be.false;
     });
   });
