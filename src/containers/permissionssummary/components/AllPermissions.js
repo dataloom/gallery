@@ -35,7 +35,7 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps() {
     const { properties } = this.props;
-    console.log('PROPS PLEASE:', this.props);
+    console.log('AP PROPS:', this.props);
 
     // Get user and role permissions for entity set
     this.getUserPermissions();
@@ -55,7 +55,7 @@ class AllPermissions extends React.Component {
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
-      if (userId && allUsersById[userId]) {
+      if (userId && allUsersById[userId] && allUsersById[userId].roles.length > 1) { // TODO: ADD CONDITIONAL FOR IF ALUSERSBYID[USERID].ROLES.LENGTH > 0
         const user = {
           id: userId,
           nickname: allUsersById[userId].nickname,
@@ -71,7 +71,7 @@ class AllPermissions extends React.Component {
           }
         });
 
-        if (allUsersById[userId].roles.length > 0) {
+        // if (allUsersById[userId].roles.length > 1) {
           Object.keys(roleAcls).forEach((permissionKey) => {
             allUsersById[userId].roles.forEach((role) => {
               if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
@@ -82,7 +82,7 @@ class AllPermissions extends React.Component {
               }
             });
           });
-        }
+        // }
 
         // Add permissions based on default for all users
         if (globalValue) {
@@ -119,10 +119,10 @@ class AllPermissions extends React.Component {
       propertyUserPermissions[property.title] = {};
       propertyUserPermissions[property.title].userPermissions = formattedPermissions;
 
-      this.setState({ propertyPermissions: propertyUserPermissions });
+      this.setState({ propertyPermissions: propertyUserPermissions });                                  // -> REDUX
     }
     else {
-      this.setState({ entityUserPermissions: formattedPermissions }, () => {
+      this.setState({ entityUserPermissions: formattedPermissions }, () => {                              // -> REDUX
         console.log('entityUserPermissions:', this.state.entityUserPermissions);
       });
     }
@@ -160,10 +160,10 @@ class AllPermissions extends React.Component {
     if (property) {
       const propertyRolePermissions = this.state.propertyPermissions;
       propertyRolePermissions[property.title].rolePermissions = formattedPermissions;
-      this.setState({ propertyPermissions: propertyRolePermissions });
+      this.setState({ propertyPermissions: propertyRolePermissions });                                  // -> REDUX
     }
     else {
-      this.setState({ entityRolePermissions: formattedPermissions }, () => {
+      this.setState({ entityRolePermissions: formattedPermissions }, () => {                              // -> REDUX
         console.log('entityRolePermissions:', this.state.entityRolePermissions);
       });
     }
