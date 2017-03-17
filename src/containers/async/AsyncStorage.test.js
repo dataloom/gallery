@@ -1,4 +1,4 @@
-import { fromJS } from 'immutable';
+import { Map } from 'immutable';
 import { expect } from 'chai';
 import '../../../config/chai/chai.config';
 
@@ -15,6 +15,8 @@ import {
   isLoadingValue,
   createErrorValue,
   isErrorValue,
+  smartDereference,
+  createReference,
   STATE
 } from './AsyncStorage';
 
@@ -23,6 +25,11 @@ describe('AsyncStorage', function() {
     namespace: 'abc',
     id: '123'
   };
+  let asyncContent;
+
+  beforeEach(function() {
+    asyncContent = Map();
+  });
 
 
   describe('isReference', function() {
@@ -123,7 +130,6 @@ describe('AsyncStorage', function() {
   describe('resolveReference', function() {
     it('should resolve value', function () {
       const expectedValue = createCompleteValue(6);
-      let asyncContent = fromJS({});
       asyncContent = resolveReference(asyncContent, reference, expectedValue);
 
       const dereferenced = dereference(asyncContent, reference);
@@ -134,19 +140,84 @@ describe('AsyncStorage', function() {
 
   describe('dereference', function() {
     it('should return empty reference', function() {
-      const asyncContent = fromJS({});
-
       const dereferenced = dereference(asyncContent, reference);
       expect(dereferenced).to.deep.equal(createEmptyValue());
     });
 
     it('should return complete reference', function() {
-      const value = createEmptyValue(5);
-      let asyncContent = fromJS({});
+      const value = createEmptyValue();
       asyncContent = asyncContent.setIn([reference.namespace, reference.id], value);
 
       const dereferenced = dereference(asyncContent, reference);
       expect(dereferenced).to.deep.equal(value);
+    });
+  });
+
+
+  describe.only('smartDereference', function() {
+    it('should ignore non-reference objects', function() {
+      const value = 5;
+      expect(smartDereference(asyncContent, value)).to.equal(value);
+    });
+
+    it('should resolve references', function() {
+      const value = createCompleteValue(5);
+      asyncContent = resolveReference(asyncContent, reference, value);
+      expect(smartDereference(asyncContent, reference)).to.equal(value);
+    });
+
+    it('should resolve array of references', function() {
+      const value1 = createCompleteValue(5);
+      const value2 = createCompleteValue(7);
+      const reference2 = createReference('name', '123');
+
+      asyncContent = resolveReference(asyncContent, reference, value1);
+      asyncContent = resolveReference(asyncContent, reference2, value2);
+
+      const expectedValue = [value1, value2];
+      expect(smartDereference(asyncContent, [reference, reference2])).to.deep.equal(expectedValue);
+    });
+
+    it('should ignore non-references in array of references', function() {
+      const value1 = createCompleteValue(5);
+      const value2 = 'hi';
+
+      asyncContent = resolveReference(asyncContent, reference, value1);
+
+      const expectedValue = [value1, value2];
+      expect(smartDereference(asyncContent, [reference, value2])).to.deep.equal(expectedValue);
+    });
+
+    it('should resolve plain object values', function() {
+      const value = createCompleteValue(5);
+      asyncContent = resolveReference(asyncContent, reference, value);
+
+      const props = {
+        value: reference
+      };
+      const expectedProps = {
+        value
+      };
+
+      expect(smartDereference(asyncContent, props)).to.deep.equal(expectedProps);
+    });
+
+    it('should ignore values in plain objects', function() {
+      const value1 = createCompleteValue(5);
+      const value2 = 'hello';
+
+      asyncContent = resolveReference(asyncContent, reference, value1);
+
+      const props = {
+        value1: reference,
+        value2
+      };
+      const expectedProps = {
+        value1,
+        value2
+      };
+
+      expect(smartDereference(asyncContent, props)).to.deep.equal(expectedProps);
     });
   });
 });

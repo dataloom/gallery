@@ -5,6 +5,10 @@ import isString from 'lodash/isString';
 import includes from 'lodash/includes';
 import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
+import mapValues from 'lodash/mapValues';
+import isArrayLikeObject from 'lodash/isArrayLikeObject';
+import isPlainObject from 'lodash/isPlainObject';
 
 export const STATE = Object.freeze({
   EMPTY_REFERENCE: Symbol('empty reference'),
@@ -148,4 +152,29 @@ export function dereference(asyncContent :AsyncContent, reference :AsyncReferenc
   }
 
   return asyncContent.getIn(path);
+}
+
+/**
+ * If value is a reference, dereference.
+ * If value is array like object, run smartDereference on each item.
+ * If value is a plain object, run smartDereference on each value
+ * @param asyncContent
+ * @param valueOrReference
+ * @return {*}
+ */
+export function smartDereference(asyncContent :AsyncContent, valueOrReference :any) :any {
+  if (isReference(valueOrReference)) {
+    return dereference(asyncContent, valueOrReference);
+  }
+  else if (isArrayLikeObject(valueOrReference)) {
+    return map(valueOrReference, (vor) => {
+      return smartDereference(asyncContent, vor);
+    });
+  }
+  else if (isPlainObject(valueOrReference)) {
+    return mapValues(valueOrReference, (value) => {
+      return smartDereference(asyncContent, value);
+    });
+  }
+  return valueOrReference;
 }
