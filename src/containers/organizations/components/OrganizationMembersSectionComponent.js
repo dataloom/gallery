@@ -215,6 +215,13 @@ class OrganizationMembersSectionComponent extends React.Component {
       .build();
 
     this.props.actions.updateAclRequest(aclData);
+
+    if (this.state.selectedMemberId === userId) {
+      this.setState({
+        selectedMemberId: '',
+        showMemberRoles: false
+      });
+    }
   }
 
   handleOnClickShowMemberRoles = (userId :string) => {
