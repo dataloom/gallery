@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -26,6 +27,10 @@ import {
   fetchOrganizationRequest
 } from '../actions/OrganizationsActionFactory';
 
+const LoadingSpinnerWrapper = styled.div`
+  width: 100%;
+`;
+
 const MODES = {
   CREATE: 'CREATE',
   EDIT: 'EDIT',
@@ -34,9 +39,13 @@ const MODES = {
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 
+  const isCreatingOrg = state.getIn(['organizations', 'isCreatingOrg']);
+  const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
+
   // TODO: checking if orgId === 'new' feels wrong. there's probably a better pattern for this use case.
   if (isDefined(ownProps.params) && ownProps.params.orgId === 'new') {
     return {
+      isCreatingOrg,
       isFetchingOrg: false,
       mode: MODES.CREATE,
       organization: Immutable.fromJS({
@@ -53,13 +62,13 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
     organizationId = ownProps.params.orgId;
   }
 
-  const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
   const organization = state.getIn(['organizations', 'organizations', organizationId], Immutable.Map());
   if (organization.get('isOwner') === true) {
     mode = MODES.EDIT;
   }
 
   return {
+    isCreatingOrg,
     isFetchingOrg,
     mode,
     organization,
@@ -84,6 +93,7 @@ class OrganizationDetailsComponent extends React.Component {
     actions: React.PropTypes.shape({
       fetchOrganizationRequest: React.PropTypes.func.isRequired
     }).isRequired,
+    isCreatingOrg: React.PropTypes.bool.isRequired,
     isFetchingOrg: React.PropTypes.bool.isRequired,
     mode: React.PropTypes.string.isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -104,16 +114,6 @@ class OrganizationDetailsComponent extends React.Component {
         this.props.actions.fetchOrganizationRequest(nextProps.organizationId);
       }
     }
-  }
-
-  renderOrganizationHeaderSection = () => {
-
-    return (
-      <StyledFlexContainerStackedLeftAligned>
-        { this.renderOrganizationTitleSection() }
-        { this.renderOrganizationDescriptionSection() }
-      </StyledFlexContainerStackedLeftAligned>
-    );
   }
 
   renderOrganizationTitleSection = () => {
@@ -179,15 +179,38 @@ class OrganizationDetailsComponent extends React.Component {
     );
   }
 
+  renderLoadingSpinner = () => {
+
+    return (
+      <LoadingSpinnerWrapper>
+        <LoadingSpinner />
+      </LoadingSpinnerWrapper>
+    );
+  }
+
   render() {
 
+    if (this.props.isCreatingOrg) {
+      return (
+        <StyledFlexContainerStacked>
+          { this.renderOrganizationTitleSection() }
+          { this.renderLoadingSpinner() }
+        </StyledFlexContainerStacked>
+      );
+    }
+
     if (this.props.isFetchingOrg) {
-      return <LoadingSpinner />;
+      return (
+        <StyledFlexContainerStacked>
+          { this.renderLoadingSpinner() }
+        </StyledFlexContainerStacked>
+      );
     }
 
     return (
       <StyledFlexContainerStacked>
-        { this.renderOrganizationHeaderSection() }
+        { this.renderOrganizationTitleSection() }
+        { this.renderOrganizationDescriptionSection() }
         { this.renderOrganizationDomainsSection() }
         { this.renderOrganizationRolesSection() }
         { this.renderOrganizationMembersSection() }
