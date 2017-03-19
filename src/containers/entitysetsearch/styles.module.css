@@ -38,6 +38,7 @@
   top: 50%;
   margin: -8px 0 0 5px;
   z-index: 1;
+  cursor: pointer;
 }
 
 .searchBox {
