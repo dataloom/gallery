@@ -13,10 +13,17 @@ import OrganizationsHeaderComponent from './OrganizationsHeaderComponent';
 export default class OrganizationsContainerComponent extends React.Component {
 
   static propTypes = {
+    auth: React.PropTypes.object.isRequired,
     children: React.PropTypes.node.isRequired
   }
 
   render() {
+
+    const childrenWithProps = React.Children.map(this.props.children, (child) => {
+      return React.cloneElement(child, {
+        auth: this.props.auth
+      });
+    });
 
     return (
       <ContentContainer>
@@ -24,7 +31,7 @@ export default class OrganizationsContainerComponent extends React.Component {
           <OrganizationsHeaderComponent />
         </ContentHeaderSection>
         <ContentSection>
-          { React.Children.toArray(this.props.children) }
+          { React.Children.toArray(childrenWithProps) }
         </ContentSection>
       </ContentContainer>
     );
