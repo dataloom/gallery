@@ -33,6 +33,7 @@ class AllPermissions extends React.Component {
   componentDidMount() {
     // WHEN REDUX ACTIONS ARE HOOKED UP, EASY ENOUGH TO CALL AND RELOAD ALL DATA FOR ENTITY
     const { properties } = this.props;
+    console.log('PROPS:', this.props);
 
     // Get user and role permissions for entity set
     this.getUserPermissions();
@@ -102,12 +103,12 @@ class AllPermissions extends React.Component {
 
   setUserPermissions = (permissions, property) => {
     if (property) {
-      const propertyUserPermissions = this.state.propertyPermissions;
+      const propertyUserPermissions = this.state.propertyPermissions; // this.props.propertyPermissions
       propertyUserPermissions[property.title] = {};
       propertyUserPermissions[property.title].userPermissions = permissions;
-
+      console.log('property user permissions:', propertyUserPermissions);
       this.setState({ propertyPermissions: propertyUserPermissions });
-      // this.props.setPropertyUserPermissions(propertyUserPermissions);
+      // this.props.setPropertyUserPermissions(permissions, property);
     }
     else {
       this.props.setEntityUserPermissions(permissions);
@@ -199,7 +200,8 @@ function mapStateToProps(state) {
     roleAcls: permissionsSummary.get('roleAcls').toJS(),
     globalValue: permissionsSummary.get('globalValue').toJS(),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
-    entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS()
+    entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
+    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS()
   };
 }
 
@@ -211,8 +213,8 @@ function mapDispatchToProps(dispatch) {
     setEntityRolePermissions: (permissions) => {
       dispatch(psActionFactory.setEntityRolePermissions(permissions));
     },
-    setPropertyUserPermissions: (permissions) => {
-      dispatch(psActionFactory.setPropertyUserPermissions(permissions));
+    setPropertyUserPermissions: (permissions, property) => {
+      dispatch(psActionFactory.setPropertyUserPermissions(permissions, property));
     },
     setPropertyRolePermissions: (permissions) => {
       dispatch(psActionFactory.setPropertyRolePermissions(permissions));

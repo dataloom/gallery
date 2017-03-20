@@ -75,14 +75,14 @@ class UserGroupRow extends React.Component {
     const { user, rolePermissions } = this.props;
     const roleRows = [];
     if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
-      user.roles.forEach((role) => {
+      user.roles.forEach((role, i) => {
         // TODO: FIGURE OUT WHY THIS IS SO OFTEN UNDEFINED
         // TODO: if (role === 'individual permissions') => display permissioins BUT the logic doesn't work this  way... would have to save to roles permissions table separately and this makes little sense.  store object of userID: permission on store
         // TODO: make this string a constant
         if (rolePermissions[role] === undefined) {
           rolePermissions[role] = '';
         }
-        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}`} />);
+        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
       });
       roleRows.push(<RoleRow role='individual' permissions={user.individualPermissions} />);
     }
@@ -136,25 +136,31 @@ class UserPermissionsTable extends React.Component {
     };
   }
 
-  componentWillReceiveProps() {
-  }
-
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
     const rows = [];
-    userPermissions.forEach((user) => {
 
+    userPermissions.forEach((user, i) => {
       // Hide rows where user has same permissions as the default permissions for authenticated users
       if (user.permissions.length > 0) {
-        user.permissions.forEach((permission) => {
+        user.permissions.forEach((permission, j) => {
           if (this.props.globalValue.indexOf(permission) === -1) {
-            rows.push(<UserGroupRow user={user} rolePermissions={rolePermissions} key={user.id} />);
+            rows.push(<UserGroupRow
+                user={user}
+                rolePermissions={rolePermissions}
+                key={`${permission}-${user.id}-${j}`} />
+            );
             return;
           }
         });
       }
 
-      rows.push(<UserGroupRow className={styles.hidden} user={user} rolePermissions={rolePermissions} key={user.id} />);
+      rows.push(<UserGroupRow
+          className={styles.hidden}
+          user={user}
+          rolePermissions={rolePermissions}
+          key={`${user.id}-${i}`} />
+        );
     });
 
     return rows;
