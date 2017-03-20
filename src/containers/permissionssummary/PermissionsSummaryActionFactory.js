@@ -72,17 +72,19 @@ export function setUpdateError(bool) {
   };
 }
 
-export function setPropertyUserPermissions(data) {
+export function setPropertyUserPermissions(permissions, property) {
   return {
     type: actionTypes.SET_PROPERTY_USER_PERMISSIONS,
-    data
+    permissions,
+    property
   };
 }
 
-export function setPropertyRolePermissions(data) {
+export function setPropertyRolePermissions(permissions, property) {
   return {
     type: actionTypes.SET_PROPERTY_ROLE_PERMISSIONS,
-    data
+    permissions,
+    property
   };
 }
 

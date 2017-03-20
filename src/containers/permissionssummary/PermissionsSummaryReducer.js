@@ -76,27 +76,20 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.SET_PROPERTY_USER_PERMISSIONS:
+      var propertyPermissions = state.get('propertyPermissions').toJS();
+      propertyPermissions[action.property.title] = propertyPermissions[action.property.title] || {};
+      propertyPermissions[action.property.title].userPermissions = action.permissions;
       return state.merge({
+        propertyPermissions
       });
 
     case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS:
+      var propertyPermissions = state.get('propertyPermissions').toJS();
+      propertyPermissions[action.property.title] = propertyPermissions[action.property.title] || {};
+      propertyPermissions[action.property.title].rolePermissions = action.permissions;
       return state.merge({
-        
-      })
-      // var stateJS = state.toJS();
-      // var nestedState = { ...stateJS,
-      //   propertyPermissions: {
-      //     ...stateJS.propertyPermissions,
-      //     [action.data.id]: {
-      //       title: action.data.title,
-      //       roleAcls: action.data.roleAcls,
-      //       userAcls: action.data.userAcls,
-      //       globalValue: action.data.globalValue
-      //     }
-      //   }
-      // };
-      // var immutableNestedState = Immutable.fromJS(nestedState);
-      // return immutableNestedState;
+        propertyPermissions
+      });
 
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
