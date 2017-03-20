@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import map from 'lodash/map';
 import mapValues from 'lodash/mapValues';
+import isPlainObject from 'lodash/isPlainObject';
 import flatMapDeep from 'lodash/flatMapDeep';
+import isArrayLikeObject from 'lodash/isArrayLikeObject';
 
 import LoadingSpinner from './LoadingSpinner';
 import DefaultAsyncErrorComponent from './DefaultAsyncErrorComponent';
@@ -12,13 +15,23 @@ import {
   isEmptyValue,
   isLoadingValue,
   isErrorValue,
-  referenceOrValuePropType
-} from '../AsyncStorage';
-
-import type {
+  referenceOrValuePropType,
   AsyncValue
 } from '../AsyncStorage';
 
+
+function unpackValue(value) {
+  if (isValue(value)) {
+    return value.value;
+  }
+  else if (isArrayLikeObject(value)) {
+    return map(value, unpackValue);
+  }
+  else if (isPlainObject(value)) {
+    return mapValues(value, unpackValue);
+  }
+  return value;
+}
 
 export class AsyncContentComponent extends React.Component {
   static propTypes = {
@@ -53,10 +66,7 @@ export class AsyncContentComponent extends React.Component {
   renderComplete() {
     const { base, baseProps, baseChildren } = this.props;
 
-    const props = mapValues(baseProps, (prop) => {
-      return isValue(prop) ? prop.value : prop;
-    });
-
+    const props = mapValues(baseProps, unpackValue);
     return React.createElement(base, props, baseChildren);
   }
 
