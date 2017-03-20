@@ -76,26 +76,28 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.SET_PROPERTY_USER_PERMISSIONS:
-      var propertyPermissions = state.get('propertyPermissions').toJS();
-      propertyPermissions[action.property.title] = propertyPermissions[action.property.title] || {};
-      propertyPermissions[action.property.title].userPermissions = action.permissions;
-      return state.merge({
-        propertyPermissions
-      });
+      const userPermissionsMerge = {
+        propertyPermissions: {
+          [action.property.title]: {
+            userPermissions: action.permissions
+          }
+        }
+      };
+      return state.mergeDeep(userPermissionsMerge);
 
     case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS:
-      var propertyPermissions = state.get('propertyPermissions').toJS();
-      propertyPermissions[action.property.title] = propertyPermissions[action.property.title] || {};
-      propertyPermissions[action.property.title].rolePermissions = action.permissions;
-      return state.merge({
-        propertyPermissions
-      });
+      const rolePermissionsMerge = {
+        propertyPermissions: {
+          [action.property.title]: {
+            rolePermissions: action.permissions
+          }
+        }
+      };
+      return state.mergeDeep(rolePermissionsMerge);
 
     case actionTypes.SET_PROPERTY_DATA:
-      var stateJS = state.toJS();
-      var nestedState = { ...stateJS,
+      const propertyDataMerge = {
         properties: {
-          ...stateJS.properties,
           [action.data.id]: {
             title: action.data.title,
             roleAcls: action.data.roleAcls,
@@ -104,22 +106,17 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
           }
         }
       };
-      var immutableNestedState = Immutable.fromJS(nestedState);
-      return immutableNestedState;
+      return state.mergeDeep(propertyDataMerge);
 
     case actionTypes.SET_PROPERTY_GLOBAL_VALUE:
-      var stateJS = state.toJS();
-      var nestedState = { ...stateJS,
+      const propertyGVMerge = {
         properties: {
-          ...stateJS.properties,
-          [action.id]: {
-            ...stateJS.properties[action.id],
+          [action.data.id]: {
             globalValue: action.data
           }
         }
       };
-      var immutableNestedState = Immutable.fromJS(nestedState);
-      return immutableNestedState;
+      return state.mergeDeep(propertyGVMerge);
 
     default:
       return state;

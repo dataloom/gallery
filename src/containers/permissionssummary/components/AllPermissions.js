@@ -45,6 +45,10 @@ class AllPermissions extends React.Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('AP STATE PROPERTYPERMISSIONS:', nextProps.propertyPermissions);
+  }
+
   getUserPermissions = (property) => {
     const { userAcls, roleAcls, globalValue } = property || this.props;
     const { allUsersById } = this.props;
