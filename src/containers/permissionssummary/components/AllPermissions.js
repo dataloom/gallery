@@ -60,16 +60,20 @@ class AllPermissions extends React.Component {
           nickname: allUsersById[userId].nickname,
           email: allUsersById[userId].email,
           roles: [],
-          permissions: [] // add from authenticateduser
+          permissions: [],
+          individualPermissions: []
         };
 
-        // Add any additional permissions based on the roles the user has
+        // Get all user permissions (sum of individual + roles + default);
+        // Get individual permissions
         Object.keys(userAcls).forEach((permissionKey) => {
           if (userAcls[permissionKey].indexOf(userId) !== -1) {
             user.permissions.push(permissionKey);
+            user.individualPermissions.push(permissionKey);
           }
         });
 
+        // Add any additional permissions based on the roles the user has
         if (allUsersById[userId].roles.length > 1) {
           Object.keys(roleAcls).forEach((permissionKey) => {
             allUsersById[userId].roles.forEach((role) => {
@@ -148,7 +152,7 @@ class AllPermissions extends React.Component {
     const tables = [];
 
     Object.keys(propertyPermissions).forEach((property) => {
-      const { userPermissions, rolePermissions } = propertyPermissions[property];
+      const { userPermissions, rolePermissions } = propertyPermissions[property]; //// NEED TO ADD INDIVIDUAL ROLE INTO THIS OBJECT
       const header = <h3>{property}</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}

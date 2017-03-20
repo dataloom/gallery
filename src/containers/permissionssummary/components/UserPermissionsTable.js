@@ -47,7 +47,7 @@ class RoleRow extends React.Component {
 
   getPermissions = () => {
     const { permissions } = this.props;
-    if (permissions) {
+    if (permissions && permissions.length > 0) {
       return permissions.join(', ');
     }
     return 'none';
@@ -77,11 +77,14 @@ class UserGroupRow extends React.Component {
     if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
       user.roles.forEach((role) => {
         // TODO: FIGURE OUT WHY THIS IS SO OFTEN UNDEFINED
+        // TODO: if (role === 'individual permissions') => display permissioins BUT the logic doesn't work this  way... would have to save to roles permissions table separately and this makes little sense.  store object of userID: permission on store
+        // TODO: make this string a constant
         if (rolePermissions[role] === undefined) {
           rolePermissions[role] = '';
         }
         roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}`} />);
       });
+      roleRows.push(<RoleRow role='individual' permissions={user.individualPermissions} />);
     }
     return roleRows;
   }
@@ -191,7 +194,7 @@ function mapStateToProps(state) {
 
   return {
     globalValue: permissionsSummary.get('globalValue').toJS()
-  }
+  };
 }
 
 export default connect(mapStateToProps)(UserPermissionsTable);
