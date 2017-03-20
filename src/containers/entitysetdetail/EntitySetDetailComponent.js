@@ -88,7 +88,7 @@ class EntitySetDetailComponent extends React.Component {
       });
     }
 
-    console.log('ALL USERS? ', this.props.allUsers);
+    // console.log('ALL USERS from redux epic? ', this.props.allUsers);
   }
 
   //////// PERMISSIONS LOGIC ///////////
@@ -108,15 +108,12 @@ class EntitySetDetailComponent extends React.Component {
     });
   }
 
-
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
     const myId = JSON.parse(localStorage.profile).user_id; // to reducer
     PrincipalsApi.getAllUsers() // epic observable
     .then((users) => {
-      console.log('USERS FROM EXISTING CALL:', users);
-
       allUsersById = users;
       Object.keys(users).forEach((userId) => {
         users[userId].roles.forEach((role) => {
@@ -132,7 +129,7 @@ class EntitySetDetailComponent extends React.Component {
           allRolesList,
           loadUsersError: false
         }
-      );
+      );  
     })
     .catch(() => {
       this.setState({ loadUsersError: true });
@@ -431,15 +428,12 @@ function mapStateToProps(state) {
   let entitySetPermissions;
   const reference = entitySetDetail.get('entitySetReference');
   if (reference) {
-    console.log('normalized, ref:', normalizedData, reference);
     entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
     entitySetPermissions = getPermissions(permissions, [entitySet.id]);
   }
   else {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
-
-  console.log('asyncState, properties', entitySetDetail.get('asyncState'), entitySetDetail.get('properties'));
 
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
