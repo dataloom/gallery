@@ -71,3 +71,31 @@ export function setUpdateError(bool) {
     bool
   };
 }
+
+export function setPropertyUserPermissions(data) {
+  return {
+    type: actionTypes.SET_PROPERTY_USER_PERMISSIONS,
+    data
+  };
+}
+
+export function setPropertyRolePermissions(data) {
+  return {
+    type: actionTypes.SET_PROPERTY_ROLE_PERMISSIONS,
+    data
+  };
+}
+
+export function setEntityUserPermissions(data) {
+  return {
+    type: actionTypes.SET_ENTITY_USER_PERMISSIONS,
+    data
+  };
+}
+
+export function setEntityRolePermissions(data) {
+  return {
+    type: actionTypes.SET_ENTITY_ROLE_PERMISSIONS,
+    data
+  };
+}

@@ -11,7 +11,6 @@ export default class RolePermissionsTable extends React.Component {
   getRows = () => {
     const { rolePermissions } = this.props;
     const rows = [];
-    console.log('ROLE PERMISSIONS FOR ROLE ROW:', rolePermissions);
 
     if (rolePermissions) {
       Object.keys(rolePermissions).forEach((role, i) => {
@@ -22,7 +21,7 @@ export default class RolePermissionsTable extends React.Component {
           roleStr = 'Default for all users';
         }
 
-        rows.push(<tr className={styles.mainRow} key={i}><td>{roleStr}</td><td>{permissionsStr}</td></tr>);
+        rows.push(<tr className={styles.mainRow}><td>{roleStr}</td><td>{permissionsStr}</td></tr>);
       });
     }
     return rows;

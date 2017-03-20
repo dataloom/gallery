@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import * as psActionFactory from '../PermissionsSummaryActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
@@ -31,9 +32,6 @@ class AllPermissions extends React.Component {
 
   componentDidMount() {
     // WHEN REDUX ACTIONS ARE HOOKED UP, EASY ENOUGH TO CALL AND RELOAD ALL DATA FOR ENTITY
-  }
-
-  componentWillReceiveProps() {
     const { properties } = this.props;
 
     // Get user and role permissions for entity set
@@ -108,10 +106,11 @@ class AllPermissions extends React.Component {
       propertyUserPermissions[property.title] = {};
       propertyUserPermissions[property.title].userPermissions = permissions;
 
-      this.setState({ propertyPermissions: propertyUserPermissions });                                  // -> REDUX
+      this.setState({ propertyPermissions: propertyUserPermissions });
+      // this.props.setPropertyUserPermissions(propertyUserPermissions);
     }
     else {
-      this.setState({ entityUserPermissions: permissions });                                              // -> REDUX
+      this.props.setEntityUserPermissions(permissions);
     }
   }
 
@@ -140,10 +139,11 @@ class AllPermissions extends React.Component {
     if (property) {
       const propertyRolePermissions = this.state.propertyPermissions;
       propertyRolePermissions[property.title].rolePermissions = permissions;
-      this.setState({ propertyPermissions: propertyRolePermissions });                                  // -> REDUX
+      this.setState({ propertyPermissions: propertyRolePermissions });
+      // this.props.setPropertyRolePermissions(propertyRolePermissions);
     }
     else {
-      this.setState({ entityRolePermissions: permissions });                                          // -> REDUX
+      this.props.setEntityRolePermissions(permissions);
     }
   }
 
@@ -152,7 +152,7 @@ class AllPermissions extends React.Component {
     const tables = [];
 
     Object.keys(propertyPermissions).forEach((property) => {
-      const { userPermissions, rolePermissions } = propertyPermissions[property]; //// NEED TO ADD INDIVIDUAL ROLE INTO THIS OBJECT
+      const { userPermissions, rolePermissions } = propertyPermissions[property];
       const header = <h3>{property}</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}
@@ -176,11 +176,11 @@ class AllPermissions extends React.Component {
         <Page.Body>
           <h3>Entity Permissions</h3>
           <RolePermissionsTable
-              rolePermissions={this.state.entityRolePermissions}
+              rolePermissions={this.props.entityRolePermissions}
               headers={R_HEADERS} />
           <UserPermissionsTable
-              userPermissions={this.state.entityUserPermissions}
-              rolePermissions={this.state.entityRolePermissions}
+              userPermissions={this.props.entityUserPermissions}
+              rolePermissions={this.props.entityRolePermissions}
               headers={U_HEADERS} />
           {this.renderPropertyTables()}
         </Page.Body>
@@ -197,13 +197,26 @@ function mapStateToProps(state) {
     properties: permissionsSummary.get('properties').toJS(),
     userAcls: permissionsSummary.get('userAcls').toJS(),
     roleAcls: permissionsSummary.get('roleAcls').toJS(),
-    globalValue: permissionsSummary.get('globalValue').toJS()
+    globalValue: permissionsSummary.get('globalValue').toJS(),
+    entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
+    entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS()
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-
+    setEntityUserPermissions: (permissions) => {
+      dispatch(psActionFactory.setEntityUserPermissions(permissions));
+    },
+    setEntityRolePermissions: (permissions) => {
+      dispatch(psActionFactory.setEntityRolePermissions(permissions));
+    },
+    setPropertyUserPermissions: (permissions) => {
+      dispatch(psActionFactory.setPropertyUserPermissions(permissions));
+    },
+    setPropertyRolePermissions: (permissions) => {
+      dispatch(psActionFactory.setPropertyRolePermissions(permissions));
+    }
   };
 }
 

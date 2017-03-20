@@ -13,7 +13,11 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   newRoleValue: '',
   newEmailValue: '',
   updateSuccess: false,
-  updateError: false
+  updateError: false,
+  // TODO: HOW ARE THESE OBJECT (PLUS FOR PROPERTIES) FORMATTED
+  entityUserPermissions: [], // array of user objects
+  entityRolePermissions: {}, // map of roles : permissions
+  propertyPermissions: {} // property.title : [permissions]
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -60,6 +64,39 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.merge({
         globalValue: action.data
       });
+
+    case actionTypes.SET_ENTITY_USER_PERMISSIONS:
+      return state.merge({
+        entityUserPermissions: action.data
+      });
+
+    case actionTypes.SET_ENTITY_ROLE_PERMISSIONS:
+      return state.merge({
+        entityRolePermissions: action.data
+      });
+
+    case actionTypes.SET_PROPERTY_USER_PERMISSIONS:
+      return state.merge({
+      });
+
+    case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS:
+      return state.merge({
+        
+      })
+      // var stateJS = state.toJS();
+      // var nestedState = { ...stateJS,
+      //   propertyPermissions: {
+      //     ...stateJS.propertyPermissions,
+      //     [action.data.id]: {
+      //       title: action.data.title,
+      //       roleAcls: action.data.roleAcls,
+      //       userAcls: action.data.userAcls,
+      //       globalValue: action.data.globalValue
+      //     }
+      //   }
+      // };
+      // var immutableNestedState = Immutable.fromJS(nestedState);
+      // return immutableNestedState;
 
     case actionTypes.SET_PROPERTY_DATA:
       var stateJS = state.toJS();
