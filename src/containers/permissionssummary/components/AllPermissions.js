@@ -45,15 +45,10 @@ class AllPermissions extends React.Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('AP STATE allusersbyid:', nextProps.allUsersById);
-  }
-
   getUserPermissions = (property) => {
     const { userAcls, roleAcls, globalValue } = property || this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
-    console.log('GUP ALL USERS BY ID:', allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
@@ -150,14 +145,16 @@ class AllPermissions extends React.Component {
 
     Object.keys(propertyPermissions).forEach((property) => {
       const { userPermissions, rolePermissions } = propertyPermissions[property];
-      const header = <h3>{property}</h3>;
+      const header = <h3 key={`header-${property}`}>{property}</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}
-          headers={R_HEADERS} />);
+          headers={R_HEADERS}
+          key={`role-${property}`} />);
       const userTable = (<UserPermissionsTable
           userPermissions={userPermissions}
           rolePermissions={rolePermissions}
-          headers={U_HEADERS} />);
+          headers={U_HEADERS}
+          key={`user-${property}`}/>);
 
       tables.push(header, roleTable, userTable);
     });

@@ -84,7 +84,7 @@ class UserGroupRow extends React.Component {
         // }
         roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
       });
-      roleRows.push(<RoleRow role='individual' permissions={user.individualPermissions} />);
+      roleRows.push(<RoleRow role='individual' permissions={user.individualPermissions} key={`individual-${user.id}`} />);
     }
     return roleRows;
   }
