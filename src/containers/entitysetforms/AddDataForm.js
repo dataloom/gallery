@@ -96,7 +96,7 @@ export default class AddDataForm extends React.Component {
       this.setState({
         createSuccess: true,
         createFailure: false,
-        propValues: {}
+        propValues
       });
     }).catch(() => {
       this.setState({
@@ -107,8 +107,12 @@ export default class AddDataForm extends React.Component {
   }
 
   reset = () => {
+    const propValues = {};
+    this.state.authorizedPropertyTypes.forEach((propertyType) => {
+      propValues[propertyType.id] = [''];
+    });
     this.setState({
-      propValues: {},
+      propValues,
       loadAuthorizationsError: false,
       createSuccess: false,
       createFailure: false
