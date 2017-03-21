@@ -15,7 +15,7 @@ class AllPermissions extends React.Component {
     userAcls: PropTypes.object.isRequired,
     roleAcls: PropTypes.object.isRequired,
     globalValue: PropTypes.array.isRequired,
-    allUsersById: PropTypes.array.isRequired
+    allUsersById: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -46,13 +46,14 @@ class AllPermissions extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('AP STATE PROPERTYPERMISSIONS:', nextProps.propertyPermissions);
+    console.log('AP STATE allusersbyid:', nextProps.allUsersById);
   }
 
   getUserPermissions = (property) => {
     const { userAcls, roleAcls, globalValue } = property || this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
+    console.log('GUP ALL USERS BY ID:', allUsersById);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {

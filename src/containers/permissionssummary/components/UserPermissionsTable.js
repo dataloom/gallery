@@ -41,7 +41,7 @@ class UserRow extends React.Component {
 
 class RoleRow extends React.Component {
   static propTypes = {
-    permissions: PropTypes.object.isRequired,
+    permissions: PropTypes.array,
     role: PropTypes.string.isRequired
   }
 
@@ -79,9 +79,9 @@ class UserGroupRow extends React.Component {
         // TODO: FIGURE OUT WHY THIS IS SO OFTEN UNDEFINED
         // TODO: if (role === 'individual permissions') => display permissioins BUT the logic doesn't work this  way... would have to save to roles permissions table separately and this makes little sense.  store object of userID: permission on store
         // TODO: make this string a constant
-        if (rolePermissions[role] === undefined) {
-          rolePermissions[role] = '';
-        }
+        // if (rolePermissions[role] === undefined) {
+        //   rolePermissions[role] = '';
+        // }
         roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
       });
       roleRows.push(<RoleRow role='individual' permissions={user.individualPermissions} />);
