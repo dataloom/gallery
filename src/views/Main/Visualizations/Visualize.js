@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 import { Promise } from 'bluebird';
 import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
@@ -230,7 +231,11 @@ export class Visualize extends React.Component {
     return (
       <div>
         <Page.Header>
-          <Page.Title>{title}</Page.Title>
+          <Page.Title>
+            <Link
+                to={`/entitysets/${this.state.entitySetId}`}
+                className={styles.titleLink}>{this.state.title}</Link>
+          </Page.Title>
           {this.renderViewOptions()}
         </Page.Header>
         <Page.Body>
