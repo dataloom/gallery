@@ -4,7 +4,6 @@ import * as psActionFactory from '../PermissionsSummaryActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
-import styles from '../styles.module.css';
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 const R_HEADERS = ['Roles', 'Permissions'];
@@ -15,7 +14,14 @@ class AllPermissions extends React.Component {
     userAcls: PropTypes.object.isRequired,
     roleAcls: PropTypes.object.isRequired,
     globalValue: PropTypes.array.isRequired,
-    allUsersById: PropTypes.object.isRequired
+    allUsersById: PropTypes.object.isRequired,
+    entityUserPermissions: PropTypes.array.isRequired,
+    entityRolePermissions: PropTypes.object.isRequired,
+    propertyPermissions: PropTypes.object.isRequired,
+    setEntityUserPermissions: PropTypes.func.isRequired,
+    setEntityRolePermissions: PropTypes.func.isRequired,
+    setPropertyUserPermissions: PropTypes.func.isRequired,
+    setPropertyRolePermissions: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -31,7 +37,7 @@ class AllPermissions extends React.Component {
   }
 
   componentDidMount() {
-    // WHEN REDUX ACTIONS ARE HOOKED UP, EASY ENOUGH TO CALL AND RELOAD ALL DATA FOR ENTITY
+    // TODO: Make sure data gets loaded on refresh once async actions are hooked up to redux
     const { properties } = this.props;
 
     // Get user and role permissions for entity set
@@ -63,15 +69,15 @@ class AllPermissions extends React.Component {
         };
 
         // Get all user permissions (sum of individual + roles + default);
-        // Get individual permissions
         Object.keys(userAcls).forEach((permissionKey) => {
           if (userAcls[permissionKey].indexOf(userId) !== -1) {
             user.permissions.push(permissionKey);
+            // Save individual permissions separately
             user.individualPermissions.push(permissionKey);
           }
         });
 
-        // Add any additional permissions based on the roles the user has
+        // Add additional permissions based on the roles the user has
         if (allUsersById[userId].roles.length > 1) {
           Object.keys(roleAcls).forEach((permissionKey) => {
             allUsersById[userId].roles.forEach((role) => {
@@ -85,7 +91,7 @@ class AllPermissions extends React.Component {
           });
         }
 
-        // Add permissions based on default for all users
+        // Add additional permissions based on default for all users
         if (globalValue) {
           globalValue.forEach((permission) => {
             if (user.permissions.indexOf(permission) === -1) {
@@ -93,7 +99,6 @@ class AllPermissions extends React.Component {
             }
           });
         }
-
         userPermissions.push(user);
       }
     });
@@ -125,7 +130,6 @@ class AllPermissions extends React.Component {
         }
       });
     });
-
     rolePermissions.AuthenticatedUser = this.props.globalValue;
     this.setRolePermissions(rolePermissions, property);
   }
@@ -154,7 +158,7 @@ class AllPermissions extends React.Component {
           userPermissions={userPermissions}
           rolePermissions={rolePermissions}
           headers={U_HEADERS}
-          key={`user-${property}`}/>);
+          key={`user-${property}`} />);
 
       tables.push(header, roleTable, userTable);
     });

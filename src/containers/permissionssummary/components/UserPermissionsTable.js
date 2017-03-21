@@ -32,7 +32,7 @@ class UserRow extends React.Component {
     return (
       <tr className={styles.mainRow}>
         <td>{this.getUserCellData()}</td>
-        <td></td>
+        <td />
         <td>{this.getPermissionsStr()}</td>
       </tr>
     );
@@ -68,7 +68,8 @@ class RoleRow extends React.Component {
 class UserGroupRow extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
-    rolePermissions: PropTypes.object.isRequired
+    rolePermissions: PropTypes.object.isRequired,
+    className: PropTypes.string
   }
 
   getRoleRows = () => {
@@ -76,15 +77,14 @@ class UserGroupRow extends React.Component {
     const roleRows = [];
     if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
       user.roles.forEach((role, i) => {
-        // TODO: FIGURE OUT WHY THIS IS SO OFTEN UNDEFINED
-        // TODO: if (role === 'individual permissions') => display permissioins BUT the logic doesn't work this  way... would have to save to roles permissions table separately and this makes little sense.  store object of userID: permission on store
-        // TODO: make this string a constant
-        // if (rolePermissions[role] === undefined) {
-        //   rolePermissions[role] = '';
-        // }
+        // TODO: Double check why this is often undefined
         roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
       });
-      roleRows.push(<RoleRow role='individual' permissions={user.individualPermissions} key={`individual-${user.id}`} />);
+      roleRows.push(<RoleRow
+          role="individual"
+          permissions={user.individualPermissions}
+          key={`individual-${user.id}`} />
+        );
     }
     return roleRows;
   }
@@ -118,8 +118,8 @@ class SearchBar extends React.Component {
   }
 }
 
-//TODO for search: if user.nickname || user.email contains query input, push; else continue
-//TODO:  Add checkbox to allow user to optionally view *all* user permissions w/o this filter
+// TODO for search: if user.nickname || user.email contains query input, push; else continue
+// TODO:  Add checkbox to allow user to optionally view *all* user permissions w/o this filter
 class UserPermissionsTable extends React.Component {
   static propTypes = {
     rolePermissions: PropTypes.object.isRequired,
@@ -173,8 +173,8 @@ class UserPermissionsTable extends React.Component {
 
   render() {
     const headers = [];
-    this.props.headers.forEach((header, i) => {
-      headers.push(<th key={i}>{header}</th>);
+    this.props.headers.forEach((header) => {
+      headers.push(<th key={header}>{header}</th>);
     });
 
     // TODO: Add checkbox to show/hide all users (default: show only users with non-default permissions);

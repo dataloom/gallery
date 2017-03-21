@@ -14,10 +14,9 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   newEmailValue: '',
   updateSuccess: false,
   updateError: false,
-  // TODO: HOW ARE THESE OBJECT (PLUS FOR PROPERTIES) FORMATTED
-  entityUserPermissions: [], // array of user objects
-  entityRolePermissions: {}, // map of roles : permissions
-  propertyPermissions: {} // property.title : [permissions]
+  entityUserPermissions: [],
+  entityRolePermissions: {},
+  propertyPermissions: {}
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -75,7 +74,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         entityRolePermissions: action.data
       });
 
-    case actionTypes.SET_PROPERTY_USER_PERMISSIONS:
+    case actionTypes.SET_PROPERTY_USER_PERMISSIONS: {
       const userPermissionsMerge = {
         propertyPermissions: {
           [action.property.title]: {
@@ -84,8 +83,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }
       };
       return state.mergeDeep(userPermissionsMerge);
+    }
 
-    case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS:
+    case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS: {
       const rolePermissionsMerge = {
         propertyPermissions: {
           [action.property.title]: {
@@ -94,8 +94,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }
       };
       return state.mergeDeep(rolePermissionsMerge);
+    }
 
-    case actionTypes.SET_PROPERTY_DATA:
+    case actionTypes.SET_PROPERTY_DATA: {
       const propertyDataMerge = {
         properties: {
           [action.data.id]: {
@@ -107,8 +108,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }
       };
       return state.mergeDeep(propertyDataMerge);
+    }
 
-    case actionTypes.SET_PROPERTY_GLOBAL_VALUE:
+    case actionTypes.SET_PROPERTY_GLOBAL_VALUE: {
       const propertyGVMerge = {
         properties: {
           [action.data.id]: {
@@ -117,6 +119,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }
       };
       return state.mergeDeep(propertyGVMerge);
+    }
 
     default:
       return state;

@@ -29,8 +29,8 @@ export default class RolePermissionsTable extends React.Component {
 
   render() {
     const headers = [];
-    this.props.headers.forEach((header, i) => {
-      headers.push(<th key={i}>{header}</th>);
+    this.props.headers.forEach((header) => {
+      headers.push(<th key={header}>{header}</th>);
     });
 
     return (

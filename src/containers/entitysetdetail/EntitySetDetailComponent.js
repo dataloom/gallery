@@ -75,8 +75,6 @@ class EntitySetDetailComponent extends React.Component {
 
   componentDidMount() {
     this.props.loadEntitySet();
-    //TEST - REMOVE
-    // this.props.testGetAllUsers();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -87,13 +85,11 @@ class EntitySetDetailComponent extends React.Component {
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
-
-    // console.log('ALL USERS from redux epic? ', this.props.allUsers);
   }
 
-  //////// PERMISSIONS LOGIC ///////////
-
-  // REFACTOR ME FIRST
+  /** PERMISSIONS LOGIC **/
+  // TODO: Move all logic to Redux so that it's not hosted here
+  // TODO: Refactor w/ new roles service once live
   loadAcls = (entitySetId, property) => {
     const aclKey = [entitySetId];
     if (property && property.id) aclKey.push(property.id);
@@ -111,8 +107,8 @@ class EntitySetDetailComponent extends React.Component {
   loadAllUsersAndRoles = () => {
     let allUsersById = {};
     const allRolesList = new Set();
-    const myId = JSON.parse(localStorage.profile).user_id; // to reducer
-    PrincipalsApi.getAllUsers() // epic observable
+    const myId = JSON.parse(localStorage.profile).user_id;
+    PrincipalsApi.getAllUsers()
     .then((users) => {
       allUsersById = users;
       Object.keys(users).forEach((userId) => {
@@ -129,7 +125,7 @@ class EntitySetDetailComponent extends React.Component {
           allRolesList,
           loadUsersError: false
         }
-      );  
+      );
     })
     .catch(() => {
       this.setState({ loadUsersError: true });
@@ -197,7 +193,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
 
-  //////// VIEW LOGIC ///////////
+  /** VIEW LOGIC **/
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
@@ -439,8 +435,7 @@ function mapStateToProps(state) {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
     entitySetPermissions,
-    entityProperties: permissionsSummary.get('properties').toJS(),
-    // allUsers: permissionsSummary.get('users').toJS()
+    entityProperties: permissionsSummary.get('properties').toJS()
   };
 }
 
@@ -459,6 +454,8 @@ function mapDispatchToProps(dispatch, ownProps) {
         }]
       ));
     },
+    /* PERMISSIONS SUMMARY */
+    //TODO: Move these to Permissions Summary once async logic is in Redux
     setEntityData: (data) => {
       dispatch(psActionFactories.setEntityData(data));
     },
