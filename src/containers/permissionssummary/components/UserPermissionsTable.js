@@ -118,6 +118,7 @@ class SearchBar extends React.Component {
   }
 }
 
+// TODO: Separate components into different files
 // TODO for search: if user.nickname || user.email contains query input, push; else continue
 // TODO:  Add checkbox to allow user to optionally view *all* user permissions w/o this filter
 class UserPermissionsTable extends React.Component {

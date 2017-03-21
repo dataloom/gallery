@@ -4,7 +4,7 @@ import styles from '../styles.module.css';
 
 export default class RolePermissionsTable extends React.Component {
   static propTypes = {
-    rolePermissions: PropTypes.object.isRequired, // fix formatting to empty string from earlier in the flow
+    rolePermissions: PropTypes.object.isRequired,
     headers: PropTypes.array.isRequired
   }
 

@@ -36,6 +36,7 @@ class AllPermissions extends React.Component {
     this.getUserPermissions = this.getUserPermissions.bind(this);
   }
 
+  //TODO: Reformat to use new roles service once live
   componentDidMount() {
     // TODO: Make sure data gets loaded on refresh once async actions are hooked up to redux
     const { properties } = this.props;
