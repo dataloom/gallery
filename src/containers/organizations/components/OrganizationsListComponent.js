@@ -58,6 +58,7 @@ class OrganizationsListComponent extends React.Component {
     actions: React.PropTypes.shape({
       fetchOrganizationsRequest: React.PropTypes.func.isRequired
     }).isRequired,
+    auth: React.PropTypes.object.isRequired,
     isFetchingOrgs: React.PropTypes.bool.isRequired,
     isSearchingOrgs: React.PropTypes.bool.isRequired,
     organizations: React.PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -93,22 +94,36 @@ class OrganizationsListComponent extends React.Component {
   renderOrganizations = () => {
 
     const yourOrgs = [];
-    const otherOrgs = [];
+    const memberOfOrgs = [];
+    const publicOrgs = [];
+
+    const currentUserId :string = this.props.auth.getProfile().user_id;
 
     this.props.visibleOrganizationIds.forEach((orgId :UUID) => {
 
       const organization :Immutable.Map = this.props.organizations.get(orgId, Immutable.Map());
+
+      let isMemberOfOrg :boolean = false;
+      organization.get('members').forEach((memberObj :Object) => {
+        if (memberObj.get('id') === currentUserId) {
+          isMemberOfOrg = true;
+        }
+      });
+
       if (!organization.isEmpty()) {
         if (organization.get('isOwner') === true) {
           yourOrgs.push(this.renderOrganization(organization));
         }
+        else if (isMemberOfOrg) {
+          memberOfOrgs.push(this.renderOrganization(organization));
+        }
         else {
-          otherOrgs.push(this.renderOrganization(organization));
+          publicOrgs.push(this.renderOrganization(organization));
         }
       }
     });
 
-    if (yourOrgs.length === 0 && otherOrgs.length === 0) {
+    if (yourOrgs.length === 0 && memberOfOrgs.length === 0 && publicOrgs.length === 0) {
       return this.renderNoOrganizations();
     }
 
@@ -118,18 +133,29 @@ class OrganizationsListComponent extends React.Component {
     if (yourOrgs.length > 0) {
       yourOrgsOverviewCardCollection = (
         <OrgOverviewCardCollection>
-          <h2>Your Organizations</h2>
+          <h2>Owner</h2>
           { yourOrgs }
         </OrgOverviewCardCollection>
       );
     }
 
-    let otherOrgsOverviewCardCollection = null;
-    if (otherOrgs.length > 0) {
-      otherOrgsOverviewCardCollection = (
+    let memberOfOrgsOverviewCardCollection = null;
+    if (memberOfOrgs.length > 0) {
+      memberOfOrgsOverviewCardCollection = (
         <OrgOverviewCardCollection>
-          <h2>Other Organizations</h2>
-          { otherOrgs }
+          <h2>Member</h2>
+          { memberOfOrgs }
+        </OrgOverviewCardCollection>
+      );
+    }
+
+    let publicOrgsOverviewCardCollection = null;
+    if (publicOrgs.length > 0) {
+      publicOrgsOverviewCardCollection = (
+        <OrgOverviewCardCollection>
+          <h3>Other Organizations</h3>
+          <h4>These organizations are visible to the public.</h4>
+          { publicOrgs }
         </OrgOverviewCardCollection>
       );
     }
@@ -137,7 +163,9 @@ class OrganizationsListComponent extends React.Component {
     return (
       <StyledFlexContainerStacked>
         { yourOrgsOverviewCardCollection }
-        { otherOrgsOverviewCardCollection }
+        { memberOfOrgsOverviewCardCollection }
+        <hr />
+        { publicOrgsOverviewCardCollection }
       </StyledFlexContainerStacked>
     );
   }
