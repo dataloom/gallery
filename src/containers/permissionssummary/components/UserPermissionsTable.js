@@ -75,17 +75,19 @@ class UserGroupRow extends React.Component {
   getRoleRows = () => {
     const { user, rolePermissions } = this.props;
     const roleRows = [];
+
     if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
       user.roles.forEach((role, i) => {
         // TODO: Double check why this is often undefined
         roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
       });
-      roleRows.push(<RoleRow
-          role="individual"
-          permissions={user.individualPermissions}
-          key={`individual-${user.id}`} />
-        );
     }
+    roleRows.push(<RoleRow
+        role="individual"
+        permissions={user.individualPermissions}
+        key={`individual-${user.id}`} />
+      );
+
     return roleRows;
   }
 
