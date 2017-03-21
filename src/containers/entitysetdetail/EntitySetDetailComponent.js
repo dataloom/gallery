@@ -329,7 +329,7 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderPermissionsSummaryLink = () => {
+  renderPermissionsSummaryButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
       <div className={styles.buttonWrapper}>
@@ -405,7 +405,7 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
-          {this.renderPermissionsSummaryLink()}
+          {this.renderPermissionsSummaryButton()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
         </Page.Body>
