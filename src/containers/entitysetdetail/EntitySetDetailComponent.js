@@ -478,9 +478,6 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setUpdateError: (bool) => {
       dispatch(psActionFactories.setUpdateError(bool));
-    },
-    testGetAllUsers: () => {
-      dispatch(principalsActionFactory.fetchAllUsersRequest());
     }
   };
 }
