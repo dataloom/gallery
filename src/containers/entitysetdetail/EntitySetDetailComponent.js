@@ -333,9 +333,11 @@ class EntitySetDetailComponent extends React.Component {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
       <div className={styles.buttonWrapper}>
-        <Button className={styles.center}>
-          <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>View Permissions Summary</Link>
-        </Button>
+        <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>
+          <Button className={styles.center}>
+            <span className={styles.buttonText}>View Permissions Summary</span>
+          </Button>
+        </Link>
       </div>
     );
   }
