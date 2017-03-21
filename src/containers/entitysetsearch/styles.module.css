@@ -131,3 +131,7 @@
   right: 0;
   display: inline-block;
 }
+
+.titleLink, .titleLink:hover {
+  color: inherit
+}
