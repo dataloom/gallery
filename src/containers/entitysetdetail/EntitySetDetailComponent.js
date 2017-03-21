@@ -88,7 +88,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   /** PERMISSIONS LOGIC **/
-  // TODO: Move all logic to Redux so that it's not hosted here
+  // TODO: Move all logic to Redux / All Permissinos so that it's not hosted here
   // TODO: Refactor w/ new roles service once live
   loadAcls = (entitySetId, property) => {
     const aclKey = [entitySetId];
@@ -455,7 +455,7 @@ function mapDispatchToProps(dispatch, ownProps) {
       ));
     },
     /* PERMISSIONS SUMMARY */
-    //TODO: Move these to Permissions Summary once async logic is in Redux
+    //TODO: Move these back to Permissions Summary now that we're using Redux
     setEntityData: (data) => {
       dispatch(psActionFactories.setEntityData(data));
     },
