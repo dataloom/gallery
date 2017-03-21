@@ -22,9 +22,9 @@ const orders = {
 const permissionLevels = {
   hidden: [],
   discover: [Permission.DISCOVER.name],
-  link: [Permission.DISCOVER.name, Permission.LINK.name],
-  read: [Permission.DISCOVER.name, Permission.READ.name],
-  write: [Permission.DISCOVER.name, Permission.WRITE.name],
+  link: [Permission.LINK.name],
+  read: [Permission.READ.name],
+  write: [Permission.WRITE.name],
   owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
 };
 
@@ -299,7 +299,7 @@ export class PermissionsPanel extends React.Component {
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const options = optionNames
-      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Hidden)
+      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden)
       .map((option) => {
         const checkboxName = `global-${option}`;
         return (
