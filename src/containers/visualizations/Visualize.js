@@ -3,13 +3,13 @@ import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { loadEntitySet, getAllEntitySets } from './VisualizationActionFactories';
-import AsyncContent from '../../../components/asynccontent/AsyncContent';
-import Page from '../../../components/page/Page';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
+import Page from '../../components/page/Page';
 import { LineChartContainer } from './LineChartContainer';
 import { ScatterChartContainer } from './ScatterChartContainer';
 import { GeoContainer } from './GeoContainer';
 import { EntitySetVisualizationList } from './EntitySetVisualizationList';
-import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
+import VisualizationConsts from '../../utils/Consts/VisualizationConsts';
 import styles from './styles.module.css';
 
 class Visualize extends React.Component {

@@ -7,7 +7,7 @@ import { DataModel } from './Schemas/DataModel';
 import Login from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
-import Visualize from './Visualizations/Visualize';
+import Visualize from '../../containers/visualizations/Visualize';
 import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';

@@ -1,16 +1,14 @@
 /* @flow */
 import { Observable } from 'rxjs';
-import { normalize } from 'normalizr';
-import Immutable from 'immutable';
 import { combineEpics } from 'redux-observable';
 import Promise from 'bluebird';
 import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 
-import EdmConsts from '../../../utils/Consts/EdmConsts';
-import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
+import EdmConsts from '../../utils/Consts/EdmConsts';
+import VisualizationConsts from '../../utils/Consts/VisualizationConsts';
 import * as actionTypes from './VisualizationActionTypes';
 import * as actionFactories from './VisualizationActionFactories';
-import { Permission } from '../../../core/permissions/Permission';
+import { Permission } from '../../core/permissions/Permission';
 
 const MAX_POINTS_TO_DISPLAY = 1000;
 

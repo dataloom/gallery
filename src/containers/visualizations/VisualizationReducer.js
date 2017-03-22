@@ -4,7 +4,7 @@
 
 import Immutable from 'immutable';
 
-import { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
+import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 import * as VisualizationActionTypes from './VisualizationActionTypes';
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
@@ -21,7 +21,7 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   isLoadingVisualizableEntitySetsStatus: ASYNC_STATUS.PENDING
 });
 
-export default function principalsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
+export default function visualizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
 
   switch (action.type) {
 

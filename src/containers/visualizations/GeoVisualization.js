@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { divIcon } from 'leaflet';
 import { Map, Marker, TileLayer } from 'react-leaflet';
-import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
+import VisualizationConsts from '../../utils/Consts/VisualizationConsts';
 import styles from './styles.module.css';
 
 export class GeoVisualization extends React.Component {
