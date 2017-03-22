@@ -156,6 +156,7 @@ class AllPermissions extends React.Component {
           headers={R_HEADERS}
           key={`role-${property}`} />);
       const userTable = (<UserPermissionsTable
+          property={property}
           userPermissions={userPermissions}
           rolePermissions={rolePermissions}
           headers={U_HEADERS}
