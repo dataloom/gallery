@@ -16,7 +16,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   updateError: false,
   entityUserPermissions: [],
   entityRolePermissions: {},
-  propertyPermissions: {}
+  propertyPermissions: {},
+  acl: {}
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -24,6 +25,15 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.RESET_PERMISSIONS:
       return INITIAL_STATE;
+
+    case actionTypes.LOAD_ACLS_SUCCESS:
+      // do something
+      return state.merge({
+        acl: action.acl
+      })
+
+    case actionTypes.LOAD_ACLS_FAILURE:
+      // do something else
 
     case actionTypes.SET_ALL_USERS_AND_ROLES:
       return state.merge({

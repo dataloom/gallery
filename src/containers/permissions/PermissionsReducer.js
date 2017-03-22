@@ -84,6 +84,14 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
         asyncStatus: ASYNC_STATUS.LOADING
       });
 
+    case actionTypes.GET_ACL_SUCCESS:
+      return state.merge({
+        acl: action.acl,
+        aclKey: action.aclKey
+      });
+
+    // case actionTypes.GET_ACL_FAILURE:
+
     default:
       return state;
   }

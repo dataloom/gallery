@@ -1,5 +1,26 @@
 import * as actionTypes from './PermissionsSummaryActionTypes';
 
+export function loadAclsRequest(entitySetId, property) {
+  return {
+    type: actionTypes.LOAD_ACLS_REQUEST,
+    entitySetId,
+    property
+  };
+}
+
+export function loadAclsSuccess(acl) {
+  return {
+    type: actionTypes.LOAD_ACLS_SUCCESS,
+    acl
+  };
+}
+
+export function loadAclsFailure() {
+  return {
+    type: actionTypes.LOAD_ACLS_FAILURE
+  };
+}
+
 export function setEntityData(data) {
   return {
     type: actionTypes.SET_ENTITY_DATA,

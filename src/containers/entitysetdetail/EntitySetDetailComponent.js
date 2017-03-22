@@ -81,9 +81,11 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      this.props.loadAclsRequest(nextProps.entitySet.id);
       this.loadAcls(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
+        // this.props.loadAclsRequest(nextProps.entitySet.id, property);
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
@@ -97,8 +99,8 @@ class EntitySetDetailComponent extends React.Component {
     if (property && property.id) aclKey.push(property.id);
     this.loadAllUsersAndRoles();
 
-    PermissionsApi.getAcl(aclKey)
-    .then((acls) => {
+    PermissionsApi.getAcl(aclKey) // -> action to save acls to store
+    .then((acls) => { // -> 2nd action to updateStateAcls
       this.updateStateAcls(acls.aces, property);
     })
     .catch(() => {
@@ -452,6 +454,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     /* PERMISSIONS SUMMARY */
     //TODO: Move these back to Permissions Summary now that we're using Redux
+    loadAclsRequest: (entitySetId, property) => {
+      dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
+    },
     setEntityData: (data) => {
       dispatch(psActionFactories.setEntityData(data));
     },
