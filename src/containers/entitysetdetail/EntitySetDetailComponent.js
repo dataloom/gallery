@@ -119,16 +119,8 @@ class EntitySetDetailComponent extends React.Component {
       allUsersById[myId] = null;
       this.props.setAllUsersAndRoles(allUsersById, allRolesList);
       this.props.setLoadUsersError(false);
-      this.setState(
-        {
-          allUsersById,
-          allRolesList,
-          loadUsersError: false
-        }
-      );
     })
     .catch(() => {
-      this.setState({ loadUsersError: true });
       this.props.setLoadUsersError(true);
     });
   }
