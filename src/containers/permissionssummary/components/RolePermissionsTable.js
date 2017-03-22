@@ -14,7 +14,6 @@ export default class RolePermissionsTable extends React.Component {
 
     if (rolePermissions) {
       Object.keys(rolePermissions).forEach((role) => {
-        // console.log('permissions!!!:', role, rolePermissions[role]);
         const permissionsStr = rolePermissions[role].join(', ');
 
         let roleStr = role;

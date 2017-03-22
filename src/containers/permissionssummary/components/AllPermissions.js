@@ -52,13 +52,6 @@ class AllPermissions extends React.Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    // TODO: Figure out why globalValue never gets mapped to props, and yet why usergrouprow headers have them listed
-    if (this.props.globalValue === undefined && nextProps.globalValue !== undefined) {
-      // console.log('GV PROPS:', nextProps.globalValue);
-    }
-  }
-
   getUserPermissions = (property) => {
     const { userAcls, roleAcls, globalValue } = property || this.props;
     const { allUsersById } = this.props;
@@ -139,7 +132,6 @@ class AllPermissions extends React.Component {
       });
     });
     rolePermissions.AuthenticatedUser = this.props.globalValue;
-    // console.log('authUser:', property, rolePermissions.AuthenticatedUser);
     this.setRolePermissions(rolePermissions, property);
   }
 
