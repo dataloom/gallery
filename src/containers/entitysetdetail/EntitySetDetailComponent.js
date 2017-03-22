@@ -74,6 +74,8 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentDidMount() {
+    // reset state for all data
+    this.props.resetPermissions();
     this.props.loadEntitySet();
   }
 
@@ -85,6 +87,8 @@ class EntitySetDetailComponent extends React.Component {
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
+
+    console.log('state:', )
   }
 
   /** PERMISSIONS LOGIC **/
@@ -470,6 +474,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setUpdateError: (bool) => {
       dispatch(psActionFactories.setUpdateError(bool));
+    },
+    resetPermissions: () => {
+      dispatch(psActionFactories.resetPermissions());
     }
   };
 }
