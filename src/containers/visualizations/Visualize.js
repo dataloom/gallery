@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 import { loadEntitySet, getAllEntitySets } from './VisualizationActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import Page from '../../components/page/Page';
@@ -22,14 +23,14 @@ class Visualize extends React.Component {
     }).isRequired,
     entitySet: PropTypes.object,
     results: PropTypes.array,
-    isLoadingDataStatus: PropTypes.symbol,
+    loadingDataStatus: PropTypes.symbol,
     errorMessage: PropTypes.string,
-    numberProps: PropTypes.array,
-    dateProps: PropTypes.array,
-    geoProps: PropTypes.array,
-    chartOptions: PropTypes.array,
-    isLoadingVisualizableEntitySetsStatus: PropTypes.symbol,
-    visualizableEntitySets: PropTypes.array
+    numberProps: PropTypes.instanceOf(Immutable.List),
+    dateProps: PropTypes.instanceOf(Immutable.List),
+    geoProps: PropTypes.instanceOf(Immutable.List),
+    chartOptions: PropTypes.instanceOf(Immutable.List),
+    loadingVisualizableEntitySetsStatus: PropTypes.symbol,
+    visualizableEntitySets: PropTypes.instanceOf(Immutable.List)
   }
 
   constructor(props) {
@@ -55,8 +56,8 @@ class Visualize extends React.Component {
       }
       else this.props.actions.getAllEntitySets();
     }
-    if (!this.state.currentView && nextProps.chartOptions.length) {
-      this.setState({ currentView: nextProps.chartOptions[0] });
+    if (!this.state.currentView && nextProps.chartOptions.size) {
+      this.setState({ currentView: nextProps.chartOptions.get(0) });
     }
   }
 
@@ -72,7 +73,7 @@ class Visualize extends React.Component {
 
   renderViewOptions = () => {
     const options = this.props.chartOptions;
-    if (options.length === 0) {
+    if (options.size === 0) {
       return null;
     }
     const optionsBar = options.map((option) => {
@@ -108,8 +109,8 @@ class Visualize extends React.Component {
 
   renderVisualizationPage = () => {
     const title = this.props.entitySet ? (<Link
-        to={`/entitysets/${this.props.entitySet.id}`}
-        className={styles.titleLink}>{this.props.entitySet.title}</Link>) : '';
+        to={`/entitysets/${this.props.entitySet.get('id')}`}
+        className={styles.titleLink}>{this.props.entitySet.get('title')}</Link>) : '';
     return (
       <div>
         <Page.Header>
@@ -118,7 +119,7 @@ class Visualize extends React.Component {
         </Page.Header>
         <Page.Body>
           <AsyncContent
-              status={this.props.isLoadingDataStatus}
+              status={this.props.loadingDataStatus}
               errorMessage={this.props.errorMessage}
               content={this.renderVisualization} />
         </Page.Body>
@@ -134,7 +135,7 @@ class Visualize extends React.Component {
         </Page.Header>
         <Page.Body>
           <AsyncContent
-              status={this.props.isLoadingVisualizableEntitySetsStatus}
+              status={this.props.loadingVisualizableEntitySetsStatus}
               errorMessage={this.props.errorMessage}
               content={() => {
                 return (<EntitySetVisualizationList
@@ -165,8 +166,8 @@ function mapStateToProps(state) {
     dateProps: state.getIn(['visualizations', 'dateProps']),
     geoProps: state.getIn(['visualizations', 'geoProps']),
     chartOptions: state.getIn(['visualizations', 'chartOptions']),
-    isLoadingDataStatus: state.getIn(['visualizations', 'isLoadingDataStatus']),
-    isLoadingVisualizableEntitySetsStatus: state.getIn(['visualizations', 'isLoadingVisualizableEntitySetsStatus']),
+    loadingDataStatus: state.getIn(['visualizations', 'loadingDataStatus']),
+    loadingVisualizableEntitySetsStatus: state.getIn(['visualizations', 'loadingVisualizableEntitySetsStatus']),
     visualizableEntitySets: state.getIn(['visualizations', 'visualizableEntitySets']),
     errorMessage: state.getIn(['visualizations', 'errorMessage'])
   };

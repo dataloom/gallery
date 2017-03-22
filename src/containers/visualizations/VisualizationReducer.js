@@ -72,7 +72,7 @@ export default function visualizationsReducer(state :Immutable.Map = INITIAL_STA
 
     case VisualizationActionTypes.GET_DATA_SUCCESS:
       return state
-        .set('results', Immutable.fromJS(action.results))
+        .set('results', action.results)
         .set('loadingDataStatus', ASYNC_STATUS.SUCCESS);
 
     case VisualizationActionTypes.GET_DATA_FAILURE:

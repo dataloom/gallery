@@ -15,7 +15,7 @@ import permissionsSummaryReducer from '../../containers/permissionssummary/Permi
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
 import datasetsReducer from '../../containers/datasets/DatasetsReducer';
-import visualizationReducer from '../../views/Main/Visualizations/VisualizationReducer';
+import visualizationReducer from '../../containers/visualizations/VisualizationReducer';
 import routerReducer from '../router/RouterReducer';
 
 export default function reduxReducer() {
