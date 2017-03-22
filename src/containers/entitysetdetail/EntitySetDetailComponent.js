@@ -87,8 +87,6 @@ class EntitySetDetailComponent extends React.Component {
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
-
-    console.log('state:', )
   }
 
   /** PERMISSIONS LOGIC **/
