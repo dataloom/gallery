@@ -5,17 +5,17 @@ import * as actionTypes from './EntitySetDetailActionTypes';
 import * as edmActionTypes from '../edm/EdmActionTypes';
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
-export const INITIAL_STATE:Immutable.Map<*,*> = Immutable.fromJS({
+export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   asyncState: {
     status: ASYNC_STATUS.LOADING,
     errorMessage: ''
   },
   // TODO: Move to object reference
   entitySetId: null,
-  entitySetReference: null,
+  entitySetReference: null
 });
 
-export default function reducer(state:Immutable.Map<*,*> = INITIAL_STATE, action:Object) {
+export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
     case actionTypes.ENTITY_SET_REQUEST:
       return state.merge({
@@ -27,9 +27,10 @@ export default function reducer(state:Immutable.Map<*,*> = INITIAL_STATE, action
         entitySetId: action.id,
         entitySetReference: null
       });
+
     // TODO: Handle error case
     case edmActionTypes.EDM_OBJECT_RESOLVE:
-      if (state.get('entitySetId') != action.reference.id) {
+      if (state.get('entitySetId') !== action.reference.id) {
         return state;
       }
 
@@ -42,6 +43,6 @@ export default function reducer(state:Immutable.Map<*,*> = INITIAL_STATE, action
       });
 
     default:
-      return state
+      return state;
   }
 }

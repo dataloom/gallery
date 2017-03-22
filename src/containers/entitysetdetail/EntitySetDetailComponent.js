@@ -1,29 +1,29 @@
 import React, { PropTypes } from 'react';
-import { Link, hashHistory } from 'react-router';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
-
-import {
-  EntityDataModelApi
-} from 'loom-data';
+import { EntityDataModelApi, PermissionsApi, PrincipalsApi } from 'loom-data';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
+import * as principalsActionFactory from '../principals/PrincipalsActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
-import { PermissionsPanel } from '../../views/Main/Schemas/Components/PermissionsPanel';
+import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
 import AddDataForm from '../entitysetforms/AddDataForm';
 import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
+import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import styles from './entitysetdetail.module.css';
 
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
@@ -37,6 +37,14 @@ const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
   flex: 1 0 auto;
 `;
+
+const permissionOptions = {
+  Discover: 'Discover',
+  Link: 'Link',
+  Read: 'Read',
+  Write: 'Write',
+  Owner: 'Owner'
+};
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
@@ -53,11 +61,15 @@ class EntitySetDetailComponent extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false
+      deleteError: false,
+      properties: {},
+      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
+      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }
     };
   }
 
@@ -66,16 +78,122 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined ) {
-      const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
-        return property.id;
-      });
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      this.loadAcls(nextProps.entitySet.id);
 
-      localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
-      localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
+      nextProps.entitySet.entityType.properties.forEach((property) => {
+        this.loadAcls(nextProps.entitySet.id, property);
+      });
     }
   }
 
+  /** PERMISSIONS LOGIC **/
+  // TODO: Move all logic to Redux / All Permissinos so that it's not hosted here
+  // TODO: Refactor w/ new roles service once live
+  loadAcls = (entitySetId, property) => {
+    const aclKey = [entitySetId];
+    if (property && property.id) aclKey.push(property.id);
+    this.loadAllUsersAndRoles();
+
+    PermissionsApi.getAcl(aclKey)
+    .then((acls) => {
+      this.updateStateAcls(acls.aces, property);
+    })
+    .catch(() => {
+      this.props.setUpdateError(true);
+    });
+  }
+
+  loadAllUsersAndRoles = () => {
+    let allUsersById = {};
+    const allRolesList = new Set();
+    const myId = JSON.parse(localStorage.profile).user_id;
+    PrincipalsApi.getAllUsers()
+    .then((users) => {
+      allUsersById = users;
+      Object.keys(users).forEach((userId) => {
+        users[userId].roles.forEach((role) => {
+          if (role !== AUTHENTICATED_USER) allRolesList.add(role);
+        });
+      });
+      allUsersById[myId] = null;
+      this.props.setAllUsersAndRoles(allUsersById, allRolesList);
+      this.props.setLoadUsersError(false);
+      this.setState(
+        {
+          allUsersById,
+          allRolesList,
+          loadUsersError: false
+        }
+      );
+    })
+    .catch(() => {
+      this.setState({ loadUsersError: true });
+      this.props.setLoadUsersError(true);
+    });
+  }
+
+  updateStateAcls = (aces, property) => {
+    let globalValue = [];
+    const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+    const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
+    aces.forEach((ace) => {
+      if (ace.permissions.length > 0) {
+        if (ace.principal.type === ROLE) {
+          if (ace.principal.id === AUTHENTICATED_USER) {
+            globalValue = this.getPermission(ace.permissions);
+          }
+          else {
+            this.getPermission(ace.permissions).forEach((permission) => {
+              roleAcls[permission].push(ace.principal.id);
+            });
+          }
+        }
+        else {
+          this.getPermission(ace.permissions).forEach((permission) => {
+            userAcls[permission].push(ace.principal.id);
+          });
+        }
+      }
+    });
+
+    this.props.setNewRoleValue('');
+    this.props.setNewEmailValue('');
+    this.props.setUpdateError(false);
+
+    if (property) {
+      const propertyAcls = {
+        id: property.id,
+        title: property.title,
+        roleAcls,
+        userAcls,
+        globalValue
+      };
+      this.props.setPropertyData(propertyAcls);
+    }
+    else {
+      const entityAcls = {
+        userAcls,
+        roleAcls,
+        globalValue
+      };
+      this.props.setEntityData(entityAcls);
+    }
+
+  }
+
+  getPermission = (permissions) => {
+    const newPermissions = [];
+    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
+    if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
+    if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
+    if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
+    if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
+    return newPermissions;
+  }
+
+
+  /** VIEW LOGIC **/
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
@@ -196,11 +314,6 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
-  onAllPermissions = () => {
-    hashHistory.push(`/allpermissions`);
-    // hashHistory.push(`/entitysets/${this.props.entitySetId}/allpermissions`);
-  }
-
   renderAddDataButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
@@ -216,18 +329,17 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderAllPermissions = () => {
+  renderPermissionsSummaryButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
-      <div className={styles.buttonWrapper} >
-        <Button
-          className={styles.center}
-          onClick={this.onAllPermissions}
-        >
-          <span className={styles.buttonText}>View all permissions</span>
-        </Button>
+      <div className={styles.buttonWrapper}>
+        <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>
+          <Button className={styles.center}>
+            <span className={styles.buttonText}>View Permissions Summary</span>
+          </Button>
+        </Link>
       </div>
-    )
+    );
   }
 
   renderDeleteEntitySet = () => {
@@ -295,7 +407,7 @@ class EntitySetDetailComponent extends React.Component {
           {this.renderAddDataForm()}
           {this.renderPermissionsPanel()}
           {this.renderSearchEntitySet()}
-          {this.renderAllPermissions()}
+          {this.renderPermissionsSummaryButton()}
           {this.renderDeleteEntitySet()}
           {this.renderConfirmDeleteModal()}
         </Page.Body>
@@ -308,6 +420,7 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
+  const permissionsSummary = state.get('permissionsSummary');
 
   let entitySet;
   let entitySetPermissions;
@@ -323,7 +436,8 @@ function mapStateToProps(state) {
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
-    entitySetPermissions
+    entitySetPermissions,
+    entityProperties: permissionsSummary.get('properties').toJS()
   };
 }
 
@@ -341,6 +455,29 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
+    },
+    /* PERMISSIONS SUMMARY */
+    //TODO: Move these back to Permissions Summary now that we're using Redux
+    setEntityData: (data) => {
+      dispatch(psActionFactories.setEntityData(data));
+    },
+    setPropertyData: (data) => {
+      dispatch(psActionFactories.setPropertyData(data));
+    },
+    setAllUsersAndRoles: (users, roles) => {
+      dispatch(psActionFactories.setAllUsersAndRoles(users, roles));
+    },
+    setLoadUsersError: (bool) => {
+      dispatch(psActionFactories.setLoadUsersError(bool));
+    },
+    setNewRoleValue: (value) => {
+      dispatch(psActionFactories.setNewRoleValue(value));
+    },
+    setNewEmailValue: (value) => {
+      dispatch(psActionFactories.setNewEmailValue(value));
+    },
+    setUpdateError: (bool) => {
+      dispatch(psActionFactories.setUpdateError(bool));
     }
   };
 }
