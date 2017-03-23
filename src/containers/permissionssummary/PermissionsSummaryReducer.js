@@ -26,13 +26,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.RESET_PERMISSIONS:
       return INITIAL_STATE;
 
-    case actionTypes.LOAD_ACLS_SUCCESS:
-      // do something
-      return state.merge({
-        acl: action.acl
-      })
+    case actionTypes.UPDATE_STATE_ACLS_SUCCESS:
+      console.log('hit update state acls success:', action)
 
-    case actionTypes.LOAD_ACLS_FAILURE:
+    case actionTypes.UPDATE_STATE_ACLS_FAILURE:
       // do something else
 
     case actionTypes.SET_ALL_USERS_AND_ROLES:

@@ -85,7 +85,7 @@ class EntitySetDetailComponent extends React.Component {
       this.loadAcls(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
-        // this.props.loadAclsRequest(nextProps.entitySet.id, property);
+        this.props.loadAclsRequest(nextProps.entitySet.id, property);
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
