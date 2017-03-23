@@ -3,7 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 
 import { PropertyTypePropType } from '../../EdmModel';
 import { PermissionsPropType } from '../../../permissions/PermissionsStorage';
-import { PermissionsPanel } from '../../../../views/Main/Schemas/Components/PermissionsPanel';
+import PermissionsPanel from '../../../../views/Main/Schemas/Components/PermissionsPanel';
 
 import styles from '../../../entitysetdetail/entitysetdetail.module.css';
 

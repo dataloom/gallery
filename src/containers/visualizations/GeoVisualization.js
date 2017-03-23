@@ -1,22 +1,23 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { divIcon } from 'leaflet';
 import { Map, Marker, TileLayer } from 'react-leaflet';
-import VisualizationConsts from '../../../utils/Consts/VisualizationConsts';
+import VisualizationConsts from '../../utils/Consts/VisualizationConsts';
 import styles from './styles.module.css';
 
 export class GeoVisualization extends React.Component {
 
   static propTypes = {
-    geoProps: PropTypes.array,
+    geoProps: PropTypes.instanceOf(Immutable.List),
     data: PropTypes.array
   }
 
   render() {
     const { geoProps, data } = this.props;
-    if (geoProps === undefined || geoProps[0] === undefined || geoProps[1] === undefined) return null;
+    if (!geoProps || !geoProps.get(0) || !geoProps.get(1)) return null;
     const icon = divIcon({ className: styles.divIcon });
-    const latFqn = `${geoProps[0].type.namespace}.${geoProps[0].type.name}`;
-    const longFqn = `${geoProps[1].type.namespace}.${geoProps[1].type.name}`;
+    const latFqn = `${geoProps.get(0).type.namespace}.${geoProps.get(0).type.name}`;
+    const longFqn = `${geoProps.get(1).type.namespace}.${geoProps.get(1).type.name}`;
 
     let maxLat = -90;
     let minLat = 90;
@@ -50,9 +51,8 @@ export class GeoVisualization extends React.Component {
       <div>
         <Map bounds={bounds} className={styles.map}>
           <TileLayer
-            url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
+              url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
           {markers}
         </Map>
       </div>

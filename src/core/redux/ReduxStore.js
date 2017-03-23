@@ -28,10 +28,14 @@ export default function initializeReduxStore() :Object {
     applyMiddleware(...reduxMiddlewares)
   ];
 
+  /* eslint-disable no-underscore-dangle */
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  /* eslint-enable */
+
   const reduxStore = createStore(
     reduxReducer(),
     Immutable.Map(),
-    compose(...reduxEnhancers)
+    composeEnhancers(...reduxEnhancers)
   );
 
   return reduxStore;

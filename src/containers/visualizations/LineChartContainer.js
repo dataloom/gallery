@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
+import Immutable from 'immutable';
 import { Checkbox } from 'react-bootstrap';
 import { LineChartVisualization } from './LineChartVisualization';
 import styles from './styles.module.css';
@@ -7,8 +8,8 @@ import styles from './styles.module.css';
 export class LineChartContainer extends React.Component {
 
   static propTypes = {
-    numberProps: PropTypes.array,
-    dateProps: PropTypes.array,
+    numberProps: PropTypes.instanceOf(Immutable.List),
+    dateProps: PropTypes.instanceOf(Immutable.List),
     data: PropTypes.array
   }
 
@@ -48,7 +49,7 @@ export class LineChartContainer extends React.Component {
         <LineChartVisualization
             xProp={this.state.xAxisProp}
             yProps={this.state.selectedYProps}
-            allProps={this.props.numberProps.concat(this.props.dateProps)}
+            allProps={this.props.numberProps.concat(this.props.dateProps).toJS()}
             data={this.props.data} />
       </div>
     );
@@ -56,22 +57,25 @@ export class LineChartContainer extends React.Component {
 
   render() {
     const { numberProps, dateProps } = this.props;
-    if (numberProps.length + dateProps.length <= 1) return null;
+    if (numberProps.size + dateProps.size <= 1) return null;
     const xAxisProp = (this.state.xAxisProp) ? JSON.parse(this.state.xAxisProp) : null;
     const checkboxMsg = (xAxisProp) ? `Choose properties to plot against ${xAxisProp.title}` : '';
     const selectOptions = [];
-    const checkboxes = numberProps.concat(dateProps).map((prop) => {
+    const checkboxes = [];
+    numberProps.concat(dateProps).forEach((propObj) => {
+      const prop = propObj.toJS();
       selectOptions.push({ label: prop.title, value: JSON.stringify(prop) });
-      if (!xAxisProp || prop.id === xAxisProp.id) return null;
-      return (
-        <div key={prop.id}>
-          <Checkbox
-              type="checkbox"
-              id={prop.id}
-              onClick={this.handleCheckboxChange}
-              value={JSON.stringify(prop)}>{prop.title}</Checkbox>
-        </div>
-      );
+      if (xAxisProp && prop.id !== xAxisProp.id) {
+        checkboxes.push(
+          <div key={prop.id}>
+            <Checkbox
+                type="checkbox"
+                id={prop.id}
+                onClick={this.handleCheckboxChange}
+                value={JSON.stringify(prop)}>{prop.title}</Checkbox>
+          </div>
+        );
+      }
     });
     return (
       <div>

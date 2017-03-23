@@ -289,7 +289,7 @@ export class PermissionsPanel extends React.Component {
 
     return null;
   }
-  
+
   updateGlobalPermissionState = (permission, checked) => {
     const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
     if (checked) globalValue.push(permission);
