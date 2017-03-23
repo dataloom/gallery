@@ -1,20 +1,19 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
-import Utils from '../../../../utils/Utils';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
 export class NameNamespaceAutosuggest extends React.Component {
   static propTypes = {
-    namespaces: PropTypes.object,
+    searchFn: PropTypes.func,
     usedProperties: PropTypes.array,
     className: PropTypes.string,
     addProperty: PropTypes.func,
     onNameChange: PropTypes.func,
     onNamespaceChange: PropTypes.func,
+    onFQNChange: PropTypes.func,
     initialName: PropTypes.string,
-    initialNamespace: PropTypes.string,
-    noSaveButton: PropTypes.bool
+    initialNamespace: PropTypes.string
   }
 
   constructor(props) {
@@ -26,8 +25,7 @@ export class NameNamespaceAutosuggest extends React.Component {
       nameVal,
       nameSuggestions: [],
       namespaceVal,
-      namespaceSuggestions: [],
-      unusedProperties: Utils.loadUnusedPairs(props.namespaces, props.usedProperties)
+      namespaceSuggestions: []
     };
   }
 
@@ -41,49 +39,63 @@ export class NameNamespaceAutosuggest extends React.Component {
       newState.nameVal = nextProps.initialName;
       newState.namespaceVal = nextProps.initialNamespace;
     }
-    if (nextProps.namespaces !== undefined && nextProps.usedProperties !== undefined) {
-      newState.unusedProperties = Utils.loadUnusedPairs(nextProps.namespaces, nextProps.usedProperties);
+    if (nextProps.usedProperties !== undefined) {
+      newState.usedProperties = nextProps.usedProperties;
     }
     this.setState(newState);
   }
 
   loadInitialSuggestionValues = () => {
-    const suggestions = this.loadSuggestionValues(true, this.state.nameVal);
-    if (suggestions) this.setState(this.loadSuggestionValues(false, this.state.namespaceVal));
+    this.loadSuggestionValues(true, this.state.nameVal)
+    .then((suggestions) => {
+      if (suggestions) {
+        this.setState({
+          nameSuggestions: suggestions.names,
+          namespaceSuggestions: suggestions.namespaces
+        });
+      }
+    });
   }
 
   loadSuggestionValues = (isNameUpdate, newValue) => {
     const nameValue = (isNameUpdate) ? newValue : this.state.nameVal;
     const namespaceValue = (isNameUpdate) ? this.state.namespaceVal : newValue;
-    if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
-    return ({
-      nameSuggestions: this.getSuggestions(true, nameValue, namespaceValue),
-      namespaceSuggestions: this.getSuggestions(false, nameValue, namespaceValue)
+    return this.getSuggestions(nameValue, namespaceValue)
+    .then((suggestions) => {
+      return suggestions;
     });
   }
 
-  getSuggestions = (getNames, nameVal, namespaceVal) => {
+  getSuggestions = (nameVal, namespaceVal) => {
     if (!this.props || this.props === undefined) return null;
-    const suggestionResult = [];
-    const suggestionSet = new Set();
+    const names = [];
+    const namespaces = [];
+    const nameSet = new Set();
+    const namespaceSet = new Set();
     const inputName = ((nameVal === undefined) ? StringConsts.EMPTY : nameVal).trim().toLowerCase();
     const inputNamespace = ((namespaceVal === undefined) ? StringConsts.EMPTY : namespaceVal).trim().toLowerCase();
-    const allNamespaces = Object.keys(this.state.unusedProperties);
-    allNamespaces.forEach((namespace) => {
-      if (namespace.trim().toLowerCase().slice(0, inputNamespace.length) === inputNamespace) {
-        const possibleNames = this.state.unusedProperties[namespace];
-        possibleNames.forEach((propObj) => {
-          if (propObj.name.trim().toLowerCase().slice(0, inputName.length) === inputName) {
-            const valueToAdd = (getNames) ? propObj.name : namespace;
-            if (!suggestionSet.has(valueToAdd)) suggestionSet.add(valueToAdd);
+    return this.props.searchFn({
+      namespace: inputNamespace,
+      name: inputName,
+      start: 0,
+      maxHits: 20
+    }).then((propertyTypes) => {
+      propertyTypes.hits.forEach((suggestion) => {
+        if (!this.props.usedProperties.includes(suggestion.id)) {
+          const name = suggestion.type.name.trim().toLowerCase();
+          const namespace = suggestion.type.namespace.trim().toLowerCase();
+          if (!nameSet.has(name)) {
+            names.push({ label: name, value: name });
+            nameSet.add(name);
           }
-        });
-      }
+          if (!namespaceSet.has(namespace)) {
+            namespaces.push({ label: namespace, value: namespace });
+            namespaceSet.add(namespace);
+          }
+        }
+      });
+      return { namespaces, names };
     });
-    suggestionSet.forEach((suggestion) => {
-      suggestionResult.push({ label: suggestion, value: suggestion });
-    });
-    return suggestionResult;
   }
 
   handleSubmit = () => {
@@ -97,17 +109,25 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   onNameInputChange = (value) => {
-    if (this.props.onNameChange !== undefined) {
+    if (this.props.onNameChange) {
       this.props.onNameChange(value);
     }
-    const suggestions = this.loadSuggestionValues(true, value);
-    const namespaceVal = (suggestions.namespaceSuggestions.length === 1) ?
-      suggestions.namespaceSuggestions[0].value : this.state.namespaceVal;
-    this.setState({
-      nameVal: value,
-      namespaceVal,
-      nameSuggestions: suggestions.nameSuggestions,
-      namespaceSuggestions: suggestions.namespaceSuggestions
+    this.loadSuggestionValues(true, value)
+    .then((suggestions) => {
+      const namespaceVal = (suggestions.namespaces.length === 1) ?
+        suggestions.namespaces[0].value : this.state.namespaceVal;
+      if (this.props.onFQNChange) {
+        this.props.onFQNChange({
+          name: value,
+          namespace: namespaceVal
+        });
+      }
+      this.setState({
+        nameVal: value,
+        namespaceVal,
+        nameSuggestions: suggestions.names,
+        namespaceSuggestions: suggestions.namespaces
+      });
     });
   }
 
@@ -117,14 +137,22 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   onNamespaceInputChange = (value) => {
-    if (this.props.onNamespaceChange !== undefined) {
+    if (this.props.onNamespaceChange) {
       this.props.onNamespaceChange(value);
     }
-    const suggestions = this.loadSuggestionValues(false, value);
-    this.setState({
-      namespaceVal: value,
-      nameSuggestions: suggestions.nameSuggestions,
-      namespaceSuggestions: suggestions.namespaceSuggestions
+    if (this.props.onFQNChange) {
+      this.props.onFQNChange({
+        name: this.state.nameVal,
+        namespace: value
+      });
+    }
+    this.loadSuggestionValues(false, value)
+    .then((suggestions) => {
+      this.setState({
+        namespaceVal: value,
+        nameSuggestions: suggestions.names,
+        namespaceSuggestions: suggestions.namespaces
+      });
     });
   }
 
@@ -137,25 +165,12 @@ export class NameNamespaceAutosuggest extends React.Component {
     this.loadInitialSuggestionValues();
   }
 
-  shouldHideSaveButton = () => {
-    return (this.props.noSaveButton !== undefined && this.props.noSaveButton);
-  }
-
-  saveButtonClass = () => {
-    return (this.shouldHideSaveButton()) ? styles.hidden : StringConsts.EMPTY;
-  }
-
-  selectInputClassName = () => {
-    return (this.shouldHideSaveButton()) ? styles.entitySetInput : styles.tableCell;
-  }
-
   render() {
-    if (!this.props || this.props === undefined || this.state.unusedProperties === undefined) return null;
     const { nameVal, nameSuggestions, namespaceVal, namespaceSuggestions } = this.state;
     return (
       <tr className={this.props.className}>
         <td />
-        <td className={this.selectInputClassName()}>
+        <td className={styles.tableCell}>
           <Select
               options={nameSuggestions}
               value={nameVal}
@@ -164,7 +179,7 @@ export class NameNamespaceAutosuggest extends React.Component {
               onFocus={this.onFocus}
               placeholder="name" />
         </td>
-        <td className={this.selectInputClassName()}>
+        <td className={styles.tableCell}>
           <Select
               options={namespaceSuggestions}
               value={namespaceVal}
@@ -173,7 +188,7 @@ export class NameNamespaceAutosuggest extends React.Component {
               onFocus={this.onFocus}
               placeholder="namespace" />
         </td>
-        <td className={this.saveButtonClass()}>
+        <td>
           <button className={styles.genericButton} onClick={this.handleSubmit}>Save</button>
         </td>
       </tr>
