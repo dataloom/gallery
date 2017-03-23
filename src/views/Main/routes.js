@@ -7,7 +7,7 @@ import { DataModel } from './Schemas/DataModel';
 import Login from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import { Settings } from './Settings/Settings';
-import { Visualize } from './Visualizations/Visualize';
+import Visualize from '../../containers/visualizations/Visualize';
 import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
@@ -18,7 +18,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
-import AllPermissions from './Schemas/Components/AllPermissions';
+import AllPermissions from '../../containers/permissionssummary/components/AllPermissions';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -91,7 +91,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
-      <Route path={'/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
+      <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path='*' component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );

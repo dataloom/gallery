@@ -15,14 +15,14 @@ import {
 
 import {
   combineEpics
-} from 'redux-observable'
+} from 'redux-observable';
 
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
-import AsyncActionFactory from '../async/AsyncActionFactory';
+import * as AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
-  STATUS as ASYNC_STATUS
+  STATE as ASYNC_STATUS
 } from '../async/AsyncStorage';
 
 import {
@@ -36,23 +36,25 @@ import type {
   AuthNRequest,
   AclKey,
   Status
-} from './PermissionsStorage'
+} from './PermissionsStorage';
 
 const { Acl } = DataModels;
 
 function updateStatuses(statuses :Status[]) {
-  return Observable.from(statuses)
-    .mergeMap(status => {
-      return Observable.from(RequestsApi.updateRequestStatuses([status]))
-        .mapTo(AsyncActionFactory.updateAsyncReference(createStatusAsyncReference(status.aclKey), status))
-        .catch(console.error);
+  return Observable.from(RequestsApi.updateRequestStatuses(statuses))
+    .mergeMapTo(statuses)
+    .map(PermissionsActionFactory.updateStatusSuccess)
+    .catch((e) => {
+      // TODO: add reall error handling: https://jira.thedataloom.com/browse/LOOMWEB-339
+      console.error(e);
+      return { type: 'noop' };
     });
 }
 
 function updateStatusesEpic(action$) {
   return action$.ofType(PermissionsActionTypes.UPDATE_STATUSES)
     .pluck('statuses')
-    .mergeMap(updateStatuses)
+    .mergeMap(updateStatuses);
 }
 
 function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
@@ -67,43 +69,13 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
         aclKeys
       })
     )
-    // Observable.of([
-    //   {
-    //     "aclKey": [
-    //       "c5c20cae-060b-4ae7-8d6a-95648ed60246",
-    //       "b43b8d12-12af-4356-8713-a9b7cb3876dc"
-    //     ],
-    //     "permissions": [
-    //       "READ"
-    //     ],
-    //     "principal": {
-    //       "id": "auth0|57e4b2d8d9d1d194778fd5b6",
-    //       "type": "USER"
-    //     },
-    //     "status": "SUBMITTED"
-    //   },
-    //   {
-    //     "aclKey": [
-    //       "c5c20cae-060b-4ae7-8d6a-95648ed60246",
-    //       "34fd7582-90e5-4663-96c5-65dfe7ea9648"
-    //     ],
-    //     "permissions": [
-    //       "READ"
-    //     ],
-    //     "principal": {
-    //       "id": "auth0|57e4b2d8d9d1d194778fd5b6",
-    //       "type": "USER"
-    //     },
-    //     "status": "SUBMITTED"
-    //   }
-    // ])
-    .mergeMap(statuses => {
+    .mergeMap((statuses) => {
       const statusByReferenceId = {};
-      statuses.forEach(status => {
+      statuses.forEach((status) => {
         statusByReferenceId[createStatusAsyncReference(status.aclKey).id] = status;
       });
 
-      return references.map(reference => {
+      return references.map((reference) => {
         const status = statusByReferenceId[reference.id];
         const value = status ? status : ASYNC_STATUS.NOT_FOUND;
         return AsyncActionFactory.updateAsyncReference(reference, value);
@@ -114,15 +86,17 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
 
 function loadStatusesEpic(action$) {
   return action$.ofType(PermissionsActionTypes.LOAD_STATUSES)
-    .mergeMap(action => loadStatuses(action.reqStatus, action.aclKeys));
+    .mergeMap((action) => {
+      return loadStatuses(action.reqStatus, action.aclKeys);
+    });
 }
 
 function submitAuthnRequest(requests :AuthNRequest[]) :Observable<Action> {
   return Observable
     .from(RequestsApi.submitRequests(requests))
     .mapTo(PermissionsActionFactory.requestPermissionsModalSuccess())
-    .catch(e => {
-      return Observable.of(PermissionsActionFactory.requestPermissionsModalError())
+    .catch(() => {
+      return Observable.of(PermissionsActionFactory.requestPermissionsModalError());
     });
 }
 
@@ -136,7 +110,7 @@ function submitAuthnRequestEpic(action$ :Observable<Action>) :Observable<Action>
 // TODO: Move entirely to async container and take *huge* advantage of caching
 function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
 
-  const references = accessChecks.map(check => {
+  const references = accessChecks.map((check) => {
     return createAuthnAsyncReference(check.aclKey);
   });
 
@@ -150,9 +124,9 @@ function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
       .map((authorizations) => {
         return authorizations.map(deserializeAuthorization);
       })
-      .mergeMap(authorizations => {
+      .mergeMap((authorizations) => {
         // Async
-        const actions = authorizations.map(authn => {
+        const actions = authorizations.map((authn) => {
           return AsyncActionFactory.updateAsyncReference(createAuthnAsyncReference(authn.aclKey), authn);
         });
         // Old Code
@@ -161,7 +135,7 @@ function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
       })
       .catch(() => {
         // Async
-        const actions = references.map(reference => {
+        const actions = references.map((reference) => {
           return AsyncActionFactory.asyncReferenceError(reference, 'Error loading authorization');
         });
         // Old Code

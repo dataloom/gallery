@@ -7,6 +7,8 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
+import * as formatter from './FormatUtils';
+import EdmConsts from '../../utils/Consts/EdmConsts';
 import styles from './styles.module.css';
 
 const labelElementId = 'visualization_label';
@@ -17,6 +19,27 @@ export class ScatterChartVisualization extends React.Component {
     xProp: PropTypes.string,
     yProp: PropTypes.string,
     data: PropTypes.array
+  }
+
+  getFormattedPointData = (point, prop) => {
+    if (EdmConsts.EDM_DATE_TYPES.includes(prop.datatype)) {
+      return new Date(point[0]).getTime();
+    }
+    return parseFloat(point[0]);
+  }
+
+  tooltipFormatter = (value, title) => {
+    const xProp = JSON.parse(this.props.xProp);
+    const yProp = JSON.parse(this.props.yProp);
+    if (xProp && yProp) {
+      if (title === xProp.title && EdmConsts.EDM_DATE_TYPES.includes(xProp.datatype)) {
+        return formatter.formatDate(value);
+      }
+      if (title === yProp.title && EdmConsts.EDM_DATE_TYPES.includes(yProp.datatype)) {
+        return formatter.formatDate(value);
+      }
+    }
+    return value;
   }
 
   render() {
@@ -30,8 +53,8 @@ export class ScatterChartVisualization extends React.Component {
     this.props.data.forEach((pointData) => {
       if (!pointData[xPropFqn] || !pointData[yPropFqn]) return;
       const point = {};
-      point[xPropFqn] = parseFloat(pointData[xPropFqn][0]);
-      point[yPropFqn] = parseFloat(pointData[yPropFqn][0]);
+      point[xPropFqn] = this.getFormattedPointData(pointData[xPropFqn], xProp);
+      point[yPropFqn] = this.getFormattedPointData(pointData[yPropFqn], yProp);
       if (isNaN(point[xPropFqn]) || isNaN(point[yPropFqn])) return;
       key += 1;
       scatterPoints.push(
@@ -48,15 +71,15 @@ export class ScatterChartVisualization extends React.Component {
             <XAxis
                 dataKey={xPropFqn}
                 name={xProp.title}
-                type="number"
-                domain={['dataMin', 'dataMax']} />
+                domain={['dataMin', 'dataMax']}
+                tickFormatter={formatter.getTickFormatter([xProp])} />
             <YAxis
                 dataKey={yPropFqn}
                 name={yProp.title}
-                type="number"
-                domain={['dataMin', 'dataMax']} />
+                domain={['dataMin', 'dataMax']}
+                tickFormatter={formatter.getTickFormatter([yProp])} />
             <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+            <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={this.tooltipFormatter} />
             {scatterPoints}
           </ScatterChart>
         </div>

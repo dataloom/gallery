@@ -1,0 +1,13 @@
+.mainRow {
+  font-weight: bold;
+  background: #f3f5f7;
+}
+
+.table th {
+  color: #fff;
+  background: #4203c5;
+}
+
+.hidden {
+  display: none
+}
