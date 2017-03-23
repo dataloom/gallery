@@ -7,7 +7,7 @@ import { createStatusAsyncReference, RequestStatus } from '../PermissionsStorage
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
 import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
-import { AsyncReferencePropType, STATUS as ASYNC_STATUS } from '../../async/AsyncStorage';
+import { AsyncReferencePropType, STATE as ASYNC_STATUS } from '../../async/AsyncStorage';
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
 import styles from './permissions.module.css';
 

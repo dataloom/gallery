@@ -1,10 +1,12 @@
-import { RequestsApi } from 'loom-data';
+import { RequestsApi, AuthorizationApi } from 'loom-data';
 import { expect } from 'chai';
 import '../../../config/chai/chai.config';
 
 import testEpic from '../../../test/testEpic';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
 import PermissionsEpic from './PermissionsEpic';
+import { createAuthnAsyncReference } from './PermissionsStorage';
+import * as AsyncActionFactory from '../async/AsyncActionFactory';
 
 
 describe('PermissionsEpic', function() {
@@ -17,6 +19,44 @@ describe('PermissionsEpic', function() {
       id: 'principal-id'
     }
   };
+
+  describe('authorizationCheck', function() {
+    let checkAuthorizations;
+
+    beforeEach(function() {
+      checkAuthorizations = sinon.stub(AuthorizationApi, 'checkAuthorizations');
+    });
+
+    afterEach(function() {
+      AuthorizationApi.checkAuthorizations.restore();
+    });
+
+    it('should emit asyncReference', function(done) {
+      const authorization = {
+        aclKey: ['abc'],
+        permissions: {
+          DISCOVER: true,
+          LINK: true,
+          READ: true,
+          WRITE: true,
+          OWNER: true
+        }
+      };
+      checkAuthorizations.returns(Promise.resolve([authorization]));
+
+      const action = PermissionsActionFactory.checkAuthorizationRequest([{
+        aclKey: authorization.aclKey,
+        permissions: ['DISCOVER', 'LINK', 'READ', 'WRITE', 'OWNER']
+      }]);
+      const expectedAction = AsyncActionFactory.updateAsyncReference(
+        createAuthnAsyncReference(authorization.aclKey), authorization);
+
+      testEpic(PermissionsEpic, 2, action, (actions) => {
+        expect(actions).to.deep.include(expectedAction);
+        done();
+      });
+    });
+  });
 
   describe('updateStatuses', function() {
     let updateRequestStatuses;

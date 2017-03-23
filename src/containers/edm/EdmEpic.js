@@ -1,6 +1,6 @@
 /* @flow */
 import Immutable from 'immutable';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import { normalize } from 'normalizr';
 
@@ -11,6 +11,7 @@ import {
 import * as EdmStorage from './EdmStorage';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
+import * as AsyncActionFactory from '../async/AsyncActionFactory';
 
 function allPropertyTypesEpic(action$) {
   return action$.ofType(actionTypes.ALL_PROPERTY_TYPES_REQUEST)
@@ -68,9 +69,25 @@ function allEntityTypesEpic(action$) {
 function referenceEpic(action$) {
   return action$.ofType(actionTypes.UPDATE_NORMALIZED_DATA)
     .pluck('normalizedData')
-    .flatMap(normalizedData => {
+    .mergeMap((normalizedData) => {
       const references = EdmStorage.getReferencesFromNormalizedData(normalizedData);
-      return references.map(actionFactories.edmObjectResolve)
+      // Old references
+      const actions = references.map(actionFactories.edmObjectResolve);
+
+      // Async code
+      for (const namespace of normalizedData.keys()) {
+        const namespaceData = normalizedData.get(namespace);
+        for (const id of namespaceData.keys()) {
+          const asyncReference = {
+            namespace,
+            id
+          };
+          const value = namespaceData.get(id);
+          actions.push(AsyncActionFactory.updateAsyncReference(asyncReference, value.toJS()));
+        }
+      }
+
+      return actions;
     });
 }
 
