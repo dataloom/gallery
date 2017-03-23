@@ -4,34 +4,28 @@ import styles from '../styles.module.css';
 
 export class DataModelToolbar extends React.Component {
   static propTypes = {
-    changeView: PropTypes.func
-  }
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      dataModelView: EdmConsts.SCHEMA
-    };
+    view: PropTypes.string,
+    changeView: PropTypes.func.isRequired
   }
 
   dataModelLabels = [
-    { label: 'Schemas', type: EdmConsts.SCHEMA, key: 0 },
-    { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE, key: 2 },
-    { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE, key: 3 }
+    { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE },
+    { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE },
+    { label: 'Schemas', type: EdmConsts.SCHEMA }
   ]
 
   updateViewAndToolbar(type) {
     this.props.changeView(type);
-    this.setState({ dataModelView: type });
   }
 
   render() {
     const navButtons = this.dataModelLabels.map((labels) => {
       const label = labels.label;
       const type = labels.type;
+      const view = this.props.view || EdmConsts.ENTITY_TYPE;
 
       let className = styles.buttonStyle;
-      if (type === this.state.dataModelView) {
+      if (type === view) {
         className = `${styles.buttonStyle} ${styles.selectedButtonStyle}`;
       }
       if (this.dataModelLabels[0] === labels) {
@@ -43,7 +37,7 @@ export class DataModelToolbar extends React.Component {
       return (
         <button
             className={className}
-            key={labels.key}
+            key={labels.type}
             onClick={() => {
               return this.updateViewAndToolbar(type);
             }}>{label}</button>

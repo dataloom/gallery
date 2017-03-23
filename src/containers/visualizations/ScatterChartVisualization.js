@@ -8,7 +8,7 @@ import {
   YAxis
 } from 'recharts';
 import * as formatter from './FormatUtils';
-import EdmConsts from '../../../utils/Consts/EdmConsts';
+import EdmConsts from '../../utils/Consts/EdmConsts';
 import styles from './styles.module.css';
 
 const labelElementId = 'visualization_label';

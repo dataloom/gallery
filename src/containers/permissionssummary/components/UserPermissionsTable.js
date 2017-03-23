@@ -181,7 +181,7 @@ class UserPermissionsTable extends React.Component {
     });
 
     // TODO: Add checkbox to show/hide all users (default: show only users with non-default permissions);
-    // TODO: Get globalValue from state
+    // TODO: Get globalValue from store
 
     return (
       <div>
@@ -198,11 +198,19 @@ class UserPermissionsTable extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const permissionsSummary = state.get('permissionsSummary');
 
+  let globalValue;
+  if (ownProps.property) {
+    globalValue = ownProps.rolePermissions.AuthenticatedUser;
+  }
+  else {
+    globalValue = permissionsSummary.get('globalValue').toJS();
+  }
+
   return {
-    globalValue: permissionsSummary.get('globalValue').toJS()
+    globalValue
   };
 }
 

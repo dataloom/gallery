@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import Select from 'react-select';
 import { ScatterChartVisualization } from './ScatterChartVisualization';
 import styles from './styles.module.css';
@@ -6,8 +7,8 @@ import styles from './styles.module.css';
 export class ScatterChartContainer extends React.Component {
 
   static propTypes = {
-    numberProps: PropTypes.array,
-    dateProps: PropTypes.array,
+    numberProps: PropTypes.instanceOf(Immutable.List),
+    dateProps: PropTypes.instanceOf(Immutable.List),
     data: PropTypes.array
   }
 
@@ -46,14 +47,16 @@ export class ScatterChartContainer extends React.Component {
   render() {
     const { numberProps, dateProps } = this.props;
     const { xAxisProp, yAxisProp } = this.state;
-    if (numberProps.length + dateProps.length <= 1) return null;
+    if (numberProps.size + dateProps.size <= 1) return null;
     const xAxisPropJson = (xAxisProp) ? JSON.parse(xAxisProp) : null;
+    const xAxisOptions = [];
     const yAxisOptions = [];
-    const xAxisOptions = numberProps.concat(dateProps).map((prop) => {
-      if (!xAxisPropJson || xAxisPropJson.id !== prop.id) {
-        yAxisOptions.push({ label: prop.title, value: JSON.stringify(prop) });
+    numberProps.concat(dateProps).forEach((prop) => {
+      const option = { label: prop.get('title'), value: JSON.stringify(prop.toJSON()) };
+      if (!xAxisPropJson || xAxisPropJson.id !== prop.get('id')) {
+        yAxisOptions.push(option);
       }
-      return { label: prop.title, value: JSON.stringify(prop) };
+      xAxisOptions.push(option);
     });
     return (
       <div>
