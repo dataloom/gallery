@@ -21,6 +21,10 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
+
+    case actionTypes.RESET_PERMISSIONS:
+      return INITIAL_STATE;
+
     case actionTypes.SET_ALL_USERS_AND_ROLES:
       return state.merge({
         allUsersById: action.users,

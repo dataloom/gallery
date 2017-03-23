@@ -74,6 +74,8 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentDidMount() {
+    // reset state for all data
+    this.props.resetPermissions();
     this.props.loadEntitySet();
   }
 
@@ -119,16 +121,8 @@ class EntitySetDetailComponent extends React.Component {
       allUsersById[myId] = null;
       this.props.setAllUsersAndRoles(allUsersById, allRolesList);
       this.props.setLoadUsersError(false);
-      this.setState(
-        {
-          allUsersById,
-          allRolesList,
-          loadUsersError: false
-        }
-      );
     })
     .catch(() => {
-      this.setState({ loadUsersError: true });
       this.props.setLoadUsersError(true);
     });
   }
@@ -478,6 +472,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setUpdateError: (bool) => {
       dispatch(psActionFactories.setUpdateError(bool));
+    },
+    resetPermissions: () => {
+      dispatch(psActionFactories.resetPermissions());
     }
   };
 }
