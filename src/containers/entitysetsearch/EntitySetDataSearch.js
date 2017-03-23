@@ -134,7 +134,7 @@ export default class EntitySetDataSearch extends React.Component {
   executeSearch = (searchTerm) => {
     const searchRequest = {
       searchTerm,
-      start: ((this.state.page - 1) * 50),
+      start: ((this.state.page - 1) * MAX_HITS),
       maxHits: MAX_HITS
     }
     SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
@@ -162,7 +162,12 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   renderEntitySetTitle = () => {
-    return (this.state.title.length > 0) ? `: ${this.state.title}` : '';
+    if (this.state.title.length <= 0) return '';
+    return (
+      <span>: <Link
+          to={`/entitysets/${this.props.params.entitySetId}`}
+          className={styles.titleLink}>{this.state.title}</Link></span>
+    );
   }
 
   renderErrorMessage = () => {

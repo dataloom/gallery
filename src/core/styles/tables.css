@@ -19,6 +19,14 @@ tr:first-child .tableCell {
     border: none;
 }
 
+.newEdmCell {
+  padding: 5px 10px;
+  color: #767a7c;
+  height: 30px;
+  min-width: 170px;
+  border-bottom: 1px solid #d1d6da;
+}
+
 .tableCell {
     padding: 5px 10px;
     color: #767a7c;

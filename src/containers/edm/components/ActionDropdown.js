@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { DataApi } from 'loom-data';
 import { SplitButton, MenuItem } from 'react-bootstrap';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import {
@@ -9,67 +10,67 @@ import {
   hashHistory
 } from 'react-router';
 
-import { createAuthnAsyncReference, createAccessCheck } from '../../permissions/PermissionsStorage';
+import {
+  createAuthnAsyncReference,
+  createAccessCheck,
+  AuthorizationPropType
+} from '../../permissions/PermissionsStorage';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import {
   getShallowEdmObjectSilent,
-  createEntitySetReference,
-  createEntityTypeReference
-} from '../../edm/EdmStorage';
+  createEntitySetReference
+} from '../EdmStorage';
+import {
+  createEntityTypeAsyncReference
+} from '../EdmAsyncStorage';
+import {
+  EntityTypePropType
+} from '../EdmModel';
+import {
+  createAsyncComponent
+} from '../../async/components/AsyncContentComponent';
+
 import DropdownSearchBox from '../../../containers/entitysetsearch/DropdownSearchBox';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
-import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
-import { AsyncReferencePropType } from '../../async/AsyncStorage';
+
 
 class ActionDropdown extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
-    propertyTypeAuthnReferences: PropTypes.arrayOf(AsyncReferencePropType),
+    propertyTypeAuthorizations: PropTypes.arrayOf(AuthorizationPropType).isRequired,
     showDetails: PropTypes.bool,
     className: PropTypes.string,
-    onRequestPermissions: PropTypes.func.isRequired,
-    loadPropertyTypeAuthns: PropTypes.func.isRequired
+    onRequestPermissions: PropTypes.func.isRequired
   };
 
-  componentDidMount() {
-    this.loadPropertyTypeAuthnsIfPresent(this.props.propertyTypeAuthnReferences);
+  static defaultProps = {
+    showDetails: false,
+    className: null
+  };
+
+  canRequestPermissions() {
+    const { propertyTypeAuthorizations } = this.props;
+
+    return !propertyTypeAuthorizations.every((authorization) => {
+      return authorization.permissions.READ;
+    });
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.propertyTypeAuthnReferences) {
-      this.loadPropertyTypeAuthnsIfPresent(nextProps.propertyTypeAuthnReferences);
-    }
-  }
-
-  loadPropertyTypeAuthnsIfPresent = (propertyTypeAuthnReferences) => {
-    if (propertyTypeAuthnReferences) {
-      let aclKeys;
-      if (propertyTypeAuthnReferences) {
-        aclKeys = propertyTypeAuthnReferences.map((reference) => {
-          return reference.id.split('/');
-        });
-        this.props.loadPropertyTypeAuthns(aclKeys);
-      }
-    }
-  }
-
-  canRequestPermissions(propertyTypeAuthn) {
-    return !propertyTypeAuthn.every(authn => authn.permissions.READ);
-  }
-
-  renderRequestPermissions(propertyTypeAuthn) {
+  renderRequestPermissions() {
     const { entitySetId, onRequestPermissions } = this.props;
 
-    if (this.canRequestPermissions(propertyTypeAuthn)) {
+    if (this.canRequestPermissions()) {
       return (
-        <MenuItem onSelect={() => { onRequestPermissions(entitySetId); }}>
+        <MenuItem
+            onSelect={() => {
+              onRequestPermissions(entitySetId);
+            }}>
           Request Permissions
         </MenuItem>
       );
-    } else {
-      return null;
     }
+    return null;
   }
 
   renderViewDetails() {
@@ -81,9 +82,8 @@ class ActionDropdown extends React.Component {
           </Link>
         </li>
       );
-    } else {
-      return null;
     }
+    return null;
   }
 
   goToViewDetails = () => {
@@ -91,86 +91,107 @@ class ActionDropdown extends React.Component {
     if (this.props.showDetails) {
       hashHistory.push(`/entitysets/${this.props.entitySetId}`);
     }
-  }
+  };
 
   render() {
-    const { entitySetId, propertyTypeAuthnReferences } = this.props;
+    const { entitySetId } = this.props;
 
     const title = (!this.props.showDetails) ? 'Actions' : 'View Details';
 
     return (
-      <AsyncContentListComponent references={propertyTypeAuthnReferences} render={(propertyTypeAuthn) => {
-        return (
-          <SplitButton
-              pullRight
-              title={title}
-              bsStyle="primary"
-              id="action-dropdown"
-              className={classnames(this.props.className)}
-              onClick={this.goToViewDetails}>
-            {this.renderViewDetails()}
-            {this.renderRequestPermissions(propertyTypeAuthn)}
-            <MenuItem header>Download</MenuItem>
-            <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
-            <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
-            <MenuItem divider />
-            <li role="presentation">
-              <Link
-                  to={{
-                    pathname: `/${PageConsts.VISUALIZE}`,
-                    query: {
-                      setId: entitySetId
-                    }
-                  }}>
-                Visualize
-              </Link>
-            </li>
-            <MenuItem divider />
-            <DropdownSearchBox entitySetId={entitySetId} />
-          </SplitButton>
-        );
-      }} />
-    );
+      <SplitButton
+          pullRight
+          title={title}
+          bsStyle="primary"
+          id="action-dropdown"
+          className={classnames(this.props.className)}
+          onClick={this.goToViewDetails}>
+        {this.renderViewDetails()}
+        {this.renderRequestPermissions()}
+        <MenuItem header>Download</MenuItem>
+        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
+        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
+        <MenuItem divider />
+        <li role="presentation">
+          <Link
+              to={{
+                pathname: `/${PageConsts.VISUALIZE}`,
+                query: {
+                  setId: entitySetId
+                }
+              }}>
+            Visualize
+          </Link>
+        </li>
+        <MenuItem divider />
+        <DropdownSearchBox entitySetId={entitySetId} />
+      </SplitButton>);
   }
 }
+ActionDropdown.Async = createAsyncComponent(ActionDropdown);
+
+class ActionDropdownWrapper extends React.Component {
+  static propTypes = {
+    entitySetId: PropTypes.string.isRequired,
+    entityType: EntityTypePropType.isRequired,
+    loadPropertyTypePermissions: PropTypes.func.isRequired
+  };
+
+  componentDidMount() {
+    const { loadPropertyTypePermissions } = this.props;
+    loadPropertyTypePermissions(this.getAclKeys());
+  }
+
+  getAclKeys() {
+    const { entityType, entitySetId } = this.props;
+
+    return entityType.properties.map((propertyTypeId) => {
+      return [entitySetId, propertyTypeId];
+    });
+  }
+
+  render() {
+    const propertyTypeAuthorizationReferences = this.getAclKeys().map(createAuthnAsyncReference);
+
+    return (
+      <ActionDropdown.Async
+          propertyTypeAuthorizations={propertyTypeAuthorizationReferences}
+          {...this.props} />);
+  }
+}
+ActionDropdownWrapper.Async = createAsyncComponent(ActionDropdownWrapper);
 
 function mapStateToProps(state, ownProps) {
   const normalizedData = state.get('normalizedData').toJS();
   const { entitySetId } = ownProps;
 
-  let propertyTypeAuthnReferences,
-    entityTypeId;
+  let entityTypeAsyncReference;
   // TODO: remove denormalization and replace with AsyncReferences
   const reference = createEntitySetReference(entitySetId);
   const entitySet = getShallowEdmObjectSilent(normalizedData, reference, null);
+
   if (entitySet) {
-    entityTypeId = entitySet.entityTypeId;
-    const etReference = createEntityTypeReference(entityTypeId);
-    const entityType = getShallowEdmObjectSilent(normalizedData, etReference, null);
-    if (entityType && entityType.properties) {
-      propertyTypeAuthnReferences = entityType.properties.map(id => {
-        return createAuthnAsyncReference([entitySetId, id]);
-      });
-    }
+    entityTypeAsyncReference = createEntityTypeAsyncReference(entitySet.entityTypeId);
+  }
+  else {
+    // TODO: replace with actual empty reference in async/
+    entityTypeAsyncReference = createEntityTypeAsyncReference('');
   }
 
   return {
-    propertyTypeAuthnReferences,
-    entityTypeId
+    entityType: entityTypeAsyncReference
   };
 }
 
 // TODO: Decide if/how to incorporate bindActionCreators
 function mapDispatchToProps(dispatch) {
-  return {
-    onRequestPermissions: (entitySetId) => {
-      dispatch(PermissionsActionFactory.requestPermissionsModalShow(entitySetId));
-    },
-    loadPropertyTypeAuthns: (aclKeys) => {
+  return bindActionCreators({
+    onRequestPermissions: PermissionsActionFactory.requestPermissionsModalShow,
+    loadPropertyTypePermissions: (aclKeys) => {
       const accessChecks = aclKeys.map(createAccessCheck);
-      dispatch(PermissionsActionFactory.checkAuthorizationRequest(accessChecks));
+      return PermissionsActionFactory.checkAuthorizationRequest(accessChecks);
     }
-  };
+  }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActionDropdown);
+export default connect(mapStateToProps, mapDispatchToProps)(ActionDropdownWrapper.Async);
