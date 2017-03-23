@@ -116,7 +116,7 @@ class AllPermissions extends React.Component {
   }
 
   getRolePermissions = (property) => {
-    const { roleAcls } = property || this.props;
+    const { roleAcls, globalValue } = property || this.props;
     const rolePermissions = {};
 
     // Get all roles and their respective permissions
@@ -131,7 +131,7 @@ class AllPermissions extends React.Component {
         }
       });
     });
-    rolePermissions.AuthenticatedUser = this.props.globalValue;
+    rolePermissions.AuthenticatedUser = globalValue;
     this.setRolePermissions(rolePermissions, property);
   }
 
@@ -156,6 +156,7 @@ class AllPermissions extends React.Component {
           headers={R_HEADERS}
           key={`role-${property}`} />);
       const userTable = (<UserPermissionsTable
+          property={property}
           userPermissions={userPermissions}
           rolePermissions={rolePermissions}
           headers={U_HEADERS}

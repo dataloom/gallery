@@ -101,3 +101,9 @@ export function setEntityRolePermissions(data) {
     data
   };
 }
+
+export function resetPermissions() {
+  return {
+    type: actionTypes.RESET_PERMISSIONS
+  };
+}
