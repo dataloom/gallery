@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { DataModels } from 'loom-data';
 import * as formatter from './FormatUtils';
-import EdmConsts from '../../../utils/Consts/EdmConsts';
+import EdmConsts from '../../utils/Consts/EdmConsts';
 import styles from './styles.module.css';
 
 const labelElementId = 'visualization_label';
