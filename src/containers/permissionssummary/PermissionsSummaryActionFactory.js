@@ -8,17 +8,25 @@ export function loadAclsRequest(entitySetId, property) {
   };
 }
 
-export function updateStateAclsSuccess(aces, property) {
+export function updateAclsRequest(aces, property) {
   return {
-    type: actionTypes.UPDATE_STATE_ACLS_SUCCESS,
+    type: actionTypes.UPDATE_ACLS_REQUEST,
     aces,
     property
   };
 }
 
-export function updateStateAclsFailure() {
+export function updateAclsSuccess(aces, property) {
   return {
-    type: actionTypes.UPDATE_STATE_ACLS_FAILURE
+    type: actionTypes.UPDATE_ACLS_SUCCESS,
+    aces,
+    property
+  };
+}
+
+export function updateAclsFailure() {
+  return {
+    type: actionTypes.UPDATE_ACLS_FAILURE
   };
 }
 

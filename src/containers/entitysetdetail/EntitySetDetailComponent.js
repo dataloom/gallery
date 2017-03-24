@@ -74,18 +74,25 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentDidMount() {
-    // reset state for all data
     this.props.resetPermissions();
     this.props.loadEntitySet();
   }
 
   componentWillReceiveProps(nextProps) {
+    // TODO: Once redux epics are working, move these actions to PermissionsSummary
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.props.loadAclsRequest(nextProps.entitySet.id);
+      // LISTEN FOR SUCCESS CASE: two calls TODO: Keep loadAcls call or do 2 separate calls for updateAcls & loadAllUsersAndRoles
+      // 1. PermissionsActionFactory.getAclRequest
+        // Success action -> reducer -> call updateStateAcls action: do shit with the data  -> set all the states
+        // Failure action -> reducer -> do something
+        // TODO: FIGURE OUT HOW TO CONNECT RESULTS W/ updateStateAcls
+      // 2. fetchAllUsersRequest -> epic -> success -> do logic + call setAllUsersAndRoles(allUsersById, allRolesList) -> success -> call setLoadUsersError
+
+      // this.props.loadAclsRequest(nextProps.entitySet.id); -> call getAclRequest + loadAllUsersAndRoles OR call each separately and listen for success
       this.loadAcls(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
-        this.props.loadAclsRequest(nextProps.entitySet.id, property);
+        // this.props.loadAclsRequest(nextProps.entitySet.id, property);
         this.loadAcls(nextProps.entitySet.id, property);
       });
     }
@@ -175,7 +182,6 @@ class EntitySetDetailComponent extends React.Component {
       };
       this.props.setEntityData(entityAcls);
     }
-
   }
 
   getPermission = (permissions) => {
@@ -454,9 +460,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     /* PERMISSIONS SUMMARY */
     //TODO: Move these back to Permissions Summary now that we're using Redux
-    loadAclsRequest: (entitySetId, property) => {
-      dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
-    },
+    // loadAclsRequest: (entitySetId, property) => {
+    //   dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
+    // },
     setEntityData: (data) => {
       dispatch(psActionFactories.setEntityData(data));
     },
