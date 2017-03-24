@@ -118,7 +118,7 @@ export class PropertyList extends React.Component {
   renderVerifyDeleteModal = () => {
     const { verifyingDelete, propertyToDelete } = this.state;
     if (!propertyToDelete) return null;
-    const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
+    const prop = `${propertyToDelete.type.namespace}.${propertyToDelete.type.name}`;
     const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
     return (
       <Modal show={verifyingDelete} onHide={this.closeModal}>
