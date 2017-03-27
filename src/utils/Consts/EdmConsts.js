@@ -53,14 +53,7 @@ const EDM_NUMBER_TYPES = [
 ];
 
 const EDM_GEOGRAPHY_TYPES = [
-  'Geography',
-  'GeographyPoint',
-  'GeographyLineString',
-  'GeographyPolygon',
-  'GeographyMultiPoint',
-  'GeographyMultiLineString',
-  'GeographyMultiPolygon',
-  'GeographyCollection'
+  'GeographyPoint'
 ];
 
 const EDM_DATE_TYPES = [

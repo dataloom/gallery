@@ -8,17 +8,22 @@ import styles from './styles.module.css';
 export class GeoVisualization extends React.Component {
 
   static propTypes = {
-    geoProps: PropTypes.instanceOf(Immutable.List),
+    mapProp: PropTypes.object,
     data: PropTypes.array
   }
 
   render() {
-    const { geoProps, data } = this.props;
-    if (!geoProps || !geoProps.get(0) || !geoProps.get(1)) return null;
+    const { mapProp, data } = this.props;
+    if (!mapProp) return null;
     const icon = divIcon({ className: styles.divIcon });
-    const latFqn = `${geoProps.get(0).type.namespace}.${geoProps.get(0).type.name}`;
-    const longFqn = `${geoProps.get(1).type.namespace}.${geoProps.get(1).type.name}`;
-
+    let latFqn;
+    let longFqn;
+    let pointFqn;
+    if (mapProp.get('latProp')) {
+      latFqn = `${mapProp.get('latProp').type.namespace}.${mapProp.get('latProp').type.name}`;
+      longFqn = `${mapProp.get('longProp').type.namespace}.${mapProp.get('longProp').type.name}`;
+    }
+    else pointFqn = `${mapProp.get('type').namespace}.${mapProp.get('type').name}`;
     let maxLat = -90;
     let minLat = 90;
     let maxLong = -180;
@@ -26,8 +31,17 @@ export class GeoVisualization extends React.Component {
 
     const markers = [];
     data.forEach((point) => {
-      const lat = parseFloat(point[latFqn][0]);
-      const long = parseFloat(point[longFqn][0]);
+      let lat;
+      let long;
+      if (mapProp.latProp) {
+        lat = parseFloat(point[latFqn][0]);
+        long = parseFloat(point[longFqn][0]);
+      }
+      else {
+        const latLongArray = point[pointFqn][0].split(',');
+        lat = parseFloat(latLongArray[0]);
+        long = parseFloat(latLongArray[1]);
+      }
       if (isNaN(lat) || isNaN(long)) return;
       const position = [lat, long];
       if (lat < minLat) minLat = lat;

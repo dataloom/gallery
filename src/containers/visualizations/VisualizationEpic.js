@@ -71,6 +71,7 @@ function loadPropertyTypesEpic(action$) {
           let longProp = null;
           const numberProps = [];
           const dateProps = [];
+          const geoProps = [];
           propertyTypes.forEach((prop) => {
             if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) {
               numberProps.push(prop);
@@ -85,8 +86,11 @@ function loadPropertyTypesEpic(action$) {
             else if (EdmConsts.EDM_DATE_TYPES.includes(prop.datatype)) {
               dateProps.push(prop);
             }
+            else if (EdmConsts.EDM_GEOGRAPHY_TYPES.includes(prop.datatype)) {
+              geoProps.push(prop);
+            }
           });
-          const geoProps = (!latProp || !longProp) ? [] : [latProp, longProp];
+          if (!!latProp && !!longProp) geoProps.push(Immutable.Map({ latProp, longProp }));
           const chartOptions = [];
           if (numberProps.length + dateProps.length > 1) {
             chartOptions.push(VisualizationConsts.SCATTER_CHART);
@@ -98,9 +102,13 @@ function loadPropertyTypesEpic(action$) {
               actionFactories.loadPropertyTypesSuccess(numberProps, dateProps, geoProps, chartOptions)
             );
           }
+          const propsToLoad = numberProps.concat(dateProps);
+          geoProps.forEach((prop) => {
+            if (!prop.latProp) propsToLoad.push(prop);
+          });
           return Observable.of(
             actionFactories.loadPropertyTypesSuccess(numberProps, dateProps, geoProps, chartOptions),
-            actionFactories.getData(action.entitySetId, numberProps.concat(dateProps).map(prop => prop.id))
+            actionFactories.getData(action.entitySetId, propsToLoad.map(prop => prop.id))
           );
         })
         // Error Handling
@@ -247,7 +255,10 @@ function getVisualizableEntitySetsEpic(action$) {
       action.entityTypes.forEach((entityType) => {
         const visualizableProps = [];
         entityType.properties.forEach((pid) => {
-          if (EdmConsts.EDM_NUMBER_TYPES.concat(EdmConsts.EDM_DATE_TYPES).includes(pidToDatatype[pid])) {
+          if (EdmConsts.EDM_NUMBER_TYPES
+            .concat(EdmConsts.EDM_DATE_TYPES)
+            .concat(EdmConsts.EDM_GEOGRAPHY_TYPES)
+            .includes(pidToDatatype[pid])) {
             visualizableProps.push(pid);
           }
         });
