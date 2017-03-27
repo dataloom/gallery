@@ -88,8 +88,9 @@ class EntitySetDetailComponent extends React.Component {
         // TODO: FIGURE OUT HOW TO CONNECT RESULTS W/ updateStateAcls
       // 2. fetchAllUsersRequest -> epic -> success -> do logic + call setAllUsersAndRoles(allUsersById, allRolesList) -> success -> call setLoadUsersError
 
-      // this.props.loadAclsRequest(nextProps.entitySet.id); -> call getAclRequest + loadAllUsersAndRoles OR call each separately and listen for success
-      this.loadAcls(nextProps.entitySet.id);
+      // -> call getAclRequest + loadAllUsersAndRoles OR call each separately and listen for success
+      this.props.loadAclsRequest(nextProps.entitySet.id);
+      // this.loadAcls(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
         // this.props.loadAclsRequest(nextProps.entitySet.id, property);
@@ -460,9 +461,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     /* PERMISSIONS SUMMARY */
     //TODO: Move these back to Permissions Summary now that we're using Redux
-    // loadAclsRequest: (entitySetId, property) => {
-    //   dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
-    // },
+    loadAclsRequest: (entitySetId, property) => {
+      dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
+    },
     setEntityData: (data) => {
       dispatch(psActionFactories.setEntityData(data));
     },

@@ -17,7 +17,7 @@ function updateStateAclsEpic(action$ :Observable<Action>, store) :Observable<Act
       return Observable
         .of(
           // QUESTION: Create own success action here that sets state vs. only listening to permissions' success action?
-          permissionsActionFactory.getAclRequest(aclKey)
+          permissionsActionFactory.getAclRequest(aclKey) //
         )
         .mergeMap(() => {
           const acl = store.get('acl'); // QUESTION: Does this update to correct value once store is updated from previous call?
