@@ -2,6 +2,7 @@
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import Promise from 'bluebird';
+import Immutable from 'immutable';
 import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 
 import EdmConsts from '../../utils/Consts/EdmConsts';
@@ -90,7 +91,7 @@ function loadPropertyTypesEpic(action$) {
               geoProps.push(prop);
             }
           });
-          if (!!latProp && !!longProp) geoProps.push(Immutable.Map({ latProp, longProp }));
+          if (!!latProp && !!longProp) geoProps.push({ latProp, longProp });
           const chartOptions = [];
           if (numberProps.length + dateProps.length > 1) {
             chartOptions.push(VisualizationConsts.SCATTER_CHART);
@@ -148,7 +149,7 @@ function getDataEpic(action$) {
     .ofType(actionTypes.GET_DATA_REQUEST)
     .mergeMap((action :Action) => {
       return Observable
-        .from(DataApi.getEntitySetData(action.entitySetId, [], action.propertyTypeIds))
+        .from(DataApi.getEntitySetData(action.entitySetId, '', action.propertyTypeIds))
         .mergeMap((data) => {
           let filteredData = data;
           if (data.length > MAX_POINTS_TO_DISPLAY) {

@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
 import { divIcon } from 'leaflet';
 import { Map, Marker, TileLayer } from 'react-leaflet';
 import VisualizationConsts from '../../utils/Consts/VisualizationConsts';
@@ -19,11 +18,11 @@ export class GeoVisualization extends React.Component {
     let latFqn;
     let longFqn;
     let pointFqn;
-    if (mapProp.get('latProp')) {
-      latFqn = `${mapProp.get('latProp').type.namespace}.${mapProp.get('latProp').type.name}`;
-      longFqn = `${mapProp.get('longProp').type.namespace}.${mapProp.get('longProp').type.name}`;
+    if (mapProp.latProp) {
+      latFqn = `${mapProp.latProp.type.namespace}.${mapProp.latProp.type.name}`;
+      longFqn = `${mapProp.longProp.type.namespace}.${mapProp.longProp.type.name}`;
     }
-    else pointFqn = `${mapProp.get('type').namespace}.${mapProp.get('type').name}`;
+    else pointFqn = `${mapProp.type.namespace}.${mapProp.type.name}`;
     let maxLat = -90;
     let minLat = 90;
     let maxLong = -180;

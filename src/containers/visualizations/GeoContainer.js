@@ -14,33 +14,30 @@ export class GeoContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mapProp: (props.geoProps.size) ? props.geoProps.get(0) : undefined
+      mapProp: (props.geoProps.size) ? JSON.stringify(props.geoProps.get(0).toJSON()) : undefined
     };
   }
 
   handlePropChange = (e) => {
-    const mapProp = (e) ? JSON.parse(e.value) : undefined;
+    const mapProp = (e) ? e.value : undefined;
     this.setState({ mapProp })
   }
 
   renderVisualizationChart = () => {
     if (!this.state.mapProp) return null;
-    return <GeoVisualization data={this.props.data} mapProp={Immutable.Map(this.state.mapProp)} />;
+    return <GeoVisualization data={this.props.data} mapProp={JSON.parse(this.state.mapProp)} />;
   }
 
   render() {
-    const { geoProps, data } = this.props;
-    const mapProp = this.state.mapProp;
-    if (geoProps.size < 1) return null;
+    if (this.props.geoProps.size < 1) return null;
     const options = [];
-    geoProps.forEach((prop) => {
-      if (prop.latProp) {
-        if (mapProp && mapProp.latProp) return;
+    this.props.geoProps.forEach((prop) => {
+      if (prop.get('latProp')) {
         options.push({
           label: 'Latitude/Longitude',
           value: JSON.stringify({
-            latProp: prop.latProp.toJSON(),
-            longProp: prop.longProp.toJSON()
+            latProp: prop.get('latProp').toJSON(),
+            longProp: prop.get('longProp').toJSON()
           })
         });
       }
@@ -59,7 +56,7 @@ export class GeoContainer extends React.Component {
               <Select
                   placeholder="Choose a map to render"
                   options={options}
-                  value={JSON.stringify(mapProp)}
+                  value={this.state.mapProp}
                   onChange={this.handlePropChange} />
             </div>
           </div>
