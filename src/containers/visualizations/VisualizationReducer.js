@@ -47,9 +47,6 @@ export default function visualizationsReducer(state :Immutable.Map = INITIAL_STA
         .set('errorMessage', action.errorMessage)
         .set('loadingDataStatus', ASYNC_STATUS.ERROR);
 
-    case VisualizationActionTypes.LOAD_PROPERTY_TYPES_REQUEST:
-      return state;
-
     case VisualizationActionTypes.LOAD_PROPERTY_TYPES_SUCCESS: {
       const loadingDataStatus = (action.chartOptions.length > 1) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.SUCCESS;
       return state
