@@ -4,13 +4,13 @@
 
 import React from 'react';
 
+import DocumentTitle from 'react-document-title';
 import Immutable from 'immutable';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
-import DocumentTitle from 'react-document-title';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import Button from '../../../components/buttons/Button';
 import OverviewCard from '../../../components/cards/OverviewCard';
@@ -183,14 +183,15 @@ class OrganizationsListComponent extends React.Component {
 
     // TODO: async content loading
 
-    const content = (this.props.isFetchingOrgs || this.props.isSearchingOrgs) ?
-      <LoadingSpinner /> : this.renderOrganizations();
+    const content = (this.props.isFetchingOrgs || this.props.isSearchingOrgs)
+      ? <LoadingSpinner />
+      : this.renderOrganizations();
 
     return (
       <DocumentTitle title="Organizations">
-        {content}
+        { content }
       </DocumentTitle>
-    )
+    );
   }
 }
 

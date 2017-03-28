@@ -246,8 +246,11 @@ export default class AdvancedDataSearch extends React.Component {
   }
 
   render() {
+    const title = (this.state.title && this.state.title.length)
+      ? `Advanced Search: ${this.state.title}`
+      : 'Advanced Search';
     return (
-      <DocumentTitle title={`Advanced Search: ${this.state.title}`}>
+      <DocumentTitle title={title}>
         <Page>
           <Page.Header>
             <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>

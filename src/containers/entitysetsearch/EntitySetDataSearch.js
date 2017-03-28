@@ -288,8 +288,9 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   render() {
+    const title = (this.state.title && this.state.title.length) ? `Search: ${this.state.title}` : 'Search';
     return (
-      <DocumentTitle title={`Search: ${this.state.title}`}>
+      <DocumentTitle title={title}>
         <Page>
           <Page.Header>
             <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>

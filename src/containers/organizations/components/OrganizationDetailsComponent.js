@@ -210,9 +210,8 @@ class OrganizationDetailsComponent extends React.Component {
         </DocumentTitle>
       );
     }
-    const title = (this.props.mode === MODES.CREATE) ? 'Create a new organization' : this.props.organization.title;
     return (
-      <DocumentTitle title={title}>
+      <DocumentTitle title={this.props.organization.get('title')}>
         <StyledFlexContainerStacked>
           { this.renderOrganizationTitleSection() }
           { this.renderOrganizationDescriptionSection() }

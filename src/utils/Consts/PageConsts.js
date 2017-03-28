@@ -1,3 +1,5 @@
+const DEFAULT_DOCUMENT_TITLE = 'Gallery';
+
 const HOME = 'home';
 const CATALOG = 'catalog';
 const LOGIN = 'login';
@@ -11,6 +13,7 @@ const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
 
 export default {
+  DEFAULT_DOCUMENT_TITLE,
   HOME,
   CATALOG,
   LOGIN,
