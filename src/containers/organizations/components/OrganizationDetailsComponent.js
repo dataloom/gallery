@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
+import DocumentTitle from 'react-document-title';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 import StyledFlexContainerStackedLeftAligned from '../../../components/flex/StyledFlexContainerStackedLeftAligned';
@@ -192,30 +192,36 @@ class OrganizationDetailsComponent extends React.Component {
 
     if (this.props.isCreatingOrg) {
       return (
-        <StyledFlexContainerStacked>
-          { this.renderOrganizationTitleSection() }
-          { this.renderLoadingSpinner() }
-        </StyledFlexContainerStacked>
+        <DocumentTitle title="Create a new organization">
+          <StyledFlexContainerStacked>
+            { this.renderOrganizationTitleSection() }
+            { this.renderLoadingSpinner() }
+          </StyledFlexContainerStacked>
+        </DocumentTitle>
       );
     }
 
     if (this.props.isFetchingOrg) {
       return (
-        <StyledFlexContainerStacked>
-          { this.renderLoadingSpinner() }
-        </StyledFlexContainerStacked>
+        <DocumentTitle title="Fetching organization...">
+          <StyledFlexContainerStacked>
+            { this.renderLoadingSpinner() }
+          </StyledFlexContainerStacked>
+        </DocumentTitle>
       );
     }
-
+    const title = (this.props.mode === MODES.CREATE) ? 'Create a new organization' : this.props.organization.title;
     return (
-      <StyledFlexContainerStacked>
-        { this.renderOrganizationTitleSection() }
-        { this.renderOrganizationDescriptionSection() }
-        { this.renderOrganizationDomainsSection() }
-        { this.renderOrganizationRolesSection() }
-        { this.renderOrganizationMembersSection() }
-        { this.renderOrganizationAddMembersSection() }
-      </StyledFlexContainerStacked>
+      <DocumentTitle title={title}>
+        <StyledFlexContainerStacked>
+          { this.renderOrganizationTitleSection() }
+          { this.renderOrganizationDescriptionSection() }
+          { this.renderOrganizationDomainsSection() }
+          { this.renderOrganizationRolesSection() }
+          { this.renderOrganizationMembersSection() }
+          { this.renderOrganizationAddMembersSection() }
+        </StyledFlexContainerStacked>
+      </DocumentTitle>
     );
   }
 }

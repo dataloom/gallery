@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
 import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
 import { Permission } from '../../core/permissions/Permission';
@@ -288,23 +289,25 @@ export default class EntitySetDataSearch extends React.Component {
 
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
-          <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
-          <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
-        </Page.Header>
-        <Page.Body>
-          {this.renderErrorMessage()}
-          {this.renderToggleSearchView()}
-          <AsyncContent
-              status={this.state.asyncStatus}
-              pendingContent={<h2>Please run a search</h2>}
-              content={this.renderSearchResultType} />
-          {this.renderPagination()}
-          <div className={styles.bottomSpacer} />
-        </Page.Body>
-      </Page>
+      <DocumentTitle title={`Search: ${this.state.title}`}>
+        <Page>
+          <Page.Header>
+            <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
+            <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
+            <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
+          </Page.Header>
+          <Page.Body>
+            {this.renderErrorMessage()}
+            {this.renderToggleSearchView()}
+            <AsyncContent
+                status={this.state.asyncStatus}
+                pendingContent={<h2>Please run a search</h2>}
+                content={this.renderSearchResultType} />
+            {this.renderPagination()}
+            <div className={styles.bottomSpacer} />
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
+import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
 import { EntityDataModelApi, LinkingApi } from 'loom-data';
 import AuthService from '../../../utils/AuthService';
@@ -476,12 +477,14 @@ export class Link extends React.Component {
       );
     }
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Link</Page.Title>
-        </Page.Header>
-        <Page.Body>{content}</Page.Body>
-      </Page>
+      <DocumentTitle title="Link">
+        <Page>
+          <Page.Header>
+            <Page.Title>Link</Page.Title>
+          </Page.Header>
+          <Page.Body>{content}</Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }
