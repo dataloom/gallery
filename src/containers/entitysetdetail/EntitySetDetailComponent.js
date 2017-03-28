@@ -66,10 +66,7 @@ class EntitySetDetailComponent extends React.Component {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false,
-      properties: {},
-      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }
+      deleteError: false
     };
   }
 
@@ -81,122 +78,14 @@ class EntitySetDetailComponent extends React.Component {
   componentWillReceiveProps(nextProps) {
     // TODO: Once redux epics are working, move these actions to PermissionsSummary
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      // LISTEN FOR SUCCESS CASE: two calls TODO: Keep loadAcls call or do 2 separate calls for updateAcls & loadAllUsersAndRoles
-      // 1. PermissionsActionFactory.getAclRequest
-        // Success action -> reducer -> call updateStateAcls action: do shit with the data  -> set all the states
-        // Failure action -> reducer -> do something
-        // TODO: FIGURE OUT HOW TO CONNECT RESULTS W/ updateStateAcls
-      // 2. fetchAllUsersRequest -> epic -> success -> do logic + call setAllUsersAndRoles(allUsersById, allRolesList) -> success -> call setLoadUsersError
-
-      // -> call getAclRequest + loadAllUsersAndRoles OR call each separately and listen for success
       this.props.loadAclsRequest(nextProps.entitySet.id);
-      // this.loadAcls(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
-        // this.props.loadAclsRequest(nextProps.entitySet.id, property);
-        this.loadAcls(nextProps.entitySet.id, property);
+        this.props.loadAclsRequest(nextProps.entitySet.id, property);
       });
     }
   }
 
-  /** PERMISSIONS LOGIC **/
-  // TODO: Move all logic to Redux / All Permissinos so that it's not hosted here
-  // TODO: Refactor w/ new roles service once live
-  loadAcls = (entitySetId, property) => {
-    const aclKey = [entitySetId];
-    if (property && property.id) aclKey.push(property.id);
-    this.loadAllUsersAndRoles();
-
-    PermissionsApi.getAcl(aclKey) // -> action to save acls to store
-    .then((acls) => { // -> 2nd action to updateStateAcls
-      this.updateStateAcls(acls.aces, property);
-    })
-    .catch(() => {
-      this.props.setUpdateError(true);
-    });
-  }
-
-  loadAllUsersAndRoles = () => {
-    let allUsersById = {};
-    const allRolesList = new Set();
-    const myId = JSON.parse(localStorage.profile).user_id;
-    PrincipalsApi.getAllUsers()
-    .then((users) => {
-      allUsersById = users;
-      Object.keys(users).forEach((userId) => {
-        users[userId].roles.forEach((role) => {
-          if (role !== AUTHENTICATED_USER) allRolesList.add(role);
-        });
-      });
-      allUsersById[myId] = null;
-      this.props.setAllUsersAndRoles(allUsersById, allRolesList);
-      this.props.setLoadUsersError(false);
-    })
-    .catch(() => {
-      this.props.setLoadUsersError(true);
-    });
-  }
-
-  updateStateAcls = (aces, property) => {
-    let globalValue = [];
-    const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-    const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-    aces.forEach((ace) => {
-      if (ace.permissions.length > 0) {
-        if (ace.principal.type === ROLE) {
-          if (ace.principal.id === AUTHENTICATED_USER) {
-            globalValue = this.getPermission(ace.permissions);
-          }
-          else {
-            this.getPermission(ace.permissions).forEach((permission) => {
-              roleAcls[permission].push(ace.principal.id);
-            });
-          }
-        }
-        else {
-          this.getPermission(ace.permissions).forEach((permission) => {
-            userAcls[permission].push(ace.principal.id);
-          });
-        }
-      }
-    });
-
-    this.props.setNewRoleValue('');
-    this.props.setNewEmailValue('');
-    this.props.setUpdateError(false);
-
-    if (property) {
-      const propertyAcls = {
-        id: property.id,
-        title: property.title,
-        roleAcls,
-        userAcls,
-        globalValue
-      };
-      this.props.setPropertyData(propertyAcls);
-    }
-    else {
-      const entityAcls = {
-        userAcls,
-        roleAcls,
-        globalValue
-      };
-      this.props.setEntityData(entityAcls);
-    }
-  }
-
-  getPermission = (permissions) => {
-    const newPermissions = [];
-    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
-    if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
-    if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
-    if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
-    if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
-    return newPermissions;
-  }
-
-
-  /** VIEW LOGIC **/
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
@@ -463,27 +352,6 @@ function mapDispatchToProps(dispatch, ownProps) {
     //TODO: Move these back to Permissions Summary now that we're using Redux
     loadAclsRequest: (entitySetId, property) => {
       dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
-    },
-    setEntityData: (data) => {
-      dispatch(psActionFactories.setEntityData(data));
-    },
-    setPropertyData: (data) => {
-      dispatch(psActionFactories.setPropertyData(data));
-    },
-    setAllUsersAndRoles: (users, roles) => {
-      dispatch(psActionFactories.setAllUsersAndRoles(users, roles));
-    },
-    setLoadUsersError: (bool) => {
-      dispatch(psActionFactories.setLoadUsersError(bool));
-    },
-    setNewRoleValue: (value) => {
-      dispatch(psActionFactories.setNewRoleValue(value));
-    },
-    setNewEmailValue: (value) => {
-      dispatch(psActionFactories.setNewEmailValue(value));
-    },
-    setUpdateError: (bool) => {
-      dispatch(psActionFactories.setUpdateError(bool));
     },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());
