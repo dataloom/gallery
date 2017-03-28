@@ -60,3 +60,24 @@ export function allPropertyTypesReject(errorMessage:string) {
     errorMessage
   }
 }
+
+export function updateEntitySetMetadataRequest(entitySetId:string, metadataUpdate:Map<string, *>) {
+  return {
+    type: actionTypes.UPDATE_ENTITY_SET_METADATA_REQUEST,
+    entitySetId,
+    metadataUpdate
+  };
+}
+
+export function updateEntitySetMetadataResolve() {
+  return {
+    type: actionTypes.UPDATE_ENTITY_SET_METADATA_RESOLVE
+  };
+}
+
+export function updateEntitySetMetadataReject(errorMessage:string) {
+  return {
+    type: actionTypes.UPDATE_ENTITY_SET_METADATA_REJECT,
+    errorMessage
+  };
+}
