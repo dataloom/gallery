@@ -109,12 +109,11 @@ function loadEdmEpic(action$) {
 function updateMetadataEpic(action$) {
   return action$.ofType(actionTypes.UPDATE_ENTITY_SET_METADATA_REQUEST)
   .mergeMap((action :Action) => {
-    console.log(action)
     return Observable
       .from(EntityDataModelApi.updateEntitySetMetaData(action.entitySetId, action.metadataUpdate))
       .mergeMap(() => {
         return Observable.of(
-          actionFactories.updateEntitySetMetadataSuccess()
+          actionFactories.updateEntitySetMetadataResolve()
         );
       })
       // Error Handling
