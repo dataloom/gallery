@@ -2,6 +2,7 @@
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import Promise from 'bluebird';
+import Immutable from 'immutable';
 import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
 
 import EdmConsts from '../../utils/Consts/EdmConsts';
@@ -71,6 +72,7 @@ function loadPropertyTypesEpic(action$) {
           let longProp = null;
           const numberProps = [];
           const dateProps = [];
+          const geoProps = [];
           propertyTypes.forEach((prop) => {
             if (EdmConsts.EDM_NUMBER_TYPES.includes(prop.datatype)) {
               numberProps.push(prop);
@@ -85,8 +87,11 @@ function loadPropertyTypesEpic(action$) {
             else if (EdmConsts.EDM_DATE_TYPES.includes(prop.datatype)) {
               dateProps.push(prop);
             }
+            else if (EdmConsts.EDM_GEOGRAPHY_TYPES.includes(prop.datatype)) {
+              geoProps.push(prop);
+            }
           });
-          const geoProps = (!latProp || !longProp) ? [] : [latProp, longProp];
+          if (!!latProp && !!longProp) geoProps.push({ latProp, longProp });
           const chartOptions = [];
           if (numberProps.length + dateProps.length > 1) {
             chartOptions.push(VisualizationConsts.SCATTER_CHART);
@@ -98,9 +103,13 @@ function loadPropertyTypesEpic(action$) {
               actionFactories.loadPropertyTypesSuccess(numberProps, dateProps, geoProps, chartOptions)
             );
           }
+          const propsToLoad = numberProps.concat(dateProps);
+          geoProps.forEach((prop) => {
+            if (!prop.latProp) propsToLoad.push(prop);
+          });
           return Observable.of(
             actionFactories.loadPropertyTypesSuccess(numberProps, dateProps, geoProps, chartOptions),
-            actionFactories.getData(action.entitySetId, numberProps.concat(dateProps).map(prop => prop.id))
+            actionFactories.getData(action.entitySetId, propsToLoad.map(prop => prop.id))
           );
         })
         // Error Handling
@@ -140,7 +149,7 @@ function getDataEpic(action$) {
     .ofType(actionTypes.GET_DATA_REQUEST)
     .mergeMap((action :Action) => {
       return Observable
-        .from(DataApi.getEntitySetData(action.entitySetId, [], action.propertyTypeIds))
+        .from(DataApi.getEntitySetData(action.entitySetId, '', action.propertyTypeIds))
         .mergeMap((data) => {
           let filteredData = data;
           if (data.length > MAX_POINTS_TO_DISPLAY) {
@@ -247,7 +256,10 @@ function getVisualizableEntitySetsEpic(action$) {
       action.entityTypes.forEach((entityType) => {
         const visualizableProps = [];
         entityType.properties.forEach((pid) => {
-          if (EdmConsts.EDM_NUMBER_TYPES.concat(EdmConsts.EDM_DATE_TYPES).includes(pidToDatatype[pid])) {
+          if (EdmConsts.EDM_NUMBER_TYPES
+            .concat(EdmConsts.EDM_DATE_TYPES)
+            .concat(EdmConsts.EDM_GEOGRAPHY_TYPES)
+            .includes(pidToDatatype[pid])) {
             visualizableProps.push(pid);
           }
         });
