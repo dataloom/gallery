@@ -119,6 +119,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         //   properties: newPropertyState
         // });
       }
+      console.log('bout to save acls');
       return state.merge({
         newRoleValue: '',
         newEmailValue: '',
@@ -135,6 +136,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       // do something else
 
     case actionTypes.SET_ALL_USERS_AND_ROLES:
+    console.log('setallusers:', action);
       return state.merge({
         allUsersById: action.users,
         allRolesList: action.roles

@@ -12,6 +12,8 @@ function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
     .ofType(actionTypes.LOAD_ACLS_REQUEST)
     .mergeMap((action :Action) => {
+      console.log('loadaclsrequest action:', action);
+
       const aclKey = [action.entitySetId];
       if (action.property && action.property.id) aclKey.push(action.property.id);
       return Observable

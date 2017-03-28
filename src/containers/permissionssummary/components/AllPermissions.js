@@ -1,6 +1,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
+import { getEdmObject } from '../../edm/EdmStorage';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
+import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
+import * as edmActionFactories from '../../edm/EdmActionFactories';
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
@@ -38,8 +43,16 @@ class AllPermissions extends React.Component {
 
   //TODO: Reformat to use new roles service once live
   componentDidMount() {
+    this.props.loadEntitySet();
     // TODO: Make sure data gets loaded on refresh once async actions are hooked up to redux
+    // this.props.loadAclsRequest(this.props.entitySet.id);
+    //
+    // this.props.entitySet.entityType.properties.forEach((property) => {
+    //   this.props.loadAclsRequest(this.props.entitySet.id, property);
+    // });
+
     const { properties } = this.props;
+    console.log('props:', this.props);
 
     // Get user and role permissions for entity set
     this.getUserPermissions();
@@ -52,10 +65,23 @@ class AllPermissions extends React.Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      // this.props.setEntitySet(nextProps.entitySet);
+      this.props.loadAclsRequest(nextProps.entitySet.id);
+
+      nextProps.entitySet.entityType.properties.forEach((property) => {
+        this.props.loadAclsRequest(nextProps.entitySet.id, property);
+      });
+    }
+  }
+
   getUserPermissions = (property) => {
+    console.log('property:', property);
     const { userAcls, roleAcls, globalValue } = property || this.props;
     const { allUsersById } = this.props;
     const userPermissions = [];
+    console.log('allusers, userAcls, roleAcls, globalValue:', allUsersById, userAcls, roleAcls, globalValue);
 
     // For each user, add their permissions
     Object.keys(allUsersById).forEach((userId) => {
@@ -190,7 +216,14 @@ class AllPermissions extends React.Component {
 }
 
 function mapStateToProps(state) {
+  const entitySetDetail = state.get('entitySetDetail');
+  const normalizedData = state.get('normalizedData');
   const permissionsSummary = state.get('permissionsSummary');
+  let entitySet;
+  const reference = entitySetDetail.get('entitySetReference');
+  if (reference) {
+    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
+  }
 
   return {
     allUsersById: permissionsSummary.get('allUsersById').toJS(),
@@ -201,12 +234,32 @@ function mapStateToProps(state) {
     entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
     propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
-    entitySet: permissionsSummary.get('entitySet').toJS()
+    entitySet
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
+  const id = ownProps.params.id;
+
   return {
+    loadEntitySet: () => {
+      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
+      // TODO: Move filter creation in helper function in EdmApi
+      dispatch(edmActionFactories.filteredEdmRequest(
+        [{
+          type: 'EntitySet',
+          id,
+          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+        }]
+      ));
+    },
+    setEntitySet: (entitySet) => {
+      dispatch(psActionFactory.setEntitySet(entitySet));
+    },
+    loadAclsRequest: (entitySetId, property) => {
+      dispatch(psActionFactory.loadAclsRequest(entitySetId, property));
+    },
     setEntityUserPermissions: (permissions) => {
       dispatch(psActionFactory.setEntityUserPermissions(permissions));
     },

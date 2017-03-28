@@ -78,7 +78,7 @@ class EntitySetDetailComponent extends React.Component {
   componentWillReceiveProps(nextProps) {
     // TODO: Once redux epics are working, move these actions to PermissionsSummary
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.props.setEntitySet(nextProps.entitySet);
+      // this.props.setEntitySet(nextProps.entitySet);
       this.props.loadAclsRequest(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
@@ -329,13 +329,13 @@ function mapStateToProps(state) {
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
-    entitySetPermissions,
-    entityProperties: permissionsSummary.get('properties').toJS()
+    entitySetPermissions
   };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
   const id = ownProps.params.id;
+
   return {
     loadEntitySet: () => {
       dispatch(actionFactories.entitySetDetailRequest(id));
