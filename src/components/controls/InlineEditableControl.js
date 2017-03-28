@@ -129,7 +129,7 @@ const TYPES = {
 const STYLE_MAP = {
   small: {
     fontSize: '14px',
-    inputFontSize: '14px',
+    inputFontSize: '13px',
     lineHeight: '16px',
     margin: '0 0 0 -13px',
     padding: '6px 12px'
