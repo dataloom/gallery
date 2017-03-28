@@ -1,5 +1,12 @@
 import * as actionTypes from './PermissionsSummaryActionTypes';
 
+export function setEntitySet(entitySet) {
+  return {
+    type: actionTypes.SET_ENTITY_SET,
+    entitySet
+  };
+}
+
 export function loadAclsRequest(entitySetId, property) {
   return {
     type: actionTypes.LOAD_ACLS_REQUEST,

@@ -78,6 +78,7 @@ class EntitySetDetailComponent extends React.Component {
   componentWillReceiveProps(nextProps) {
     // TODO: Once redux epics are working, move these actions to PermissionsSummary
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      this.props.setEntitySet(nextProps.entitySet);
       this.props.loadAclsRequest(nextProps.entitySet.id);
 
       nextProps.entitySet.entityType.properties.forEach((property) => {
@@ -350,6 +351,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     /* PERMISSIONS SUMMARY */
     //TODO: Move these back to Permissions Summary now that we're using Redux
+    setEntitySet: (entitySet) => {
+      dispatch(psActionFactories.setEntitySet(entitySet));
+    },
     loadAclsRequest: (entitySetId, property) => {
       dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
     },

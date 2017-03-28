@@ -200,7 +200,8 @@ function mapStateToProps(state) {
     globalValue: permissionsSummary.get('globalValue').toJS(),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
-    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS()
+    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
+    entitySet: permissionsSummary.get('entitySet').toJS()
   };
 }
 
