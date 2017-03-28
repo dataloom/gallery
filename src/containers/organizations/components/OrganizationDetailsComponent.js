@@ -189,10 +189,11 @@ class OrganizationDetailsComponent extends React.Component {
   }
 
   render() {
+    const title = (this.props.organization) ? this.props.organization.get('title') : 'Organizations';
 
     if (this.props.isCreatingOrg) {
       return (
-        <DocumentTitle title="Create a new organization">
+        <DocumentTitle title={title}>
           <StyledFlexContainerStacked>
             { this.renderOrganizationTitleSection() }
             { this.renderLoadingSpinner() }
@@ -203,7 +204,7 @@ class OrganizationDetailsComponent extends React.Component {
 
     if (this.props.isFetchingOrg) {
       return (
-        <DocumentTitle title="Fetching organization...">
+        <DocumentTitle title={title}>
           <StyledFlexContainerStacked>
             { this.renderLoadingSpinner() }
           </StyledFlexContainerStacked>
@@ -211,7 +212,7 @@ class OrganizationDetailsComponent extends React.Component {
       );
     }
     return (
-      <DocumentTitle title={this.props.organization.get('title')}>
+      <DocumentTitle title={title}>
         <StyledFlexContainerStacked>
           { this.renderOrganizationTitleSection() }
           { this.renderOrganizationDescriptionSection() }
