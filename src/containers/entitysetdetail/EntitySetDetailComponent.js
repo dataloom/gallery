@@ -5,13 +5,12 @@ import { Button, Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
-import { EntityDataModelApi, PermissionsApi, PrincipalsApi } from 'loom-data';
+import { EntityDataModelApi } from 'loom-data';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
-import * as principalsActionFactory from '../principals/PrincipalsActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
@@ -23,7 +22,6 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
-import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import styles from './entitysetdetail.module.css';
 
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
@@ -73,18 +71,6 @@ class EntitySetDetailComponent extends React.Component {
   componentDidMount() {
     this.props.resetPermissions();
     this.props.loadEntitySet();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // TODO: Once redux epics are working, move these actions to PermissionsSummary
-    // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-    //   // this.props.setEntitySet(nextProps.entitySet);
-    //   this.props.loadAclsRequest(nextProps.entitySet.id);
-    //
-    //   nextProps.entitySet.entityType.properties.forEach((property) => {
-    //     this.props.loadAclsRequest(nextProps.entitySet.id, property);
-    //   });
-    // }
   }
 
   setEditingPermissions = () => {
@@ -313,7 +299,6 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
-  const permissionsSummary = state.get('permissionsSummary');
 
   let entitySet;
   let entitySetPermissions;
@@ -348,14 +333,6 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
-    },
-    /* PERMISSIONS SUMMARY */
-    //TODO: Move these back to Permissions Summary now that we're using Redux
-    setEntitySet: (entitySet) => {
-      dispatch(psActionFactories.setEntitySet(entitySet));
-    },
-    loadAclsRequest: (entitySetId, property) => {
-      dispatch(psActionFactories.loadAclsRequest(entitySetId, property));
     },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());
