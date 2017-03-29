@@ -59,8 +59,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
       // QUESTION: chain success -> action call in the observable or context where request is called, OR design separate epic w/ api call
 
-    case actionTypes.UPDATE_ACLS_REQUEST:
-    // TODO: Refactor into helper function(s)
+    case actionTypes.UPDATE_ACLS_REQUEST: {
       const property = action.property || null; // TODO: get property from action or acl?
       let globalValue = [];
       const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
@@ -102,22 +101,6 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
           }
         };
         return state.mergeDeep(propertyDataMerge);
-        // TODO: SEE IF BELOW CODE WORKS BETTER THAN ABOVE (in case 2 state merges before returnint doesn't work -> single merge)
-        // const propertyData = {
-        //   [property.id]: {
-        //     title: property.title,
-        //     roleAcls,
-        //     userAcls,
-        //     globalValue
-        //   }
-        // };
-        // const newPropertyState = state.get('properties').merge(propertyData);
-        // state.merge({
-        //   newRoleValue: '',
-        //   newEmailValue: '',
-        //   updateError: false,
-        //   properties: newPropertyState
-        // });
       }
       console.log('bout to save acls');
       return state.merge({
@@ -128,6 +111,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         userAcls,
         globalValue
       });
+    }
 
     case actionTypes.UPDATE_ACLS_SUCCESS:
       console.log('hit update state acls success:', action);
@@ -179,36 +163,110 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         globalValue: action.data
       });
 
-    case actionTypes.SET_ENTITY_USER_PERMISSIONS:
-      return state.merge({
-        entityUserPermissions: action.data
-      });
+    case actionTypes.SET_USER_PERMISSIONS: {
+      console.log('HIT IIIIIIIIIT!');
+      const userAcls = action.property || state.get('userAcls').toJS();
+      const roleAcls = action.property || state.get('roleAcls').toJS();
+      const globalValue = action.property || state.get('globalValue').toJS();
+      const allUsersById = state.get('allUsersById').toJS();
+      console.log('allusers, userAcls, roleAcls, globalValue:', allUsersById, userAcls, roleAcls, globalValue);
 
-    case actionTypes.SET_ENTITY_ROLE_PERMISSIONS:
-      return state.merge({
-        entityRolePermissions: action.data
-      });
+      const userPermissions = [];
 
-    case actionTypes.SET_PROPERTY_USER_PERMISSIONS: {
-      const userPermissionsMerge = {
-        propertyPermissions: {
-          [action.property.title]: {
-            userPermissions: action.permissions
+      Object.keys(allUsersById).forEach((userId) => {
+        if (userId && allUsersById[userId]) {
+          const user = {
+            id: userId,
+            nickname: allUsersById[userId].nickname,
+            email: allUsersById[userId].email,
+            roles: [],
+            permissions: [],
+            individualPermissions: []
+          };
+
+          // Get all user permissions (sum of individual + roles + default);
+          Object.keys(userAcls).forEach((permissionKey) => {
+            if (userAcls[permissionKey].indexOf(userId) !== -1) {
+              user.permissions.push(permissionKey);
+              // Save individual permissions separately
+              user.individualPermissions.push(permissionKey);
+            }
+          });
+
+          // Add additional permissions based on the roles the user has
+          if (allUsersById[userId].roles.length > 1) {
+            Object.keys(roleAcls).forEach((permissionKey) => {
+              allUsersById[userId].roles.forEach((role) => {
+                if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
+                  user.permissions.push(permissionKey);
+                }
+                if (user.roles.indexOf(role) === -1 && role !== 'AuthenticatedUser') {
+                  user.roles.push(role);
+                }
+              });
+            });
           }
+
+          // Add additional permissions based on default for all users
+          if (globalValue) {
+            globalValue.forEach((permission) => {
+              if (user.permissions.indexOf(permission) === -1) {
+                user.permissions.push(permission);
+              }
+            });
+          }
+          userPermissions.push(user);
         }
-      };
-      return state.mergeDeep(userPermissionsMerge);
+      });
+
+      if (action.property) {
+        const userPermissionsMerge = {
+          propertyPermissions: {
+            [action.property.title]: {
+              userPermissions: action.permissions
+            }
+          }
+        };
+        return state.mergeDeep(userPermissionsMerge);
+      }
+
+      return state.merge({
+        entityUserPermissions: userPermissions
+      });
     }
 
-    case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS: {
-      const rolePermissionsMerge = {
-        propertyPermissions: {
-          [action.property.title]: {
-            rolePermissions: action.permissions
+    case actionTypes.SET_ROLE_PERMISSIONS: {
+      const roleAcls = action.property || state.get('roleAcls').toJS();
+      const globalValue = action.property || state.get('globalValue').toJS();
+      const rolePermissions = {};
+
+      // Get all roles and their respective permissions
+      Object.keys(roleAcls).forEach((permission) => {
+        roleAcls[permission].forEach((role) => {
+          if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
+            rolePermissions[role] = [];
           }
-        }
-      };
-      return state.mergeDeep(rolePermissionsMerge);
+
+          if (rolePermissions[role].indexOf(permission) === -1) {
+            rolePermissions[role].push(permission);
+          }
+        });
+      });
+      rolePermissions.AuthenticatedUser = globalValue;
+
+      if (action.property) {
+        const rolePermissionsMerge = {
+          propertyPermissions: {
+            [action.property.title]: {
+              rolePermissions
+            }
+          }
+        };
+        return state.mergeDeep(rolePermissionsMerge);
+      }
+      return state.merge({
+        entityRolePermissions: rolePermissions
+      });
     }
 
     case actionTypes.SET_PROPERTY_DATA: {

@@ -109,34 +109,18 @@ export function setUpdateError(bool) {
   };
 }
 
-export function setPropertyUserPermissions(permissions, property) {
+export function setUserPermissions(property) {
   return {
-    type: actionTypes.SET_PROPERTY_USER_PERMISSIONS,
-    permissions,
+    type: actionTypes.SET_USER_PERMISSIONS,
     property
-  };
+  }
 }
 
-export function setPropertyRolePermissions(permissions, property) {
+export function setRolePermissions(property) {
   return {
-    type: actionTypes.SET_PROPERTY_ROLE_PERMISSIONS,
-    permissions,
+    type: actionTypes.SET_ROLE_PERMISSIONS,
     property
-  };
-}
-
-export function setEntityUserPermissions(data) {
-  return {
-    type: actionTypes.SET_ENTITY_USER_PERMISSIONS,
-    data
-  };
-}
-
-export function setEntityRolePermissions(data) {
-  return {
-    type: actionTypes.SET_ENTITY_ROLE_PERMISSIONS,
-    data
-  };
+  }
 }
 
 export function resetPermissions() {

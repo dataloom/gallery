@@ -15,18 +15,9 @@ const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
   static propTypes = {
-    properties: PropTypes.object.isRequired,
-    userAcls: PropTypes.object.isRequired,
-    roleAcls: PropTypes.object.isRequired,
-    globalValue: PropTypes.array.isRequired,
-    allUsersById: PropTypes.object.isRequired,
     entityUserPermissions: PropTypes.array.isRequired,
     entityRolePermissions: PropTypes.object.isRequired,
-    propertyPermissions: PropTypes.object.isRequired,
-    setEntityUserPermissions: PropTypes.func.isRequired,
-    setEntityRolePermissions: PropTypes.func.isRequired,
-    setPropertyUserPermissions: PropTypes.func.isRequired,
-    setPropertyRolePermissions: PropTypes.func.isRequired
+    propertyPermissions: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -37,32 +28,11 @@ class AllPermissions extends React.Component {
       entityRolePermissions: {},
       propertyPermissions: {}
     };
-
-    this.getUserPermissions = this.getUserPermissions.bind(this);
   }
 
   //TODO: Reformat to use new roles service once live
   componentDidMount() {
     this.props.loadEntitySet();
-    // TODO: Make sure data gets loaded on refresh once async actions are hooked up to redux
-    // this.props.loadAclsRequest(this.props.entitySet.id);
-    //
-    // this.props.entitySet.entityType.properties.forEach((property) => {
-    //   this.props.loadAclsRequest(this.props.entitySet.id, property);
-    // });
-
-    const { properties } = this.props;
-    console.log('props:', this.props);
-
-    // Get user and role permissions for entity set
-    this.getUserPermissions();
-    this.getRolePermissions();
-
-    // Get user and role permissions for each property
-    Object.keys(properties).forEach((property) => {
-      this.getUserPermissions(properties[property]);
-      this.getRolePermissions(properties[property]);
-    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -73,100 +43,6 @@ class AllPermissions extends React.Component {
       nextProps.entitySet.entityType.properties.forEach((property) => {
         this.props.loadAclsRequest(nextProps.entitySet.id, property);
       });
-    }
-  }
-
-  getUserPermissions = (property) => {
-    console.log('property:', property);
-    const { userAcls, roleAcls, globalValue } = property || this.props;
-    const { allUsersById } = this.props;
-    const userPermissions = [];
-    console.log('allusers, userAcls, roleAcls, globalValue:', allUsersById, userAcls, roleAcls, globalValue);
-
-    // For each user, add their permissions
-    Object.keys(allUsersById).forEach((userId) => {
-      if (userId && allUsersById[userId]) {
-        const user = {
-          id: userId,
-          nickname: allUsersById[userId].nickname,
-          email: allUsersById[userId].email,
-          roles: [],
-          permissions: [],
-          individualPermissions: []
-        };
-
-        // Get all user permissions (sum of individual + roles + default);
-        Object.keys(userAcls).forEach((permissionKey) => {
-          if (userAcls[permissionKey].indexOf(userId) !== -1) {
-            user.permissions.push(permissionKey);
-            // Save individual permissions separately
-            user.individualPermissions.push(permissionKey);
-          }
-        });
-
-        // Add additional permissions based on the roles the user has
-        if (allUsersById[userId].roles.length > 1) {
-          Object.keys(roleAcls).forEach((permissionKey) => {
-            allUsersById[userId].roles.forEach((role) => {
-              if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
-                user.permissions.push(permissionKey);
-              }
-              if (user.roles.indexOf(role) === -1 && role !== 'AuthenticatedUser') {
-                user.roles.push(role);
-              }
-            });
-          });
-        }
-
-        // Add additional permissions based on default for all users
-        if (globalValue) {
-          globalValue.forEach((permission) => {
-            if (user.permissions.indexOf(permission) === -1) {
-              user.permissions.push(permission);
-            }
-          });
-        }
-        userPermissions.push(user);
-      }
-    });
-    this.setUserPermissions(userPermissions, property);
-  }
-
-  setUserPermissions = (permissions, property) => {
-    if (property) {
-      this.props.setPropertyUserPermissions(permissions, property);
-    }
-    else {
-      this.props.setEntityUserPermissions(permissions);
-    }
-  }
-
-  getRolePermissions = (property) => {
-    const { roleAcls, globalValue } = property || this.props;
-    const rolePermissions = {};
-
-    // Get all roles and their respective permissions
-    Object.keys(roleAcls).forEach((permission) => {
-      roleAcls[permission].forEach((role) => {
-        if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
-          rolePermissions[role] = [];
-        }
-
-        if (rolePermissions[role].indexOf(permission) === -1) {
-          rolePermissions[role].push(permission);
-        }
-      });
-    });
-    rolePermissions.AuthenticatedUser = globalValue;
-    this.setRolePermissions(rolePermissions, property);
-  }
-
-  setRolePermissions = (permissions, property) => {
-    if (property) {
-      this.props.setPropertyRolePermissions(permissions, property);
-    }
-    else {
-      this.props.setEntityRolePermissions(permissions);
     }
   }
 

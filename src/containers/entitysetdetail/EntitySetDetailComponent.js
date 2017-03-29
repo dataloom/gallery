@@ -77,14 +77,14 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // TODO: Once redux epics are working, move these actions to PermissionsSummary
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      // this.props.setEntitySet(nextProps.entitySet);
-      this.props.loadAclsRequest(nextProps.entitySet.id);
-
-      nextProps.entitySet.entityType.properties.forEach((property) => {
-        this.props.loadAclsRequest(nextProps.entitySet.id, property);
-      });
-    }
+    // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+    //   // this.props.setEntitySet(nextProps.entitySet);
+    //   this.props.loadAclsRequest(nextProps.entitySet.id);
+    //
+    //   nextProps.entitySet.entityType.properties.forEach((property) => {
+    //     this.props.loadAclsRequest(nextProps.entitySet.id, property);
+    //   });
+    // }
   }
 
   setEditingPermissions = () => {

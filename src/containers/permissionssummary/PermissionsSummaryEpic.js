@@ -65,7 +65,18 @@ function loadAllUsersAndRolesEpic(action$) {
     });
 }
 
+function setPermissions(action$) {
+  // call and wait for both updateStateAcls and loadAllUsersAndRoles to complete
+  // THEN dispatch set user and role permissions
+  return action$
+  .ofType(actionTypes.SET_PS_PERMISSIONS)
+  .mergeMap(() => {
+    return action$.ofType(actionTypes.LOAD_ACLS_REQUEST);
+  });
+}
+
 export default combineEpics(
   updateStateAclsEpic,
-  loadAllUsersAndRolesEpic
+  loadAllUsersAndRolesEpic,
+  setPermissions
 );
