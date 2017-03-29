@@ -8,8 +8,6 @@ import EdmConsts from '../../utils/Consts/EdmConsts';
 
 import styles from './entitysetforms.module.css';
 
-const BASE_SYNC_ID = '00000000-0000-0000-0000-000000000000';
-
 export default class AddDataForm extends React.Component {
 
   static propTypes = {
@@ -87,7 +85,7 @@ export default class AddDataForm extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     const entities = this.generateEntites();
-    DataApi.createEntityData(this.props.entitySetId, BASE_SYNC_ID, entities)
+    DataApi.createEntityData(this.props.entitySetId, '', entities)
     .then(() => {
       const propValues = {};
       this.state.authorizedPropertyTypes.forEach((propertyType) => {
