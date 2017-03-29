@@ -40,7 +40,7 @@ export default class EntitySet extends React.Component {
           </h2>
 
           <div className={styles.controls}>
-            <ActionDropdown entitySetId={entitySet.id} showDetails={true} />
+            <ActionDropdown entitySetId={entitySet.id} showDetails />
           </div>
           {contact}
         </header>
