@@ -45,6 +45,9 @@ function getPermission(permissions) {
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
+    // case actionTypes.LOAD_ENTITY_SET:
+    //   return state;
+
     case actionTypes.SET_ENTITY_SET:
       return state.merge({
         entitySet: action.entitySet
@@ -164,11 +167,11 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.SET_USER_PERMISSIONS: {
-      console.log('HIT IIIIIIIIIT!');
-      const userAcls = action.property || state.get('userAcls').toJS();
-      const roleAcls = action.property || state.get('roleAcls').toJS();
-      const globalValue = action.property || state.get('globalValue').toJS();
-      const allUsersById = state.get('allUsersById').toJS();
+      console.log('HIT SET_USER_PERMISSIONS, property:', action.property);
+      // const userAcls = action.property || state.get('userAcls').toJS();
+      // const roleAcls = action.property || state.get('roleAcls').toJS();
+      // const globalValue = action.property || state.get('globalValue').toJS();
+      const { userAcls, roleAcls, globalValue } = action.data;
       console.log('allusers, userAcls, roleAcls, globalValue:', allUsersById, userAcls, roleAcls, globalValue);
 
       const userPermissions = [];
@@ -236,6 +239,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
+      console.log('HIT SET_ROLE_PERMISSIONS, property:', property);
       const roleAcls = action.property || state.get('roleAcls').toJS();
       const globalValue = action.property || state.get('globalValue').toJS();
       const rolePermissions = {};

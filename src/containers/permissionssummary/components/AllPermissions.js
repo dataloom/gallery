@@ -32,18 +32,33 @@ class AllPermissions extends React.Component {
 
   //TODO: Reformat to use new roles service once live
   componentDidMount() {
-    this.props.loadEntitySet();
+    console.log('props', this.props);
+    const id = this.props.params.id;
+    this.props.initialLoad(id);
+    // TODO:
+      // get entitySet & load all users and roles : can happen in parallel
+      // THEN calculate user and role permissions for entityType and each property
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      // this.props.setEntitySet(nextProps.entitySet);
-      this.props.loadAclsRequest(nextProps.entitySet.id);
+    // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+    //   // this.props.setEntitySet(nextProps.entitySet);
+    //   this.props.loadAclsRequest(nextProps.entitySet.id);
+    //
+    //   nextProps.entitySet.entityType.properties.forEach((property) => {
+    //     this.props.loadAclsRequest(nextProps.entitySet.id, property);
+    //   });
+    // }
 
-      nextProps.entitySet.entityType.properties.forEach((property) => {
-        this.props.loadAclsRequest(nextProps.entitySet.id, property);
-      });
-    }
+    // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+    //   console.log('get entityset SHOULD ONLY BE CALLED ONCE');
+    //   // this.props.setEntitySet(nextProps.entitySet);
+    //   this.props.setAllPermissions(nextProps.entitySet.id);
+    //
+    //   nextProps.entitySet.entityType.properties.forEach((property) => {
+    //     this.props.setAllPermissions(nextProps.entitySet.id, property);
+    //   });
+    // }
   }
 
   renderPropertyTables() {
@@ -118,6 +133,9 @@ function mapDispatchToProps(dispatch, ownProps) {
   const id = ownProps.params.id;
 
   return {
+    initialLoad: (id) => {
+      dispatch(psActionFactory.initialLoad(id));
+    },
     loadEntitySet: () => {
       dispatch(actionFactories.entitySetDetailRequest(id));
       dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
@@ -133,6 +151,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     setEntitySet: (entitySet) => {
       dispatch(psActionFactory.setEntitySet(entitySet));
     },
+    setAllPermissions: (entitySetId, property) => {
+      dispatch(psActionFactory.setAllPermissions(entitySetId, property));
+    },
     loadAclsRequest: (entitySetId, property) => {
       dispatch(psActionFactory.loadAclsRequest(entitySetId, property));
     },
@@ -147,6 +168,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     setPropertyRolePermissions: (permissions, property) => {
       dispatch(psActionFactory.setPropertyRolePermissions(permissions, property));
+    },
+    getAllUsersAndRoles: () => {
+      dispatch(psActionFactory.getAllUsersAndRoles());
     }
   };
 }

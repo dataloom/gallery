@@ -1,5 +1,19 @@
 import * as actionTypes from './PermissionsSummaryActionTypes';
 
+export function initialLoad(id) {
+  return {
+    type: actionTypes.INITIAL_LOAD,
+    id
+  };
+}
+
+export function loadEntitySet(id) {
+  return {
+    type: actionTypes.LOAD_ENTITY_SET,
+    id
+  };
+}
+
 export function setEntitySet(entitySet) {
   return {
     type: actionTypes.SET_ENTITY_SET,
@@ -10,6 +24,14 @@ export function setEntitySet(entitySet) {
 export function loadAclsRequest(entitySetId, property) {
   return {
     type: actionTypes.LOAD_ACLS_REQUEST,
+    entitySetId,
+    property
+  };
+}
+
+export function updateAclsEpicRequest(entitySetId, property) {
+  return {
+    type: actionTypes.UPDATE_ACLS_EPIC_REQUEST,
     entitySetId,
     property
   };
@@ -66,6 +88,14 @@ export function setPropertyGlobalValue(id, data) {
   };
 }
 
+export function getAllUsersAndRoles(users, roles) {
+  return {
+    type: actionTypes.GET_ALL_USERS_AND_ROLES,
+    users,
+    roles
+  };
+}
+
 export function setAllUsersAndRoles(users, roles) {
   return {
     type: actionTypes.SET_ALL_USERS_AND_ROLES,
@@ -106,6 +136,14 @@ export function setUpdateError(bool) {
   return {
     type: actionTypes.SET_UPDATE_ERROR,
     bool
+  };
+}
+
+export function setAllPermissions(entitySetId, property) {
+  return {
+    type: actionTypes.SET_ALL_PERMISSIONS,
+    entitySetId,
+    property
   };
 }
 
