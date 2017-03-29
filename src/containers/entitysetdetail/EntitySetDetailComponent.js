@@ -6,7 +6,7 @@ import DocumentTitle from 'react-document-title';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
-import { EntityDataModelApi, PermissionsApi, PrincipalsApi } from 'loom-data';
+import { EntityDataModelApi, PermissionsApi, PrincipalsApi, DataApi } from 'loom-data';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -27,6 +27,7 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import styles from './entitysetdetail.module.css';
 
+import InlineEditableControl from '../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
 
@@ -57,7 +58,8 @@ class EntitySetDetailComponent extends React.Component {
     entitySetPermissions: PermissionsPropType.isRequired,
 
     // Loading
-    loadEntitySet: PropTypes.func.isRequired
+    loadEntitySet: PropTypes.func.isRequired,
+    updateMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -193,6 +195,50 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ editingPermissions: true });
   };
 
+  updateEntitySetTitle = (title) => {
+    if (newTitle && newTitle.length) {
+      this.props.updateMetadata(this.props.entitySet.id, { title });
+    }
+  }
+
+  updateEntitySetDescription = (description) => {
+    if (description) this.props.updateMetadata(this.props.entitySet.id, { description })
+  }
+
+  updateEntitySetContacts = (contacts) => {
+    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] })
+  }
+
+  renderTitle = (title, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="xlarge"
+        placeholder="Entity set title..."
+        value={title}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetTitle} />);
+  }
+
+  renderDescription = (description, isOwner) => {
+    return (<InlineEditableControl
+        type="textarea"
+        size="small"
+        placeholder="Entity set description..."
+        value={description}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetDescription} />);
+  }
+
+  renderEntitySetContacts = (contacts, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="small"
+        placeholder="Entity set owner contacts..."
+        value={contacts}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetContacts} />);
+  }
+
   renderHeaderContent = () => {
     const { entitySet, entitySetPermissions } = this.props;
 
@@ -202,10 +248,10 @@ class EntitySetDetailComponent extends React.Component {
       <StyledFlexContainerStacked>
         <TitleControlsContainer>
           <div>
-            <Page.Title>{entitySet.title}</Page.Title>
+            <Page.Title>{this.renderTitle(entitySet.title, entitySetPermissions.OWNER)}</Page.Title>
             <div className={styles.descriptionTitle}>About this data</div>
-            {entitySet.description}
-            <div className={styles.contacts}>Owner contact: {contactValue}</div>
+            {this.renderDescription(entitySet.description, entitySetPermissions.OWNER)}
+            <span className={styles.contacts}>{this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}</span>
           </div>
 
           <ControlsContainer>
@@ -457,8 +503,11 @@ function mapDispatchToProps(dispatch, ownProps) {
         }]
       ));
     },
+    updateMetadata: (entitySetId, metadataUpdate) => {
+      dispatch(edmActionFactories.updateEntitySetMetadataRequest(entitySetId, metadataUpdate));
+    },
     /* PERMISSIONS SUMMARY */
-    //TODO: Move these back to Permissions Summary now that we're using Redux
+    // TODO: Move these back to Permissions Summary now that we're using Redux
     setEntityData: (data) => {
       dispatch(psActionFactories.setEntityData(data));
     },
