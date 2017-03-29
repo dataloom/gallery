@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-
+import DocumentTitle from 'react-document-title';
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../edm/EdmModel';
 import { getShallowEdmObjectSilent } from '../edm/EdmStorage';
@@ -45,33 +45,35 @@ class HomeComponent extends React.Component {
 
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Welcome to Loom!</Page.Title>
-          <div className={styles.welcomeInstructionsContainer}>
-            <WelcomeInstructionsBox
-                title="JOIN"
-                description="Find the organizations to which you belong or with the data you need and request access."
-                imgSrc={joinImg}
-                linkRoute={PageConsts.ORGS} />
-            <WelcomeInstructionsBox
-                title="EXPLORE"
-                description="See the data available to you and download Excel and .JSON files to analyze each property."
-                imgSrc={exploreImg}
-                linkRoute={PageConsts.CATALOG} />
-            <WelcomeInstructionsBox
-                title="VISUALIZE"
-                description="Use our visualization tools to easily organize, analyze, and share data with those who need it."
-                imgSrc={visualizeImg}
-                linkRoute={PageConsts.VISUALIZE} />
-          </div>
-        </Page.Header>
-        <Page.Body>
-          <div className={styles.getStartedMessage}>Get started by exploring entity sets you can view
-          </div>
-          {this.renderAllEntitySets()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title="Home">
+        <Page>
+          <Page.Header>
+            <Page.Title>Welcome to Loom!</Page.Title>
+            <div className={styles.welcomeInstructionsContainer}>
+              <WelcomeInstructionsBox
+                  title="JOIN"
+                  description="Find the organizations to which you belong or with the data you need and request access."
+                  imgSrc={joinImg}
+                  linkRoute={PageConsts.ORGS} />
+              <WelcomeInstructionsBox
+                  title="EXPLORE"
+                  description="See the data available to you and download Excel and .JSON files to analyze each property."
+                  imgSrc={exploreImg}
+                  linkRoute={PageConsts.CATALOG} />
+              <WelcomeInstructionsBox
+                  title="VISUALIZE"
+                  description="Use our visualization tools to easily organize, analyze, and share data with those who need it."
+                  imgSrc={visualizeImg}
+                  linkRoute={PageConsts.VISUALIZE} />
+            </div>
+          </Page.Header>
+          <Page.Body>
+            <div className={styles.getStartedMessage}>Get started by exploring entity sets you can view
+            </div>
+            {this.renderAllEntitySets()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }

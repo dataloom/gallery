@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
@@ -169,22 +170,24 @@ class AllPermissions extends React.Component {
 
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>All Permissions</Page.Title>
-        </Page.Header>
-        <Page.Body>
-          <h3>Entity Permissions</h3>
-          <RolePermissionsTable
-              rolePermissions={this.props.entityRolePermissions}
-              headers={R_HEADERS} />
-          <UserPermissionsTable
-              userPermissions={this.props.entityUserPermissions}
-              rolePermissions={this.props.entityRolePermissions}
-              headers={U_HEADERS} />
-          {this.renderPropertyTables()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title="All Permissions">
+        <Page>
+          <Page.Header>
+            <Page.Title>All Permissions</Page.Title>
+          </Page.Header>
+          <Page.Body>
+            <h3>Entity Permissions</h3>
+            <RolePermissionsTable
+                rolePermissions={this.props.entityRolePermissions}
+                headers={R_HEADERS} />
+            <UserPermissionsTable
+                userPermissions={this.props.entityUserPermissions}
+                rolePermissions={this.props.entityRolePermissions}
+                headers={U_HEADERS} />
+            {this.renderPropertyTables()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }
