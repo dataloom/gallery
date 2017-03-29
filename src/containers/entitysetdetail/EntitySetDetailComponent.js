@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
@@ -375,37 +376,43 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ editingPermissions: false });
   };
 
+  getDocumentTitle = () => {
+    return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
+  }
+
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
-        </Page.Header>
-        <Page.Body>
-          {this.renderAddDataButton()}
-          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-          <AsyncContent
-              {...this.props.asyncState}
-              content={() => {
-                // TODO: Remove when removing denormalization
-                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                  return property.id;
-                });
-                return (
-                  <PropertyTypeList
-                      entitySetId={this.props.entitySet.id}
-                      propertyTypeIds={propertyTypeIds}
-                      className="propertyTypeStyleDefault" />
-                );
-              }} />
-          {this.renderAddDataForm()}
-          {this.renderPermissionsPanel()}
-          {this.renderSearchEntitySet()}
-          {this.renderPermissionsSummaryButton()}
-          {this.renderDeleteEntitySet()}
-          {this.renderConfirmDeleteModal()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title={this.getDocumentTitle()}>
+        <Page>
+          <Page.Header>
+            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
+          </Page.Header>
+          <Page.Body>
+            {this.renderAddDataButton()}
+            <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+            <AsyncContent
+                {...this.props.asyncState}
+                content={() => {
+                  // TODO: Remove when removing denormalization
+                  const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                    return property.id;
+                  });
+                  return (
+                    <PropertyTypeList
+                        entitySetId={this.props.entitySet.id}
+                        propertyTypeIds={propertyTypeIds}
+                        className="propertyTypeStyleDefault" />
+                  );
+                }} />
+            {this.renderAddDataForm()}
+            {this.renderPermissionsPanel()}
+            {this.renderSearchEntitySet()}
+            {this.renderPermissionsSummaryButton()}
+            {this.renderDeleteEntitySet()}
+            {this.renderConfirmDeleteModal()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }
