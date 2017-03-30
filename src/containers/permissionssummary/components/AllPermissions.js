@@ -22,7 +22,7 @@ class AllPermissions extends React.Component {
     entityRolePermissions: PropTypes.object.isRequired,
     propertyPermissions: PropTypes.object.isRequired,
     loadEntitySet: PropTypes.func.isRequired,
-    initialLoad: PropTypes.func.isRequired
+    getAllUsersAndRoles: PropTypes.func.isRequired
   }
 
   componentDidMount() {
@@ -32,7 +32,7 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.props.initialLoad(nextProps.entitySet);
+      this.props.getAllUsersAndRoles(nextProps.entitySet);
     }
   }
 
@@ -124,8 +124,8 @@ function mapDispatchToProps(dispatch) {
         }]
       ));
     },
-    initialLoad: (id) => {
-      dispatch(psActionFactory.initialLoad(id));
+    getAllUsersAndRoles: (id) => {
+      dispatch(psActionFactory.getAllUsersAndRoles(id));
     }
   };
 }
