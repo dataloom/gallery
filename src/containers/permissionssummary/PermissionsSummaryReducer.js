@@ -233,7 +233,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         const userPermissionsMerge = {
           propertyPermissions: {
             [action.property.title]: {
-              userPermissions
+              userPermissions /// TODO: FIX THIS
             }
           }
         };

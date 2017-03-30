@@ -24,9 +24,9 @@ class AllPermissions extends React.Component {
     super(props);
 
     this.state = {
-      entityUserPermissions: [],
-      entityRolePermissions: {},
-      propertyPermissions: {}
+      // entityUserPermissions: [],
+      // entityRolePermissions: {},
+      // propertyPermissions: {}
     };
   }
 
@@ -43,12 +43,13 @@ class AllPermissions extends React.Component {
   }
 
   renderPropertyTables() {
-    console.log('inside renderPropertyTables');
     const { propertyPermissions } = this.props;
+    console.log('inside renderPropertyTables, propertyPermissions:', propertyPermissions);
     const tables = [];
 
     Object.keys(propertyPermissions).forEach((property) => {
-      const { userPermissions, rolePermissions } = propertyPermissions[property];
+      const rolePermissions = propertyPermissions[property].rolePermissions || [];
+      const userPermissions = propertyPermissions[property].userPermissions || [];
       const header = <h3 key={`header-${property}`}>{property}</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}
