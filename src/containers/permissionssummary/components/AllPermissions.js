@@ -15,23 +15,16 @@ const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
   static propTypes = {
+    params: PropTypes.object.isRequired,
+    entitySet: PropTypes.object,
     entityUserPermissions: PropTypes.array.isRequired,
     entityRolePermissions: PropTypes.object.isRequired,
-    propertyPermissions: PropTypes.object.isRequired
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      // entityUserPermissions: [],
-      // entityRolePermissions: {},
-      // propertyPermissions: {}
-    };
+    propertyPermissions: PropTypes.object.isRequired,
+    loadEntitySet: PropTypes.func.isRequired,
+    initialLoad: PropTypes.func.isRequired
   }
 
   componentDidMount() {
-    // TODO:  check that i need to set id here - is it not already in state via loadentitysetepic
     const id = this.props.params.id;
     this.props.loadEntitySet(id);
   }
@@ -42,9 +35,23 @@ class AllPermissions extends React.Component {
     }
   }
 
+  renderEntityTables() {
+    return (
+      <div>
+        <h3>Entity Permissions</h3>
+        <RolePermissionsTable
+            rolePermissions={this.props.entityRolePermissions}
+            headers={R_HEADERS} />
+        <UserPermissionsTable
+            userPermissions={this.props.entityUserPermissions}
+            rolePermissions={this.props.entityRolePermissions}
+            headers={U_HEADERS} />
+      </div>
+    );
+  }
+
   renderPropertyTables() {
     const { propertyPermissions } = this.props;
-    console.log('inside renderPropertyTables, propertyPermissions:', propertyPermissions);
     const tables = [];
 
     Object.keys(propertyPermissions).forEach((property) => {
@@ -74,14 +81,7 @@ class AllPermissions extends React.Component {
           <Page.Title>All Permissions</Page.Title>
         </Page.Header>
         <Page.Body>
-          <h3>Entity Permissions</h3>
-          <RolePermissionsTable
-              rolePermissions={this.props.entityRolePermissions}
-              headers={R_HEADERS} />
-          <UserPermissionsTable
-              userPermissions={this.props.entityUserPermissions}
-              rolePermissions={this.props.entityRolePermissions}
-              headers={U_HEADERS} />
+          {this.renderEntityTables()}
           {this.renderPropertyTables()}
         </Page.Body>
       </Page>
@@ -89,6 +89,7 @@ class AllPermissions extends React.Component {
   }
 }
 
+// TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
 function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
@@ -100,30 +101,18 @@ function mapStateToProps(state) {
   }
 
   return {
-    allUsersById: permissionsSummary.get('allUsersById').toJS(),
-    properties: permissionsSummary.get('properties').toJS(),
-    userAcls: permissionsSummary.get('userAcls').toJS(),
-    roleAcls: permissionsSummary.get('roleAcls').toJS(),
-    globalValue: permissionsSummary.get('globalValue').toJS(),
+    entitySet,
     entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
-    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
-    entitySet
+    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS()
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch) {
   return {
-    setEntitySetId: (id) => {
-      dispatch(psActionFactory.setEntitySetId(id));
-    },
-    initialLoad: (id) => {
-      dispatch(psActionFactory.initialLoad(id));
-    },
     loadEntitySet: (id) => {
       dispatch(actionFactories.entitySetDetailRequest(id));
       dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      // TODO: Move filter creation in helper function in EdmApi
       dispatch(edmActionFactories.filteredEdmRequest(
         [{
           type: 'EntitySet',
@@ -132,29 +121,8 @@ function mapDispatchToProps(dispatch, ownProps) {
         }]
       ));
     },
-    setEntitySet: (entitySet) => {
-      dispatch(psActionFactory.setEntitySet(entitySet));
-    },
-    setAllPermissions: (entitySetId, property) => {
-      dispatch(psActionFactory.setAllPermissions(entitySetId, property));
-    },
-    loadAclsRequest: (entitySetId, property) => {
-      dispatch(psActionFactory.loadAclsRequest(entitySetId, property));
-    },
-    setEntityUserPermissions: (permissions) => {
-      dispatch(psActionFactory.setEntityUserPermissions(permissions));
-    },
-    setEntityRolePermissions: (permissions) => {
-      dispatch(psActionFactory.setEntityRolePermissions(permissions));
-    },
-    setPropertyUserPermissions: (permissions, property) => {
-      dispatch(psActionFactory.setPropertyUserPermissions(permissions, property));
-    },
-    setPropertyRolePermissions: (permissions, property) => {
-      dispatch(psActionFactory.setPropertyRolePermissions(permissions, property));
-    },
-    getAllUsersAndRoles: () => {
-      dispatch(psActionFactory.getAllUsersAndRoles());
+    initialLoad: (id) => {
+      dispatch(psActionFactory.initialLoad(id));
     }
   };
 }

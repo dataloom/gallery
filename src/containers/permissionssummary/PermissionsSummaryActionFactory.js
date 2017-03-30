@@ -14,13 +14,6 @@ export function loadEntitySet(entitySet) {
   };
 }
 
-export function setEntitySet(entitySet) {
-  return {
-    type: actionTypes.SET_ENTITY_SET,
-    entitySet
-  };
-}
-
 export function loadAclsRequest(entitySetId, property) {
   return {
     type: actionTypes.LOAD_ACLS_REQUEST,
@@ -34,57 +27,6 @@ export function updateAclsEpicRequest(entitySetId, property) {
     type: actionTypes.UPDATE_ACLS_EPIC_REQUEST,
     entitySetId,
     property
-  };
-}
-
-export function updateAclsRequest(aces, property) {
-  return {
-    type: actionTypes.UPDATE_ACLS_REQUEST,
-    aces,
-    property
-  };
-}
-
-export function updateAclsSuccess(aces, property) {
-  return {
-    type: actionTypes.UPDATE_ACLS_SUCCESS,
-    aces,
-    property
-  };
-}
-
-export function updateAclsFailure() {
-  return {
-    type: actionTypes.UPDATE_ACLS_FAILURE
-  };
-}
-
-export function setEntityData(data) {
-  return {
-    type: actionTypes.SET_ENTITY_DATA,
-    data
-  };
-}
-
-export function setEntityGlobalValue(data) {
-  return {
-    type: actionTypes.SET_ENTITY_GLOBAL_VALUE,
-    data
-  };
-}
-
-export function setPropertyData(data) {
-  return {
-    type: actionTypes.SET_PROPERTY_DATA,
-    data
-  };
-}
-
-export function setPropertyGlobalValue(id, data) {
-  return {
-    type: actionTypes.SET_PROPERTY_GLOBAL_VALUE,
-    id,
-    data
   };
 }
 
@@ -107,42 +49,6 @@ export function setLoadUsersError(bool) {
   return {
     type: actionTypes.SET_LOAD_USERS_ERROR,
     bool
-  };
-}
-
-export function setNewRoleValue(value) {
-  return {
-    type: actionTypes.SET_NEW_ROLE_VALUE,
-    value
-  };
-}
-
-export function setNewEmailValue(value) {
-  return {
-    type: actionTypes.SET_NEW_EMAIL_VALUE,
-    value
-  };
-}
-
-export function setUpdateSuccess(bool) {
-  return {
-    type: actionTypes.SET_UPDATE_SUCCESS,
-    bool
-  };
-}
-
-export function setUpdateError(bool) {
-  return {
-    type: actionTypes.SET_UPDATE_ERROR,
-    bool
-  };
-}
-
-export function setAllPermissions(entitySetId, property) {
-  return {
-    type: actionTypes.SET_ALL_PERMISSIONS,
-    entitySetId,
-    property
   };
 }
 

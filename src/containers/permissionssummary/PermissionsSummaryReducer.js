@@ -4,10 +4,8 @@ import * as psActionFactory from './PermissionsSummaryActionFactory';
 import * as permissionsActionTypes from '../permissions/permissionsActionTypes';
 import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 
-// import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
-
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
-  allUsersById: {}, // check it's an object
+  allUsersById: {},
   allRolesList: [],
   loadUsersError: false,
   roleAcls: {},
@@ -51,7 +49,6 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.INITIAL_LOAD:
-      console.log('initial load, setentitySetid, action:', action);
       return state.merge({
         entitySetId: action.id
       });
@@ -68,77 +65,14 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.merge({
         acl: action.acl
       });
-      // QUESTION: chain success -> action call in the observable or context where request is called, OR design separate epic w/ api call
-
-    case actionTypes.UPDATE_ACLS_REQUEST: {
-      const property = action.property || null; // TODO: get property from action or acl?
-      let globalValue = [];
-      const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-      const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-      action.aces.forEach((ace) => {
-        if (ace.permissions.length > 0) {
-          if (ace.principal.type === ROLE) {
-            if (ace.principal.id === AUTHENTICATED_USER) {
-              // TODO: define getPermissions somewhere in here
-              globalValue = getPermission(ace.permissions);
-            }
-            else {
-              getPermission(ace.permissions).forEach((permission) => {
-                roleAcls[permission].push(ace.principal.id);
-              });
-            }
-          }
-          else {
-            getPermission(ace.permissions).forEach((permission) => {
-              userAcls[permission].push(ace.principal.id);
-            });
-          }
-        }
-      });
-      if (property) {
-        state.merge({
-          newRoleValue: '',
-          newEmailValue: '',
-          updateError: false
-        });
-        const propertyDataMerge = {
-          properties: {
-            [property.id]: {
-              title: property.title,
-              roleAcls,
-              userAcls,
-              globalValue
-            }
-          }
-        };
-        return state.mergeDeep(propertyDataMerge);
-      }
-      console.log('bout to save acls');
-      return state.merge({
-        newRoleValue: '',
-        newEmailValue: '',
-        updateError: false,
-        roleAcls,
-        userAcls,
-        globalValue
-      });
-    }
-
-    case actionTypes.UPDATE_ACLS_SUCCESS:
-      console.log('hit update state acls success:', action);
-
-    case actionTypes.UPDATE_ACLS_FAILURE:
-      // do something else
 
     case actionTypes.SET_ALL_USERS_AND_ROLES:
-    console.log('setallusers:', action);
       return state.merge({
         allUsersById: action.users,
         allRolesList: action.roles
       });
 
     case actionTypes.SET_LOAD_USERS_ERROR:
-      console.log('set load users error, action:', action);
       return state.merge({
         loadUsersError: action.bool
       });
@@ -176,7 +110,6 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.SET_USER_PERMISSIONS: {
-      console.log('HIT SET_USER_PERMISSIONS, action:', action);
       const { userAcls, roleAcls, globalValue } = action.data;
       const allUsersById = state.get('allUsersById').toJS();
       const userPermissions = [];
@@ -227,13 +160,11 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }
       });
 
-      console.log('user permissions:', userPermissions);
-
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {
             [action.property.title]: {
-              userPermissions /// TODO: FIX THIS
+              userPermissions
             }
           }
         };
@@ -246,7 +177,6 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      console.log('HIT SET_ROLE_PERMISSIONS, property:', action.property);
       const { roleAcls, globalValue } = action.data;
       const rolePermissions = {};
 

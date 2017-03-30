@@ -109,7 +109,6 @@ function submitAuthnRequestEpic(action$ :Observable<Action>) :Observable<Action>
 
 // TODO: Move entirely to async container and take *huge* advantage of caching
 function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
-  console.log('inside permissions authorizationcheck');
   const references = accessChecks.map((check) => {
     return createAuthnAsyncReference(check.aclKey);
   });
