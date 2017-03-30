@@ -32,14 +32,22 @@ class AllPermissions extends React.Component {
 
   //TODO: Reformat to use new roles service once live
   componentDidMount() {
+    // TODO:  check that i need to set id here - is it not already in state via loadentitysetepic
     const id = this.props.params.id;
-    this.props.initialLoad(id);
+    this.props.loadEntitySet(id);
+    // this.props.initialLoad(id);
+
     // TODO:
       // get entitySet & load all users and roles : can happen in parallel
       // THEN calculate user and role permissions for entityType and each property
   }
 
   componentWillReceiveProps(nextProps) {
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      console.log('CWRP entityset:', nextProps.entitySet);
+      this.props.initialLoad(nextProps.entitySet);
+
+    }
     // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
     //   // this.props.setEntitySet(nextProps.entitySet);
     //   this.props.loadAclsRequest(nextProps.entitySet.id);
@@ -129,8 +137,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  // const id = ownProps.params.id;
-
   return {
     setEntitySetId: (id) => {
       dispatch(psActionFactory.setEntitySetId(id));
@@ -138,21 +144,21 @@ function mapDispatchToProps(dispatch, ownProps) {
     initialLoad: (id) => {
       dispatch(psActionFactory.initialLoad(id));
     },
-    // loadEntitySet: () => {
-    //   dispatch(actionFactories.entitySetDetailRequest(id));
-    //   dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-    //   // TODO: Move filter creation in helper function in EdmApi
-    //   dispatch(edmActionFactories.filteredEdmRequest(
-    //     [{
-    //       type: 'EntitySet',
-    //       id,
-    //       include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-    //     }]
-    //   ));
-    // },
-    // setEntitySet: (entitySet) => {
-    //   dispatch(psActionFactory.setEntitySet(entitySet));
-    // },
+    loadEntitySet: (id) => {
+      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
+      // TODO: Move filter creation in helper function in EdmApi
+      dispatch(edmActionFactories.filteredEdmRequest(
+        [{
+          type: 'EntitySet',
+          id,
+          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+        }]
+      ));
+    },
+    setEntitySet: (entitySet) => {
+      dispatch(psActionFactory.setEntitySet(entitySet));
+    },
     setAllPermissions: (entitySetId, property) => {
       dispatch(psActionFactory.setAllPermissions(entitySetId, property));
     },

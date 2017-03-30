@@ -93,6 +93,7 @@ function referenceEpic(action$) {
 
 // TODO: Cancellation and Error handling
 function loadEdm(edmQuery) {
+  console.log('inside loadEdm in edm epic');
   return Observable.from(EntityDataModelApi.getEntityDataModelProjection(edmQuery))
     .map(Immutable.fromJS)
     .map(actionFactories.updateNormalizedData);

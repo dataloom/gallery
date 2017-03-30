@@ -88,33 +88,21 @@ function intitialLoadEpic(action$ :Observable<Action>, store) :Observable<Action
   .mergeMap((action) => {
     console.log('inside initialLoadEpic, action:', action);
     return Observable.of(
-      actionFactory.getAllUsersAndRoles()
+      actionFactory.getAllUsersAndRoles(action.entitySet)
     );
   });
   // catch
 }
 
 function loadEntitySetEpic(action$ :Observable<Action>, store) :Observable<Action> {
+  // TODO: RENAME THIS TO BE GET ACLS
   return action$
   .ofType(actionTypes.LOAD_ENTITY_SET)
   .mergeMap((action) => {
     console.log('inside loadEntitySetEpic, BEGIN SHITTY REFACTOR! action:', action);
+    console.log('store', store.getState().toJS());
 
-    const { id } = action;
-    const actions = [
-      entitySetDetailActionFactory.entitySetDetailRequest(id),
-      permissionsActionFactory.getEntitySetsAuthorizations([id]),
-    // TODO: Move filter creation in helper function in EdmApi
-      edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      )
-    ];
-
-    // TODO: refactor all previous epics into logic performed here / other epics
+    const { entitySet } = action;
     // TODO: on completion, for entity and each property: dispatch actionFactory.updateAclsEpicRequest(entitySetId, property)
     // QUESTION: HOW TO RETURN MULTIPLE OBSERVABLES????
   });
@@ -150,10 +138,12 @@ function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
 }
 
 function getAllUsersAndRolesEpic(action$, store) {
+  let entitySet;
   return action$
     .ofType(actionTypes.LOAD_ACLS_REQUEST, actionTypes.GET_ALL_USERS_AND_ROLES)
-    .mergeMap(() => {
-      console.log('hit loadAllUsersAndRoles');
+    .mergeMap((action) => {
+      entitySet = action.entitySet;
+      console.log('hit loadAllUsersAndRoles, action:', action);
       return Observable
         .from(
           PrincipalsApi.getAllUsers()
@@ -172,14 +162,13 @@ function getAllUsersAndRolesEpic(action$, store) {
       });
       allUsersById[myId] = null;
 
-      const entitySetId = store.getState().get('permissionsSummary').toJS().entitySetId;
-      console.log('entitySetId from store:', entitySetId);
+      console.log('inside getAUAR, entitySet:', entitySet);
 
       return Observable
         .of(
           actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // -> TODO: make into success action containing logic above?
           actionFactory.setLoadUsersError(false),
-          actionFactory.loadEntitySet(entitySetId)
+          actionFactory.loadEntitySet(entitySet) // TODO: PASS IN FROM ENTITYSET
         );
     })
     .catch(() => {

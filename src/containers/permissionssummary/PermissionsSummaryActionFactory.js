@@ -1,16 +1,16 @@
 import * as actionTypes from './PermissionsSummaryActionTypes';
 
-export function initialLoad(id) {
+export function initialLoad(entitySet) {
   return {
     type: actionTypes.INITIAL_LOAD,
-    id
+    entitySet
   };
 }
 
-export function loadEntitySet(id) {
+export function loadEntitySet(entitySet) {
   return {
     type: actionTypes.LOAD_ENTITY_SET,
-    id
+    entitySet
   };
 }
 
@@ -88,11 +88,10 @@ export function setPropertyGlobalValue(id, data) {
   };
 }
 
-export function getAllUsersAndRoles(users, roles) {
+export function getAllUsersAndRoles(entitySet) {
   return {
     type: actionTypes.GET_ALL_USERS_AND_ROLES,
-    users,
-    roles
+    entitySet
   };
 }
 

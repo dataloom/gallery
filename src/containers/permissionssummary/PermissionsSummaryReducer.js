@@ -45,8 +45,11 @@ function getPermission(permissions) {
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
-    // case actionTypes.LOAD_ENTITY_SET:
-    //   return state;
+    case actionTypes.LOAD_ENTITY_SET:
+      return state.merge({
+        entitySet: action.entitySet
+      });
+
     case actionTypes.INITIAL_LOAD:
       console.log('initial load, setentitySetid, action:', action);
       return state.merge({

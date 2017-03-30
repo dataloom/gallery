@@ -18,6 +18,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
     case actionTypes.ENTITY_SET_REQUEST:
+      console.log('entityset request, action:', action);
       return state.merge({
         asyncState: {
           status: ASYNC_STATUS.LOADING,
