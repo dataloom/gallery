@@ -57,7 +57,7 @@ class AllPermissions extends React.Component {
     Object.keys(propertyPermissions).forEach((property) => {
       const rolePermissions = propertyPermissions[property].rolePermissions || [];
       const userPermissions = propertyPermissions[property].userPermissions || [];
-      const header = <h3 key={`header-${property}`}>{property}</h3>;
+      const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
       const roleTable = (<RolePermissionsTable
           rolePermissions={rolePermissions}
           headers={R_HEADERS}
