@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
 import { getEdmObject } from '../../edm/EdmStorage';
+import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
 import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
 import * as edmActionFactories from '../../edm/EdmActionFactories';
@@ -76,15 +77,17 @@ class AllPermissions extends React.Component {
 
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>All Permissions</Page.Title>
-        </Page.Header>
-        <Page.Body>
-          {this.renderEntityTables()}
-          {this.renderPropertyTables()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title="All Permissions">
+        <Page>
+          <Page.Header>
+            <Page.Title>All Permissions</Page.Title>
+          </Page.Header>
+          <Page.Body>
+            {this.renderEntityTables()}
+            {this.renderPropertyTables()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }

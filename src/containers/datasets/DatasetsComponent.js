@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import DocumentTitle from 'react-document-title';
 import Immutable from 'immutable';
 import { Button, Modal, Pager } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
@@ -106,36 +107,38 @@ class DatasetsComponent extends React.Component {
     const { isModalOpen } = this.state;
 
     return (
-      <Page className={styles.datasets}>
-        <Page.Header className={styles.pageHeader}>
-          <Page.Title className={styles.pageTitle}>Your datasets</Page.Title>
-          <Button bsStyle="primary" className={styles.control} onClick={this.onAddDataset}>
-            <FontAwesome name="plus-circle" size="lg"/> Dataset
-          </Button>
-        </Page.Header>
+      <DocumentTitle title="Datasets">
+        <Page className={styles.datasets}>
+          <Page.Header className={styles.pageHeader}>
+            <Page.Title className={styles.pageTitle}>Your datasets</Page.Title>
+            <Button bsStyle="primary" className={styles.control} onClick={this.onAddDataset}>
+              <FontAwesome name="plus-circle" size="lg"/> Dataset
+            </Button>
+          </Page.Header>
 
-        <Modal show={isModalOpen} onHide={this.closeModal} container={this}>
-          <Modal.Header closeButton>
-            <Modal.Title>Create a dataset</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <CreateEntitySet defaultContact={this.getDefaultContact()} />
-          </Modal.Body>
-        </Modal>
+          <Modal show={isModalOpen} onHide={this.closeModal} container={this}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create a dataset</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <CreateEntitySet defaultContact={this.getDefaultContact()} />
+            </Modal.Body>
+          </Modal>
 
-        <Page.Body>
-          <AsyncContent
-              status={this.props.asyncStatus}
-              errorMessage={this.props.errorMessage}
-              content={() => (
-                <div>
-                  <EntitySetList entitySets={this.props.ownedEntitySets} />
-                </div>
-              )}
-          />
-          {this.renderPagination()}
-        </Page.Body>
-      </Page>
+          <Page.Body>
+            <AsyncContent
+                status={this.props.asyncStatus}
+                errorMessage={this.props.errorMessage}
+                content={() => (
+                  <div>
+                    <EntitySetList entitySets={this.props.ownedEntitySets} />
+                  </div>
+                )}
+            />
+            {this.renderPagination()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }

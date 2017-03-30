@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
@@ -24,6 +25,7 @@ import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './entitysetdetail.module.css';
 
+import InlineEditableControl from '../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
 
@@ -54,7 +56,8 @@ class EntitySetDetailComponent extends React.Component {
     entitySetPermissions: PermissionsPropType.isRequired,
 
     // Loading
-    loadEntitySet: PropTypes.func.isRequired
+    loadEntitySet: PropTypes.func.isRequired,
+    updateMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -77,6 +80,50 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ editingPermissions: true });
   };
 
+  updateEntitySetTitle = (title) => {
+    if (newTitle && newTitle.length) {
+      this.props.updateMetadata(this.props.entitySet.id, { title });
+    }
+  }
+
+  updateEntitySetDescription = (description) => {
+    if (description) this.props.updateMetadata(this.props.entitySet.id, { description })
+  }
+
+  updateEntitySetContacts = (contacts) => {
+    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] })
+  }
+
+  renderTitle = (title, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="xlarge"
+        placeholder="Entity set title..."
+        value={title}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetTitle} />);
+  }
+
+  renderDescription = (description, isOwner) => {
+    return (<InlineEditableControl
+        type="textarea"
+        size="small"
+        placeholder="Entity set description..."
+        value={description}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetDescription} />);
+  }
+
+  renderEntitySetContacts = (contacts, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="small"
+        placeholder="Entity set owner contacts..."
+        value={contacts}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetContacts} />);
+  }
+
   renderHeaderContent = () => {
     const { entitySet, entitySetPermissions } = this.props;
 
@@ -86,10 +133,10 @@ class EntitySetDetailComponent extends React.Component {
       <StyledFlexContainerStacked>
         <TitleControlsContainer>
           <div>
-            <Page.Title>{entitySet.title}</Page.Title>
+            <Page.Title>{this.renderTitle(entitySet.title, entitySetPermissions.OWNER)}</Page.Title>
             <div className={styles.descriptionTitle}>About this data</div>
-            {entitySet.description}
-            <div className={styles.contacts}>Owner contact: {contactValue}</div>
+            {this.renderDescription(entitySet.description, entitySetPermissions.OWNER)}
+            <span className={styles.contacts}>{this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}</span>
           </div>
 
           <ControlsContainer>
@@ -260,37 +307,43 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ editingPermissions: false });
   };
 
+  getDocumentTitle = () => {
+    return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
+  }
+
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
-        </Page.Header>
-        <Page.Body>
-          {this.renderAddDataButton()}
-          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-          <AsyncContent
-              {...this.props.asyncState}
-              content={() => {
-                // TODO: Remove when removing denormalization
-                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                  return property.id;
-                });
-                return (
-                  <PropertyTypeList
-                      entitySetId={this.props.entitySet.id}
-                      propertyTypeIds={propertyTypeIds}
-                      className="propertyTypeStyleDefault" />
-                );
-              }} />
-          {this.renderAddDataForm()}
-          {this.renderPermissionsPanel()}
-          {this.renderSearchEntitySet()}
-          {this.renderPermissionsSummaryButton()}
-          {this.renderDeleteEntitySet()}
-          {this.renderConfirmDeleteModal()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title={this.getDocumentTitle()}>
+        <Page>
+          <Page.Header>
+            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
+          </Page.Header>
+          <Page.Body>
+            {this.renderAddDataButton()}
+            <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+            <AsyncContent
+                {...this.props.asyncState}
+                content={() => {
+                  // TODO: Remove when removing denormalization
+                  const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                    return property.id;
+                  });
+                  return (
+                    <PropertyTypeList
+                        entitySetId={this.props.entitySet.id}
+                        propertyTypeIds={propertyTypeIds}
+                        className="propertyTypeStyleDefault" />
+                  );
+                }} />
+            {this.renderAddDataForm()}
+            {this.renderPermissionsPanel()}
+            {this.renderSearchEntitySet()}
+            {this.renderPermissionsSummaryButton()}
+            {this.renderDeleteEntitySet()}
+            {this.renderConfirmDeleteModal()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }

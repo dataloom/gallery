@@ -37,15 +37,6 @@ export class PropertyList extends React.Component {
     };
   }
 
-  keyProperties() {
-    const properties = this.props.properties.map((prop) => {
-      const newProp = prop;
-      newProp.key = this.props.properties.indexOf(prop);
-      return newProp;
-    });
-    return properties;
-  }
-
   newProperty = () => {
     this.setState({ newPropertyRow: true });
   }
@@ -118,7 +109,7 @@ export class PropertyList extends React.Component {
   renderVerifyDeleteModal = () => {
     const { verifyingDelete, propertyToDelete } = this.state;
     if (!propertyToDelete) return null;
-    const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
+    const prop = `${propertyToDelete.type.namespace}.${propertyToDelete.type.name}`;
     const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
     return (
       <Modal show={verifyingDelete} onHide={this.closeModal}>
@@ -174,12 +165,11 @@ export class PropertyList extends React.Component {
 
   render() {
     const { properties, entitySetName, editingPermissions, isOwner } = this.props;
-    const propArray = (properties !== null && properties.length > 0) ?
-      this.keyProperties() : [];
+    const propArray = (properties && properties.length > 0) ? properties : [];
     const propertyList = propArray.map((prop) => {
       return (
         <Property
-            key={prop.key}
+            key={prop.id}
             property={prop}
             primaryKey={this.isPrimaryKey(prop)}
             editingPermissions={editingPermissions}

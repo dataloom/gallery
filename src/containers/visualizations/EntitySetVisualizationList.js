@@ -1,11 +1,12 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { hashHistory } from 'react-router';
 import styles from './styles.module.css';
 
 export class EntitySetVisualizationList extends React.Component {
 
   static propTypes = {
-    visualizableEntitySets: PropTypes.array,
+    visualizableEntitySets: PropTypes.instanceOf(Immutable.List),
     location: PropTypes.object
   }
 
@@ -22,12 +23,12 @@ export class EntitySetVisualizationList extends React.Component {
         return (
           <button
               onClick={() => {
-                this.routeToEntitySet(entitySet.id);
+                this.routeToEntitySet(entitySet.get('id'));
               }}
               className={styles.listItemButton}
-              key={entitySet.id} >
-            <div className={styles.entitySetTitle}>{entitySet.title}</div>
-            <div className={styles.entitySetFqn}>{entitySet.description}</div>
+              key={entitySet.get('id')} >
+            <div className={styles.entitySetTitle}>{entitySet.get('title')}</div>
+            <div className={styles.entitySetFqn}>{entitySet.get('description')}</div>
           </button>
         );
       });

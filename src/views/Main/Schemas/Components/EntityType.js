@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
+import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import FileService from '../../../../utils/FileService';
 import { PropertyList } from './PropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
@@ -12,6 +13,10 @@ export class EntityType extends React.Component {
   static propTypes = {
     entityType: PropTypes.object,
     idToPropertyTypes: PropTypes.object
+  }
+
+  static contextTypes = {
+    isAdmin: PropTypes.bool
   }
 
   constructor() {
@@ -70,14 +75,36 @@ export class EntityType extends React.Component {
     }
   }
 
+  updateEntityTypeTitle = (title) => {
+    EntityDataModelApi.updateEntityTypeMetaData(this.props.entityType.id, { title })
+    .then(() => this.updateFn());
+  }
+
+  updateEntityTypeDescription = (description) => {
+    EntityDataModelApi.updateEntityTypeMetaData(this.props.entityType.id, { description })
+    .then(() => this.updateFn());
+  }
+
   render() {
     const entityType = this.props.entityType;
     return (
       <div>
         <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
         <div className={styles.spacerSmall} />
-        <div className={styles.title}>{entityType.title}</div>
-        <div className={styles.description}>{entityType.description}</div>
+        <InlineEditableControl
+            type="text"
+            size="xlarge"
+            placeholder="Entity type title..."
+            value={entityType.title}
+            viewOnly={!this.context.isAdmin}
+            onChange={this.updateEntityTypeTitle} />
+        <InlineEditableControl
+            type="textarea"
+            size="small"
+            placeholder="Entity type description..."
+            value={entityType.description}
+            viewOnly={!this.context.isAdmin}
+            onChange={this.updateEntityTypeDescription} />
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownButtonContainer}>
           <Button bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
