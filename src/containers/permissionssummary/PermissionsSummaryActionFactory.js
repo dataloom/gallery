@@ -154,9 +154,10 @@ export function setUserPermissions(property, data) {
   }
 }
 
-export function setRolePermissions(data) {
+export function setRolePermissions(property, data) {
   return {
     type: actionTypes.SET_ROLE_PERMISSIONS,
+    property,
     data
   }
 }

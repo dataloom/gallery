@@ -246,7 +246,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      console.log('HIT SET_ROLE_PERMISSIONS, property:', property);
+      console.log('HIT SET_ROLE_PERMISSIONS, property:', action.property);
       const { roleAcls, globalValue } = action.data;
       const rolePermissions = {};
 

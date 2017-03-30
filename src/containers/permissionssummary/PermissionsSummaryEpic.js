@@ -134,9 +134,9 @@ function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
           const configuredAcls = configureAcls(acl.aces, property);
           console.log('consifguredAcls:', configuredAcls);
           return Observable.of(
-            actionFactory.updateAclsRequest(acl.aces, property), // TODO: Do we need to keep it? if so: Refactor so it only sets state
-            actionFactory.setUserPermissions(property, configuredAcls), // TODO: Refactor w/ new data format
-            actionFactory.setRolePermissions(property, configuredAcls) // TODO: Refactor w/ new data format
+            // actionFactory.updateAclsRequest(acl.aces, property), // TODO: Do we need to keep it? if so: Refactor so it only sets state
+            actionFactory.setRolePermissions(property, configuredAcls),
+            actionFactory.setUserPermissions(property, configuredAcls)
           );
         })
         .catch((err) => {
