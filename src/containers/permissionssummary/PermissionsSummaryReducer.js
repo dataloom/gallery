@@ -93,6 +93,27 @@ function getUserPermissions(action, allUsersById) {
   return userPermissions;
 }
 
+function getRolePermissions(action) {
+  const { roleAcls, globalValue } = action.data;
+  const rolePermissions = {};
+
+  // Get all roles and their respective permissions
+  Object.keys(roleAcls).forEach((permission) => {
+    roleAcls[permission].forEach((role) => {
+      if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
+        rolePermissions[role] = [];
+      }
+
+      if (rolePermissions[role].indexOf(permission) === -1) {
+        rolePermissions[role].push(permission);
+      }
+    });
+  });
+  rolePermissions.AuthenticatedUser = globalValue;
+
+  return rolePermissions;
+}
+
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
@@ -181,23 +202,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      const { roleAcls, globalValue } = action.data;
-      const rolePermissions = {};
-
-      // Get all roles and their respective permissions
-      Object.keys(roleAcls).forEach((permission) => {
-        roleAcls[permission].forEach((role) => {
-          if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
-            rolePermissions[role] = [];
-          }
-
-          if (rolePermissions[role].indexOf(permission) === -1) {
-            rolePermissions[role].push(permission);
-          }
-        });
-      });
-      rolePermissions.AuthenticatedUser = globalValue;
-
+      const rolePermissions = getRolePermissions(action);
       if (action.property) {
         const rolePermissionsMerge = {
           propertyPermissions: {
