@@ -32,7 +32,6 @@ class AllPermissions extends React.Component {
 
   //TODO: Reformat to use new roles service once live
   componentDidMount() {
-    console.log('props', this.props);
     const id = this.props.params.id;
     this.props.initialLoad(id);
     // TODO:
@@ -130,27 +129,30 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  const id = ownProps.params.id;
+  // const id = ownProps.params.id;
 
   return {
+    setEntitySetId: (id) => {
+      dispatch(psActionFactory.setEntitySetId(id));
+    },
     initialLoad: (id) => {
       dispatch(psActionFactory.initialLoad(id));
     },
-    loadEntitySet: () => {
-      dispatch(actionFactories.entitySetDetailRequest(id));
-      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      // TODO: Move filter creation in helper function in EdmApi
-      dispatch(edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      ));
-    },
-    setEntitySet: (entitySet) => {
-      dispatch(psActionFactory.setEntitySet(entitySet));
-    },
+    // loadEntitySet: () => {
+    //   dispatch(actionFactories.entitySetDetailRequest(id));
+    //   dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
+    //   // TODO: Move filter creation in helper function in EdmApi
+    //   dispatch(edmActionFactories.filteredEdmRequest(
+    //     [{
+    //       type: 'EntitySet',
+    //       id,
+    //       include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+    //     }]
+    //   ));
+    // },
+    // setEntitySet: (entitySet) => {
+    //   dispatch(psActionFactory.setEntitySet(entitySet));
+    // },
     setAllPermissions: (entitySetId, property) => {
       dispatch(psActionFactory.setAllPermissions(entitySetId, property));
     },

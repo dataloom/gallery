@@ -47,6 +47,11 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     // case actionTypes.LOAD_ENTITY_SET:
     //   return state;
+    case actionTypes.INITIAL_LOAD:
+      console.log('initial load, setentitySetid, action:', action);
+      return state.merge({
+        entitySetId: action.id
+      });
 
     case actionTypes.SET_ENTITY_SET:
       return state.merge({
@@ -130,6 +135,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.SET_LOAD_USERS_ERROR:
+      console.log('set load users error, action:', action);
       return state.merge({
         loadUsersError: action.bool
       });

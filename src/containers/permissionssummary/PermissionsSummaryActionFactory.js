@@ -147,17 +147,17 @@ export function setAllPermissions(entitySetId, property) {
   };
 }
 
-export function setUserPermissions(property) {
+export function setUserPermissions(data) {
   return {
     type: actionTypes.SET_USER_PERMISSIONS,
-    property
+    data
   }
 }
 
-export function setRolePermissions(property) {
+export function setRolePermissions(data) {
   return {
     type: actionTypes.SET_ROLE_PERMISSIONS,
-    property
+    data
   }
 }
 
