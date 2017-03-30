@@ -30,45 +30,20 @@ class AllPermissions extends React.Component {
     };
   }
 
-  //TODO: Reformat to use new roles service once live
   componentDidMount() {
     // TODO:  check that i need to set id here - is it not already in state via loadentitysetepic
     const id = this.props.params.id;
     this.props.loadEntitySet(id);
-    // this.props.initialLoad(id);
-
-    // TODO:
-      // get entitySet & load all users and roles : can happen in parallel
-      // THEN calculate user and role permissions for entityType and each property
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      console.log('CWRP entityset:', nextProps.entitySet);
       this.props.initialLoad(nextProps.entitySet);
-
     }
-    // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-    //   // this.props.setEntitySet(nextProps.entitySet);
-    //   this.props.loadAclsRequest(nextProps.entitySet.id);
-    //
-    //   nextProps.entitySet.entityType.properties.forEach((property) => {
-    //     this.props.loadAclsRequest(nextProps.entitySet.id, property);
-    //   });
-    // }
-
-    // if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-    //   console.log('get entityset SHOULD ONLY BE CALLED ONCE');
-    //   // this.props.setEntitySet(nextProps.entitySet);
-    //   this.props.setAllPermissions(nextProps.entitySet.id);
-    //
-    //   nextProps.entitySet.entityType.properties.forEach((property) => {
-    //     this.props.setAllPermissions(nextProps.entitySet.id, property);
-    //   });
-    // }
   }
 
   renderPropertyTables() {
+    console.log('inside renderPropertyTables');
     const { propertyPermissions } = this.props;
     const tables = [];
 

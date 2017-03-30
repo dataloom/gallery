@@ -139,6 +139,11 @@ class UserPermissionsTable extends React.Component {
     };
   }
 
+  // TEMP
+  componentDidMount() {
+    console.log('USER TABLE PROPS:', this.props);
+  }
+
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
     const rows = [];

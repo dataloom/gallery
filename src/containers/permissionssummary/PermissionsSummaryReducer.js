@@ -176,13 +176,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       });
 
     case actionTypes.SET_USER_PERMISSIONS: {
-      console.log('HIT SET_USER_PERMISSIONS, property:', action.property);
-      // const userAcls = action.property || state.get('userAcls').toJS();
-      // const roleAcls = action.property || state.get('roleAcls').toJS();
-      // const globalValue = action.property || state.get('globalValue').toJS();
+      console.log('HIT SET_USER_PERMISSIONS, action:', action);
       const { userAcls, roleAcls, globalValue } = action.data;
-      console.log('allusers, userAcls, roleAcls, globalValue:', allUsersById, userAcls, roleAcls, globalValue);
-
+      const allUsersById = state.get('allUsersById').toJS();
       const userPermissions = [];
 
       Object.keys(allUsersById).forEach((userId) => {
@@ -231,11 +227,13 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }
       });
 
+      console.log('user permissions:', userPermissions);
+
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {
             [action.property.title]: {
-              userPermissions: action.permissions
+              userPermissions
             }
           }
         };
@@ -249,8 +247,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
       console.log('HIT SET_ROLE_PERMISSIONS, property:', property);
-      const roleAcls = action.property || state.get('roleAcls').toJS();
-      const globalValue = action.property || state.get('globalValue').toJS();
+      const { roleAcls, globalValue } = action.data;
       const rolePermissions = {};
 
       // Get all roles and their respective permissions

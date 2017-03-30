@@ -146,9 +146,10 @@ export function setAllPermissions(entitySetId, property) {
   };
 }
 
-export function setUserPermissions(data) {
+export function setUserPermissions(property, data) {
   return {
     type: actionTypes.SET_USER_PERMISSIONS,
+    property,
     data
   }
 }

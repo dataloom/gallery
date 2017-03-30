@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 
 import { PermissionsApi, PrincipalsApi } from 'loom-data';
-import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
+import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as entitySetDetailActionFactory from '../entitysetdetail/EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as actionTypes from './PermissionsSummaryActionTypes';
@@ -29,11 +29,12 @@ function getPermission(permissions) {
 }
 
 function configureAcls(aces, property) {
+  console.log('inside configureAcls, aces, property:', aces, property);
   // const property = property || null;
   let globalValue = [];
   const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
   const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-  action.aces.forEach((ace) => {
+  aces.forEach((ace) => {
     if (ace.permissions.length > 0) {
       if (ace.principal.type === ROLE) {
         if (ace.principal.id === AUTHENTICATED_USER) {
@@ -100,19 +101,27 @@ function loadEntitySetEpic(action$ :Observable<Action>, store) :Observable<Actio
   .ofType(actionTypes.LOAD_ENTITY_SET)
   .mergeMap((action) => {
     console.log('inside loadEntitySetEpic, BEGIN SHITTY REFACTOR! action:', action);
-    console.log('store', store.getState().toJS());
 
     const { entitySet } = action;
-    // TODO: on completion, for entity and each property: dispatch actionFactory.updateAclsEpicRequest(entitySetId, property)
-    // QUESTION: HOW TO RETURN MULTIPLE OBSERVABLES????
-  });
+    const { properties } = action.entitySet.entityType;
+    console.log('entityset, properties:', entitySet, properties);
+    const loadAclsObservables = properties.map(property => Observable.of(actionFactory.updateAclsEpicRequest(entitySet.id, property)));
+    loadAclsObservables.unshift(Observable.of(actionFactory.updateAclsEpicRequest(entitySet.id)));
+    console.log('loadeAclsObservables:', loadAclsObservables);
+    return loadAclsObservables;
+  })
+  .mergeMap((observables) => {
+    return observables;
+  })
 }
 
 function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
+  // let property; // IS THIS HOLDING REFERENCE TO A DIFFERENT OBSERVABLE'S PROPEPRTY DUE TO OVERLAP?
   return action$
     .ofType(actionTypes.LOAD_ACLS_REQUEST, actionTypes.UPDATE_ACLS_EPIC_REQUEST)
     .mergeMap((action :Action) => {
       console.log('hit loadaclsrequest, action:', action);
+      const property = action.property;
 
       const aclKey = [action.entitySetId];
       if (action.property && action.property.id) aclKey.push(action.property.id);
@@ -121,18 +130,20 @@ function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
           PermissionsApi.getAcl(aclKey)
         )
         .mergeMap((acl) => {
-          // TODO: Reconfigure permissions actions to take data directly rather than from state
-          const configuredAcls = configureAcls(acl.aces, action.property);
+          console.log('acl!!!:', acl);
+          const configuredAcls = configureAcls(acl.aces, property);
+          console.log('consifguredAcls:', configuredAcls);
           return Observable.of(
-            actionFactory.updateAclsRequest(action.property), // TODO: Do we need to keep it? if so: Refactor so it only sets state
-            actionFactory.setUserPermissions(action.property, configuredAcls), // TODO: Refactor w/ new data format
-            actionFactory.setRolePermissions(action.property, configuredAcls) // TODO: Refactor w/ new data format
+            actionFactory.updateAclsRequest(acl.aces, property), // TODO: Do we need to keep it? if so: Refactor so it only sets state
+            actionFactory.setUserPermissions(property, configuredAcls), // TODO: Refactor w/ new data format
+            actionFactory.setRolePermissions(property, configuredAcls) // TODO: Refactor w/ new data format
           );
         })
-        .catch(() => {
-          return Observable.of(
-            actionFactory.updateStateAclsFailure()
-          );
+        .catch((err) => {
+          console.log('updateStateAclsEpic err:', err);
+          // return Observable.of(
+          //   actionFactory.updateStateAclsFailure()
+          // );
         });
     });
 }
