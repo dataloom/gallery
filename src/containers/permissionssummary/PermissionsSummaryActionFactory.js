@@ -22,9 +22,9 @@ export function loadAclsRequest(entitySetId, property) {
   };
 }
 
-export function updateAclsEpicRequest(entitySetId, property) {
+export function getUserRolePermissionsRequest(entitySetId, property) {
   return {
-    type: actionTypes.UPDATE_ACLS_EPIC_REQUEST,
+    type: actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST,
     entitySetId,
     property
   };

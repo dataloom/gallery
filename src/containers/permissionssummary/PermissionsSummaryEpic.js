@@ -57,11 +57,19 @@ function configureAcls(aces) {
   };
 }
 
+function getAclKey(action) {
+  const property = action.property;
+  const aclKey = [action.entitySetId];
+  if (property && property.id) aclKey.push(action.property.id);
+  return aclKey;
+}
+
+
 /* EPICS */
 function getAllUsersAndRolesEpic(action$) {
-  let entitySet;
+  let entitySet; // remove and don't pass ito loadEntitySet if I can get it from store in next epic
   return action$
-    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES)
+    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES) // request
     .mergeMap((action) => {
       entitySet = action.entitySet;
       return Observable
@@ -69,7 +77,7 @@ function getAllUsersAndRolesEpic(action$) {
           PrincipalsApi.getAllUsers()
         );
     })
-    .mergeMap((users) => {
+    .mergeMap((users) => { // extract fn
       const allUsersById = users;
       const allRolesList = new Set();
       const myId = JSON.parse(localStorage.profile).user_id;
@@ -82,13 +90,13 @@ function getAllUsersAndRolesEpic(action$) {
 
       return Observable
         .of(
-          actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // -> TODO: make into success action containing logic above?
-          actionFactory.setLoadUsersError(false),
-          actionFactory.loadEntitySet(entitySet)
+          actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // getall users and roles success
+          actionFactory.setLoadUsersError(false), // what doe sthis do
+          actionFactory.loadEntitySet(entitySet) // redundant?
         );
     })
     .catch(() => {
-      actionFactory.setLoadUsersError(true);
+      actionFactory.setLoadUsersError(true); // getallusersand roles failure
     });
 }
 
@@ -97,12 +105,12 @@ function loadEntitySetEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.LOAD_ENTITY_SET)
   .mergeMap((action) => {
-    const { entitySet } = action;
+    const { entitySet } = action; // get from store?
     const { properties } = action.entitySet.entityType;
     const loadAclsObservables = properties.map((property) => {
-      return Observable.of(actionFactory.updateAclsEpicRequest(entitySet.id, property));
+      return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
     });
-    loadAclsObservables.unshift(Observable.of(actionFactory.updateAclsEpicRequest(entitySet.id)));
+    loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id)));
     return loadAclsObservables;
   })
   .mergeMap((observables) => {
@@ -110,13 +118,11 @@ function loadEntitySetEpic(action$ :Observable<Action>) :Observable<Action> {
   });
 }
 
-function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
+function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
-    .ofType(actionTypes.UPDATE_ACLS_EPIC_REQUEST)
+    .ofType(actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST)
     .mergeMap((action :Action) => {
-      const property = action.property;
-      const aclKey = [action.entitySetId];
-      if (action.property && action.property.id) aclKey.push(action.property.id);
+      const aclKey = getAclKey(action);
       return Observable
         .from(
           PermissionsApi.getAcl(aclKey)
@@ -124,20 +130,18 @@ function updateStateAclsEpic(action$ :Observable<Action>) :Observable<Action> {
         .mergeMap((acl) => {
           const configuredAcls = configureAcls(acl.aces);
           return Observable.of(
-            actionFactory.setRolePermissions(property, configuredAcls),
-            actionFactory.setUserPermissions(property, configuredAcls)
+            actionFactory.setRolePermissions(action.property, configuredAcls),
+            actionFactory.setUserPermissions(action.property, configuredAcls)
           );
         })
         .catch((err) => {
-          // return Observable.of(
-          //   actionFactory.updateStateAclsFailure()
-          // );
+          console.log('Error in getUserRolePermissions:', err);
         });
     });
 }
 
 export default combineEpics(
   loadEntitySetEpic,
-  updateStateAclsEpic,
+  getUserRolePermissionsEpic,
   getAllUsersAndRolesEpic
 );
