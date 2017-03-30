@@ -1,8 +1,5 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-import * as psActionFactory from './PermissionsSummaryActionFactory';
-import * as permissionsActionTypes from '../permissions/permissionsActionTypes';
-import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allUsersById: {},
