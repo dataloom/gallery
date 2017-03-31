@@ -14,6 +14,22 @@ export function loadEntitySet(entitySet) {
   };
 }
 
+export function getAcls(entitySet) {
+  return {
+    type: actionTypes.GET_ACLS,
+    entitySet
+  };
+}
+
+export function loadAcls(entitySetId, property) {
+  return {
+    type: actionTypes.LOAD_ACLS,
+    entitySetId,
+    property
+  };
+}
+
+// TODO: IS THIS REDUNDANT?
 export function loadAclsRequest(entitySetId, property) {
   return {
     type: actionTypes.LOAD_ACLS_REQUEST,

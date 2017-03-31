@@ -66,6 +66,23 @@ function getAclKey(action) {
 
 
 /* EPICS */
+function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
+  return action$
+  .ofType(actionTypes.GET_ACLS)
+  .mergeMap((action) => {
+    const { entitySet } = action; // get from store?
+    const { properties } = action.entitySet.entityType;
+    const loadAclsObservables = properties.map((property) => {
+      return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
+    });
+    loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id)));
+    return loadAclsObservables;
+  })
+  .mergeMap((observables) => {
+    return observables;
+  });
+}
+
 function getAllUsersAndRolesEpic(action$) {
   let entitySet; // remove and don't pass ito loadEntitySet if I can get it from store in next epic
   return action$
@@ -92,7 +109,7 @@ function getAllUsersAndRolesEpic(action$) {
         .of(
           actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // getall users and roles success
           actionFactory.setLoadUsersError(false), // what doe sthis do
-          actionFactory.loadEntitySet(entitySet) // redundant?
+          actionFactory.getAcls(entitySet)
         );
     })
     .catch(() => {
@@ -100,24 +117,7 @@ function getAllUsersAndRolesEpic(action$) {
     });
 }
 
-function loadEntitySetEpic(action$ :Observable<Action>) :Observable<Action> {
-  // TODO: RENAME THIS TO BE GET ACLS
-  return action$
-  .ofType(actionTypes.LOAD_ENTITY_SET)
-  .mergeMap((action) => {
-    const { entitySet } = action; // get from store?
-    const { properties } = action.entitySet.entityType;
-    const loadAclsObservables = properties.map((property) => {
-      return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
-    });
-    loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id)));
-    return loadAclsObservables;
-  })
-  .mergeMap((observables) => {
-    return observables;
-  });
-}
-
+// NEED ALLUSERSBYID AT THIS POINT ONLY
 function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
     .ofType(actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST)
@@ -141,7 +141,7 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
 }
 
 export default combineEpics(
-  loadEntitySetEpic,
+  getAclsEpic,
   getUserRolePermissionsEpic,
   getAllUsersAndRolesEpic
 );

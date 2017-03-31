@@ -89,11 +89,6 @@ function getRolePermissions(action) {
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
-    case actionTypes.LOAD_ENTITY_SET:
-      return state.merge({
-        entitySet: action.entitySet
-      });
-
     case actionTypes.SET_ALL_USERS_AND_ROLES:
       return state.merge({
         allUsersById: action.users,
