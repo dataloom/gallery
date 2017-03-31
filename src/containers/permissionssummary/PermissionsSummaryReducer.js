@@ -7,8 +7,9 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entityUserPermissions: [],
   entityRolePermissions: {},
   propertyPermissions: {},
-  isGettingUsersRoles: false,
-  isGettingAcls: false
+  isGettingUsersRoles: true,
+  isGettingAcls: false,
+  isGettingPermissions: false
 });
 
 /* HELPER FUNCTIONS */

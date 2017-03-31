@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
 import { getEdmObject } from '../../edm/EdmStorage';
+import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
 import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
@@ -22,8 +23,10 @@ class AllPermissions extends React.Component {
     entityRolePermissions: PropTypes.object.isRequired,
     propertyPermissions: PropTypes.object.isRequired,
     loadEntitySet: PropTypes.func.isRequired,
-    getAllUsersAndRoles: PropTypes.func.isRequired,
-    isGettingUsersRoles: PropTypes.bool.isRequired
+    getAllUsersAndRolesRequest: PropTypes.func.isRequired,
+    isGettingUsersRoles: PropTypes.bool.isRequired,
+    isGettingAcls: PropTypes.bool.isRequired,
+    isGettingPermissions: PropTypes.bool.isRequired
   }
 
   componentDidMount() {
@@ -76,6 +79,21 @@ class AllPermissions extends React.Component {
     return tables;
   }
 
+  renderTables() {
+    return (
+      <div>
+        {this.renderEntityTables()}
+        {this.renderPropertyTables()}
+      </div>
+    )
+  }
+
+  renderContent() {
+    return (this.props.isGettingUsersRoles || this.props.isGettingAcls || this.props.isGettingPermissions)
+    ? <LoadingSpinner />
+    : this.renderTables();
+  }
+
   render() {
     return (
       <DocumentTitle title="All Permissions">
@@ -84,8 +102,7 @@ class AllPermissions extends React.Component {
             <Page.Title>All Permissions</Page.Title>
           </Page.Header>
           <Page.Body>
-            {this.renderEntityTables()}
-            {this.renderPropertyTables()}
+            {this.renderContent()}
           </Page.Body>
         </Page>
       </DocumentTitle>
@@ -109,7 +126,9 @@ function mapStateToProps(state) {
     entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
     propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
-    isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles')
+    isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles'),
+    isGettingAcls: permissionsSummary.get('isGettingAcls'),
+    isGettingPermissions: permissionsSummary.get('isGettingPermissions')
   };
 }
 
