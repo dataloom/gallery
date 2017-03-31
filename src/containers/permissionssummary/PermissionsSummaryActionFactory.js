@@ -46,6 +46,18 @@ export function getUserRolePermissionsRequest(entitySetId, property) {
   };
 }
 
+export function getUserRolePermissionsSuccess() {
+  return {
+    type: actionTypes.GET_USER_ROLE_PERMISSIONS_SUCCESS
+  };
+}
+
+export function getUserRolePermissionsFailure() {
+  return {
+    type: actionTypes.GET_USER_ROLE_PERMISSIONS_FAILURE
+  };
+}
+
 export function getAllUsersAndRolesRequest(entitySet) {
   return {
     type: actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST,

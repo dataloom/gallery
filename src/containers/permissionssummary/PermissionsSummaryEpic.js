@@ -117,7 +117,6 @@ function getAllUsersAndRolesEpic(action$) {
     });
 }
 
-// TODO: CAN I MERGE THIS WITH GETUSERROLEPERMISSIONS SINCE NOT ASYNC?
 function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
@@ -142,12 +141,13 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
         .mergeMap((acl) => {
           const configuredAcls = configureAcls(acl.aces);
           return Observable.of(
+            actionFactory.getUserRolePermissionsSuccess(),
             actionFactory.setRolePermissions(action.property, configuredAcls),
             actionFactory.setUserPermissions(action.property, configuredAcls)
           );
         })
         .catch((err) => {
-          console.log('Error in getUserRolePermissions:', err);
+          actionFactory.getUserRolePermissionsFailure()
         });
     });
 }

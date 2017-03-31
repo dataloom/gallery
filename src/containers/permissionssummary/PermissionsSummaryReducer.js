@@ -7,7 +7,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entityUserPermissions: [],
   entityRolePermissions: {},
   propertyPermissions: {},
-  isGettingUsersRoles: false
+  isGettingUsersRoles: false,
+  isGettingAcls: false
 });
 
 /* HELPER FUNCTIONS */
@@ -101,6 +102,20 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         allUsersById: action.users,
         allRolesList: action.roles
       });
+
+    case actionTypes.GET_ACLS:
+      return state.set('isGettingAcls', true);
+
+    case actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST:
+      return state
+      .set('isGettingAcls', false)
+      .set('isGettingPermissions', true);
+
+    case actionTypes.GET_USER_ROLE_PERMISSIONS_SUCCESS:
+      return state.set('isGettingPermissions', false);
+
+    case actionTypes.GET_USER_ROLE_PERMISSIONS_FAILURE:
+      return state.set('isGettingPermissions', false);
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
       const rolePermissions = getRolePermissions(action);
