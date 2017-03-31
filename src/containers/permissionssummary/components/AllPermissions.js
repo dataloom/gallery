@@ -11,6 +11,7 @@ import * as PermissionsActionFactory from '../../permissions/PermissionsActionFa
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
+import styles from '../styles.module.css';
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 const R_HEADERS = ['Roles', 'Permissions'];
@@ -94,14 +95,17 @@ class AllPermissions extends React.Component {
     : this.renderTables();
   }
 
+  getEntitySetTitle() {
+    return this.props.entitySet ? this.props.entitySet.title : null;
+  }
+
   render() {
-    {{console.log('entityset:', this.props.entitySet)}}
     return (
       <DocumentTitle title="All Permissions">
         <Page>
           <Page.Header>
             <Page.Title>Permissions Summary</Page.Title>
-            <h4>Test Entity Set</h4>
+            <h3 className={styles.headerTitle}>{this.getEntitySetTitle()}</h3>
           </Page.Header>
           <Page.Body>
             {this.renderContent()}
