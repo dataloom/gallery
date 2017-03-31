@@ -49,7 +49,6 @@ function configureAcls(aces) {
       }
     }
   });
-
   return {
     roleAcls,
     userAcls,
@@ -64,13 +63,54 @@ function getAclKey(action) {
   return aclKey;
 }
 
+function getUsersAndRoles(users) {
+  const allUsersById = users;
+  const allRolesList = new Set();
+  const myId = JSON.parse(localStorage.profile).user_id;
+  Object.keys(users).forEach((userId) => {
+    users[userId].roles.forEach((role) => {
+      if (role !== AUTHENTICATED_USER) allRolesList.add(role);
+    });
+  });
+  allUsersById[myId] = null;
+  return {
+    allUsersById,
+    allRolesList
+  };
+}
+
 
 /* EPICS */
+function getAllUsersAndRolesEpic(action$) {
+  let entitySet;
+  return action$
+    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES) // request
+    .mergeMap((action) => {
+      entitySet = action.entitySet;
+      return Observable
+        .from(
+          PrincipalsApi.getAllUsers()
+        )
+        .mergeMap((users) => {
+          const { allUsersById, allRolesList } = getUsersAndRoles(users);
+          return Observable
+            .of(
+              actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // getall users and roles success
+              actionFactory.setLoadUsersError(false), // what doe sthis do
+              actionFactory.getAcls(entitySet)
+            );
+        })
+        .catch(() => {
+          actionFactory.setLoadUsersError(true); // getallusersand roles failure
+        });
+    });
+}
+
 function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
   .mergeMap((action) => {
-    const { entitySet } = action; // get from store?
+    const { entitySet } = action;
     const { properties } = action.entitySet.entityType;
     const loadAclsObservables = properties.map((property) => {
       return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
@@ -83,41 +123,6 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   });
 }
 
-function getAllUsersAndRolesEpic(action$) {
-  let entitySet; // remove and don't pass ito loadEntitySet if I can get it from store in next epic
-  return action$
-    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES) // request
-    .mergeMap((action) => {
-      entitySet = action.entitySet;
-      return Observable
-        .from(
-          PrincipalsApi.getAllUsers()
-        );
-    })
-    .mergeMap((users) => { // extract fn
-      const allUsersById = users;
-      const allRolesList = new Set();
-      const myId = JSON.parse(localStorage.profile).user_id;
-      Object.keys(users).forEach((userId) => {
-        users[userId].roles.forEach((role) => {
-          if (role !== AUTHENTICATED_USER) allRolesList.add(role);
-        });
-      });
-      allUsersById[myId] = null;
-
-      return Observable
-        .of(
-          actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // getall users and roles success
-          actionFactory.setLoadUsersError(false), // what doe sthis do
-          actionFactory.getAcls(entitySet)
-        );
-    })
-    .catch(() => {
-      actionFactory.setLoadUsersError(true); // getallusersand roles failure
-    });
-}
-
-// NEED ALLUSERSBYID AT THIS POINT ONLY
 function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
     .ofType(actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST)
