@@ -2,6 +2,7 @@
  * @flow
  */
 
+export const NEURON_CONNECT_REQUEST :string = 'NEURON_CONNECT_REQUEST';
 export const NEURON_CONNECT_SUCCESS :string = 'NEURON_CONNECT_SUCCESS';
 export const NEURON_CONNECT_FAILURE :string = 'NEURON_CONNECT_FAILURE';
 

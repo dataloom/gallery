@@ -2,67 +2,103 @@
  * @flow
  */
 
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
+import {
+  combineEpics
+} from 'redux-observable';
 
-import { combineEpics } from 'redux-observable';
-import { Observable } from 'rxjs';
+import {
+  Observable
+} from 'rxjs';
 
 import * as NeuronActionFactory from './NeuronActionFactory';
 import * as NeuronActionTypes from './NeuronActionTypes';
 
-import { SERVER_COMMANDS } from './StompFrameCommands';
+import {
+  getStompClient,
+  initializeStompClient
+} from './NeuronStompClient';
 
-/*
- * SockJS client instance
- *
- * https://github.com/sockjs/sockjs-client
- * https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/html/websocket.html
- */
-const socketClient = new SockJS('http://localhost:8081/neuron');
+import {
+  SERVER_COMMANDS
+} from './StompFrameCommands';
 
-/*
- * Stomp client instance
- *
- * https://github.com/jmesnil/stomp-websocket
- * http://jmesnil.net/stomp-websocket/doc
- * http://jmesnil.net/stomp-websocket/doc/stomp.html
- */
-const stompClient = Stomp.over(socketClient);
+const RETRY_DELAY :number = 1000; // in milliseconds
+const MAX_RETRY_DELAY :number = 10 * 1000; // in milliseconds
 
-/*
- * initialize WebSocket connection to Neuron on app startup
- *
- * TODO: implement logic to retry to connect
- */
-export function initializeNeuron(reduxStore :any) {
+let retryCount :number = 0;
 
-  const onConnectCallback = (frame :any) => {
+function computeReconnectDelayTimeout() :number {
 
-    switch (frame.command) {
+  let delay :number = RETRY_DELAY * retryCount;
+  if (delay >= MAX_RETRY_DELAY) {
+    delay = MAX_RETRY_DELAY;
+  }
 
-      case SERVER_COMMANDS.CONNECTED:
-        reduxStore.dispatch(NeuronActionFactory.neuronConnectSuccess(frame));
-        // TODO: once connected, subscribe to the necessary topics/channels/notifications
-        // reduxStore.dispatch(NeuronActionFactory.neuronSubscribeRequest('events'));
-        // reduxStore.dispatch(NeuronActionFactory.neuronSubscribeRequest('signals'));
-        break;
+  return delay;
+}
 
-      default:
-        reduxStore.dispatch(NeuronActionFactory.neuronConnectFailure(frame));
-        break;
-    }
-  };
+function neuronConnectRequestEpic(action$ :Observable<Action>, reduxStore :Object) :Observable<Action> {
 
-  const onErrorCallback = () => {
-    reduxStore.dispatch(NeuronActionFactory.neuronConnectFailure());
-  };
+  return action$
+    .ofType(NeuronActionTypes.NEURON_CONNECT_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .create((observer :Observer) => {
+          initializeStompClient().connect(
+            {},
+            (frame :Object) => {
+              observer.next({
+                frame
+              });
+            },
+            () => {
+              observer.error();
+            }
+          );
+        })
+        .mergeMap((frame :Object) => {
+          switch (frame.command) {
+            case SERVER_COMMANDS.CONNECTED:
+              return Observable.of(
+                NeuronActionFactory.neuronConnectSuccess(frame)
+              );
+            default:
+              return Observable.of(
+                NeuronActionFactory.neuronConnectFailure()
+              );
+          }
+        })
+        .catch(() => {
+          return Observable.of(
+            NeuronActionFactory.neuronConnectFailure()
+          );
+        });
+    });
 
-  stompClient.connect(
-    {},
-    onConnectCallback,
-    onErrorCallback
-  );
+}
+
+function neuronConnectSuccessEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(NeuronActionTypes.NEURON_CONNECT_SUCCESS)
+    .mergeMap(() => {
+      retryCount = 0;
+      return Observable.of(
+        NeuronActionFactory.neuronSubscribeRequest('signals')
+      );
+    });
+}
+
+function neuronConnectFailureEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(NeuronActionTypes.NEURON_CONNECT_FAILURE)
+    .mergeMap(() => {
+      retryCount += 1; // having this here means the delay will never be 0; could be considered a bug
+      return Observable
+        .of(NeuronActionFactory.neuronConnectRequest())
+        .delay(computeReconnectDelayTimeout());
+    });
 }
 
 function neuronSubscribeRequestEpic(action$ :Observable<Action>) :Observable<Action> {
@@ -72,7 +108,7 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>) :Observable<Act
     .mergeMap((action :Action) => {
       return Observable
         .create((observer :Observer) => {
-          const subscription = stompClient.subscribe(`/topic/${action.topic}`, (frame :any) => {
+          const subscription = getStompClient().subscribe(`/topic/${action.topic}`, (frame :Object) => {
             observer.next({
               frame
             });
@@ -101,6 +137,7 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>) :Observable<Act
 
 function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
 
+  // TODO: this doesn't do anything yet
   return action$
     .ofType(NeuronActionTypes.NEURON_ON_MESSAGE)
     .map((action :Action) => {
@@ -108,13 +145,24 @@ function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
         case SERVER_COMMANDS.MESSAGE:
         default:
           return {
-            type: 'NOOP'
+            type: 'NEURON_NO_OP'
           };
       }
     });
 }
 
+/*
+ * TODO: not sure if I like exposing the initialization step here and in this way
+ */
+export function initializeNeuron(reduxStore :any) {
+
+  reduxStore.dispatch(NeuronActionFactory.neuronConnectRequest());
+}
+
 export default combineEpics(
+  neuronConnectRequestEpic,
+  neuronConnectSuccessEpic,
+  neuronConnectFailureEpic,
   neuronSubscribeRequestEpic,
   neuronOnMessageEpic
 );

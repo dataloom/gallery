@@ -4,6 +4,13 @@
 
 import * as NeuronActionTypes from './NeuronActionTypes';
 
+export function neuronConnectRequest() :Object {
+
+  return {
+    type: NeuronActionTypes.NEURON_CONNECT_REQUEST
+  };
+}
+
 export function neuronConnectSuccess(frame :any) :Object {
 
   return {
