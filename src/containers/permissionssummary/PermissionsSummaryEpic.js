@@ -79,6 +79,16 @@ function getUsersAndRoles(users) {
   };
 }
 
+function createAclsObservables(action) {
+  const { entitySet } = action;
+  const { properties } = action.entitySet.entityType;
+  const loadAclsObservables = properties.map((property) => {
+    return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
+  });
+  loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id)));
+  return loadAclsObservables;
+}
+
 
 /* EPICS */
 function getAllUsersAndRolesEpic(action$) {
@@ -110,12 +120,7 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
   .mergeMap((action) => {
-    const { entitySet } = action;
-    const { properties } = action.entitySet.entityType;
-    const loadAclsObservables = properties.map((property) => {
-      return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
-    });
-    loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id)));
+    const loadAclsObservables = createAclsObservables(action);
     return loadAclsObservables;
   })
   .mergeMap((observables) => {
