@@ -9,43 +9,25 @@ import { PERMISSIONS } from '../permissions/PermissionsStorage';
 
 
 /* HELPER FUNCTIONS */
-const permissionOptions = {
-  Discover: 'Discover',
-  Link: 'Link',
-  Read: 'Read',
-  Write: 'Write',
-  Owner: 'Owner'
-};
-
-// function getPermission(permissions) {
-//   const newPermissions = [];
-//   if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
-//   if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
-//   if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
-//   if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
-//   if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
-//   return newPermissions;
-// }
+function toCamelCase(s) {
+  return s.charAt(0) + s.slice(1).toLowerCase();
+}
 
 function getPermission(permissions) {
-  console.log('PERMISSIONS:', PERMISSIONS);
   const newPermissions = [];
-  if (permissions.includes(PERMISSIONS.OWNER)) return [PERMISSIONS.OWNER];
-  if (permissions.includes(PERMISSIONS.WRITE)) newPermissions.push(PERMISSIONS.WRITE);
-  if (permissions.includes(PERMISSIONS.READ)) newPermissions.push(PERMISSIONS.READ);
-  if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(PERMISSIONS.LINK);
-  if (permissions.includes(PERMISSIONS.DISCOVER)) newPermissions.push(PERMISSIONS.DISCOVER);
-  console.log('new PERMISSIONS:', newPermissions);
-
+  const camelOwner = toCamelCase(PERMISSIONS.OWNER);
+  if (permissions.includes(PERMISSIONS.OWNER)) return [toCamelCase(PERMISSIONS.OWNER)];
+  if (permissions.includes(PERMISSIONS.WRITE)) newPermissions.push(toCamelCase(PERMISSIONS.WRITE));
+  if (permissions.includes(PERMISSIONS.READ)) newPermissions.push(toCamelCase(PERMISSIONS.READ));
+  if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(toCamelCase(PERMISSIONS.LINK));
+  if (permissions.includes(PERMISSIONS.DISCOVER)) newPermissions.push(toCamelCase(PERMISSIONS.DISCOVER));
   return newPermissions;
 }
 
 function configureAcls(aces) {
   let globalValue = [];
-  // const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-  // const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-  const roleAcls = { DISCOVER: [], LINK: [], READ: [], WRITE: [] };
-  const userAcls = { DISCOVER: [], LINK: [], READ: [], WRITE: [], OWNER: [] };
+  const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+  const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
   aces.forEach((ace) => {
     if (ace.permissions.length > 0) {
       if (ace.principal.type === ROLE) {
@@ -54,21 +36,17 @@ function configureAcls(aces) {
         }
         else {
           getPermission(ace.permissions).forEach((permission) => {
-            console.log('permission:', permission);
             roleAcls[permission].push(ace.principal.id);
           });
         }
       }
       else {
         getPermission(ace.permissions).forEach((permission) => {
-          console.log('permission:', permission);
           userAcls[permission].push(ace.principal.id);
         });
       }
     }
   });
-  console.log('USER ACLS', userAcls);
-
   return {
     roleAcls,
     userAcls,
