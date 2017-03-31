@@ -82,7 +82,8 @@ function getRolePermissions(action) {
     });
   });
 
-  rolePermissions.AuthenticatedUser = globalValue;
+  const defaultPermissions = globalValue.length === 0 ? ['None'] : globalValue;
+  rolePermissions.AuthenticatedUser = defaultPermissions;
   return rolePermissions;
 }
 

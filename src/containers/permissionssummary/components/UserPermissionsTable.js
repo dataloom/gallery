@@ -19,7 +19,7 @@ class UserRow extends React.Component {
   getPermissionsStr = () => {
     let formattedPermissions;
     if (this.props.user.permissions.length === 0) {
-      formattedPermissions = 'none';
+      formattedPermissions = 'None';
     }
     else {
       formattedPermissions = this.props.user.permissions.join(', ');
@@ -50,7 +50,7 @@ class RoleRow extends React.Component {
     if (permissions && permissions.length > 0) {
       return permissions.join(', ');
     }
-    return 'none';
+    return 'None';
   }
 
   render() {
@@ -78,12 +78,11 @@ class UserGroupRow extends React.Component {
 
     if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
       user.roles.forEach((role, i) => {
-        // TODO: Double check why this is often undefined
         roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
       });
     }
     roleRows.push(<RoleRow
-        role="individual"
+        role="Individual"
         permissions={user.individualPermissions}
         key={`individual-${user.id}`} />
       );
@@ -102,7 +101,7 @@ class UserGroupRow extends React.Component {
 
 }
 
-// TODO: Filter based on state's input
+// TODO: Finish search feature -> Filter based on state's input
 class SearchBar extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired
@@ -121,8 +120,6 @@ class SearchBar extends React.Component {
 }
 
 // TODO: Separate components into different files
-// TODO for search: if user.nickname || user.email contains query input, push; else continue
-// TODO:  Add checkbox to allow user to optionally view *all* user permissions w/o this filter
 class UserPermissionsTable extends React.Component {
   static propTypes = {
     rolePermissions: PropTypes.object.isRequired,
@@ -178,9 +175,6 @@ class UserPermissionsTable extends React.Component {
     this.props.headers.forEach((header) => {
       headers.push(<th key={header}>{header}</th>);
     });
-
-    // TODO: Add checkbox to show/hide all users (default: show only users with non-default permissions);
-    // TODO: Get globalValue from store
 
     return (
       <div>

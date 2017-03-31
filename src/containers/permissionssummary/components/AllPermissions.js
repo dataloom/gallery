@@ -95,11 +95,13 @@ class AllPermissions extends React.Component {
   }
 
   render() {
+    {{console.log('entityset:', this.props.entitySet)}}
     return (
       <DocumentTitle title="All Permissions">
         <Page>
           <Page.Header>
-            <Page.Title>All Permissions</Page.Title>
+            <Page.Title>Permissions Summary</Page.Title>
+            <h4>Test Entity Set</h4>
           </Page.Header>
           <Page.Body>
             {this.renderContent()}
