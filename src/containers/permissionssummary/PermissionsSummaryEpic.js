@@ -94,7 +94,7 @@ function createAclsObservables(action) {
 function getAllUsersAndRolesEpic(action$) {
   let entitySet;
   return action$
-    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES)
+    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST)
     .mergeMap((action) => {
       entitySet = action.entitySet;
       return Observable
@@ -110,11 +110,12 @@ function getAllUsersAndRolesEpic(action$) {
             );
         })
         .catch((err) => {
-          console.log('Error in getAllUsersAndRolesEpic:', err);
+          actionFactory.getAllUsersAndRolesFailure();
         });
     });
 }
 
+// TODO: CAN I MERGE THIS WITH GETUSERROLEPERMISSIONS SINCE NOT ASYNC?
 function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)

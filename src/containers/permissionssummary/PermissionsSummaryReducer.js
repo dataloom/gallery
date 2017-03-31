@@ -6,7 +6,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allRolesList: [],
   entityUserPermissions: [],
   entityRolePermissions: {},
-  propertyPermissions: {}
+  propertyPermissions: {},
+  isGettingUsersRoles: false
 });
 
 /* HELPER FUNCTIONS */
@@ -88,8 +89,15 @@ function getRolePermissions(action) {
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
+    case actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST:
+      return state.set('isGettingUsersRoles', true);
+
+    case actionTypes.GET_ALL_USERS_AND_ROLES_FAILURE:
+      return state.set('isGettingUsersRoles', false);
+
     case actionTypes.GET_ALL_USERS_AND_ROLES_SUCCESS:
       return state.merge({
+        isGettingUsersRoles: false,
         allUsersById: action.users,
         allRolesList: action.roles
       });

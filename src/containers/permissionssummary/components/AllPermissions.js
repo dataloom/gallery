@@ -22,7 +22,8 @@ class AllPermissions extends React.Component {
     entityRolePermissions: PropTypes.object.isRequired,
     propertyPermissions: PropTypes.object.isRequired,
     loadEntitySet: PropTypes.func.isRequired,
-    getAllUsersAndRoles: PropTypes.func.isRequired
+    getAllUsersAndRoles: PropTypes.func.isRequired,
+    isGettingUsersRoles: PropTypes.bool.isRequired
   }
 
   componentDidMount() {
@@ -32,7 +33,7 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.props.getAllUsersAndRoles(nextProps.entitySet);
+      this.props.getAllUsersAndRolesRequest(nextProps.entitySet);
     }
   }
 
@@ -107,7 +108,8 @@ function mapStateToProps(state) {
     entitySet,
     entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
-    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS()
+    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
+    isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles')
   };
 }
 
@@ -124,8 +126,8 @@ function mapDispatchToProps(dispatch) {
         }]
       ));
     },
-    getAllUsersAndRoles: (id) => {
-      dispatch(psActionFactory.getAllUsersAndRoles(id));
+    getAllUsersAndRolesRequest: (id) => {
+      dispatch(psActionFactory.getAllUsersAndRolesRequest(id));
     }
   };
 }
