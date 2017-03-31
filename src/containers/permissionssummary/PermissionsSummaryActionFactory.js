@@ -53,18 +53,11 @@ export function getAllUsersAndRoles(entitySet) {
   };
 }
 
-export function setAllUsersAndRoles(users, roles) {
+export function getAllUsersAndRolesSuccess(users, roles) {
   return {
-    type: actionTypes.SET_ALL_USERS_AND_ROLES,
+    type: actionTypes.GET_ALL_USERS_AND_ROLES_SUCCESS,
     users,
     roles
-  };
-}
-
-export function setLoadUsersError(bool) {
-  return {
-    type: actionTypes.SET_LOAD_USERS_ERROR,
-    bool
   };
 }
 

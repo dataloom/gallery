@@ -4,7 +4,6 @@ import * as actionTypes from './PermissionsSummaryActionTypes';
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allUsersById: {},
   allRolesList: [],
-  loadUsersError: false,
   entityUserPermissions: [],
   entityRolePermissions: {},
   propertyPermissions: {}
@@ -89,15 +88,10 @@ function getRolePermissions(action) {
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
-    case actionTypes.SET_ALL_USERS_AND_ROLES:
+    case actionTypes.GET_ALL_USERS_AND_ROLES_SUCCESS:
       return state.merge({
         allUsersById: action.users,
         allRolesList: action.roles
-      });
-
-    case actionTypes.SET_LOAD_USERS_ERROR:
-      return state.merge({
-        loadUsersError: action.bool
       });
 
     case actionTypes.SET_ROLE_PERMISSIONS: {

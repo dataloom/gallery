@@ -94,7 +94,7 @@ function createAclsObservables(action) {
 function getAllUsersAndRolesEpic(action$) {
   let entitySet;
   return action$
-    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES) // request
+    .ofType(actionTypes.GET_ALL_USERS_AND_ROLES)
     .mergeMap((action) => {
       entitySet = action.entitySet;
       return Observable
@@ -105,13 +105,12 @@ function getAllUsersAndRolesEpic(action$) {
           const { allUsersById, allRolesList } = getUsersAndRoles(users);
           return Observable
             .of(
-              actionFactory.setAllUsersAndRoles(allUsersById, allRolesList), // getall users and roles success
-              actionFactory.setLoadUsersError(false), // what doe sthis do
+              actionFactory.getAllUsersAndRolesSuccess(allUsersById, allRolesList),
               actionFactory.getAcls(entitySet)
             );
         })
-        .catch(() => {
-          actionFactory.setLoadUsersError(true); // getallusersand roles failure
+        .catch((err) => {
+          console.log('Error in getAllUsersAndRolesEpic:', err);
         });
     });
 }
