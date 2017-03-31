@@ -86,7 +86,7 @@ class AllPermissions extends React.Component {
         {this.renderEntityTables()}
         {this.renderPropertyTables()}
       </div>
-    )
+    );
   }
 
   renderContent() {

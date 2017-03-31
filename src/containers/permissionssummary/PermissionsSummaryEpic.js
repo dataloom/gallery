@@ -5,6 +5,7 @@ import { PermissionsApi, PrincipalsApi } from 'loom-data';
 import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
+import { PERMISSIONS } from '../permissions/PermissionsStorage';
 
 
 /* HELPER FUNCTIONS */
@@ -16,20 +17,35 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
+// function getPermission(permissions) {
+//   const newPermissions = [];
+//   if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
+//   if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
+//   if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
+//   if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
+//   if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
+//   return newPermissions;
+// }
+
 function getPermission(permissions) {
+  console.log('PERMISSIONS:', PERMISSIONS);
   const newPermissions = [];
-  if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
-  if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
-  if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
-  if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
-  if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
+  if (permissions.includes(PERMISSIONS.OWNER)) return [PERMISSIONS.OWNER];
+  if (permissions.includes(PERMISSIONS.WRITE)) newPermissions.push(PERMISSIONS.WRITE);
+  if (permissions.includes(PERMISSIONS.READ)) newPermissions.push(PERMISSIONS.READ);
+  if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(PERMISSIONS.LINK);
+  if (permissions.includes(PERMISSIONS.DISCOVER)) newPermissions.push(PERMISSIONS.DISCOVER);
+  console.log('new PERMISSIONS:', newPermissions);
+
   return newPermissions;
 }
 
 function configureAcls(aces) {
   let globalValue = [];
-  const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-  const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
+  // const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+  // const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
+  const roleAcls = { DISCOVER: [], LINK: [], READ: [], WRITE: [] };
+  const userAcls = { DISCOVER: [], LINK: [], READ: [], WRITE: [], OWNER: [] };
   aces.forEach((ace) => {
     if (ace.permissions.length > 0) {
       if (ace.principal.type === ROLE) {
@@ -38,17 +54,21 @@ function configureAcls(aces) {
         }
         else {
           getPermission(ace.permissions).forEach((permission) => {
+            console.log('permission:', permission);
             roleAcls[permission].push(ace.principal.id);
           });
         }
       }
       else {
         getPermission(ace.permissions).forEach((permission) => {
+          console.log('permission:', permission);
           userAcls[permission].push(ace.principal.id);
         });
       }
     }
   });
+  console.log('USER ACLS', userAcls);
+
   return {
     roleAcls,
     userAcls,
