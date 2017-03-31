@@ -29,15 +29,6 @@ export function loadAcls(entitySetId, property) {
   };
 }
 
-// TODO: IS THIS REDUNDANT?
-export function loadAclsRequest(entitySetId, property) {
-  return {
-    type: actionTypes.LOAD_ACLS_REQUEST,
-    entitySetId,
-    property
-  };
-}
-
 export function getUserRolePermissionsRequest(entitySetId, property) {
   return {
     type: actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST,
