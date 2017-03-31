@@ -91,6 +91,8 @@ function createAclsObservables(action) {
 
 
 /* EPICS */
+// TODO: Include success/failure actions that update state w/ its status
+// TODO: Use spinner when loading, based on status ^
 function getAllUsersAndRolesEpic(action$) {
   let entitySet;
   return action$
