@@ -27,7 +27,7 @@ class AllPermissions extends React.Component {
     entitySet: PropTypes.object,
     entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     entityRolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
-    propertyPermissions: PropTypes.object.isRequired,
+    propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     loadEntitySet: PropTypes.func.isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
     isGettingAcls: PropTypes.bool.isRequired,
@@ -64,22 +64,25 @@ class AllPermissions extends React.Component {
     const { propertyPermissions } = this.props;
     const tables = [];
 
-    Object.keys(propertyPermissions).forEach((property) => {
-      const rolePermissions = propertyPermissions[property].rolePermissions || [];
-      const userPermissions = propertyPermissions[property].userPermissions || [];
-      const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
-      const roleTable = (<RolePermissionsTable
-          rolePermissions={rolePermissions}
-          headers={R_HEADERS}
-          key={`role-${property}`} />);
-      const userTable = (<UserPermissionsTable
-          property={property}
-          userPermissions={userPermissions}
-          rolePermissions={rolePermissions}
-          headers={U_HEADERS}
-          key={`user-${property}`} />);
+    propertyPermissions.keySeq().forEach((property) => {
+      if (propertyPermissions.hasIn([property, 'userPermissions'], Immutable.List()) && propertyPermissions.hasIn([property, 'rolePermissions'], Immutable.List())) {
+        const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
+        const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
 
-      tables.push(header, roleTable, userTable);
+        const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
+        const roleTable = (<RolePermissionsTable
+            rolePermissions={rolePermissions}
+            headers={R_HEADERS}
+            key={`role-${property}`} />);
+        const userTable = (<UserPermissionsTable
+            property={property}
+            userPermissions={userPermissions}
+            rolePermissions={rolePermissions}
+            headers={U_HEADERS}
+            key={`user-${property}`} />);
+
+        tables.push(header, roleTable, userTable);
+      }
     });
     return tables;
   }
@@ -135,7 +138,7 @@ function mapStateToProps(state) {
     entitySet,
     entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions'),
-    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
+    propertyPermissions: permissionsSummary.get('propertyPermissions'),
     isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles'),
     isGettingAcls: permissionsSummary.get('isGettingAcls'),
     isGettingPermissions: permissionsSummary.get('isGettingPermissions')
