@@ -2,7 +2,7 @@ import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import { PermissionsApi, PrincipalsApi } from 'loom-data';
-import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
+import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
 import { PERMISSIONS } from '../permissions/PermissionsStorage';
@@ -38,8 +38,7 @@ function configureAcls(aces) {
             roleAcls[permission].push(ace.principal.id);
           });
         }
-      }
-      else {
+      } else if (ace.principal.type === USER) {
         getPermission(ace.permissions).forEach((permission) => {
           userAcls[permission].push(ace.principal.id);
         });
