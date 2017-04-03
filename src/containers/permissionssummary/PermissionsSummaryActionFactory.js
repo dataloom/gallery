@@ -21,14 +21,6 @@ export function getAcls(entitySet) {
   };
 }
 
-export function loadAcls(entitySetId, property) {
-  return {
-    type: actionTypes.LOAD_ACLS,
-    entitySetId,
-    property
-  };
-}
-
 export function getUserRolePermissionsRequest(entitySetId, property) {
   return {
     type: actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST,
