@@ -114,8 +114,7 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
   .mergeMap((action) => {
-    const loadAclsObservables = createAclsObservables(action);
-    return loadAclsObservables;
+    return createAclsObservables(action);
   })
   .mergeMap((observables) => {
     return observables;
