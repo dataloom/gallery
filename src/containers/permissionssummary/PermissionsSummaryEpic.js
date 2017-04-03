@@ -15,7 +15,6 @@ function toCamelCase(s) {
 
 function getPermission(permissions) {
   const newPermissions = [];
-  const camelOwner = toCamelCase(PERMISSIONS.OWNER);
   if (permissions.includes(PERMISSIONS.OWNER)) return [toCamelCase(PERMISSIONS.OWNER)];
   if (permissions.includes(PERMISSIONS.WRITE)) newPermissions.push(toCamelCase(PERMISSIONS.WRITE));
   if (permissions.includes(PERMISSIONS.READ)) newPermissions.push(toCamelCase(PERMISSIONS.READ));
