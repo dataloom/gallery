@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import FontAwesome from 'react-fontawesome';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
@@ -75,7 +76,9 @@ export class Property extends React.Component {
               onClick={() => {
                 this.props.verifyDeleteFn(this.props.property);
               }}
-              className={className}>-</button>
+              className={className}>
+              <FontAwesome name="minus" />
+          </button>
         </td>
       );
     }

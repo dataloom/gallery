@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
+import FontAwesome from 'react-fontawesome';
 import { PermissionsApi, PrincipalsApi } from 'loom-data';
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import { Permission } from '../../../../core/permissions/Permission';
@@ -390,7 +391,9 @@ export class PermissionsPanel extends React.Component {
                 onClick={() => {
                   this.updateRoles(ActionConsts.REMOVE, role, rolesView);
                 }}
-                className={styles.deleteButton}>-</button>
+                className={styles.deleteButton}>
+              <FontAwesome name="minus" />
+            </button>
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{role}</div>
         </div>
@@ -469,7 +472,9 @@ export class PermissionsPanel extends React.Component {
                 onClick={() => {
                   this.updateEmails(ActionConsts.REMOVE, userId, emailsView);
                 }}
-                className={styles.deleteButton}>-</button>
+                className={styles.deleteButton}>
+              <FontAwesome name="minus" />
+            </button>
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{this.state.allUsersById[userId].email}</div>
         </div>

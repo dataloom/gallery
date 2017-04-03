@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import FontAwesome from 'react-fontawesome';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import styles from '../styles.module.css';
@@ -22,7 +23,9 @@ export class EntityTypeFqn extends React.Component {
     if (this.context.isAdmin) {
       return (
         <td>
-          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
+          <button className={styles.deleteButton} onClick={this.deleteProp}>
+            <FontAwesome name="minus" />
+          </button>
         </td>
       );
     }

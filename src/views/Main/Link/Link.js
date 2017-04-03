@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
+import FontAwesome from 'react-fontawesome';
 import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
 import { EntityDataModelApi, LinkingApi } from 'loom-data';
@@ -81,7 +82,9 @@ export class Link extends React.Component {
                 className={buttonStyles.deleteButton}
                 onClick={() => {
                   this.removeLink(link.propertyType.id);
-                }}>-</button>
+                }}>
+              <FontAwesome name="minus" />
+            </button>
           </td>
           <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
           <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
@@ -106,7 +109,9 @@ export class Link extends React.Component {
     return (
       <tr>
         <td>
-          <button className={buttonStyles.addButton} onClick={this.addRow}>+</button>
+          <button className={buttonStyles.addButton} onClick={this.addRow}>
+            <FontAwesome name="plus" />
+          </button>
         </td>
       </tr>
     );

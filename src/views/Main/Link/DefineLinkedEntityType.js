@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
+import FontAwesome from 'react-fontawesome';
 
 import {
   Button
@@ -75,7 +76,8 @@ export default class DefineLinkedEntityType extends React.Component {
           className={buttonStyles.deleteButton}
           onClick={() => {
             this.deselectProp(propertyTypeId);
-          }}>-
+          }}>
+        <FontAwesome name="minus" />
       </button>
     );
   }

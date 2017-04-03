@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
+import FontAwesome from 'react-fontawesome';
 
 import {
   FormControl,
@@ -188,7 +189,9 @@ export class NewEdmObjectInput extends React.Component {
                 className={styles.deleteButton}
                 onClick={() => {
                   this.removePropertyTypeFromList(propertyType);
-                }}>-</button>
+                }}>
+              <FontAwesome name="minus" />
+            </button>
           </td>
           <td className={styles.newEdmCell}>{propertyType.type.name}</td>
           <td className={styles.newEdmCell}>{propertyType.type.namespace}</td>

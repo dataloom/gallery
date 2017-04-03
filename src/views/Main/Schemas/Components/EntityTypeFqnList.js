@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import FontAwesome from 'react-fontawesome';
 import { EntityDataModelApi, SearchApi } from 'loom-data';
 import { EntityTypeFqn } from './EntityTypeFqn';
 import StringConsts from '../../../../utils/Consts/StringConsts';
@@ -65,7 +66,9 @@ export class EntityTypeFqnList extends React.Component {
     if (!this.context.isAdmin) return null;
     const className = (this.state.newEntityTypeRow) ? styles.hidden : styles.addButton;
     return (
-      <button onClick={this.newEntityType} className={className}>+</button>
+      <button onClick={this.newEntityType} className={className}>
+        <FontAwesome name="plus" />
+      </button>
     );
   }
 

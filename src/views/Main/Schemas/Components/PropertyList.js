@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import FontAwesome from 'react-fontawesome';
 import { Button, ButtonGroup, ButtonToolbar, Modal } from 'react-bootstrap';
 import { EntityDataModelApi, SearchApi } from 'loom-data';
 import { Property } from './Property';
@@ -144,7 +145,9 @@ export class PropertyList extends React.Component {
     if (!this.context.isAdmin) return null;
     const className = (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
     return (
-      <button onClick={this.newProperty} className={className}>+</button>
+      <button onClick={this.newProperty} className={className}>
+        <FontAwesome name="plus" />
+      </button>
     );
   }
 
