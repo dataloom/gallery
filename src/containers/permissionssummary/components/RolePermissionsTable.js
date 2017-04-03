@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
 import { Table } from 'react-bootstrap';
+import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
 import styles from '../styles.module.css';
 
 export default class RolePermissionsTable extends React.Component {
@@ -19,7 +20,7 @@ export default class RolePermissionsTable extends React.Component {
         const permissionsStr = rolePermissions.get(role).join(', ');
 
         let roleStr = role;
-        if (role === 'AuthenticatedUser') {
+        if (role === AUTHENTICATED_USER) {
           roleStr = 'Default for all users';
         }
 
