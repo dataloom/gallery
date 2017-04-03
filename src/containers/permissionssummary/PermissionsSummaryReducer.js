@@ -20,12 +20,16 @@ function getUserPermissions(action, allUsersById) {
   const { userAcls, roleAcls, authenticatedUserPermissions } = action.data;
   const userPermissions = [];
 
-  Object.keys(allUsersById).forEach((userId) => {
-    if (userId && allUsersById[userId]) {
-      const user = {
+  allUsersById.valueSeq().forEach((user) => {
+    const userId = user.get('user_id');
+    const nickname = user.get('nickname');
+    const email = user.get('email');
+
+    if (user) {
+      const userObj = {
         id: userId,
-        nickname: allUsersById[userId].nickname,
-        email: allUsersById[userId].email,
+        nickname,
+        email,
         roles: [],
         permissions: [],
         individualPermissions: []
@@ -34,21 +38,22 @@ function getUserPermissions(action, allUsersById) {
       // Get all user permissions (sum of individual + roles + default);
       Object.keys(userAcls).forEach((permissionKey) => {
         if (userAcls[permissionKey].indexOf(userId) !== -1) {
-          user.permissions.push(permissionKey);
+          userObj.permissions.push(permissionKey);
           // Save individual permissions separately
-          user.individualPermissions.push(permissionKey);
+          userObj.individualPermissions.push(permissionKey);
         }
       });
 
       // Add additional permissions based on the roles the user has
-      if (allUsersById[userId].roles.length > 1) {
+      const roles = user.get('roles');
+      if (roles.size > 1) {
         Object.keys(roleAcls).forEach((permissionKey) => {
-          allUsersById[userId].roles.forEach((role) => {
-            if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
-              user.permissions.push(permissionKey);
+          roles.forEach((role) => {
+            if (roleAcls[permissionKey].indexOf(role) !== -1 && userObj.permissions.indexOf(permissionKey) === -1) {
+              userObj.permissions.push(permissionKey);
             }
-            if (user.roles.indexOf(role) === -1 && role !== AUTHENTICATED_USER) {
-              user.roles.push(role);
+            if (userObj.roles.indexOf(role) === -1 && role !== AUTHENTICATED_USER) {
+              userObj.roles.push(role);
             }
           });
         });
@@ -57,12 +62,13 @@ function getUserPermissions(action, allUsersById) {
       // Add additional permissions based on default for all users
       if (authenticatedUserPermissions) {
         authenticatedUserPermissions.forEach((permission) => {
-          if (user.permissions.indexOf(permission) === -1) {
-            user.permissions.push(permission);
+          if (userObj.permissions.indexOf(permission) === -1) {
+            userObj.permissions.push(permission);
           }
         });
       }
-      userPermissions.push(user);
+
+      userPermissions.push(userObj);
     }
   });
 
@@ -122,7 +128,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingPermissions', false);
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      const rolePermissions = getRolePermissions(action);
+      const rolePermissions = Immutable.Map(getRolePermissions(action));
       if (action.property) {
         const rolePermissionsMerge = {
           propertyPermissions: {
@@ -139,8 +145,8 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_USER_PERMISSIONS: {
-      const allUsersById = state.get('allUsersById').toJS();
-      const userPermissions = getUserPermissions(action, allUsersById);
+      const allUsersById = state.get('allUsersById');
+      const userPermissions = Immutable.Set(getUserPermissions(action, allUsersById));
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {
