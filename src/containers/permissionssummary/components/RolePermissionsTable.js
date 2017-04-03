@@ -17,7 +17,7 @@ export default class RolePermissionsTable extends React.Component {
         const permissionsStr = rolePermissions[role].join(', ');
 
         let roleStr = role;
-        if (role === 'default') {
+        if (role === 'AuthenticatedUser') {
           roleStr = 'Default for all users';
         }
 

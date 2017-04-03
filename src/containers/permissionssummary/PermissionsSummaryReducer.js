@@ -85,7 +85,7 @@ function getRolePermissions(action) {
     });
   });
 
-  rolePermissions.Default = authenticatedUserPermissions.length === 0 ? [NONE] : authenticatedUserPermissions;
+  rolePermissions[AUTHENTICATED_USER] = authenticatedUserPermissions.length === 0 ? [NONE] : authenticatedUserPermissions;
   return rolePermissions;
 }
 

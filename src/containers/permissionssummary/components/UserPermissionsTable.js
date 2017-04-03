@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Table } from 'react-bootstrap';
+import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
 import { INDIVIDUAL, NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
 import styles from '../styles.module.css';
 
@@ -126,7 +127,7 @@ class UserPermissionsTable extends React.Component {
     rolePermissions: PropTypes.object.isRequired,
     userPermissions: PropTypes.array.isRequired,
     headers: PropTypes.array.isRequired,
-    defaultPermissions: PropTypes.array
+    authenticatedUserPermissions: PropTypes.array
   }
 
   constructor(props) {
@@ -144,7 +145,7 @@ class UserPermissionsTable extends React.Component {
       // Hide rows where user has same permissions as the default permissions for authenticated users
       if (user.permissions.length > 0) {
         user.permissions.forEach((permission, j) => {
-          if (this.props.defaultPermissions.indexOf(permission) === -1) {
+          if (this.props.authenticatedUserPermissions.indexOf(permission) === -1) {
             rows.push(<UserGroupRow
                 user={user}
                 rolePermissions={rolePermissions}
@@ -194,7 +195,7 @@ class UserPermissionsTable extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    defaultPermissions: ownProps.rolePermissions.Default
+    authenticatedUserPermissions: ownProps.rolePermissions[AUTHENTICATED_USER]
   };
 }
 
