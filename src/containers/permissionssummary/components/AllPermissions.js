@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Immutable from 'immutable';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
 import { getEdmObject } from '../../edm/EdmStorage';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
@@ -24,8 +25,8 @@ class AllPermissions extends React.Component {
     }).isRequired,
     params: PropTypes.object.isRequired,
     entitySet: PropTypes.object,
-    entityUserPermissions: PropTypes.array.isRequired,
-    entityRolePermissions: PropTypes.object.isRequired,
+    entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
+    entityRolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     propertyPermissions: PropTypes.object.isRequired,
     loadEntitySet: PropTypes.func.isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
@@ -132,8 +133,8 @@ function mapStateToProps(state) {
 
   return {
     entitySet,
-    entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
-    entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
+    entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
+    entityRolePermissions: permissionsSummary.get('entityRolePermissions'),
     propertyPermissions: permissionsSummary.get('propertyPermissions').toJS(),
     isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles'),
     isGettingAcls: permissionsSummary.get('isGettingAcls'),

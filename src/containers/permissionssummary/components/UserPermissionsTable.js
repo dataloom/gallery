@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 import { Table } from 'react-bootstrap';
 import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
 import { INDIVIDUAL, NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
@@ -70,17 +71,16 @@ class RoleRow extends React.Component {
 class UserGroupRow extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
-    rolePermissions: PropTypes.object.isRequired,
+    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     className: PropTypes.string
   }
 
   getRoleRows = () => {
     const { user, rolePermissions } = this.props;
     const roleRows = [];
-
-    if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
+    if (user && user.roles.length > 0 && rolePermissions && rolePermissions.size > 0) {
       user.roles.forEach((role, i) => {
-        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
+        roleRows.push(<RoleRow role={role} permissions={rolePermissions.get(role)} key={`${user.id}-${role}-${i}`} />);
       });
     }
     roleRows.push(<RoleRow
@@ -100,7 +100,6 @@ class UserGroupRow extends React.Component {
       </tbody>
     );
   }
-
 }
 
 // TODO: Finish search feature -> Filter based on state's input
@@ -124,8 +123,8 @@ class SearchBar extends React.Component {
 // TODO: Separate components into different files
 class UserPermissionsTable extends React.Component {
   static propTypes = {
-    rolePermissions: PropTypes.object.isRequired,
-    userPermissions: PropTypes.array.isRequired,
+    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
+    userPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     headers: PropTypes.array.isRequired,
     authenticatedUserPermissions: PropTypes.array
   }
@@ -195,7 +194,7 @@ class UserPermissionsTable extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    authenticatedUserPermissions: ownProps.rolePermissions[AUTHENTICATED_USER]
+    authenticatedUserPermissions: ownProps.rolePermissions.get(AUTHENTICATED_USER)
   };
 }
 

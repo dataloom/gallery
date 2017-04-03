@@ -146,7 +146,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.SET_USER_PERMISSIONS: {
       const allUsersById = state.get('allUsersById');
-      const userPermissions = Immutable.Set(getUserPermissions(action, allUsersById));
+      const userPermissions = Immutable.List(getUserPermissions(action, allUsersById));
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {
@@ -157,6 +157,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         };
         return state.mergeDeep(userPermissionsMerge);
       }
+
       return state.merge({
         entityUserPermissions: userPermissions
       });

@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { Table } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
 export default class RolePermissionsTable extends React.Component {
   static propTypes = {
-    rolePermissions: PropTypes.object.isRequired,
+    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     headers: PropTypes.array.isRequired
   }
 
@@ -13,8 +14,9 @@ export default class RolePermissionsTable extends React.Component {
     const rows = [];
 
     if (rolePermissions) {
-      Object.keys(rolePermissions).forEach((role) => {
-        const permissionsStr = rolePermissions[role].join(', ');
+      // Object.keys(rolePermissions).forEach((role) => {
+      rolePermissions.keySeq().forEach((role) => {
+        const permissionsStr = rolePermissions.get(role).join(', ');
 
         let roleStr = role;
         if (role === 'AuthenticatedUser') {
