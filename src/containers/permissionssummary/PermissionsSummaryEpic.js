@@ -62,13 +62,11 @@ function getAclKey(action) {
 function getUsersAndRoles(users) {
   const allUsersById = users;
   const allRolesList = new Set();
-  const myId = JSON.parse(localStorage.profile).user_id;
   Object.keys(users).forEach((userId) => {
     users[userId].roles.forEach((role) => {
       if (role !== AUTHENTICATED_USER) allRolesList.add(role);
     });
   });
-  allUsersById[myId] = null;
   return {
     allUsersById,
     allRolesList
