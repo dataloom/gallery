@@ -125,7 +125,7 @@ class UserPermissionsTable extends React.Component {
     rolePermissions: PropTypes.object.isRequired,
     userPermissions: PropTypes.array.isRequired,
     headers: PropTypes.array.isRequired,
-    globalValue: PropTypes.array
+    defaultPermissions: PropTypes.array
   }
 
   constructor(props) {
@@ -143,7 +143,7 @@ class UserPermissionsTable extends React.Component {
       // Hide rows where user has same permissions as the default permissions for authenticated users
       if (user.permissions.length > 0) {
         user.permissions.forEach((permission, j) => {
-          if (this.props.globalValue.indexOf(permission) === -1) {
+          if (this.props.defaultPermissions.indexOf(permission) === -1) {
             rows.push(<UserGroupRow
                 user={user}
                 rolePermissions={rolePermissions}
@@ -193,7 +193,7 @@ class UserPermissionsTable extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    globalValue: ownProps.rolePermissions.default
+    defaultPermissions: ownProps.rolePermissions.default
   };
 }
 

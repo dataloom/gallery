@@ -16,7 +16,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
 
 /* HELPER FUNCTIONS */
 function getUserPermissions(action, allUsersById) {
-  const { userAcls, roleAcls, globalValue } = action.data;
+  const { userAcls, roleAcls, defaultPermissions } = action.data;
   const userPermissions = [];
 
   Object.keys(allUsersById).forEach((userId) => {
@@ -54,8 +54,8 @@ function getUserPermissions(action, allUsersById) {
       }
 
       // Add additional permissions based on default for all users
-      if (globalValue) {
-        globalValue.forEach((permission) => {
+      if (defaultPermissions) {
+        defaultPermissions.forEach((permission) => {
           if (user.permissions.indexOf(permission) === -1) {
             user.permissions.push(permission);
           }
@@ -69,7 +69,7 @@ function getUserPermissions(action, allUsersById) {
 }
 
 function getRolePermissions(action) {
-  const { roleAcls, globalValue } = action.data;
+  const { roleAcls, defaultPermissions } = action.data;
   const rolePermissions = {};
 
   // Get all roles and their respective permissions
@@ -84,8 +84,7 @@ function getRolePermissions(action) {
     });
   });
 
-  const defaultPermissions = globalValue.length === 0 ? ['None'] : globalValue;
-  rolePermissions.default = defaultPermissions;
+  rolePermissions.default = defaultPermissions.length === 0 ? ['None'] : defaultPermissions;
   return rolePermissions;
 }
 
