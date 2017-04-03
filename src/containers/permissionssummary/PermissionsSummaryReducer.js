@@ -21,11 +21,15 @@ function getUserPermissions(action, allUsersById) {
   const userPermissions = [];
 
   allUsersById.valueSeq().forEach((user) => {
-    const userId = user.get('user_id');
-    const nickname = user.get('nickname');
-    const email = user.get('email');
+    let userId;
+    let nickname;
+    let email;
 
     if (user) {
+      userId = user.get('user_id');
+      nickname = user.get('nickname');
+      email = user.get('email');
+
       const userObj = {
         id: userId,
         nickname,
