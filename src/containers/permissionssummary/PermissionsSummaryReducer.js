@@ -1,5 +1,6 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
+import { NONE} from '../../utils/Consts/PermissionsSummaryConsts';
 import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 
 
@@ -16,7 +17,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
 
 /* HELPER FUNCTIONS */
 function getUserPermissions(action, allUsersById) {
-  const { userAcls, roleAcls, defaultPermissions } = action.data;
+  const { userAcls, roleAcls, authenticatedUserPermissions } = action.data;
   const userPermissions = [];
 
   Object.keys(allUsersById).forEach((userId) => {
@@ -54,8 +55,8 @@ function getUserPermissions(action, allUsersById) {
       }
 
       // Add additional permissions based on default for all users
-      if (defaultPermissions) {
-        defaultPermissions.forEach((permission) => {
+      if (authenticatedUserPermissions) {
+        authenticatedUserPermissions.forEach((permission) => {
           if (user.permissions.indexOf(permission) === -1) {
             user.permissions.push(permission);
           }
@@ -69,7 +70,7 @@ function getUserPermissions(action, allUsersById) {
 }
 
 function getRolePermissions(action) {
-  const { roleAcls, defaultPermissions } = action.data;
+  const { roleAcls, authenticatedUserPermissions } = action.data;
   const rolePermissions = {};
 
   // Get all roles and their respective permissions
@@ -84,7 +85,7 @@ function getRolePermissions(action) {
     });
   });
 
-  rolePermissions.default = defaultPermissions.length === 0 ? ['None'] : defaultPermissions;
+  rolePermissions.Default = authenticatedUserPermissions.length === 0 ? [NONE] : authenticatedUserPermissions;
   return rolePermissions;
 }
 

@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { Table } from 'react-bootstrap';
+import { INDIVIDUAL, NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
 import styles from '../styles.module.css';
 
 class UserRow extends React.Component {
@@ -19,7 +20,7 @@ class UserRow extends React.Component {
   getPermissionsStr = () => {
     let formattedPermissions;
     if (this.props.user.permissions.length === 0) {
-      formattedPermissions = 'None';
+      formattedPermissions = NONE;
     }
     else {
       formattedPermissions = this.props.user.permissions.join(', ');
@@ -50,7 +51,7 @@ class RoleRow extends React.Component {
     if (permissions && permissions.length > 0) {
       return permissions.join(', ');
     }
-    return 'None';
+    return NONE;
   }
 
   render() {
@@ -82,7 +83,7 @@ class UserGroupRow extends React.Component {
       });
     }
     roleRows.push(<RoleRow
-        role="Individual"
+        role={INDIVIDUAL}
         permissions={user.individualPermissions}
         key={`individual-${user.id}`} />
       );
@@ -193,7 +194,7 @@ class UserPermissionsTable extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    defaultPermissions: ownProps.rolePermissions.default
+    defaultPermissions: ownProps.rolePermissions.Default
   };
 }
 

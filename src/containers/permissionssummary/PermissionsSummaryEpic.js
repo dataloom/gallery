@@ -24,14 +24,14 @@ function getPermission(permissions) {
 }
 
 function configureAcls(aces) {
-  let defaultPermissions = [];
+  let authenticatedUserPermissions = [];
   const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
   const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
   aces.forEach((ace) => {
     if (ace.permissions.length > 0) {
       if (ace.principal.type === ROLE) {
         if (ace.principal.id === AUTHENTICATED_USER) {
-          defaultPermissions = getPermission(ace.permissions);
+          authenticatedUserPermissions = getPermission(ace.permissions);
         }
         else {
           getPermission(ace.permissions).forEach((permission) => {
@@ -48,7 +48,7 @@ function configureAcls(aces) {
   return {
     roleAcls,
     userAcls,
-    defaultPermissions
+    authenticatedUserPermissions
   };
 }
 
