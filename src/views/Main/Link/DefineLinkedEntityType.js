@@ -170,7 +170,6 @@ export default class DefineLinkedEntityType extends React.Component {
         description: descriptionValue,
         key: primaryKey,
         properties: selectedPropertyTypes,
-        schemas: [],
         category: SecurableTypes.LinkingEntityType
       };
       this.props.linkFn(entityType, deidentify);

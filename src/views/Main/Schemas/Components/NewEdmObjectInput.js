@@ -137,7 +137,6 @@ export class NewEdmObjectInput extends React.Component {
           .setDescription(this.state[DESCRIPTION_FIELD])
           .setPropertyTypes(propertyTypes)
           .setKey(this.state.pKeys)
-          .setSchemas([])
           .setCategory(SecurableTypes.EntityType)
           .build();
         return EntityDataModelApi.createEntityType(entityType);
