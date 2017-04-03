@@ -193,7 +193,7 @@ class UserPermissionsTable extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    globalValue: ownProps.rolePermissions.AuthenticatedUser
+    globalValue: ownProps.rolePermissions.default
   };
 }
 

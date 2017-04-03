@@ -1,5 +1,7 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
+import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
+
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allUsersById: {},
@@ -44,7 +46,7 @@ function getUserPermissions(action, allUsersById) {
             if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
               user.permissions.push(permissionKey);
             }
-            if (user.roles.indexOf(role) === -1 && role !== 'AuthenticatedUser') {
+            if (user.roles.indexOf(role) === -1 && role !== AUTHENTICATED_USER) {
               user.roles.push(role);
             }
           });
@@ -83,7 +85,7 @@ function getRolePermissions(action) {
   });
 
   const defaultPermissions = globalValue.length === 0 ? ['None'] : globalValue;
-  rolePermissions.AuthenticatedUser = defaultPermissions;
+  rolePermissions.default = defaultPermissions;
   return rolePermissions;
 }
 
