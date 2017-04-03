@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
 import { getEdmObject } from '../../edm/EdmStorage';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
@@ -18,13 +19,15 @@ const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
   static propTypes = {
+    actions: React.PropTypes.shape({
+      getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
+    }).isRequired,
     params: PropTypes.object.isRequired,
     entitySet: PropTypes.object,
     entityUserPermissions: PropTypes.array.isRequired,
     entityRolePermissions: PropTypes.object.isRequired,
     propertyPermissions: PropTypes.object.isRequired,
     loadEntitySet: PropTypes.func.isRequired,
-    getAllUsersAndRolesRequest: PropTypes.func.isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
     isGettingAcls: PropTypes.bool.isRequired,
     isGettingPermissions: PropTypes.bool.isRequired
@@ -37,7 +40,7 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.props.getAllUsersAndRolesRequest(nextProps.entitySet);
+      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet);
     }
   }
 
@@ -139,6 +142,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
+  const actions = {
+    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
+  };
+
   return {
     loadEntitySet: (id) => {
       dispatch(actionFactories.entitySetDetailRequest(id));
@@ -151,9 +158,7 @@ function mapDispatchToProps(dispatch) {
         }]
       ));
     },
-    getAllUsersAndRolesRequest: (id) => {
-      dispatch(psActionFactory.getAllUsersAndRolesRequest(id));
-    }
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 
