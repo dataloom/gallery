@@ -1,11 +1,26 @@
 import React, { PropTypes } from 'react';
-import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import Select from 'react-select';
-import { EntityDataModelApi, DataModels, SearchApi } from 'loom-data';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+
+import {
+  FormControl,
+  FormGroup,
+  ControlLabel,
+  Button
+} from 'react-bootstrap';
+import {
+  EntityDataModelApi,
+  DataModels,
+  SearchApi,
+  Types
+} from 'loom-data';
+
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
+
+import {
+  NameNamespaceAutosuggest
+} from './NameNamespaceAutosuggest';
 
 const NAME_FIELD = 'name';
 const NAMESPACE_FIELD = 'namespace';
@@ -28,6 +43,7 @@ const INITIAL_STATE = {
 };
 
 const STRING = 'String';
+const { SecurableTypes } = Types;
 
 export class NewEdmObjectInput extends React.Component {
 
@@ -122,7 +138,7 @@ export class NewEdmObjectInput extends React.Component {
           .setPropertyTypes(propertyTypes)
           .setKey(this.state.pKeys)
           .setSchemas([])
-          .setCategory('EntityType')
+          .setCategory(SecurableTypes.EntityType)
           .build();
         return EntityDataModelApi.createEntityType(entityType);
       }

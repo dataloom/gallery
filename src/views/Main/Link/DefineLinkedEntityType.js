@@ -1,8 +1,18 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import Select from 'react-select';
+
+import {
+  Button
+} from 'react-bootstrap';
+
+import {
+  Types
+} from 'loom-data';
+
 import buttonStyles from '../../../core/styles/buttons.css';
 import styles from './styles.module.css';
+
+const { SecurableTypes } = Types;
 
 export default class DefineLinkedEntityType extends React.Component {
   static propTypes = {
@@ -161,7 +171,7 @@ export default class DefineLinkedEntityType extends React.Component {
         key: primaryKey,
         properties: selectedPropertyTypes,
         schemas: [],
-        category: 'LinkingEntityType'
+        category: SecurableTypes.LinkingEntityType
       };
       this.props.linkFn(entityType, deidentify);
       this.setState({
