@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
+
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
+import DeleteButton from '../../../../components/buttons/DeleteButton';
 import styles from '../styles.module.css';
 
 
@@ -22,7 +24,7 @@ export class EntityTypeFqn extends React.Component {
     if (this.context.isAdmin) {
       return (
         <td>
-          <button className={styles.deleteButton} onClick={this.deleteProp}>-</button>
+          <DeleteButton onClick={this.deleteProp} />
         </td>
       );
     }

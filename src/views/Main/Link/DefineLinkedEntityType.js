@@ -9,7 +9,7 @@ import {
   Types
 } from 'loom-data';
 
-import buttonStyles from '../../../core/styles/buttons.css';
+import DeleteButton from '../../../components/buttons/DeleteButton';
 import styles from './styles.module.css';
 
 const { SecurableTypes } = Types;
@@ -67,17 +67,6 @@ export default class DefineLinkedEntityType extends React.Component {
       return (id !== propertyTypeId);
     });
     this.setState({ selectedPropertyTypes, primaryKey });
-  }
-
-  renderDeleteButton = (propertyTypeId) => {
-    return (
-      <button
-          className={buttonStyles.deleteButton}
-          onClick={() => {
-            this.deselectProp(propertyTypeId);
-          }}>-
-      </button>
-    );
   }
 
   toggleCheckbox = (checked, propertyTypeId) => {
@@ -280,7 +269,7 @@ export default class DefineLinkedEntityType extends React.Component {
             onChange={this.handleDeidentifyChange}
             className={styles.inputBox} />
       </div>
-    )
+    );
   }
 
   renderInputFields = () => {
@@ -313,7 +302,11 @@ export default class DefineLinkedEntityType extends React.Component {
     const propertyTypes = this.state.selectedPropertyTypes.map((propertyTypeId) => {
       return (
         <tr key={propertyTypeId}>
-          <td>{this.renderDeleteButton(propertyTypeId)}</td>
+          <td>
+            <DeleteButton
+                onClick={() => {
+                  this.deselectProp(propertyTypeId);
+                }} /></td>
           <td className={styles.tableCell}>{this.state.availablePropertyTypes[propertyTypeId].title}</td>
           <td className={styles.tableCell}>{this.renderPrimaryKeyCheckbox(propertyTypeId)}</td>
         </tr>
