@@ -135,7 +135,7 @@ class UserPermissionsTable extends React.Component {
     rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     userPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     headers: PropTypes.array.isRequired,
-    authenticatedUserPermissions: PropTypes.array
+    authenticatedUserPermissions: PropTypes.instanceOf(Immutable.List)
   }
 
   constructor(props) {
