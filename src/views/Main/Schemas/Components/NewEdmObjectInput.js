@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
-import FontAwesome from 'react-fontawesome';
 
 import {
   FormControl,
@@ -8,6 +7,7 @@ import {
   ControlLabel,
   Button
 } from 'react-bootstrap';
+
 import {
   EntityDataModelApi,
   DataModels,
@@ -17,6 +17,7 @@ import {
 
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
+import DeleteButton from '../../../../components/buttons/DeleteButton';
 import styles from '../styles.module.css';
 
 import {
@@ -185,13 +186,10 @@ export class NewEdmObjectInput extends React.Component {
       return (
         <tr key={`${propertyType.type.namespace}.${propertyType.type.name}`}>
           <td>
-            <button
-                className={styles.deleteButton}
+            <DeleteButton
                 onClick={() => {
                   this.removePropertyTypeFromList(propertyType);
-                }}>
-              <FontAwesome name="minus" />
-            </button>
+                }} />
           </td>
           <td className={styles.newEdmCell}>{propertyType.type.name}</td>
           <td className={styles.newEdmCell}>{propertyType.type.namespace}</td>

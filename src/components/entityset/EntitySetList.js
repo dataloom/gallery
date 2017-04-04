@@ -22,13 +22,13 @@ export default class EntitySetList extends React.Component {
           No entity sets found
         </div>
       );
-    } else {
+    }
+    else {
       content = entitySets.map((entitySet) => {
         return (
           <EntitySet
-            key={entitySet.id}
-            entitySet={entitySet}
-          />
+              key={entitySet.id}
+              entitySet={entitySet} />
         );
       });
     }

@@ -48,33 +48,6 @@
     background: #d8dcdf;
 }
 
-.addButton {
-    color: #39de9d;
-    background: none;
-    border: none;
-    display: flex;
-    flex: 0;
-    margin: auto 5px;
-}
-
-.addButton:hover {
-    color: #09a34d;
-}
-
-.deleteButton {
-  color: #e91e63;
-  background: none;
-  border: none;
-  display: flex;
-  flex: 0;
-  margin: auto 5px;
-}
-
-.deleteButton:hover {
-  color: #b90b14;
-}
-
-
 .dropdownButtonContainer {
     float: right;
 }
