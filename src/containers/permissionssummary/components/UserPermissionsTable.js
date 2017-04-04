@@ -6,6 +6,12 @@ import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
 import { INDIVIDUAL, NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
 import styles from '../styles.module.css';
 
+let counter = 0;
+function getUniqueId() {
+  counter += 1;
+  return counter;
+}
+
 class UserRow extends React.Component {
   static propTypes = {
     user: PropTypes.instanceOf(Immutable.Map).isRequired
@@ -83,13 +89,13 @@ class UserGroupRow extends React.Component {
     const userRoles = user.get('roles');
     if (user && userRoles.size > 0 && rolePermissions && rolePermissions.size > 0) {
       userRoles.forEach((role, i) => {
-        roleRows.push(<RoleRow role={role} permissions={rolePermissions.get(role)} key={`${user.id}-${role}-${i}`} />);
+        roleRows.push(<RoleRow role={role} permissions={rolePermissions.get(role)} key={getUniqueId()} />);
       });
     }
     roleRows.push(<RoleRow
         role={INDIVIDUAL}
         permissions={user.get('individualPermissions')}
-        key={`individual-${user.id}`} />
+        key={getUniqueId()} />
       );
 
     return roleRows;
@@ -98,7 +104,7 @@ class UserGroupRow extends React.Component {
   render() {
     return (
       <tbody className={this.props.className}>
-        <UserRow user={this.props.user} key={this.props.user.id} />
+        <UserRow user={this.props.user} key={getUniqueId()} />
         {this.getRoleRows()}
       </tbody>
     );
@@ -152,7 +158,7 @@ class UserPermissionsTable extends React.Component {
             rows.push(<UserGroupRow
                 user={user}
                 rolePermissions={rolePermissions}
-                key={`${permission}-${user.id}-${j}`} />
+                key={getUniqueId()} />
             );
             return;
           }
@@ -163,7 +169,7 @@ class UserPermissionsTable extends React.Component {
           className={styles.hidden}
           user={user}
           rolePermissions={rolePermissions}
-          key={`${user.id}-${i}`} />
+          key={getUniqueId()} />
         );
     });
 
@@ -178,7 +184,7 @@ class UserPermissionsTable extends React.Component {
   render() {
     const headers = [];
     this.props.headers.forEach((header) => {
-      headers.push(<th key={header}>{header}</th>);
+      headers.push(<th key={getUniqueId()}>{header}</th>);
     });
 
     return (
