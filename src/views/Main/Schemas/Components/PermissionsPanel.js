@@ -1,12 +1,30 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import Select from 'react-select';
-import { PermissionsApi, PrincipalsApi } from 'loom-data';
+
+import {
+  Button
+} from 'react-bootstrap';
+
+import {
+  PermissionsApi,
+  PrincipalsApi
+} from 'loom-data';
+
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import { Permission } from '../../../../core/permissions/Permission';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
-import { USER, ROLE, AUTHENTICATED_USER } from '../../../../utils/Consts/UserRoleConsts';
+import DeleteButton from '../../../../components/buttons/DeleteButton';
 import styles from '../styles.module.css';
+
+import {
+  Permission
+} from '../../../../core/permissions/Permission';
+
+import {
+  USER,
+  ROLE,
+  AUTHENTICATED_USER
+} from '../../../../utils/Consts/UserRoleConsts';
+
 
 const views = {
   GLOBAL: 0,
@@ -386,11 +404,10 @@ export class PermissionsPanel extends React.Component {
       return (
         <div className={styles.tableRows} key={roleList.indexOf(role)}>
           <div className={styles.inline}>
-            <button
+            <DeleteButton
                 onClick={() => {
                   this.updateRoles(ActionConsts.REMOVE, role, rolesView);
-                }}
-                className={styles.deleteButton}>-</button>
+                }} />
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{role}</div>
         </div>
@@ -465,11 +482,10 @@ export class PermissionsPanel extends React.Component {
       return (
         <div className={styles.tableRows} key={userId}>
           <div className={styles.inline}>
-            <button
+            <DeleteButton
                 onClick={() => {
                   this.updateEmails(ActionConsts.REMOVE, userId, emailsView);
-                }}
-                className={styles.deleteButton}>-</button>
+                }} />
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{this.state.allUsersById[userId].email}</div>
         </div>
