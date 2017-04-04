@@ -75,7 +75,6 @@ function getUserPermissions(action, allUsersById) {
       userPermissions.push(userObj);
     }
   });
-
   return userPermissions;
 }
 
@@ -132,7 +131,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingPermissions', false);
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      const rolePermissions = Immutable.Map(getRolePermissions(action));
+      const rolePermissions = Immutable.fromJS(getRolePermissions(action));
       if (action.property) {
         const rolePermissionsMerge = {
           propertyPermissions: {
@@ -150,7 +149,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.SET_USER_PERMISSIONS: {
       const allUsersById = state.get('allUsersById');
-      const userPermissions = Immutable.List(getUserPermissions(action, allUsersById));
+      const userPermissions = Immutable.fromJS(getUserPermissions(action, allUsersById));
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {

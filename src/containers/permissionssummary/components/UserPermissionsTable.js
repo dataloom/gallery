@@ -8,24 +8,26 @@ import styles from '../styles.module.css';
 
 class UserRow extends React.Component {
   static propTypes = {
-    user: PropTypes.object.isRequired
+    user: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   getUserCellData = () => {
-    if (this.props.user.nickname) {
-      return `${this.props.user.nickname} (${this.props.user.email})`;
+    const { user } = this.props;
+    if (user.get('nickname')) {
+      return `${user.get('nickname')} (${user.get('email')})`;
     }
 
-    return this.props.user.email;
+    return user.get('email');
   }
 
   getPermissionsStr = () => {
+    const { user } = this.props;
     let formattedPermissions;
-    if (this.props.user.permissions.length === 0) {
+    if (user.get('permissions').size === 0) {
       formattedPermissions = NONE;
     }
     else {
-      formattedPermissions = this.props.user.permissions.join(', ');
+      formattedPermissions = user.get('permissions').join(', ');
     }
 
     return formattedPermissions;
@@ -44,13 +46,13 @@ class UserRow extends React.Component {
 
 class RoleRow extends React.Component {
   static propTypes = {
-    permissions: PropTypes.array,
+    permissions: PropTypes.instanceOf(Immutable.List),
     role: PropTypes.string.isRequired
   }
 
   getPermissions = () => {
     const { permissions } = this.props;
-    if (permissions && permissions.length > 0) {
+    if (permissions && permissions.size > 0) {
       return permissions.join(', ');
     }
     return NONE;
@@ -70,7 +72,7 @@ class RoleRow extends React.Component {
 
 class UserGroupRow extends React.Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
+    user: PropTypes.instanceOf(Immutable.Map).isRequired,
     rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     className: PropTypes.string
   }
@@ -78,14 +80,15 @@ class UserGroupRow extends React.Component {
   getRoleRows = () => {
     const { user, rolePermissions } = this.props;
     const roleRows = [];
-    if (user && user.roles.length > 0 && rolePermissions && rolePermissions.size > 0) {
-      user.roles.forEach((role, i) => {
+    const userRoles = user.get('roles');
+    if (user && userRoles.size > 0 && rolePermissions && rolePermissions.size > 0) {
+      userRoles.forEach((role, i) => {
         roleRows.push(<RoleRow role={role} permissions={rolePermissions.get(role)} key={`${user.id}-${role}-${i}`} />);
       });
     }
     roleRows.push(<RoleRow
         role={INDIVIDUAL}
-        permissions={user.individualPermissions}
+        permissions={user.get('individualPermissions')}
         key={`individual-${user.id}`} />
       );
 
@@ -142,8 +145,9 @@ class UserPermissionsTable extends React.Component {
     const rows = [];
     userPermissions.forEach((user, i) => {
       // Hide rows where user has same permissions as the default permissions for authenticated users
-      if (user.permissions.length > 0) {
-        user.permissions.forEach((permission, j) => {
+      const permissions = user.get('permissions');
+      if (permissions.size > 0) {
+        permissions.forEach((permission, j) => {
           if (this.props.authenticatedUserPermissions.indexOf(permission) === -1) {
             rows.push(<UserGroupRow
                 user={user}
