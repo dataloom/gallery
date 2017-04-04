@@ -1,28 +1,39 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Immutable from 'immutable';
 import { Table } from 'react-bootstrap';
+import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
+import { INDIVIDUAL, NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
 import styles from '../styles.module.css';
+
+let counter = 0;
+function getUniqueId() {
+  counter += 1;
+  return counter;
+}
 
 class UserRow extends React.Component {
   static propTypes = {
-    user: PropTypes.object.isRequired
+    user: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   getUserCellData = () => {
-    if (this.props.user.nickname) {
-      return `${this.props.user.nickname} (${this.props.user.email})`;
+    const { user } = this.props;
+    if (user.get('nickname')) {
+      return `${user.get('nickname')} (${user.get('email')})`;
     }
 
-    return this.props.user.email;
+    return user.get('email');
   }
 
   getPermissionsStr = () => {
+    const { user } = this.props;
     let formattedPermissions;
-    if (this.props.user.permissions.length === 0) {
-      formattedPermissions = 'none';
+    if (user.get('permissions').size === 0) {
+      formattedPermissions = NONE;
     }
     else {
-      formattedPermissions = this.props.user.permissions.join(', ');
+      formattedPermissions = user.get('permissions').join(', ');
     }
 
     return formattedPermissions;
@@ -41,16 +52,16 @@ class UserRow extends React.Component {
 
 class RoleRow extends React.Component {
   static propTypes = {
-    permissions: PropTypes.array,
+    permissions: PropTypes.instanceOf(Immutable.List),
     role: PropTypes.string.isRequired
   }
 
   getPermissions = () => {
     const { permissions } = this.props;
-    if (permissions && permissions.length > 0) {
+    if (permissions && permissions.size > 0) {
       return permissions.join(', ');
     }
-    return 'none';
+    return NONE;
   }
 
   render() {
@@ -67,25 +78,24 @@ class RoleRow extends React.Component {
 
 class UserGroupRow extends React.Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
-    rolePermissions: PropTypes.object.isRequired,
+    user: PropTypes.instanceOf(Immutable.Map).isRequired,
+    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     className: PropTypes.string
   }
 
   getRoleRows = () => {
     const { user, rolePermissions } = this.props;
     const roleRows = [];
-
-    if (user && user.roles.length > 0 && rolePermissions && Object.keys(rolePermissions).length > 0) {
-      user.roles.forEach((role, i) => {
-        // TODO: Double check why this is often undefined
-        roleRows.push(<RoleRow role={role} permissions={rolePermissions[role]} key={`${user.id}-${role}-${i}`} />);
+    const userRoles = user.get('roles');
+    if (user && userRoles.size > 0 && rolePermissions && rolePermissions.size > 0) {
+      userRoles.forEach((role, i) => {
+        roleRows.push(<RoleRow role={role} permissions={rolePermissions.get(role)} key={getUniqueId()} />);
       });
     }
     roleRows.push(<RoleRow
-        role="individual"
-        permissions={user.individualPermissions}
-        key={`individual-${user.id}`} />
+        role={INDIVIDUAL}
+        permissions={user.get('individualPermissions')}
+        key={getUniqueId()} />
       );
 
     return roleRows;
@@ -94,15 +104,14 @@ class UserGroupRow extends React.Component {
   render() {
     return (
       <tbody className={this.props.className}>
-        <UserRow user={this.props.user} key={this.props.user.id} />
+        <UserRow user={this.props.user} key={getUniqueId()} />
         {this.getRoleRows()}
       </tbody>
     );
   }
-
 }
 
-// TODO: Filter based on state's input
+// TODO: Finish search feature -> Filter based on state's input
 class SearchBar extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired
@@ -121,14 +130,12 @@ class SearchBar extends React.Component {
 }
 
 // TODO: Separate components into different files
-// TODO for search: if user.nickname || user.email contains query input, push; else continue
-// TODO:  Add checkbox to allow user to optionally view *all* user permissions w/o this filter
 class UserPermissionsTable extends React.Component {
   static propTypes = {
-    rolePermissions: PropTypes.object.isRequired,
-    userPermissions: PropTypes.array.isRequired,
+    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
+    userPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     headers: PropTypes.array.isRequired,
-    globalValue: PropTypes.array.isRequired
+    authenticatedUserPermissions: PropTypes.instanceOf(Immutable.List)
   }
 
   constructor(props) {
@@ -142,16 +149,16 @@ class UserPermissionsTable extends React.Component {
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
     const rows = [];
-
     userPermissions.forEach((user, i) => {
       // Hide rows where user has same permissions as the default permissions for authenticated users
-      if (user.permissions.length > 0) {
-        user.permissions.forEach((permission, j) => {
-          if (this.props.globalValue.indexOf(permission) === -1) {
+      const permissions = user.get('permissions');
+      if (permissions.size > 0) {
+        permissions.forEach((permission, j) => {
+          if (this.props.authenticatedUserPermissions.indexOf(permission) === -1) {
             rows.push(<UserGroupRow
                 user={user}
                 rolePermissions={rolePermissions}
-                key={`${permission}-${user.id}-${j}`} />
+                key={getUniqueId()} />
             );
             return;
           }
@@ -162,7 +169,7 @@ class UserPermissionsTable extends React.Component {
           className={styles.hidden}
           user={user}
           rolePermissions={rolePermissions}
-          key={`${user.id}-${i}`} />
+          key={getUniqueId()} />
         );
     });
 
@@ -177,11 +184,8 @@ class UserPermissionsTable extends React.Component {
   render() {
     const headers = [];
     this.props.headers.forEach((header) => {
-      headers.push(<th key={header}>{header}</th>);
+      headers.push(<th key={getUniqueId()}>{header}</th>);
     });
-
-    // TODO: Add checkbox to show/hide all users (default: show only users with non-default permissions);
-    // TODO: Get globalValue from store
 
     return (
       <div>
@@ -199,18 +203,8 @@ class UserPermissionsTable extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const permissionsSummary = state.get('permissionsSummary');
-
-  let globalValue;
-  if (ownProps.property) {
-    globalValue = ownProps.rolePermissions.AuthenticatedUser;
-  }
-  else {
-    globalValue = permissionsSummary.get('globalValue').toJS();
-  }
-
   return {
-    globalValue
+    authenticatedUserPermissions: ownProps.rolePermissions.get(AUTHENTICATED_USER)
   };
 }
 

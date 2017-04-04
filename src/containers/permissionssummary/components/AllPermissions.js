@@ -1,171 +1,109 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import Immutable from 'immutable';
+import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
+import { getEdmObject } from '../../edm/EdmStorage';
+import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
+import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
+import * as edmActionFactories from '../../edm/EdmActionFactories';
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
+import styles from '../styles.module.css';
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
   static propTypes = {
-    properties: PropTypes.object.isRequired,
-    userAcls: PropTypes.object.isRequired,
-    roleAcls: PropTypes.object.isRequired,
-    globalValue: PropTypes.array.isRequired,
-    allUsersById: PropTypes.object.isRequired,
-    entityUserPermissions: PropTypes.array.isRequired,
-    entityRolePermissions: PropTypes.object.isRequired,
-    propertyPermissions: PropTypes.object.isRequired,
-    setEntityUserPermissions: PropTypes.func.isRequired,
-    setEntityRolePermissions: PropTypes.func.isRequired,
-    setPropertyUserPermissions: PropTypes.func.isRequired,
-    setPropertyRolePermissions: PropTypes.func.isRequired
+    actions: React.PropTypes.shape({
+      getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
+    }).isRequired,
+    params: PropTypes.object.isRequired,
+    entitySet: PropTypes.object,
+    entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
+    entityRolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
+    loadEntitySet: PropTypes.func.isRequired,
+    isGettingUsersRoles: PropTypes.bool.isRequired,
+    isGettingAcls: PropTypes.bool.isRequired,
+    isGettingPermissions: PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      entityUserPermissions: [],
-      entityRolePermissions: {},
-      propertyPermissions: {}
-    };
-
-    this.getUserPermissions = this.getUserPermissions.bind(this);
-  }
-
-  //TODO: Reformat to use new roles service once live
   componentDidMount() {
-    // TODO: Make sure data gets loaded on refresh once async actions are hooked up to redux
-    const { properties } = this.props;
-
-    // Get user and role permissions for entity set
-    this.getUserPermissions();
-    this.getRolePermissions();
-
-    // Get user and role permissions for each property
-    Object.keys(properties).forEach((property) => {
-      this.getUserPermissions(properties[property]);
-      this.getRolePermissions(properties[property]);
-    });
+    const id = this.props.params.id;
+    this.props.loadEntitySet(id);
   }
 
-  getUserPermissions = (property) => {
-    const { userAcls, roleAcls, globalValue } = property || this.props;
-    const { allUsersById } = this.props;
-    const userPermissions = [];
-
-    // For each user, add their permissions
-    Object.keys(allUsersById).forEach((userId) => {
-      if (userId && allUsersById[userId]) {
-        const user = {
-          id: userId,
-          nickname: allUsersById[userId].nickname,
-          email: allUsersById[userId].email,
-          roles: [],
-          permissions: [],
-          individualPermissions: []
-        };
-
-        // Get all user permissions (sum of individual + roles + default);
-        Object.keys(userAcls).forEach((permissionKey) => {
-          if (userAcls[permissionKey].indexOf(userId) !== -1) {
-            user.permissions.push(permissionKey);
-            // Save individual permissions separately
-            user.individualPermissions.push(permissionKey);
-          }
-        });
-
-        // Add additional permissions based on the roles the user has
-        if (allUsersById[userId].roles.length > 1) {
-          Object.keys(roleAcls).forEach((permissionKey) => {
-            allUsersById[userId].roles.forEach((role) => {
-              if (roleAcls[permissionKey].indexOf(role) !== -1 && user.permissions.indexOf(permissionKey) === -1) {
-                user.permissions.push(permissionKey);
-              }
-              if (user.roles.indexOf(role) === -1 && role !== 'AuthenticatedUser') {
-                user.roles.push(role);
-              }
-            });
-          });
-        }
-
-        // Add additional permissions based on default for all users
-        if (globalValue) {
-          globalValue.forEach((permission) => {
-            if (user.permissions.indexOf(permission) === -1) {
-              user.permissions.push(permission);
-            }
-          });
-        }
-        userPermissions.push(user);
-      }
-    });
-    this.setUserPermissions(userPermissions, property);
-  }
-
-  setUserPermissions = (permissions, property) => {
-    if (property) {
-      this.props.setPropertyUserPermissions(permissions, property);
-    }
-    else {
-      this.props.setEntityUserPermissions(permissions);
+  componentWillReceiveProps(nextProps) {
+    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet);
     }
   }
 
-  getRolePermissions = (property) => {
-    const { roleAcls, globalValue } = property || this.props;
-    const rolePermissions = {};
-
-    // Get all roles and their respective permissions
-    Object.keys(roleAcls).forEach((permission) => {
-      roleAcls[permission].forEach((role) => {
-        if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
-          rolePermissions[role] = [];
-        }
-
-        if (rolePermissions[role].indexOf(permission) === -1) {
-          rolePermissions[role].push(permission);
-        }
-      });
-    });
-    rolePermissions.AuthenticatedUser = globalValue;
-    this.setRolePermissions(rolePermissions, property);
-  }
-
-  setRolePermissions = (permissions, property) => {
-    if (property) {
-      this.props.setPropertyRolePermissions(permissions, property);
-    }
-    else {
-      this.props.setEntityRolePermissions(permissions);
-    }
+  renderEntityTables() {
+    return (
+      <div>
+        <h3>Entity Permissions</h3>
+        <RolePermissionsTable
+            rolePermissions={this.props.entityRolePermissions}
+            headers={R_HEADERS} />
+        <UserPermissionsTable
+            userPermissions={this.props.entityUserPermissions}
+            rolePermissions={this.props.entityRolePermissions}
+            headers={U_HEADERS} />
+      </div>
+    );
   }
 
   renderPropertyTables() {
     const { propertyPermissions } = this.props;
     const tables = [];
 
-    Object.keys(propertyPermissions).forEach((property) => {
-      const { userPermissions, rolePermissions } = propertyPermissions[property];
-      const header = <h3 key={`header-${property}`}>{property}</h3>;
-      const roleTable = (<RolePermissionsTable
-          rolePermissions={rolePermissions}
-          headers={R_HEADERS}
-          key={`role-${property}`} />);
-      const userTable = (<UserPermissionsTable
-          property={property}
-          userPermissions={userPermissions}
-          rolePermissions={rolePermissions}
-          headers={U_HEADERS}
-          key={`user-${property}`} />);
+    propertyPermissions.keySeq().forEach((property) => {
+      if (propertyPermissions.hasIn([property, 'userPermissions']) && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+        const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
+        const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
 
-      tables.push(header, roleTable, userTable);
+        const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
+        const roleTable = (<RolePermissionsTable
+            rolePermissions={rolePermissions}
+            headers={R_HEADERS}
+            key={`role-${property}`} />);
+        const userTable = (<UserPermissionsTable
+            property={property}
+            userPermissions={userPermissions}
+            rolePermissions={rolePermissions}
+            headers={U_HEADERS}
+            key={`user-${property}`} />);
+
+        tables.push(header, roleTable, userTable);
+      }
     });
     return tables;
+  }
+
+  renderTables() {
+    return (
+      <div>
+        {this.renderEntityTables()}
+        {this.renderPropertyTables()}
+      </div>
+    );
+  }
+
+  renderContent() {
+    return (this.props.isGettingUsersRoles || this.props.isGettingAcls || this.props.isGettingPermissions)
+    ? <LoadingSpinner />
+    : this.renderTables();
+  }
+
+  getEntitySetTitle() {
+    return this.props.entitySet ? this.props.entitySet.title : null;
   }
 
   render() {
@@ -173,18 +111,11 @@ class AllPermissions extends React.Component {
       <DocumentTitle title="All Permissions">
         <Page>
           <Page.Header>
-            <Page.Title>All Permissions</Page.Title>
+            <Page.Title>Permissions Summary</Page.Title>
+            <h3 className={styles.headerTitle}>{this.getEntitySetTitle()}</h3>
           </Page.Header>
           <Page.Body>
-            <h3>Entity Permissions</h3>
-            <RolePermissionsTable
-                rolePermissions={this.props.entityRolePermissions}
-                headers={R_HEADERS} />
-            <UserPermissionsTable
-                userPermissions={this.props.entityUserPermissions}
-                rolePermissions={this.props.entityRolePermissions}
-                headers={U_HEADERS} />
-            {this.renderPropertyTables()}
+            {this.renderContent()}
           </Page.Body>
         </Page>
       </DocumentTitle>
@@ -192,35 +123,46 @@ class AllPermissions extends React.Component {
   }
 }
 
+// TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
 function mapStateToProps(state) {
+  const entitySetDetail = state.get('entitySetDetail');
+  const normalizedData = state.get('normalizedData');
   const permissionsSummary = state.get('permissionsSummary');
+  let entitySet;
+  const reference = entitySetDetail.get('entitySetReference');
+  if (reference) {
+    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
+  }
 
   return {
-    allUsersById: permissionsSummary.get('allUsersById').toJS(),
-    properties: permissionsSummary.get('properties').toJS(),
-    userAcls: permissionsSummary.get('userAcls').toJS(),
-    roleAcls: permissionsSummary.get('roleAcls').toJS(),
-    globalValue: permissionsSummary.get('globalValue').toJS(),
-    entityUserPermissions: permissionsSummary.get('entityUserPermissions').toJS(),
-    entityRolePermissions: permissionsSummary.get('entityRolePermissions').toJS(),
-    propertyPermissions: permissionsSummary.get('propertyPermissions').toJS()
+    entitySet,
+    entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
+    entityRolePermissions: permissionsSummary.get('entityRolePermissions'),
+    propertyPermissions: permissionsSummary.get('propertyPermissions'),
+    isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles'),
+    isGettingAcls: permissionsSummary.get('isGettingAcls'),
+    isGettingPermissions: permissionsSummary.get('isGettingPermissions')
   };
 }
 
 function mapDispatchToProps(dispatch) {
+  const actions = {
+    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
+  };
+
   return {
-    setEntityUserPermissions: (permissions) => {
-      dispatch(psActionFactory.setEntityUserPermissions(permissions));
+    loadEntitySet: (id) => {
+      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
+      dispatch(edmActionFactories.filteredEdmRequest(
+        [{
+          type: 'EntitySet',
+          id,
+          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+        }]
+      ));
     },
-    setEntityRolePermissions: (permissions) => {
-      dispatch(psActionFactory.setEntityRolePermissions(permissions));
-    },
-    setPropertyUserPermissions: (permissions, property) => {
-      dispatch(psActionFactory.setPropertyUserPermissions(permissions, property));
-    },
-    setPropertyRolePermissions: (permissions, property) => {
-      dispatch(psActionFactory.setPropertyRolePermissions(permissions, property));
-    }
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 
