@@ -6,6 +6,27 @@ import * as PSActionFactory from './PermissionsSummaryActionFactory';
 import reducer from './PermissionsSummaryReducer';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 
+const property = {
+  title: 'title'
+};
+
+const data = {
+  authenticatedUserPermissions: [],
+  roleAcls: {
+    Discover: [],
+    Link: ['foo'],
+    Read: [],
+    Write: []
+  },
+  userAcls: {
+    Discover: [],
+    Link: [],
+    Read: [],
+    Write: ['bar'],
+    Ownder: []
+  }
+};
+
 describe('PermissionsSummaryReducer', function() {
   let INITIAL_STATE;
 
@@ -96,25 +117,6 @@ describe('PermissionsSummaryReducer', function() {
   });
 
   it('should get role permissions', function() {
-    const property = {
-      title: 'title'
-    };
-    const data = {
-      authenticatedUserPermissions: [],
-      roleAcls: {
-        Discover: [],
-        Link: ['foo'],
-        Read: [],
-        Write: []
-      },
-      userAcls: {
-        Discover: [],
-        Link: [],
-        Read: [],
-        Write: ['bar'],
-        Ownder: []
-      }
-    };
     const action = PSActionFactory.setRolePermissions(property, data);
     const permissions = getRolePermissions(action);
     const result = {
@@ -125,27 +127,49 @@ describe('PermissionsSummaryReducer', function() {
     expect(permissions).to.eql(result);
   });
 
+  it('should update property role permissions', function() {
+    const action = PSActionFactory.setRolePermissions(property, data);
+    const permissions = Immutable.fromJS(getRolePermissions(action));
+    const state = reducer(INITIAL_STATE, action);
+
+    expect(state).to.have.deep.property(`propertyPermissions.${property.title}.rolePermissions`).eql(permissions);
+  });
+
+  it('should update entity role permissions', function() {
+    const action = PSActionFactory.setRolePermissions(undefined, data);
+    const permissions = Immutable.fromJS(getRolePermissions(action));
+    const state = reducer(INITIAL_STATE, action);
+
+    expect(state).to.have.property('entityRolePermissions').eql(permissions);
+  });
+
+  // it('should get user permissions', function() {
+  //   const action = PSActionFactory.setUserPermissions(property, data);
+  //   const permissions = getUserPermissions(action);
+  //   const result = [
+  //     {
+  //
+  //     }
+  //   ];
+  //
+  //   expect(permissions).to.eql(result);
+  // });
+
   // it('should update property role permissions', function() {
-  //   const property = {title: 'title'};
-  //   const data = {};
   //   const action = PSActionFactory.setRolePermissions(property, data);
-  //   const permissions = getRolePermissions(action); // TODO: import function
+  //   const permissions = Immutable.fromJS(getRolePermissions(action));
   //   const state = reducer(INITIAL_STATE, action);
   //
-    // expect(state).to.have.deep.property(`propertyPermissions.${property.title}`).equal(permissions);
+  //   expect(state).to.have.deep.property(`propertyPermissions.${property.title}.rolePermissions`).eql(permissions);
   // });
-
+  //
   // it('should update entity role permissions', function() {
-  //   const property = undefined;
-  //   const data = {};
-  //   const action = PSActionFactory.setRolePermissions(property, data);
-  //   const permissions = getRolePermissions(action); // TODO: import function
+  //   const action = PSActionFactory.setRolePermissions(undefined, data);
+  //   const permissions = Immutable.fromJS(getRolePermissions(action));
   //   const state = reducer(INITIAL_STATE, action);
   //
-  //   expect(state).to.have.property('entityRolePermissions').equal(permissions);
+  //   expect(state).to.have.property('entityRolePermissions').eql(permissions);
   // });
-
-  // TODO: COPY ABOVE TESTS FOR SET USER PERMISSIONS
 
   it('should reset permissions', function() {
     const action = PSActionFactory.resetPermissions();
