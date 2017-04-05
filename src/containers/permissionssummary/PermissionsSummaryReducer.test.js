@@ -6,6 +6,19 @@ import * as PSActionFactory from './PermissionsSummaryActionFactory';
 import reducer from './PermissionsSummaryReducer';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 
+// const allUsersById = [
+//   {
+//     'auth0|foo': {
+//       email: 'foo',
+//       nickname: 'bar',
+//       organization: [],
+//       roles: ['foo'],
+//       user_id: 'auth0|foo',
+//       username: 'baz'
+//     }
+//   }
+// ];
+
 const property = {
   title: 'title'
 };
@@ -22,7 +35,7 @@ const data = {
     Discover: [],
     Link: [],
     Read: [],
-    Write: ['bar'],
+    Write: ['auth0|foo'],
     Ownder: []
   }
 };
@@ -31,7 +44,7 @@ describe('PermissionsSummaryReducer', function() {
   let INITIAL_STATE;
 
   beforeEach(function() {
-    INITIAL_STATE = reducer(undefined, { type: 'init' }); // QUESTION: Does this jive w/ actual inItial state?
+    INITIAL_STATE = reducer(undefined, { type: 'init' });
   });
 
   it('should update isGettingUsersRoles to true', function() {
@@ -143,32 +156,69 @@ describe('PermissionsSummaryReducer', function() {
     expect(state).to.have.property('entityRolePermissions').eql(permissions);
   });
 
+// TODO: Fix errors in user permissions tests
   // it('should get user permissions', function() {
+  //   const allUsersById = {
+  //     'auth0|foo': {
+  //       email: 'foo',
+  //       nickname: 'bar',
+  //       organization: [],
+  //       roles: ['foo'],
+  //       user_id: 'auth0|foo',
+  //       username: 'baz'
+  //     }
+  //   };
   //   const action = PSActionFactory.setUserPermissions(property, data);
-  //   const permissions = getUserPermissions(action);
+  //   const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
   //   const result = [
   //     {
-  //
+  //       email: 'foo',
+  //       id: 'auth0|foo',
+  //       individualPermissions: ['Write'],
+  //       nickname: 'bar',
+  //       permissions: ['Link', 'Write'],
+  //       roles: ['foo']
   //     }
   //   ];
+  //   console.log('permissions, result:', permissions, result);
   //
   //   expect(permissions).to.eql(result);
   // });
-
-  // it('should update property role permissions', function() {
-  //   const action = PSActionFactory.setRolePermissions(property, data);
-  //   const permissions = Immutable.fromJS(getRolePermissions(action));
+  //
+  // it('should update property user permissions', function() {
+  //   const allUsersById = {
+  //     'auth0|foo': {
+  //       email: 'foo',
+  //       nickname: 'bar',
+  //       organization: [],
+  //       roles: ['foo'],
+  //       user_id: 'auth0|foo',
+  //       username: 'baz'
+  //     }
+  //   };
+  //   const action = PSActionFactory.setUserPermissions(property, data);
+  //   const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
   //   const state = reducer(INITIAL_STATE, action);
   //
-  //   expect(state).to.have.deep.property(`propertyPermissions.${property.title}.rolePermissions`).eql(permissions);
+  //   expect(state).to.have.deep.property(`propertyPermissions.${property.title}.userPermissions`).eql(permissions);
   // });
   //
-  // it('should update entity role permissions', function() {
-  //   const action = PSActionFactory.setRolePermissions(undefined, data);
-  //   const permissions = Immutable.fromJS(getRolePermissions(action));
+  // it('should update entity user permissions', function() {
+  //   const allUsersById = {
+  //     'auth0|foo': {
+  //       email: 'foo',
+  //       nickname: 'bar',
+  //       organization: [],
+  //       roles: ['foo'],
+  //       user_id: 'auth0|foo',
+  //       username: 'baz'
+  //     }
+  //   };
+  //   const action = PSActionFactory.setUserPermissions(undefined, data);
+  //   const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
   //   const state = reducer(INITIAL_STATE, action);
   //
-  //   expect(state).to.have.property('entityRolePermissions').eql(permissions);
+  //   expect(state).to.have.property('entityUserPermissions').eql(permissions);
   // });
 
   it('should reset permissions', function() {
