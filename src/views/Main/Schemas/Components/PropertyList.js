@@ -1,12 +1,29 @@
 import React, { PropTypes } from 'react';
-import { Button, ButtonGroup, ButtonToolbar, Modal } from 'react-bootstrap';
-import { EntityDataModelApi, SearchApi } from 'loom-data';
-import { Property } from './Property';
+
+import {
+  Button,
+  ButtonGroup,
+  Modal
+} from 'react-bootstrap';
+
+import {
+  EntityDataModelApi,
+  SearchApi
+} from 'loom-data';
+
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import AddButton from '../../../../components/buttons/AddButton';
 import styles from '../styles.module.css';
+
+import {
+  Property
+} from './Property';
+
+import {
+  NameNamespaceAutosuggest
+} from './NameNamespaceAutosuggest';
 
 export class PropertyList extends React.Component {
   static propTypes = {
@@ -35,15 +52,6 @@ export class PropertyList extends React.Component {
       verifyingDelete: false,
       propertyToDelete: undefined
     };
-  }
-
-  keyProperties() {
-    const properties = this.props.properties.map((prop) => {
-      const newProp = prop;
-      newProp.key = this.props.properties.indexOf(prop);
-      return newProp;
-    });
-    return properties;
   }
 
   newProperty = () => {
@@ -118,7 +126,7 @@ export class PropertyList extends React.Component {
   renderVerifyDeleteModal = () => {
     const { verifyingDelete, propertyToDelete } = this.state;
     if (!propertyToDelete) return null;
-    const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
+    const prop = `${propertyToDelete.type.namespace}.${propertyToDelete.type.name}`;
     const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
     return (
       <Modal show={verifyingDelete} onHide={this.closeModal}>
@@ -150,11 +158,10 @@ export class PropertyList extends React.Component {
   }
 
   renderNewRowButton = () => {
-    if (!this.context.isAdmin) return null;
-    const className = (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
-    return (
-      <button onClick={this.newProperty} className={className}>+</button>
-    );
+    if (this.context.isAdmin && !this.state.newPropertyRow && !this.props.entitySetName) {
+      return <AddButton onClick={this.newProperty} />
+    }
+    return null;
   }
 
   renderNewRowInput = () => {
@@ -174,12 +181,11 @@ export class PropertyList extends React.Component {
 
   render() {
     const { properties, entitySetName, editingPermissions, isOwner } = this.props;
-    const propArray = (properties !== null && properties.length > 0) ?
-      this.keyProperties() : [];
+    const propArray = (properties && properties.length > 0) ? properties : [];
     const propertyList = propArray.map((prop) => {
       return (
         <Property
-            key={prop.key}
+            key={prop.id}
             property={prop}
             primaryKey={this.isPrimaryKey(prop)}
             editingPermissions={editingPermissions}

@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import DocumentTitle from 'react-document-title';
 import Immutable from 'immutable';
 import { loadEntitySet, getAllEntitySets } from './VisualizationActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
@@ -150,10 +151,13 @@ class Visualize extends React.Component {
   render() {
     const entitySetId = this.props.location.query.setId;
     const content = (entitySetId) ? this.renderVisualizationPage() : this.renderEntitySetVisualizationList();
+    const title = (this.props.entitySet) ? `Visualize: ${this.props.entitySet.get('title')}` : 'Visualize';
     return (
-      <Page>
-        {content}
-      </Page>
+      <DocumentTitle title={title}>
+        <Page>
+          {content}
+        </Page>
+      </DocumentTitle>
     );
   }
 }

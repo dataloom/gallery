@@ -28,18 +28,14 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   renderColumns = () => {
-    const columnWidth = (TABLE_WIDTH - 1) / Object.keys(this.state.results[0]).length;
-    const propertyIds = Object.keys(this.state.results[0]);
-    return propertyIds.map((id) => {
-      const title = this.props.propertyTypes.filter((propertyType) => {
-        return propertyType.id === id;
-      })[0].title;
+    const columnWidth = (TABLE_WIDTH - 1) / this.props.propertyTypes.length;
+    return this.props.propertyTypes.map((propertyType) => {
       return (
         <Column
-            key={id}
-            header={<Cell>{title}</Cell>}
+            key={propertyType.id}
+            header={<Cell>{propertyType.title}</Cell>}
             cell={
-              <TextCell results={this.state.results} field={id} formatValueFn={this.props.formatValueFn} />
+              <TextCell results={this.state.results} field={propertyType.id} formatValueFn={this.props.formatValueFn} />
             }
             width={columnWidth} />
       );

@@ -2,16 +2,16 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
-import { EntityDataModelApi, PermissionsApi, PrincipalsApi } from 'loom-data';
+import { EntityDataModelApi } from 'loom-data';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
-import * as principalsActionFactory from '../principals/PrincipalsActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
@@ -23,9 +23,9 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import { EntitySetPropType } from '../edm/EdmModel';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
-import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import styles from './entitysetdetail.module.css';
 
+import InlineEditableControl from '../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
 
@@ -56,7 +56,8 @@ class EntitySetDetailComponent extends React.Component {
     entitySetPermissions: PermissionsPropType.isRequired,
 
     // Loading
-    loadEntitySet: PropTypes.func.isRequired
+    loadEntitySet: PropTypes.func.isRequired,
+    updateMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -66,131 +67,62 @@ class EntitySetDetailComponent extends React.Component {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false,
-      properties: {},
-      roleAcls: { Discover: [], Link: [], Read: [], Write: [] },
-      userAcls: { Discover: [], Link: [], Read: [], Write: [], Owner: [] }
+      deleteError: false
     };
   }
 
   componentDidMount() {
-    // reset state for all data
     this.props.resetPermissions();
     this.props.loadEntitySet();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
-      this.loadAcls(nextProps.entitySet.id);
-
-      nextProps.entitySet.entityType.properties.forEach((property) => {
-        this.loadAcls(nextProps.entitySet.id, property);
-      });
-    }
-  }
-
-  /** PERMISSIONS LOGIC **/
-  // TODO: Move all logic to Redux / All Permissinos so that it's not hosted here
-  // TODO: Refactor w/ new roles service once live
-  loadAcls = (entitySetId, property) => {
-    const aclKey = [entitySetId];
-    if (property && property.id) aclKey.push(property.id);
-    this.loadAllUsersAndRoles();
-
-    PermissionsApi.getAcl(aclKey)
-    .then((acls) => {
-      this.updateStateAcls(acls.aces, property);
-    })
-    .catch(() => {
-      this.props.setUpdateError(true);
-    });
-  }
-
-  loadAllUsersAndRoles = () => {
-    let allUsersById = {};
-    const allRolesList = new Set();
-    const myId = JSON.parse(localStorage.profile).user_id;
-    PrincipalsApi.getAllUsers()
-    .then((users) => {
-      allUsersById = users;
-      Object.keys(users).forEach((userId) => {
-        users[userId].roles.forEach((role) => {
-          if (role !== AUTHENTICATED_USER) allRolesList.add(role);
-        });
-      });
-      allUsersById[myId] = null;
-      this.props.setAllUsersAndRoles(allUsersById, allRolesList);
-      this.props.setLoadUsersError(false);
-    })
-    .catch(() => {
-      this.props.setLoadUsersError(true);
-    });
-  }
-
-  updateStateAcls = (aces, property) => {
-    let globalValue = [];
-    const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-    const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-    aces.forEach((ace) => {
-      if (ace.permissions.length > 0) {
-        if (ace.principal.type === ROLE) {
-          if (ace.principal.id === AUTHENTICATED_USER) {
-            globalValue = this.getPermission(ace.permissions);
-          }
-          else {
-            this.getPermission(ace.permissions).forEach((permission) => {
-              roleAcls[permission].push(ace.principal.id);
-            });
-          }
-        }
-        else {
-          this.getPermission(ace.permissions).forEach((permission) => {
-            userAcls[permission].push(ace.principal.id);
-          });
-        }
-      }
-    });
-
-    this.props.setNewRoleValue('');
-    this.props.setNewEmailValue('');
-    this.props.setUpdateError(false);
-
-    if (property) {
-      const propertyAcls = {
-        id: property.id,
-        title: property.title,
-        roleAcls,
-        userAcls,
-        globalValue
-      };
-      this.props.setPropertyData(propertyAcls);
-    }
-    else {
-      const entityAcls = {
-        userAcls,
-        roleAcls,
-        globalValue
-      };
-      this.props.setEntityData(entityAcls);
-    }
-
-  }
-
-  getPermission = (permissions) => {
-    const newPermissions = [];
-    if (permissions.includes(permissionOptions.Owner.toUpperCase())) return [permissionOptions.Owner];
-    if (permissions.includes(permissionOptions.Write.toUpperCase())) newPermissions.push(permissionOptions.Write);
-    if (permissions.includes(permissionOptions.Read.toUpperCase())) newPermissions.push(permissionOptions.Read);
-    if (permissions.includes(permissionOptions.Link.toUpperCase())) newPermissions.push(permissionOptions.Link);
-    if (permissions.includes(permissionOptions.Discover.toUpperCase())) newPermissions.push(permissionOptions.Discover);
-    return newPermissions;
-  }
-
-
-  /** VIEW LOGIC **/
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
+
+  updateEntitySetTitle = (title) => {
+    if (newTitle && newTitle.length) {
+      this.props.updateMetadata(this.props.entitySet.id, { title });
+    }
+  }
+
+  updateEntitySetDescription = (description) => {
+    if (description) this.props.updateMetadata(this.props.entitySet.id, { description })
+  }
+
+  updateEntitySetContacts = (contacts) => {
+    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] })
+  }
+
+  renderTitle = (title, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="xlarge"
+        placeholder="Entity set title..."
+        value={title}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetTitle} />);
+  }
+
+  renderDescription = (description, isOwner) => {
+    return (<InlineEditableControl
+        type="textarea"
+        size="small"
+        placeholder="Entity set description..."
+        value={description}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetDescription} />);
+  }
+
+  renderEntitySetContacts = (contacts, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="small"
+        placeholder="Entity set owner contacts..."
+        value={contacts}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetContacts} />);
+  }
 
   renderHeaderContent = () => {
     const { entitySet, entitySetPermissions } = this.props;
@@ -201,10 +133,10 @@ class EntitySetDetailComponent extends React.Component {
       <StyledFlexContainerStacked>
         <TitleControlsContainer>
           <div>
-            <Page.Title>{entitySet.title}</Page.Title>
+            <Page.Title>{this.renderTitle(entitySet.title, entitySetPermissions.OWNER)}</Page.Title>
             <div className={styles.descriptionTitle}>About this data</div>
-            {entitySet.description}
-            <div className={styles.contacts}>Owner contact: {contactValue}</div>
+            {this.renderDescription(entitySet.description, entitySetPermissions.OWNER)}
+            <span className={styles.contacts}>{this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}</span>
           </div>
 
           <ControlsContainer>
@@ -375,37 +307,43 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ editingPermissions: false });
   };
 
+  getDocumentTitle = () => {
+    return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
+  }
+
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
-        </Page.Header>
-        <Page.Body>
-          {this.renderAddDataButton()}
-          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-          <AsyncContent
-              {...this.props.asyncState}
-              content={() => {
-                // TODO: Remove when removing denormalization
-                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                  return property.id;
-                });
-                return (
-                  <PropertyTypeList
-                      entitySetId={this.props.entitySet.id}
-                      propertyTypeIds={propertyTypeIds}
-                      className="propertyTypeStyleDefault" />
-                );
-              }} />
-          {this.renderAddDataForm()}
-          {this.renderPermissionsPanel()}
-          {this.renderSearchEntitySet()}
-          {this.renderPermissionsSummaryButton()}
-          {this.renderDeleteEntitySet()}
-          {this.renderConfirmDeleteModal()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title={this.getDocumentTitle()}>
+        <Page>
+          <Page.Header>
+            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
+          </Page.Header>
+          <Page.Body>
+            {this.renderAddDataButton()}
+            <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+            <AsyncContent
+                {...this.props.asyncState}
+                content={() => {
+                  // TODO: Remove when removing denormalization
+                  const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                    return property.id;
+                  });
+                  return (
+                    <PropertyTypeList
+                        entitySetId={this.props.entitySet.id}
+                        propertyTypeIds={propertyTypeIds}
+                        className="propertyTypeStyleDefault" />
+                  );
+                }} />
+            {this.renderAddDataForm()}
+            {this.renderPermissionsPanel()}
+            {this.renderSearchEntitySet()}
+            {this.renderPermissionsSummaryButton()}
+            {this.renderDeleteEntitySet()}
+            {this.renderConfirmDeleteModal()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }
@@ -414,7 +352,6 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
-  const permissionsSummary = state.get('permissionsSummary');
 
   let entitySet;
   let entitySetPermissions;
@@ -430,13 +367,13 @@ function mapStateToProps(state) {
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
-    entitySetPermissions,
-    entityProperties: permissionsSummary.get('properties').toJS()
+    entitySetPermissions
   };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
   const id = ownProps.params.id;
+
   return {
     loadEntitySet: () => {
       dispatch(actionFactories.entitySetDetailRequest(id));
@@ -449,29 +386,6 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
-    },
-    /* PERMISSIONS SUMMARY */
-    //TODO: Move these back to Permissions Summary now that we're using Redux
-    setEntityData: (data) => {
-      dispatch(psActionFactories.setEntityData(data));
-    },
-    setPropertyData: (data) => {
-      dispatch(psActionFactories.setPropertyData(data));
-    },
-    setAllUsersAndRoles: (users, roles) => {
-      dispatch(psActionFactories.setAllUsersAndRoles(users, roles));
-    },
-    setLoadUsersError: (bool) => {
-      dispatch(psActionFactories.setLoadUsersError(bool));
-    },
-    setNewRoleValue: (value) => {
-      dispatch(psActionFactories.setNewRoleValue(value));
-    },
-    setNewEmailValue: (value) => {
-      dispatch(psActionFactories.setNewEmailValue(value));
-    },
-    setUpdateError: (bool) => {
-      dispatch(psActionFactories.setUpdateError(bool));
     },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());

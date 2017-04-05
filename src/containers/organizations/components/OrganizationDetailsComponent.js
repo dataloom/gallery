@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
+import DocumentTitle from 'react-document-title';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 import StyledFlexContainerStackedLeftAligned from '../../../components/flex/StyledFlexContainerStackedLeftAligned';
@@ -189,33 +189,39 @@ class OrganizationDetailsComponent extends React.Component {
   }
 
   render() {
+    const title = (this.props.organization) ? this.props.organization.get('title') : 'Organizations';
 
     if (this.props.isCreatingOrg) {
       return (
-        <StyledFlexContainerStacked>
-          { this.renderOrganizationTitleSection() }
-          { this.renderLoadingSpinner() }
-        </StyledFlexContainerStacked>
+        <DocumentTitle title={title}>
+          <StyledFlexContainerStacked>
+            { this.renderOrganizationTitleSection() }
+            { this.renderLoadingSpinner() }
+          </StyledFlexContainerStacked>
+        </DocumentTitle>
       );
     }
 
     if (this.props.isFetchingOrg) {
       return (
-        <StyledFlexContainerStacked>
-          { this.renderLoadingSpinner() }
-        </StyledFlexContainerStacked>
+        <DocumentTitle title={title}>
+          <StyledFlexContainerStacked>
+            { this.renderLoadingSpinner() }
+          </StyledFlexContainerStacked>
+        </DocumentTitle>
       );
     }
-
     return (
-      <StyledFlexContainerStacked>
-        { this.renderOrganizationTitleSection() }
-        { this.renderOrganizationDescriptionSection() }
-        { this.renderOrganizationDomainsSection() }
-        { this.renderOrganizationRolesSection() }
-        { this.renderOrganizationMembersSection() }
-        { this.renderOrganizationAddMembersSection() }
-      </StyledFlexContainerStacked>
+      <DocumentTitle title={title}>
+        <StyledFlexContainerStacked>
+          { this.renderOrganizationTitleSection() }
+          { this.renderOrganizationDescriptionSection() }
+          { this.renderOrganizationDomainsSection() }
+          { this.renderOrganizationRolesSection() }
+          { this.renderOrganizationMembersSection() }
+          { this.renderOrganizationAddMembersSection() }
+        </StyledFlexContainerStacked>
+      </DocumentTitle>
     );
   }
 }

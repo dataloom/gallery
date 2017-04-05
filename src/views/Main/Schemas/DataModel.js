@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { hashHistory } from 'react-router';
+import DocumentTitle from 'react-document-title';
 import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import EntityTypeSearch from './Components/EntityTypeSearch';
@@ -33,12 +34,21 @@ export class DataModel extends React.Component {
     const view = this.props.location.query.type;
     switch (view) {
       case EdmConsts.SCHEMA:
-        return (<SchemaList />);
+        return (
+          <DocumentTitle title="Schemas">
+            <SchemaList />
+          </DocumentTitle>);
       case EdmConsts.PROPERTY_TYPE:
-        return (<PropertyTypeSearch location={this.props.location} />);
+        return (
+          <DocumentTitle title="Property Types">
+            <PropertyTypeSearch location={this.props.location} />
+          </DocumentTitle>);
       case EdmConsts.ENTITY_TYPE:
       default:
-        return (<EntityTypeSearch location={this.props.location} />);
+        return (
+          <DocumentTitle title="Entity Types">
+            <EntityTypeSearch location={this.props.location} />
+          </DocumentTitle>);
     }
   }
 

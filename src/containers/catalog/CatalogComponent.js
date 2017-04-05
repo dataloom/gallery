@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Pagination } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { denormalize } from 'normalizr';
-
+import DocumentTitle from 'react-document-title';
 import Page from '../../components/page/Page';
 import { EntitySetPropType } from '../edm/EdmModel';
 import { EntitySetNschema } from '../edm/EdmStorage';
@@ -58,22 +58,24 @@ class CatalogComponent extends React.Component {
 
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Browse the catalog</Page.Title>
-          <SecurableObjectSearch
-            filterParams={this.props.filterParams}
-            onSubmit={this.props.onSubmitSearch}
-          />
-        </Page.Header>
-        <Page.Body>
-          <AsyncContent {...this.props.asyncState}
-            pendingContent={<h2>Please run a search</h2>}
-            content={() => <EntitySetList {...this.props} />}
-          />
-          {this.renderPagination()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title="Catalog">
+        <Page>
+          <Page.Header>
+            <Page.Title>Browse the catalog</Page.Title>
+            <SecurableObjectSearch
+              filterParams={this.props.filterParams}
+              onSubmit={this.props.onSubmitSearch}
+            />
+          </Page.Header>
+          <Page.Body>
+            <AsyncContent {...this.props.asyncState}
+              pendingContent={<h2>Please run a search</h2>}
+              content={() => <EntitySetList {...this.props} />}
+            />
+            {this.renderPagination()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }

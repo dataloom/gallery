@@ -1,129 +1,173 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-// import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
+import { NONE} from '../../utils/Consts/PermissionsSummaryConsts';
+import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
+
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
-  allUsersById: {}, // check it's an object
+  allUsersById: {},
   allRolesList: [],
-  loadUsersError: false,
-  roleAcls: {},
-  userAcls: {},
-  globalValue: [],
-  properties: {},
-  newRoleValue: '',
-  newEmailValue: '',
-  updateSuccess: false,
-  updateError: false,
   entityUserPermissions: [],
   entityRolePermissions: {},
-  propertyPermissions: {}
+  propertyPermissions: {},
+  isGettingUsersRoles: true,
+  isGettingAcls: false,
+  isGettingPermissions: false
 });
 
+/* HELPER FUNCTIONS */
+function getUserPermissions(action, allUsersById) {
+  const { userAcls, roleAcls, authenticatedUserPermissions } = action.data;
+  const userPermissions = [];
+
+  allUsersById.valueSeq().forEach((user) => {
+    let userId;
+    let nickname;
+    let email;
+
+    if (user) {
+      userId = user.get('user_id');
+      nickname = user.get('nickname');
+      email = user.get('email');
+
+      const userObj = {
+        id: userId,
+        nickname,
+        email,
+        roles: [],
+        permissions: [],
+        individualPermissions: []
+      };
+
+      // Get all user permissions (sum of individual + roles + default);
+      Object.keys(userAcls).forEach((permissionKey) => {
+        if (userAcls[permissionKey].indexOf(userId) !== -1) {
+          userObj.permissions.push(permissionKey);
+          // Save individual permissions separately
+          userObj.individualPermissions.push(permissionKey);
+        }
+      });
+
+      // Add additional permissions based on the roles the user has
+      const roles = user.get('roles');
+      if (roles.size > 1) {
+        Object.keys(roleAcls).forEach((permissionKey) => {
+          roles.forEach((role) => {
+            if (roleAcls[permissionKey].indexOf(role) !== -1 && userObj.permissions.indexOf(permissionKey) === -1) {
+              userObj.permissions.push(permissionKey);
+            }
+            if (userObj.roles.indexOf(role) === -1 && role !== AUTHENTICATED_USER) {
+              userObj.roles.push(role);
+            }
+          });
+        });
+      }
+
+      // Add additional permissions based on default for all users
+      if (authenticatedUserPermissions) {
+        authenticatedUserPermissions.forEach((permission) => {
+          if (userObj.permissions.indexOf(permission) === -1) {
+            userObj.permissions.push(permission);
+          }
+        });
+      }
+
+      userPermissions.push(userObj);
+    }
+  });
+  return userPermissions;
+}
+
+function getRolePermissions(action) {
+  const { roleAcls, authenticatedUserPermissions } = action.data;
+  const rolePermissions = {};
+
+  // Get all roles and their respective permissions
+  Object.keys(roleAcls).forEach((permission) => {
+    roleAcls[permission].forEach((role) => {
+      if (!Object.prototype.hasOwnProperty.call(rolePermissions, role)) {
+        rolePermissions[role] = [];
+      }
+      if (rolePermissions[role].indexOf(permission) === -1) {
+        rolePermissions[role].push(permission);
+      }
+    });
+  });
+
+  rolePermissions[AUTHENTICATED_USER] = authenticatedUserPermissions.length === 0 ? [NONE] : authenticatedUserPermissions;
+  return rolePermissions;
+}
+
+
+/* REDUCER */
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
-    case actionTypes.RESET_PERMISSIONS:
-      return INITIAL_STATE;
+    case actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST:
+      return state.set('isGettingUsersRoles', true);
 
-    case actionTypes.SET_ALL_USERS_AND_ROLES:
+    case actionTypes.GET_ALL_USERS_AND_ROLES_FAILURE:
+      return state.set('isGettingUsersRoles', false);
+
+    case actionTypes.GET_ALL_USERS_AND_ROLES_SUCCESS:
       return state.merge({
+        isGettingUsersRoles: false,
         allUsersById: action.users,
         allRolesList: action.roles
       });
 
-    case actionTypes.SET_LOAD_USERS_ERROR:
-      return state.merge({
-        loadUsersError: action.bool
-      });
+    case actionTypes.GET_ACLS:
+      return state.set('isGettingAcls', true);
 
-    case actionTypes.SET_NEW_ROLE_VALUE:
-      return state.merge({
-        newRoleValue: action.value
-      });
+    case actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST:
+      return state
+      .set('isGettingAcls', false)
+      .set('isGettingPermissions', true);
 
-    case actionTypes.SET_NEW_EMAIL_VALUE:
-      return state.merge({
-        newEmailValue: action.value
-      });
+    case actionTypes.GET_USER_ROLE_PERMISSIONS_SUCCESS:
+      return state.set('isGettingPermissions', false);
 
-    case actionTypes.SET_UPDATE_SUCCESS:
-      return state.merge({
-        updateSuccess: action.bool
-      });
+    case actionTypes.GET_USER_ROLE_PERMISSIONS_FAILURE:
+      return state.set('isGettingPermissions', false);
 
-    case actionTypes.SET_UPDATE_ERROR:
-      return state.merge({
-        updateError: action.bool
-      });
-
-    case actionTypes.SET_ENTITY_DATA:
-      return state.merge({
-        roleAcls: action.data.roleAcls,
-        userAcls: action.data.userAcls,
-        globalValue: action.data.globalValue
-      });
-
-    case actionTypes.SET_ENTITY_GLOBAL_VALUE:
-      return state.merge({
-        globalValue: action.data
-      });
-
-    case actionTypes.SET_ENTITY_USER_PERMISSIONS:
-      return state.merge({
-        entityUserPermissions: action.data
-      });
-
-    case actionTypes.SET_ENTITY_ROLE_PERMISSIONS:
-      return state.merge({
-        entityRolePermissions: action.data
-      });
-
-    case actionTypes.SET_PROPERTY_USER_PERMISSIONS: {
-      const userPermissionsMerge = {
-        propertyPermissions: {
-          [action.property.title]: {
-            userPermissions: action.permissions
+    case actionTypes.SET_ROLE_PERMISSIONS: {
+      const rolePermissions = Immutable.fromJS(getRolePermissions(action));
+      if (action.property) {
+        const rolePermissionsMerge = {
+          propertyPermissions: {
+            [action.property.title]: {
+              rolePermissions
+            }
           }
-        }
-      };
-      return state.mergeDeep(userPermissionsMerge);
+        };
+        return state.mergeDeep(rolePermissionsMerge);
+      }
+      return state.merge({
+        entityRolePermissions: rolePermissions
+      });
     }
 
-    case actionTypes.SET_PROPERTY_ROLE_PERMISSIONS: {
-      const rolePermissionsMerge = {
-        propertyPermissions: {
-          [action.property.title]: {
-            rolePermissions: action.permissions
+    case actionTypes.SET_USER_PERMISSIONS: {
+      const allUsersById = state.get('allUsersById');
+      const userPermissions = Immutable.fromJS(getUserPermissions(action, allUsersById));
+      if (action.property) {
+        const userPermissionsMerge = {
+          propertyPermissions: {
+            [action.property.title]: {
+              userPermissions
+            }
           }
-        }
-      };
-      return state.mergeDeep(rolePermissionsMerge);
+        };
+        return state.mergeDeep(userPermissionsMerge);
+      }
+
+      return state.merge({
+        entityUserPermissions: userPermissions
+      });
     }
 
-    case actionTypes.SET_PROPERTY_DATA: {
-      const propertyDataMerge = {
-        properties: {
-          [action.data.id]: {
-            title: action.data.title,
-            roleAcls: action.data.roleAcls,
-            userAcls: action.data.userAcls,
-            globalValue: action.data.globalValue
-          }
-        }
-      };
-      return state.mergeDeep(propertyDataMerge);
-    }
-
-    case actionTypes.SET_PROPERTY_GLOBAL_VALUE: {
-      const propertyGVMerge = {
-        properties: {
-          [action.data.id]: {
-            globalValue: action.data
-          }
-        }
-      };
-      return state.mergeDeep(propertyGVMerge);
-    }
+    case actionTypes.RESET_PERMISSIONS:
+      return INITIAL_STATE;
 
     default:
       return state;

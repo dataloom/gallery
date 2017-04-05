@@ -1,105 +1,75 @@
 import * as actionTypes from './PermissionsSummaryActionTypes';
 
-export function setEntityData(data) {
+export function initialLoad(entitySet) {
   return {
-    type: actionTypes.SET_ENTITY_DATA,
-    data
+    type: actionTypes.INITIAL_LOAD,
+    entitySet
   };
 }
 
-export function setEntityGlobalValue(data) {
+export function loadEntitySet(entitySet) {
   return {
-    type: actionTypes.SET_ENTITY_GLOBAL_VALUE,
-    data
+    type: actionTypes.LOAD_ENTITY_SET,
+    entitySet
   };
 }
 
-export function setPropertyData(data) {
+export function getAcls(entitySet) {
   return {
-    type: actionTypes.SET_PROPERTY_DATA,
-    data
+    type: actionTypes.GET_ACLS,
+    entitySet
   };
 }
 
-export function setPropertyGlobalValue(id, data) {
+export function getUserRolePermissionsRequest(entitySetId, property) {
   return {
-    type: actionTypes.SET_PROPERTY_GLOBAL_VALUE,
-    id,
-    data
+    type: actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST,
+    entitySetId,
+    property
   };
 }
 
-export function setAllUsersAndRoles(users, roles) {
+export function getUserRolePermissionsSuccess() {
   return {
-    type: actionTypes.SET_ALL_USERS_AND_ROLES,
+    type: actionTypes.GET_USER_ROLE_PERMISSIONS_SUCCESS
+  };
+}
+
+export function getUserRolePermissionsFailure() {
+  return {
+    type: actionTypes.GET_USER_ROLE_PERMISSIONS_FAILURE
+  };
+}
+
+export function getAllUsersAndRolesRequest(entitySet) {
+  return {
+    type: actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST,
+    entitySet
+  };
+}
+
+export function getAllUsersAndRolesSuccess(users, roles) {
+  return {
+    type: actionTypes.GET_ALL_USERS_AND_ROLES_SUCCESS,
     users,
     roles
   };
 }
 
-export function setLoadUsersError(bool) {
+export function setUserPermissions(property, data) {
   return {
-    type: actionTypes.SET_LOAD_USERS_ERROR,
-    bool
-  };
-}
-
-export function setNewRoleValue(value) {
-  return {
-    type: actionTypes.SET_NEW_ROLE_VALUE,
-    value
-  };
-}
-
-export function setNewEmailValue(value) {
-  return {
-    type: actionTypes.SET_NEW_EMAIL_VALUE,
-    value
-  };
-}
-
-export function setUpdateSuccess(bool) {
-  return {
-    type: actionTypes.SET_UPDATE_SUCCESS,
-    bool
-  };
-}
-
-export function setUpdateError(bool) {
-  return {
-    type: actionTypes.SET_UPDATE_ERROR,
-    bool
-  };
-}
-
-export function setPropertyUserPermissions(permissions, property) {
-  return {
-    type: actionTypes.SET_PROPERTY_USER_PERMISSIONS,
-    permissions,
-    property
-  };
-}
-
-export function setPropertyRolePermissions(permissions, property) {
-  return {
-    type: actionTypes.SET_PROPERTY_ROLE_PERMISSIONS,
-    permissions,
-    property
-  };
-}
-
-export function setEntityUserPermissions(data) {
-  return {
-    type: actionTypes.SET_ENTITY_USER_PERMISSIONS,
+    type: actionTypes.SET_USER_PERMISSIONS,
+    property,
     data
-  };
+  }
 }
 
-export function setEntityRolePermissions(data) {
+export function setRolePermissions(property, data) {
   return {
-    type: actionTypes.SET_ENTITY_ROLE_PERMISSIONS,
+    type: actionTypes.SET_ROLE_PERMISSIONS,
+    property,
     data
-  };
+  }
 }
 
 export function resetPermissions() {

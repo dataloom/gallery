@@ -106,4 +106,21 @@ function loadEdmEpic(action$) {
     .mergeMap(loadEdm)
 }
 
-export default combineEpics(loadEdmEpic, referenceEpic, allEntityTypesEpic, allPropertyTypesEpic);
+function updateMetadataEpic(action$) {
+  return action$.ofType(actionTypes.UPDATE_ENTITY_SET_METADATA_REQUEST)
+  .mergeMap((action :Action) => {
+    return Observable
+      .from(EntityDataModelApi.updateEntitySetMetaData(action.entitySetId, action.metadataUpdate))
+      .mergeMap(() => {
+        return Observable.of(
+          actionFactories.updateEntitySetMetadataResolve()
+        );
+      })
+      // Error Handling
+      .catch((error) => {
+        return Observable.of(actionFactories.updateEntitySetMetadataReject('Unable to update entity set metadata.'));
+      });
+  });
+}
+
+export default combineEpics(loadEdmEpic, referenceEpic, allEntityTypesEpic, allPropertyTypesEpic, updateMetadataEpic);

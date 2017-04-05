@@ -1,11 +1,23 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi, SearchApi } from 'loom-data';
-import { EntityTypeFqn } from './EntityTypeFqn';
+
+import {
+  EntityDataModelApi,
+  SearchApi
+} from 'loom-data';
+
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import AddButton from '../../../../components/buttons/AddButton';
 import styles from '../styles.module.css';
+
+import {
+  EntityTypeFqn
+} from './EntityTypeFqn';
+
+import {
+  NameNamespaceAutosuggest
+} from './NameNamespaceAutosuggest';
 
 export class EntityTypeFqnList extends React.Component {
   static propTypes = {
@@ -62,11 +74,8 @@ export class EntityTypeFqnList extends React.Component {
   }
 
   renderAddNewRowButton = () => {
-    if (!this.context.isAdmin) return null;
-    const className = (this.state.newEntityTypeRow) ? styles.hidden : styles.addButton;
-    return (
-      <button onClick={this.newEntityType} className={className}>+</button>
-    );
+    if (!this.context.isAdmin || this.state.newEntityTypeRow) return null;
+    return <AddButton onClick={this.newEntityType} />;
   }
 
   renderNewRowInput = () => {
