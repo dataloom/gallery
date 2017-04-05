@@ -4,6 +4,7 @@ import '../../../config/chai/chai.config';
 import Immutable from 'immutable';
 import * as PSActionFactory from './PermissionsSummaryActionFactory';
 import reducer from './PermissionsSummaryReducer';
+import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 
 describe('PermissionsSummaryReducer', function() {
   let INITIAL_STATE;
@@ -94,15 +95,35 @@ describe('PermissionsSummaryReducer', function() {
     expect(state).to.have.property('isGettingPermissions').equal(false);
   });
 
-  // it('should get role permissions', function() {
-  //   const property = {title: 'title'};
-  //   const data = {};
-  //   const action = PSActionFactory.setRolePermissions(property, data);
-  //   const permissions = getRolePermissions(action); // TODO: import function
-  //   const result = {};
-  //
-  //   expect(permissions).to.equal(result);
-  // })
+  it('should get role permissions', function() {
+    const property = {
+      title: 'title'
+    };
+    const data = {
+      authenticatedUserPermissions: [],
+      roleAcls: {
+        Discover: [],
+        Link: ['foo'],
+        Read: [],
+        Write: []
+      },
+      userAcls: {
+        Discover: [],
+        Link: [],
+        Read: [],
+        Write: ['bar'],
+        Ownder: []
+      }
+    };
+    const action = PSActionFactory.setRolePermissions(property, data);
+    const permissions = getRolePermissions(action);
+    const result = {
+      AuthenticatedUser: ['None'],
+      foo: ['Link']
+    };
+
+    expect(permissions).to.eql(result);
+  });
 
   // it('should update property role permissions', function() {
   //   const property = {title: 'title'};
