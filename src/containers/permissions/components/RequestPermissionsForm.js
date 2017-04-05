@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
+
+import Immutable from 'immutable';
+
 import { Button, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
-import { Map } from 'immutable';
 
 import PropertyTypeList from '../../edm/components/PropertyTypeList';
 import styles from './permissions.module.css';
@@ -16,12 +18,12 @@ export default class RequestPermissionsForm extends React.Component {
     onSubmit: PropTypes.func.isRequired,
     onPermissionChange: PropTypes.func.isRequired,
     onReasonChange: PropTypes.func.isRequired,
-    pidToRequestedPermissions: PropTypes.instanceOf(Map),
+    pidToRequestedPermissions: PropTypes.instanceOf(Immutable.Map),
     reason: PropTypes.string
   };
 
   static defaultProps = {
-    pidToRequestedPermissions: Map(),
+    pidToRequestedPermissions: Immutable.Map(),
     reason: ''
   };
 
