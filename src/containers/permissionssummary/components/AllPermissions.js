@@ -145,7 +145,7 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch) {
   const actions = {
     getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
   };

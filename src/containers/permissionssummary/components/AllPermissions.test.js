@@ -1,9 +1,6 @@
-import React from 'react';
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
 import '../../../../config/chai/chai.config';
 
-import AllPermissions from './AllPermissions';
 import * as PSActionFactory from '../PermissionsSummaryActionFactory';
 import * as ESDCActionFactory from '../../entitysetdetail/EntitySetDetailActionFactories';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
@@ -11,6 +8,7 @@ import * as EDMActionFactory from '../../edm/EdmActionFactories';
 import { mapDispatchToProps } from './AllPermissions';
 
 describe('PermissionsSummary Component', function() {
+  const id = 'id';
 
   describe('mapDispatchToProps', function() {
     let dispatch;
@@ -24,8 +22,6 @@ describe('PermissionsSummary Component', function() {
     });
 
     describe('loadEntitySet', function() {
-      const id = 'id';
-
       it('should dispatch entitySetDetailRequest', function() {
         mappedProps.loadEntitySet(id);
 
@@ -51,6 +47,7 @@ describe('PermissionsSummary Component', function() {
     });
 
     describe('getAllUsersAndRolesRequest', function() {
+
       it('should dispatch getAllUsersAndRolesRequest', function() {
         mappedProps.actions.getAllUsersAndRolesRequest();
 
