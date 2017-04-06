@@ -13,6 +13,14 @@ import {
   isReference
 } from './AsyncStorage';
 
+export function updateAsyncReferenceOld(reference :AsyncReference, value :any) {
+  return {
+    type: AsyncActionTypes.UPDATE_ASYNC_REFERENCE_OLD,
+    reference,
+    value
+  };
+}
+
 /**
  * Depricated.
  * @param reference

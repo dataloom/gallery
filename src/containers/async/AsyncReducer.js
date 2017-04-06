@@ -13,6 +13,11 @@ export const INITIAL_STATE :AsyncContent = fromJS({});
 export default function reducer(state :AsyncContent = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
+    case actionTypes.UPDATE_ASYNC_REFERENCE_OLD: {
+      const { reference, value } = action;
+      return state.setIn([reference.namespace, reference.id], value);
+    }
+
     case actionTypes.UPDATE_ASYNC_REFERENCE:
       return resolveReference(state, action.reference, createCompleteValue(action.value));
 

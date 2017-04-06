@@ -78,7 +78,7 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
       return references.map((reference) => {
         const status = statusByReferenceId[reference.id];
         const value = status ? status : ASYNC_STATUS.NOT_FOUND;
-        return AsyncActionFactory.updateAsyncReference(reference, value);
+        return AsyncActionFactory.updateAsyncReferenceOld(reference, value);
       });
     })
   );

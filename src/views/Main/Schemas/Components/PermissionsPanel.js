@@ -69,7 +69,7 @@ const permissionOptions = {
   Owner: 'Owner'
 };
 
-export class PermissionsPanel extends React.Component {
+class PermissionsPanel extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string,
     propertyTypeId: PropTypes.string,
