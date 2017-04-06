@@ -6,18 +6,16 @@ import * as PSActionFactory from './PermissionsSummaryActionFactory';
 import reducer from './PermissionsSummaryReducer';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 
-// const allUsersById = [
-//   {
-//     'auth0|foo': {
-//       email: 'foo',
-//       nickname: 'bar',
-//       organization: [],
-//       roles: ['foo'],
-//       user_id: 'auth0|foo',
-//       username: 'baz'
-//     }
-//   }
-// ];
+const allUsersById = {
+  'auth0|foo': {
+    email: 'foo',
+    nickname: 'bar',
+    organization: [],
+    roles: ['foo', 'AuthenticatedUser'],
+    user_id: 'auth0|foo',
+    username: 'baz'
+  }
+};
 
 const property = {
   title: 'title'
@@ -160,33 +158,23 @@ describe('PermissionsSummaryReducer', function() {
     });
 
   // TODO: Fix errors in user permissions tests
-    // it('should get user permissions', function() {
-    //   const allUsersById = {
-    //     'auth0|foo': {
-    //       email: 'foo',
-    //       nickname: 'bar',
-    //       organization: [],
-    //       roles: ['foo'],
-    //       user_id: 'auth0|foo',
-    //       username: 'baz'
-    //     }
-    //   };
-    //   const action = PSActionFactory.setUserPermissions(property, data);
-    //   const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
-    //   const result = [
-    //     {
-    //       email: 'foo',
-    //       id: 'auth0|foo',
-    //       individualPermissions: ['Write'],
-    //       nickname: 'bar',
-    //       permissions: ['Link', 'Write'],
-    //       roles: ['foo']
-    //     }
-    //   ];
-    //   console.log('permissions, result:', permissions, result);
-    //
-    //   expect(permissions).to.eql(result);
-    // });
+    it('should get user permissions', function() {
+      const action = PSActionFactory.setUserPermissions(property, data);
+      const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
+      const result = [
+        {
+          email: 'foo',
+          id: 'auth0|foo',
+          individualPermissions: ['Write'],
+          nickname: 'bar',
+          permissions: ['Write', 'Link'],
+          roles: ['foo']
+        }
+      ];
+
+      // TODO: Reformat to accept different order in array e.g. permissions
+      expect(permissions).to.eql(result);
+    });
     //
     // it('should update property user permissions', function() {
     //   const allUsersById = {
