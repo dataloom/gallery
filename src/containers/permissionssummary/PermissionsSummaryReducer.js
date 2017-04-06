@@ -16,7 +16,6 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   isGettingPermissions: false
 });
 
-/* REDUCER */
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
