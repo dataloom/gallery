@@ -157,7 +157,6 @@ describe('PermissionsSummaryReducer', function() {
       expect(state).to.have.property('entityRolePermissions').eql(permissions);
     });
 
-  // TODO: Fix errors in user permissions tests
     it('should get user permissions', function() {
       const action = PSActionFactory.setUserPermissions(property, data);
       const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
