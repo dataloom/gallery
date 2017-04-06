@@ -33,7 +33,6 @@ describe('RolePermissionsTable', function() {
     expect(wrapper.find('th')).to.have.length(2);
   });
 
-  // TODO: fix
   it('Renders a row for each role', function() {
     const wrapper = mount(
       <RolePermissionsTable {...defaultProps} />
