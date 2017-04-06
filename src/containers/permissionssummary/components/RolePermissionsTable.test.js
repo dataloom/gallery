@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import '../../../../config/chai/chai.config';
 import Immutable from 'immutable';
 import RolePermissionsTable from './RolePermissionsTable';
@@ -34,19 +34,11 @@ describe('RolePermissionsTable', function() {
   });
 
   // TODO: fix
-  // it('Renders a row for each role', function() {
-  //   const wrapper = shallow(
-  //     <RolePermissionsTable {...defaultProps} />
-  //   );
-  //
-  //   expect(wrapper.find('.mainRow')).to.have.length(3);
-  // });
+  it('Renders a row for each role', function() {
+    const wrapper = mount(
+      <RolePermissionsTable {...defaultProps} />
+    );
 
-  // it(`Renders ${'None'} when no permissions are granted`, function() {
-  //   const wrapper = shallow(
-  //     <RolePermissionsTable {...defaultProps} />
-  //   );
-  //
-  //   expect(wrapper.find('.permissions-User').text()).to.eql('None');
-  // });
+    expect(wrapper.find('.roleRow')).to.have.length(3);
+  });
 });
