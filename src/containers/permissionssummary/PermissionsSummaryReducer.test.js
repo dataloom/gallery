@@ -173,44 +173,24 @@ describe('PermissionsSummaryReducer', function() {
       ];
 
       // TODO: Reformat to accept different order in array e.g. permissions
-      expect(permissions).to.eql(result);
+      expect(permissions).to.deep.eql(result);
     });
-    //
-    // it('should update property user permissions', function() {
-    //   const allUsersById = {
-    //     'auth0|foo': {
-    //       email: 'foo',
-    //       nickname: 'bar',
-    //       organization: [],
-    //       roles: ['foo'],
-    //       user_id: 'auth0|foo',
-    //       username: 'baz'
-    //     }
-    //   };
-    //   const action = PSActionFactory.setUserPermissions(property, data);
-    //   const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
-    //   const state = reducer(INITIAL_STATE, action);
-    //
-    //   expect(state).to.have.deep.property(`propertyPermissions.${property.title}.userPermissions`).eql(permissions);
-    // });
-    //
-    // it('should update entity user permissions', function() {
-    //   const allUsersById = {
-    //     'auth0|foo': {
-    //       email: 'foo',
-    //       nickname: 'bar',
-    //       organization: [],
-    //       roles: ['foo'],
-    //       user_id: 'auth0|foo',
-    //       username: 'baz'
-    //     }
-    //   };
-    //   const action = PSActionFactory.setUserPermissions(undefined, data);
-    //   const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
-    //   const state = reducer(INITIAL_STATE, action);
-    //
-    //   expect(state).to.have.property('entityUserPermissions').eql(permissions);
-    // });
+
+    it('should update property user permissions', function() {
+      const action = PSActionFactory.setUserPermissions(property, data);
+      const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
+      const state = reducer(INITIAL_STATE, action);
+
+      expect(Promise.resolve(state)).to.eventually.have.deep.property(`propertyPermissions.${property.title}.userPermissions`).eql(Immutable.fromJS(permissions));
+    });
+
+    it('should update entity user permissions', function() {
+      const action = PSActionFactory.setUserPermissions(undefined, data);
+      const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
+      const state = reducer(INITIAL_STATE, action);
+
+      expect(Promise.resolve(state)).to.eventually.have.property('entityUserPermissions').eql(permissions);
+    });
   });
 
   describe('Reset permissions', function() {
