@@ -19,6 +19,7 @@ import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 import AllPermissions from '../../containers/permissionssummary/components/AllPermissions';
+import EditProfile from '../../containers/profile/containers/EditProfileContainer';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -92,7 +93,8 @@ export const makeMainRoutes = () => {
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
-      <Route path='*' component={HomeComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.EDIT_PROFILE} component={EditProfile} onEnter={requireAuth} />
+      <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
 };
