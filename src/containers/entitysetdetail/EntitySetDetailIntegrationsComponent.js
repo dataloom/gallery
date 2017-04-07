@@ -1,20 +1,26 @@
 import React, { PropTypes } from 'react';
-import { Collapse } from 'react-bootstrap';
+import { Collapse, Button } from 'react-bootstrap';
 import styles from './entitysetdetail.module.css';
 
-const IntegrationDetails = ({handleIntegrationClick}) => {
+const IntegrationDetails = ({isOpen, handleClick}) => {
   return (
-    <Collapse onClick={handleIntegrationClick} in={isIntegrationDetailsOpen}>
-      <div>
-        DETAILS!
+    <div className={styles.integrationDetailsWrapper}>
+      <div className={styles.integrationDetailsHeader}>
+        Integration Details
       </div>
-    </Collapse>
+      <Button block onClick={handleClick}>Integration Details</Button>
+      <Collapse onClick={handleClick} in={isOpen}>
+        <div>
+          DETAILS!
+        </div>
+      </Collapse>
+    </div>
   )
 };
 
 IntegrationDetails.propTypes = {
-  handleIntegrationClick: PropTypes.func.isRequired,
-  isIntegrationDetailsOpen: PropTypes.bool.isRequired
+  isOpen: PropTypes.bool.isRequired,
+  handleClick: PropTypes.func.isRequired
 };
 
 export default IntegrationDetails;

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 import { EntityDataModelApi } from 'loom-data';
+import IntegrationDetails from './EntitySetDetailIntegrationsComponent';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -311,6 +312,10 @@ class EntitySetDetailComponent extends React.Component {
     return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
   }
 
+  handleIntegrationDetailsClick = () => {
+    this.setState({isIntegrationDetailsOpen: !this.state.isIntegrationDetailsOpen});
+  }
+
   render() {
     return (
       <DocumentTitle title={this.getDocumentTitle()}>
@@ -337,6 +342,9 @@ class EntitySetDetailComponent extends React.Component {
                 }} />
             {this.renderAddDataForm()}
             {this.renderPermissionsPanel()}
+            <IntegrationDetails
+                isOpen={this.state.isIntegrationDetailsOpen}
+                handleClick={this.handleIntegrationDetailsClick} />
             {this.renderSearchEntitySet()}
             {this.renderPermissionsSummaryButton()}
             {this.renderDeleteEntitySet()}
