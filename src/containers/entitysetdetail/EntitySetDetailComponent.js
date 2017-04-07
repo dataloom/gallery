@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 import { EntityDataModelApi } from 'loom-data';
-import IntegrationDetails from './EntitySetDetailIntegrationsComponent';
+import IntegrationDetailsModal from './IntegrationDetailsModal';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -68,7 +68,8 @@ class EntitySetDetailComponent extends React.Component {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false
+      deleteError: false,
+      isIntegrationDetailsOpen: false
     };
   }
 
@@ -241,6 +242,14 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
+  openIntegrationDetailsModal = () => {
+    this.setState({ isIntegrationDetailsOpen: true });
+  }
+
+  closeIntegrationDetailsModal = () => {
+    this.setState({ isIntegrationDetailsOpen: false });
+  }
+
   renderAddDataButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
@@ -253,6 +262,24 @@ class EntitySetDetailComponent extends React.Component {
           <span className={styles.buttonText}>Add Data</span>
         </Button>
       </div>
+    );
+  }
+
+  renderIntegrationDetailsButton = () => {
+    return (
+      <div className={styles.buttonWrapper}>
+        <Button
+            className={styles.center}
+            onClick={this.openIntegrationDetailsModal}>
+          <span className={styles.buttonText}>View Integration Details</span>
+        </Button>
+      </div>
+    );
+  }
+
+  renderIntegrationDetailsModal = () => {
+    return (
+      <IntegrationDetailsModal isOpen={this.state.isIntegrationDetailsOpen} onClose={this.closeIntegrationDetailsModal} />
     );
   }
 
@@ -312,10 +339,6 @@ class EntitySetDetailComponent extends React.Component {
     return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
   }
 
-  handleIntegrationDetailsClick = () => {
-    this.setState({isIntegrationDetailsOpen: !this.state.isIntegrationDetailsOpen});
-  }
-
   render() {
     return (
       <DocumentTitle title={this.getDocumentTitle()}>
@@ -342,11 +365,10 @@ class EntitySetDetailComponent extends React.Component {
                 }} />
             {this.renderAddDataForm()}
             {this.renderPermissionsPanel()}
-            <IntegrationDetails
-                isOpen={this.state.isIntegrationDetailsOpen}
-                handleClick={this.handleIntegrationDetailsClick} />
             {this.renderSearchEntitySet()}
             {this.renderPermissionsSummaryButton()}
+            {this.renderIntegrationDetailsButton()}
+            {this.renderIntegrationDetailsModal()}
             {this.renderDeleteEntitySet()}
             {this.renderConfirmDeleteModal()}
           </Page.Body>
