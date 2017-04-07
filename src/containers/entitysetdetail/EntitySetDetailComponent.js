@@ -265,14 +265,14 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderIntegrationDetailsButton = () => {
+  renderIntegrationDetailsLink = () => {
     return (
       <div className={styles.buttonWrapper}>
-        <Button
-            className={styles.center}
+        <Link
+            className={`${styles.center} ${styles.link}`}
             onClick={this.openIntegrationDetailsModal}>
           <span className={styles.buttonText}>View Integration Details</span>
-        </Button>
+        </Link>
       </div>
     );
   }
@@ -345,7 +345,7 @@ class EntitySetDetailComponent extends React.Component {
   render() {
     return (
       <DocumentTitle title={this.getDocumentTitle()}>
-        <Page>
+        <Page className={styles.page}>
           <Page.Header>
             <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
           </Page.Header>
@@ -370,10 +370,10 @@ class EntitySetDetailComponent extends React.Component {
             {this.renderPermissionsPanel()}
             {this.renderSearchEntitySet()}
             {this.renderPermissionsSummaryButton()}
-            {this.renderIntegrationDetailsButton()}
-            {this.renderIntegrationDetailsModal()}
             {this.renderDeleteEntitySet()}
             {this.renderConfirmDeleteModal()}
+            {this.renderIntegrationDetailsLink()}
+            {this.renderIntegrationDetailsModal()}
           </Page.Body>
         </Page>
       </DocumentTitle>
