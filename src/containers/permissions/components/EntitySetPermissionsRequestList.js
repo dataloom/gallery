@@ -36,7 +36,13 @@ class EntitySetPermissionsRequestList extends React.Component {
   renderContent = (statuses) => {
 
     const openStatuses = statuses.filter((status) => {
-      return status.status === RequestStatus.SUBMITTED;
+      if (status.status != null) {
+        return status.status === RequestStatus.SUBMITTED;
+      }
+      else if (status.value != null) {
+        return status.value.status === RequestStatus.SUBMITTED;
+      }
+      return false;
     });
 
     if (openStatuses.length === 0) {
@@ -44,7 +50,12 @@ class EntitySetPermissionsRequestList extends React.Component {
     }
 
     const statusesByPrincipalId = groupBy(openStatuses, (status) => {
-      return status.principal.id;
+
+      if (status.principal != null) {
+        return status.principal.id;
+      }
+
+      return status.value.principal.id;
     });
 
     const entitySetPermissionsRequests = Object.keys(statusesByPrincipalId)
