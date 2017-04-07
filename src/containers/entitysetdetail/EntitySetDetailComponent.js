@@ -279,7 +279,10 @@ class EntitySetDetailComponent extends React.Component {
 
   renderIntegrationDetailsModal = () => {
     return (
-      <IntegrationDetailsModal isOpen={this.state.isIntegrationDetailsOpen} onClose={this.closeIntegrationDetailsModal} />
+      <IntegrationDetailsModal
+          isOpen={this.state.isIntegrationDetailsOpen}
+          onClose={this.closeIntegrationDetailsModal}
+          entitySet={this.props.entitySet} />
     );
   }
 
