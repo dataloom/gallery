@@ -13,6 +13,12 @@ export default function reducer(state :Immutble.Map<*, *> = INITIAL_STATE, actio
     case actionTypes.ON_PROFILE_SUBMIT:
       console.log('hit onProfileSubmit reducer case, action:', action);
 
+    case actionTypes.HANDLE_CHANGE:
+      console.log('hit HANDLE_CHANGE reducer case, action:', action);
+      return state.merge({
+        [action.label]: action.value
+      });
+
     default:
       return state;
   }

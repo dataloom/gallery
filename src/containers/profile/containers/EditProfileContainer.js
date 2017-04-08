@@ -8,13 +8,28 @@ import styles from '../styles.module.css';
 
 class EditProfileContainer extends React.Component {
   static propTypes = {
+    firstName: PropTypes.string.isRequired,
+    lastName: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
+  }
+
+  getUserDetailsObj = () => {
+    const { firstName, lastName, email } = this.props;
+    return {
+      firstName,
+      lastName,
+      email
+    };
   }
 
   render() {
     return (
       <EditProfile
-          onSubmit={this.props.onSubmit} />
+          userDetails={this.getUserDetailsObj()}
+          onSubmit={this.props.onSubmit}
+          handleChange={this.props.handleChange} />
     );
   }
 }
@@ -23,12 +38,15 @@ function mapStateToProps(state) {
   const profile = state.get('profile');
 
   return {
-    test: 'sup'
+    firstName: profile.get('firstName'),
+    lastName: profile.get('lastName'),
+    email: profile.get('email')
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
+    handleChange: actionFactory.handleChange,
     onSubmit: actionFactory.onProfileSubmit
   };
 

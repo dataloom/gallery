@@ -1,1 +1,2 @@
 export const ON_PROFILE_SUBMIT = 'ON_PROFILE_SUBMIT';
+export const HANDLE_CHANGE = 'HANDLE_CHANGE';

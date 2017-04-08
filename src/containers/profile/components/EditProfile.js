@@ -6,7 +6,7 @@ import Page from '../../../components/page/Page';
 import ProfileForm from './ProfileForm';
 import styles from '../styles.module.css';
 
-const EditProfile = ({ userDetails, onSubmit }) => {
+const EditProfile = ({ userDetails, handleChange, onSubmit }) => {
   return (
     <DocumentTitle title="Edit Profile">
       <Page>
@@ -14,7 +14,9 @@ const EditProfile = ({ userDetails, onSubmit }) => {
           <Page.Title>Edit Profile</Page.Title>
         </Page.Header>
         <Page.Body>
-          <ProfileForm />
+          <ProfileForm
+              userDetails={userDetails}
+              handleChange={handleChange} />
           <Button onClick={onSubmit}>Submit</Button>
         </Page.Body>
       </Page>
@@ -23,6 +25,8 @@ const EditProfile = ({ userDetails, onSubmit }) => {
 };
 
 EditProfile.propTypes = {
+  userDetails: PropTypes.object.isRequired,
+  handleChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired
 };
 
