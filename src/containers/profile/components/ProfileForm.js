@@ -4,6 +4,8 @@ import styles from '../styles.module.css';
 
 // TODO: Make this modular
 // QUESTION: How to get placeholder text - set it as property on values obj?
+// TODO: Set label on left side
+// TODO: Style Form
 const ProfileForm = ({ values, handleChange }) => {
   return (
     <form>

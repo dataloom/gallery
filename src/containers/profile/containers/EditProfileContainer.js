@@ -2,55 +2,42 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
+import { Button } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
+
 import * as actionFactory from '../ProfileActionFactory';
-import EditProfile from '../components/EditProfile';
+import Page from '../../../components/page/Page';
+import BasicInfoForm from './BasicInfoForm';
 import styles from '../styles.module.css';
 
 class EditProfileContainer extends React.Component {
   static propTypes = {
-    firstName: PropTypes.string.isRequired,
-    lastName: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    handleChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
-  }
-
-  getUserDetailsObj = () => {
-    const { firstName, lastName, email } = this.props;
-    return {
-      firstName,
-      lastName,
-      email
-    };
   }
 
   render() {
     return (
-      <EditProfile
-          userDetails={this.getUserDetailsObj()}
-          onSubmit={this.props.onSubmit}
-          handleChange={this.props.handleChange} />
+      <DocumentTitle title="Edit Profile">
+        <Page>
+          <Page.Header>
+            <Page.Title>Edit Profile</Page.Title>
+          </Page.Header>
+          <Page.Body>
+            <BasicInfoForm />
+            <Button onClick={this.props.onSubmit}>Submit</Button>
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }
 
-function mapStateToProps(state) {
-  const profile = state.get('profile');
-
-  return {
-    firstName: profile.get('firstName'),
-    lastName: profile.get('lastName'),
-    email: profile.get('email')
-  };
-}
-
 function mapDispatchToProps(dispatch) {
   const actions = {
-    handleChange: actionFactory.handleChange,
     onSubmit: actionFactory.onProfileSubmit
   };
 
   return bindActionCreators(actions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditProfileContainer);
+export default connect(mapDispatchToProps)(EditProfileContainer);
