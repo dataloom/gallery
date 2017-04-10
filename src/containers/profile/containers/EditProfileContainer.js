@@ -15,6 +15,8 @@ class EditProfileContainer extends React.Component {
     onSubmit: PropTypes.func.isRequired
   }
 
+  // TODO: Add in submit button once hooked up to backend
+  // <Button onClick={this.props.onSubmit}>Submit</Button>
   render() {
     return (
       <DocumentTitle title="Edit Profile">
@@ -24,7 +26,6 @@ class EditProfileContainer extends React.Component {
           </Page.Header>
           <Page.Body>
             <BasicInfoForm />
-            <Button onClick={this.props.onSubmit}>Submit</Button>
           </Page.Body>
         </Page>
       </DocumentTitle>
