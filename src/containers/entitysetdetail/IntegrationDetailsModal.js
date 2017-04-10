@@ -16,12 +16,11 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
           namespace = property.type.namespace;
         }
       });
-      return (<li><b>Key(s): </b>{namespace}.{title}</li>);
+      return (<li>{namespace}.{title}</li>);
     });
   };
 
   const getEntityDetails = () => {
-    console.log('entitySet:', entitySet);
     if (entitySet) {
       return (
         <div>
@@ -29,7 +28,11 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
           <ul className={styles.list}>
             <li><b>Entity Set Name: </b>{entitySet.name}</li>
             <li><b>Entity Set Type: </b>{entitySet.entityType.type.name}</li>
-            {getKeyListItems()}
+            <li><b>Primary Key(s): </b>
+              <ul>
+              {getKeyListItems()}
+              </ul>
+            </li>
           </ul>
         </div>
       );
@@ -38,7 +41,6 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
 
   const getPropertyListItems = () => {
     const { properties } = entitySet.entityType;
-    console.log('properties:', properties);
     return properties.map((property) => (
       <li><b>namespace.propertyName: </b>{property.type.namespace}.{property.type.name}</li>
     ));
