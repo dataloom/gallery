@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 import styles from '../styles.module.css';
 
 // TODO: Set label on left side
@@ -8,18 +9,15 @@ const getFormItems = (content, handleChange) => {
   // TODO: Update key with item id
   const formItems = content.map((item) => {
     return (
-      <div className={styles.formItemWrapper} key={item.key}>
-        <div className={styles.controlLabel}>
-          <ControlLabel>
-            {item.label}:
-          </ControlLabel>
-        </div>
-        <div className={styles.formControl}>
-          <FormControl
-              type="text"
-              value={item.value}
-              disabled />
-        </div>
+      <div className={styles.formRow} key={item.key}>
+        <ControlLabel className={styles.controlLabel}>
+          {item.label}
+        </ControlLabel>
+        <FormControl
+            className={styles.formControl}
+            type="text"
+            value={item.value}
+            disabled />
       </div>
     );
   });

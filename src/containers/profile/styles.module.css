@@ -2,6 +2,7 @@
   border: 1px solid grey;
   width: 800px;
   margin-bottom: 40px;
+  position: relative;
 }
 
 .header {
@@ -14,18 +15,30 @@
   border-bottom: 1px solid grey;
 }
 
+StyledFlexContainer {
+  align-items: center;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
 .formGroup {
   padding: 20px;
 }
 
-.formItemWrapper {
-  margin-bottom: 10px;
-}
-
 .controlLabel, .formControl {
-  display: inline-block;
+  font-size: 16px;
 }
 
 .controlLabel {
-  margin-right: 10px;
+  flex: 1 0 0;
+  text-align: right;
+  padding: 0 10px;
+}
+
+.formControl {
+  flex: 2 0 0;
 }
