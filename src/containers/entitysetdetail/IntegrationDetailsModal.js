@@ -6,16 +6,17 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   const getKeyListItems = () => {
     const keys = entitySet.entityType.key;
     const properties = entitySet.entityType.properties;
-    const namespace = entitySet.entityType.type.namespace;
-    let title;
 
     return keys.map((key) => {
+      let title;
+      let namespace;
       properties.forEach((property) => {
         if (property.id === key) {
           title = property.title;
+          namespace = property.type.namespace;
         }
       });
-      return (<li><b>Key: </b>{namespace}.{title}</li>);
+      return (<li><b>Key(s): </b>{namespace}.{title}</li>);
     });
   };
 
