@@ -22,7 +22,7 @@ const getFormItems = (content, handleChange) => {
     );
   });
 
-  // TODO: Make input editable once changes are able to be made
+  // TODO: Make input editable once changes are able to be saved
   // <FormControl
   //     type="text"
   //     value={item.value}
