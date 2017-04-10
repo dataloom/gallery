@@ -5,9 +5,18 @@ import styles from './entitysetdetail.module.css';
 const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   const getKeyListItems = () => {
     const keys = entitySet.entityType.key;
-    return keys.map((key) => (
-      <li><b>Key: </b>{key}</li>
-    ));
+    const properties = entitySet.entityType.properties;
+    const namespace = entitySet.entityType.type.namespace;
+    let title;
+
+    return keys.map((key) => {
+      properties.forEach((property) => {
+        if (property.id === key) {
+          title = property.title;
+        }
+      });
+      return (<li><b>Key: </b>{namespace}.{title}</li>);
+    });
   };
 
   const getEntityDetails = () => {
