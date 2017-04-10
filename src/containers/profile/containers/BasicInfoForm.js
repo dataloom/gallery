@@ -15,20 +15,37 @@ class BasicInfoForm extends React.Component {
     handleChange: PropTypes.func.isRequired
   }
 
-  getUserDetailsList = () => {
+  getContent = () => {
     const { firstName, lastName, email } = this.props;
-    // TODO: Pass info: state key, value, placeholderText (optional) , descriptionText (optional)
-    return {
-      firstName,
-      lastName,
-      email
+    // TODO: Pass info: state key, value, placeholderText (optional) , note (optional)
+    const firstNameDetails = {
+      key: 'firstName',
+      value: firstName,
+      label: 'First name',
+      note: null
     };
+
+    const lastNameDetails = {
+      key: 'lastName',
+      value: lastName,
+      label: 'Last name',
+      note: null
+    };
+
+    const emailDetails = {
+      key: 'email',
+      value: email,
+      label: 'Email address',
+      note: null
+    };
+
+    return [firstNameDetails, lastNameDetails, emailDetails];
   }
 
   render() {
     return (
       <ProfileForm
-          values={this.getUserDetailsList()}
+          content={this.getContent()}
           handleChange={this.props.handleChange} />
     );
   }
