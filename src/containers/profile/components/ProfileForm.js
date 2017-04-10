@@ -8,25 +8,34 @@ const getFormItems = (content, handleChange) => {
   // TODO: Update key with item id
   const formItems = content.map((item) => {
     return (
-      <ControlLabel key={item.key}>
-        {item.label}:
-        <FormControl
-            type="text"
-            value={item.value}
-            onChange={(e) => {
-              return (handleChange(item.key, e.target.value));
-            }} />
-      </ControlLabel>
+      <div className={styles.formItemWrapper} key={item.key}>
+        <div className={styles.controlLabel}>
+          <ControlLabel>
+            {item.label}:
+          </ControlLabel>
+        </div>
+        <div className={styles.formControl}>
+          <FormControl
+              type="text"
+              value={item.value}
+              onChange={(e) => {
+                return (handleChange(item.key, e.target.value));
+              }} />
+        </div>
+      </div>
     );
   });
 
   return formItems;
 };
 
-const ProfileForm = ({ content, handleChange }) => {
+const ProfileForm = ({ header, content, handleChange }) => {
   return (
-    <form>
-      <FormGroup>
+    <form className={styles.profileFormWrapper}>
+      <div className={styles.header}>
+        {header}
+      </div>
+      <FormGroup className={styles.formGroup}>
         {getFormItems(content, handleChange)}
       </FormGroup>
     </form>
@@ -39,3 +48,12 @@ ProfileForm.propTypes = {
 };
 
 export default ProfileForm;
+
+
+
+
+
+
+
+
+// TODO: COLUMNS FOR LABEL / INPUT

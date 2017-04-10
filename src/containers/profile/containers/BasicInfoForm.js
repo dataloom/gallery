@@ -42,6 +42,7 @@ class BasicInfoForm extends React.Component {
   render() {
     return (
       <ProfileForm
+          header={'Basic Info'}
           content={this.getContent()}
           handleChange={this.props.handleChange} />
     );

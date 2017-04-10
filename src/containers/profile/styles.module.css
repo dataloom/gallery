@@ -1,0 +1,31 @@
+.profileFormWrapper {
+  border: 1px solid grey;
+  width: 800px;
+  margin-bottom: 40px;
+}
+
+.header {
+  width: 100%;
+  height: 40px;
+  font-size: 18px;
+  color: black;
+  background: lightgrey;
+  padding: 10px 0 0 20px;
+  border-bottom: 1px solid grey;
+}
+
+.formGroup {
+  padding: 20px;
+}
+
+.formItemWrapper {
+  margin-bottom: 10px;
+}
+
+.controlLabel, .formControl {
+  display: inline-block;
+}
+
+.controlLabel {
+  margin-right: 10px;
+}
