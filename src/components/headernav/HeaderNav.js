@@ -22,7 +22,7 @@ class HeaderNav extends React.Component {
   render() {
 
     const greeting = (this.props.name && this.props.name.length)
-      ? `Hi, ${this.props.name}!`
+      ? <span>Hi, <Link to={`/${PageConsts.EDIT_PROFILE}`}>{this.props.name}</Link>!</span>
       : 'Hi!';
 
     const settingsNavItemClassNames = (this.props.isAdmin)
