@@ -1,6 +1,6 @@
 .profileFormWrapper {
-  border: 1px solid grey;
-  width: 800px;
+  border: 1px solid #ccc;
+  width: 100%;
   margin-bottom: 40px;
   position: relative;
 }
@@ -10,9 +10,9 @@
   height: 40px;
   font-size: 18px;
   color: black;
-  background: lightgrey;
+  background: #eee;
   padding: 10px 0 0 20px;
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid #ccc;
 }
 
 StyledFlexContainer {

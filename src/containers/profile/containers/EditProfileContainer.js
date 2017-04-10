@@ -19,10 +19,10 @@ class EditProfileContainer extends React.Component {
   // <Button onClick={this.props.onSubmit}>Submit</Button>
   render() {
     return (
-      <DocumentTitle title="Edit Profile">
+      <DocumentTitle title="Profile">
         <Page>
           <Page.Header>
-            <Page.Title>Edit Profile</Page.Title>
+            <Page.Title>Profile</Page.Title>
           </Page.Header>
           <Page.Body>
             <BasicInfoForm />
