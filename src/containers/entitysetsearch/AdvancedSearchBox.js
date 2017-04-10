@@ -47,13 +47,18 @@ export default class AdvancedSearchBox extends React.Component {
         <InputGroup key={propertyType.id}>
           <ControlLabel>{propertyType.title}</ControlLabel>
           <br />
-          <FormControl
-              bsClass={searchStyles.advancedSearchBox}
-              value={this.state.searches[propertyType.id]}
-              type="text"
-              onChange={(e) => {
-                this.updateSearch(e, propertyType.id);
-              }} />
+          <div className={searchStyles.formItemWrapper}>
+            <FormControl
+                bsClass={searchStyles.advancedSearchBox}
+                value={this.state.searches[propertyType.id]}
+                type="text"
+                onChange={(e) => {
+                  this.updateSearch(e, propertyType.id);
+                }} />
+            <div className={searchStyles.advancedSearchCheckbox}>
+              <input type="checkbox" aria-label="Exact Match" />
+            </div>
+          </div>
         </InputGroup>
       );
     });
@@ -63,6 +68,7 @@ export default class AdvancedSearchBox extends React.Component {
     return (
       <form onSubmit={this.onSubmit} className={securableObjectStyles.search}>
         <FormGroup className={securableObjectStyles.keyword}>
+          <div className={searchStyles.exactMatchLabel}>Exact?</div>
           {this.renderSearchBoxes()}
         </FormGroup>
         <Button type="submit" bsStyle="primary" className={securableObjectStyles.submitButton}>Search</Button>

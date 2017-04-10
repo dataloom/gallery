@@ -118,13 +118,33 @@
 }
 
 .advancedSearchBox {
-  border-radius: 3px;
+  border-radius: 3px 0 0 3px;
   border: solid 2pt #a3a8ab;
   font-weight: 400;
   box-shadow: none !important;
   margin-bottom: 10px;
   height: 34px;
-  width: 100%;
+  width: 97% !important;
+}
+
+.exactMatchLabel {
+  margin: 0 0 -20px 97%;
+}
+
+.advancedSearchCheckbox {
+  width: 3%;
+  background: rgb(204, 204, 204);
+  display: inline-block;
+  text-align: center;
+  height: 34px;
+  padding-top: 6px;
+  border-radius: 0 3px 3px 0;
+  border: solid 2pt #a3a8ab;
+  border-left: 0;
+}
+
+.formItemWrapper {
+  height: 45px;
 }
 
 .changeSearchView {
