@@ -32,6 +32,11 @@ class EditProfileContainer extends React.Component {
   }
 }
 
+// TODO: Separate container & component logic
+function mapStateToProps(state) {
+  return {};
+}
+
 function mapDispatchToProps(dispatch) {
   const actions = {
     onSubmit: actionFactory.onProfileSubmit
@@ -40,4 +45,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(actions, dispatch);
 }
 
-export default connect(mapDispatchToProps)(EditProfileContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(EditProfileContainer);

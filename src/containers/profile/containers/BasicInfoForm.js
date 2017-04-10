@@ -17,12 +17,10 @@ class BasicInfoForm extends React.Component {
 
   getContent = () => {
     const { firstName, lastName, email } = this.props;
-    // TODO: Pass info: state key, value, placeholderText (optional) , note (optional)
     const firstNameDetails = {
       key: 'firstName',
       value: firstName,
-      label: 'First name',
-      note: null
+      label: 'First name'
     };
 
     const lastNameDetails = {
@@ -35,8 +33,7 @@ class BasicInfoForm extends React.Component {
     const emailDetails = {
       key: 'email',
       value: email,
-      label: 'Email address',
-      note: null
+      label: 'Email address'
     };
 
     return [firstNameDetails, lastNameDetails, emailDetails];
