@@ -48,14 +48,13 @@ class BasicInfoForm extends React.Component {
   }
 }
 
-// TODO: Hook up to real data
 function mapStateToProps(state) {
-  const profile = state.get('profile');
+  const profile = JSON.parse(window.localStorage.getItem('profile'));
 
   return {
-    firstName: profile.get('firstName'),
-    lastName: profile.get('lastName'),
-    email: profile.get('email')
+    firstName: profile.given_name,
+    lastName: profile.family_name,
+    email: profile.email
   };
 }
 
