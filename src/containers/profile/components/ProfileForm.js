@@ -18,13 +18,19 @@ const getFormItems = (content, handleChange) => {
           <FormControl
               type="text"
               value={item.value}
-              onChange={(e) => {
-                return (handleChange(item.key, e.target.value));
-              }} />
+              disabled />
         </div>
       </div>
     );
   });
+
+  // TODO: Make input editable once changes are able to be made
+  // <FormControl
+  //     type="text"
+  //     value={item.value}
+  //     onChange={(e) => {
+  //       return (handleChange(item.key, e.target.value));
+  //     }} />
 
   return formItems;
 };
@@ -48,12 +54,3 @@ ProfileForm.propTypes = {
 };
 
 export default ProfileForm;
-
-
-
-
-
-
-
-
-// TODO: COLUMNS FOR LABEL / INPUT
