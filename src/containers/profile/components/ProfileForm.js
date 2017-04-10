@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 import styles from '../styles.module.css';
 
 // TODO: Set label on left side
