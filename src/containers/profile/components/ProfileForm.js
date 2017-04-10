@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
-const ProfileForm = ({ userDetails, handleChange }) => {
+// TODO: Make this modular
+// QUESTION: How to get placeholder text - set it as property on values obj?
+const ProfileForm = ({ values, handleChange }) => {
   return (
     <form>
       <FormGroup>
@@ -10,7 +12,7 @@ const ProfileForm = ({ userDetails, handleChange }) => {
             First name:
           <FormControl
               type="text"
-              value={userDetails.firstName}
+              value={values.firstName}
               placeholder="First name"
               onChange={(e) => (handleChange('firstName', e.target.value))} />
         </ControlLabel>
@@ -18,7 +20,7 @@ const ProfileForm = ({ userDetails, handleChange }) => {
             Last name:
           <FormControl
               type="text"
-              value={userDetails.lastName}
+              value={values.lastName}
               placeholder="Last name"
               onChange={(e) => (handleChange('lastName', e.target.value))} />
         </ControlLabel>
@@ -26,7 +28,7 @@ const ProfileForm = ({ userDetails, handleChange }) => {
             Email address:
           <FormControl
               type="text"
-              value={userDetails.email}
+              value={values.email}
               placeholder="Email address"
               onChange={(e) => (handleChange('email', e.target.value))} />
         </ControlLabel>
@@ -36,7 +38,8 @@ const ProfileForm = ({ userDetails, handleChange }) => {
 };
 
 ProfileForm.propTypes = {
-
+  values: PropTypes.object.isRequired,
+  handleChange: PropTypes.func.isRequired
 };
 
 export default ProfileForm;
