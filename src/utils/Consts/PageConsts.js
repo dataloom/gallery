@@ -11,7 +11,7 @@ const LINK = 'link';
 const SEARCH = 'search';
 const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
-const EDIT_PROFILE = 'profile';
+const EDIT_PROFILE = 'edit_profile';
 
 export default {
   DEFAULT_DOCUMENT_TITLE,
