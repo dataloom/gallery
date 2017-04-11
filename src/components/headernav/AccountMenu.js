@@ -2,9 +2,9 @@ import React, { PropTypes } from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import { hashHistory } from 'react-router';
-import PageConsts from '../../../utils/Consts/PageConsts';
+import PageConsts from '../../utils/Consts/PageConsts';
 
-import styles from '../styles.module.css';
+import styles from './headernav.module.css';
 
 // TODO UPDATE PAGECONSTS (profile/edit profile) here and elsewhere
 const AccountMenu = ({ onLogoutClick }) => {

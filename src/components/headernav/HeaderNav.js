@@ -8,7 +8,7 @@ import {
   Link
 } from 'react-router';
 
-import AccountMenu from '../../containers/accountmenu/components/AccountMenu';
+import AccountMenu from './AccountMenu';
 import AuthService from '../../utils/AuthService';
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './headernav.module.css';
