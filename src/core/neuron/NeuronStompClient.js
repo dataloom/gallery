@@ -5,6 +5,9 @@
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 
+// injected by Webpack.DefinePlugin
+declare var __PROD__;
+
 /*
  * SockJS client instance
  *
@@ -33,6 +36,11 @@ export function initializeStompClient() :Object {
   // TODO: get an actual URL
   socketClient = new SockJS('http://localhost:8081/neuron');
   stompClient = Stomp.over(socketClient);
+
+  if (__PROD__) {
+    // disable logging in prod
+    stompClient.debug = () => {};
+  }
 
   return stompClient;
 }
