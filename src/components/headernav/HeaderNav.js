@@ -5,7 +5,8 @@
 import React from 'react';
 
 import {
-  Link
+  Link,
+  hashHistory
 } from 'react-router';
 
 import AccountMenu from './AccountMenu';
@@ -17,6 +18,7 @@ class HeaderNav extends React.Component {
 
   onLogoutClick = () => {
     this.props.auth.logout();
+    hashHistory.push(`/${PageConsts.LOGIN}`);
   }
 
   render() {
