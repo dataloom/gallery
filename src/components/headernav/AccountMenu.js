@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-import PageConsts from '../../utils/Consts/PageConsts';
+import { hashHistory } from 'react-router';
 
+import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './headernav.module.css';
 
 const AccountMenu = ({ onLogoutClick }) => {
@@ -16,7 +17,7 @@ const AccountMenu = ({ onLogoutClick }) => {
         noCaret>
       <MenuItem
           onSelect={() => {
-            hashHistory.push(`/${PageConsts.EDIT_PROFILE}`);
+            hashHistory.push(`/${PageConsts.EDIT_ACCOUNT}`);
           }}>Profile
       </MenuItem>
       <MenuItem divider />

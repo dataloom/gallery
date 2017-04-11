@@ -11,7 +11,7 @@ const LINK = 'link';
 const SEARCH = 'search';
 const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
-const EDIT_PROFILE = 'edit_profile';
+const EDIT_ACCOUNT = 'edit_account';
 
 export default {
   DEFAULT_DOCUMENT_TITLE,
@@ -26,5 +26,5 @@ export default {
   SEARCH,
   ADVANCED_SEARCH,
   ORGS,
-  EDIT_PROFILE
+  EDIT_ACCOUNT
 };
