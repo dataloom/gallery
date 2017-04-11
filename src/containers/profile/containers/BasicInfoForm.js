@@ -12,7 +12,7 @@ class BasicInfoForm extends React.Component {
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
-    handleChange: PropTypes.func.isRequired
+    // handleChange: PropTypes.func.isRequired
   }
 
   getContent = () => {
@@ -26,8 +26,7 @@ class BasicInfoForm extends React.Component {
     const lastNameDetails = {
       key: 'lastName',
       value: lastName,
-      label: 'Last name',
-      note: null
+      label: 'Last name'
     };
 
     const emailDetails = {
@@ -59,9 +58,11 @@ function mapStateToProps(state) {
   };
 }
 
+// TODO: Make fields editable
+// TODO: Consider keeping handleChange as a local action/state
 function mapDispatchToProps(dispatch) {
   const actions = {
-    handleChange: actionFactory.handleChange
+    // handleChange: actionFactory.handleChange
   };
 
   return bindActionCreators(actions, dispatch);

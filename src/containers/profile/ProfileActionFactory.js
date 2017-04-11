@@ -1,15 +1,17 @@
-import * as actionTypes from './ProfileActionTypes';
+// TODO: MAKE PROFILE FIELDS EDITABLE
 
-export function onProfileSubmit() {
-  return {
-    type: actionTypes.ON_PROFILE_SUBMIT
-  };
-}
-
-export function handleChange(label, value) {
-  return {
-    type: actionTypes.HANDLE_CHANGE,
-    label,
-    value
-  };
-}
+// import * as actionTypes from './ProfileActionTypes';
+//
+// export function onProfileSubmit() {
+//   return {
+//     type: actionTypes.ON_PROFILE_SUBMIT
+//   };
+// }
+//
+// export function handleChange(label, value) {
+//   return {
+//     type: actionTypes.HANDLE_CHANGE,
+//     label,
+//     value
+//   };
+// }

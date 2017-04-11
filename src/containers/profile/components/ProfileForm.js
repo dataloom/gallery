@@ -2,8 +2,6 @@ import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import styles from '../styles.module.css';
 
-// TODO: Set label on left side
-// TODO: Style Form
 const getFormItems = (content, handleChange) => {
   // TODO: Update key with item id
   const formItems = content.map((item) => {
@@ -21,7 +19,7 @@ const getFormItems = (content, handleChange) => {
     );
   });
 
-  // TODO: Make input editable once changes are able to be saved
+  // TODO: Make input editable once changes are able to be saved; look @ InlineEditableControl
   // <FormControl
   //     type="text"
   //     value={item.value}
@@ -47,7 +45,7 @@ const ProfileForm = ({ header, content, handleChange }) => {
 
 ProfileForm.propTypes = {
   content: PropTypes.array.isRequired,
-  handleChange: PropTypes.func.isRequired
+  // handleChange: PropTypes.func.isRequired
 };
 
 export default ProfileForm;

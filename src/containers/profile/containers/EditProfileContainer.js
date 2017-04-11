@@ -10,9 +10,10 @@ import Page from '../../../components/page/Page';
 import BasicInfoForm from './BasicInfoForm';
 import styles from '../styles.module.css';
 
-class EditProfileContainer extends React.Component {
+// TODO: Hook up Redux; make fields editable
+export default class EditProfileContainer extends React.Component {
   static propTypes = {
-    onSubmit: PropTypes.func.isRequired
+    // onSubmit: PropTypes.func.isRequired
   }
 
   // TODO: Add in submit button once hooked up to backend
@@ -34,16 +35,16 @@ class EditProfileContainer extends React.Component {
 }
 
 // TODO: Separate container & component logic
-function mapStateToProps(state) {
-  return {};
-}
-
-function mapDispatchToProps(dispatch) {
-  const actions = {
-    onSubmit: actionFactory.onProfileSubmit
-  };
-
-  return bindActionCreators(actions, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditProfileContainer);
+// function mapStateToProps(state) {
+//   return {};
+// }
+//
+// function mapDispatchToProps(dispatch) {
+//   const actions = {
+//     onSubmit: actionFactory.onProfileSubmit
+//   };
+//
+//   return bindActionCreators(actions, dispatch);
+// }
+//
+// export default connect(mapStateToProps, mapDispatchToProps)(EditProfileContainer);
