@@ -8,10 +8,10 @@ import {
   Link
 } from 'react-router';
 
-import styles from './headernav.module.css';
-
+import AccountMenu from '../../containers/accountmenu/components/AccountMenu';
 import AuthService from '../../utils/AuthService';
 import PageConsts from '../../utils/Consts/PageConsts';
+import styles from './headernav.module.css';
 
 class HeaderNav extends React.Component {
 
@@ -22,7 +22,7 @@ class HeaderNav extends React.Component {
   render() {
 
     const greeting = (this.props.name && this.props.name.length)
-      ? <span>Hi, <Link to={`/${PageConsts.EDIT_PROFILE}`}>{this.props.name}</Link>!</span>
+      ? `Hi, ${this.props.name}!`
       : 'Hi!';
 
     const settingsNavItemClassNames = (this.props.isAdmin)
@@ -42,12 +42,7 @@ class HeaderNav extends React.Component {
               { greeting }
             </div>
             <div className={styles.headerNavItem}>
-              <Link
-                  to={`/${PageConsts.LOGIN}`}
-                  className={styles.headerNavLink}
-                  onClick={this.onLogoutClick}>
-                Logout
-              </Link>
+              <AccountMenu onLogoutClick={this.onLogoutClick} />
             </div>
           </div>
 
