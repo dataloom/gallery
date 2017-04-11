@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 
 const getFormItems = (content) => {
   const formItems = content.map((item) => {
