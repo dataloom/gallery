@@ -3,6 +3,7 @@ import DocumentTitle from 'react-document-title';
 
 import Page from '../../../components/page/Page';
 import BasicInfoForm from './BasicInfoForm';
+import AccountInfoForm from './AccountInfoForm';
 
 export default class EditProfileContainer extends React.Component {
 
@@ -11,10 +12,11 @@ export default class EditProfileContainer extends React.Component {
       <DocumentTitle title="Profile">
         <Page>
           <Page.Header>
-            <Page.Title>Profile</Page.Title>
+            <Page.Title>Account</Page.Title>
           </Page.Header>
           <Page.Body>
             <BasicInfoForm />
+            <AccountInfoForm />
           </Page.Body>
         </Page>
       </DocumentTitle>
