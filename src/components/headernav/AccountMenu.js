@@ -5,7 +5,6 @@ import PageConsts from '../../utils/Consts/PageConsts';
 
 import styles from './headernav.module.css';
 
-// TODO UPDATE PAGECONSTS (profile/edit profile) here and elsewhere
 const AccountMenu = ({ onLogoutClick }) => {
   return (
     <DropdownButton
