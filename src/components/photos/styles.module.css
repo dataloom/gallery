@@ -1,4 +1,4 @@
-.profileFormWrapper {
+.photoUploadWrapper {
   border: 1px solid #ccc;
   width: 100%;
   margin-bottom: 40px;
@@ -15,16 +15,17 @@
   border-bottom: 1px solid #ccc;
 }
 
+.contentWrapper {
+  display: flex;
+  align-items: center;
+}
+
 .photoWrapper {
   height: 100px;
   width: 100px;
+  margin: 20px;
 }
 
-/*.photo {
-  height: 90px;
-  width: 90px;
-}*/
-
 .uploadButton {
-  
+  margin: 20px;
 }

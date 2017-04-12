@@ -1,21 +1,23 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 
+import StyledFlexContainer from '../flex/StyledFlexContainer';
 import styles from './styles.module.css';
 
 const PhotoUpload = ({ header, content }) => {
-  console.log('content:', content);
   return (
-    <form className={styles.profileFormWrapper}>
+    <div className={styles.photoUploadWrapper}>
       <div className={styles.header}>
         {header}
       </div>
-      <div className={styles.photoWrapper}>
-        {content}
+      <div className={styles.contentWrapper}>
+        <div className={styles.photoWrapper}>
+          {content}
+        </div>
+        <Button className={styles.uploadButton}>Upload photo
+        </Button>
       </div>
-      <Button className={styles.uploadButton}>Upload photo
-      </Button>
-    </form>
+    </div>
   );
 };
 
@@ -25,6 +27,3 @@ PhotoUpload.propTypes = {
 };
 
 export default PhotoUpload;
-
-
-// <image src={content} className={styles.photo}></image>
