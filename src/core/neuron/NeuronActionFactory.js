@@ -57,3 +57,11 @@ export function neuronOnMessage(frame :any) :Object {
     frame
   };
 }
+
+export function neuronSignal(signal :any) :Object {
+
+  return {
+    type: NeuronActionTypes.NEURON_SIGNAL,
+    signal
+  };
+}

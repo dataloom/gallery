@@ -14,6 +14,10 @@ import * as NeuronActionFactory from './NeuronActionFactory';
 import * as NeuronActionTypes from './NeuronActionTypes';
 
 import {
+  isNonEmptyString
+} from '../../utils/LangUtils';
+
+import {
   getStompClient,
   initializeStompClient
 } from './NeuronStompClient';
@@ -145,7 +149,16 @@ function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
   // TODO: this doesn't do anything yet
   return action$
     .ofType(NeuronActionTypes.NEURON_ON_MESSAGE)
-    .mapTo(NEURON_NO_OP);
+    .map((action :Action) => {
+      try {
+        // TODO: consider dispatch specific action based on signal.type
+        const signal = JSON.parse(action.frame.body);
+        return NeuronActionFactory.neuronSignal(signal);
+      }
+      catch (e) {
+        return NeuronActionFactory.neuronSignal(action.frame.body);
+      }
+    });
 }
 
 /*
