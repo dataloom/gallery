@@ -20,7 +20,7 @@ class HeaderNav extends React.Component {
 
   getAvatar = () => {
     const { fullName, googleId } = this.props;
-    return <Avatar name={fullName} googleId={googleId} size="30" round />
+    return <Avatar name={fullName} googleId={googleId} size={30} round />;
   }
 
   onLogoutClick = () => {

@@ -30,4 +30,9 @@ const AccountMenu = ({ avatar, onLogoutClick }) => {
   );
 };
 
+AccountMenu.propTypes = {
+  avatar: PropTypes.element.isRequired,
+  onLogoutClick: PropTypes.func.isRequired
+};
+
 export default AccountMenu;
