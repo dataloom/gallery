@@ -14,10 +14,6 @@ import * as NeuronActionFactory from './NeuronActionFactory';
 import * as NeuronActionTypes from './NeuronActionTypes';
 
 import {
-  isNonEmptyString
-} from '../../utils/LangUtils';
-
-import {
   getStompClient,
   initializeStompClient
 } from './NeuronStompClient';
