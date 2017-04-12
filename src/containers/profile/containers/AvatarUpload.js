@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import Avatar from 'react-avatar';
 
 import PhotoUpload from '../../../components/photos/PhotoUpload';
 import UserProfileIcon from '../../../images/user-profile-icon.png';
@@ -10,8 +11,10 @@ class AvatarUpload extends React.Component {
   }
 
   getAvatar = () => {
-    const avatar = this.props.avatar || UserProfileIcon;
-    return avatar;
+    const { name, id } = this.props;
+    // id = id.slice()
+    console.log('id:', id);
+    return <Avatar name={name} googleId={id} />;
   }
 
   render() {
@@ -24,9 +27,11 @@ class AvatarUpload extends React.Component {
 }
 
 function mapStateToProps() {
-  // TODO: Add ability to save and get avatar
-  return {
+  const profile = JSON.parse(window.localStorage.profile);
 
+  return {
+    name: profile.name,
+    id: profile.identities[0].user_id
   };
 }
 

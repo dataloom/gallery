@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+
 import styles from './styles.module.css';
 
 const PhotoUpload = ({ header, content }) => {
@@ -10,7 +11,7 @@ const PhotoUpload = ({ header, content }) => {
         {header}
       </div>
       <div className={styles.photoWrapper}>
-        <image src={content} className={styles.photo}></image>
+        {content}
       </div>
       <Button className={styles.uploadButton}>Upload photo
       </Button>
@@ -24,3 +25,6 @@ PhotoUpload.propTypes = {
 };
 
 export default PhotoUpload;
+
+
+// <image src={content} className={styles.photo}></image>
