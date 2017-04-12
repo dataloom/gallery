@@ -5,15 +5,15 @@ import Avatar from 'react-avatar';
 import PhotoUpload from '../../../components/photos/PhotoUpload';
 import UserProfileIcon from '../../../images/user-profile-icon.png';
 
+// TODO: Implememnt
 class AvatarUpload extends React.Component {
   static propTypes = {
-    // avatar: photo
+    name: PropTypes.string.isRequired,
+    id: PropTypes.string
   }
 
   getAvatar = () => {
     const { name, id } = this.props;
-    // id = id.slice()
-    console.log('id:', id);
     return <Avatar name={name} googleId={id} />;
   }
 
