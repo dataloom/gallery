@@ -24,6 +24,12 @@ import {
 
 const RETRY_DELAY :number = 1000; // in milliseconds
 const MAX_RETRY_DELAY :number = 10 * 1000; // in milliseconds
+const MAX_RETRY_COUNT :number = 10;
+
+// TODO: figure out how to handle no-op situations
+const NEURON_NO_OP :Object = {
+  type: 'NEURON_NO_OP'
+};
 
 let retryCount :number = 0;
 
@@ -47,9 +53,7 @@ function neuronConnectRequestEpic(action$ :Observable<Action>, reduxStore :Objec
           initializeStompClient().connect(
             {},
             (frame :Object) => {
-              observer.next({
-                frame
-              });
+              observer.next(frame);
             },
             () => {
               observer.error();
@@ -83,9 +87,7 @@ function neuronConnectSuccessEpic(action$ :Observable<Action>) :Observable<Actio
     .ofType(NeuronActionTypes.NEURON_CONNECT_SUCCESS)
     .mergeMap(() => {
       retryCount = 0;
-      return Observable.of(
-        NeuronActionFactory.neuronSubscribeRequest('signals')
-      );
+      return Observable.of(NEURON_NO_OP);
     });
 }
 
@@ -94,6 +96,9 @@ function neuronConnectFailureEpic(action$ :Observable<Action>) :Observable<Actio
   return action$
     .ofType(NeuronActionTypes.NEURON_CONNECT_FAILURE)
     .mergeMap(() => {
+      if (retryCount > MAX_RETRY_COUNT) {
+        return Observable.of(NEURON_NO_OP);
+      }
       retryCount += 1; // having this here means the delay will never be 0; could be considered a bug
       return Observable
         .of(NeuronActionFactory.neuronConnectRequest())
@@ -140,15 +145,7 @@ function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
   // TODO: this doesn't do anything yet
   return action$
     .ofType(NeuronActionTypes.NEURON_ON_MESSAGE)
-    .map((action :Action) => {
-      switch (action.frame.command) {
-        case SERVER_COMMANDS.MESSAGE:
-        default:
-          return {
-            type: 'NEURON_NO_OP'
-          };
-      }
-    });
+    .mapTo(NEURON_NO_OP);
 }
 
 /*
