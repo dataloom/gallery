@@ -28,6 +28,10 @@ class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = props.route.profileFn();
+
+    const profile = JSON.parse(window.localStorage.profile);
+    this.state.fullName = profile.name;
+    this.state.googleId = profile.identities[0].user_id;
   }
 
   componentDidMount() {
@@ -65,7 +69,11 @@ class Container extends React.Component {
       <DocumentTitle title={PageConsts.DEFAULT_DOCUMENT_TITLE}>
         <div className={styles.appWrapper}>
           <RequestPermissionsModal />
-          <HeaderNav auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
+          <HeaderNav auth={this.props.route.auth}
+              isAdmin={this.state.isAdmin}
+              name={this.state.name}
+              fullName={this.state.fullName}
+              googleId={this.state.googleId} />
           <div className={styles.appBody}>
             <SideNav name={this.state.name} />
             <div className={styles.appContent}>

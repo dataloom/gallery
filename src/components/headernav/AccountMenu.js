@@ -6,11 +6,11 @@ import { hashHistory } from 'react-router';
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './headernav.module.css';
 
-const AccountMenu = ({ onLogoutClick }) => {
+const AccountMenu = ({ avatar, onLogoutClick }) => {
   return (
     <DropdownButton
         title={
-          <span><FontAwesome name="cog" /></span>
+          <span>{avatar}</span>
         }
         pullRight
         id={styles.dropdown}
