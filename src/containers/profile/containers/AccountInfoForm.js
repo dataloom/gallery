@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import ProfileForm from '../../../components/forms/ProfileForm';
+import ProfileForm from '../../../components/profile/ProfileForm';
 
 class AccountInfoForm extends React.Component {
   static propTypes = {
