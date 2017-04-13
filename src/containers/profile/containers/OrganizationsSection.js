@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 
-import ProfileSection from '../../../components/profile/ProfileSection';
+import OrganizationSectionView from '../../../components/profile/OrganizationSectionView';
 import { fetchOrganizationsRequest } from '../../organizations/actions/OrganizationsActionFactory';
 import { sortOrganizations } from '../../organizations/utils/OrgsUtils';
 
@@ -19,35 +19,19 @@ class OrganizationsSection extends React.Component {
     this.props.fetchOrganizationsRequest();
   }
 
-  getContent = () => {
+  getSortedOrgs = () => {
     const { visibleOrganizationIds, organizations, auth } = this.props;
     const sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
     if (sortedOrgs.yourOrgs[0]) {
       console.log('sortedOrgs org:', sortedOrgs.yourOrgs[0].toJS());
     }
-    const yourOrgs = sortedOrgs.yourOrgs.map((org) => {
-      return (
-        <div>
-          {org.get('title')} (Owner)
-        </div>
-      );
-    });
-
-    const memberOfOrgs = sortedOrgs.memberOfOrgs.map((org) => {
-      return (
-          <div>
-            {org.get('title')}
-          </div>
-      );
-    });
-
-    return yourOrgs.concat(memberOfOrgs);
+    return sortedOrgs;
   }
 
   render() {
     return (
       <div>
-        <ProfileSection header="Your Organizations" content={this.getContent()} />
+        <OrganizationSectionView header="Your Organizations" content={this.getSortedOrgs()} />
       </div>
     );
   }

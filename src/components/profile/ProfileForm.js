@@ -27,7 +27,7 @@ const ProfileForm = ({ header, content }) => {
       <div className={styles.header}>
         {header}
       </div>
-      <FormGroup className={styles.formGroup}>
+      <FormGroup className={styles.sectionContent}>
         {getFormItems(content)}
       </FormGroup>
     </form>

@@ -21,11 +21,11 @@
   margin-bottom: 20px;
 }
 
-.formGroup {
+.sectionContent {
   padding: 20px;
 }
 
-.controlLabel, .formControl {
+.controlLabel, .formControl, .contentLabel {
   font-size: 16px;
 }
 
