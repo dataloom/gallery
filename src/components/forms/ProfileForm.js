@@ -36,7 +36,11 @@ const ProfileForm = ({ header, content }) => {
 
 ProfileForm.propTypes = {
   header: PropTypes.string.isRequired,
-  content: PropTypes.array.isRequired
+  content: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
+  })).isRequired
 };
 
 export default ProfileForm;
