@@ -1,0 +1,18 @@
+.contentWrapper {
+  /*display: flex;*/
+}
+
+.orgWrapper {
+  /*border: 1px solid grey;
+  padding: 20px;*/
+  margin: 20px;
+}
+
+.orgTitle {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.orgRoles {
+  color: #999;
+}

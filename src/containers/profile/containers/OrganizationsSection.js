@@ -19,9 +19,36 @@ class OrganizationsSection extends React.Component {
     this.props.fetchOrganizationsRequest();
   }
 
+  getRoles = (org) => {
+    const roles = [];
+    if (org.get('isOwner')) {
+      roles.push('Owner');
+    }
+    let orgRoles = org.get('roles').map((role) => {
+      return role.get('id').slice(org.get('id').length + 1);
+    });
+    orgRoles = orgRoles.toJS();
+
+    return roles.concat(orgRoles).join(', ');
+  }
+
   getSortedOrgs = () => {
     const { visibleOrganizationIds, organizations, auth } = this.props;
-    const sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
+    let sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
+    sortedOrgs = sortedOrgs.yourOrgs.concat(sortedOrgs.memberOfOrgs);
+
+    sortedOrgs = sortedOrgs.map((org) => {
+      const id = org.get('id');
+      const title = org.get('title');
+      const roles = this.getRoles(org);
+
+      return {
+        id,
+        title,
+        roles
+      };
+    });
+
     return sortedOrgs;
   }
 

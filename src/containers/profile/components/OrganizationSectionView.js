@@ -1,31 +1,31 @@
 import React, { PropTypes } from 'react';
 
 import ProfileSectionWrapper from '../../../components/profile/ProfileSectionWrapper';
+import styles from '../styles.module.css';
 
 const renderContent = (content) => {
-  const yourOrgs = content.yourOrgs.map((org) => {
+  const renderedUserOrgs = content.map((org) => {
     return (
-      <div key={org.get('id')}>
-        {org.get('title')} (Owner)
+      <div className={styles.orgWrapper} key={org.id}>
+        <div className={styles.orgTitle}>
+          {org.title}
+        </div>
+        <div className={styles.orgRoles}>
+          Roles: {org.roles}
+        </div>
       </div>
     );
   });
 
-  const memberOfOrgs = content.memberOfOrgs.map((org) => {
-    return (
-        <div key={org.get('id')}>
-          {org.get('title')}
-        </div>
-    );
-  });
-
-  return yourOrgs.concat(memberOfOrgs);
+  return renderedUserOrgs;
 }
 
 const OrganizationSectionView = ({ header, content }) => {
   return (
     <ProfileSectionWrapper header="Your Organizations">
-      {renderContent(content)}
+      <div className={styles.contentWrapper}>
+        {renderContent(content)}
+      </div>
     </ProfileSectionWrapper>
   );
 };
