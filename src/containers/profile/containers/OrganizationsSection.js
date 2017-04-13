@@ -1,38 +1,28 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { PrincipalsApi, OrganizationsApi } from 'loom-data';
+import { bindActionCreators } from 'redux';
+import Immutable from 'immutable';
+
+import { fetchOrganizationsRequest } from '../../organizations/actions/OrganizationsActionFactory';
+import { sortOrganizations } from '../../organizations/utils/OrgsUtils';
 
 class OrganizationsSection extends React.Component {
   static propTypes = {
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    fetchOrganizationsRequest: PropTypes.func.isRequired,
+    visibleOrganizationIds: PropTypes.instanceOf(Immutable.Set).isRequired,
+    organizations: PropTypes.instanceOf(Immutable.Map).isRequired
+  }
+
+  componentDidMount() {
+    this.props.fetchOrganizationsRequest();
   }
 
   getContent = () => {
-  //   const { organizations } = this.props;
-  //   console.log('organizations:', organizations);
-    // "9176e1c9-da83-451b-b933-0fbf8277456e", "285e155c-fccc-483d-80b7-d16e2eb66dc7"
-    const userId = JSON.parse(window.localStorage.profile).user_id;
-    const orgs = PrincipalsApi.getUser(userId)
-    .then((data) => {
-      return data.organization;
-    });
-    console.log('orgs', orgs);
-    // const orgs = PrincipalsApi.getUser(userId)
-    // .then((data) => {
-    //   return data.organization;
-    // })
-    // .then((data) => {
-    //   data.forEach((org) => {
-    //     OrganizationsApi.getOrganization(org)
-    //       .then((orgObj) => {
-    //         console.log('ORG OBJ:', orgObj);
-    //       });
-    //   });
-    // });
-    // // const user = Promise.resolve(PrincipalsApi.getUser(userId));
-    // console.log('orgs', orgs);
-
-    // return orgs;
+    const { visibleOrganizationIds, organizations, auth } = this.props;
+    const sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
+    console.log('sortedOrgs:', sortedOrgs);
+    // TODO: make them pretty
   }
 
   render() {
@@ -45,15 +35,29 @@ class OrganizationsSection extends React.Component {
   }
 }
 
-function mapStateToProps() {
-  const profile = JSON.parse(window.localStorage.getItem('profile'));
+function mapStateToProps(state) {
+  const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map());
+  const visibleOrganizationIds = state.getIn(
+    ['organizations', 'visibleOrganizationIds'],
+    Immutable.Set()
+  );
 
   return {
-    organizations: profile.organizations
+    organizations,
+    visibleOrganizationIds
   };
 }
 
-export default connect(mapStateToProps)(OrganizationsSection);
+function mapDispatchToProps(dispatch) {
+
+  const actions = {
+    fetchOrganizationsRequest
+  };
+
+  return bindActionCreators(actions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrganizationsSection);
 
 
 // const emailDetails = {
