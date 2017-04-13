@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import styles from './styles.module.css';
+
+import ProfileSectionWrapper from '../../../components/profile/ProfileSectionWrapper';
 
 const renderContent = (content) => {
   const yourOrgs = content.yourOrgs.map((org) => {
@@ -24,14 +24,9 @@ const renderContent = (content) => {
 
 const OrganizationSectionView = ({ header, content }) => {
   return (
-    <form className={styles.profileFormWrapper}>
-      <div className={styles.header}>
-        {header}
-      </div>
-      <div className={styles.sectionContent}>
-        {renderContent(content)}
-      </div>
-    </form>
+    <ProfileSectionWrapper header="Your Organizations">
+      {renderContent(content)}
+    </ProfileSectionWrapper>
   );
 };
 

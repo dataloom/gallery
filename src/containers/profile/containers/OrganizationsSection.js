@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 
-import OrganizationSectionView from '../../../components/profile/OrganizationSectionView';
+import OrganizationSectionView from '../components/OrganizationSectionView';
 import { fetchOrganizationsRequest } from '../../organizations/actions/OrganizationsActionFactory';
 import { sortOrganizations } from '../../organizations/utils/OrgsUtils';
 
@@ -22,9 +22,6 @@ class OrganizationsSection extends React.Component {
   getSortedOrgs = () => {
     const { visibleOrganizationIds, organizations, auth } = this.props;
     const sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
-    if (sortedOrgs.yourOrgs[0]) {
-      console.log('sortedOrgs org:', sortedOrgs.yourOrgs[0].toJS());
-    }
     return sortedOrgs;
   }
 
