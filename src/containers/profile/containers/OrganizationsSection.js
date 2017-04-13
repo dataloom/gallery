@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 
+import ProfileSection from '../../../components/profile/ProfileSection';
 import { fetchOrganizationsRequest } from '../../organizations/actions/OrganizationsActionFactory';
 import { sortOrganizations } from '../../organizations/utils/OrgsUtils';
 
@@ -21,15 +22,32 @@ class OrganizationsSection extends React.Component {
   getContent = () => {
     const { visibleOrganizationIds, organizations, auth } = this.props;
     const sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
-    console.log('sortedOrgs:', sortedOrgs);
-    // TODO: make them pretty
+    if (sortedOrgs.yourOrgs[0]) {
+      console.log('sortedOrgs org:', sortedOrgs.yourOrgs[0].toJS());
+    }
+    const yourOrgs = sortedOrgs.yourOrgs.map((org) => {
+      return (
+        <div>
+          {org.get('title')} (Owner)
+        </div>
+      );
+    });
+
+    const memberOfOrgs = sortedOrgs.memberOfOrgs.map((org) => {
+      return (
+          <div>
+            {org.get('title')}
+          </div>
+      );
+    });
+
+    return yourOrgs.concat(memberOfOrgs);
   }
 
   render() {
     return (
       <div>
-        fack
-        {this.getContent()}
+        <ProfileSection header="Your Organizations" content={this.getContent()} />
       </div>
     );
   }
@@ -58,10 +76,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationsSection);
-
-
-// const emailDetails = {
-//   key: 'email',
-//   value: email,
-//   label: 'Email address'
-// };
