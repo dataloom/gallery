@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
-import FontAwesome from 'react-fontawesome';
 import { hashHistory } from 'react-router';
 
 import PageConsts from '../../utils/Consts/PageConsts';

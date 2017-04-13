@@ -3,13 +3,8 @@
  */
 
 import React from 'react';
-
-import {
-  Link,
-  hashHistory
-} from 'react-router';
+import { hashHistory } from 'react-router';
 import Avatar from 'react-avatar';
-
 
 import AccountMenu from './AccountMenu';
 import AuthService from '../../utils/AuthService';
