@@ -4,7 +4,9 @@ import DocumentTitle from 'react-document-title';
 import Page from '../../../components/page/Page';
 import BasicInfoForm from './BasicInfoForm';
 import AccountInfoForm from './AccountInfoForm';
+import OrganizationsSection from './OrganizationsSection';
 
+// TODO:  Rename to NOT container
 export default class EditProfileContainer extends React.Component {
 
   render() {
@@ -17,6 +19,7 @@ export default class EditProfileContainer extends React.Component {
           <Page.Body>
             <BasicInfoForm />
             <AccountInfoForm />
+            <OrganizationsSection auth={this.props.auth} />
           </Page.Body>
         </Page>
       </DocumentTitle>
