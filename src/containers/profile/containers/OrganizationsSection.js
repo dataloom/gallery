@@ -34,6 +34,7 @@ class OrganizationsSection extends React.Component {
 
   getSortedOrgs = () => {
     const { visibleOrganizationIds, organizations, auth } = this.props;
+
     let sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, auth);
     sortedOrgs = sortedOrgs.yourOrgs.concat(sortedOrgs.memberOfOrgs);
 

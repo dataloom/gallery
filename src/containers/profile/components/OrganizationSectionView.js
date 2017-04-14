@@ -24,7 +24,7 @@ const OrganizationSectionView = ({ header, content }) => {
   return (
     <ProfileSectionWrapper header="Your Organizations">
       <div className={styles.contentWrapper}>
-        {renderContent(content)}
+        {content.length > 0 ? renderContent(content) : 'You\'re not a member of any organization yet.'}
       </div>
     </ProfileSectionWrapper>
   );
