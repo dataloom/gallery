@@ -130,17 +130,6 @@ describe('PermissionsSummaryReducer', function() {
       expect(state).to.have.property('isGettingPermissions').equal(false);
     });
 
-    it('should get role permissions', function() {
-      const action = PSActionFactory.setRolePermissions(property, data);
-      const permissions = getRolePermissions(action);
-      const result = {
-        AuthenticatedUser: ['None'],
-        foo: ['Link']
-      };
-
-      expect(permissions).to.eql(result);
-    });
-
     it('should update property role permissions', function() {
       const action = PSActionFactory.setRolePermissions(property, data);
       const permissions = Immutable.fromJS(getRolePermissions(action));
@@ -155,24 +144,6 @@ describe('PermissionsSummaryReducer', function() {
       const state = reducer(INITIAL_STATE, action);
 
       expect(state).to.have.property('entityRolePermissions').eql(permissions);
-    });
-
-    it('should get user permissions', function() {
-      const action = PSActionFactory.setUserPermissions(property, data);
-      const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
-      const result = [
-        {
-          email: 'foo',
-          id: 'auth0|foo',
-          individualPermissions: ['Write'],
-          nickname: 'bar',
-          permissions: ['Write', 'Link'],
-          roles: ['foo']
-        }
-      ];
-
-      // TODO: Reformat to accept different order in array e.g. permissions
-      expect(permissions).to.deep.eql(result);
     });
 
     it('should update property user permissions', function() {
