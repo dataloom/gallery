@@ -24,9 +24,16 @@ describe('UserPermissionsTable', function() {
     userPermissions
   };
 
+  // beforeEach(function() {
+  //   const initialState = {};
+  //   const store = mockStore(initialState);
+  // })
+
   it('Should render', function() {
+    // const initialState = {};
+    // const store = mockStore(initialState);
     const wrapper = shallow(
-      <UserPermissionsTable {...defaultProps} />
+      <UserPermissionsTable {...defaultProps} store={store} />
     );
 
     expect(wrapper.length).to.eql(1);
