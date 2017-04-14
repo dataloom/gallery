@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import '../../../config/chai/chai.config';
-
 import Immutable from 'immutable';
+
+import '../../../config/chai/chai.config';
 import * as PSActionFactory from './PermissionsSummaryActionFactory';
 import reducer from './PermissionsSummaryReducer';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
