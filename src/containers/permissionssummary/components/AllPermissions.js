@@ -68,6 +68,7 @@ class AllPermissions extends React.Component {
       if (propertyPermissions.hasIn([property, 'userPermissions']) && propertyPermissions.hasIn([property, 'rolePermissions'])) {
         const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
         const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
+        console.log('userpermissions,', userPermissions.toJS());
 
         const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
         const roleTable = (<RolePermissionsTable
