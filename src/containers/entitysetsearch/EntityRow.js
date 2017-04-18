@@ -13,8 +13,6 @@ const PROPERTY_COLUMN_WIDTH = 200;
 const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
 const HEADERS = ['Property', 'Data'];
 
-
-
 export default class EntityRow extends React.Component {
   static propTypes = {
     row: PropTypes.object.isRequired,
@@ -49,7 +47,7 @@ export default class EntityRow extends React.Component {
   }
 
   loadNeighbors = (entityId, entitySetId) => {
-    const url = 'http://localhost:8080/datastore/search/' + entitySetId + '/' + entityId;
+    const url = `http://localhost:8080/datastore/search/${entitySetId}/${entityId}`;
     axios({
       method: 'get',
       url,

@@ -80,7 +80,7 @@ export default class EntitySetSearchResults extends React.Component {
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.state.selectedPropertyTypes}
           onClick={this.onRowSelect} />
-    )
+    );
   }
 
   renderResults = () => {
@@ -106,7 +106,7 @@ export default class EntitySetSearchResults extends React.Component {
   render() {
     let content;
     if (this.state.selectedId) {
-      content = this.renderSingleRow()
+      content = this.renderSingleRow();
     }
     else {
       content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderResults();

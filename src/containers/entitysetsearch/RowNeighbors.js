@@ -9,8 +9,6 @@ const NO_NEIGHBOR = 'NO_NEIGHBOR';
 const TABLE_WIDTH = 1000;
 const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
-const PROPERTY_COLUMN_WIDTH = 200;
-const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
 
 export default class RowNeighbors extends React.Component {
 
@@ -24,7 +22,7 @@ export default class RowNeighbors extends React.Component {
     super(props);
     this.state = {
       organizedNeighbors: this.organizeNeighbors(props.neighbors)
-    }
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -46,7 +44,7 @@ export default class RowNeighbors extends React.Component {
           [neighborEntitySetId]: [neighbor]
         };
       }
-      else if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]){
+      else if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
         organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
       }
       else {
@@ -56,7 +54,13 @@ export default class RowNeighbors extends React.Component {
     return organizedNeighbors;
   }
 
-  renderColumns = (entitySetId, propertyTypes, rowValues, numColumns, cellPropertyTypes, cellEntitySetId) => {
+  renderColumns = (renderingAssociation, rowValues, neighborGroup, noNeighbor) => {
+    const entitySetId = (noNeighbor) ? null : neighborGroup.neighborEntitySet.id;
+    let numColumns = neighborGroup.associationPropertyTypes.length;
+    if (!noNeighbor) numColumns += neighborGroup.neighborPropertyTypes.length;
+    const propertyTypes = (renderingAssociation) ?
+      neighborGroup.associationPropertyTypes : neighborGroup.neighborPropertyTypes;
+
     const columnWidth = (TABLE_WIDTH - 1) / numColumns;
     const allColumns = propertyTypes.map((propertyType) => {
       const field = `${propertyType.type.namespace}.${propertyType.type.name}`;
@@ -71,8 +75,8 @@ export default class RowNeighbors extends React.Component {
                   formatValueFn={this.props.formatValueFn}
                   onClick={this.props.onClick}
                   width={columnWidth}
-                  entitySetId={cellEntitySetId}
-                  propertyTypes={cellPropertyTypes} />
+                  entitySetId={entitySetId}
+                  propertyTypes={neighborGroup.neighborPropertyTypes} />
             }
             width={columnWidth} />
       );
@@ -82,16 +86,19 @@ export default class RowNeighbors extends React.Component {
 
 
   renderNeighborGroupTitle = (neighbor, neighborId) => {
-    const neighborTitle = (neighborId === NO_NEIGHBOR) ? <div className={styles.neighborGroupTitleUnclickable}>?</div>
-      : <Link to={`/entitysets/${neighborId}`} className={styles.neighborGroupTitle}>{neighbor.neighborEntitySet.title}</Link>
-    return (neighbor.src) ? <div className={styles.neighborContainer}>{`${neighbor.associationEntitySet.title} `}{neighborTitle}</div>
-      : <div className={styles.neighborContainer}>{neighborTitle}{` ${neighbor.associationEntitySet.title}`}</div>
+    const neighborTitle = (neighborId === NO_NEIGHBOR)
+      ? <div className={styles.neighborGroupTitleUnclickable}>?</div>
+      : (<Link to={`/entitysets/${neighborId}`} className={styles.neighborGroupTitle}>
+        {neighbor.neighborEntitySet.title}
+      </Link>);
+    return (neighbor.src)
+      ? <div className={styles.neighborContainer}>{`${neighbor.associationEntitySet.title} `}{neighborTitle}</div>
+      : <div className={styles.neighborContainer}>{neighborTitle}{` ${neighbor.associationEntitySet.title}`}</div>;
   }
 
   renderNeighborGroup = (neighborGroup, neighborId) => {
     const noNeighbor = neighborId === NO_NEIGHBOR;
     const tableHeight = ((neighborGroup.length + 1) * ROW_HEIGHT) + TABLE_OFFSET;
-    const entitySetId = (noNeighbor) ? null : neighborGroup[0].neighborEntitySet.id;
 
     const rowValues = neighborGroup.map((neighbor) => {
       const row = (noNeighbor) ? neighbor.associationDetails :
@@ -99,15 +106,9 @@ export default class RowNeighbors extends React.Component {
       if (!noNeighbor) row.id = neighbor.neighborId;
       return row;
     });
-
-    let numColumns = neighborGroup[0].associationPropertyTypes.length;
-    if (!noNeighbor) numColumns += neighborGroup[0].neighborPropertyTypes.length;
-    const cellPropertyTypes = neighborGroup[0].neighborPropertyTypes;
-    const cellEntitySetId = (neighborId === NO_NEIGHBOR) ? null : neighborGroup[0].neighborEntitySet.id;
-    const associationColumns = this.renderColumns(entitySetId, neighborGroup[0].associationPropertyTypes, rowValues, numColumns, cellPropertyTypes, cellEntitySetId);
+    const associationColumns = this.renderColumns(true, rowValues, neighborGroup[0], noNeighbor);
     const neighborColumns = (noNeighbor) ? null :
-      this.renderColumns(entitySetId, neighborGroup[0].neighborPropertyTypes, rowValues, numColumns, cellPropertyTypes, cellEntitySetId);
-
+      this.renderColumns(false, rowValues, neighborGroup[0], noNeighbor);
 
     return (
       <div key={neighborId}>
@@ -128,15 +129,14 @@ export default class RowNeighbors extends React.Component {
   renderAssociationGroup = (associationGroup) => {
     const neighborGroups = Object.keys(associationGroup).map((neighborId) => {
       const neighborGroup = associationGroup[neighborId];
-      const noNeighbor = neighborId === NO_NEIGHBOR;
       return this.renderNeighborGroup(neighborGroup, neighborId);
     });
     const title = Object.values(associationGroup)[0][0].associationEntitySet.title;
     return (
       <div>
-      <div className={styles.spacerSmall} />
-      <hr />
-      <div className={styles.spacerSmall} />
+        <div className={styles.spacerSmall} />
+        <hr />
+        <div className={styles.spacerSmall} />
         <div className={styles.associationGroupTitle}>{title}</div>
         {neighborGroups}
       </div>
@@ -150,7 +150,7 @@ export default class RowNeighbors extends React.Component {
         <div key={associationId}>
           {this.renderAssociationGroup(associationGroup)}
         </div>
-      )
+      );
     });
     return neighbors;
   }
@@ -160,7 +160,7 @@ export default class RowNeighbors extends React.Component {
       <div>
         {this.renderNeighbors()}
       </div>
-    )
+    );
   }
 
 }
