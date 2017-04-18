@@ -186,3 +186,12 @@
 .neighborContainer {
   margin: 10px 0;
 }
+
+
+:global .public_fixedDataTableRow_even:hover .public_fixedDataTableCell_main {
+  background-color: #eeeff0;
+}
+
+:global .public_fixedDataTableRow_odd:hover .public_fixedDataTableCell_main {
+  background-color: #eeeff0;
+}
