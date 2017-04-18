@@ -1,9 +1,11 @@
 import React, { PropTypes } from 'react';
 import UserRow from './UserRow';
+import EntityRow from './EntityRow';
 
 export default class EntitySetUserSearchResults extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
+    entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
@@ -16,7 +18,10 @@ export default class EntitySetUserSearchResults extends React.Component {
     super(props);
     this.state = {
       results: props.results,
-      selectedRow: undefined
+      selectedId: undefined,
+      selectedRow: undefined,
+      selectedEntitySetId: undefined,
+      selectedPropertyTypes: undefined
     };
   }
 
@@ -26,13 +31,18 @@ export default class EntitySetUserSearchResults extends React.Component {
     });
   }
 
-  onUserSelect = (row) => {
-    this.setState({ selectedRow: row });
+  onUserSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
+    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes });
     this.props.hidePaginationFn(true);
   }
 
   onUserDeselect = () => {
-    this.setState({ selectedRow: undefined });
+    this.setState({
+      selectedId: undefined,
+      selectedRow: undefined,
+      selectedEntitySetId: undefined,
+      selectedPropertyTypes: undefined
+    });
     this.props.hidePaginationFn(false);
   }
 
@@ -41,18 +51,22 @@ export default class EntitySetUserSearchResults extends React.Component {
     const lastNameId = this.props.lastName.id;
     const resultRows = [];
     this.state.results.forEach((row) => {
-      const propertyTypeIds = Object.keys(row);
+      const propertyTypeIds = Object.keys(row).filter((id) => {
+        return (id !== 'id');
+      });
       if (propertyTypeIds.includes(firstNameId) && propertyTypeIds.includes(lastNameId)) {
         resultRows.push(
           <UserRow
-              key={this.state.results.indexOf(row)}
+              key={row.id}
               row={row}
+              entitySetId={this.props.entitySetId}
               propertyTypes={this.props.propertyTypes}
               firstName={this.props.firstName}
               lastName={this.props.lastName}
               dob={this.props.dob}
               selectUserFn={this.onUserSelect}
-              formatValueFn={this.props.formatValueFn} />
+              formatValueFn={this.props.formatValueFn}
+              entityId={row.id} />
         );
       }
     });
@@ -60,21 +74,43 @@ export default class EntitySetUserSearchResults extends React.Component {
   }
 
   renderSingleUser = () => {
+    const row = Object.assign({}, this.state.selectedRow);
+    delete row.id;
     return (
       <UserRow
-          row={this.state.selectedRow}
-          propertyTypes={this.props.propertyTypes}
+          row={row}
+          entityId={this.state.selectedRow.id}
+          entitySetId={this.state.selectedEntitySetId}
+          propertyTypes={this.state.selectedPropertyTypes}
           firstName={this.props.firstName}
           lastName={this.props.lastName}
           dob={this.props.dob}
           backFn={this.onUserDeselect}
           userPage
-          formatValueFn={this.props.formatValueFn} />
+          formatValueFn={this.props.formatValueFn}
+          onClick={this.onUserSelect} />
     );
   }
 
+  renderSingleRow = () => {
+    const row = Object.assign({}, this.state.selectedRow);
+    delete row.id;
+    return (
+      <EntityRow
+          row={row}
+          entityId={this.state.selectedRow.id}
+          entitySetId={this.state.selectedEntitySetId}
+          propertyTypes={this.state.selectedPropertyTypes}
+          backFn={this.onUserDeselect}
+          formatValueFn={this.props.formatValueFn}
+          onClick={this.onUserSelect} />);
+  }
+
   renderResults = () => {
-    if (this.state.selectedRow) return this.renderSingleUser()
+    if (this.state.selectedRow) {
+      return (this.state.selectedEntitySetId === this.props.entitySetId) ?
+        this.renderSingleUser() : this.renderSingleRow();
+    }
     return this.renderAllUserResults();
   }
 
