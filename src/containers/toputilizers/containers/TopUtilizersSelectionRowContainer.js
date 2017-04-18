@@ -12,16 +12,32 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     this.state = {
       selectedAssociation: null,
       selectedArrow: null,
-      selectedEntities: null
+      selectedEntities: []
     }
+  }
+
+  selectAssociation = (data) => {
+    this.props.selectAssociation(data);
+    this.setState({ selectedAssociation: data });
+  }
+
+  selectArrow = (data) => {
+    this.props.selectArrow(data);
+    this.setState({ selectedArrow: data });
+  }
+
+  selectEntity = (data) => {
+    this.props.selectEntity(data);
+    const entities = this.state.selectedEntities.push(data);
+    this.setState({ selectedEntities: entities });
   }
 
   render() {
     return(
       <TopUtilizersSelectionRow
-          selectAssociation={this.props.selectAssociation}
-          selectArrow={this.props.selectArrow}
-          selectentity={this.props.selectEntity}
+          selectAssociation={this.selectAssociation}
+          selectArrow={this.selectArrow}
+          selectentity={this.selectEntity}
           associations={this.props.associations}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}

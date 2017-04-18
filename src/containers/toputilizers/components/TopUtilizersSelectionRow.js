@@ -52,17 +52,18 @@ const TopUtilizersSelectionRow = ({
           className={styles.associationSelect}
           options={associationOptions}
           value={selectedAssociation}
-          onChange={(e) => selectAssociation(e)} />
+          onChange={selectAssociation} />
       <Select
           className={styles.arrowSelect}
           options={arrowOptions}
-          value={selectedAssociation}
-          onChange={(e) => selectAssociation(e)} />
+          value={selectedArrow}
+          onChange={selectArrow} />
         <Select
             className={styles.entitySelect}
             options={entityOptions}
-            value={selectedAssociation}
-            onChange={(e) => selectAssociation(e)} />
+            value={selectedEntities}
+            onChange={selectEntity}
+            multi />
     </ContentSection>
   );
 };

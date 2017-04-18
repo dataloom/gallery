@@ -16,19 +16,23 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('entitySetId', action.id);
 
     case actionTypes.ON_ASSOCIATION_SELECT:
-      const name = action.e.target.name;
-      const value = action.e.target.value;
       console.log('on association selectaction:', action);
-      // set state w/ name as key
 
-    case actionTypes.ON_TU_ARROW_SELECT:
+      const label = action.data.label;
+      const value = action.data.value;
+      return state;
+
+    case actionTypes.ON_ARROW_SELECT:
       console.log('arrow select action:', action);
+      return state;
 
-    case actionTypes.ON_TU_ENTITY_SELECT:
+    case actionTypes.ON_ENTITY_SELECT:
     console.log('entity select action:', action);
+    return state;
 
-    case actionTypes.ON_TU_SUBMIT:
+    case actionTypes.ON_SUBMIT:
     console.log('submit action:', action);
+    return state;
 
     default:
       return state;
