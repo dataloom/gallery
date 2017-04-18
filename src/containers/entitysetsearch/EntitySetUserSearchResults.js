@@ -79,7 +79,7 @@ export default class EntitySetUserSearchResults extends React.Component {
     return (
       <UserRow
           row={row}
-          entityId={this.state.selectedRow.id}
+          entityId={this.state.selectedId}
           entitySetId={this.state.selectedEntitySetId}
           propertyTypes={this.state.selectedPropertyTypes}
           firstName={this.props.firstName}
@@ -98,7 +98,7 @@ export default class EntitySetUserSearchResults extends React.Component {
     return (
       <EntityRow
           row={row}
-          entityId={this.state.selectedRow.id}
+          entityId={this.state.selectedId}
           entitySetId={this.state.selectedEntitySetId}
           propertyTypes={this.state.selectedPropertyTypes}
           backFn={this.onUserDeselect}

@@ -7,11 +7,17 @@ import styles from './styles.module.css';
 export default class UserRow extends React.Component {
   constructor(props) {
     super(props);
-    const propertyIds = this.getPropertyIds();
     this.state = {
-      propertyIds,
-      numRows: propertyIds.length
+      propertyIds: this.getPropertyIds()
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.entityId !== this.props.entityId) {
+      this.setState({
+        propertyIds: Object.keys(nextProps.row)
+      });
+    }
   }
 
   getPropertyIds() {
