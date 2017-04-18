@@ -6,16 +6,7 @@ import styles from '../styles.module.css';
 
 const TopUtilizersForm = ({}) => {
   return (
-    <DocumentTitle>
-      <Page>
-        <Page.Header>
-          <Page.Title>Top Utilizers</Page.Title>
-        </Page.Header>
-        <Page.Body>
-          top utilizers
-        </Page.Body>
-      </Page>
-    </DocumentTitle>
+    <div>top utilizers</div>
   );
 };
 
