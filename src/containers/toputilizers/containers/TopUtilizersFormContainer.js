@@ -7,27 +7,31 @@ import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
 import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
 import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
+import DummyData from '../DummyData';
 
 
 class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired
   }
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isReadyForNext: true
+    };
+  }
 
   componentDidMount() {
     this.props.allEntitySetsRequest();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps && nextProps.entitySets) {
-      console.log('nextprops entitysets:', nextProps.entitySets.toJS());
-
-    }
-  }
+    //QUESTION: How to get access to selected association and keep the whole row scoped to it?
+    //IDEA: Each row has selectedAssociation and selectedArrow state, so that any child selector will refer to it.
 
   render() {
     return (
-      <TopUtilizersForm />
+      <TopUtilizersForm isReadyForNext={this.state.isReadyForNext} />
     );
   }
 }
@@ -48,13 +52,15 @@ function mapStateToProps(state) {
 
   return {
     entitySetId: topUtilizers.get('entitySetId'),
-    entitySets
+    entitySets,
+    associations: DummyData
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    allEntitySetsRequest
+    allEntitySetsRequest,
+    submitQuery: actionFactory.onSubmit
   };
 
   return bindActionCreators(actions, dispatch);
