@@ -192,6 +192,7 @@ export default class AdvancedDataSearch extends React.Component {
       return (
         <EntitySetUserSearchResults
             results={this.state.searchResults}
+            entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.propertyTypes}
             firstName={firstName}
             lastName={lastName}
@@ -203,6 +204,7 @@ export default class AdvancedDataSearch extends React.Component {
     return (
       <EntitySetSearchResults
           results={this.state.searchResults}
+          entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.propertyTypes}
           formatValueFn={this.formatValue} />
     );
