@@ -51,6 +51,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       }
       return state.merge(newState);
 
+    case actionTypes.SUBMIT_TOP_UTILIZERS_FAILURE:
+      console.log('submit failure:', action);
+      return state.set('isGettingResults', false);
+
     default:
       return state;
   }
