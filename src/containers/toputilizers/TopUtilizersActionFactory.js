@@ -14,16 +14,15 @@ export function onArrowSelect(e) {
   };
 }
 
-export function onEntitySelect(e) {
+export function onEntitySelect(data) {
   return {
     type: actionTypes.ON_ENTITY_SELECT,
-    e
+    data
   };
 }
 
-export function onSubmit(e) {
+export function submitTopUtilizersRequest() {
   return {
-    type: actionTypes.ON_SUBMIT,
-    e
+    type: actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST
   };
 }

@@ -51,9 +51,15 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     });
   }
 
-  selectEntity = (options) => {
-    // this.props.selectEntity(options);
-    this.setState({ selectedEntities: options });
+  selectEntity = (selectedEntities) => {
+    const { selectedAssociation, selectedArrow } = this.state;
+    const data = {
+      selectedAssociation,
+      selectedArrow,
+      selectedEntities
+    };
+    this.setState({ selectedEntities });
+    this.props.selectEntity(data);
   }
 
   render() {

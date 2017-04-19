@@ -9,3 +9,9 @@
 .entitySelect {
   width: 300px;
 }
+
+.submitButton {
+  background: #4203c5;
+  color: white;
+  font-weight: bold;
+}

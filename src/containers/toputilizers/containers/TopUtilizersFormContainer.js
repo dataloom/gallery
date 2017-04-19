@@ -30,20 +30,23 @@ class TopUtilizersFormContainer extends React.Component {
 
   handleClickAddParameter = (e) => {
     e.preventDefault();
-    this.setState({ counter: ++this.state.counter}, () => {console.log('counter', this.state.counter)});
+    this.setState({ counter: ++this.state.counter});
     const rowData = this.state.rowData;
     rowData.push({ id: this.state.counter });
     this.setState({ rowData });
   }
 
-    //QUESTION: How to get access to selected association and keep the whole row scoped to it?
-    //IDEA: Each row has selectedAssociation and selectedArrow state, so that any child selector will refer to it.
+  onSubmit = (e) => {
+    e.preventDefault();
+    this.props.submitQuery();
+  }
 
   render() {
     return (
       <TopUtilizersForm
           handleClick={this.handleClickAddParameter}
-          rowData={this.state.rowData} />
+          rowData={this.state.rowData}
+          onSubmit={this.onSubmit} />
     );
   }
 }
@@ -72,7 +75,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   const actions = {
     allEntitySetsRequest,
-    submitQuery: actionFactory.onSubmit
+    submitQuery: actionFactory.submitTopUtilizersRequest
   };
 
   return bindActionCreators(actions, dispatch);
