@@ -9,7 +9,7 @@ import DummyData from './DummyData';
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
   associations: [],
-  topUtilizersDetailsList: [],
+  topUtilizersDetailsList: {},
   topUtilizersResults: [],
   isGettingResults: false
 });
@@ -26,14 +26,17 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.ON_ENTITY_SELECT:
       console.log('entity select action:', action);
       const { selectedAssociation, selectedArrow, selectedEntities } = action.data;
+      const neighborTypeIds = selectedEntities.map((entity) => {
+        return entity.value;
+      });
       const mergeObj = {
-        topUtilizersDetailsList: [
-          {
+        topUtilizersDetailsList: {
+          [selectedAssociation.value]: {
             associationTypeId: selectedAssociation.value,
-            neighborTypeIds: selectedEntities,
+            neighborTypeIds,
             utilizerIsSrc: selectedArrow.value
           }
-        ]
+        }
       };
       return state.mergeDeep(mergeObj);
 
