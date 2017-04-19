@@ -6,8 +6,6 @@ import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
 import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
 import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
-import DummyData from '../DummyData';
-
 
 class TopUtilizersFormContainer extends React.Component {
   static propTypes = {

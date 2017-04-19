@@ -4,7 +4,6 @@ import Immutable from 'immutable';
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as ESDActionTypes from '../entitysetdetail/EntitySetDetailActionTypes';
 import * as catalogActionTypes from '../catalog/CatalogActionTypes';
-import DummyData from './DummyData';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
