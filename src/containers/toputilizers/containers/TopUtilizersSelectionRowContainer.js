@@ -12,8 +12,32 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     this.state = {
       selectedAssociation: null,
       selectedArrow: null,
+      entityOptions: [],
       selectedEntities: []
     }
+  }
+
+  formatEntityOptions = (entities) => {
+    return entities.map((entity) => {
+      return { value: entity.get('id'), label: entity.get('title') };
+    });
+  }
+
+  getEntityOptions = () => {
+    this.props.associations.forEach((assoc) => {
+      if (assoc.get('title') === this.state.selectedAssociation.label) {
+        if (this.state.selectedArrow.label === 'source') {
+          const entityOptions = this.formatEntityOptions(assoc.get('sourceVals')).toJS();
+          console.log('entityoptions:', entityOptions);
+          this.setState({ entityOptions });
+        }
+        else if (this.state.selectedArrow.label === 'dest') {
+          const entityOptions = this.formatEntityOptions(assoc.get('destVals')).toJS();
+          this.setState({ entityOptions });
+        }
+        // TODO: Handle bi-directional arrows
+      }
+    });
   }
 
   selectAssociation = (data) => {
@@ -23,7 +47,9 @@ class TopUtilizersSelectionRowContainer extends React.Component {
 
   selectArrow = (data) => {
     this.props.selectArrow(data);
-    this.setState({ selectedArrow: data });
+    this.setState({ selectedArrow: data }, () => {
+      this.getEntityOptions();
+    });
   }
 
   selectEntity = (data) => {
@@ -41,7 +67,8 @@ class TopUtilizersSelectionRowContainer extends React.Component {
           associations={this.props.associations}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}
-          selectedEntities={this.state.selectedEntities} />
+          selectedEntities={this.state.selectedEntities}
+          entityOptions={this.state.entityOptions} />
     );
   }
 }

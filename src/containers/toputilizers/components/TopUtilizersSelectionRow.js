@@ -13,22 +13,6 @@ const getAssociationOptions = (associations) => {
   });
 };
 
-const getEntityOptions = (selectedAssociation, selectedArrow) => {
-  if (!selectedAssociation) return [];
-  if (selectedArrow === 'source') {
-    return selectedAssociation.get('sourceVals').map((entity) => {
-      return { value: entity.get('id'), label: entity.get('title') };
-    });
-  }
-  else if (selectedArrow === 'dest') {
-    return selectedAssociation.get('destVals').map((entity) => {
-      return { value: entity.get('id'), label: entity.get('title') };
-    });
-  }
-
-  // TODO: handle case for bi-directional arrows
-};
-
 const TopUtilizersSelectionRow = ({
   selectAssociation,
   selectArrow,
@@ -36,7 +20,8 @@ const TopUtilizersSelectionRow = ({
   associations,
   selectedAssociation,
   selectedArrow,
-  selectedEntities
+  selectedEntities,
+  entityOptions
 }) => {
 
   const associationOptions = getAssociationOptions(associations).toJS();
@@ -44,7 +29,6 @@ const TopUtilizersSelectionRow = ({
     { value: 'source', label: 'source'},
     { value: 'dest', label: 'dest'}
   ];
-  const entityOptions = getEntityOptions(selectedAssociation, selectedArrow);
 
   return (
     <ContentSection>
@@ -72,26 +56,6 @@ TopUtilizersSelectionRow.propTypes = {
   selectAssociation: PropTypes.func.isRequired,
   selectArrow: PropTypes.func.isRequired,
   selectEntity: PropTypes.func.isRequired
-}
+};
 
 export default TopUtilizersSelectionRow;
-
-//
-// <Select
-//     className={styles.propertyTypeSelect}
-//     options={this.getPropertyTypeOptions()}
-//     value={this.state.editingPropertyType}
-//     onChange={this.onPropertyTypeLinkChange} />
-// </td>
-// <td>
-// <Select
-//     className={styles.entitySetsSelect}
-//     options={this.getEntitySetsOptions()}
-//     value={this.state.editingEntitySets}
-//     onChange={this.onEntitySetsLinkChange}
-//     multi />
-//
-//     <Select
-//         options={addPropOptions}
-//         value={this.state.addPropValue}
-//         onChange={this.addPropertyType} />
