@@ -19,16 +19,14 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit, entitySetId }) => {
     <ContentContainer>
       <form className={styles.formWrapper} onSubmit={onSubmit}>
         <div className={styles.labelsRow}>
-          <span className={styles.associationLabel}>Association</span>
-          <span className={styles.directionLabel}>Direction</span>
-          <span className={styles.entitiesLabel}>Entities</span>
+          Select search parameters
         </div>
         <div className={styles.rowsWrapper}>
           {getChildren(rowData)}
         </div>
         <div className={styles.addLink}>
           <a href="#" className={styles.addLink} onClick={handleClick}>
-            <FontAwesome className={styles.plusIcon} name="plus" size="2x" />Add search parameter
+            <FontAwesome className={styles.plusIcon} name="plus" />Add search parameter
           </a>
         </div>
         <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>

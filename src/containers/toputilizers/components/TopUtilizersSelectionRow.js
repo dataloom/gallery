@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Select from 'react-select';
+import FontAwesome from 'react-fontawesome';
 
 import styles from '../styles.module.css';
 
@@ -9,6 +10,14 @@ const getAssociationOptions = (associations) => {
     return { value: assoc.id, label: assoc.title };
   });
 };
+
+const isDisabled = (selectedAssociation, selectedArrow) => {
+  if (!selectedAssociation || !selectedArrow) {
+    return true;
+  }
+
+  return false;
+}
 
 const TopUtilizersSelectionRow = ({
   selectAssociation,
@@ -23,8 +32,8 @@ const TopUtilizersSelectionRow = ({
 
   const associationOptions = getAssociationOptions(associations).toJS();
   const arrowOptions = [
-    { value: true, label: 'source'},
-    { value: false, label: 'dest'}
+    { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" />},
+    { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" />}
   ];
 
   return (
@@ -33,17 +42,23 @@ const TopUtilizersSelectionRow = ({
           className={styles.associationSelect}
           options={associationOptions}
           value={selectedAssociation}
-          onChange={selectAssociation} />
+          onChange={selectAssociation}
+          placeholder="Association"
+          clearable={false} />
       <Select
           className={styles.arrowSelect}
           options={arrowOptions}
           value={selectedArrow}
-          onChange={selectArrow} />
+          onChange={selectArrow}
+          placeholder="Ownership"
+          clearable={false} />
       <Select
           className={styles.entitySelect}
           options={associationOptions}
           value={selectedEntities}
           onChange={selectEntity}
+          placeholder="Entities"
+          disabled={isDisabled(selectedAssociation, selectedArrow)}
           multi />
     </div>
   );

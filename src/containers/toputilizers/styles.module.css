@@ -8,47 +8,41 @@
 
 .labelsRow {
   font-size: 20px;
-  margin: 12px;
-}
-
-.associationLabel {
-  display: inline-block;
-}
-
-.directionLabel {
-  display: inline-block;
-  margin-left: 160px;
-}
-
-.entitiesLabel {
-  display: inline-block;
-  margin-left: 90px;
+  margin: 6px 0;
 }
 
 .rowWrapper {
   display: flex;
-  padding: 6px 12px;
+  padding: 6px 0;
 }
 
 .associationSelect {
-  width: 300px;
+  width: 30%;
 }
 
 .arrowSelect {
-  width: 200px;
+  width: 12%;
+}
+
+.arrowIcon {
+  margin-left: 40%;
 }
 
 .entitySelect {
-  width: 600px;
+  width: 58%;
 }
 
 .addLink {
-  margin: 6px 12px 40px 6px;
+  margin-bottom: 40px;
 }
 
 a {
   color: inherit;
   font-size: 16px;
+}
+
+a:hover {
+  color: inherit;
 }
 
 .plusIcon {
@@ -62,4 +56,5 @@ a {
   color: white;
   font-weight: bold;
   margin: auto;
+  display: inline-block;
 }

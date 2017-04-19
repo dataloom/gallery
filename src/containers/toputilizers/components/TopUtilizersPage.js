@@ -17,12 +17,17 @@ class TopUtilizersPage extends React.Component {
     this.props.getEntitySetId();
   }
 
+  getEntitySetTitle = () => {
+    return this.props.entitySet ? this.props.entitySet.title : null;
+  }
+
   render() {
     return (
       <DocumentTitle>
         <Page>
           <Page.Header>
             <Page.Title>Top Utilizers</Page.Title>
+            <h3>{this.getEntitySetTitle()}</h3>
           </Page.Header>
           <Page.Body>
             {this.props.children}
