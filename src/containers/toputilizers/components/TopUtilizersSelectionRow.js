@@ -1,9 +1,6 @@
 import React, { PropTypes } from 'react';
-import DocumentTitle from 'react-document-title';
 import Select from 'react-select';
 
-import Page from '../../../components/page/Page.js';
-import ContentSection from '../../../components/applayout/ContentSection';
 import styles from '../styles.module.css';
 
 const getAssociationOptions = (associations) => {
@@ -55,7 +52,12 @@ const TopUtilizersSelectionRow = ({
 TopUtilizersSelectionRow.propTypes = {
   selectAssociation: PropTypes.func.isRequired,
   selectArrow: PropTypes.func.isRequired,
-  selectEntity: PropTypes.func.isRequired
+  selectEntity: PropTypes.func.isRequired,
+  associations: PropTypes.array.isRequired,
+  selectedAssociation: PropTypes.object.isRequired,
+  selectedArrow: PropTypes.bool.isRequired,
+  selectedEntities: PropTypes.array.isRequired,
+  entityOptions: PropTypes.array.isRequired
 };
 
 export default TopUtilizersSelectionRow;

@@ -21,17 +21,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       console.log('GET ENTITY SETS SUCCESS:', action);
       return state.set('associations', action.data);
 
-    case actionTypes.ON_ASSOCIATION_SELECT:
-      console.log('on association selection:', action);
-      return state;
-
-    case actionTypes.ON_ARROW_SELECT:
-      console.log('arrow select action:', action);
-      return state;
-
     case actionTypes.ON_ENTITY_SELECT:
-    console.log('entity select action:', action);
-    const { selectedAssociation, selectedArrow, selectedEntities } = action.data;
+      console.log('entity select action:', action);
+      const { selectedAssociation, selectedArrow, selectedEntities } = action.data;
     // const mergeObj = {
     //   searchQuery: {
     //     [assocValue]: {

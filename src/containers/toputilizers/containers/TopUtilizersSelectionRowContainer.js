@@ -6,6 +6,10 @@ import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersSelectionRow from '../components/TopUtilizersSelectionRow';
 
 class TopUtilizersSelectionRowContainer extends React.Component {
+  static propTypes = {
+    associations: PropTypes.array.isRequired
+  }
+
   constructor(props) {
     super(props);
 
@@ -40,12 +44,10 @@ class TopUtilizersSelectionRowContainer extends React.Component {
   }
 
   selectAssociation = (data) => {
-    // this.props.selectAssociation(data);
     this.setState({ selectedAssociation: data });
   }
 
   selectArrow = (data) => {
-    // this.props.selectArrow(data);
     this.setState({ selectedArrow: data }, () => {
       this.getEntityOptions();
     });
@@ -87,8 +89,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    selectAssociation: actionFactory.onAssociationSelect,
-    selectArrow: actionFactory.onArrowSelect,
     selectEntity: actionFactory.onEntitySelect
   };
 

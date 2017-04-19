@@ -1,12 +1,11 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Immutable from 'immutable';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
-import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
-import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
+// import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
+// import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
 import DummyData from '../DummyData';
 
 

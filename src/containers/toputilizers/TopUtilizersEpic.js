@@ -1,4 +1,3 @@
-import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import * as actionTypes from './TopUtilizersActionTypes';
@@ -24,13 +23,14 @@ function getEntitySetsEpic(action$) {
     });
 }
 
-function submitQueryEpic(action$) {
+function submitQueryEpic(action$, state) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
+      const searchQuery = state.get('searchQuery');
       return Observable
         .from(
-          // submit request
+          // API.findTopUtilizers(searchQuery)
         )
         .mergeMap((results) => {
           return Observable

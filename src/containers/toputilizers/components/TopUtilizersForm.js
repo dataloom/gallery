@@ -1,17 +1,14 @@
 import React, { PropTypes } from 'react';
-import DocumentTitle from 'react-document-title';
 import { Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 
-import Page from '../../../components/page/Page.js';
 import ContentContainer from '../../../components/applayout/ContentContainer';
-import ContentSection from '../../../components/applayout/ContentSection';
 import TopUtilizersSelectionRowContainer from '../containers/TopUtilizersSelectionRowContainer';
 import styles from '../styles.module.css';
 
 const getChildren = (rowData) => {
   return rowData.map((row) => {
-    return <TopUtilizersSelectionRowContainer id={row.id} />
+    return <TopUtilizersSelectionRowContainer id={row.id} />;
   });
 };
 
@@ -42,12 +39,9 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
 };
 
 TopUtilizersForm.propTypes = {
-  associations: PropTypes.array.isRequired,
-  onAssociationSelect: PropTypes.func.isRequired,
-  onArrowSelect: PropTypes.func.isRequired,
-  onEntitySelect: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  isReadyForNext: PropTypes.bool.isRequired
+  handleClick: PropTypes.func.isRequired,
+  rowData: PropTypes.array.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default TopUtilizersForm;
