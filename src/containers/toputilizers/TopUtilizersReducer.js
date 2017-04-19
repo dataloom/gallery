@@ -7,7 +7,8 @@ import DummyData from './DummyData';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
-  associations: DummyData
+  associations: DummyData,
+  searchQuery: {}
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -16,11 +17,20 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('entitySetId', action.id);
 
     case actionTypes.ON_ASSOCIATION_SELECT:
-      console.log('on association selectaction:', action);
+      console.log('on association selection:', action);
 
       const label = action.data.label;
       const value = action.data.value;
-      return state;
+      const mergeObj = {
+        searchQuery: {
+          [value]: {
+            label,
+            directionality: null,
+            selectedEntities: []
+          }
+        }
+      };
+      return state.mergeDeep(mergeObj);
 
     case actionTypes.ON_ARROW_SELECT:
       console.log('arrow select action:', action);
