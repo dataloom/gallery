@@ -20,10 +20,6 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     }
   }
 
-  componentDidMount() {
-    // run onSubmit again to load on refresh?
-  }
-
   formatEntityOptions = (entities) => {
     return entities.map((entity) => {
       return { value: entity.get('id'), label: entity.get('title') };

@@ -9,20 +9,21 @@ import * as actionFactory from '../TopUtilizersActionFactory';
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
-    propertyTypes: PropTypes.array.isRequired,
-    formatValueFn: PropTypes.func.isRequired,
+    entitySet: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired
   }
 
   getResults = () => {
-    const dummyResults = {
-      
-    };
+    const dummyResults = [
+      {
+
+      }
+    ];
     return dummyResults;
   }
 
   getPropertyTypes = () => {
-    return this.props.entitySet.entityType.properties;
+    return this.props.entitySet ? this.props.entitySet.entityType.properties : [];
   }
 
   formatValue = (rawValue) => {
@@ -44,7 +45,7 @@ class TopUtilizersResultsContainer extends React.Component {
       <SearchResultsTable
           results={this.getResults()}
           propertyTypes={this.getPropertyTypes()}
-          formatValueFn={this.formatValueFn} />
+          formatValueFn={this.formatValue} />
     );
   }
 
