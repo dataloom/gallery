@@ -77,7 +77,7 @@ class OrganizationsListComponent extends React.Component {
     };
 
     const viewOrgDetailsButton = (
-      <Button onClick={viewOrgDetailsOnClick}>
+      <Button scStyle="purple" onClick={viewOrgDetailsOnClick}>
         View Organization
       </Button>
     );
