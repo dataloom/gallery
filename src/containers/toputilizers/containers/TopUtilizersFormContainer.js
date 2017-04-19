@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { hashHistory } from 'react-router';
 
+import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
+import { getEdmObject } from '../../edm/EdmStorage';
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
 import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
@@ -30,6 +33,10 @@ class TopUtilizersFormContainer extends React.Component {
     if (this.props.entitySets.size === 0 && nextProps.entitySets.size > 0) {
       this.props.setEntitySets(nextProps.entitySets);
     }
+
+    if (!this.props.entitySet && nextProps.entitySet) {
+      this.props.setEntitySet(nextProps.entitySet);
+    }
   }
 
   handleClickAddParameter = (e) => {
@@ -43,7 +50,7 @@ class TopUtilizersFormContainer extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     this.props.submitQuery();
-    // hashHistory push results page
+    hashHistory.push(`entitysets/${this.props.entitySetId}/toputilizers/results`);
   }
 
   render() {
@@ -51,7 +58,8 @@ class TopUtilizersFormContainer extends React.Component {
       <TopUtilizersForm
           handleClick={this.handleClickAddParameter}
           rowData={this.state.rowData}
-          onSubmit={this.onSubmit} />
+          onSubmit={this.onSubmit}
+          entitySetId={this.props.entitySetId} />
     );
   }
 }
@@ -60,6 +68,7 @@ function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
   const catalog = state.get('catalog');
   const normalizedData = state.get('normalizedData').toJS();
+  const entitySetDetail = state.get('entitySetDetail');
 
   let entitySets = [];
   if (catalog && catalog.get('allEntitySetReferences')) {
@@ -70,9 +79,16 @@ function mapStateToProps(state) {
     });
   }
 
+  let entitySet;
+  const reference = entitySetDetail.get('entitySetReference');
+  if (reference) {
+    entitySet = getEdmObject(normalizedData, reference.toJS());
+  }
+
   return {
     entitySetId: topUtilizers.get('entitySetId'),
-    entitySets
+    entitySets,
+    entitySet
   };
 }
 
@@ -80,8 +96,8 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     allEntitySetsRequest,
     setEntitySets: actionFactory.setEntitySets,
-    submitQuery: actionFactory.submitTopUtilizersRequest
-    // getEntitySets: actionFactory.getEntitySetsRequest,
+    submitQuery: actionFactory.submitTopUtilizersRequest,
+    setEntitySet: actionFactory.setEntitySet
   };
 
   return bindActionCreators(actions, dispatch);

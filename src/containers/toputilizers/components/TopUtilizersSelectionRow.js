@@ -53,10 +53,10 @@ TopUtilizersSelectionRow.propTypes = {
   selectAssociation: PropTypes.func.isRequired,
   selectArrow: PropTypes.func.isRequired,
   selectEntity: PropTypes.func.isRequired,
-  associations: PropTypes.array.isRequired,
-  selectedAssociation: PropTypes.object.isRequired,
-  selectedArrow: PropTypes.object.isRequired,
-  selectedEntities: PropTypes.array.isRequired
+  associations: PropTypes.object.isRequired,
+  selectedAssociation: PropTypes.object,
+  selectedArrow: PropTypes.object,
+  selectedEntities: PropTypes.array
 };
 
 export default TopUtilizersSelectionRow;

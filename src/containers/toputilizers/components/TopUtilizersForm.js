@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
+import { Link } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 
 import ContentContainer from '../../../components/applayout/ContentContainer';
@@ -12,7 +13,7 @@ const getChildren = (rowData) => {
   });
 };
 
-const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
+const TopUtilizersForm = ({ handleClick, rowData, onSubmit, entitySetId }) => {
 
   return (
     <ContentContainer>
@@ -30,9 +31,7 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
             <FontAwesome className={styles.plusIcon} name="plus" size="2x" />Add search parameter
           </a>
         </div>
-        <div className={styles.submitWrapper}>
-          <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>
-        </div>
+        <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>
       </form>
     </ContentContainer>
   );

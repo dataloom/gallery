@@ -7,6 +7,7 @@ import * as catalogActionTypes from '../catalog/CatalogActionTypes';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
+  entitySet: null,
   associations: [],
   topUtilizersDetailsList: {},
   topUtilizersResults: [],
@@ -21,6 +22,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.SET_ENTITY_SETS:
       console.log('set entity sets:', action);
       return state.set('associations', action.data);
+
+    case actionTypes.SET_ENTITY_SET:
+      console.log('set entity set:', action);
+      return state.set('entitySet', action.data);
 
     case actionTypes.ON_ENTITY_SELECT:
       console.log('entity select action:', action);

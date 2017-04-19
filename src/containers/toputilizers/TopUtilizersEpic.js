@@ -7,10 +7,11 @@ function submitQueryEpic(action$, state) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const searchQuery = state.get('searchQuery');
+      let topUtilizersDetailsList = state.get('topUtilizersDetailsList').toJS();
+      topUtilizersDetailsList = Object.values(topUtilizersDetailsList);
       return Observable
         .from(
-          // API.findTopUtilizers(state.get('entitySetId'), 100, searchQuery)
+          // API.findTopUtilizers(state.get('entitySetId'), 100, topUtilizersDetailsList)
         )
         .mergeMap((results) => {
           return Observable

@@ -7,7 +7,7 @@ import TopUtilizersSelectionRow from '../components/TopUtilizersSelectionRow';
 
 class TopUtilizersSelectionRowContainer extends React.Component {
   static propTypes = {
-    associations: PropTypes.array.isRequired
+    associations: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -18,6 +18,10 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       selectedArrow: null,
       selectedEntities: []
     }
+  }
+
+  componentDidMount() {
+    // run onSubmit again to load on refresh?
   }
 
   formatEntityOptions = (entities) => {
