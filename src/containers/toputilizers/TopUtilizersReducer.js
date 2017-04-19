@@ -17,6 +17,10 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case ESDActionTypes.ENTITY_SET_REQUEST:
       return state.set('entitySetId', action.id);
 
+    case actionTypes.GET_ENTITY_SETS_SUCCESS:
+      console.log('GET ENTITY SETS SUCCESS:', action);
+      return state.set('associations', action.data);
+
     case actionTypes.ON_ASSOCIATION_SELECT:
       console.log('on association selection:', action);
       return state;

@@ -25,7 +25,8 @@ class TopUtilizersFormContainer extends React.Component {
   }
 
   componentDidMount() {
-    this.props.allEntitySetsRequest();
+    // this.props.allEntitySetsRequest();
+    this.props.getEntitySets();
   }
 
   handleClickAddParameter = (e) => {
@@ -53,28 +54,29 @@ class TopUtilizersFormContainer extends React.Component {
 
 function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
-  const catalog = state.get('catalog');
-  const normalizedData = state.get('normalizedData').toJS();
-
-  let entitySets = [];
-  if (catalog && catalog.get('allEntitySetReferences')) {
-    entitySets = catalog.get('allEntitySetReferences').map((reference) => {
-      return getShallowEdmObjectSilent(normalizedData, reference, null);
-    }).filter((entitySet) => {
-      return entitySet;
-    });
-  }
+  // const catalog = state.get('catalog');
+  // const normalizedData = state.get('normalizedData').toJS();
+  //
+  // let entitySets = [];
+  // if (catalog && catalog.get('allEntitySetReferences')) {
+  //   entitySets = catalog.get('allEntitySetReferences').map((reference) => {
+  //     return getShallowEdmObjectSilent(normalizedData, reference, null);
+  //   }).filter((entitySet) => {
+  //     return entitySet;
+  //   });
+  // }
 
   return {
     entitySetId: topUtilizers.get('entitySetId'),
-    entitySets,
+    // entitySets,
     associations: DummyData
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    allEntitySetsRequest,
+    // allEntitySetsRequest,
+    getEntitySets: actionFactory.getEntitySetsRequest,
     submitQuery: actionFactory.submitTopUtilizersRequest
   };
 
