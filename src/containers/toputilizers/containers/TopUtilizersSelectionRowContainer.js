@@ -25,10 +25,9 @@ class TopUtilizersSelectionRowContainer extends React.Component {
 
   getEntityOptions = () => {
     this.props.associations.forEach((assoc) => {
-      if (assoc.get('title') === this.state.selectedAssociation.label) {
+      if (this.state.selectedAssociation && assoc.get('title') === this.state.selectedAssociation.label) {
         if (this.state.selectedArrow.label === 'source') {
           const entityOptions = this.formatEntityOptions(assoc.get('sourceVals')).toJS();
-          console.log('entityoptions:', entityOptions);
           this.setState({ entityOptions });
         }
         else if (this.state.selectedArrow.label === 'dest') {
@@ -41,21 +40,20 @@ class TopUtilizersSelectionRowContainer extends React.Component {
   }
 
   selectAssociation = (data) => {
-    this.props.selectAssociation(data);
+    // this.props.selectAssociation(data);
     this.setState({ selectedAssociation: data });
   }
 
   selectArrow = (data) => {
-    this.props.selectArrow(data);
+    // this.props.selectArrow(data);
     this.setState({ selectedArrow: data }, () => {
       this.getEntityOptions();
     });
   }
 
-  selectEntity = (data) => {
-    this.props.selectEntity(data);
-    const entities = this.state.selectedEntities.push(data);
-    this.setState({ selectedEntities: entities });
+  selectEntity = (options) => {
+    // this.props.selectEntity(options);
+    this.setState({ selectedEntities: options });
   }
 
   render() {
@@ -63,7 +61,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       <TopUtilizersSelectionRow
           selectAssociation={this.selectAssociation}
           selectArrow={this.selectArrow}
-          selectentity={this.selectEntity}
+          selectEntity={this.selectEntity}
           associations={this.props.associations}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}

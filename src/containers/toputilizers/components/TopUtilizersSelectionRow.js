@@ -23,7 +23,7 @@ const TopUtilizersSelectionRow = ({
   selectedEntities,
   entityOptions
 }) => {
-
+  console.log('selectedEntities:', selectedEntities);
   const associationOptions = getAssociationOptions(associations).toJS();
   const arrowOptions = [
     { value: 'source', label: 'source'},
@@ -42,12 +42,12 @@ const TopUtilizersSelectionRow = ({
           options={arrowOptions}
           value={selectedArrow}
           onChange={selectArrow} />
-        <Select
-            className={styles.entitySelect}
-            options={entityOptions}
-            value={selectedEntities}
-            onChange={selectEntity}
-            multi />
+      <Select
+          className={styles.entitySelect}
+          options={entityOptions}
+          value={selectedEntities}
+          onChange={selectEntity}
+          multi />
     </ContentSection>
   );
 };
