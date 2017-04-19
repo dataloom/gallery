@@ -7,24 +7,27 @@ import ContentSection from '../../../components/applayout/ContentSection';
 import TopUtilizersSelectionRowContainer from '../containers/TopUtilizersSelectionRowContainer';
 import styles from '../styles.module.css';
 
-const renderAddNew = (associations) => {
-  return (
-    <ContentSection>Add search parameter</ContentSection>
-  );
+const getChildren = (rowData) => {
+  console.log('rowData:', rowData);
+  return rowData.map((row) => {
+    return <TopUtilizersSelectionRowContainer id={row.id} />
+  });
 };
 
-const TopUtilizersForm = ({ isReadyForNext }) => {
+const TopUtilizersForm = ({ handleClick, rowData }) => {
 
   return (
     <ContentContainer>
-      <TopUtilizersSelectionRowContainer />
-      {isReadyForNext ? renderAddNew() : null}
+      <div className={styles.formWrapper}>
+        {getChildren(rowData)}
+      </div>
+      <ContentSection><a href="#" onClick={handleClick}>Add search parameter</a></ContentSection>
     </ContentContainer>
   );
 };
 
 TopUtilizersForm.propTypes = {
-  associatoins: PropTypes.array.isRequired,
+  associations: PropTypes.array.isRequired,
   onAssociationSelect: PropTypes.func.isRequired,
   onArrowSelect: PropTypes.func.isRequired,
   onEntitySelect: PropTypes.func.isRequired,

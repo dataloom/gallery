@@ -23,7 +23,7 @@ const TopUtilizersSelectionRow = ({
   selectedEntities,
   entityOptions
 }) => {
-  console.log('selectedEntities:', selectedEntities);
+
   const associationOptions = getAssociationOptions(associations).toJS();
   const arrowOptions = [
     { value: 'source', label: 'source'},

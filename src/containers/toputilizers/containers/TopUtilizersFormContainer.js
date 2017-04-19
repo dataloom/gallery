@@ -14,16 +14,26 @@ class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired
   }
+
   constructor(props) {
     super(props);
 
-    this.state = {
-      isReadyForNext: true
-    };
+    this.state= {
+      counter: 0,
+      rowData: [{id: 0}]
+    }
   }
 
   componentDidMount() {
     this.props.allEntitySetsRequest();
+  }
+
+  handleClickAddParameter = (e) => {
+    e.preventDefault();
+    this.setState({ counter: ++this.state.counter}, () => {console.log('counter', this.state.counter)});
+    const rowData = this.state.rowData;
+    rowData.push({ id: this.state.counter });
+    this.setState({ rowData });
   }
 
     //QUESTION: How to get access to selected association and keep the whole row scoped to it?
@@ -31,7 +41,9 @@ class TopUtilizersFormContainer extends React.Component {
 
   render() {
     return (
-      <TopUtilizersForm isReadyForNext={this.state.isReadyForNext} />
+      <TopUtilizersForm
+          handleClick={this.handleClickAddParameter}
+          rowData={this.state.rowData} />
     );
   }
 }
