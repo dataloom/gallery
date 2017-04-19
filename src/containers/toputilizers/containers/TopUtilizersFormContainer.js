@@ -72,8 +72,7 @@ function mapStateToProps(state) {
 
   return {
     entitySetId: topUtilizers.get('entitySetId'),
-    entitySets,
-    topUtilizersDetailsList: topUtilizers.get('topUtilizersDetailsList')
+    entitySets
   };
 }
 
