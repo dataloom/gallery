@@ -11,6 +11,7 @@ const LINK = 'link';
 const SEARCH = 'search';
 const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
+const ENTITY_SETS = 'entitysets';
 
 export default {
   DEFAULT_DOCUMENT_TITLE,
@@ -24,5 +25,6 @@ export default {
   LINK,
   SEARCH,
   ADVANCED_SEARCH,
-  ORGS
+  ORGS,
+  ENTITY_SETS
 };
