@@ -13,15 +13,6 @@ class TopUtilizersResultsContainer extends React.Component {
     isGettingResults: PropTypes.bool.isRequired
   }
 
-  getResults = () => {
-    const dummyResults = [
-      {
-
-      }
-    ];
-    return dummyResults;
-  }
-
   getPropertyTypes = () => {
     return this.props.entitySet ? this.props.entitySet.entityType.properties : [];
   }
@@ -43,15 +34,14 @@ class TopUtilizersResultsContainer extends React.Component {
   renderTable = () => {
     return (
       <SearchResultsTable
-          results={this.getResults()}
+          results={this.props.results}
           propertyTypes={this.getPropertyTypes()}
           formatValueFn={this.formatValue} />
     );
   }
 
   renderContent = () => {
-    // return this.props.isGettingResults ? <LoadingSpinner /> : this.renderTable();
-    return this.renderTable();
+    return this.props.isGettingResults ? <LoadingSpinner /> : this.renderTable();
   }
 
   render() {

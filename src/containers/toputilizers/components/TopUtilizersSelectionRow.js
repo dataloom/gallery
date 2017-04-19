@@ -15,9 +15,8 @@ const isDisabled = (selectedAssociation, selectedArrow) => {
   if (!selectedAssociation || !selectedArrow) {
     return true;
   }
-
   return false;
-}
+};
 
 const TopUtilizersSelectionRow = ({
   selectAssociation,
