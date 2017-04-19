@@ -17,7 +17,6 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       selectedAssociation: null,
       selectedArrow: null,
       selectedEntities: []
-      // entityOptions: []
     }
   }
 
@@ -26,23 +25,6 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       return { value: entity.get('id'), label: entity.get('title') };
     });
   }
-
-// TODO: Get filter entity options based on selected association and arrow
-  // getEntityOptions = () => {
-  //   this.props.associations.forEach((assoc) => {
-  //     if (this.state.selectedAssociation && assoc.get('title') === this.state.selectedAssociation.label) {
-  //       if (this.state.selectedArrow === true) {
-  //         const entityOptions = this.formatEntityOptions(assoc.get('sourceVals')).toJS();
-  //         this.setState({ entityOptions });
-  //       }
-  //       else if (this.state.selectedArrow === false) {
-  //         const entityOptions = this.formatEntityOptions(assoc.get('destVals')).toJS();
-  //         this.setState({ entityOptions });
-  //       }
-  //       // TODO: Handle bi-directional arrows
-  //     }
-  //   });
-  // }
 
   selectAssociation = (data) => {
     this.setState({ selectedAssociation: data });
@@ -72,7 +54,6 @@ class TopUtilizersSelectionRowContainer extends React.Component {
           associations={this.props.associations}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}
-          // entityOptions={this.state.entityOptions}
           selectedEntities={this.state.selectedEntities} />
     );
   }

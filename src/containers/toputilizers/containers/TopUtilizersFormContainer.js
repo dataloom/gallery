@@ -75,7 +75,7 @@ function mapStateToProps(state) {
   return {
     entitySetId: topUtilizers.get('entitySetId'),
     entitySets,
-    associations: DummyData
+    topUtilizersDetailsList: topUtilizers.get('topUtilizersDetailsList')
   };
 }
 
