@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 
 import ContentContainer from '../../../components/applayout/ContentContainer';

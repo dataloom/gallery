@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { hashHistory } from 'react-router';
 
-import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
-import { getEdmObject } from '../../edm/EdmStorage';
+import { getEdmObject, getShallowEdmObjectSilent } from '../../edm/EdmStorage';
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
 import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
-import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
 
 class TopUtilizersFormContainer extends React.Component {
   static propTypes = {

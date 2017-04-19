@@ -17,7 +17,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       selectedAssociation: null,
       selectedArrow: null,
       selectedEntities: []
-    }
+    };
   }
 
   formatEntityOptions = (entities) => {
@@ -46,7 +46,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
   }
 
   render() {
-    return(
+    return (
       <TopUtilizersSelectionRow
           selectAssociation={this.selectAssociation}
           selectArrow={this.selectArrow}

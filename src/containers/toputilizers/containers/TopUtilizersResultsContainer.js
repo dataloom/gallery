@@ -1,10 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
-import * as actionFactory from '../TopUtilizersActionFactory';
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
@@ -60,12 +58,4 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  const actions = {
-
-  };
-
-  return bindActionCreators(actions, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TopUtilizersResultsContainer);
+export default connect(mapStateToProps)(TopUtilizersResultsContainer);
