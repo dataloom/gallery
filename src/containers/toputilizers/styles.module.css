@@ -66,3 +66,8 @@ a:hover {
   margin: auto;
   display: inline-block;
 }
+
+.submitButton:hover {
+  background: #300290;
+  color: white;
+}
