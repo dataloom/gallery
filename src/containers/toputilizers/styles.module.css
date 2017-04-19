@@ -1,13 +1,37 @@
+.labelsRow {
+  font-size: 20px;
+  margin: 12px;
+}
+
+.associationLabel {
+  display: inline-block;
+}
+
+.directionLabel {
+  display: inline-block;
+  margin-left: 160px;
+}
+
+.entitiesLabel {
+  display: inline-block;
+  margin-left: 90px;
+}
+
+.rowWrapper {
+  display: flex;
+  padding: 6px 12px;
+}
+
 .associationSelect {
   width: 300px;
 }
 
 .arrowSelect {
-  width: 100px;
+  width: 200px;
 }
 
 .entitySelect {
-  width: 300px;
+  width: 600px;
 }
 
 .submitButton {

@@ -19,6 +19,11 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
   return (
     <ContentContainer>
       <form className={styles.formWrapper} onSubmit={onSubmit}>
+        <div className={styles.labelsRow}>
+          <span className={styles.associationLabel}>Association</span>
+          <span className={styles.directionLabel}>Direction</span>
+          <span className={styles.entitiesLabel}>Entities</span>
+        </div>
         <div className={styles.rowsWrapper}>
           {getChildren(rowData)}
         </div>

@@ -31,7 +31,7 @@ const TopUtilizersSelectionRow = ({
   ];
 
   return (
-    <ContentSection>
+    <div className={styles.rowWrapper}>
       <Select
           className={styles.associationSelect}
           options={associationOptions}
@@ -48,7 +48,7 @@ const TopUtilizersSelectionRow = ({
           value={selectedEntities}
           onChange={selectEntity}
           multi />
-    </ContentSection>
+    </div>
   );
 };
 
