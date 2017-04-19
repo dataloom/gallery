@@ -43,7 +43,9 @@ class TopUtilizersFormContainer extends React.Component {
     e.preventDefault();
     this.setState({ counter: ++this.state.counter});
     const rowData = this.state.rowData;
-    rowData.push({ id: this.state.counter });
+    if (this.state.counter <= 10) {
+      rowData.push({ id: this.state.counter });
+    }
     this.setState({ rowData });
   }
 

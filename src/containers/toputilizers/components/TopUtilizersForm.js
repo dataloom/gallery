@@ -16,22 +16,26 @@ const getChildren = (rowData) => {
 const TopUtilizersForm = ({ handleClick, rowData, onSubmit, entitySetId }) => {
 
   return (
-    <ContentContainer>
-      <form className={styles.formWrapper} onSubmit={onSubmit}>
-        <div className={styles.labelsRow}>
-          Select search parameters
-        </div>
-        <div className={styles.rowsWrapper}>
-          {getChildren(rowData)}
-        </div>
-        <div className={styles.addLink}>
-          <a href="#" className={styles.addLink} onClick={handleClick}>
-            <FontAwesome className={styles.plusIcon} name="plus" />Add search parameter
-          </a>
-        </div>
+    <div className={styles.pageWrapper}>
+      <ContentContainer>
+        <form className={styles.formWrapper} onSubmit={onSubmit}>
+          <div className={styles.labelsRow}>
+            Select search parameters
+          </div>
+          <div className={styles.rowsWrapper}>
+            {getChildren(rowData)}
+          </div>
+          <div className={styles.addLink}>
+            <a href="#" className={styles.addLink} onClick={handleClick}>
+              <FontAwesome className={styles.plusIcon} name="plus" />Add search parameter
+            </a>
+          </div>
+        </form>
+      </ContentContainer>
+      <div className={styles.buttonWrapper}>
         <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>
-      </form>
-    </ContentContainer>
+      </div>
+    </div>
   );
 };
 
