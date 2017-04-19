@@ -1,3 +1,11 @@
+.formWrapper {
+
+}
+
+.rowsWrapper {
+  margin-bottom: 20px;
+}
+
 .labelsRow {
   font-size: 20px;
   margin: 12px;
@@ -34,8 +42,24 @@
   width: 600px;
 }
 
+.addLink {
+  margin: 6px 12px 40px 6px;
+}
+
+a {
+  color: inherit;
+  font-size: 16px;
+}
+
+.plusIcon {
+  color: #4203c5;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
 .submitButton {
   background: #4203c5;
   color: white;
   font-weight: bold;
+  margin: auto;
 }

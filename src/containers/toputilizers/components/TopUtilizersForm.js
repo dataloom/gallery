@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import DocumentTitle from 'react-document-title';
 import { Button } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
 
 import Page from '../../../components/page/Page.js';
 import ContentContainer from '../../../components/applayout/ContentContainer';
@@ -27,8 +28,14 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
         <div className={styles.rowsWrapper}>
           {getChildren(rowData)}
         </div>
-        <ContentSection><a href="#" onClick={handleClick}>Add search parameter</a></ContentSection>
-        <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>
+        <div className={styles.addLink}>
+          <a href="#" className={styles.addLink} onClick={handleClick}>
+            <FontAwesome className={styles.plusIcon} name="plus" size="2x" />Add search parameter
+          </a>
+        </div>
+        <div className={styles.submitWrapper}>
+          <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>
+        </div>
       </form>
     </ContentContainer>
   );
