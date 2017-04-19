@@ -3,26 +3,6 @@ import { combineEpics } from 'redux-observable';
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
 
-function getEntitySetsEpic(action$) {
-  return action$
-    .ofType(actionTypes.GET_ENTITY_SETS_REQUEST)
-    .mergeMap((action) => {
-      return Observable
-        .from(
-          // GET request
-        )
-        .mergeMap((results) => {
-          return Observable
-            .of(
-              actionFactory.getEntitySetsSuccess(results)
-            );
-        })
-        .catch((err) => {
-          actionFactory.getEntitySetsFailure();
-        });
-    });
-}
-
 function submitQueryEpic(action$, state) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
@@ -30,7 +10,7 @@ function submitQueryEpic(action$, state) {
       const searchQuery = state.get('searchQuery');
       return Observable
         .from(
-          // API.findTopUtilizers(searchQuery)
+          // API.findTopUtilizers(state.get('entitySetId'), 100, searchQuery)
         )
         .mergeMap((results) => {
           return Observable

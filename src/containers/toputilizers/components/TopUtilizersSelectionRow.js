@@ -6,7 +6,7 @@ import styles from '../styles.module.css';
 const getAssociationOptions = (associations) => {
   if (!associations) return [];
   return associations.map((assoc) => {
-    return { value: assoc.get('id'), label: assoc.get('title') };
+    return { value: assoc.id, label: assoc.title };
   });
 };
 
@@ -23,8 +23,8 @@ const TopUtilizersSelectionRow = ({
 
   const associationOptions = getAssociationOptions(associations).toJS();
   const arrowOptions = [
-    { value: 'source', label: 'source'},
-    { value: 'dest', label: 'dest'}
+    { value: true, label: 'source'},
+    { value: false, label: 'dest'}
   ];
 
   return (
@@ -41,7 +41,7 @@ const TopUtilizersSelectionRow = ({
           onChange={selectArrow} />
       <Select
           className={styles.entitySelect}
-          options={entityOptions}
+          options={associationOptions}
           value={selectedEntities}
           onChange={selectEntity}
           multi />
@@ -55,7 +55,7 @@ TopUtilizersSelectionRow.propTypes = {
   selectEntity: PropTypes.func.isRequired,
   associations: PropTypes.array.isRequired,
   selectedAssociation: PropTypes.object.isRequired,
-  selectedArrow: PropTypes.bool.isRequired,
+  selectedArrow: PropTypes.object.isRequired,
   selectedEntities: PropTypes.array.isRequired,
   entityOptions: PropTypes.array.isRequired
 };

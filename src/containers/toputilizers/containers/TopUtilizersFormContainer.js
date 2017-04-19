@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
-// import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
-// import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
+import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
+import { getShallowEdmObjectSilent } from '../../edm/EdmStorage';
 import DummyData from '../DummyData';
 
 
@@ -19,13 +19,19 @@ class TopUtilizersFormContainer extends React.Component {
 
     this.state= {
       counter: 0,
-      rowData: [{id: 0}]
-    }
+      rowData: [{id: 0}],
+      entitySets: []
+    };
   }
 
   componentDidMount() {
-    // this.props.allEntitySetsRequest();
-    this.props.getEntitySets();
+    this.props.allEntitySetsRequest();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.entitySets.size === 0 && nextProps.entitySets.size > 0) {
+      this.props.setEntitySets(nextProps.entitySets);
+    }
   }
 
   handleClickAddParameter = (e) => {
@@ -39,6 +45,7 @@ class TopUtilizersFormContainer extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     this.props.submitQuery();
+    // hashHistory push results page
   }
 
   render() {
@@ -53,30 +60,31 @@ class TopUtilizersFormContainer extends React.Component {
 
 function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
-  // const catalog = state.get('catalog');
-  // const normalizedData = state.get('normalizedData').toJS();
-  //
-  // let entitySets = [];
-  // if (catalog && catalog.get('allEntitySetReferences')) {
-  //   entitySets = catalog.get('allEntitySetReferences').map((reference) => {
-  //     return getShallowEdmObjectSilent(normalizedData, reference, null);
-  //   }).filter((entitySet) => {
-  //     return entitySet;
-  //   });
-  // }
+  const catalog = state.get('catalog');
+  const normalizedData = state.get('normalizedData').toJS();
+
+  let entitySets = [];
+  if (catalog && catalog.get('allEntitySetReferences')) {
+    entitySets = catalog.get('allEntitySetReferences').map((reference) => {
+      return getShallowEdmObjectSilent(normalizedData, reference, null);
+    }).filter((entitySet) => {
+      return entitySet;
+    });
+  }
 
   return {
     entitySetId: topUtilizers.get('entitySetId'),
-    // entitySets,
+    entitySets,
     associations: DummyData
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    // allEntitySetsRequest,
-    getEntitySets: actionFactory.getEntitySetsRequest,
+    allEntitySetsRequest,
+    setEntitySets: actionFactory.setEntitySets,
     submitQuery: actionFactory.submitTopUtilizersRequest
+    // getEntitySets: actionFactory.getEntitySetsRequest,
   };
 
   return bindActionCreators(actions, dispatch);

@@ -3,13 +3,15 @@ import Immutable from 'immutable';
 
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as ESDActionTypes from '../entitysetdetail/EntitySetDetailActionTypes';
+import * as catalogActionTypes from '../catalog/CatalogActionTypes';
 import DummyData from './DummyData';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
-  associations: DummyData,
-  searchQuery: {},
-  topUtilizers: []
+  associations: [],
+  topUtilizersDetailsList: [],
+  topUtilizersResults: [],
+  isGettingResults: false
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -17,32 +19,35 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case ESDActionTypes.ENTITY_SET_REQUEST:
       return state.set('entitySetId', action.id);
 
-    case actionTypes.GET_ENTITY_SETS_SUCCESS:
-      console.log('GET ENTITY SETS SUCCESS:', action);
+    case actionTypes.SET_ENTITY_SETS:
+      console.log('set entity sets:', action);
       return state.set('associations', action.data);
 
     case actionTypes.ON_ENTITY_SELECT:
       console.log('entity select action:', action);
       const { selectedAssociation, selectedArrow, selectedEntities } = action.data;
-    // const mergeObj = {
-    //   searchQuery: {
-    //     [assocValue]: {
-    //       label,
-    //       vertexIsSrc: null,
-    //       selectedEntities: []
-    //     }
-    //   }
-    // };
-    // return state.mergeDeep(mergeObj);
-    return state;
+      const mergeObj = {
+        topUtilizersDetailsList: [
+          {
+            associationTypeId: selectedAssociation.value,
+            neighborTypeIds: selectedEntities,
+            utilizerIsSrc: selectedArrow.value
+          }
+        ]
+      };
+      return state.mergeDeep(mergeObj);
 
     case actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST:
       console.log('submit action:', action);
-      return state;
+      return state.set('isGettingResults', true);
 
     case actionTypes.SUBMIT_TOP_UTILIZERS_SUCCESS:
       console.log('submit SUCCESS:', action);
-      return state.set('topUtilizers', action.data);
+      const newState = {
+        isGettingResults: false,
+        topUtilizersResults: action.data
+      }
+      return state.merge(newState);
 
     default:
       return state;

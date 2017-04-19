@@ -16,8 +16,8 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     this.state = {
       selectedAssociation: null,
       selectedArrow: null,
-      entityOptions: [],
       selectedEntities: []
+      // entityOptions: []
     }
   }
 
@@ -27,30 +27,29 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     });
   }
 
-  getEntityOptions = () => {
-    this.props.associations.forEach((assoc) => {
-      if (this.state.selectedAssociation && assoc.get('title') === this.state.selectedAssociation.label) {
-        if (this.state.selectedArrow.label === 'source') {
-          const entityOptions = this.formatEntityOptions(assoc.get('sourceVals')).toJS();
-          this.setState({ entityOptions });
-        }
-        else if (this.state.selectedArrow.label === 'dest') {
-          const entityOptions = this.formatEntityOptions(assoc.get('destVals')).toJS();
-          this.setState({ entityOptions });
-        }
-        // TODO: Handle bi-directional arrows
-      }
-    });
-  }
+// TODO: Get filter entity options based on selected association and arrow
+  // getEntityOptions = () => {
+  //   this.props.associations.forEach((assoc) => {
+  //     if (this.state.selectedAssociation && assoc.get('title') === this.state.selectedAssociation.label) {
+  //       if (this.state.selectedArrow === true) {
+  //         const entityOptions = this.formatEntityOptions(assoc.get('sourceVals')).toJS();
+  //         this.setState({ entityOptions });
+  //       }
+  //       else if (this.state.selectedArrow === false) {
+  //         const entityOptions = this.formatEntityOptions(assoc.get('destVals')).toJS();
+  //         this.setState({ entityOptions });
+  //       }
+  //       // TODO: Handle bi-directional arrows
+  //     }
+  //   });
+  // }
 
   selectAssociation = (data) => {
     this.setState({ selectedAssociation: data });
   }
 
   selectArrow = (data) => {
-    this.setState({ selectedArrow: data }, () => {
-      this.getEntityOptions();
-    });
+    this.setState({ selectedArrow: data });
   }
 
   selectEntity = (selectedEntities) => {
@@ -73,8 +72,8 @@ class TopUtilizersSelectionRowContainer extends React.Component {
           associations={this.props.associations}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}
-          selectedEntities={this.state.selectedEntities}
-          entityOptions={this.state.entityOptions} />
+          // entityOptions={this.state.entityOptions}
+          selectedEntities={this.state.selectedEntities} />
     );
   }
 }
