@@ -1,7 +1,33 @@
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
+import {
+  EntityDataModelApi
+} from 'loom-data';
+
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
+
+function getAllEntityTypesEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_ENTITY_TYPES_REQUEST)
+    .mergeMap((action) => {
+      console.log('entity types request, ', action);
+      return Observable
+        .from(
+          EntityDataModelApi.getAllEntityTypes()
+        )
+        .mergeMap((results) => {
+          console.log('get entity type results:', results);
+          return Observable
+            .of(
+              actionFactory.getAllEntityTypesSuccess(results)
+            );
+        })
+        .catch((err) => {
+          actionFactory.getAllEntityTypesFailure(err);
+        });
+    });
+}
 
 function submitQueryEpic(action$, state) {
   return action$
@@ -26,5 +52,6 @@ function submitQueryEpic(action$, state) {
 }
 
 export default combineEpics(
+  getAllEntityTypesEpic,
   submitQueryEpic
 );

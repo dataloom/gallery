@@ -29,7 +29,7 @@ const TopUtilizersSelectionRow = ({
   entityOptions
 }) => {
 
-  const associationOptions = getAssociationOptions(associations).toJS();
+  const associationOptions = getAssociationOptions(associations);
   const arrowOptions = [
     { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" />},
     { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" />}

@@ -24,13 +24,13 @@ class TopUtilizersFormContainer extends React.Component {
   }
 
   componentDidMount() {
-    this.props.allEntitySetsRequest();
+    this.props.getAllEntityTypesRequest();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySets.size === 0 && nextProps.entitySets.size > 0) {
-      this.props.setEntitySets(nextProps.entitySets);
-    }
+    // if (this.props.entitySets.size === 0 && nextProps.entitySets.size > 0) {
+    //   this.props.setEntitySets(nextProps.entitySets);
+    // }
 
     if (!this.props.entitySet && nextProps.entitySet) {
       this.props.setEntitySet(nextProps.entitySet);
@@ -94,7 +94,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    allEntitySetsRequest,
+    getAllEntityTypesRequest: actionFactory.getAllEntityTypesRequest,
     setEntitySets: actionFactory.setEntitySets,
     submitQuery: actionFactory.submitTopUtilizersRequest,
     setEntitySet: actionFactory.setEntitySet
