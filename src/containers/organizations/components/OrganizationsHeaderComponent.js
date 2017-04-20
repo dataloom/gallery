@@ -175,8 +175,12 @@ class OrganizationsHeaderComponent extends React.Component {
             value={this.state.searchInputValue}
             onChange={this.handleOnChangeSearchInput}
             onKeyDown={this.handleOnKeyDownSearchInput} />
-        <Button disabled={this.props.isSearchingOrgs} onClick={this.handleOnClickSearchButton}>Search</Button>
-        <Button onClick={this.handleOnClickShowAllButton}>Show All</Button>
+        <Button scStyle="purple" disabled={this.props.isSearchingOrgs} onClick={this.handleOnClickSearchButton}>
+          Search
+        </Button>
+        <Button scStyle="purple" onClick={this.handleOnClickShowAllButton}>
+          Show All
+        </Button>
       </SearchBox>
     );
   }
@@ -189,7 +193,9 @@ class OrganizationsHeaderComponent extends React.Component {
         <Actions>
           { this.renderSearch() }
           <ActionSeparator>OR</ActionSeparator>
-          <Button onClick={this.onCreateNewOrganization}>Create New Organization</Button>
+          <Button scStyle="purple" onClick={this.onCreateNewOrganization}>
+            Create New Organization
+          </Button>
         </Actions>
       </StyledFlexContainerStacked>
     );

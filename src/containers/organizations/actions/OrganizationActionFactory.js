@@ -46,6 +46,29 @@ export function createOrganizationFailure() :Object {
   };
 }
 
+export function deleteOrganizationRequest(orgId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.DELETE_ORG_REQUEST,
+    orgId
+  };
+}
+
+export function deleteOrganizationSuccess(orgId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.DELETE_ORG_SUCCESS,
+    orgId
+  };
+}
+
+export function deleteOrganizationFailure(orgId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.DELETE_ORG_FAILURE,
+    orgId
+  };
+}
 
 export function updateOrganizationDescriptionRequest(organization :Organization) :Object {
 
