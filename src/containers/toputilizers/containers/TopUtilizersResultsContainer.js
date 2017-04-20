@@ -34,7 +34,8 @@ class TopUtilizersResultsContainer extends React.Component {
       <SearchResultsTable
           results={this.props.results}
           propertyTypes={this.getPropertyTypes()}
-          formatValueFn={this.formatValue} />
+          formatValueFn={this.formatValue}
+          entitySetId={this.props.entitySetId} />
     );
   }
 
@@ -54,7 +55,8 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    entitySet: topUtilizers.get('entitySet')
+    entitySet: topUtilizers.get('entitySet'),
+    entitySetId: topUtilizers.get('entitySetId')
   };
 }
 
