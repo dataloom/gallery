@@ -18,7 +18,9 @@ class Container extends React.Component {
     children: PropTypes.element,
     route: PropTypes.object,
     loadPropertyTypes: PropTypes.func.isRequired,
-    loadEntityTypes: PropTypes.func.isRequired
+    loadEntityTypes: PropTypes.func.isRequired,
+    fullName: PropTypes.string.isRequired,
+    googleId: PropTypes.string.isRequired
   };
 
   static childContextTypes = {
@@ -65,7 +67,12 @@ class Container extends React.Component {
       <DocumentTitle title={PageConsts.DEFAULT_DOCUMENT_TITLE}>
         <div className={styles.appWrapper}>
           <RequestPermissionsModal />
-          <HeaderNav auth={this.props.route.auth} isAdmin={this.state.isAdmin} name={this.state.name} />
+          <HeaderNav
+              auth={this.props.route.auth}
+              isAdmin={this.state.isAdmin}
+              name={this.state.name}
+              fullName={this.props.fullName}
+              googleId={this.props.googleId} />
           <div className={styles.appBody}>
             <SideNav name={this.state.name} />
             <div className={styles.appContent}>
@@ -76,6 +83,22 @@ class Container extends React.Component {
       </DocumentTitle>
     );
   }
+}
+
+function mapStateToProps() {
+  let fullName = '';
+  let googleId = '';
+
+  if (window.localStorage.profile) {
+    const profile = JSON.parse(window.localStorage.profile);
+    fullName = profile.name;
+    googleId = profile.identities[0].user_id;
+  }
+
+  return {
+    fullName,
+    googleId
+  };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -89,4 +112,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(null, mapDispatchToProps)(Container);
+export default connect(mapStateToProps, mapDispatchToProps)(Container);

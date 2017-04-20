@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+
+import ProfileSectionWrapper from './ProfileSectionWrapper';
 import styles from './styles.module.css';
 
 const getFormItems = (content) => {
@@ -23,20 +25,21 @@ const getFormItems = (content) => {
 
 const ProfileForm = ({ header, content }) => {
   return (
-    <form className={styles.profileFormWrapper}>
-      <div className={styles.header}>
-        {header}
-      </div>
-      <FormGroup className={styles.formGroup}>
+    <ProfileSectionWrapper header={header}>
+      <FormGroup className={styles.sectionContent}>
         {getFormItems(content)}
       </FormGroup>
-    </form>
+    </ProfileSectionWrapper>
   );
 };
 
 ProfileForm.propTypes = {
   header: PropTypes.string.isRequired,
-  content: PropTypes.array.isRequired
+  content: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired
+  })).isRequired
 };
 
 export default ProfileForm;
