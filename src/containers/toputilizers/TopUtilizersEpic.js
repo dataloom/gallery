@@ -53,8 +53,9 @@ function submitQueryEpic(action$, state) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      let topUtilizersDetailsList = state.get('topUtilizersDetailsList').toJS();
-      topUtilizersDetailsList = Object.values(topUtilizersDetailsList);
+      const topUtilizersState = state.getState().get('topUtilizers');
+      const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
+      const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
       return Observable
         .from(
           // API.findTopUtilizers(state.get('entitySetId'), 100, topUtilizersDetailsList)
