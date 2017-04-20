@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
-import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
+import { SearchApi } from 'loom-data';
 import PropertyTextCell from './PropertyTextCell';
 import RowNeighbors from './RowNeighbors';
 import styles from './styles.module.css';
@@ -47,15 +47,7 @@ export default class EntityRow extends React.Component {
   }
 
   loadNeighbors = (entityId, entitySetId) => {
-    const url = `http://localhost:8080/datastore/search/${entitySetId}/${entityId}`;
-    axios({
-      method: 'get',
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.id_token}`
-      }
-    }).then((result) => {
+    SearchApi.searchEntityNeighbors(entitySetId, entityId).then((result) => {
       this.setState({ neighbors: result.data });
     });
   }
