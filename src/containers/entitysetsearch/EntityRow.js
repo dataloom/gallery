@@ -47,8 +47,8 @@ export default class EntityRow extends React.Component {
   }
 
   loadNeighbors = (entityId, entitySetId) => {
-    SearchApi.searchEntityNeighbors(entitySetId, entityId).then((result) => {
-      this.setState({ neighbors: result.data });
+    SearchApi.searchEntityNeighbors(entitySetId, entityId).then((neighbors) => {
+      this.setState({ neighbors });
     });
   }
 
