@@ -52,6 +52,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
           selectArrow={this.selectArrow}
           selectEntity={this.selectEntity}
           associations={this.props.associations}
+          entityTypes={this.props.entityTypes}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}
           selectedEntities={this.state.selectedEntities} />
@@ -63,7 +64,8 @@ function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
 
   return {
-    associations: topUtilizers.get('associations')
+    associations: topUtilizers.get('associations'),
+    entityTypes: topUtilizers.get('entityTypes')
   };
 }
 

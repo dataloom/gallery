@@ -4,10 +4,10 @@ import FontAwesome from 'react-fontawesome';
 
 import styles from '../styles.module.css';
 
-const getAssociationOptions = (associations) => {
-  if (!associations) return [];
-  return associations.map((assoc) => {
-    return { value: assoc.id, label: assoc.title };
+const getOptions = (data) => {
+  if (!data) return [];
+  return data.map((item) => {
+    return { value: item.id, label: item.title };
   });
 };
 
@@ -23,13 +23,15 @@ const TopUtilizersSelectionRow = ({
   selectArrow,
   selectEntity,
   associations,
+  entityTypes,
   selectedAssociation,
   selectedArrow,
   selectedEntities,
   entityOptions
 }) => {
 
-  const associationOptions = getAssociationOptions(associations);
+  const associationOptions = getOptions(associations);
+  const entityTypeOptions = getOptions(entityTypes);
   const arrowOptions = [
     { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" />},
     { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" />}
@@ -53,7 +55,7 @@ const TopUtilizersSelectionRow = ({
           clearable={false} />
       <Select
           className={styles.entitySelect}
-          options={associationOptions}
+          options={entityTypeOptions}
           value={selectedEntities}
           onChange={selectEntity}
           placeholder="Entities"
