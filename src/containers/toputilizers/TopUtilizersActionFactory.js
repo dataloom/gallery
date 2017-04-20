@@ -40,13 +40,6 @@ export function getAllEntityTypesFailure(err) {
   };
 }
 
-export function setEntitySets(data) {
-  return {
-    type: actionTypes.SET_ENTITY_SETS,
-    data
-  };
-}
-
 export function setEntitySet(data) {
   return {
     type: actionTypes.SET_ENTITY_SET,

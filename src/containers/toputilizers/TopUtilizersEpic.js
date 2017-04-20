@@ -12,7 +12,6 @@ function getAssociationsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ASSOCIATIONS_REQUEST)
     .mergeMap((action) => {
-      // console.log('associations request, ', action);
       return Observable
         .from(
           EntityDataModelApi.getAllAssociationEntityTypes()
@@ -54,23 +53,21 @@ function submitQueryEpic(action$, state) {
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
       const topUtilizersState = state.getState().get('topUtilizers');
-      // console.log('topUtilizersState', topUtilizersState.toJS());
       const entitySetId = topUtilizersState.get('entitySetId');
       const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
       const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
       return Observable
-      // TODO: ADD API REQUEST HERE
         .from(
           AnalysisApi.getTopUtilizers(entitySetId, topUtilizersDetailsList, 100)
         )
         .mergeMap((results) => {
           return Observable
             .of(
-              actionFactory.onSubmitSuccess(results.entities)
+              actionFactory.submitTopUtilizersSuccess(results.entities)
             );
         })
         .catch((err) => {
-          actionFactory.onSubmitFailure();
+          actionFactory.submitTopUtilizersFailure(err);
         });
     });
 }
