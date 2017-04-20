@@ -4,15 +4,16 @@
 
 import React from 'react';
 
+import DocumentTitle from 'react-document-title';
 import Immutable from 'immutable';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import DocumentTitle from 'react-document-title';
+
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
+import Button from '../../../components/buttons/Button';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
-import StyledFlexContainerStackedLeftAligned from '../../../components/flex/StyledFlexContainerStackedLeftAligned';
 
 import OrganizationAddMembersSectionComponent from './OrganizationAddMembersSectionComponent';
 import OrganizationDescriptionSectionComponent from './OrganizationDescriptionSectionComponent';
@@ -22,6 +23,10 @@ import OrganizationRolesSectionComponent from './OrganizationRolesSectionCompone
 import OrganizationTitleSectionComponent from './OrganizationTitleSectionComponent';
 
 import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
+
+import {
+  deleteOrganizationRequest
+} from '../actions/OrganizationActionFactory';
 
 import {
   fetchOrganizationRequest
@@ -79,6 +84,7 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
+    deleteOrganizationRequest,
     fetchOrganizationRequest
   };
 
@@ -91,6 +97,7 @@ class OrganizationDetailsComponent extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
+      deleteOrganizationRequest: React.PropTypes.func.isRequired,
       fetchOrganizationRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isCreatingOrg: React.PropTypes.bool.isRequired,
@@ -179,6 +186,28 @@ class OrganizationDetailsComponent extends React.Component {
     );
   }
 
+  handleOnClickDeleteButton = () => {
+
+    this.props.actions.deleteOrganizationRequest(this.props.organizationId);
+  }
+
+  renderOrganizationDeleteButton = () => {
+
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+
+    if (this.props.mode === MODES.CREATE || !isOwner) {
+      return null;
+    }
+
+    return (
+      <div>
+        <Button scStyle="red" onClick={this.handleOnClickDeleteButton}>
+          Delete Organization
+        </Button>
+      </div>
+    );
+  }
+
   renderLoadingSpinner = () => {
 
     return (
@@ -220,6 +249,7 @@ class OrganizationDetailsComponent extends React.Component {
           { this.renderOrganizationRolesSection() }
           { this.renderOrganizationMembersSection() }
           { this.renderOrganizationAddMembersSection() }
+          { this.renderOrganizationDeleteButton() }
         </StyledFlexContainerStacked>
       </DocumentTitle>
     );

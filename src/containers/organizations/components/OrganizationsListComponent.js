@@ -77,7 +77,7 @@ class OrganizationsListComponent extends React.Component {
     };
 
     const viewOrgDetailsButton = (
-      <Button onClick={viewOrgDetailsOnClick}>
+      <Button scStyle="purple" onClick={viewOrgDetailsOnClick}>
         View Organization
       </Button>
     );
@@ -160,11 +160,16 @@ class OrganizationsListComponent extends React.Component {
       );
     }
 
+    const shouldHideDivider = ((yourOrgs.length > 0 || memberOfOrgs.length > 0) && publicOrgs.length === 0)
+      || ((yourOrgs.length === 0 && memberOfOrgs.length === 0) && publicOrgs.length > 0);
+
     return (
       <StyledFlexContainerStacked>
         { yourOrgsOverviewCardCollection }
         { memberOfOrgsOverviewCardCollection }
-        <hr />
+        {
+          shouldHideDivider ? null : <hr />
+        }
         { publicOrgsOverviewCardCollection }
       </StyledFlexContainerStacked>
     );
