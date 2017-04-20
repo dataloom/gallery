@@ -34,3 +34,42 @@ export function getUserNameLabelValue(member :Immutable.Map) :string {
 
   return label;
 }
+
+// auth is auth0 auth object
+export function sortOrganizations(visibleOrgIds, organizations, auth) {
+  const yourOrgs = [];
+  const memberOfOrgs = [];
+  const publicOrgs = [];
+
+  const currentUserId :string = auth.getProfile().user_id;
+
+  visibleOrgIds.forEach((orgId :UUID) => {
+
+    const organization :Immutable.Map = organizations.get(orgId, Immutable.Map());
+
+    let isMemberOfOrg :boolean = false;
+    organization.get('members').forEach((memberObj :Object) => {
+      if (memberObj.get('id') === currentUserId) {
+        isMemberOfOrg = true;
+      }
+    });
+
+    if (!organization.isEmpty()) {
+      if (organization.get('isOwner') === true) {
+        yourOrgs.push(organization);
+      }
+      else if (isMemberOfOrg) {
+        memberOfOrgs.push(organization);
+      }
+      else {
+        publicOrgs.push(organization);
+      }
+    }
+  });
+
+  return {
+    yourOrgs,
+    memberOfOrgs,
+    publicOrgs
+  };
+}

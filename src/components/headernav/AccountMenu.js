@@ -1,16 +1,15 @@
 import React, { PropTypes } from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
-import FontAwesome from 'react-fontawesome';
 import { hashHistory } from 'react-router';
 
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './headernav.module.css';
 
-const AccountMenu = ({ onLogoutClick }) => {
+const AccountMenu = ({ avatar, onLogoutClick }) => {
   return (
     <DropdownButton
         title={
-          <span><FontAwesome name="cog" /></span>
+          <span>{avatar}</span>
         }
         pullRight
         id={styles.dropdown}
@@ -28,6 +27,11 @@ const AccountMenu = ({ onLogoutClick }) => {
       </MenuItem>
     </DropdownButton>
   );
+};
+
+AccountMenu.propTypes = {
+  avatar: PropTypes.element.isRequired,
+  onLogoutClick: PropTypes.func.isRequired
 };
 
 export default AccountMenu;
