@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 import { EntityDataModelApi } from 'loom-data';
+import IntegrationDetailsModal from './IntegrationDetailsModal';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
@@ -67,7 +68,8 @@ class EntitySetDetailComponent extends React.Component {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false
+      deleteError: false,
+      isIntegrationDetailsOpen: false
     };
   }
 
@@ -240,6 +242,14 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
+  openIntegrationDetailsModal = () => {
+    this.setState({ isIntegrationDetailsOpen: true });
+  }
+
+  closeIntegrationDetailsModal = () => {
+    this.setState({ isIntegrationDetailsOpen: false });
+  }
+
   renderAddDataButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
@@ -252,6 +262,27 @@ class EntitySetDetailComponent extends React.Component {
           <span className={styles.buttonText}>Add Data</span>
         </Button>
       </div>
+    );
+  }
+
+  renderIntegrationDetailsLink = () => {
+    return (
+      <div className={styles.buttonWrapper}>
+        <Link
+            className={`${styles.center} ${styles.link}`}
+            onClick={this.openIntegrationDetailsModal}>
+          <span className={styles.buttonText}>View Integration Details</span>
+        </Link>
+      </div>
+    );
+  }
+
+  renderIntegrationDetailsModal = () => {
+    return (
+      <IntegrationDetailsModal
+          isOpen={this.state.isIntegrationDetailsOpen}
+          onClose={this.closeIntegrationDetailsModal}
+          entitySet={this.props.entitySet} />
     );
   }
 
@@ -314,7 +345,7 @@ class EntitySetDetailComponent extends React.Component {
   render() {
     return (
       <DocumentTitle title={this.getDocumentTitle()}>
-        <Page>
+        <Page className={styles.page}>
           <Page.Header>
             <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
           </Page.Header>
@@ -341,6 +372,8 @@ class EntitySetDetailComponent extends React.Component {
             {this.renderPermissionsSummaryButton()}
             {this.renderDeleteEntitySet()}
             {this.renderConfirmDeleteModal()}
+            {this.renderIntegrationDetailsLink()}
+            {this.renderIntegrationDetailsModal()}
           </Page.Body>
         </Page>
       </DocumentTitle>
