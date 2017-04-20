@@ -52,3 +52,11 @@
   margin-top: 15px;
   font-style: italic;
 }
+
+.link {
+  cursor: pointer;
+}
+
+.page {
+  margin-bottom: 40px;
+}

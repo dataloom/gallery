@@ -29,10 +29,6 @@ class HeaderNav extends React.Component {
       ? `Hi, ${this.props.name}!`
       : 'Hi!';
 
-    const settingsNavItemClassNames = (this.props.isAdmin)
-      ? styles.headerNavItem
-      : `${styles.headerNavItem} ${styles.hidden}`;
-
     return (
       <header className={styles.headerNavWrapper}>
         <nav className={styles.headerNav}>
