@@ -12,6 +12,12 @@
   background: #4203c5;
 }
 
+.asterix {
+  font-style: italic;
+  color: grey;
+  margin: 40px 0 40px 0;
+}
+
 .hidden {
   display: none
 }

@@ -63,6 +63,7 @@ const {
 
 const SearchContainer = styled.div`
   min-height: 150px;
+  padding-bottom: 50px;
   width: 400px;
 `;
 

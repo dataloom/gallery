@@ -1,14 +1,13 @@
 /* @flow */
-import { Map, fromJS } from 'immutable';
+import Immutable from 'immutable';
 import isEmpty from 'lodash/isEmpty';
 
 import * as actionTypes from './PermissionsActionTypes';
-import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
+import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const LOADING_ERROR = Symbol('loading error');
 
-
-const INITIAL_STATE :Map<*, *> = fromJS({
+const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   authorizations: {},
   requestPermissionsModal: {
     show: false,
@@ -20,24 +19,32 @@ const INITIAL_STATE :Map<*, *> = fromJS({
 });
 
 export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+
   let authorizations;
 
   switch (action.type) {
-    case actionTypes.CHECK_AUTHORIZATION_REJECT:
+
+    case actionTypes.CHECK_AUTHORIZATION_REJECT: {
+
       authorizations = state.get('authorizations');
       action.accessChecks.forEach((accessCheck) => {
-        authorizations = authorizations.setIn(accessCheck.aclKey.concat(['permissions']), LOADING_ERROR)
+        authorizations = authorizations.setIn(accessCheck.aclKey.concat(['permissions']), LOADING_ERROR);
       });
-      return state.set('authorizations', authorizations);
 
-    case actionTypes.CHECK_AUTHORIZATION_RESOLVE:
+      return state.set('authorizations', authorizations);
+    }
+
+    case actionTypes.CHECK_AUTHORIZATION_RESOLVE: {
+
       authorizations = state.get('authorizations');
       action.authorizations.forEach((authorization) => {
         authorizations = authorizations.setIn(
           authorization.aclKey.concat(['permissions']),
-          fromJS(authorization.permissions));
+          Immutable.fromJS(authorization.permissions));
       });
+
       return state.set('authorizations', authorizations);
+    }
 
     case actionTypes.REQUEST_PERMISSIONS_MODAL_SHOW:
       return state.mergeIn(['requestPermissionsModal'], {
@@ -50,7 +57,7 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
       return state.mergeIn(['requestPermissionsModal'], {
         show: false,
         reason: '',
-        pidToRequestedPermissions: Map()
+        pidToRequestedPermissions: Immutable.Map()
         // Don't set entitySetId to false. Allows modal to fade away with content
       });
 
@@ -67,20 +74,22 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
     case actionTypes.REQUEST_PERMISSIONS_UPDATE_REASON:
       return state.setIn(['requestPermissionsModal', 'reason'], action.reason);
 
-    case actionTypes.REQUEST_PERMISSIONS_UPDATE_REQUEST:
+    case actionTypes.REQUEST_PERMISSIONS_UPDATE_REQUEST: {
+
       const { propertyTypeId, requestedPermissions } = action;
       const path = ['requestPermissionsModal', 'pidToRequestedPermissions', propertyTypeId];
 
       if (isEmpty(requestedPermissions)) {
         return state.deleteIn(path);
-      } else {
-        return state.setIn(path, requestedPermissions);
       }
+
+      return state.setIn(path, requestedPermissions);
+    }
 
     case actionTypes.SUBMIT_AUTHN_REQUEST:
       return state.mergeIn(['requestPermissionsModal'], {
         reason: '',
-        pidToRequestedPermissions: Map(),
+        pidToRequestedPermissions: Immutable.Map(),
         asyncStatus: ASYNC_STATUS.LOADING
       });
 
