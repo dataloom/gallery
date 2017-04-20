@@ -17,6 +17,7 @@ import OrganizationsEpic from '../../containers/organizations/epics/Organization
 import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 import DatasetsEpic from '../../containers/datasets/DatasetsEpic';
 import VisualizationEpic from '../../containers/visualizations/VisualizationEpic';
+import TopUtilizersEpic from '../../containers/toputilizers/TopUtilizersEpic';
 
 export default function reduxEpic() {
   return combineEpics(
@@ -30,6 +31,7 @@ export default function reduxEpic() {
     OrganizationEpic,
     OrganizationsEpic,
     DatasetsEpic,
-    VisualizationEpic
+    VisualizationEpic,
+    TopUtilizersEpic
   );
 }
