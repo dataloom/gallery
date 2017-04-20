@@ -124,6 +124,14 @@ class ActionDropdown extends React.Component {
             Visualize
           </Link>
         </li>
+        <li role="presentation">
+          <Link
+              to={{
+                pathname: `/${PageConsts.ENTITY_SETS}/${this.props.entitySetId}/toputilizers`
+              }}>
+            Find Top Utilizers
+          </Link>
+        </li>
         <MenuItem divider />
         <DropdownSearchBox entitySetId={entitySetId} />
       </SplitButton>);
