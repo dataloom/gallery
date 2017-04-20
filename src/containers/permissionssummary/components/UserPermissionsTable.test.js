@@ -31,9 +31,14 @@ describe('UserPermissionsTable', function() {
     rolePermissions
   };
 
+  let initialState;
+  let store;
+  beforeEach(() => {
+    initialState = {};
+    store = mockStore(initialState);
+  })
+
   it('Should render', function() {
-    const initialState = {};
-    const store = mockStore(initialState);
     const wrapper = shallow(
       <Provider store={store}>
         <UserPermissionsTable {...defaultProps} />
@@ -44,8 +49,6 @@ describe('UserPermissionsTable', function() {
   });
 
   it('Should render headers', function() {
-    const initialState = {};
-    const store = mockStore(initialState);
     const wrapper = mount(
       <Provider store={store}>
         <UserPermissionsTable {...defaultProps} />
