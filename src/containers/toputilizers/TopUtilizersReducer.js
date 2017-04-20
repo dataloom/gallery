@@ -9,6 +9,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySetId: null,
   entitySet: null,
   associations: [],
+  entityTypes: [],
   topUtilizersDetailsList: {},
   topUtilizersResults: [],
   isGettingResults: false
@@ -18,6 +19,14 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
   switch (action.type) {
     case actionTypes.GET_ENTITY_TYPES_REQUEST:
       console.log('entity types REQUEST:', action);
+      return state;
+
+    case actionTypes.GET_ASSOCIATIONS_SUCCESS:
+      console.log('entity types sucess:', action);
+      return state.set('associations', action.data);
+
+    case actionTypes.GET_ASSOCIATIONS_FAILURE:
+      console.log('entity types failure:', action.err);
       return state;
 
     case actionTypes.GET_ENTITY_TYPES_SUCCESS:
@@ -33,7 +42,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.SET_ENTITY_SETS:
       console.log('set entity sets:', action);
-      return state.set('associations', action.data);
+      return state.set('entityTypes', action.data);
 
     case actionTypes.SET_ENTITY_SET:
       console.log('set entity set:', action);

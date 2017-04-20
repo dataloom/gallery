@@ -25,6 +25,7 @@ class TopUtilizersFormContainer extends React.Component {
 
   componentDidMount() {
     this.props.getAllEntityTypesRequest();
+    this.props.getAssociationsRequest();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -95,6 +96,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   const actions = {
     getAllEntityTypesRequest: actionFactory.getAllEntityTypesRequest,
+    getAssociationsRequest: actionFactory.getAssociationsRequest,
     setEntitySets: actionFactory.setEntitySets,
     submitQuery: actionFactory.submitTopUtilizersRequest,
     setEntitySet: actionFactory.setEntitySet

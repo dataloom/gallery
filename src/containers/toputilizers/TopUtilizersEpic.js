@@ -7,17 +7,37 @@ import {
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
 
+function getAssociationsEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_ASSOCIATIONS_REQUEST)
+    .mergeMap((action) => {
+      console.log('associations request, ', action);
+      return Observable
+        .from(
+          //Plug in associations api here
+          EntityDataModelApi.getAllEntityTypes()
+        )
+        .mergeMap((results) => {
+          return Observable
+            .of(
+              actionFactory.getAssociationsSuccess(results)
+            );
+        })
+        .catch((err) => {
+          actionFactory.getAssociationsFailure(err);
+        });
+    });
+}
+
 function getAllEntityTypesEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ENTITY_TYPES_REQUEST)
     .mergeMap((action) => {
-      console.log('entity types request, ', action);
       return Observable
         .from(
           EntityDataModelApi.getAllEntityTypes()
         )
         .mergeMap((results) => {
-          console.log('get entity type results:', results);
           return Observable
             .of(
               actionFactory.getAllEntityTypesSuccess(results)
@@ -52,6 +72,7 @@ function submitQueryEpic(action$, state) {
 }
 
 export default combineEpics(
+  getAssociationsEpic,
   getAllEntityTypesEpic,
   submitQueryEpic
 );

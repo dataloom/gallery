@@ -1,5 +1,25 @@
 import * as actionTypes from './TopUtilizersActionTypes';
 
+export function getAssociationsRequest() {
+  return {
+    type: actionTypes.GET_ASSOCIATIONS_REQUEST
+  };
+}
+
+export function getAssociationsSuccess(data) {
+  return {
+    type: actionTypes.GET_ASSOCIATIONS_SUCCESS,
+    data
+  };
+}
+
+export function getAssociationsFailure(err) {
+  return {
+    type: actionTypes.GET_ASSOCIATIONS_FAILURE,
+    err
+  };
+}
+
 export function getAllEntityTypesRequest() {
   return {
     type: actionTypes.GET_ENTITY_TYPES_REQUEST
