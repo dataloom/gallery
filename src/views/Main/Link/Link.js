@@ -1,13 +1,23 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import Select from 'react-select';
+import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
-import { EntityDataModelApi, LinkingApi } from 'loom-data';
+
+import {
+  Button
+} from 'react-bootstrap';
+
+import {
+  EntityDataModelApi,
+  LinkingApi
+} from 'loom-data';
+
 import AuthService from '../../../utils/AuthService';
 import DefineLinkedEntityType from './DefineLinkedEntityType';
 import DefineLinkedEntitySet from './DefineLinkedEntitySet';
 import Page from '../../../components/page/Page';
-import buttonStyles from '../../../core/styles/buttons.css';
+import DeleteButton from '../../../components/buttons/DeleteButton';
+import AddButton from '../../../components/buttons/AddButton';
 import styles from './styles.module.css';
 
 export class Link extends React.Component {
@@ -76,11 +86,10 @@ export class Link extends React.Component {
       return (
         <tr key={link.propertyType.id}>
           <td>
-            <button
-                className={buttonStyles.deleteButton}
+            <DeleteButton
                 onClick={() => {
                   this.removeLink(link.propertyType.id);
-                }}>-</button>
+                }} />
           </td>
           <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
           <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
@@ -105,7 +114,7 @@ export class Link extends React.Component {
     return (
       <tr>
         <td>
-          <button className={buttonStyles.addButton} onClick={this.addRow}>+</button>
+          <AddButton onClick={this.addRow} />
         </td>
       </tr>
     );
@@ -476,12 +485,14 @@ export class Link extends React.Component {
       );
     }
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Link</Page.Title>
-        </Page.Header>
-        <Page.Body>{content}</Page.Body>
-      </Page>
+      <DocumentTitle title="Link">
+        <Page>
+          <Page.Header>
+            <Page.Title>Link</Page.Title>
+          </Page.Header>
+          <Page.Body>{content}</Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }

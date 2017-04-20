@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { Promise } from 'bluebird';
 import { EntityDataModelApi } from 'loom-data';
+import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import FileService from '../../../../utils/FileService';
 import { PropertyList } from './PropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
@@ -11,8 +12,11 @@ import styles from '../styles.module.css';
 export class EntityType extends React.Component {
   static propTypes = {
     entityType: PropTypes.object,
-    updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object
+    idToPropertyTypes: PropTypes.object
+  }
+
+  static contextTypes = {
+    isAdmin: PropTypes.bool
   }
 
   constructor() {
@@ -31,10 +35,20 @@ export class EntityType extends React.Component {
   }
 
   loadProperties = (propertyIds) => {
-    Promise.map(propertyIds, (propertyId) => {
-      return EntityDataModelApi.getPropertyType(propertyId);
-    }).then((properties) => {
-      this.setState({ properties });
+    const properties = propertyIds.map((id) => {
+      return this.props.idToPropertyTypes[id];
+    });
+    this.setState({ properties });
+  }
+
+  updateFn = () => {
+    EntityDataModelApi.getEntityType(this.props.entityType.id)
+    .then((entityType) => {
+      Promise.map(entityType.properties, (propertyId) => {
+        return EntityDataModelApi.getPropertyType(propertyId);
+      }).then((properties) => {
+        this.setState({ properties });
+      });
     });
   }
 
@@ -50,28 +64,50 @@ export class EntityType extends React.Component {
     if (action === ActionConsts.ADD) {
       EntityDataModelApi.addPropertyTypeToEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
-        this.props.updateFn();
+        this.updateFn();
       });
     }
     else if (action === ActionConsts.REMOVE) {
       EntityDataModelApi.removePropertyTypeFromEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
-        this.props.updateFn();
+        this.updateFn();
       });
     }
   }
 
+  updateEntityTypeTitle = (title) => {
+    EntityDataModelApi.updateEntityTypeMetaData(this.props.entityType.id, { title })
+    .then(() => this.updateFn());
+  }
+
+  updateEntityTypeDescription = (description) => {
+    EntityDataModelApi.updateEntityTypeMetaData(this.props.entityType.id, { description })
+    .then(() => this.updateFn());
+  }
+
   render() {
-    const { entityType, allPropNamespaces } = this.props;
+    const entityType = this.props.entityType;
     return (
       <div>
         <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
         <div className={styles.spacerSmall} />
-        <div className={styles.title}>{entityType.title}</div>
-        <div className={styles.description}>{entityType.description}</div>
+        <InlineEditableControl
+            type="text"
+            size="xlarge"
+            placeholder="Entity type title..."
+            value={entityType.title}
+            viewOnly={!this.context.isAdmin}
+            onChange={this.updateEntityTypeTitle} />
+        <InlineEditableControl
+            type="textarea"
+            size="small"
+            placeholder="Entity type description..."
+            value={entityType.description}
+            viewOnly={!this.context.isAdmin}
+            onChange={this.updateEntityTypeDescription} />
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownButtonContainer}>
-          <Button pullRight bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
+          <Button bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
         </div>
         <div className={styles.spacerMed} />
         <PropertyList
@@ -80,7 +116,6 @@ export class EntityType extends React.Component {
             entityTypeName={entityType.type.name}
             entityTypeNamespace={entityType.type.namespace}
             updateFn={this.updateEntityType}
-            allPropNamespaces={allPropNamespaces}
             editingPermissions={false} />
         <div className={styles.spacerBig} />
         <hr />

@@ -1,10 +1,29 @@
 import React, { PropTypes } from 'react';
-import { Property } from './Property';
+
+import {
+  Button,
+  ButtonGroup,
+  Modal
+} from 'react-bootstrap';
+
+import {
+  EntityDataModelApi,
+  SearchApi
+} from 'loom-data';
+
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
-import { NameNamespaceAutosuggest } from './NameNamespaceAutosuggest';
+import AddButton from '../../../../components/buttons/AddButton';
 import styles from '../styles.module.css';
+
+import {
+  Property
+} from './Property';
+
+import {
+  NameNamespaceAutosuggest
+} from './NameNamespaceAutosuggest';
 
 export class PropertyList extends React.Component {
   static propTypes = {
@@ -13,7 +32,6 @@ export class PropertyList extends React.Component {
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
     updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
     isOwner: PropTypes.bool
@@ -34,15 +52,6 @@ export class PropertyList extends React.Component {
       verifyingDelete: false,
       propertyToDelete: undefined
     };
-  }
-
-  keyProperties() {
-    const properties = this.props.properties.map((prop) => {
-      const newProp = prop;
-      newProp.key = this.props.properties.indexOf(prop);
-      return newProp;
-    });
-    return properties;
   }
 
   newProperty = () => {
@@ -70,16 +79,13 @@ export class PropertyList extends React.Component {
   }
 
   addProperty = (namespace, name) => {
-    const propIdList = this.props.allPropNamespaces[namespace].filter((propObj) => {
-      return (propObj.name === name);
-    });
-    if (propIdList.length !== 1) {
+    EntityDataModelApi.getPropertyTypeId({ namespace, name })
+    .then((id) => {
+      this.props.updateFn([id], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
+      this.updateFqns();
+    }).catch(() => {
       this.updateError();
-      return;
-    }
-    const propId = propIdList[0].id;
-    this.props.updateFn([propId], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
-    this.updateFqns();
+    });
   }
 
   verifyDelete = (property) => {
@@ -113,24 +119,33 @@ export class PropertyList extends React.Component {
     });
   }
 
-  renderVerifyDeletePropertyBox = () => {
+  closeModal = () => {
+    this.setState({ verifyingDelete: false });
+  }
+
+  renderVerifyDeleteModal = () => {
     const { verifyingDelete, propertyToDelete } = this.state;
-    if (verifyingDelete) {
-      const prop = `${propertyToDelete.namespace}.${propertyToDelete.name}`;
-      const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
-      return (
-        <div className={styles.verifyDeleteContainer}>
-          <div className={styles.verifyDeleteText}>
+    if (!propertyToDelete) return null;
+    const prop = `${propertyToDelete.type.namespace}.${propertyToDelete.type.name}`;
+    const entityType = `${this.props.entityTypeNamespace}.${this.props.entityTypeName}`;
+    return (
+      <Modal show={verifyingDelete} onHide={this.closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Verify Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
             Are you sure you want to delete property type {prop} and all associated data from entity type {entityType}?
           </div>
           <div className={styles.buttonContainer}>
-            <button onClick={this.confirmDelete} className={styles.simpleButton}>Delete</button>
-            <button onClick={this.cancelDelete} className={styles.simpleButton}>Cancel</button>
+            <ButtonGroup >
+              <Button onClick={this.confirmDelete} bsStyle="danger">Delete</Button>
+              <Button onClick={this.cancelDelete} bsStyle="default">Cancel</Button>
+            </ButtonGroup>
           </div>
-        </div>
-      );
-    }
-    return null;
+        </Modal.Body>
+      </Modal>
+    );
   }
 
   isPrimaryKey = (prop) => {
@@ -143,21 +158,22 @@ export class PropertyList extends React.Component {
   }
 
   renderNewRowButton = () => {
-    if (!this.context.isAdmin) return null;
-    const className = (!this.state.newPropertyRow && !this.props.entitySetName) ? styles.addButton : styles.hidden;
-    return (
-      <button onClick={this.newProperty} className={className}>+</button>
-    );
+    if (this.context.isAdmin && !this.state.newPropertyRow && !this.props.entitySetName) {
+      return <AddButton onClick={this.newProperty} />
+    }
+    return null;
   }
 
   renderNewRowInput = () => {
     if (!this.context.isAdmin) return null;
-    const { properties, allPropNamespaces } = this.props;
+    const properties = this.props.properties.map((property) => {
+      return property.id;
+    });
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
+          searchFn={SearchApi.searchPropertyTypesByFQN}
           className={className}
-          namespaces={allPropNamespaces}
           usedProperties={properties}
           addProperty={this.addProperty} />
     );
@@ -165,12 +181,11 @@ export class PropertyList extends React.Component {
 
   render() {
     const { properties, entitySetName, editingPermissions, isOwner } = this.props;
-    const propArray = (properties !== null && properties.length > 0) ?
-      this.keyProperties() : [];
+    const propArray = (properties && properties.length > 0) ? properties : [];
     const propertyList = propArray.map((prop) => {
       return (
         <Property
-            key={prop.key}
+            key={prop.id}
             property={prop}
             primaryKey={this.isPrimaryKey(prop)}
             editingPermissions={editingPermissions}
@@ -195,7 +210,7 @@ export class PropertyList extends React.Component {
         </table>
         {this.renderNewRowButton()}
         <div className={this.state.error.display}>Unable to {this.state.error.action} property.</div>
-        {this.renderVerifyDeletePropertyBox()}
+        {this.renderVerifyDeleteModal()}
       </div>
     );
   }

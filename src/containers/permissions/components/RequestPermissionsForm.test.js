@@ -2,7 +2,7 @@ import React from 'react';
 import { Map } from 'immutable';
 import { shallow } from 'enzyme';
 import { expect } from 'chai';
-import '../../../../config/chai/plugins.config';
+import '../../../../config/chai/chai.config';
 
 import RequestPermissionsForm from './RequestPermissionsForm';
 

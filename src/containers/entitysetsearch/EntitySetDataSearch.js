@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
 import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
 import { Permission } from '../../core/permissions/Permission';
@@ -86,11 +87,14 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   loadPropertyTypes = (propertyTypeIds, searchTerm, title) => {
-    const accessChecks = propertyTypeIds.map((propertyId) => {
-      return {
-        aclKey: [this.props.params.entitySetId, propertyId],
-        permissions: [Permission.READ.name]
-      };
+    const accessChecks = [];
+    propertyTypeIds.forEach((propertyId) => {
+      if (propertyId !== 'id') {
+        accessChecks.push({
+          aclKey: [this.props.params.entitySetId, propertyId],
+          permissions: [Permission.READ.name]
+        });
+      }
     });
     AuthorizationApi.checkAuthorizations(accessChecks)
     .then((aces) => {
@@ -134,7 +138,7 @@ export default class EntitySetDataSearch extends React.Component {
   executeSearch = (searchTerm) => {
     const searchRequest = {
       searchTerm,
-      start: ((this.state.page - 1) * 50),
+      start: ((this.state.page - 1) * MAX_HITS),
       maxHits: MAX_HITS
     }
     SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
@@ -162,7 +166,12 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   renderEntitySetTitle = () => {
-    return (this.state.title.length > 0) ? `: ${this.state.title}` : '';
+    if (this.state.title.length <= 0) return '';
+    return (
+      <span>: <Link
+          to={`/entitysets/${this.props.params.entitySetId}`}
+          className={styles.titleLink}>{this.state.title}</Link></span>
+    );
   }
 
   renderErrorMessage = () => {
@@ -265,6 +274,7 @@ export default class EntitySetDataSearch extends React.Component {
       return (
         <EntitySetUserSearchResults
             results={this.state.searchResults}
+            entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.propertyTypes}
             firstName={firstName}
             lastName={lastName}
@@ -276,30 +286,34 @@ export default class EntitySetDataSearch extends React.Component {
     return (
       <EntitySetSearchResults
           results={this.state.searchResults}
+          entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.propertyTypes}
           formatValueFn={this.formatValue} />
     );
   }
 
   render() {
+    const title = (this.state.title && this.state.title.length) ? `Search: ${this.state.title}` : 'Search';
     return (
-      <Page>
-        <Page.Header>
-          <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
-          <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
-          <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
-        </Page.Header>
-        <Page.Body>
-          {this.renderErrorMessage()}
-          {this.renderToggleSearchView()}
-          <AsyncContent
-              status={this.state.asyncStatus}
-              pendingContent={<h2>Please run a search</h2>}
-              content={this.renderSearchResultType} />
-          {this.renderPagination()}
-          <div className={styles.bottomSpacer} />
-        </Page.Body>
-      </Page>
+      <DocumentTitle title={title}>
+        <Page>
+          <Page.Header>
+            <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
+            <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
+            <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
+          </Page.Header>
+          <Page.Body>
+            {this.renderErrorMessage()}
+            {this.renderToggleSearchView()}
+            <AsyncContent
+                status={this.state.asyncStatus}
+                pendingContent={<h2>Please run a search</h2>}
+                content={this.renderSearchResultType} />
+            {this.renderPagination()}
+            <div className={styles.bottomSpacer} />
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 

@@ -1,3 +1,5 @@
+const DEFAULT_DOCUMENT_TITLE = 'Gallery';
+
 const HOME = 'home';
 const CATALOG = 'catalog';
 const LOGIN = 'login';
@@ -9,8 +11,11 @@ const LINK = 'link';
 const SEARCH = 'search';
 const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
+const ENTITY_SETS = 'entitysets';
+const EDIT_ACCOUNT = 'edit_account';
 
 export default {
+  DEFAULT_DOCUMENT_TITLE,
   HOME,
   CATALOG,
   LOGIN,
@@ -21,5 +26,7 @@ export default {
   LINK,
   SEARCH,
   ADVANCED_SEARCH,
-  ORGS
+  ORGS,
+  ENTITY_SETS,
+  EDIT_ACCOUNT
 };

@@ -38,6 +38,7 @@ const {
  */
 
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+  isCreatingOrg: false,
   isFetchingOrg: false,
   isFetchingOrgs: false,
   isSearchingOrgs: false,
@@ -50,6 +51,12 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
 export default function organizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
 
   switch (action.type) {
+
+    case OrgActionTypes.CREATE_ORG_REQUEST:
+      return state.set('isCreatingOrg', true);
+
+    case OrgActionTypes.CREATE_ORG_FAILURE:
+      return state.set('isCreatingOrg', false);
 
     case OrgsActionTypes.FETCH_ORG_REQUEST:
       return state.set('isFetchingOrg', true);
@@ -80,6 +87,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       const organization :Organization = action.organization;
       return state
         .setIn(['organizations', organization.id], Immutable.fromJS(organization))
+        .set('isCreatingOrg', false)
         .set('isFetchingOrg', false);
     }
 
@@ -133,8 +141,24 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgActionTypes.CREATE_ORG_SUCCESS: {
 
+      /*
+       * we are *not* setting "isCreatingOrg" to false here because creating an organization involves 2 steps:
+       *
+       *   1. make the HTTP request to create the organization and get back the org UUID
+       *   2. once we actually have the org UUID, we route from /org/new to /org/{orgId}, which does a fetch
+       *
+       * once we've successfully routed to /org/{orgId} and finished the fetch is when we're done with the process of
+       * creating an organization. as such, we set "isCreatingOrg" to false in the FETCH_ORG_SUCCESS case.
+       */
+
       const organization :Organization = action.organization;
       return state.setIn(['organizations', organization.id], Immutable.Map(organization));
+    }
+
+    case OrgActionTypes.DELETE_ORG_SUCCESS: {
+
+      const orgId :string = action.orgId;
+      return state.deleteIn(['organizations', orgId]);
     }
 
     case OrgActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {

@@ -28,7 +28,8 @@ const plugins = [
   new Webpack.optimize.OccurrenceOrderPlugin(),
   new HtmlWebpackPlugin({
     inject: true,
-    template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`
+    template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`,
+    favicon: `${APP_PATHS.ABS.SOURCE}/images/favicon.png`
   }),
   new Webpack.optimize.UglifyJsPlugin(),
   ...baseWebpackConfig.plugins
@@ -36,5 +37,6 @@ const plugins = [
 
 export default Object.assign({}, baseWebpackConfig, {
   output,
-  plugins
+  plugins,
+  devtool: 'nosources-source-map'
 });

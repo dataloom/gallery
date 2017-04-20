@@ -1,15 +1,31 @@
-/* @flow */
+/*
+ * @flow
+ */
+
 import Immutable from 'immutable';
 
-import * as actionTypes from './AsyncActionTypes';
+import * as AsyncActionTypes from './AsyncActionTypes';
 
-export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({});
+import {
+  resolveReference,
+  createCompleteValue
+} from './AsyncStorage';
 
-export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Object) {
+import type {
+  AsyncContent
+} from './AsyncStorage';
+
+export const INITIAL_STATE :AsyncContent = Immutable.fromJS({});
+
+export default function reducer(state :AsyncContent = INITIAL_STATE, action :Object) {
+
   switch (action.type) {
-    case actionTypes.UPDATE_ASYNC_REFERENCE:
-      const { reference, value } = action;
-      return state.setIn([reference.namespace, reference.id], value);
+
+    case AsyncActionTypes.UPDATE_ASYNC_REFERENCE:
+      return resolveReference(state, action.reference, createCompleteValue(action.value));
+
+    case AsyncActionTypes.RESOLVE_ASYNC_REFERENCE:
+      return resolveReference(state, action.reference, action.value);
 
     default:
       return state;

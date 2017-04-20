@@ -4,14 +4,16 @@
 
 import React from 'react';
 
+import DocumentTitle from 'react-document-title';
 import Immutable from 'immutable';
+import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
+import Button from '../../../components/buttons/Button';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
-import StyledFlexContainerStackedLeftAligned from '../../../components/flex/StyledFlexContainerStackedLeftAligned';
 
 import OrganizationAddMembersSectionComponent from './OrganizationAddMembersSectionComponent';
 import OrganizationDescriptionSectionComponent from './OrganizationDescriptionSectionComponent';
@@ -23,8 +25,16 @@ import OrganizationTitleSectionComponent from './OrganizationTitleSectionCompone
 import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 
 import {
+  deleteOrganizationRequest
+} from '../actions/OrganizationActionFactory';
+
+import {
   fetchOrganizationRequest
 } from '../actions/OrganizationsActionFactory';
+
+const LoadingSpinnerWrapper = styled.div`
+  width: 100%;
+`;
 
 const MODES = {
   CREATE: 'CREATE',
@@ -34,9 +44,13 @@ const MODES = {
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 
+  const isCreatingOrg = state.getIn(['organizations', 'isCreatingOrg']);
+  const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
+
   // TODO: checking if orgId === 'new' feels wrong. there's probably a better pattern for this use case.
   if (isDefined(ownProps.params) && ownProps.params.orgId === 'new') {
     return {
+      isCreatingOrg,
       isFetchingOrg: false,
       mode: MODES.CREATE,
       organization: Immutable.fromJS({
@@ -53,13 +67,13 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
     organizationId = ownProps.params.orgId;
   }
 
-  const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
   const organization = state.getIn(['organizations', 'organizations', organizationId], Immutable.Map());
   if (organization.get('isOwner') === true) {
     mode = MODES.EDIT;
   }
 
   return {
+    isCreatingOrg,
     isFetchingOrg,
     mode,
     organization,
@@ -70,6 +84,7 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
+    deleteOrganizationRequest,
     fetchOrganizationRequest
   };
 
@@ -82,8 +97,10 @@ class OrganizationDetailsComponent extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
+      deleteOrganizationRequest: React.PropTypes.func.isRequired,
       fetchOrganizationRequest: React.PropTypes.func.isRequired
     }).isRequired,
+    isCreatingOrg: React.PropTypes.bool.isRequired,
     isFetchingOrg: React.PropTypes.bool.isRequired,
     mode: React.PropTypes.string.isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -104,16 +121,6 @@ class OrganizationDetailsComponent extends React.Component {
         this.props.actions.fetchOrganizationRequest(nextProps.organizationId);
       }
     }
-  }
-
-  renderOrganizationHeaderSection = () => {
-
-    return (
-      <StyledFlexContainerStackedLeftAligned>
-        { this.renderOrganizationTitleSection() }
-        { this.renderOrganizationDescriptionSection() }
-      </StyledFlexContainerStackedLeftAligned>
-    );
   }
 
   renderOrganizationTitleSection = () => {
@@ -179,20 +186,72 @@ class OrganizationDetailsComponent extends React.Component {
     );
   }
 
-  render() {
+  handleOnClickDeleteButton = () => {
 
-    if (this.props.isFetchingOrg) {
-      return <LoadingSpinner />;
+    this.props.actions.deleteOrganizationRequest(this.props.organizationId);
+  }
+
+  renderOrganizationDeleteButton = () => {
+
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+
+    if (this.props.mode === MODES.CREATE || !isOwner) {
+      return null;
     }
 
     return (
-      <StyledFlexContainerStacked>
-        { this.renderOrganizationHeaderSection() }
-        { this.renderOrganizationDomainsSection() }
-        { this.renderOrganizationRolesSection() }
-        { this.renderOrganizationMembersSection() }
-        { this.renderOrganizationAddMembersSection() }
-      </StyledFlexContainerStacked>
+      <div>
+        <Button scStyle="red" onClick={this.handleOnClickDeleteButton}>
+          Delete Organization
+        </Button>
+      </div>
+    );
+  }
+
+  renderLoadingSpinner = () => {
+
+    return (
+      <LoadingSpinnerWrapper>
+        <LoadingSpinner />
+      </LoadingSpinnerWrapper>
+    );
+  }
+
+  render() {
+    const title = (this.props.organization) ? this.props.organization.get('title') : 'Organizations';
+
+    if (this.props.isCreatingOrg) {
+      return (
+        <DocumentTitle title={title}>
+          <StyledFlexContainerStacked>
+            { this.renderOrganizationTitleSection() }
+            { this.renderLoadingSpinner() }
+          </StyledFlexContainerStacked>
+        </DocumentTitle>
+      );
+    }
+
+    if (this.props.isFetchingOrg) {
+      return (
+        <DocumentTitle title={title}>
+          <StyledFlexContainerStacked>
+            { this.renderLoadingSpinner() }
+          </StyledFlexContainerStacked>
+        </DocumentTitle>
+      );
+    }
+    return (
+      <DocumentTitle title={title}>
+        <StyledFlexContainerStacked>
+          { this.renderOrganizationTitleSection() }
+          { this.renderOrganizationDescriptionSection() }
+          { this.renderOrganizationDomainsSection() }
+          { this.renderOrganizationRolesSection() }
+          { this.renderOrganizationMembersSection() }
+          { this.renderOrganizationAddMembersSection() }
+          { this.renderOrganizationDeleteButton() }
+        </StyledFlexContainerStacked>
+      </DocumentTitle>
     );
   }
 }

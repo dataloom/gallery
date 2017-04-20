@@ -48,36 +48,6 @@
     background: #d8dcdf;
 }
 
-.addButton {
-    background: -webkit-linear-gradient(#0ab053, #09a34d);
-    border: 0;
-    border-radius: 4px;
-    width: 25px;
-    height: 25px;
-    color: white;
-    box-shadow: 1px 1px 1px #767a7c;
-    margin: 5px 3px 3px 3px;
-}
-
-.addButton:hover {
-    background: #088941;
-}
-
-.deleteButton {
-    background: -webkit-linear-gradient(#e00d18, #d30c17);
-    border: 0;
-    border-radius: 4px;
-    width: 25px;
-    height: 25px;
-    color: white;
-    box-shadow: 1px 1px 1px #767a7c;
-    margin: 3px;
-}
-
-.deleteButton:hover {
-    background: #b90b14
-}
-
 .dropdownButtonContainer {
     float: right;
 }

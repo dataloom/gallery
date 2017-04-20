@@ -5,18 +5,20 @@
 import React from 'react';
 
 import {
-  Link
+  Link,
+  hashHistory
 } from 'react-router';
 
-import styles from './headernav.module.css';
-
+import AccountMenu from './AccountMenu';
 import AuthService from '../../utils/AuthService';
 import PageConsts from '../../utils/Consts/PageConsts';
+import styles from './headernav.module.css';
 
 class HeaderNav extends React.Component {
 
   onLogoutClick = () => {
     this.props.auth.logout();
+    hashHistory.push(`/${PageConsts.LOGIN}`);
   }
 
   render() {
@@ -24,10 +26,6 @@ class HeaderNav extends React.Component {
     const greeting = (this.props.name && this.props.name.length)
       ? `Hi, ${this.props.name}!`
       : 'Hi!';
-
-    const settingsNavItemClassNames = (this.props.isAdmin)
-      ? styles.headerNavItem
-      : `${styles.headerNavItem} ${styles.hidden}`;
 
     return (
       <header className={styles.headerNavWrapper}>
@@ -42,12 +40,7 @@ class HeaderNav extends React.Component {
               { greeting }
             </div>
             <div className={styles.headerNavItem}>
-              <Link
-                  to={`/${PageConsts.LOGIN}`}
-                  className={styles.headerNavLink}
-                  onClick={this.onLogoutClick}>
-                Logout
-              </Link>
+              <AccountMenu onLogoutClick={this.onLogoutClick} />
             </div>
           </div>
 
@@ -59,7 +52,6 @@ class HeaderNav extends React.Component {
 
 HeaderNav.propTypes = {
   auth: React.PropTypes.instanceOf(AuthService),
-  isAdmin: React.PropTypes.bool,
   name: React.PropTypes.string
 };
 

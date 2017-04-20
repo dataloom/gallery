@@ -1,0 +1,73 @@
+.pageWrapper {
+  /*position: relative;*/
+}
+
+.formWrapper {
+
+}
+
+.rowsWrapper {
+  margin-bottom: 20px;
+}
+
+.labelsRow {
+  font-size: 20px;
+  margin: 6px 0;
+}
+
+.rowWrapper {
+  display: flex;
+  padding: 6px 0;
+}
+
+.associationSelect {
+  width: 50%;
+}
+
+.arrowSelect {
+  width: 12%;
+}
+
+.arrowIcon {
+  margin-left: 40%;
+}
+
+.entitySelect {
+  width: 50%;
+}
+
+.addLink {
+  margin-bottom: 40px;
+}
+
+a {
+  color: inherit;
+  font-size: 16px;
+}
+
+a:hover {
+  color: inherit;
+}
+
+.plusIcon {
+  color: #4203c5;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.buttonWrapper {
+  text-align: center;
+}
+
+.submitButton {
+  background: #4203c5;
+  color: white;
+  font-weight: bold;
+  margin: auto;
+  display: inline-block;
+}
+
+.submitButton:hover {
+  background: #300290;
+  color: white;
+}

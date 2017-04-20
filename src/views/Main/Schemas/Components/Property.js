@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
+
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import { PermissionsPanel } from './PermissionsPanel';
 import styles from '../styles.module.css';
+import DeleteButton from '../../../../components/buttons/DeleteButton';
+
+import { PermissionsPanel } from './PermissionsPanel';
 
 export class Property extends React.Component {
   static propTypes = {
@@ -67,20 +70,14 @@ export class Property extends React.Component {
   }
 
   renderDeleteButton = () => {
-    if (this.context.isAdmin) {
-      const className = (this.props.primaryKey || this.props.entitySetName) ? styles.hidden : styles.deleteButton;
-      return (
-        <td>
-          <button
-              onClick={() => {
-                this.props.verifyDeleteFn(this.props.property);
-              }}
-              className={className}>-</button>
-        </td>
-      );
-    }
+    if (!this.context.isAdmin || this.props.primaryKey || this.props.entitySetName) return <td />;
     return (
-      <td />
+      <td>
+        <DeleteButton
+            onClick={() => {
+              this.props.verifyDeleteFn(this.props.property);
+            }} />
+      </td>
     );
   }
 

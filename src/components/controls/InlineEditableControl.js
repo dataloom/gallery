@@ -34,6 +34,7 @@ const Icon = styled.div`
   height: 32px;
   width: 32px;
   margin-left: 10px;
+  font-size: 14px;
   padding: 0;
   display: flex;
   flex-shrink: 0;
@@ -126,6 +127,13 @@ const TYPES = {
  * the negative margin-left is to adjust for the padding + border offset
  */
 const STYLE_MAP = {
+  small: {
+    fontSize: '14px',
+    inputFontSize: '13px',
+    lineHeight: '16px',
+    margin: '0 0 0 -13px',
+    padding: '6px 12px'
+  },
   medium: {
     fontSize: '20px',
     inputFontSize: '18px',

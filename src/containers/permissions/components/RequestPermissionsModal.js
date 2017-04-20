@@ -1,4 +1,7 @@
 import React, { PropTypes } from 'react';
+
+import Immutable from 'immutable';
+
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Modal, Alert } from 'react-bootstrap';
@@ -13,8 +16,8 @@ export class RequestPermissionsModal extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
     entitySetId: PropTypes.string,
-    reason: PropTypes.string,
-    pidToRequestedPermissions: PropTypes.instanceOf(Map),
+    reason: PropTypes.string.isRequired,
+    pidToRequestedPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
 
     onSubmit: PropTypes.func.isRequired,
     onReasonChange: PropTypes.func.isRequired,
@@ -25,6 +28,12 @@ export class RequestPermissionsModal extends React.Component {
     // Async Objects
     entitySet: EntitySetPropType,
     propertyTypeIds: PropTypes.arrayOf(PropTypes.string)
+  };
+
+  static defaultProps = {
+    entitySet: null,
+    propertyTypeIds: [],
+    entitySetId: null
   };
 
   render() {

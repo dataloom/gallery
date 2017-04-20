@@ -1,56 +1,142 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import map from 'lodash/map';
+import mapValues from 'lodash/mapValues';
+import isPlainObject from 'lodash/isPlainObject';
+import flatMapDeep from 'lodash/flatMapDeep';
+import isArrayLikeObject from 'lodash/isArrayLikeObject';
 
 import LoadingSpinner from './LoadingSpinner';
-import { AsyncReferencePropType, STATUS, resolveReference } from '../AsyncStorage';
+import DefaultAsyncErrorComponent from './DefaultAsyncErrorComponent';
 
-class AsyncContentComponent extends React.Component {
+import {
+  smartDereference,
+  isValue,
+  isEmptyValue,
+  isLoadingValue,
+  isErrorValue,
+  referenceOrValuePropType,
+  AsyncValue
+} from '../AsyncStorage';
+
+
+function unpackValue(value) {
+  if (isValue(value)) {
+    return value.value;
+  }
+  else if (isArrayLikeObject(value)) {
+    return map(value, unpackValue);
+  }
+  else if (isPlainObject(value)) {
+    return mapValues(value, unpackValue);
+  }
+  return value;
+}
+
+export class AsyncContentComponent extends React.Component {
   static propTypes = {
-    reference: AsyncReferencePropType.isRequired,
-    render: PropTypes.func.isRequired,
-    // Status renderers
-    referenceEmptyContent: PropTypes.node,
-    reference404Content: PropTypes.node,
-    reference403Content: PropTypes.node,
-    // Literally anything
-    resolvedReference: PropTypes.any
+    base: PropTypes.oneOfType([React.Component]).isRequired,
+    baseChildren: PropTypes.arrayOf(PropTypes.element),
+    baseProps: PropTypes.object,
+    // State Components
+    errorComponent: PropTypes.func
   };
 
+  static defaultProps = {
+    baseProps: {},
+    baseChildren: [],
+    errorComponent: DefaultAsyncErrorComponent
+  };
+
+  renderEmpty() {
+    return this.renderLoading();
+  }
+
   renderLoading() {
-    return (<LoadingSpinner/>);
+    return (<LoadingSpinner />);
+  }
+
+  renderError(error :AsyncValue) {
+    const { errorComponent } = this.props;
+    return React.createElement(errorComponent, {
+      error: error.value
+    });
+  }
+
+  renderComplete() {
+    const { base, baseProps, baseChildren } = this.props;
+
+    const props = mapValues(baseProps, unpackValue);
+    return React.createElement(base, props, baseChildren);
   }
 
   render() {
-    const {
-      resolvedReference,
-      render,
-      referenceEmptyContent,
-      reference404Content,
-      reference403Content
-    } = this.props;
+    const { baseProps } = this.props;
+    const asyncValues = flatMapDeep(baseProps).filter(isValue);
 
-    switch (resolvedReference) {
-      case STATUS.EMPTY_REFERENCE:
-        return referenceEmptyContent ? referenceEmptyContent : this.renderLoading();
-      case STATUS.LOADING:
-        return this.renderLoading();
-      case STATUS.ACCESS_DENIED:
-        return reference403Content ? reference403Content : render(resolvedReference);
-      case STATUS.NOT_FOUND:
-        return reference404Content ? reference404Content : render(resolvedReference);
-      default:
-        return render(resolvedReference);
+    if (asyncValues.some(isErrorValue)) {
+      const error = asyncValues.find(isErrorValue);
+      return this.renderError(error);
     }
+    else if (asyncValues.some(isLoadingValue)) {
+      return this.renderLoading();
+    }
+    else if (asyncValues.some(isEmptyValue)) {
+      return this.renderEmpty();
+    }
+
+    return this.renderComplete();
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  const asyncContent = state.get('async'),
-    { reference } = ownProps;
+export function mapStateToProps(state, ownProps) {
+  const { baseProps } = ownProps;
+  const asyncContent = state.get('async');
+
+  const dereferencedBaseProps = mapValues(baseProps, (value) => {
+    return smartDereference(asyncContent, value);
+  });
 
   return {
-    resolvedReference: resolveReference(asyncContent, reference)
-  }
+    baseProps: dereferencedBaseProps
+  };
 }
 
-export default connect(mapStateToProps)(AsyncContentComponent);
+export const SmartAsyncContentComponent = connect(mapStateToProps)(AsyncContentComponent);
+
+export function createAsyncComponent(baseComponent, errorComponent = DefaultAsyncErrorComponent) {
+  const propTypes = mapValues(baseComponent.propTypes, (propType, name) => {
+    if (name === 'children') {
+      return propType;
+    }
+
+    if (propType === PropTypes.array || propType === PropTypes.array.isRequired) {
+      let newPropType = PropTypes.arrayOf(PropTypes.any);
+
+      if (propType === PropTypes.array.isRequired) {
+        newPropType = newPropType.isRequired;
+      }
+      return newPropType;
+    }
+
+    return referenceOrValuePropType(propType);
+  });
+
+  return class extends React.Component {
+    static propTypes = propTypes;
+    static defaultProps = baseComponent.defaultProps;
+
+    render() {
+      const { children } = this.props;
+      const baseProps = Object.assign({}, this.props);
+      delete baseProps.children;
+
+      return (
+        <SmartAsyncContentComponent
+            base={baseComponent}
+            baseProps={baseProps}
+            baseChildren={children}
+            errorComponent={errorComponent} />);
+    }
+  };
+}

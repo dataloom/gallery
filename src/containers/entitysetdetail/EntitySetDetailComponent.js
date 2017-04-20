@@ -1,23 +1,23 @@
 import React, { PropTypes } from 'react';
-import { Link, hashHistory } from 'react-router';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal } from 'react-bootstrap';
+import DocumentTitle from 'react-document-title';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
-
-import {
-  EntityDataModelApi
-} from 'loom-data';
+import { EntityDataModelApi } from 'loom-data';
+import IntegrationDetailsModal from './IntegrationDetailsModal';
 
 import * as actionFactories from './EntitySetDetailActionFactories';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
-import { PermissionsPanel } from '../../views/Main/Schemas/Components/PermissionsPanel';
+import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
 import AddDataForm from '../entitysetforms/AddDataForm';
 import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
@@ -26,6 +26,7 @@ import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './entitysetdetail.module.css';
 
+import InlineEditableControl from '../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
 
@@ -38,6 +39,14 @@ const ControlsContainer = styled(StyledFlexContainerStacked)`
   flex: 1 0 auto;
 `;
 
+const permissionOptions = {
+  Discover: 'Discover',
+  Link: 'Link',
+  Read: 'Read',
+  Write: 'Write',
+  Owner: 'Owner'
+};
+
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
@@ -48,37 +57,74 @@ class EntitySetDetailComponent extends React.Component {
     entitySetPermissions: PermissionsPropType.isRequired,
 
     // Loading
-    loadEntitySet: PropTypes.func.isRequired
+    loadEntitySet: PropTypes.func.isRequired,
+    updateMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
+
     this.state = {
       editingPermissions: false,
       confirmingDelete: false,
       addingData: false,
-      deleteError: false
+      deleteError: false,
+      isIntegrationDetailsOpen: false
     };
   }
 
   componentDidMount() {
+    this.props.resetPermissions();
     this.props.loadEntitySet();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined ) {
-      const propertyTypeIds = nextProps.entitySet.entityType.properties.map((property) => {
-        return property.id;
-      });
-
-      localStorage.setItem('entitySet', JSON.stringify(nextProps.entitySet));
-      localStorage.setItem('propertyTypeIds', JSON.stringify(propertyTypeIds));
-    }
   }
 
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
+
+  updateEntitySetTitle = (title) => {
+    if (newTitle && newTitle.length) {
+      this.props.updateMetadata(this.props.entitySet.id, { title });
+    }
+  }
+
+  updateEntitySetDescription = (description) => {
+    if (description) this.props.updateMetadata(this.props.entitySet.id, { description })
+  }
+
+  updateEntitySetContacts = (contacts) => {
+    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] })
+  }
+
+  renderTitle = (title, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="xlarge"
+        placeholder="Entity set title..."
+        value={title}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetTitle} />);
+  }
+
+  renderDescription = (description, isOwner) => {
+    return (<InlineEditableControl
+        type="textarea"
+        size="small"
+        placeholder="Entity set description..."
+        value={description}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetDescription} />);
+  }
+
+  renderEntitySetContacts = (contacts, isOwner) => {
+    return (<InlineEditableControl
+        type="text"
+        size="small"
+        placeholder="Entity set owner contacts..."
+        value={contacts}
+        viewOnly={!isOwner}
+        onChange={this.updateEntitySetContacts} />);
+  }
 
   renderHeaderContent = () => {
     const { entitySet, entitySetPermissions } = this.props;
@@ -89,10 +135,10 @@ class EntitySetDetailComponent extends React.Component {
       <StyledFlexContainerStacked>
         <TitleControlsContainer>
           <div>
-            <Page.Title>{entitySet.title}</Page.Title>
+            <Page.Title>{this.renderTitle(entitySet.title, entitySetPermissions.OWNER)}</Page.Title>
             <div className={styles.descriptionTitle}>About this data</div>
-            {entitySet.description}
-            <div className={styles.contacts}>Owner contact: {contactValue}</div>
+            {this.renderDescription(entitySet.description, entitySetPermissions.OWNER)}
+            <span className={styles.contacts}>{this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}</span>
           </div>
 
           <ControlsContainer>
@@ -196,9 +242,12 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ addingData: false });
   }
 
-  onAllPermissions = () => {
-    hashHistory.push(`/allpermissions`);
-    // hashHistory.push(`/entitysets/${this.props.entitySetId}/allpermissions`);
+  openIntegrationDetailsModal = () => {
+    this.setState({ isIntegrationDetailsOpen: true });
+  }
+
+  closeIntegrationDetailsModal = () => {
+    this.setState({ isIntegrationDetailsOpen: false });
   }
 
   renderAddDataButton = () => {
@@ -216,18 +265,38 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderAllPermissions = () => {
+  renderIntegrationDetailsLink = () => {
+    return (
+      <div className={styles.buttonWrapper}>
+        <Link
+            className={`${styles.center} ${styles.link}`}
+            onClick={this.openIntegrationDetailsModal}>
+          <span className={styles.buttonText}>View Integration Details</span>
+        </Link>
+      </div>
+    );
+  }
+
+  renderIntegrationDetailsModal = () => {
+    return (
+      <IntegrationDetailsModal
+          isOpen={this.state.isIntegrationDetailsOpen}
+          onClose={this.closeIntegrationDetailsModal}
+          entitySet={this.props.entitySet} />
+    );
+  }
+
+  renderPermissionsSummaryButton = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     return (
-      <div className={styles.buttonWrapper} >
-        <Button
-          className={styles.center}
-          onClick={this.onAllPermissions}
-        >
-          <span className={styles.buttonText}>View all permissions</span>
-        </Button>
+      <div className={styles.buttonWrapper}>
+        <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>
+          <Button className={styles.center}>
+            <span className={styles.buttonText}>View Permissions Summary</span>
+          </Button>
+        </Link>
       </div>
-    )
+    );
   }
 
   renderDeleteEntitySet = () => {
@@ -269,37 +338,45 @@ class EntitySetDetailComponent extends React.Component {
     this.setState({ editingPermissions: false });
   };
 
+  getDocumentTitle = () => {
+    return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
+  }
+
   render() {
     return (
-      <Page>
-        <Page.Header>
-          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
-        </Page.Header>
-        <Page.Body>
-          {this.renderAddDataButton()}
-          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-          <AsyncContent
-              {...this.props.asyncState}
-              content={() => {
-                // TODO: Remove when removing denormalization
-                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                  return property.id;
-                });
-                return (
-                  <PropertyTypeList
-                      entitySetId={this.props.entitySet.id}
-                      propertyTypeIds={propertyTypeIds}
-                      className="propertyTypeStyleDefault" />
-                );
-              }} />
-          {this.renderAddDataForm()}
-          {this.renderPermissionsPanel()}
-          {this.renderSearchEntitySet()}
-          {this.renderAllPermissions()}
-          {this.renderDeleteEntitySet()}
-          {this.renderConfirmDeleteModal()}
-        </Page.Body>
-      </Page>
+      <DocumentTitle title={this.getDocumentTitle()}>
+        <Page className={styles.page}>
+          <Page.Header>
+            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
+          </Page.Header>
+          <Page.Body>
+            {this.renderAddDataButton()}
+            <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+            <AsyncContent
+                {...this.props.asyncState}
+                content={() => {
+                  // TODO: Remove when removing denormalization
+                  const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                    return property.id;
+                  });
+                  return (
+                    <PropertyTypeList
+                        entitySetId={this.props.entitySet.id}
+                        propertyTypeIds={propertyTypeIds}
+                        className="propertyTypeStyleDefault" />
+                  );
+                }} />
+            {this.renderAddDataForm()}
+            {this.renderPermissionsPanel()}
+            {this.renderSearchEntitySet()}
+            {this.renderPermissionsSummaryButton()}
+            {this.renderDeleteEntitySet()}
+            {this.renderConfirmDeleteModal()}
+            {this.renderIntegrationDetailsLink()}
+            {this.renderIntegrationDetailsModal()}
+          </Page.Body>
+        </Page>
+      </DocumentTitle>
     );
   }
 }
@@ -329,6 +406,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch, ownProps) {
   const id = ownProps.params.id;
+
   return {
     loadEntitySet: () => {
       dispatch(actionFactories.entitySetDetailRequest(id));
@@ -341,6 +419,9 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
+    },
+    resetPermissions: () => {
+      dispatch(psActionFactories.resetPermissions());
     }
   };
 }

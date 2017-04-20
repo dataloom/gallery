@@ -7,19 +7,19 @@ import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 
 import { EntitySetPropType } from '../../edm/EdmModel';
-import { StatusPropType, RequestStatus } from '../PermissionsStorage'
+import { StatusPropType, RequestStatus } from '../PermissionsStorage';
 import { createPrincipalReference } from '../../principals/PrincipalsStorage';
 import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
 import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
 import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
 
-import { AsyncReferencePropType } from '../../async/AsyncStorage';
-import AsyncContentComponent from '../../async/components/AsyncContentComponent';
+import { createAsyncComponent } from '../../async/components/AsyncContentComponent';
 import styles from './permissions.module.css';
 
 class EntitySetPermissionsRequest extends React.Component {
   static propTypes = {
+    principal: PropTypes.any,
     principalId: PropTypes.string.isRequired,
     entitySetId: PropTypes.string.isRequired,
     statuses: PropTypes.arrayOf(StatusPropType).isRequired,
@@ -29,8 +29,6 @@ class EntitySetPermissionsRequest extends React.Component {
     // Loaders
     loadPrincipal: PropTypes.func.isRequired,
 
-    // Async
-    principalReference: AsyncReferencePropType.isRequired,
     // TODO: Move to AsyncReference
     entitySet: EntitySetPropType
 
@@ -47,10 +45,6 @@ class EntitySetPermissionsRequest extends React.Component {
       // TODO: Move to Redux
       selectedProperties
     };
-  }
-
-  componentDidMount() {
-    this.props.loadPrincipal(this.props.principalId);
   }
 
   sendUpdateRequests = (requestStatus) => {
@@ -113,8 +107,9 @@ class EntitySetPermissionsRequest extends React.Component {
     this.setState({ open: !this.state.open });
   };
 
-  renderContent = (principal) => {
-    const { statuses, entitySet } = this.props;
+  render() {
+
+    const { statuses, entitySet, principal } = this.props;
     const propertyTypes = entitySet.entityType.properties;
     const reasonList = new Set();
     statuses.forEach((status) => {
@@ -135,55 +130,72 @@ class EntitySetPermissionsRequest extends React.Component {
     const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`
 
     return (
-      <div className={styles.permissionsRequest}>
-        <div className={styles.permissionRequestHeader}>
-          <div className={styles.permissionRequestTitle}>
-            <span className={styles.principalName}>{principalDisplayName} </span>
-            requested permission on
-            <a onClick={this.toggleBody}> { statuses.length } properties</a>
-          </div>
-          <button className={styles.approveButton} onClick={this.approve}>
-            <FontAwesome name="thumbs-o-up" />
-            Allow
-          </button>
-          <button className={styles.rejectButton} onClick={this.deny}>
-            <FontAwesome name="thumbs-o-down" />
-            Deny
-          </button>
-        </div>
-
-        <div className={styles.permissionRequestBody}>
-          <div className={styles.subtitle}>Message:</div>
-          {reasons}
-          <div className={styles.subtitle}>Properties requested:</div>
-          <div className="propertyTypeList">{ content }</div>
-        </div>
-      </div>
-    );
-  };
-
-  render() {
-    const { principalReference } = this.props;
-
-    return (
-      // Hack to force re-rendering on state change
       <div className={classnames({ [styles.open]: this.state.open })}>
-        <AsyncContentComponent reference={principalReference} render={this.renderContent} />
+        <div className={styles.permissionsRequest}>
+          <div className={styles.permissionRequestHeader}>
+            <div className={styles.permissionRequestTitle}>
+              <span className={styles.principalName}>{principalDisplayName} </span>
+              requested permission on
+              <a onClick={this.toggleBody}> { statuses.length } properties</a>
+            </div>
+            <button className={styles.approveButton} onClick={this.approve}>
+              <FontAwesome name="thumbs-o-up" />
+              Allow
+            </button>
+            <button className={styles.rejectButton} onClick={this.deny}>
+              <FontAwesome name="thumbs-o-down" />
+              Deny
+            </button>
+          </div>
+
+          <div className={styles.permissionRequestBody}>
+            <div className={styles.subtitle}>Message:</div>
+            {reasons}
+            <div className={styles.subtitle}>Properties requested:</div>
+            <div className="propertyTypeList">{ content }</div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
+EntitySetPermissionsRequest.Async = createAsyncComponent(EntitySetPermissionsRequest);
+
+class EntitySetPermissionsRequestWrapper extends React.Component {
+
+  static propTypes = {
+    principalId: PropTypes.string.isRequired,
+    loadPrincipal: PropTypes.func.isRequired
+  };
+
+  componentDidMount() {
+    this.props.loadPrincipal(this.props.principalId);
+  }
+
+  render() {
+
+    const principalReference = createPrincipalReference(this.props.principalId);
+
+    return (
+      <EntitySetPermissionsRequest.Async
+          principal={principalReference}
+          {...this.props} />
+    );
+  }
+}
+
+EntitySetPermissionsRequestWrapper.Async = createAsyncComponent(EntitySetPermissionsRequestWrapper);
+
 function mapStateToProps(state, ownProps) {
+
   const normalizedData = state.get('normalizedData').toJS();
-
   const { principalId, entitySetId } = ownProps;
-
   const entitySet = getEdmObjectSilent(normalizedData, createEntitySetReference(entitySetId), null);
 
   return {
-    principalReference: createPrincipalReference(principalId),
-    entitySet
+    entitySet,
+    principalId
   };
 }
 
@@ -191,8 +203,8 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     loadPrincipal: PrincipalsActionFactory.loadPrincipalDetails,
-    updateStatuses: PermissionsActionFactory.updateStatusesStatusesRequest
+    updateStatuses: PermissionsActionFactory.updateStatusesRequest
   }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EntitySetPermissionsRequest);
+export default connect(mapStateToProps, mapDispatchToProps)(EntitySetPermissionsRequestWrapper.Async);

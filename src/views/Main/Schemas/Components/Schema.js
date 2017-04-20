@@ -10,9 +10,7 @@ import styles from '../styles.module.css';
 export class Schema extends React.Component {
   static propTypes = {
     schema: PropTypes.object,
-    updateFn: PropTypes.func,
-    allPropNamespaces: PropTypes.object,
-    allEntityTypeNamespaces: PropTypes.object
+    updateFn: PropTypes.func
   }
 
   constructor() {
@@ -49,7 +47,7 @@ export class Schema extends React.Component {
   }
 
   render() {
-    const { schema, allEntityTypeNamespaces, allPropNamespaces } = this.props;
+    const schema = this.props.schema;
     return (
       <div>
         <div className={styles.name}>{`${schema.fqn.namespace}.${schema.fqn.name}`}</div>
@@ -65,14 +63,12 @@ export class Schema extends React.Component {
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
             entityTypeFqns={schema.entityTypes}
-            updateSchemaFn={this.updateSchema}
-            allEntityTypeNamespaces={allEntityTypeNamespaces} />
+            updateSchemaFn={this.updateSchema}  />
         <br />
         <div className={styles.spacerMed} />
         <PropertyList
             properties={schema.propertyTypes}
             updateFn={this.updateSchema}
-            allPropNamespaces={allPropNamespaces}
             editingPermissions={false} />
         {this.renderError()}
         <div className={styles.spacerBig} />

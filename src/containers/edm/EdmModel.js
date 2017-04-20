@@ -18,7 +18,8 @@ export const EntityTypePropType = PropTypes.shape({
   properties: PropTypes.arrayOf(PropTypes.string),
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  type: TypePropType.isRequired
+  type: TypePropType.isRequired,
+  category: PropTypes.string
 });
 
 export const EntitySetPropType = PropTypes.shape({

@@ -1,123 +1,14 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
-import { Table, Column, Cell } from 'fixed-data-table';
-import PropertyTextCell from './PropertyTextCell';
+import EntityRow from './EntityRow';
 import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
 
-const TABLE_WIDTH = 1000;
-const ROW_HEIGHT = 50;
-const TABLE_OFFSET = 2;
-const PROPERTY_COLUMN_WIDTH = 200;
-const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
-const HEADERS = ['Property', 'Data'];
-
 export default class UserRow extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      rowKeys: Object.keys(props.row),
-      propertyIds: [],
-      numRows: 1
-    }
-  }
-
-  componentDidMount() {
-    const propertyIds = this.getPropertyIds();
-
-    this.setState({
-      propertyIds,
-      numRows: propertyIds.length
-    });
-  }
-
-  getPropertyIds() {
-    const { propertyTypes, firstName, lastName, dob } = this.props;
-    const { rowKeys } = this.state;
-
-    const propertyIds = rowKeys.filter((id) => {
-      if (dob && id === dob.id) return false;
-      return (id !== firstName.id && id !== lastName.id);
-    });
-
-    return propertyIds;
-  }
-
-  renderTable = () => {
-    if (!this.props.userPage) return null;
-    const tableHeight = ((this.state.numRows + 1) * ROW_HEIGHT) + TABLE_OFFSET;
-    return (
-      <Table
-          rowsCount={this.state.numRows}
-          rowHeight={ROW_HEIGHT}
-          headerHeight={ROW_HEIGHT}
-          width={TABLE_WIDTH}
-          height={tableHeight}>
-        {this.renderPropertyColumn()}
-        {this.renderDataColumn()}
-      </Table>
-    );
-  }
-
-  renderPropertyColumn() {
-    const header = HEADERS[0];
-    const propertyTitles = this.getPropertyTitles();
-
-    return (
-      <Column
-        key={0}
-        header={header}
-        cell={
-          <PropertyTextCell data={propertyTitles} />
-        }
-        width={PROPERTY_COLUMN_WIDTH}
-      />
-    )
-  }
-
-  renderDataColumn() {
-    const header = HEADERS[1];
-    const cellData = this.getCellData();
-
-    return (
-      <Column
-          key={1}
-          header={<Cell>{header}</Cell>}
-          cell={
-            <PropertyTextCell data={cellData} />
-          }
-          width={COLUMN_WIDTH} />
-    );
-  }
-
-  getPropertyTitles() {
-    const { propertyTypes } = this.props;
-    const { propertyIds } = this.state;
-
-    var headers = propertyIds.map((id) => {
-      var property = propertyTypes.filter((propertyType) => {
-        return propertyType.id === id;
-      });
-      return property[0].title;
-    });
-
-    return headers;
-  }
-
-  getCellData(){
-    const { row, propertyTypes, firstName, lastName, dob } = this.props;
-    const { propertyIds } = this.state;
-
-    return propertyIds.map((id) => {
-      var formatValue = this.props.formatValueFn([row][0][id]);
-      return formatValue;
-    });
-  }
 
   selectUser = () => {
     if (this.props.userPage) return;
-    this.props.selectUserFn(this.props.row);
+    this.props.selectUserFn(this.props.entityId, this.props.row, this.props.entitySetId, this.props.propertyTypes);
   }
 
   renderBackButton = () => {
@@ -131,17 +22,39 @@ export default class UserRow extends React.Component {
   }
 
   getFirstNameVal = () => {
-    return this.props.formatValueFn(this.props.row[this.props.firstName.id]);
+    return this.getFormattedVal(this.props.firstName);
   }
 
   getLastNameVal = () => {
-    return this.props.formatValueFn(this.props.row[this.props.lastName.id]);
+    return this.getFormattedVal(this.props.lastName);
   }
 
   renderDOB = () => {
     if (!this.props.dob) return null;
-    const dobVal = this.props.row[this.props.dob.id] || '';
-    return <div className={styles.userProfileDetailItem}><b>Date of Birth:</b> {this.props.formatValueFn(dobVal)}</div>;
+    return (
+      <div className={styles.userProfileDetailItem}>
+        <b>Date of Birth:</b> {this.getFormattedVal(this.props.dob)}
+      </div>);
+  }
+
+  getFormattedVal = (prop) => {
+    const id = prop.id;
+    const fqn = `${prop.type.namespace}.${prop.type.name}`;
+    const value = this.props.row[id] || this.props.row[fqn] || '';
+    return this.props.formatValueFn(value);
+  }
+
+  getRowWithoutUserProfile = () => {
+    const row = Object.assign({}, this.props.row);
+    delete row[this.props.firstName.id];
+    delete row[`${this.props.firstName.type.namespace}.${this.props.firstName.type.name}`];
+    delete row[this.props.lastName.id];
+    delete row[`${this.props.lastName.type.namespace}.${this.props.lastName.type.name}`];
+    if (this.props.dob) {
+      delete row[this.props.dob.id];
+      delete row[`${this.props.dob.type.namespace}.${this.props.dob.type.name}`];
+    }
+    return row;
   }
 
   getClassName = () => {
@@ -165,18 +78,32 @@ export default class UserRow extends React.Component {
     return (this.props.userPage) ? '' : styles.userListContainer;
   }
 
+  renderRow = () => {
+    if (!this.props.userPage) return null;
+    return (
+      <EntityRow
+          row={this.getRowWithoutUserProfile()}
+          entityId={this.props.entityId}
+          entitySetId={this.props.entitySetId}
+          formatValueFn={this.props.formatValueFn}
+          propertyTypes={this.props.propertyTypes}
+          onClick={this.props.onClick} />
+    );
+  }
+
   render() {
     return (
       <div className={this.getContainerClassName()}>
         {this.renderBackButton()}
         {this.renderUserProfile()}
-        {this.renderTable()}
+        {this.renderRow()}
       </div>
     );
   }
 
   static propTypes = {
     row: PropTypes.object.isRequired,
+    entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
@@ -184,6 +111,8 @@ export default class UserRow extends React.Component {
     selectUserFn: PropTypes.func,
     backFn: PropTypes.func,
     userPage: PropTypes.bool,
-    formatValueFn: PropTypes.func
+    formatValueFn: PropTypes.func,
+    entityId: PropTypes.string,
+    onClick: PropTypes.func.isRequired
   }
 }
