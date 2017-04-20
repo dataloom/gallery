@@ -422,6 +422,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());
+    },
+    updateMetadata: (entitySetId, metadataUpdate) => {
+      dispatch(edmActionFactories.updateEntitySetMetadataRequest(entitySetId, metadataUpdate));
     }
   };
 }
