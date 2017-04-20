@@ -15,6 +15,7 @@ import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import Button from '../../../components/buttons/Button';
 import OverviewCard from '../../../components/cards/OverviewCard';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
+import { sortOrganizations } from '../utils/OrgsUtils';
 
 import { fetchOrganizationsRequest } from '../actions/OrganizationsActionFactory';
 
@@ -77,7 +78,7 @@ class OrganizationsListComponent extends React.Component {
     };
 
     const viewOrgDetailsButton = (
-      <Button onClick={viewOrgDetailsOnClick}>
+      <Button scStyle="purple" onClick={viewOrgDetailsOnClick}>
         View Organization
       </Button>
     );
@@ -92,79 +93,64 @@ class OrganizationsListComponent extends React.Component {
   }
 
   renderOrganizations = () => {
+    const { visibleOrganizationIds, organizations } = this.props;
+    const sortedOrgs = sortOrganizations(visibleOrganizationIds, organizations, this.props.auth);
 
-    const yourOrgs = [];
-    const memberOfOrgs = [];
-    const publicOrgs = [];
-
-    const currentUserId :string = this.props.auth.getProfile().user_id;
-
-    this.props.visibleOrganizationIds.forEach((orgId :UUID) => {
-
-      const organization :Immutable.Map = this.props.organizations.get(orgId, Immutable.Map());
-
-      let isMemberOfOrg :boolean = false;
-      organization.get('members').forEach((memberObj :Object) => {
-        if (memberObj.get('id') === currentUserId) {
-          isMemberOfOrg = true;
-        }
+    Object.keys(sortedOrgs).forEach((orgType) => {
+      sortedOrgs[orgType] = sortedOrgs[orgType].map((org) => {
+        return this.renderOrganization(org);
       });
-
-      if (!organization.isEmpty()) {
-        if (organization.get('isOwner') === true) {
-          yourOrgs.push(this.renderOrganization(organization));
-        }
-        else if (isMemberOfOrg) {
-          memberOfOrgs.push(this.renderOrganization(organization));
-        }
-        else {
-          publicOrgs.push(this.renderOrganization(organization));
-        }
-      }
     });
 
-    if (yourOrgs.length === 0 && memberOfOrgs.length === 0 && publicOrgs.length === 0) {
+    if (sortedOrgs.yourOrgs.length === 0
+      && sortedOrgs.memberOfOrgs.length === 0
+      && sortedOrgs.publicOrgs.length === 0) {
       return this.renderNoOrganizations();
     }
 
     // TODO: this can be refactored
 
     let yourOrgsOverviewCardCollection = null;
-    if (yourOrgs.length > 0) {
+    if (sortedOrgs.yourOrgs.length > 0) {
       yourOrgsOverviewCardCollection = (
         <OrgOverviewCardCollection>
           <h2>Owner</h2>
-          { yourOrgs }
+          { sortedOrgs.yourOrgs }
         </OrgOverviewCardCollection>
       );
     }
 
     let memberOfOrgsOverviewCardCollection = null;
-    if (memberOfOrgs.length > 0) {
+    if (sortedOrgs.memberOfOrgs.length > 0) {
       memberOfOrgsOverviewCardCollection = (
         <OrgOverviewCardCollection>
           <h2>Member</h2>
-          { memberOfOrgs }
+          { sortedOrgs.memberOfOrgs }
         </OrgOverviewCardCollection>
       );
     }
 
     let publicOrgsOverviewCardCollection = null;
-    if (publicOrgs.length > 0) {
+    if (sortedOrgs.publicOrgs.length > 0) {
       publicOrgsOverviewCardCollection = (
         <OrgOverviewCardCollection>
           <h3>Other Organizations</h3>
           <h4>These organizations are visible to the public.</h4>
-          { publicOrgs }
+          { sortedOrgs.publicOrgs }
         </OrgOverviewCardCollection>
       );
     }
+
+    const shouldHideDivider = ((yourOrgs.length > 0 || memberOfOrgs.length > 0) && publicOrgs.length === 0)
+      || ((yourOrgs.length === 0 && memberOfOrgs.length === 0) && publicOrgs.length > 0);
 
     return (
       <StyledFlexContainerStacked>
         { yourOrgsOverviewCardCollection }
         { memberOfOrgsOverviewCardCollection }
-        <hr />
+        {
+          shouldHideDivider ? null : <hr />
+        }
         { publicOrgsOverviewCardCollection }
       </StyledFlexContainerStacked>
     );

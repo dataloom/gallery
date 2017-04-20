@@ -38,7 +38,8 @@ import PageConsts from '../../../utils/Consts/PageConsts';
 class ActionDropdown extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
-    propertyTypeAuthorizations: PropTypes.arrayOf(AuthorizationPropType).isRequired,
+    // propertyTypeAuthorizations: PropTypes.arrayOf(AuthorizationPropType).isRequired,
+    propertyTypeAuthorizations: PropTypes.array.isRequired,
     showDetails: PropTypes.bool,
     className: PropTypes.string,
     onRequestPermissions: PropTypes.func.isRequired
@@ -121,6 +122,14 @@ class ActionDropdown extends React.Component {
                 }
               }}>
             Visualize
+          </Link>
+        </li>
+        <li role="presentation">
+          <Link
+              to={{
+                pathname: `/${PageConsts.ENTITY_SETS}/${this.props.entitySetId}/toputilizers`
+              }}>
+            Find Top Utilizers
           </Link>
         </li>
         <MenuItem divider />

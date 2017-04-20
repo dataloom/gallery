@@ -1,6 +1,6 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-import { NONE} from '../../utils/Consts/PermissionsSummaryConsts';
+import { NONE } from '../../utils/Consts/PermissionsSummaryConsts';
 import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 

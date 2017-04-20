@@ -117,6 +117,11 @@ class AllPermissions extends React.Component {
           </Page.Header>
           <Page.Body>
             {this.renderContent()}
+            <div className={styles.asterix}>
+              <div>* Default permissions are effectively public permissions. They are granted to all authenticated Loom users.
+              For readability, only people with permissions that are different than the default are displayed in the tables above.
+              To change default permissions, go to 'Manage Permissions' on the entity set detail view.</div>
+            </div>
           </Page.Body>
         </Page>
       </DocumentTitle>
