@@ -83,7 +83,6 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     getAllEntityTypesRequest: actionFactory.getAllEntityTypesRequest,
     getAssociationsRequest: actionFactory.getAssociationsRequest,
-    setEntitySets: actionFactory.setEntitySets,
     submitQuery: actionFactory.submitTopUtilizersRequest,
     setEntitySet: actionFactory.setEntitySet
   };

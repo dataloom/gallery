@@ -63,7 +63,7 @@ function submitQueryEpic(action$, state) {
         .mergeMap((results) => {
           return Observable
             .of(
-              actionFactory.submitTopUtilizersSuccess(results.entities)
+              actionFactory.submitTopUtilizersSuccess(results)
             );
         })
         .catch((err) => {
