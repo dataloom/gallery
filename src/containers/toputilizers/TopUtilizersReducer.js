@@ -27,6 +27,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state;
 
     case actionTypes.GET_ENTITY_TYPES_SUCCESS:
+      console.log('et success:', action);
       return state.set('entityTypes', action.data);
 
     case actionTypes.GET_ENTITY_TYPES_FAILURE:
