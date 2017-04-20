@@ -83,7 +83,7 @@ class EntitySetDetailComponent extends React.Component {
   };
 
   updateEntitySetTitle = (title) => {
-    if (newTitle && newTitle.length) {
+    if (title && title.length) {
       this.props.updateMetadata(this.props.entitySet.id, { title });
     }
   }
