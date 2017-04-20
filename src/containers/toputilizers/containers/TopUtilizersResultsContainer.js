@@ -40,10 +40,6 @@ class TopUtilizersResultsContainer extends React.Component {
     });
   }
 
-  // getPropertyTypes = () => {
-  //   return this.state.entitySet ? this.props.entitySet.entityType.properties : [];
-  // }
-
   formatValue = (rawValue) => {
     if (rawValue instanceof Array) {
       let formattedValue = '';
@@ -85,7 +81,6 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    entitySet: topUtilizers.get('entitySet'),
     entitySetId: topUtilizers.get('entitySetId')
   };
 }

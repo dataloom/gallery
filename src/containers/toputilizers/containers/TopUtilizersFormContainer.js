@@ -30,12 +30,6 @@ class TopUtilizersFormContainer extends React.Component {
     this.props.getAssociationsRequest();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.entitySet && nextProps.entitySet) {
-      this.props.setEntitySet(nextProps.entitySet);
-    }
-  }
-
   handleClickAddParameter = (e) => {
     e.preventDefault();
     this.setState({ counter: ++this.state.counter});
@@ -50,7 +44,6 @@ class TopUtilizersFormContainer extends React.Component {
     e.preventDefault();
     this.props.submitQuery();
     this.setState({ showResultsTable: true });
-    // hashHistory.push(`entitysets/${this.props.entitySetId}/toputilizers/results`);
   }
 
   renderResultsContainer = () => {
@@ -75,19 +68,9 @@ class TopUtilizersFormContainer extends React.Component {
 
 function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
-  const catalog = state.get('catalog');
-  const normalizedData = state.get('normalizedData').toJS();
-  const entitySetDetail = state.get('entitySetDetail');
-
-  let entitySet;
-  const reference = entitySetDetail.get('entitySetReference');
-  if (reference) {
-    entitySet = getEdmObject(normalizedData, reference.toJS());
-  }
 
   return {
-    entitySetId: topUtilizers.get('entitySetId'),
-    entitySet
+    entitySetId: topUtilizers.get('entitySetId')
   };
 }
 
@@ -95,8 +78,7 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     getAllEntityTypesRequest: actionFactory.getAllEntityTypesRequest,
     getAssociationsRequest: actionFactory.getAssociationsRequest,
-    submitQuery: actionFactory.submitTopUtilizersRequest,
-    setEntitySet: actionFactory.setEntitySet
+    submitQuery: actionFactory.submitTopUtilizersRequest
   };
 
   return bindActionCreators(actions, dispatch);
