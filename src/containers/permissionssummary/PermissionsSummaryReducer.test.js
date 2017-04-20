@@ -151,7 +151,9 @@ describe('PermissionsSummaryReducer', function() {
       const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
       const state = reducer(INITIAL_STATE, action);
 
-      expect(Promise.resolve(state)).to.eventually.have.deep.property(`propertyPermissions.${property.title}.userPermissions`).eql(Immutable.fromJS(permissions));
+      expect(Promise.resolve(state)).to.eventually.have.deep.property(
+        `propertyPermissions.${property.title}.userPermissions`
+      ).eql(Immutable.fromJS(permissions));
     });
 
     it('should update entity user permissions', function() {
@@ -159,7 +161,9 @@ describe('PermissionsSummaryReducer', function() {
       const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
       const state = reducer(INITIAL_STATE, action);
 
-      expect(Promise.resolve(state)).to.eventually.have.property('entityUserPermissions').eql(permissions);
+      expect(Promise.resolve(state)).to.eventually.have.property(
+        'entityUserPermissions'
+      ).eql(permissions);
     });
   });
 
