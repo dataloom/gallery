@@ -87,11 +87,14 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   loadPropertyTypes = (propertyTypeIds, searchTerm, title) => {
-    const accessChecks = propertyTypeIds.map((propertyId) => {
-      return {
-        aclKey: [this.props.params.entitySetId, propertyId],
-        permissions: [Permission.READ.name]
-      };
+    const accessChecks = [];
+    propertyTypeIds.forEach((propertyId) => {
+      if (propertyId !== 'id') {
+        accessChecks.push({
+          aclKey: [this.props.params.entitySetId, propertyId],
+          permissions: [Permission.READ.name]
+        });
+      }
     });
     AuthorizationApi.checkAuthorizations(accessChecks)
     .then((aces) => {
@@ -271,6 +274,7 @@ export default class EntitySetDataSearch extends React.Component {
       return (
         <EntitySetUserSearchResults
             results={this.state.searchResults}
+            entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.propertyTypes}
             firstName={firstName}
             lastName={lastName}
@@ -282,6 +286,7 @@ export default class EntitySetDataSearch extends React.Component {
     return (
       <EntitySetSearchResults
           results={this.state.searchResults}
+          entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.propertyTypes}
           formatValueFn={this.formatValue} />
     );
