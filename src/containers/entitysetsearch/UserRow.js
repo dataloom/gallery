@@ -5,29 +5,6 @@ import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
 
 export default class UserRow extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      propertyIds: this.getPropertyIds()
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.entityId !== this.props.entityId) {
-      this.setState({
-        propertyIds: Object.keys(nextProps.row)
-      });
-    }
-  }
-
-  getPropertyIds() {
-    const { firstName, lastName, dob, row } = this.props;
-    const propertyIds = Object.keys(row).filter((id) => {
-      if (dob && id === dob.id) return false;
-      return (id !== firstName.id && id !== lastName.id);
-    });
-    return propertyIds;
-  }
 
   selectUser = () => {
     if (this.props.userPage) return;
@@ -45,17 +22,39 @@ export default class UserRow extends React.Component {
   }
 
   getFirstNameVal = () => {
-    return this.props.formatValueFn(this.props.row[this.props.firstName.id]);
+    return this.getFormattedVal(this.props.firstName);
   }
 
   getLastNameVal = () => {
-    return this.props.formatValueFn(this.props.row[this.props.lastName.id]);
+    return this.getFormattedVal(this.props.lastName);
   }
 
   renderDOB = () => {
     if (!this.props.dob) return null;
-    const dobVal = this.props.row[this.props.dob.id] || '';
-    return <div className={styles.userProfileDetailItem}><b>Date of Birth:</b> {this.props.formatValueFn(dobVal)}</div>;
+    return (
+      <div className={styles.userProfileDetailItem}>
+        <b>Date of Birth:</b> {this.getFormattedVal(this.props.dob)}
+      </div>);
+  }
+
+  getFormattedVal = (prop) => {
+    const id = prop.id;
+    const fqn = `${prop.type.namespace}.${prop.type.name}`;
+    const value = this.props.row[id] || this.props.row[fqn] || '';
+    return this.props.formatValueFn(value);
+  }
+
+  getRowWithoutUserProfile = () => {
+    const row = Object.assign({}, this.props.row);
+    delete row[this.props.firstName.id];
+    delete row[`${this.props.firstName.type.namespace}.${this.props.firstName.type.name}`];
+    delete row[this.props.lastName.id];
+    delete row[`${this.props.lastName.type.namespace}.${this.props.lastName.type.name}`];
+    if (this.props.dob) {
+      delete row[this.props.dob.id];
+      delete row[`${this.props.dob.type.namespace}.${this.props.dob.type.name}`];
+    }
+    return row;
   }
 
   getClassName = () => {
@@ -81,13 +80,9 @@ export default class UserRow extends React.Component {
 
   renderRow = () => {
     if (!this.props.userPage) return null;
-    const row = Object.assign({}, this.props.row);
-    delete row[this.props.firstName.id];
-    delete row[this.props.lastName.id];
-    if (this.props.dob) delete row[this.props.dob.id];
     return (
       <EntityRow
-          row={row}
+          row={this.getRowWithoutUserProfile()}
           entityId={this.props.entityId}
           entitySetId={this.props.entitySetId}
           formatValueFn={this.props.formatValueFn}
