@@ -29,10 +29,6 @@ class TopUtilizersFormContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // if (this.props.entitySets.size === 0 && nextProps.entitySets.size > 0) {
-    //   this.props.setEntitySets(nextProps.entitySets);
-    // }
-
     if (!this.props.entitySet && nextProps.entitySet) {
       this.props.setEntitySet(nextProps.entitySet);
     }
@@ -71,15 +67,6 @@ function mapStateToProps(state) {
   const normalizedData = state.get('normalizedData').toJS();
   const entitySetDetail = state.get('entitySetDetail');
 
-  let entitySets = [];
-  if (catalog && catalog.get('allEntitySetReferences')) {
-    entitySets = catalog.get('allEntitySetReferences').map((reference) => {
-      return getShallowEdmObjectSilent(normalizedData, reference, null);
-    }).filter((entitySet) => {
-      return entitySet;
-    });
-  }
-
   let entitySet;
   const reference = entitySetDetail.get('entitySetReference');
   if (reference) {
@@ -88,7 +75,6 @@ function mapStateToProps(state) {
 
   return {
     entitySetId: topUtilizers.get('entitySetId'),
-    entitySets,
     entitySet
   };
 }
