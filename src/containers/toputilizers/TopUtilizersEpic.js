@@ -14,7 +14,7 @@ function getAssociationsEpic(action$) {
       console.log('associations request, ', action);
       return Observable
         .from(
-          //Plug in associations api here
+          // TODO: ADD ASSOCIATOINS API REQUEST HERE
           EntityDataModelApi.getAllEntityTypes()
         )
         .mergeMap((results) => {
@@ -57,6 +57,7 @@ function submitQueryEpic(action$, state) {
       const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
       const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
       return Observable
+      // TODO: ADD API REQUEST HERE
         .from(
           // API.findTopUtilizers(state.get('entitySetId'), 100, topUtilizersDetailsList)
         )
