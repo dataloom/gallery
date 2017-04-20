@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import {
-  EntityDataModelApi
+  EntityDataModelApi,
+  AnalysisApi
 } from 'loom-data';
 
 import * as actionTypes from './TopUtilizersActionTypes';
@@ -11,11 +12,10 @@ function getAssociationsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ASSOCIATIONS_REQUEST)
     .mergeMap((action) => {
-      console.log('associations request, ', action);
+      // console.log('associations request, ', action);
       return Observable
         .from(
-          // TODO: ADD ASSOCIATOINS API REQUEST HERE
-          EntityDataModelApi.getAllEntityTypes()
+          EntityDataModelApi.getAllAssociationEntityTypes()
         )
         .mergeMap((results) => {
           return Observable
@@ -54,12 +54,14 @@ function submitQueryEpic(action$, state) {
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
       const topUtilizersState = state.getState().get('topUtilizers');
+      // console.log('topUtilizersState', topUtilizersState.toJS());
+      const entitySetId = topUtilizersState.get('entitySetId');
       const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
       const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
       return Observable
       // TODO: ADD API REQUEST HERE
         .from(
-          // API.findTopUtilizers(state.get('entitySetId'), 100, topUtilizersDetailsList)
+          AnalysisApi.getTopUtilizers(entitySetId, topUtilizersDetailsList, 100)
         )
         .mergeMap((results) => {
           return Observable
