@@ -7,7 +7,7 @@ import { createStatusAsyncReference, RequestStatus } from '../PermissionsStorage
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
 import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
-import { AsyncReferencePropType, STATE as ASYNC_STATUS } from '../../async/AsyncStorage';
+import { AsyncReferencePropType } from '../../async/AsyncStorage';
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
 import styles from './permissions.module.css';
 
@@ -25,30 +25,50 @@ class EntitySetPermissionsRequestList extends React.Component {
   };
 
   componentDidMount() {
-    const { entitySetId, propertyTypeIds, loadStatuses } = this.props;
-    const aclKeys = propertyTypeIds.map(id => [entitySetId, id]);
-    loadStatuses(aclKeys);
+
+    const aclKeys = this.props.propertyTypeIds.map((id) => {
+      return [this.props.entitySetId, id];
+    });
+
+    this.props.loadStatuses(aclKeys);
   }
 
   renderContent = (statuses) => {
-    const openStatuses = statuses.filter(status => status.status === RequestStatus.SUBMITTED);
-    if (openStatuses.length == 0) {
+
+    const openStatuses = statuses.filter((status) => {
+      if (status.status != null) {
+        return status.status === RequestStatus.SUBMITTED;
+      }
+      else if (status.value != null) {
+        return status.value.status === RequestStatus.SUBMITTED;
+      }
+      return false;
+    });
+
+    if (openStatuses.length === 0) {
       return null;
     }
-    const statusesByPrincipalId = groupBy(openStatuses, (status) => status.principal.id);
 
-    const { entitySetId } = this.props;
+    const statusesByPrincipalId = groupBy(openStatuses, (status) => {
+
+      if (status.principal != null) {
+        return status.principal.id;
+      }
+
+      return status.value.principal.id;
+    });
+
     const entitySetPermissionsRequests = Object.keys(statusesByPrincipalId)
-        .map(principalId => {
-          return (
-            <EntitySetPermissionsRequest
-              entitySetId={entitySetId}
+      .map((principalId) => {
+        return (
+          <EntitySetPermissionsRequest
+              entitySetId={this.props.entitySetId}
               principalId={principalId}
               statuses={statusesByPrincipalId[principalId]}
-              key={principalId}
-            />
-          );
-        });
+              key={principalId} />
+        );
+      });
+
     return (
       <div>
         <h2 className={styles.permissionRequestListTitle}>Permission Requests</h2>
@@ -62,7 +82,7 @@ class EntitySetPermissionsRequestList extends React.Component {
 
     return (
       <div className={classNames(styles.permissionRequestList, className)}>
-        <AsyncContentListComponent references={statusReferences} render={this.renderContent}/>
+        <AsyncContentListComponent references={statusReferences} render={this.renderContent} />
       </div>
     );
   }

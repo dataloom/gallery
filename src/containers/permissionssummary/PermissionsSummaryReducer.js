@@ -50,7 +50,7 @@ function getUserPermissions(action, allUsersById) {
 
       // Add additional permissions based on the roles the user has
       const roles = user.get('roles');
-      if (roles.size > 1) {
+      if (!((roles.includes(AUTHENTICATED_USER) && roles.size === 1) || roles.size === 0)) {
         Object.keys(roleAcls).forEach((permissionKey) => {
           roles.forEach((role) => {
             if (roleAcls[permissionKey].indexOf(role) !== -1 && userObj.permissions.indexOf(permissionKey) === -1) {
