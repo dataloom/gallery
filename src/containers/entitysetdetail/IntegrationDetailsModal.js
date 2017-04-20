@@ -8,15 +8,15 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
     const properties = entitySet.entityType.properties;
 
     return keys.map((key) => {
-      let title;
+      let name;
       let namespace;
       properties.forEach((property) => {
         if (property.id === key) {
-          title = property.title;
+          name = property.type.name;
           namespace = property.type.namespace;
         }
       });
-      return (<li>{namespace}.{title}</li>);
+      return (<li>{namespace}.{name}</li>);
     });
   };
 
@@ -27,7 +27,7 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
           <h5>Entity Details</h5>
           <ul className={styles.list}>
             <li><b>Entity Set Name: </b>{entitySet.name}</li>
-            <li><b>Entity Set Type: </b>{entitySet.entityType.type.name}</li>
+            <li><b>Entity Set Type: </b>{entitySet.entityType.type.namespace}.{entitySet.entityType.type.name}</li>
             <li><b>Primary Key(s): </b>
               <ul>
               {getKeyListItems()}
@@ -42,7 +42,7 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   const getPropertyListItems = () => {
     const { properties } = entitySet.entityType;
     return properties.map((property) => (
-      <li><b>namespace.propertyName: </b>{property.type.namespace}.{property.type.name}</li>
+      <li><b>{property.title}: </b>{property.type.namespace}.{property.type.name}</li>
     ));
   };
 
