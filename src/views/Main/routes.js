@@ -88,7 +88,6 @@ export const makeMainRoutes = () => {
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={'entitySets/:id/toputilizers'} component={TopUtilizersContainer} onEnter={requireAuth}>
         <IndexRoute component={TopUtilizersFormContainer} />
-        <Route path="results" component={TopUtilizersResultsContainer} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />

@@ -6,6 +6,7 @@ import { hashHistory } from 'react-router';
 import { getEdmObject, getShallowEdmObjectSilent } from '../../edm/EdmStorage';
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
+import TopUtilizersResultsContainer from './TopUtilizersResultsContainer';
 import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
 
 class TopUtilizersFormContainer extends React.Component {
@@ -19,7 +20,8 @@ class TopUtilizersFormContainer extends React.Component {
     this.state= {
       counter: 0,
       rowData: [{id: 0}],
-      entitySets: []
+      entitySets: [],
+      showResultsTable: false
     };
   }
 
@@ -47,16 +49,26 @@ class TopUtilizersFormContainer extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     this.props.submitQuery();
-    hashHistory.push(`entitysets/${this.props.entitySetId}/toputilizers/results`);
+    this.setState({ showResultsTable: true });
+    // hashHistory.push(`entitysets/${this.props.entitySetId}/toputilizers/results`);
+  }
+
+  renderResultsContainer = () => {
+    if (!this.state.showResultsTable) return null;
+    return <TopUtilizersResultsContainer />;
   }
 
   render() {
     return (
-      <TopUtilizersForm
-          handleClick={this.handleClickAddParameter}
-          rowData={this.state.rowData}
-          onSubmit={this.onSubmit}
-          entitySetId={this.props.entitySetId} />
+      <div>
+        <TopUtilizersForm
+            handleClick={this.handleClickAddParameter}
+            rowData={this.state.rowData}
+            onSubmit={this.onSubmit}
+            entitySetId={this.props.entitySetId} />
+        <br />
+        {this.renderResultsContainer()}
+      </div>
     );
   }
 }
