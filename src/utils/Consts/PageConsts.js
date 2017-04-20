@@ -27,6 +27,6 @@ export default {
   SEARCH,
   ADVANCED_SEARCH,
   ORGS,
-  ENTITY_SETS
+  ENTITY_SETS,
   EDIT_ACCOUNT
 };
