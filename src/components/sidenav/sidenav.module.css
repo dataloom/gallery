@@ -24,6 +24,7 @@
 }
 .sideNavItem > a:hover, .sideNavItemSelected {
   background: #333435;
+  color: #ffffff;
 }
 
 .sideNavItemIcon {
