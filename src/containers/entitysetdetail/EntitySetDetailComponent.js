@@ -198,7 +198,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   loadESPermissionsTitle = (title, shouldUpdatePropertyTypes) => {
-    return (shouldUpdatePropertyTypes) ? `${title} (and all owned permissions)` : `${title} (entity set only)`;
+    return (shouldUpdatePropertyTypes) ? `${title} (dataset and all owned properties)` : `${title} (dataset only)`;
   }
 
   getPermissionsManagementOptions = () => {
@@ -221,7 +221,7 @@ class EntitySetDetailComponent extends React.Component {
 
     return (
       <SplitButton bsStyle="default" title={this.state.permissionsModalTitle} id="permissions-select">
-        <MenuItem header>Entity Set</MenuItem>
+        <MenuItem header>Dataset</MenuItem>
         <MenuItem
             onClick={() => {
               this.updateModalView(esAllTitle, [this.props.entitySet.id], true);
@@ -237,7 +237,7 @@ class EntitySetDetailComponent extends React.Component {
           {esOnlyTitle}
         </MenuItem>
         <MenuItem divider />
-        <MenuItem header>PropertyTypes</MenuItem>
+        <MenuItem header>Property Types</MenuItem>
         {propertyTypeOptions}
       </SplitButton>
     );
