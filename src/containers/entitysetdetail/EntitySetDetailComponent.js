@@ -243,6 +243,18 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
+  renderPermissionsSummaryText = () => {
+    return (
+      <div className={styles.permissionsSummaryTextWrapper}>
+        <Link
+            to={`/entitysets/${this.props.params.id}/allpermissions`}
+            className={styles.permissionsSummaryText}>
+          See a complete overview of assigned permissions for this dataset
+        </Link>
+      </div>
+    );
+  }
+
   renderPermissionsPanel = () => {
     if (!this.props.entitySet) return null;
     const aclKey = this.state.permissionsModalAclKey;
@@ -268,6 +280,7 @@ class EntitySetDetailComponent extends React.Component {
         </Modal.Header>
         <Modal.Body>
           {panel}
+          {this.renderPermissionsSummaryText()}
         </Modal.Body>
       </Modal>
     );
@@ -379,19 +392,6 @@ class EntitySetDetailComponent extends React.Component {
     );
   }
 
-  renderPermissionsSummaryButton = () => {
-    if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
-    return (
-      <div className={styles.buttonWrapper}>
-        <Link to={`/entitysets/${this.props.params.id}/allpermissions`}>
-          <Button className={styles.center}>
-            <span className={styles.buttonText}>View Permissions Summary</span>
-          </Button>
-        </Link>
-      </div>
-    );
-  }
-
   renderDeleteEntitySet = () => {
     if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
     const error = (this.state.deleteError) ? <div className={styles.error}>Unable to delete entity set</div> : null;
@@ -462,7 +462,6 @@ class EntitySetDetailComponent extends React.Component {
             {this.renderAddDataForm()}
             {this.renderPermissionsPanel()}
             {this.renderSearchEntitySet()}
-            {this.renderPermissionsSummaryButton()}
             {this.renderDeleteEntitySet()}
             {this.renderConfirmDeleteModal()}
             {this.renderIntegrationDetailsLink()}
