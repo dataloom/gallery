@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
 import DocumentTitle from 'react-document-title';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
@@ -14,7 +14,7 @@ import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
-import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../permissions/PermissionsStorage';
+import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS, PERMISSIONS } from '../permissions/PermissionsStorage';
 import { getEdmObject } from '../edm/EdmStorage';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
 import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
@@ -55,10 +55,14 @@ class EntitySetDetailComponent extends React.Component {
     // Async content
     entitySet: EntitySetPropType,
     entitySetPermissions: PermissionsPropType.isRequired,
+    allPropertyTypeIds: PropTypes.array.isRequired,
+    ownedPropertyTypeIds: PropTypes.object.isRequired,
 
     // Loading
     loadEntitySet: PropTypes.func.isRequired,
-    updateMetadata: PropTypes.func.isRequired
+    updateMetadata: PropTypes.func.isRequired,
+    resetPermissions: PropTypes.func.isRequired,
+    loadOwnedPropertyTypes: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -69,13 +73,36 @@ class EntitySetDetailComponent extends React.Component {
       confirmingDelete: false,
       addingData: false,
       deleteError: false,
-      isIntegrationDetailsOpen: false
+      isIntegrationDetailsOpen: false,
+      permissionsModalTitle: '',
+      permissionsModalAclKey: [],
+      permissionsShouldUpdateAll: true
     };
   }
 
   componentDidMount() {
     this.props.resetPermissions();
     this.props.loadEntitySet();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.entitySet) {
+      if (nextProps.entitySet !== this.props.entitySet) {
+        this.setState({
+          permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.title, true),
+          permissionsModalAclKey: [nextProps.entitySet.id]
+        });
+      }
+      let shouldLoad = false;
+      nextProps.allPropertyTypeIds.forEach((id) => {
+        if (!this.props.allPropertyTypeIds.includes(id)) {
+          shouldLoad = true;
+        }
+      });
+      if (shouldLoad) {
+        this.props.loadOwnedPropertyTypes(nextProps.entitySet.id, nextProps.allPropertyTypeIds);
+      }
+    }
   }
 
   setEditingPermissions = () => {
@@ -89,11 +116,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   updateEntitySetDescription = (description) => {
-    if (description) this.props.updateMetadata(this.props.entitySet.id, { description })
+    if (description) this.props.updateMetadata(this.props.entitySet.id, { description });
   }
 
   updateEntitySetContacts = (contacts) => {
-    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] })
+    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] });
   }
 
   renderTitle = (title, isOwner) => {
@@ -156,25 +183,91 @@ class EntitySetDetailComponent extends React.Component {
           entitySetPermissions.OWNER &&
           <EntitySetPermissionsRequestList
               entitySetId={entitySet.id}
-              propertyTypeIds={entitySet.entityType.properties.map((p) => {
-                return p.id;
-              })} />
+              propertyTypeIds={this.props.allPropertyTypeIds} />
         }
       </StyledFlexContainerStacked>
     );
   };
 
+  updateModalView = (newViewTitle, newViewAclKey, shouldUpdateAll) => {
+    this.setState({
+      permissionsModalTitle: newViewTitle,
+      permissionsModalAclKey: newViewAclKey,
+      permissionsShouldUpdateAll: shouldUpdateAll
+    });
+  }
+
+  loadESPermissionsTitle = (title, shouldUpdatePropertyTypes) => {
+    return (shouldUpdatePropertyTypes) ? `${title} (and all owned permissions)` : `${title} (entity set only)`;
+  }
+
+  getPermissionsManagementOptions = () => {
+    if (!this.props.entitySetPermissions.OWNER) return null;
+    const propertyTypeOptions = Object.keys(this.props.ownedPropertyTypeIds).map((id) => {
+      const aclKey = [this.props.entitySet.id, id];
+      return (
+        <MenuItem
+            eventKey={id}
+            key={id}
+            onClick={() => {
+              this.updateModalView(this.props.ownedPropertyTypeIds[id], aclKey);
+            }}>
+          {this.props.ownedPropertyTypeIds[id]}
+        </MenuItem>
+      );
+    });
+    const esAllTitle = this.loadESPermissionsTitle(this.props.entitySet.title, true);
+    const esOnlyTitle = this.loadESPermissionsTitle(this.props.entitySet.title, false);
+
+    return (
+      <SplitButton bsStyle="default" title={this.state.permissionsModalTitle} id="permissions-select">
+        <MenuItem header>Entity Set</MenuItem>
+        <MenuItem
+            onClick={() => {
+              this.updateModalView(esAllTitle, [this.props.entitySet.id], true);
+            }}
+            eventKey={esAllTitle}>
+          {esAllTitle}
+        </MenuItem>
+        <MenuItem
+            onClick={() => {
+              this.updateModalView(esOnlyTitle, [this.props.entitySet.id]);
+            }}
+            eventKey={esOnlyTitle}>
+          {esOnlyTitle}
+        </MenuItem>
+        <MenuItem divider />
+        <MenuItem header>PropertyTypes</MenuItem>
+        {propertyTypeOptions}
+      </SplitButton>
+    );
+  }
+
   renderPermissionsPanel = () => {
     if (!this.props.entitySet) return null;
+    const aclKey = this.state.permissionsModalAclKey;
+    let panel = null;
+    if (aclKey.length === 1) {
+      const aclKeysToUpdate = [aclKey];
+      if (this.state.permissionsShouldUpdateAll) {
+        Object.keys(this.props.ownedPropertyTypeIds).forEach((id) => {
+          aclKeysToUpdate.push([this.props.entitySet.id, id]);
+        });
+      }
+      panel = <PermissionsPanel entitySetId={aclKey[0]} aclKeysToUpdate={aclKeysToUpdate} />;
+    }
+    else if (aclKey.length === 2) {
+      panel = <PermissionsPanel entitySetId={aclKey[0]} propertyTypeId={aclKey[1]} aclKeysToUpdate={[aclKey]} />;
+    }
     return (
       <Modal
           show={this.state.editingPermissions}
           onHide={this.closePermissionsPanel}>
         <Modal.Header closeButton>
-          <Modal.Title>Manage permissions for entity set: {this.props.entitySet.title}</Modal.Title>
+          <Modal.Title>Manage permissions for {this.getPermissionsManagementOptions()}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <PermissionsPanel entitySetId={this.props.entitySet.id} />
+          {panel}
         </Modal.Body>
       </Modal>
     );
@@ -388,10 +481,18 @@ function mapStateToProps(state) {
 
   let entitySet;
   let entitySetPermissions;
+  const allPropertyTypeIds = [];
+  const ownedPropertyTypeIds = {};
   const reference = entitySetDetail.get('entitySetReference');
   if (reference) {
     entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
     entitySetPermissions = getPermissions(permissions, [entitySet.id]);
+    entitySet.entityType.properties.forEach((propertyType) => {
+      allPropertyTypeIds.push(propertyType.id);
+      if (getPermissions(permissions, [entitySet.id, propertyType.id]).OWNER) {
+        ownedPropertyTypeIds[propertyType.id] = propertyType.title;
+      }
+    });
   }
   else {
     entitySetPermissions = DEFAULT_PERMISSIONS;
@@ -400,7 +501,9 @@ function mapStateToProps(state) {
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
-    entitySetPermissions
+    entitySetPermissions,
+    allPropertyTypeIds,
+    ownedPropertyTypeIds
   };
 }
 
@@ -425,6 +528,15 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     updateMetadata: (entitySetId, metadataUpdate) => {
       dispatch(edmActionFactories.updateEntitySetMetadataRequest(entitySetId, metadataUpdate));
+    },
+    loadOwnedPropertyTypes: (entitySetId, propertyTypeIds) => {
+      const accessChecks = propertyTypeIds.map((id) => {
+        return {
+          aclKey: [entitySetId, id],
+          permissions: [PERMISSIONS.OWNER]
+        };
+      });
+      dispatch(PermissionsActionFactory.checkAuthorizationRequest(accessChecks));
     }
   };
 }
