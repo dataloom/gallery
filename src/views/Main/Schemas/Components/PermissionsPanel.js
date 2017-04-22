@@ -73,12 +73,11 @@ class PermissionsPanel extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string,
     propertyTypeId: PropTypes.string,
+    aclKeysToUpdate: PropTypes.array
   }
 
   constructor(props) {
     super(props);
-    const options = (this.props.propertyTypeId === undefined) ?
-      Object.keys(accessOptions) : Object.keys(permissionOptions);
     this.state = {
       view: views.GLOBAL,
       updateSuccess: false,
@@ -97,7 +96,11 @@ class PermissionsPanel extends React.Component {
   }
 
   componentDidMount() {
-    this.loadAcls(false);
+    this.loadAcls(this.props.entitySetId, this.props.propertyTypeId, false);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.loadAcls(nextProps.entitySetId, nextProps.propertyTypeId, false);
   }
 
   loadAllUsersAndRoles = () => {
@@ -167,8 +170,7 @@ class PermissionsPanel extends React.Component {
     });
   }
 
-  loadAcls = (updateSuccess) => {
-    const { propertyTypeId, entitySetId } = this.props;
+  loadAcls = (entitySetId, propertyTypeId, updateSuccess) => {
     const aclKey = [entitySetId];
     if (propertyTypeId) aclKey.push(propertyTypeId);
     this.loadAllUsersAndRoles();
@@ -241,25 +243,23 @@ class PermissionsPanel extends React.Component {
   }
 
   updatePermissions(rawAction, principal, rawPermissions) {
-    const { entitySetId, propertyTypeId } = this.props;
-    const aclKey = [entitySetId];
-    if (propertyTypeId) aclKey.push(propertyTypeId);
-
     let action = rawAction;
     let permissions = rawPermissions;
     if (action === ActionConsts.SET && permissions.length === 0) {
       action = ActionConsts.REMOVE;
       permissions = permissionLevels.owner;
     }
-    const aces = [{ principal, permissions }];
-    const acl = { aclKey, aces };
-    const req = { action, acl };
-    PermissionsApi.updateAcl(req)
-    .then(() => {
-      this.loadAcls(true);
-    }).catch(() => {
-      this.setState({
-        updateError: true
+    this.props.aclKeysToUpdate.forEach((aclKey) => {
+      const aces = [{ principal, permissions }];
+      const acl = { aclKey, aces };
+      const req = { action, acl };
+      PermissionsApi.updateAcl(req)
+      .then(() => {
+        this.loadAcls(this.props.entitySetId, this.props.propertyTypeId, true);
+      }).catch(() => {
+        this.setState({
+          updateError: true
+        });
       });
     });
   }
