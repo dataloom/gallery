@@ -87,7 +87,7 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.entitySet) {
-      if (nextProps.entitySet !== this.props.entitySet) {
+      if (!this.props.entitySet || this.props.entitySet.id !== nextProps.entitySet.id) {
         this.setState({
           permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.title, true),
           permissionsModalAclKey: [nextProps.entitySet.id]
