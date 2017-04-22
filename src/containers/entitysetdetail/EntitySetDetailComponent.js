@@ -372,6 +372,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderIntegrationDetailsLink = () => {
+    if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
     return (
       <div className={styles.buttonWrapper}>
         <Link
