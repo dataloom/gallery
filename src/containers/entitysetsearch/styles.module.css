@@ -187,6 +187,11 @@
   margin: 10px 0;
 }
 
+.countHeaderCell {
+  color: white;
+  background-image: linear-gradient(#66686a, #535557);
+}
+
 
 :global .public_fixedDataTableRow_even:hover .public_fixedDataTableCell_main {
   background-color: #eeeff0;
