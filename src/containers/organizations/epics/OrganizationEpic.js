@@ -75,7 +75,7 @@ function updateOrganizationTitleEpic(action$ :Observable<Action>) :Observable<Ac
       return Observable
         .from(OrganizationsApi.updateTitle(action.organization.id, action.organization.title))
         .map(() => {
-          return OrgActionFactory.updateOrganizationTitleSuccess();
+          return OrgActionFactory.updateOrganizationTitleSuccess(action.organization.id, action.organization.title);
         })
         .catch(() => {
           return Observable.of(
