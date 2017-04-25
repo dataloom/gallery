@@ -48,6 +48,19 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
+  renderTextCell = (field, columnWidth) => {
+    return (
+      <TextCell
+          results={this.state.results}
+          field={field}
+          formatValueFn={this.props.formatValueFn}
+          onClick={this.onRowSelect}
+          width={columnWidth}
+          entitySetId={this.props.entitySetId}
+          propertyTypes={this.props.propertyTypes} />
+    );
+  }
+
   renderColumns = () => {
     const numColumns = (this.props.showCount) ? this.props.propertyTypes.length + 1 : this.props.propertyTypes.length;
     const columnWidth = (TABLE_WIDTH - 1) / numColumns;
@@ -57,16 +70,7 @@ export default class EntitySetSearchResults extends React.Component {
         <Column
             key="count"
             header={<Cell className={styles.countHeaderCell}>Count</Cell>}
-            cell={
-              <TextCell
-                  results={this.state.results}
-                  field="count"
-                  formatValueFn={this.props.formatValueFn}
-                  onClick={this.onRowSelect}
-                  width={columnWidth}
-                  entitySetId={this.props.entitySetId}
-                  propertyTypes={this.props.propertyTypes} />
-            }
+            cell={this.renderTextCell('count', columnWidth)}
             width={columnWidth} />
       );
     }
@@ -78,16 +82,7 @@ export default class EntitySetSearchResults extends React.Component {
         <Column
             key={key}
             header={<Cell>{propertyType.title}</Cell>}
-            cell={
-              <TextCell
-                  results={this.state.results}
-                  field={key}
-                  formatValueFn={this.props.formatValueFn}
-                  onClick={this.onRowSelect}
-                  width={columnWidth}
-                  entitySetId={this.props.entitySetId}
-                  propertyTypes={this.props.propertyTypes} />
-            }
+            cell={this.renderTextCell(key, columnWidth)}
             width={columnWidth} />
       );
     });
