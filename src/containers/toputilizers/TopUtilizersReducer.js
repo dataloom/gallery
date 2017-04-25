@@ -19,14 +19,18 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.GET_ENTITY_TYPES_REQUEST:
       return state;
 
-    case actionTypes.GET_ASSOCIATIONS_SUCCESS:
-      return state.set('associations', action.data);
+    case actionTypes.GET_ASSOCIATIONS_SUCCESS: {
+      const associations = Immutable.fromJS(action.data);
+      return state.set('associations', associations);
+    }
 
     case actionTypes.GET_ASSOCIATIONS_FAILURE:
       return state;
 
-    case actionTypes.GET_ENTITY_TYPES_SUCCESS:
-      return state.set('entityTypes', action.data);
+    case actionTypes.GET_ENTITY_TYPES_SUCCESS: {
+      const entityTypes = Immutable.fromJS(action.data);
+      return state.set('entityTypes', entityTypes);
+    }
 
     case actionTypes.GET_ENTITY_TYPES_FAILURE:
       return state;

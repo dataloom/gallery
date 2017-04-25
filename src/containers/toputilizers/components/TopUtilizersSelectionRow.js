@@ -7,9 +7,9 @@ import Immutable from 'immutable';
 import styles from '../styles.module.css';
 
 const getOptions = (data) => {
-  if (!data) return [];
+  if (data.size === 0) return Immutable.List();
   return data.map((item) => {
-    return { value: item.id, label: item.title };
+    return { value: item.get('id'), label: item.get('title') };
   });
 };
 
@@ -42,7 +42,7 @@ const TopUtilizersSelectionRow = ({
     <div className={styles.rowWrapper}>
       <Select
           className={styles.associationSelect}
-          options={associationOptions}
+          options={associationOptions.toJS()}
           value={selectedAssociation}
           onChange={selectAssociation}
           placeholder="Association"
@@ -56,7 +56,7 @@ const TopUtilizersSelectionRow = ({
           clearable={false} />
       <Select
           className={styles.entitySelect}
-          options={entityTypeOptions}
+          options={entityTypeOptions.toJS()}
           value={selectedEntities}
           onChange={selectEntity}
           placeholder="Entities"
