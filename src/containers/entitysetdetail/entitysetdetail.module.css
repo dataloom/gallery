@@ -10,6 +10,15 @@
     margin-top: 7px;
 }
 
+.permissionsSummaryTextWrapper {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.permissionsSummaryText {
+  font-size: 12px;
+}
+
 /* Body */
 .propertyTypeTitle {
     margin: 0 0 25px 0;

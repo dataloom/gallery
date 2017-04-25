@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import Promise from 'bluebird';
+import DocumentTitle from 'react-document-title';
 import { connect } from 'react-redux';
 import { EntityDataModelApi } from 'loom-data';
 
@@ -65,7 +66,8 @@ class TopUtilizersResultsContainer extends React.Component {
           results={this.props.results.toJS()}
           propertyTypes={this.state.propertyTypes}
           formatValueFn={this.formatValue}
-          entitySetId={this.props.entitySetId} />
+          entitySetId={this.props.entitySetId}
+          showCount />
     );
   }
 
@@ -74,7 +76,11 @@ class TopUtilizersResultsContainer extends React.Component {
   }
 
   render() {
-    return this.renderContent();
+    return (
+      <DocumentTitle title="Top Utilizers">
+        {this.renderContent()}
+      </DocumentTitle>
+    );
   }
 }
 

@@ -141,8 +141,8 @@ class OrganizationsListComponent extends React.Component {
       );
     }
 
-    const shouldHideDivider = ((yourOrgs.length > 0 || memberOfOrgs.length > 0) && publicOrgs.length === 0)
-      || ((yourOrgs.length === 0 && memberOfOrgs.length === 0) && publicOrgs.length > 0);
+    const shouldHideDivider = ((sortedOrgs.yourOrgs.length > 0 || sortedOrgs.memberOfOrgs.length > 0) && sortedOrgs.publicOrgs.length === 0)
+      || ((sortedOrgs.yourOrgs.length === 0 && sortedOrgs.memberOfOrgs.length === 0) && sortedOrgs.publicOrgs.length > 0);
 
     return (
       <StyledFlexContainerStacked>

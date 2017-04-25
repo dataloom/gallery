@@ -7,7 +7,6 @@ import { PermissionsPropType, getPermissions } from '../../../permissions/Permis
 import PropertyTypePermissions from './PropertyTypePermissions';
 import PropertyTypeTitle from './PropertyTypeTitle';
 import PropertyTypeDescription from './PropertyTypeDescription';
-import PropertyTypeControls from './PropertyTypeControls';
 
 // Default styles
 import '../propertype.module.css';
@@ -40,11 +39,7 @@ class PropertyType extends React.Component {
   };
 
   render() {
-    const { propertyType, entitySetId, permissions, editing, onChange, requestingPermissions } = this.props;
-
-    const controls = requestingPermissions ? null : (
-      <PropertyTypeControls entitySetId={entitySetId} propertyType={propertyType} permissions={permissions} />);
-
+    const { propertyType, permissions, editing, onChange } = this.props;
     return (
       <div className="propertyType">
         <PropertyTypePermissions
@@ -54,7 +49,6 @@ class PropertyType extends React.Component {
             onChange={onChange} />
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
-        { controls }
       </div>
     );
   }
