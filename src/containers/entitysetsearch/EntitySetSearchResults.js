@@ -49,7 +49,8 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   renderColumns = () => {
-    const columnWidth = (TABLE_WIDTH - 1) / this.props.propertyTypes.length;
+    const numColumns = (this.props.showCount) ? this.props.propertyTypes.length + 1 : this.props.propertyTypes.length;
+    const columnWidth = (TABLE_WIDTH - 1) / numColumns;
     const columns = [];
     if (this.props.showCount) {
       columns.push(
