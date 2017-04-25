@@ -10,25 +10,19 @@ import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailAct
 class TopUtilizersPage extends React.Component {
   static propTypes = {
     getEntitySetId: PropTypes.func.isRequired,
-    entitySet: PropTypes.object.isRequired,
-    children: PropTypes.array.isRequired
+    children: PropTypes.object.isRequired
   }
 
   componentDidMount() {
     this.props.getEntitySetId();
   }
 
-  getEntitySetTitle = () => {
-    return this.props.entitySet ? this.props.entitySet.title : null;
-  }
-
   render() {
     return (
-      <DocumentTitle>
+      <DocumentTitle title="Top Utilizers">
         <Page>
           <Page.Header>
             <Page.Title>Top Utilizers</Page.Title>
-            <h3>{this.getEntitySetTitle()}</h3>
           </Page.Header>
           <Page.Body>
             {this.props.children}

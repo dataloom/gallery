@@ -5,8 +5,8 @@ import * as actionTypes from './TopUtilizersActionTypes';
 import * as ESDActionTypes from '../entitysetdetail/EntitySetDetailActionTypes';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
-  entitySetId: null,
-  entitySet: null,
+  entitySetId: '',
+  entitySet: {},
   associations: [],
   entityTypes: [],
   topUtilizersDetailsList: {},
