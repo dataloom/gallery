@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Promise from 'bluebird';
 import { connect } from 'react-redux';
 import { EntityDataModelApi } from 'loom-data';
@@ -8,8 +9,7 @@ import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
-    results: PropTypes.array.isRequired,
-    entitySet: PropTypes.object.isRequired,
+    results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
     entitySetId: PropTypes.string.isRequired
   }

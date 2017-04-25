@@ -1,6 +1,8 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import FontAwesome from 'react-fontawesome';
+import Immutable from 'immutable';
 
 import styles from '../styles.module.css';
 
@@ -26,15 +28,14 @@ const TopUtilizersSelectionRow = ({
   entityTypes,
   selectedAssociation,
   selectedArrow,
-  selectedEntities,
-  entityOptions
+  selectedEntities
 }) => {
 
   const associationOptions = getOptions(associations);
   const entityTypeOptions = getOptions(entityTypes);
   const arrowOptions = [
-    { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" />},
-    { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" />}
+    { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" /> },
+    { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" /> }
   ];
 
   return (
@@ -69,7 +70,8 @@ TopUtilizersSelectionRow.propTypes = {
   selectAssociation: PropTypes.func.isRequired,
   selectArrow: PropTypes.func.isRequired,
   selectEntity: PropTypes.func.isRequired,
-  associations: PropTypes.object.isRequired,
+  associations: PropTypes.instanceOf(Immutable.List).isRequired,
+  entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
   selectedAssociation: PropTypes.object,
   selectedArrow: PropTypes.object,
   selectedEntities: PropTypes.array

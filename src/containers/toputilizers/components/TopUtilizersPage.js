@@ -1,16 +1,17 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Immutable from 'immutable';
 import DocumentTitle from 'react-document-title';
 
-import Page from '../../../components/page/Page.js';
-import * as actionFactory from '../TopUtilizersActionFactory';
+import Page from '../../../components/page/Page';
 import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactories';
 
 class TopUtilizersPage extends React.Component {
   static propTypes = {
-    getEntitySetId: PropTypes.func.isRequired
+    getEntitySetId: PropTypes.func.isRequired,
+    entitySet: PropTypes.object.isRequired,
+    children: PropTypes.array.isRequired
   }
 
   componentDidMount() {

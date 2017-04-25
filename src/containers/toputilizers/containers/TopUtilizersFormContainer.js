@@ -1,25 +1,26 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { hashHistory } from 'react-router';
 
-import { getEdmObject, getShallowEdmObjectSilent } from '../../edm/EdmStorage';
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersForm from '../components/TopUtilizersForm';
 import TopUtilizersResultsContainer from './TopUtilizersResultsContainer';
-import { allEntitySetsRequest } from '../../catalog/CatalogActionFactories';
 
 class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
-    entitySetId: PropTypes.string.isRequired
+    entitySetId: PropTypes.string.isRequired,
+    getAllEntityTypesRequest: PropTypes.func.isRequired,
+    getAssociationsRequest: PropTypes.func.isRequired,
+    submitQuery: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
 
-    this.state= {
+    this.state = {
       counter: 0,
-      rowData: [{id: 0}],
+      rowData: [{ id: 0 }],
       entitySets: [],
       showResultsTable: false
     };
@@ -32,7 +33,7 @@ class TopUtilizersFormContainer extends React.Component {
 
   handleClickAddParameter = (e) => {
     e.preventDefault();
-    this.setState({ counter: ++this.state.counter});
+    this.setState({ counter: ++this.state.counter });
     const rowData = this.state.rowData;
     if (this.state.counter <= 10) {
       rowData.push({ id: this.state.counter });

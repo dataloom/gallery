@@ -1,13 +1,17 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Immutable from 'immutable';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersSelectionRow from '../components/TopUtilizersSelectionRow';
 
 class TopUtilizersSelectionRowContainer extends React.Component {
   static propTypes = {
-    associations: PropTypes.object.isRequired
+    associations: PropTypes.instanceOf(Immutable.List).isRequired,
+    selectEntity: PropTypes.func.isRequired,
+    entityTypes: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
   constructor(props) {
