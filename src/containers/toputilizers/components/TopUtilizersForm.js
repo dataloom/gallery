@@ -9,7 +9,7 @@ import styles from '../styles.module.css';
 
 const getChildren = (rowData) => {
   return rowData.map((row) => {
-    return <TopUtilizersSelectionRowContainer id={row.id} />;
+    return <TopUtilizersSelectionRowContainer key={row.id} />;
   });
 };
 
