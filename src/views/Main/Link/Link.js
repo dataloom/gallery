@@ -451,16 +451,6 @@ export class Link extends React.Component {
     });
   }
 
-  renderLinkingStatus = () => {
-    if (this.state.linkingSuccess) {
-      return <div className={styles.success}>Success! Your linked entity set is being created.</div>;
-    }
-    else if (this.state.linkingError) {
-      return <div className={styles.error}>Unable to link entity sets.</div>;
-    }
-    return null;
-  }
-
   getDefaultContact = () => {
     const profile = this.props.auth.getProfile();
     let defaultContact = '';
@@ -489,7 +479,6 @@ export class Link extends React.Component {
           {this.renderChooseLinks()}
           {this.renderDefineLinkedEntityTypeButton()}
           {this.renderDefineLinkedEntityType()}
-          {this.renderLinkingStatus()}
         </div>
       );
     }
