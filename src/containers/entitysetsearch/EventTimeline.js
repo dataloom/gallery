@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import FontAwesome from 'react-fontawesome';
-import { Button, ButtonGroup } from 'react-bootstrap';
+import { Button, ButtonGroup, Collapse } from 'react-bootstrap';
 import { Timeline, TimelineEvent } from 'react-event-timeline';
 import styles from './styles.module.css';
 
@@ -168,20 +168,21 @@ export default class EventTimeline extends React.Component {
   }
 
   renderDisplayPreferencesBody = () => {
-    if (!this.state.showDisplayPrefences) return null;
     const namesToTitles = this.getNamesToTitles();
     const checkboxes = Object.keys(namesToTitles).map((aclKeyString) => {
       return this.renderCheckbox(aclKeyString, namesToTitles[aclKeyString]);
     });
 
     return (
-      <div className={styles.checkboxContainer}>
-        <div className={styles.checkboxTitle}>Select properties to display on the timeline.</div>
-        {checkboxes}
-        <br />
-        <div className={styles.checkboxTitle}>Select sorted order.</div>
-        {this.renderSortOrderButtons()}
-      </div>
+      <Collapse in={this.state.showDisplayPrefences}>
+        <div className={styles.checkboxContainer}>
+          <div className={styles.checkboxTitle}>Select properties to display on the timeline.</div>
+          {checkboxes}
+          <br />
+          <div className={styles.checkboxTitle}>Select sorted order.</div>
+          {this.renderSortOrderButtons()}
+        </div>
+      </Collapse>
     );
   }
 
