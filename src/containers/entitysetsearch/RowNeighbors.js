@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Table, Column, Cell } from 'fixed-data-table';
-import { Timeline, TimelineEvent } from 'react-event-timeline';
 import { Button, ButtonGroup } from 'react-bootstrap';
 
 import EventTimeline from './EventTimeline';
@@ -18,7 +17,7 @@ const TABLE_OFFSET = 2;
 const NEIGHBOR_VIEW = {
   TYPE_GROUPS: 'TYPE_GROUPS',
   TIMELINE: 'TIMELINE'
-}
+};
 
 export default class RowNeighbors extends React.Component {
 
@@ -201,21 +200,21 @@ export default class RowNeighbors extends React.Component {
   renderViewToolbar = () => {
     return (
       <div className={styles.viewToolbar}>
-      <ButtonGroup>
-        <Button
-            onClick={() => {
-              this.setState({ neighborView: NEIGHBOR_VIEW.TYPE_GROUPS });
-            }}
-            active={this.state.neighborView === NEIGHBOR_VIEW.TYPE_GROUPS}>
-          Grouped Types</Button>
-        <Button
-            onClick={() => {
-              this.setState({ neighborView: NEIGHBOR_VIEW.TIMELINE });
-            }}
-            active={this.state.neighborView === NEIGHBOR_VIEW.TIMELINE}>
-          Timeline</Button>
-      </ButtonGroup>
-    </div>
+        <ButtonGroup>
+          <Button
+              onClick={() => {
+                this.setState({ neighborView: NEIGHBOR_VIEW.TYPE_GROUPS });
+              }}
+              active={this.state.neighborView === NEIGHBOR_VIEW.TYPE_GROUPS}>
+            Grouped Types</Button>
+          <Button
+              onClick={() => {
+                this.setState({ neighborView: NEIGHBOR_VIEW.TIMELINE });
+              }}
+              active={this.state.neighborView === NEIGHBOR_VIEW.TIMELINE}>
+            Timeline</Button>
+        </ButtonGroup>
+      </div>
     );
   }
 

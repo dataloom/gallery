@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import FontAwesome from 'react-fontawesome';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { Timeline, TimelineEvent } from 'react-event-timeline';
 import styles from './styles.module.css';
 
@@ -15,7 +17,9 @@ export default class EventTimeline extends React.Component {
     super(props);
     this.state = {
       datesToProps: this.getDatesToProps(props.organizedNeighbors, props.dateProps),
-      selectedProps: this.getPropNamesFromDateProps(props.dateProps)
+      selectedProps: this.getPropNamesFromDateProps(props.dateProps),
+      sortDesc: true,
+      showDisplayPrefences: false
     };
   }
 
@@ -31,7 +35,7 @@ export default class EventTimeline extends React.Component {
     Object.keys(dateProps).forEach((entitySetId) => {
       dateProps[entitySetId].forEach((propertyTypeId) => {
         propNames.add(this.getPropAclKeyAsString(entitySetId, propertyTypeId));
-      })
+      });
     });
     return propNames;
   }
@@ -137,12 +141,34 @@ export default class EventTimeline extends React.Component {
             onChange={(e) => {
               this.updateChecked(e, aclKeyString);
             }} />
-          <label htmlFor={aclKeyString} className={styles.checkboxLabel}>{title}</label>
+        <label htmlFor={aclKeyString} className={styles.checkboxLabel}>{title}</label>
       </div>
     );
   }
 
-  renderPropertySelectionBoxes = () => {
+  renderSortOrderButtons = () => {
+    return (
+      <ButtonGroup>
+        <Button
+            onClick={() => {
+              this.setState({ sortDesc: true });
+            }}
+            active={this.state.sortDesc}>
+          <FontAwesome name="long-arrow-down" />
+        </Button>
+        <Button
+            onClick={() => {
+              this.setState({ sortDesc: false });
+            }}
+            active={!this.state.sortDesc}>
+          <FontAwesome name="long-arrow-up" />
+        </Button>
+      </ButtonGroup>
+    );
+  }
+
+  renderDisplayPreferencesBody = () => {
+    if (!this.state.showDisplayPrefences) return null;
     const namesToTitles = this.getNamesToTitles();
     const checkboxes = Object.keys(namesToTitles).map((aclKeyString) => {
       return this.renderCheckbox(aclKeyString, namesToTitles[aclKeyString]);
@@ -152,6 +178,28 @@ export default class EventTimeline extends React.Component {
       <div className={styles.checkboxContainer}>
         <div className={styles.checkboxTitle}>Select properties to display on the timeline.</div>
         {checkboxes}
+        <br />
+        <div className={styles.checkboxTitle}>Select sorted order.</div>
+        {this.renderSortOrderButtons()}
+      </div>
+    );
+  }
+
+  renderDisplayPreferences = () => {
+    const buttonName = (this.state.showDisplayPrefences) ? 'angle-up' : 'angle-down';
+    return (
+      <div>
+        <div className={styles.displayPreferencesTitleBar}>
+          <div>Display Preferences</div>
+        </div>
+        {this.renderDisplayPreferencesBody()}
+        <button
+            className={styles.expandDisplayPreferencesButton}
+            onClick={() => {
+              this.setState({ showDisplayPrefences: !this.state.showDisplayPrefences });
+            }}>
+          <FontAwesome name={buttonName} size="2x" />
+        </button>
       </div>
     );
   }
@@ -187,7 +235,8 @@ export default class EventTimeline extends React.Component {
 
   renderTimelineEvents = (datesToProps) => {
     const orderedDates = Object.keys(datesToProps).sort((date1, date2) => {
-      return new Date(date2).getTime() - new Date(date1).getTime();
+      if (this.state.sortDesc) return new Date(date2).getTime() - new Date(date1).getTime();
+      return new Date(date1).getTime() - new Date(date2).getTime();
     });
     const events = [];
     orderedDates.forEach((date) => {
@@ -210,7 +259,7 @@ export default class EventTimeline extends React.Component {
   render() {
     return (
       <div>
-        {this.renderPropertySelectionBoxes()}
+        {this.renderDisplayPreferences()}
         {this.renderTimeline()}
       </div>
     );
