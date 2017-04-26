@@ -24,6 +24,7 @@ export default class DefineLinkedEntityType extends React.Component {
     const selectedPropertyTypes = Object.keys(props.availablePropertyTypes).filter((id) => {
       return (!props.availablePropertyTypes[id].piiField);
     });
+
     super(props);
     this.state = {
       availablePropertyTypes: props.availablePropertyTypes,
@@ -205,14 +206,13 @@ export default class DefineLinkedEntityType extends React.Component {
 
   renderDeidentify = () => {
     return (
-      <div className={styles.inputRow}>
+      <div className={styles.inputRowCheckbox}>
         <label className={styles.inputLabel} htmlFor="deidentify">Deidentify: </label>
         <input
             id="deidentify"
             type="checkbox"
             defaultChecked={this.state.deidentify}
-            onChange={this.handleDeidentifyChange}
-            className={styles.inputBox} />
+            onChange={this.handleDeidentifyChange} />
       </div>
     );
   }
@@ -272,14 +272,6 @@ export default class DefineLinkedEntityType extends React.Component {
                 className={styles.inputBox} />
           </div>
         </div>
-        <div className={styles.inputRowCheckbox}>
-          <label className={styles.inputLabel} htmlFor="deidentify">Deidentify: </label>
-          <input
-              id="deidentify"
-              type="checkbox"
-              defaultChecked={this.state.deidentify}
-              onChange={this.handleDeidentifyChange} />
-        </div>
       </div>
     );
   }
@@ -319,6 +311,7 @@ export default class DefineLinkedEntityType extends React.Component {
         <br />
         <div className={styles.entityTypeTableWrapper}>
           {this.renderInputFields()}
+          {this.renderDeidentify()}
           <table>
             <tbody>
               <tr>
