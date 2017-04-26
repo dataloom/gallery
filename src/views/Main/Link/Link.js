@@ -18,6 +18,7 @@ import DefineLinkedEntitySet from './DefineLinkedEntitySet';
 import Page from '../../../components/page/Page';
 import DeleteButton from '../../../components/buttons/DeleteButton';
 import AddButton from '../../../components/buttons/AddButton';
+import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import styles from './styles.module.css';
 
 export class Link extends React.Component {
@@ -45,7 +46,8 @@ export class Link extends React.Component {
       chooseLinks: false,
       chooseLinkedEntityType: false,
       entityTypeCreated: false,
-      linkingEntityTypeId: ''
+      linkingEntityTypeId: '',
+      isLinking: false
     };
   }
 
@@ -384,6 +386,7 @@ export class Link extends React.Component {
   }
 
   performLink = (name, title, description, contacts) => {
+    this.setState({ isLinking: true });
     const entitySet = {
       name,
       title,
@@ -403,12 +406,14 @@ export class Link extends React.Component {
     .then(() => {
       this.setState({
         linkingSuccess: true,
-        linkingError: false
+        linkingError: false,
+        isLinking: false
       });
     }).catch(() => {
       this.setState({
         linkingError: true,
-        linkingSuccess: false
+        linkingSuccess: false,
+        isLinking: false
       });
     });
   }
@@ -467,7 +472,10 @@ export class Link extends React.Component {
 
   render() {
     let content;
-    if (this.state.linkingSuccess) {
+    if (this.state.isLinking) {
+      content = <LoadingSpinner />;
+    }
+    else if (this.state.linkingSuccess) {
       content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
     }
     else if (this.state.entityTypeCreated) {

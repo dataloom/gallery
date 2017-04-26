@@ -98,10 +98,6 @@ export default class DefineLinkedEntitySet extends React.Component {
     const { name, title, description, contact } = this.state;
     if (name.length < 1 || title.length < 1) {
       this.setState({ noNameOrTitleError: true });
-      // this.setState({
-      //   noNameOrTitleError: true,
-      //   isLoading: true
-      // });
     }
     else {
       this.props.linkFn(name, title, description, [contact]);
