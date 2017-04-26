@@ -11,9 +11,9 @@ export default class DefineLinkedEntitySet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      title: '',
-      description: '',
+      name: props.formData.name,
+      title: props.formData.title,
+      description: props.formData.description,
       contact: props.defaultContact,
       noNameOrTitleError: false
     };
