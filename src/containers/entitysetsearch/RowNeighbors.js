@@ -15,7 +15,7 @@ const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
 
 const NEIGHBOR_VIEW = {
-  TYPE_GROUPS: 'TYPE_GROUPS',
+  TABLE: 'TABLE',
   TIMELINE: 'TIMELINE'
 };
 
@@ -30,7 +30,7 @@ export default class RowNeighbors extends React.Component {
   constructor(props) {
     super(props);
     this.state = Object.assign(this.organizeNeighbors(props.neighbors), {
-      neighborView: NEIGHBOR_VIEW.TYPE_GROUPS
+      neighborView: NEIGHBOR_VIEW.TABLE
     });
   }
 
@@ -203,10 +203,10 @@ export default class RowNeighbors extends React.Component {
         <ButtonGroup>
           <Button
               onClick={() => {
-                this.setState({ neighborView: NEIGHBOR_VIEW.TYPE_GROUPS });
+                this.setState({ neighborView: NEIGHBOR_VIEW.TABLE });
               }}
-              active={this.state.neighborView === NEIGHBOR_VIEW.TYPE_GROUPS}>
-            Grouped Types</Button>
+              active={this.state.neighborView === NEIGHBOR_VIEW.TABLE}>
+            Table</Button>
           <Button
               onClick={() => {
                 this.setState({ neighborView: NEIGHBOR_VIEW.TIMELINE });
@@ -219,7 +219,7 @@ export default class RowNeighbors extends React.Component {
   }
 
   render() {
-    const content = (this.state.neighborView === NEIGHBOR_VIEW.TYPE_GROUPS)
+    const content = (this.state.neighborView === NEIGHBOR_VIEW.TABLE)
       ? this.renderNeighbors() : this.renderTimeline();
     return (
       <div>
