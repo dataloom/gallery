@@ -187,7 +187,7 @@ export default class EventTimeline extends React.Component {
 
   renderTimelineEvents = (datesToProps) => {
     const orderedDates = Object.keys(datesToProps).sort((date1, date2) => {
-      return new Date(date1).getTime() - new Date(date2).getTime();
+      return new Date(date2).getTime() - new Date(date1).getTime();
     });
     const events = [];
     orderedDates.forEach((date) => {
