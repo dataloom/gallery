@@ -47,7 +47,8 @@ export class Link extends React.Component {
       chooseLinkedEntityType: false,
       entityTypeCreated: false,
       linkingEntityTypeId: '',
-      isLinking: false
+      isLinking: false,
+      defineLinkedEntityTypeError: false
     };
   }
 
@@ -353,6 +354,12 @@ export class Link extends React.Component {
     );
   }
 
+  renderDefineLinkedEntityTypeError = () => {
+    return this.state.defineLinkedEntityTypeError
+        ? <div className={styles.error}>An error occurred. Check that the Namespace + Name combination is unique.</div>
+        : null;
+  }
+
   renderDefineLinkedEntityTypeButton = () => {
     if (this.state.selectedEntitySetIds.length > 0
       && this.state.links.length >= 1
@@ -432,7 +439,8 @@ export class Link extends React.Component {
         this.setState({
           entityTypeCreated: true,
           deidentified,
-          linkingEntityTypeId
+          linkingEntityTypeId,
+          defineLinkedEntityTypeError: false
         });
       }
       else {
@@ -446,7 +454,8 @@ export class Link extends React.Component {
       this.setState({
         entityTypeCreated: false,
         linkingError: true,
-        linkingSuccess: false
+        linkingSuccess: false,
+        defineLinkedEntityTypeError: true
       });
     });
   }
@@ -479,6 +488,7 @@ export class Link extends React.Component {
           {this.renderChooseLinks()}
           {this.renderDefineLinkedEntityTypeButton()}
           {this.renderDefineLinkedEntityType()}
+          {this.renderDefineLinkedEntityTypeError()}
         </div>
       );
     }
