@@ -250,9 +250,11 @@ export default class EventTimeline extends React.Component {
   renderTimeline = () => {
     if (this.state.selectedProps.size === 0) return null;
     return (
-      <Timeline>
-        {this.renderTimelineEvents(this.state.datesToProps)}
-      </Timeline>
+      <div className={styles.timelineContainer}>
+        <Timeline>
+          {this.renderTimelineEvents(this.state.datesToProps)}
+        </Timeline>
+      </div>
     );
   }
 

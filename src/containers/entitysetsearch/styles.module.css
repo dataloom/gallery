@@ -197,6 +197,10 @@
   text-align: center;
 }
 
+.timelineContainer {
+  margin-left: -80px;
+}
+
 .timelineDate {
   font-size: 14px;
   font-weight: bold;
