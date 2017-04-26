@@ -30,10 +30,6 @@ export default class DefineLinkedEntityType extends React.Component {
       availablePropertyTypes: props.availablePropertyTypes,
       selectedPropertyTypes,
       primaryKey: [],
-      titleValue: '',
-      namespaceValue: '',
-      nameValue: '',
-      descriptionValue: '',
       addPropValue: '',
       noPrimaryKeyError: false,
       noTypeOrTitleError: false,
@@ -138,13 +134,16 @@ export default class DefineLinkedEntityType extends React.Component {
     const {
       selectedPropertyTypes,
       primaryKey,
-      titleValue,
-      descriptionValue,
-      nameValue,
-      namespaceValue,
       deidentify
     } = this.state;
-    if (titleValue.length < 1 || namespaceValue.length < 1 || nameValue.length < 1) {
+    const {
+      title,
+      description,
+      name,
+      namespace
+    } = this.props.formData;
+    console.log('props:', this.props);
+    if (title.length < 1 || namespace.length < 1 || name.length < 1) {
       this.setState({ noTypeOrTitleError: true });
     }
     else if (primaryKey.length <= 0) {
@@ -153,11 +152,11 @@ export default class DefineLinkedEntityType extends React.Component {
     else {
       const entityType = {
         type: {
-          namespace: namespaceValue,
-          name: nameValue
+          namespace,
+          name
         },
-        title: titleValue,
-        description: descriptionValue,
+        title,
+        description,
         key: primaryKey,
         properties: selectedPropertyTypes,
         category: SecurableTypes.LinkingEntityType,
@@ -169,22 +168,6 @@ export default class DefineLinkedEntityType extends React.Component {
         noPrimaryKeyError: false
       });
     }
-  }
-
-  handleNamespaceChange = (e) => {
-    this.setState({ namespaceValue: e.target.value });
-  }
-
-  handleNameChange = (e) => {
-    this.setState({ nameValue: e.target.value });
-  }
-
-  handleTitleChange = (e) => {
-    this.setState({ titleValue: e.target.value });
-  }
-
-  handleDescriptionChange = (e) => {
-    this.setState({ descriptionValue: e.target.value });
   }
 
   handleDeidentifyChange = (e) => {
@@ -228,8 +211,8 @@ export default class DefineLinkedEntityType extends React.Component {
             <input
                 id="namespace"
                 type="text"
-                value={this.state.namespaceValue}
-                onChange={this.handleNamespaceChange}
+                value={this.props.formData.namespaceValue}
+                onChange={this.props.handleNamespaceChange}
                 className={styles.inputBox} />
           </div>
         </div>
@@ -241,8 +224,8 @@ export default class DefineLinkedEntityType extends React.Component {
             <input
                 id="name"
                 type="text"
-                value={this.state.nameValue}
-                onChange={this.handleNameChange}
+                value={this.props.formData.nameValue}
+                onChange={this.props.handleNameChange}
                 className={styles.inputBox} />
           </div>
         </div>
@@ -254,8 +237,8 @@ export default class DefineLinkedEntityType extends React.Component {
             <input
                 id="title"
                 type="text"
-                value={this.state.titleValue}
-                onChange={this.handleTitleChange}
+                value={this.props.formData.titleValue}
+                onChange={this.props.handleTitleChange}
                 className={styles.inputBox} />
           </div>
         </div>
@@ -267,8 +250,8 @@ export default class DefineLinkedEntityType extends React.Component {
             <input
                 id="description"
                 type="text"
-                value={this.state.descriptionValue}
-                onChange={this.handleDescriptionChange}
+                value={this.props.formData.descriptionValue}
+                onChange={this.props.handleDescriptionChange}
                 className={styles.inputBox} />
           </div>
         </div>

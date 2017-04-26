@@ -49,7 +49,11 @@ export class Link extends React.Component {
       linkingEntityTypeId: '',
       isLinking: false,
       defineLinkedEntityTypeError: false,
-      createLinkedEntitySetError: false
+      createLinkedEntitySetError: false,
+      titleValue: '',
+      namespaceValue: '',
+      nameValue: '',
+      descriptionValue: '',
     };
   }
 
@@ -374,10 +378,21 @@ export class Link extends React.Component {
 
   renderDefineLinkedEntityType = () => {
     if (this.state.chooseLinkedEntityType) {
+      const entityTypeFormData = {
+        namespace: this.state.namespaceValue,
+        name: this.state.nameValue,
+        title: this.state.titleValue,
+        description: this.state.descriptionValue
+      }
       return (
         <DefineLinkedEntityType
             availablePropertyTypes={this.state.availablePropertyTypes}
-            linkFn={this.createLinkingEntityType} />
+            linkFn={this.createLinkingEntityType}
+            formData={entityTypeFormData}
+            handleNamespaceChange={this.handleNamespaceChange}
+            handleNameChange={this.handleNameChange}
+            handleTitleChange={this.handleTitleChange}
+            handleDescriptionChange={this.handleDescriptionChange} />
       );
     }
     return null;
@@ -472,6 +487,22 @@ export class Link extends React.Component {
         : null;
   }
 
+    handleNamespaceChange = (e) => {
+      this.setState({ namespaceValue: e.target.value });
+    }
+
+    handleNameChange = (e) => {
+      this.setState({ nameValue: e.target.value });
+    }
+
+    handleTitleChange = (e) => {
+      this.setState({ titleValue: e.target.value });
+    }
+
+    handleDescriptionChange = (e) => {
+      this.setState({ descriptionValue: e.target.value });
+    }
+
   render() {
     let content;
     if (this.state.isLinking) {
@@ -481,10 +512,17 @@ export class Link extends React.Component {
       content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
     }
     else if (this.state.entityTypeCreated) {
+      const formData = {
+        namespace: this.state.namespace,
+        name: this.state.nameValue,
+        title: this.state.titleValue,
+        description: this.state.descriptionValue
+      }
       content = (<DefineLinkedEntitySet
           linkFn={this.performLink}
           createLinkedEntitySetError={this.state.createLinkedEntitySetError}
-          defaultContact={this.getDefaultContact()} />);
+          defaultContact={this.getDefaultContact()}
+          formData={formData} />);
     }
     else {
       content = (
