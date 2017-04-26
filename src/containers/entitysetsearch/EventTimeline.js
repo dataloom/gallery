@@ -13,11 +13,27 @@ export default class EventTimeline extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { datesToProps: this.getDatesToProps(props.organizedNeighbors, props.dateProps) };
+    this.state = {
+      datesToProps: this.getDatesToProps(props.organizedNeighbors, props.dateProps),
+      selectedProps: this.getPropNamesFromDateProps(props.dateProps)
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ datesToProps: this.getDatesToProps(nextProps.organizedNeighbors, nextProps.dateProps) });
+    this.setState({
+      datesToProps: this.getDatesToProps(nextProps.organizedNeighbors, nextProps.dateProps),
+      selectedProps: this.getPropNamesFromDateProps(nextProps.dateProps)
+    });
+  }
+
+  getPropNamesFromDateProps = (dateProps) => {
+    const propNames = new Set();
+    Object.keys(dateProps).forEach((entitySetId) => {
+      dateProps[entitySetId].forEach((propertyTypeId) => {
+        propNames.add(this.getPropAclKeyAsString(entitySetId, propertyTypeId));
+      })
+    });
+    return propNames;
   }
 
   getPropDetails = (propertyType, propertyValues, dateProps, row) => {
@@ -61,12 +77,101 @@ export default class EventTimeline extends React.Component {
     return datesToProps;
   }
 
+  getPropAclKeyAsString = (entitySetId, propertyTypeId) => {
+    return `${entitySetId}|${propertyTypeId}`;
+  }
+
+  getPropAclKeyFromString = (aclKeyString) => {
+    return aclKeyString.split('|');
+  }
+
+  getCheckboxTitle = (propAndRow) => {
+    let esTitle = '';
+    const assocTitle = propAndRow.row.associationEntitySet.title;
+    const neighborTitle = (propAndRow.row.neighborEntitySet) ? propAndRow.row.neighborEntitySet.title : '';
+    esTitle = (propAndRow.row.src) ? `${assocTitle} ${neighborTitle}` : `${neighborTitle} ${assocTitle}`;
+    return `${esTitle}: ${propAndRow.propertyType.title}`;
+  }
+
+  getNamesToTitles = () => {
+    const dateProps = this.props.dateProps;
+    const namesToTitles = {};
+    Object.values(this.state.datesToProps).forEach((propAndRowList) => {
+      propAndRowList.forEach((propAndRow) => {
+        const propertyTypeId = propAndRow.propertyType.id;
+        const associationEntitySet = propAndRow.row.associationEntitySet;
+        if (dateProps[associationEntitySet.id] && dateProps[associationEntitySet.id].includes(propertyTypeId)) {
+          const aclKeyString = this.getPropAclKeyAsString(associationEntitySet.id, propertyTypeId);
+          if (!namesToTitles[aclKeyString]) namesToTitles[aclKeyString] = this.getCheckboxTitle(propAndRow);
+        }
+
+        const neighborEntitySet = propAndRow.row.neighborEntitySet;
+        if (neighborEntitySet && dateProps[neighborEntitySet.id]
+          && dateProps[neighborEntitySet.id].includes(propertyTypeId)) {
+          const aclKeyString = this.getPropAclKeyAsString(neighborEntitySet.id, propertyTypeId);
+          if (!namesToTitles[aclKeyString]) namesToTitles[aclKeyString] = this.getCheckboxTitle(propAndRow);
+        }
+      });
+    });
+    return namesToTitles;
+  }
+
+  updateChecked = (e, aclKeyString) => {
+    const selectedProps = this.state.selectedProps;
+    if (e.target.checked) {
+      selectedProps.add(aclKeyString);
+    }
+    else {
+      selectedProps.delete(aclKeyString);
+    }
+    this.setState({ selectedProps });
+  }
+
+  renderCheckbox = (aclKeyString, title) => {
+    return (
+      <div key={aclKeyString}>
+        <input
+            type="checkbox"
+            name={aclKeyString}
+            checked={this.state.selectedProps.has(aclKeyString)}
+            onChange={(e) => {
+              this.updateChecked(e, aclKeyString);
+            }} />
+          <label htmlFor={aclKeyString} className={styles.checkboxLabel}>{title}</label>
+      </div>
+    );
+  }
+
+  renderPropertySelectionBoxes = () => {
+    const namesToTitles = this.getNamesToTitles();
+    const checkboxes = Object.keys(namesToTitles).map((aclKeyString) => {
+      return this.renderCheckbox(aclKeyString, namesToTitles[aclKeyString]);
+    });
+
+    return (
+      <div className={styles.checkboxContainer}>
+        <div className={styles.checkboxTitle}>Select properties to display on the timeline.</div>
+        {checkboxes}
+      </div>
+    );
+  }
+
   renderEvent = (date, dateDetails) => {
-    const neighborId = (dateDetails.row.neighborEntitySet) ? dateDetails.row.neighborEntitySet.id : NO_NEIGHBOR;
-    const neighborTitle = (dateDetails.row.neighborEntitySet) ? dateDetails.row.neighborEntitySet.title : '';
+    const propertyType = dateDetails.propertyType;
+    const associationEntitySet = dateDetails.row.associationEntitySet;
+    const neighborEntitySet = dateDetails.row.neighborEntitySet;
+
+    if (!this.state.selectedProps.has(this.getPropAclKeyAsString(associationEntitySet.id, propertyType.id))) {
+      if (!neighborEntitySet
+        || !this.state.selectedProps.has(this.getPropAclKeyAsString(neighborEntitySet.id, propertyType.id))) {
+        return null;
+      }
+    }
+    const neighborId = (neighborEntitySet) ? neighborEntitySet.id : NO_NEIGHBOR;
+    const neighborTitle = (neighborEntitySet) ? neighborEntitySet.title : '';
     const title = (dateDetails.row.src)
-      ? `${dateDetails.row.associationEntitySet.title} ${neighborTitle}: ${dateDetails.propertyType.title}`
-      : `${neighborTitle} ${dateDetails.row.associationEntitySet.title}: ${dateDetails.propertyType.title}`;
+      ? `${associationEntitySet.title} ${neighborTitle}: ${propertyType.title}`
+      : `${neighborTitle} ${associationEntitySet.title}: ${propertyType.title}`;
     const dateObj = new Date(date);
     const formattedDate = `${dateObj.toDateString()} ${dateObj.toLocaleTimeString()}`;
     return (
@@ -94,9 +199,12 @@ export default class EventTimeline extends React.Component {
 
   render() {
     return (
-      <Timeline>
-        {this.renderTimelineEvents(this.state.datesToProps)}
-      </Timeline>
+      <div>
+        {this.renderPropertySelectionBoxes()}
+        <Timeline>
+          {this.renderTimelineEvents(this.state.datesToProps)}
+        </Timeline>
+      </div>
     );
   }
 }

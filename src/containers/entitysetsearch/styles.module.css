@@ -206,6 +206,22 @@
   font-size: 14px;
 }
 
+.checkboxContainer {
+  text-align: center;
+  padding: 20px;
+  background: #f3f5f7;
+  margin: 20px 0;
+}
+
+.checkboxTitle {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.checkboxLabel {
+  margin-left: 5px;
+}
+
 :global .public_fixedDataTableRow_even:hover .public_fixedDataTableCell_main {
   background-color: #eeeff0;
 }
