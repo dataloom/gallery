@@ -75,16 +75,31 @@
 }
 
 .inputBox {
-  margin-left: 5px;
+  width: 100%;
 }
 
-.longInputBox {
-  width: 300px;
-  float: right;
+.inputsWrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .inputRow {
+  display: flex;
   margin: 10px 0;
+}
+
+.inputRowCheckbox {
+  margin: 10px auto;
+}
+
+.col_1 {
+  flex: 1 0 0;
+  text-align: right;
+  margin-right: 10px;
+}
+
+.col_4 {
+  flex: 4 0 0;
 }
 
 .inputRowSet {

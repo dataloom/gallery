@@ -174,72 +174,16 @@ export default class DefineLinkedEntityType extends React.Component {
     this.setState({ namespaceValue: e.target.value });
   }
 
-  renderNamespaceField = () => {
-    return (
-      <span className={styles.inputRow}>
-        <label htmlFor="namespace">Namespace:</label>
-        <input
-            id="namespace"
-            type="text"
-            value={this.state.namespaceValue}
-            onChange={this.handleNamespaceChange}
-            className={styles.inputBox} />
-      </span>
-    );
-  }
-
   handleNameChange = (e) => {
     this.setState({ nameValue: e.target.value });
-  }
-
-  renderNameField = () => {
-    return (
-      <span className={styles.inputRow}>
-        <label className={styles.inputBox} htmlFor="name">Name:</label>
-        <input
-            id="name"
-            type="text"
-            value={this.state.nameValue}
-            onChange={this.handleNameChange}
-            className={styles.inputBox} />
-      </span>
-    );
   }
 
   handleTitleChange = (e) => {
     this.setState({ titleValue: e.target.value });
   }
 
-  renderTitleField = () => {
-    return (
-      <div className={styles.inputRow}>
-        <label htmlFor="title">Title:</label>
-        <input
-            id="title"
-            type="text"
-            value={this.state.titleValue}
-            onChange={this.handleTitleChange}
-            className={styles.longInputBox} />
-      </div>
-    );
-  }
-
   handleDescriptionChange = (e) => {
     this.setState({ descriptionValue: e.target.value });
-  }
-
-  renderDescriptionField = () => {
-    return (
-      <div className={styles.inputRow}>
-        <label htmlFor="description">Description:</label>
-        <input
-            id="description"
-            type="text"
-            value={this.state.descriptionValue}
-            onChange={this.handleDescriptionChange}
-            className={styles.longInputBox} />
-      </div>
-    );
   }
 
   handleDeidentifyChange = (e) => {
@@ -275,12 +219,67 @@ export default class DefineLinkedEntityType extends React.Component {
 
   renderInputFields = () => {
     return (
-      <div>
-        {this.renderNamespaceField()}
-        {this.renderNameField()}
-        {this.renderTitleField()}
-        {this.renderDescriptionField()}
-        {this.renderDeidentify()}
+      <div className={styles.inputsWrapper}>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label htmlFor="namespace">Namespace:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="namespace"
+                type="text"
+                value={this.state.namespaceValue}
+                onChange={this.handleNamespaceChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="name">Name:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="name"
+                type="text"
+                value={this.state.nameValue}
+                onChange={this.handleNameChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="title">Title:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="title"
+                type="text"
+                value={this.state.titleValue}
+                onChange={this.handleTitleChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="description">Description:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="description"
+                type="text"
+                value={this.state.descriptionValue}
+                onChange={this.handleDescriptionChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRowCheckbox}>
+          <label className={styles.inputLabel} htmlFor="deidentify">Deidentify: </label>
+          <input
+              id="deidentify"
+              type="checkbox"
+              defaultChecked={this.state.deidentify}
+              onChange={this.handleDeidentifyChange} />
+        </div>
       </div>
     );
   }
