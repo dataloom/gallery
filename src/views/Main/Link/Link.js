@@ -475,7 +475,7 @@ export class Link extends React.Component {
     }
     else {
       content = (
-        <div>
+        <div className={styles.contentWrapper}>
           {this.renderChooseEntitySets()}
           {this.renderChooseLinksButton()}
           {this.renderChooseLinks()}

@@ -1,3 +1,7 @@
+.contentWrapper {
+  margin-bottom: 100px;
+}
+
 .propertyTypeSelect {
   width: 300px;
 }
