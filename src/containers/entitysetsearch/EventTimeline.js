@@ -67,10 +67,12 @@ export default class EventTimeline extends React.Component {
     const title = (dateDetails.row.src)
       ? `${dateDetails.row.associationEntitySet.title} ${neighborTitle}: ${dateDetails.propertyType.title}`
       : `${neighborTitle} ${dateDetails.row.associationEntitySet.title}: ${dateDetails.propertyType.title}`;
+    const dateObj = new Date(date);
+    const formattedDate = `${dateObj.toDateString()} ${dateObj.toLocaleTimeString()}`;
     return (
       <TimelineEvent
           title={<div className={styles.timelineTitle}>{title}</div>}
-          createdAt={<div className={styles.timelineDate}>{date}</div>}>
+          createdAt={<div className={styles.timelineDate}>{formattedDate}</div>}>
         {this.props.renderNeighborGroupFn([dateDetails.row], neighborId, false)}
       </TimelineEvent>
     );
