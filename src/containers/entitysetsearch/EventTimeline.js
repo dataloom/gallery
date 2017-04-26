@@ -186,7 +186,7 @@ export default class EventTimeline extends React.Component {
 
   renderTimelineEvents = (datesToProps) => {
     const orderedDates = Object.keys(datesToProps).sort((date1, date2) => {
-      return new Date(date1).getTime() > new Date(date2).getTime();
+      return new Date(date1).getTime() - new Date(date2).getTime();
     });
     const events = [];
     orderedDates.forEach((date) => {
@@ -197,13 +197,20 @@ export default class EventTimeline extends React.Component {
     return events;
   }
 
+  renderTimeline = () => {
+    if (this.state.selectedProps.size === 0) return null;
+    return (
+      <Timeline>
+        {this.renderTimelineEvents(this.state.datesToProps)}
+      </Timeline>
+    );
+  }
+
   render() {
     return (
       <div>
         {this.renderPropertySelectionBoxes()}
-        <Timeline>
-          {this.renderTimelineEvents(this.state.datesToProps)}
-        </Timeline>
+        {this.renderTimeline()}
       </div>
     );
   }
