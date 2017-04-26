@@ -72,7 +72,8 @@ export default class EventTimeline extends React.Component {
     return (
       <TimelineEvent
           title={<div className={styles.timelineTitle}>{title}</div>}
-          createdAt={<div className={styles.timelineDate}>{formattedDate}</div>}>
+          createdAt={<div className={styles.timelineDate}>{formattedDate}</div>}
+          iconColor="#5bdadf">
         {this.props.renderNeighborGroupFn([dateDetails.row], neighborId, false)}
       </TimelineEvent>
     );
