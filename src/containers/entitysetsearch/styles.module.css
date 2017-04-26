@@ -192,6 +192,19 @@
   background-image: linear-gradient(#66686a, #535557);
 }
 
+.viewToolbar {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.timelineDate {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.timelineTitle {
+  font-size: 14px;
+}
 
 :global .public_fixedDataTableRow_even:hover .public_fixedDataTableCell_main {
   background-color: #eeeff0;
