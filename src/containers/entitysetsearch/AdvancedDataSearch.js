@@ -22,19 +22,13 @@ export default class AdvancedDataSearch extends React.Component {
   static propTypes = {
     params: PropTypes.shape({
       entitySetId: PropTypes.string.isRequired
-    }).isRequired,
-    location: PropTypes.shape({
-      query: PropTypes.shape({
-        page: PropTypes.string
-      }),
-      key: PropTypes.string
-    })
+    }).isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      page: (props.location.query.page) ? props.location.query.page : 1,
+      page: 1,
       searchResults: [],
       totalHits: 0,
       title: '',
@@ -48,27 +42,6 @@ export default class AdvancedDataSearch extends React.Component {
 
   componentDidMount() {
     this.loadPropertyIds();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const page = nextProps.location.query.page || 1;
-    if (!this.props.location.key) {
-      this.setState({
-        page,
-        searchResults: [],
-        totalHits: 0,
-        asyncStatus: ASYNC_STATUS.PENDING
-      });
-      if (this.state.propertyTypes) {
-        const searches = this.getSearchesFromProps(nextProps, this.state.propertyTypes.map((propertyType) => {
-          return propertyType.id;
-        }));
-        if (Object.keys(searches).length > 0) {
-          this.setState({ searches });
-          this.executeSearch(searches, page);
-        }
-      }
-    }
   }
 
   loadPropertyIds = () => {
@@ -92,7 +65,6 @@ export default class AdvancedDataSearch extends React.Component {
         permissions: [Permission.READ.name]
       };
     });
-    const searches = this.getSearchesFromProps(this.props, propertyIds);
     AuthorizationApi.checkAuthorizations(accessChecks)
     .then((response) => {
       const propsWithReadAccess = [];
@@ -109,10 +81,8 @@ export default class AdvancedDataSearch extends React.Component {
         this.setState({
           propertyTypes,
           title: entitySet.title,
-          loadError: false,
-          searches
+          loadError: false
         });
-        if (Object.keys(searches).length > 0 && Object.values(searches).length > 0) this.executeSearch(searches, this.state.page);
       }).catch(() => {
         this.setState({ loadError: true });
       });
@@ -121,19 +91,13 @@ export default class AdvancedDataSearch extends React.Component {
     });
   }
 
-  getSearchesFromProps = (props, propertyIds) => {
-    const searches = {};
-    const query = props.location.query;
-    propertyIds.forEach((id) => {
-      if (query[id]) searches[id] = query[id];
-    });
-    return searches;
-  }
-
   executeSearch = (searches, page) => {
     if (Object.keys(searches).length >= 1 && Object.values(searches).length >= 1) {
+      const searchDetails = Object.values(searches).filter((search) => {
+        return search.searchTerm && search.searchTerm.length;
+      });
       const searchOptions = {
-        searchFields: searches,
+        searchFields: searchDetails,
         start: ((page - 1) * 50),
         maxHits: MAX_HITS
       };
@@ -152,14 +116,13 @@ export default class AdvancedDataSearch extends React.Component {
     }
   }
 
-  routeToNewQueryParams = (searches, page) => {
-    const query = Object.assign({}, searches, { page });
-    const newLocation = Object.assign({}, this.props.location, { query });
-    this.context.router.push(newLocation);
-  }
-
   renderEntitySetTitle = () => {
-    return (this.state.title.length > 0) ? `: ${this.state.title}` : '';
+    if (this.state.title.length <= 0) return '';
+    return (
+      <span>: <Link
+          to={`/entitysets/${this.props.params.entitySetId}`}
+          className={styles.titleLink}>{this.state.title}</Link></span>
+    );
   }
 
   renderErrorMessage = () => {
@@ -170,7 +133,8 @@ export default class AdvancedDataSearch extends React.Component {
   }
 
   handlePageSelect = (eventKey) => {
-    this.routeToNewQueryParams(this.state.searches, eventKey);
+    this.setState({ page: eventKey });
+    this.executeSearch(this.state.searches, eventKey);
   }
 
   hidePagination = (shouldHide) => {
@@ -192,9 +156,8 @@ export default class AdvancedDataSearch extends React.Component {
   }
 
   onSearchSubmit = (searches) => {
-    if (Object.keys(searches).length >= 1) {
-      this.routeToNewQueryParams(searches, 1);
-    }
+    this.executeSearch(searches, this.state.page);
+    this.setState({ searches });
   }
 
   renderPagination = () => {
@@ -229,6 +192,7 @@ export default class AdvancedDataSearch extends React.Component {
       return (
         <EntitySetUserSearchResults
             results={this.state.searchResults}
+            entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.propertyTypes}
             firstName={firstName}
             lastName={lastName}
@@ -240,8 +204,18 @@ export default class AdvancedDataSearch extends React.Component {
     return (
       <EntitySetSearchResults
           results={this.state.searchResults}
+          entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.propertyTypes}
           formatValueFn={this.formatValue} />
+    );
+  }
+
+  renderSearchBox = () => {
+    if (this.state.propertyTypes.length === 0) return null;
+    return (
+      <AdvancedSearchBox
+          onSubmit={this.onSearchSubmit}
+          propertyTypes={this.state.propertyTypes} />
     );
   }
 
@@ -254,11 +228,10 @@ export default class AdvancedDataSearch extends React.Component {
         <Page>
           <Page.Header>
             <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
-            <AdvancedSearchBox
-                onSubmit={this.onSearchSubmit}
-                propertyTypes={this.state.propertyTypes}
-                initialSearches={this.state.searches} />
-            <Link to={`/search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Simple Search</Link>
+            {this.renderSearchBox()}
+            <Link to={`/search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>
+              Simple Search
+            </Link>
           </Page.Header>
           <Page.Body>
             {this.renderErrorMessage()}

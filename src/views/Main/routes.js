@@ -19,6 +19,11 @@ import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 import AllPermissions from '../../containers/permissionssummary/components/AllPermissions';
+import EditProfile from '../../containers/profile/containers/EditProfileContainer';
+
+import TopUtilizersContainer from '../../containers/toputilizers/components/TopUtilizersPage';
+import TopUtilizersFormContainer from '../../containers/toputilizers/containers/TopUtilizersFormContainer';
+import TopUtilizersResultsContainer from '../../containers/toputilizers/containers/TopUtilizersResultsContainer';
 
 import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
@@ -80,6 +85,10 @@ export const makeMainRoutes = () => {
       <Route path={`${PageConsts.SEARCH}/:entitySetId`} component={EntitySetDataSearch} onEnter={requireAuth} />
       <Route path={`${PageConsts.ADVANCED_SEARCH}/:entitySetId`} component={AdvancedDataSearch} onEnter={requireAuth} />
       <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
+      <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
+      <Route path={'entitySets/:id/toputilizers'} component={TopUtilizersContainer} onEnter={requireAuth}>
+        <IndexRoute component={TopUtilizersFormContainer} />
+      </Route>
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
@@ -92,7 +101,8 @@ export const makeMainRoutes = () => {
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
-      <Route path='*' component={HomeComponent} onEnter={requireAuth} />
+      <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
+      <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
 };

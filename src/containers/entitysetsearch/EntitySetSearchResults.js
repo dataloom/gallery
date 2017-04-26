@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import { Table, Column, Cell } from 'fixed-data-table';
+import EntityRow from './EntityRow';
 import TextCell from './TextCell';
+import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
 const MAX_TABLE_HEIGHT = 500;
@@ -10,14 +12,20 @@ const TABLE_OFFSET = 2;
 export default class EntitySetSearchResults extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
+    entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    formatValueFn: PropTypes.func.isRequired
+    formatValueFn: PropTypes.func.isRequired,
+    showCount: PropTypes.boolean
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      results: props.results
+      results: props.results,
+      selectedId: undefined,
+      selectedRow: undefined,
+      selectedEntitySetId: undefined,
+      selectedPropertyTypes: undefined
     };
   }
 
@@ -27,19 +35,73 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
+  onRowSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
+    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes });
+  }
+
+  onRowDeselect = () => {
+    this.setState({
+      selectedId: undefined,
+      selectedRow: undefined,
+      selectedEntitySetId: undefined,
+      selectedPropertyTypes: undefined
+    });
+  }
+
+  renderTextCell = (field, columnWidth) => {
+    return (
+      <TextCell
+          results={this.state.results}
+          field={field}
+          formatValueFn={this.props.formatValueFn}
+          onClick={this.onRowSelect}
+          width={columnWidth}
+          entitySetId={this.props.entitySetId}
+          propertyTypes={this.props.propertyTypes} />
+    );
+  }
+
   renderColumns = () => {
-    const columnWidth = (TABLE_WIDTH - 1) / this.props.propertyTypes.length;
-    return this.props.propertyTypes.map((propertyType) => {
-      return (
+    const numColumns = (this.props.showCount) ? this.props.propertyTypes.length + 1 : this.props.propertyTypes.length;
+    const columnWidth = (TABLE_WIDTH - 1) / numColumns;
+    const columns = [];
+    if (this.props.showCount) {
+      columns.push(
         <Column
-            key={propertyType.id}
+            key="count"
+            header={<Cell className={styles.countHeaderCell}>Count</Cell>}
+            cell={this.renderTextCell('count', columnWidth)}
+            width={columnWidth} />
+      );
+    }
+    this.props.propertyTypes.forEach((propertyType) => {
+      const key = (Object.keys(this.state.results[0])[0].indexOf('.') > -1)
+        ? `${propertyType.type.namespace}.${propertyType.type.name}`
+        : propertyType.id;
+      columns.push(
+        <Column
+            key={key}
             header={<Cell>{propertyType.title}</Cell>}
-            cell={
-              <TextCell results={this.state.results} field={propertyType.id} formatValueFn={this.props.formatValueFn} />
-            }
+            cell={this.renderTextCell(key, columnWidth)}
             width={columnWidth} />
       );
     });
+    return columns;
+  }
+
+  renderSingleRow = () => {
+    const row = Object.assign({}, this.state.selectedRow);
+    delete row.id;
+    return (
+      <EntityRow
+          row={row}
+          entityId={this.state.selectedId}
+          entitySetId={this.state.selectedEntitySetId}
+          backFn={this.onRowDeselect}
+          formatValueFn={this.props.formatValueFn}
+          propertyTypes={this.state.selectedPropertyTypes}
+          onClick={this.onRowSelect} />
+    );
   }
 
   renderResults = () => {
@@ -63,7 +125,13 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   render() {
-    const content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderResults();
+    let content;
+    if (this.state.selectedId) {
+      content = this.renderSingleRow();
+    }
+    else {
+      content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderResults();
+    }
     return (
       <div>{content}</div>
     );

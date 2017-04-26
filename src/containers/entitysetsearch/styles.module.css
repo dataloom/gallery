@@ -112,19 +112,43 @@
   cursor: pointer;
 }
 
-.textCell {
+.textCell, .textCellUnclickable {
   height: 40px;
   overflow: auto;
 }
 
+.textCell:hover {
+  cursor: pointer;
+}
+
 .advancedSearchBox {
-  border-radius: 3px;
+  border-radius: 3px 0 0 3px;
   border: solid 2pt #a3a8ab;
   font-weight: 400;
   box-shadow: none !important;
   margin-bottom: 10px;
   height: 34px;
-  width: 100%;
+  width: 97% !important;
+}
+
+.exactMatchLabel {
+  margin: 0 0 -20px 97%;
+}
+
+.advancedSearchCheckbox {
+  width: 3%;
+  background: rgb(204, 204, 204);
+  display: inline-block;
+  text-align: center;
+  height: 34px;
+  padding-top: 6px;
+  border-radius: 0 3px 3px 0;
+  border: solid 2pt #a3a8ab;
+  border-left: 0;
+}
+
+.formItemWrapper {
+  height: 45px;
 }
 
 .changeSearchView {
@@ -134,4 +158,45 @@
 
 .titleLink, .titleLink:hover {
   color: inherit
+}
+
+.spacerSmall {
+  height: 15px;
+}
+
+.associationGroupTitle {
+  text-align: center;
+  width: 100%;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.neighborGroupTitle, .neighborGroupTitleUnclickable {
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+}
+
+.neighborGroupTitle:hover {
+  text-decoration: underline;
+  color: black
+}
+
+.neighborContainer {
+  margin: 10px 0;
+}
+
+.countHeaderCell {
+  color: white;
+  background-image: linear-gradient(#66686a, #535557);
+}
+
+
+:global .public_fixedDataTableRow_even:hover .public_fixedDataTableCell_main {
+  background-color: #eeeff0;
+}
+
+:global .public_fixedDataTableRow_odd:hover .public_fixedDataTableCell_main {
+  background-color: #eeeff0;
 }

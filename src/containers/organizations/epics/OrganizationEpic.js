@@ -75,7 +75,7 @@ function updateOrganizationTitleEpic(action$ :Observable<Action>) :Observable<Ac
       return Observable
         .from(OrganizationsApi.updateTitle(action.organization.id, action.organization.title))
         .map(() => {
-          return OrgActionFactory.updateOrganizationTitleSuccess();
+          return OrgActionFactory.updateOrganizationTitleSuccess(action.organization.id, action.organization.title);
         })
         .catch(() => {
           return Observable.of(
@@ -202,6 +202,27 @@ export function removeMemberFromOrganizationEpic(action$ :Observable<Action>) :O
     });
 }
 
+export function deleteOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(OrgActionTypes.DELETE_ORG_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.deleteOrganization(action.orgId))
+        .mergeMap(() => {
+          return Observable.of(
+            push('/orgs'),
+            OrgActionFactory.deleteOrganizationSuccess(action.orgId)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.deleteOrganizationFailure(action.orgId)
+          );
+        });
+    });
+}
+
 export default combineEpics(
   createNewOrganizationEpic,
   updateOrganizationDescriptionEpic,
@@ -211,5 +232,6 @@ export default combineEpics(
   addRoleToOrganizationEpic,
   removeRoleFromOrganizationEpic,
   addMemberToOrganizationEpic,
-  removeMemberFromOrganizationEpic
+  removeMemberFromOrganizationEpic,
+  deleteOrganizationEpic
 );

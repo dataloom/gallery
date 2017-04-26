@@ -58,3 +58,9 @@
 .hidden {
   display: none;
 }
+
+#dropdown {
+  border-style: none;
+  border-radius: 50%;
+  padding: 0;
+}

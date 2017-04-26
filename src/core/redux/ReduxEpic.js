@@ -16,6 +16,7 @@ import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
 import PermissionsSummaryEpic from '../../containers/permissionssummary/PermissionsSummaryEpic';
 import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 import VisualizationEpic from '../../containers/visualizations/VisualizationEpic';
+import TopUtilizersEpic from '../../containers/toputilizers/TopUtilizersEpic';
 
 import NeuronEpic from '../neuron/NeuronEpic';
 
@@ -31,6 +32,7 @@ export default function reduxEpic() {
     PrincipalsEpic,
     OrganizationEpic,
     OrganizationsEpic,
+    TopUtilizersEpic,
     VisualizationEpic
   );
 }

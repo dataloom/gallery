@@ -15,6 +15,7 @@ import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import permissionsSummaryReducer from '../../containers/permissionssummary/PermissionsSummaryReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
 import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+import topUtilizersReducer from '../../containers/toputilizers/TopUtilizersReducer';
 import visualizationReducer from '../../containers/visualizations/VisualizationReducer';
 
 import neuronReducer from '../neuron/NeuronReducer';
@@ -36,6 +37,7 @@ export default function reduxReducer() {
     principals: principalsReducer,
     router: routerReducer,
     securableObject: securableObjectReducer,
+    topUtilizers: topUtilizersReducer,
     visualizations: visualizationReducer
   });
 }
