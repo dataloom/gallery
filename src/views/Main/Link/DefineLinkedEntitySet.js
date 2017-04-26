@@ -116,6 +116,12 @@ export default class DefineLinkedEntitySet extends React.Component {
     return null;
   }
 
+  renderCreateLinkedEntitySetError = () => {
+    return this.props.createLinkedEntitySetError
+        ? <div className={styles.error}>An error occurred. Check that the name is unique to this entity set.</div>
+        : null;
+  }
+
   render() {
     return (
       <div className={styles.linkedDefinitionContainer}>
@@ -123,6 +129,7 @@ export default class DefineLinkedEntitySet extends React.Component {
         {this.renderInputFields()}
         {this.renderLinkButton()}
         {this.renderError()}
+        {this.renderCreateLinkedEntitySetError()}
       </div>
     );
   }

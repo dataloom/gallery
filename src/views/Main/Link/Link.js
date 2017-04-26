@@ -48,7 +48,8 @@ export class Link extends React.Component {
       entityTypeCreated: false,
       linkingEntityTypeId: '',
       isLinking: false,
-      defineLinkedEntityTypeError: false
+      defineLinkedEntityTypeError: false,
+      createLinkedEntitySetError: false
     };
   }
 
@@ -354,12 +355,6 @@ export class Link extends React.Component {
     );
   }
 
-  renderDefineLinkedEntityTypeError = () => {
-    return this.state.defineLinkedEntityTypeError
-        ? <div className={styles.error}>An error occurred. Check that the Namespace + Name combination is unique.</div>
-        : null;
-  }
-
   renderDefineLinkedEntityTypeButton = () => {
     if (this.state.selectedEntitySetIds.length > 0
       && this.state.links.length >= 1
@@ -414,13 +409,15 @@ export class Link extends React.Component {
       this.setState({
         linkingSuccess: true,
         linkingError: false,
-        isLinking: false
+        isLinking: false,
+        createLinkedEntitySetError: false
       });
     }).catch(() => {
       this.setState({
         linkingError: true,
         linkingSuccess: false,
-        isLinking: false
+        isLinking: false,
+        createLinkedEntitySetError: true
       });
     });
   }
@@ -469,6 +466,12 @@ export class Link extends React.Component {
     return defaultContact;
   }
 
+  renderDefineLinkedEntityTypeError = () => {
+    return this.state.defineLinkedEntityTypeError
+        ? <div className={styles.error}>An error occurred. Check that the Namespace + Name combination is unique.</div>
+        : null;
+  }
+
   render() {
     let content;
     if (this.state.isLinking) {
@@ -478,7 +481,10 @@ export class Link extends React.Component {
       content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
     }
     else if (this.state.entityTypeCreated) {
-      content = <DefineLinkedEntitySet linkFn={this.performLink} defaultContact={this.getDefaultContact()} />;
+      content = (<DefineLinkedEntitySet
+          linkFn={this.performLink}
+          createLinkedEntitySetError={this.state.createLinkedEntitySetError}
+          defaultContact={this.getDefaultContact()} />);
     }
     else {
       content = (
