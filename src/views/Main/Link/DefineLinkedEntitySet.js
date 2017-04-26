@@ -91,6 +91,52 @@ export default class DefineLinkedEntitySet extends React.Component {
     );
   }
 
+  renderInputFields = () => {
+    return (
+      <div className={styles.inputsWrapper_4}>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label htmlFor="name">Name:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="name"
+                type="text"
+                value={this.state.name}
+                onChange={this.handleNameChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="title">Title:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="title"
+                type="text"
+                value={this.state.title}
+                onChange={this.handleTitleChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="description">Description:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="description"
+                type="text"
+                value={this.state.description}
+                onChange={this.handleDescriptionChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   link = () => {
     const { name, title, description, contact } = this.state;
     if (name.length < 1 || title.length < 1) {
@@ -117,14 +163,7 @@ export default class DefineLinkedEntitySet extends React.Component {
     return (
       <div className={styles.linkedDefinitionContainer}>
         <div className={styles.explanationText}>Step 4. Define your linked entity set.</div>
-        {this.renderNameField()}
-        <br />
-        {this.renderTitleField()}
-        <br />
-        {this.renderDescriptionField()}
-        <br />
-        {this.renderContactField()}
-        <br />
+        {this.renderInputFields()}
         {this.renderLinkButton()}
         {this.renderError()}
       </div>

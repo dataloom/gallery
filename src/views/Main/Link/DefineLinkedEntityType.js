@@ -219,7 +219,7 @@ export default class DefineLinkedEntityType extends React.Component {
 
   renderInputFields = () => {
     return (
-      <div className={styles.inputsWrapper}>
+      <div className={styles.inputsWrapper_3}>
         <div className={styles.inputRow}>
           <div className={styles.col_1}>
             <label htmlFor="namespace">Namespace:</label>

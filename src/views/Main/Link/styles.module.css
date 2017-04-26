@@ -78,9 +78,15 @@
   width: 100%;
 }
 
-.inputsWrapper {
+.inputsWrapper_3, .inputsWrapper_4 {
   display: flex;
   flex-direction: column;
+}
+
+.inputsWrapper_4 {
+  width: 400px;
+  margin-bottom: 40px;
+  margin-left: 246px;
 }
 
 .inputRow {
