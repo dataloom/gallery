@@ -72,52 +72,8 @@ export class Link extends React.Component {
     });
   }
 
-  renderExistingLinks = () => {
-    return this.state.links.map((link) => {
-      let entitySetsString = '';
-      if (link.entitySets.length >= 1) {
-        entitySetsString = link.entitySets[0].name;
-      }
-      if (link.entitySets.length > 1) {
-        for (let i = 1; i < link.entitySets.length; i += 1) {
-          entitySetsString = entitySetsString.concat(', ').concat(link.entitySets[i].name);
-        }
-      }
-      return (
-        <tr key={link.propertyType.id}>
-          <td>
-            <DeleteButton
-                onClick={() => {
-                  this.removeLink(link.propertyType.id);
-                }} />
-          </td>
-          <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
-          <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
-        </tr>
-      );
-    });
-  }
-
   addRow = () => {
     this.setState({ newRow: true });
-  }
-
-  removeLink = (propertyTypeId) => {
-    const links = this.state.links.filter((link) => {
-      return link.propertyType.id !== propertyTypeId;
-    });
-    this.setState({ links });
-  }
-
-  renderAddRowButton = () => {
-    if (this.state.newRow) return null;
-    return (
-      <tr>
-        <td>
-          <AddButton onClick={this.addRow} />
-        </td>
-      </tr>
-    );
   }
 
   onPropertyTypeLinkChange = (e) => {
@@ -182,6 +138,67 @@ export class Link extends React.Component {
     });
   }
 
+  renderNotEnoughEntitySetsError = () => {
+    if (this.state.needsOneEntitySetError) {
+      return <div className={styles.error}>You must specify an entity set to link on.</div>;
+    }
+    return null;
+  }
+
+  chooseLinks = () => {
+    this.setState({
+      chooseLinks: true,
+      newRow: true
+    });
+  }
+
+  renderChooseLinksButton = () => {
+    if (this.state.selectedEntitySetIds.length < 1 || this.state.chooseLinks) return null;
+    return (
+      <div className={styles.createEntityTypeButtonContainer}>
+        <Button
+            bsStyle="primary"
+            onClick={this.chooseLinks}
+            className={styles.createEntityTypeButton}>
+          {'Define the links to join the entity sets'}</Button>
+      </div>
+    );
+  }
+
+
+  removeLink = (propertyTypeId) => {
+    const links = this.state.links.filter((link) => {
+      return link.propertyType.id !== propertyTypeId;
+    });
+    this.setState({ links });
+  }
+
+  renderExistingLinks = () => {
+    return this.state.links.map((link) => {
+      let entitySetsString = '';
+      if (link.entitySets.length >= 1) {
+        entitySetsString = link.entitySets[0].name;
+      }
+      if (link.entitySets.length > 1) {
+        for (let i = 1; i < link.entitySets.length; i += 1) {
+          entitySetsString = entitySetsString.concat(', ').concat(link.entitySets[i].name);
+        }
+      }
+      return (
+        <tr key={link.propertyType.id}>
+          <td>
+            <DeleteButton
+                onClick={() => {
+                  this.removeLink(link.propertyType.id);
+                }} />
+          </td>
+          <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
+          <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
+        </tr>
+      );
+    });
+  }
+
   renderNewLink = () => {
     if (this.state.newRow) {
       return (
@@ -211,30 +228,14 @@ export class Link extends React.Component {
     return null;
   }
 
-  renderNotEnoughEntitySetsError = () => {
-    if (this.state.needsOneEntitySetError) {
-      return <div className={styles.error}>You must specify an entity set to link on.</div>;
-    }
-    return null;
-  }
-
-  chooseLinks = () => {
-    this.setState({
-      chooseLinks: true,
-      newRow: true
-    });
-  }
-
-  renderChooseLinksButton = () => {
-    if (this.state.selectedEntitySetIds.length < 1 || this.state.chooseLinks) return null;
+  renderAddRowButton = () => {
+    if (this.state.newRow) return null;
     return (
-      <div className={styles.createEntityTypeButtonContainer}>
-        <Button
-            bsStyle="primary"
-            onClick={this.chooseLinks}
-            className={styles.createEntityTypeButton}>
-          {'Define the links to join the entity sets'}</Button>
-      </div>
+      <tr>
+        <td>
+          <AddButton onClick={this.addRow} />
+        </td>
+      </tr>
     );
   }
 
@@ -338,7 +339,7 @@ export class Link extends React.Component {
       return ({ label: entitySet.name, value: entitySet.id });
     });
     return (
-      <div>
+      <div className={styles.step1Wrapper}>
         <div className={styles.explanationText}>Step 1. Choose entity sets to link.</div>
         <Select
             value={this.state.selectedEntitySetIds}

@@ -3,11 +3,15 @@
 }
 
 .entitySetsSelect {
-  width: 500px;
+  width: 600px;
 }
 
 .linkSelection {
   margin-top: 50px;
+}
+
+.linkTable {
+  margin-left: 6px;
 }
 
 .explanationText {
@@ -93,4 +97,9 @@
   color: green;
   font-weight: bold;
   text-align: center;
+}
+
+.step1Wrapper {
+  width: 900px;
+  margin: auto;
 }
