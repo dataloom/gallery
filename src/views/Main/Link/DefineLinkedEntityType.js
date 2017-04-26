@@ -308,7 +308,6 @@ export default class DefineLinkedEntityType extends React.Component {
       <div className={styles.linkedDefinitionContainer}>
         <div className={styles.explanationText}>
           Step 3. Define the linked entity type for returning your results.</div>
-        <br />
         <div className={styles.entityTypeTableWrapper}>
           {this.renderInputFields()}
           {this.renderDeidentify()}
