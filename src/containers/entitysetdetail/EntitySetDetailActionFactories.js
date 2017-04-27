@@ -6,3 +6,10 @@ export function entitySetDetailRequest(id) {
     id
   };
 }
+
+export function setEntitySet(data) {
+  return {
+    type: actionTypes.SET_ENTITY_SET,
+    data
+  };
+}

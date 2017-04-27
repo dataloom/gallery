@@ -103,6 +103,12 @@ class EntitySetDetailComponent extends React.Component {
         this.props.loadOwnedPropertyTypes(nextProps.entitySet.id, nextProps.allPropertyTypeIds);
       }
     }
+    // set entity set from here
+    if (!this.props.entitySet && nextProps.entitySet) {
+      console.log('ENTITY SET:', nextProps.entitySet);
+      this.props.setEntitySet(nextProps.entitySet);
+    }
+
   }
 
   setEditingPermissions = () => {
@@ -498,6 +504,7 @@ function mapStateToProps(state) {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
+
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
@@ -522,6 +529,9 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
+    },
+    setEntitySet: (entitySet) => {
+      dispatch(actionFactories.setEntitySet(entitySet));
     },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());
