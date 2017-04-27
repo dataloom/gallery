@@ -306,6 +306,9 @@ export default class DefineLinkedEntityType extends React.Component {
               {this.renderAddPropertyType()}
             </tbody>
           </table>
+          <div className={styles.note}>
+            Note: In most cases, primary keys should match the properties selected in Step 2.
+          </div>
           <Button
               bsStyle="primary"
               onClick={this.link}

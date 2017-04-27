@@ -24,6 +24,13 @@
   text-align: center;
 }
 
+.note {
+  font-size: 13px;
+  color: grey;
+  font-style: italic;
+  margin-top: 10px;
+}
+
 .linkBox {
   border: 1px solid gray;
   padding: 15px;
