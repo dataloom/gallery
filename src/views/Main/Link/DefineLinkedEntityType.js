@@ -142,7 +142,7 @@ export default class DefineLinkedEntityType extends React.Component {
       name,
       namespace
     } = this.props.formData;
-    
+
     if (title.length < 1 || namespace.length < 1 || name.length < 1) {
       this.setState({ noTypeOrTitleError: true });
     }
@@ -307,7 +307,7 @@ export default class DefineLinkedEntityType extends React.Component {
             </tbody>
           </table>
           <div className={styles.note}>
-            Note: In most cases, primary keys should match the properties selected in Step 2.
+            Note: Make sure the primary key or combination of primary keys will be unique.
           </div>
           <Button
               bsStyle="primary"
