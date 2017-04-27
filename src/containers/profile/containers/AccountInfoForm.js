@@ -13,13 +13,15 @@ class AccountInfoForm extends React.Component {
     const accountId = {
       key: 'accountId',
       value: userId,
-      label: 'Account ID'
+      label: 'Account ID',
+      editable: false
     };
 
     const jwt = {
       key: 'jwtToken',
       value: jwtToken,
-      label: 'JWT Token'
+      label: 'JWT Token',
+      editable: false
     };
 
     return [accountId, jwt];

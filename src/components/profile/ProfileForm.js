@@ -4,6 +4,20 @@ import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import ProfileSectionWrapper from './ProfileSectionWrapper';
 import styles from './styles.module.css';
 
+const getValueField = (item) => {
+  return item.editable
+      ? <FormControl
+          className={styles.formControl}
+          type="text"
+          value={item.value}
+          disabled />
+      : (
+        <div className={styles.uneditableField}>
+          {item.value}
+        </div>
+      );
+};
+
 const getFormItems = (content) => {
   const formItems = content.map((item) => {
     return (
@@ -11,11 +25,7 @@ const getFormItems = (content) => {
         <ControlLabel className={styles.controlLabel}>
           {item.label}
         </ControlLabel>
-        <FormControl
-            className={styles.formControl}
-            type="text"
-            value={item.value}
-            disabled />
+        {getValueField(item)}
       </div>
     );
   });

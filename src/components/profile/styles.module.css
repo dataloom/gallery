@@ -41,7 +41,7 @@
   padding: 0 10px;
 }
 
-.formControl {
+.formControl, .uneditableField {
   -webkit-box-flex: 2 0 0;
   -webkit-flex: 2 0 0;
   -ms-flex: 2 0 0;
