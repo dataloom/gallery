@@ -63,11 +63,10 @@
 .copyButton {
   border: 1px solid #ccc;
   width: 60px;
-  height: 24px;
   background: #eee;
   position: absolute;
   right: 0;
-  margin: 4px;
+  margin: 5px;
   text-align: center;
   float: right;
   color: #555;

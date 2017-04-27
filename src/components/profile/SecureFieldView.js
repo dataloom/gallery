@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { Button } from 'react-bootstrap';
 
 import styles from './styles.module.css';
 
@@ -13,8 +14,7 @@ const SecureFieldView = ({ content }) => {
         <div className={styles.dots}>
           {content.value.slice(0, 59)}
         </div>
-        <div className={styles.copyButton}>copy
-        </div>
+        <Button bsSize="xs" className={styles.copyButton}>copy</Button>
       </div>
     </CopyToClipboard>
   );
