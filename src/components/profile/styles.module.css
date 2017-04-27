@@ -28,8 +28,44 @@
   padding: 20px;
 }
 
-.controlLabel, .formControl, .contentLabel {
+.controlLabel,
+.formControl,
+.contentLabel,
+.uneditableField {
   font-size: 16px;
+}
+
+.uneditableField {
+  height: 34px;
+  border-radius: 3px;
+  color: grey;
+}
+
+.secureField {
+  border: 1px dashed grey;
+  position: relative;
+}
+
+.dots {
+  margin: 6px;
+  float: left;
+}
+
+.copyButton {
+  border: 1px solid #ccc;
+  width: 60px;
+  height: 24px;
+  background: lightgrey;
+  position: absolute;
+  right: 0;
+  margin: 4px;
+  text-align: center;
+  float: right;
+  color: black;
+}
+
+.copyButton:hover {
+  cursor: pointer;
 }
 
 .controlLabel {
