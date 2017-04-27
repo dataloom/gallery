@@ -209,11 +209,11 @@
 }
 
 .crumbActive {
-  color: gray;
+  color: #777;
 }
 
 .crumbDivider {
-  color: gray;
+  color: #777;
 }
 
 /* globals */
