@@ -21,7 +21,9 @@ export default class EntityRow extends React.Component {
     backFn: PropTypes.func,
     formatValueFn: PropTypes.func,
     entityId: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    jumpFn: PropTypes.func,
+    breadcrumbs: PropTypes.array
   }
 
   constructor(props) {
@@ -141,10 +143,29 @@ export default class EntityRow extends React.Component {
     );
   }
 
+  renderBreadcrumbs = () => {
+    const breadcrumbs = [];
+    breadcrumbs.push(<span className={styles.crumbLink} onClick={this.props.backFn}>Results</span>);
+    for (let i = 0; i < this.props.breadcrumbs.length; i += 1) {
+      const crumb = this.props.breadcrumbs[i];
+      breadcrumbs.push(<span className={styles.crumbDivider}> / </span>);
+      breadcrumbs.push(
+        <span
+            className={styles.crumbLink}
+            onClick={() => {
+              this.props.jumpFn(i);
+            }}>
+          {crumb.title}
+        </span>
+      );
+    }
+    return (<div className={styles.breadcrumbsContainer}>{breadcrumbs}</div>);
+  }
+
   render() {
     return (
       <div>
-        {this.renderBackButton()}
+        {this.renderBreadcrumbs()}
         {this.renderTable()}
         {this.renderNeighbors()}
       </div>

@@ -28,7 +28,7 @@ export default class TextCell extends React.Component {
     });
     if (this.props.entitySetId) {
       return () => {
-        this.props.onClick(results[rowIndex].id, rowValues, entitySetId, propertyTypes);
+        this.props.onClick(results[rowIndex].id, rowValues, entitySetId, propertyTypes, entitySetId);
       };
     }
     return () => {};

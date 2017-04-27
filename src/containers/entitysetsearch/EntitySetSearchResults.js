@@ -25,7 +25,8 @@ export default class EntitySetSearchResults extends React.Component {
       selectedId: undefined,
       selectedRow: undefined,
       selectedEntitySetId: undefined,
-      selectedPropertyTypes: undefined
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     };
   }
 
@@ -35,8 +36,28 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
-  onRowSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
-    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes });
+  onRowSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes, breadcrumbTitle) => {
+    const crumb = {
+      id: selectedId,
+      title: breadcrumbTitle,
+      row: selectedRow,
+      propertyTypes: selectedPropertyTypes,
+      entitySetId: selectedEntitySetId
+    };
+    const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes, breadcrumbs });
+  }
+
+  jumpToRow = (index) => {
+    const crumb = this.state.breadcrumbs[index];
+    const breadcrumbs = this.state.breadcrumbs.slice(0, index);
+    this.setState({
+      selectedId: crumb.id,
+      selectedRow: crumb.row,
+      selectedEntitySetId: crumb.entitySetId,
+      selectedPropertyTypes: crumb.propertyTypes,
+      breadcrumbs
+    });
   }
 
   onRowDeselect = () => {
@@ -100,7 +121,9 @@ export default class EntitySetSearchResults extends React.Component {
           backFn={this.onRowDeselect}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.state.selectedPropertyTypes}
-          onClick={this.onRowSelect} />
+          onClick={this.onRowSelect}
+          jumpFn={this.jumpToRow}
+          breadcrumbs={this.state.breadcrumbs} />
     );
   }
 
