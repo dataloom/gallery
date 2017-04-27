@@ -50,7 +50,7 @@ export default class EntitySetSearchResults extends React.Component {
 
   jumpToRow = (index) => {
     const crumb = this.state.breadcrumbs[index];
-    const breadcrumbs = this.state.breadcrumbs.slice(0, index);
+    const breadcrumbs = this.state.breadcrumbs.slice(0, index + 1);
     this.setState({
       selectedId: crumb.id,
       selectedRow: crumb.row,

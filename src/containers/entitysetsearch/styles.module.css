@@ -205,6 +205,11 @@
 .crumbLink:hover {
   color: #23527c;
   text-decoration: underline;
+  cursor: pointer;
+}
+
+.crumbActive {
+  color: gray;
 }
 
 .crumbDivider {

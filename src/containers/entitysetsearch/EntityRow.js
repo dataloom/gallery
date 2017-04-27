@@ -149,15 +149,21 @@ export default class EntityRow extends React.Component {
     for (let i = 0; i < this.props.breadcrumbs.length; i += 1) {
       const crumb = this.props.breadcrumbs[i];
       breadcrumbs.push(<span className={styles.crumbDivider}> / </span>);
-      breadcrumbs.push(
-        <span
-            className={styles.crumbLink}
-            onClick={() => {
-              this.props.jumpFn(i);
-            }}>
-          {crumb.title}
-        </span>
-      );
+
+      if (i + 1 === this.props.breadcrumbs.length) {
+        breadcrumbs.push(<span className={styles.crumbActive}>{crumb.title}</span>);
+      }
+      else {
+        breadcrumbs.push(
+            <span
+                className={styles.crumbLink}
+                onClick={() => {
+                  this.props.jumpFn(i);
+                }}>
+              {crumb.title}
+            </span>
+        );
+      }
     }
     return (<div className={styles.breadcrumbsContainer}>{breadcrumbs}</div>);
   }
