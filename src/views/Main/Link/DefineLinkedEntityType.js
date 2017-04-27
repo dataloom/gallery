@@ -142,7 +142,7 @@ export default class DefineLinkedEntityType extends React.Component {
       name,
       namespace
     } = this.props.formData;
-    console.log('props:', this.props);
+    
     if (title.length < 1 || namespace.length < 1 || name.length < 1) {
       this.setState({ noTypeOrTitleError: true });
     }
