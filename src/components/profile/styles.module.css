@@ -39,6 +39,12 @@
   height: 34px;
   border-radius: 3px;
   color: grey;
+  position: relative;
+}
+
+.uneditableFieldContent {
+  position: absolute;
+  top: 5px;
 }
 
 .secureField {

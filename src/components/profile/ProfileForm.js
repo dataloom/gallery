@@ -39,7 +39,7 @@ const getValueField = (item) => {
 
   return (
     <div className={styles.uneditableField}>
-      {item.value}
+      <div className={styles.uneditableFieldContent}>{item.value}</div>
     </div>
   );
 };
