@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
+import { EntityDataModelApi } from 'loom-data';
 import UserRow from './UserRow';
 import EntityRow from './EntityRow';
+import EntityTypeTitles from '../../utils/EntityTypeTitles';
 
 export default class EntitySetUserSearchResults extends React.Component {
   static propTypes = {
@@ -20,7 +22,7 @@ export default class EntitySetUserSearchResults extends React.Component {
       results: props.results,
       selectedId: undefined,
       selectedRow: undefined,
-      selectedEntitySetId: undefined,
+      selectedEntitySet: undefined,
       selectedPropertyTypes: undefined,
       breadcrumbs: []
     };
@@ -32,17 +34,23 @@ export default class EntitySetUserSearchResults extends React.Component {
     });
   }
 
-  onUserSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes, breadcrumbTitle) => {
-    const crumb = {
-      id: selectedId,
-      title: breadcrumbTitle,
-      row: selectedRow,
-      propertyTypes: selectedPropertyTypes,
-      entitySetId: selectedEntitySetId
-    };
-    const breadcrumbs = this.state.breadcrumbs.concat(crumb);
-    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes, breadcrumbs });
-    this.props.hidePaginationFn(true);
+  onUserSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
+    EntityDataModelApi.getEntitySet(selectedEntitySetId)
+    .then((selectedEntitySet) => {
+      EntityDataModelApi.getEntityType(selectedEntitySet.entityTypeId)
+      .then((entityType) => {
+        const crumb = {
+          id: selectedId,
+          title: EntityTypeTitles.getTitle(entityType, selectedRow, selectedPropertyTypes),
+          row: selectedRow,
+          propertyTypes: selectedPropertyTypes,
+          entitySet: selectedEntitySet
+        };
+        const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+        this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
+        this.props.hidePaginationFn(true);
+      });
+    });
   }
 
   jumpToRow = (index) => {
@@ -51,7 +59,7 @@ export default class EntitySetUserSearchResults extends React.Component {
     this.setState({
       selectedId: crumb.id,
       selectedRow: crumb.row,
-      selectedEntitySetId: crumb.entitySetId,
+      selectedEntitySet: crumb.entitySet,
       selectedPropertyTypes: crumb.propertyTypes,
       breadcrumbs
     });
@@ -61,7 +69,7 @@ export default class EntitySetUserSearchResults extends React.Component {
     this.setState({
       selectedId: undefined,
       selectedRow: undefined,
-      selectedEntitySetId: undefined,
+      selectedEntitySet: undefined,
       selectedPropertyTypes: undefined
     });
     this.props.hidePaginationFn(false);
@@ -101,7 +109,7 @@ export default class EntitySetUserSearchResults extends React.Component {
       <UserRow
           row={row}
           entityId={this.state.selectedId}
-          entitySetId={this.state.selectedEntitySetId}
+          entitySet={this.state.selectedEntitySet}
           propertyTypes={this.state.selectedPropertyTypes}
           firstName={this.props.firstName}
           lastName={this.props.lastName}
@@ -122,7 +130,7 @@ export default class EntitySetUserSearchResults extends React.Component {
       <EntityRow
           row={row}
           entityId={this.state.selectedId}
-          entitySetId={this.state.selectedEntitySetId}
+          entitySet={this.state.selectedEntitySet}
           propertyTypes={this.state.selectedPropertyTypes}
           backFn={this.onUserDeselect}
           formatValueFn={this.props.formatValueFn}
@@ -133,7 +141,7 @@ export default class EntitySetUserSearchResults extends React.Component {
 
   renderResults = () => {
     if (this.state.selectedRow) {
-      return (this.state.selectedEntitySetId === this.props.entitySetId) ?
+      return (this.state.selectedEntitySet.id === this.props.entitySetId) ?
         this.renderSingleUser() : this.renderSingleRow();
     }
     return this.renderAllUserResults();
