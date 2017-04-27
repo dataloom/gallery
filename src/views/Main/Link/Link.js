@@ -168,7 +168,7 @@ export class Link extends React.Component {
             bsStyle="primary"
             onClick={this.chooseLinks}
             className={styles.createEntityTypeButton}>
-          {'Define the links to join the entity sets'}</Button>
+          {'Confirm linked entity sets'}</Button>
       </div>
     );
   }
@@ -369,7 +369,7 @@ export class Link extends React.Component {
               bsStyle="primary"
               onClick={this.chooseLinkedEntityType}
               className={styles.createEntityTypeButton}>
-            {'Define the linked entity type to create'}</Button>
+            {'Confirm property links'}</Button>
         </div>
       );
     }

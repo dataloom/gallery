@@ -290,7 +290,8 @@ export default class DefineLinkedEntityType extends React.Component {
     return (
       <div className={styles.linkedDefinitionContainer}>
         <div className={styles.explanationText}>
-          Step 3. Define the linked entity type for returning your results.</div>
+          Step 3. Define the entity type for storing your linked results.
+        </div>
         <div className={styles.entityTypeTableWrapper}>
           {this.renderInputFields()}
           {this.renderDeidentify()}
@@ -308,7 +309,7 @@ export default class DefineLinkedEntityType extends React.Component {
           <Button
               bsStyle="primary"
               onClick={this.link}
-              className={styles.linkButton}>Create linked entity type</Button>
+              className={styles.linkButton}>Confirm linked entity type</Button>
           {this.renderError()}
         </div>
       </div>
