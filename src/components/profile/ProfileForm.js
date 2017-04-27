@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 import ProfileSectionWrapper from './ProfileSectionWrapper';
-import SecureField from './SecureField';
+import SecureFieldView from './SecureFieldView';
 import styles from './styles.module.css';
 
 const getValueField = (item) => {
@@ -16,7 +16,7 @@ const getValueField = (item) => {
         disabled />);
   }
   if (secure) {
-    return <SecureField content={item} />;
+    return <SecureFieldView content={item} />;
   }
 
   return (
