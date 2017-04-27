@@ -12,7 +12,7 @@ const SecureFieldView = ({ content }) => {
         text={content.value}>
       <div>
         <div className={styles.dots}>
-          {content.value.slice(0, 59)}
+          {content.value.slice(0, 42)}
         </div>
         <Button bsSize="xs" className={styles.copyButton}>copy</Button>
       </div>

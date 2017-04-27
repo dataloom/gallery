@@ -40,11 +40,11 @@
   border-radius: 3px;
   color: grey;
   position: relative;
+  padding: 6px 12px;
 }
 
 .uneditableFieldContent {
   position: absolute;
-  top: 5px;
 }
 
 .secureField {
@@ -53,23 +53,23 @@
 }
 
 .dots {
-  margin: 8px;
+  margin: 1px;
   float: left;
-  font-family: Symbola, serif;
   -webkit-text-security: disc;
   letter-spacing: 3px;
 }
 
 .copyButton {
   border: 1px solid #ccc;
-  width: 60px;
+  width: 56px;
   background: #eee;
   position: absolute;
   right: 0;
-  margin: 5px;
   text-align: center;
   float: right;
   color: #555;
+  margin-right: 6px;
+  margin-top: -1px;
 }
 
 .copyButton:hover {
