@@ -21,7 +21,8 @@ export default class EntitySetUserSearchResults extends React.Component {
       selectedId: undefined,
       selectedRow: undefined,
       selectedEntitySetId: undefined,
-      selectedPropertyTypes: undefined
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     };
   }
 
@@ -31,9 +32,29 @@ export default class EntitySetUserSearchResults extends React.Component {
     });
   }
 
-  onUserSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
-    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes });
+  onUserSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes, breadcrumbTitle) => {
+    const crumb = {
+      id: selectedId,
+      title: breadcrumbTitle,
+      row: selectedRow,
+      propertyTypes: selectedPropertyTypes,
+      entitySetId: selectedEntitySetId
+    };
+    const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes, breadcrumbs });
     this.props.hidePaginationFn(true);
+  }
+
+  jumpToRow = (index) => {
+    const crumb = this.state.breadcrumbs[index];
+    const breadcrumbs = this.state.breadcrumbs.slice(0, index + 1);
+    this.setState({
+      selectedId: crumb.id,
+      selectedRow: crumb.row,
+      selectedEntitySetId: crumb.entitySetId,
+      selectedPropertyTypes: crumb.propertyTypes,
+      breadcrumbs
+    });
   }
 
   onUserDeselect = () => {
@@ -88,7 +109,9 @@ export default class EntitySetUserSearchResults extends React.Component {
           backFn={this.onUserDeselect}
           userPage
           formatValueFn={this.props.formatValueFn}
-          onClick={this.onUserSelect} />
+          onClick={this.onUserSelect}
+          jumpFn={this.jumpToRow}
+          breadcrumbs={this.state.breadcrumbs} />
     );
   }
 
@@ -103,7 +126,9 @@ export default class EntitySetUserSearchResults extends React.Component {
           propertyTypes={this.state.selectedPropertyTypes}
           backFn={this.onUserDeselect}
           formatValueFn={this.props.formatValueFn}
-          onClick={this.onUserSelect} />);
+          onClick={this.onUserSelect}
+          jumpFn={this.jumpToRow}
+          breadcrumbs={this.state.breadcrumbs} />);
   }
 
   renderResults = () => {

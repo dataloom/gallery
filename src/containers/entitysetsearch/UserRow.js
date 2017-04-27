@@ -8,7 +8,12 @@ export default class UserRow extends React.Component {
 
   selectUser = () => {
     if (this.props.userPage) return;
-    this.props.selectUserFn(this.props.entityId, this.props.row, this.props.entitySetId, this.props.propertyTypes);
+    this.props.selectUserFn(
+      this.props.entityId,
+      this.props.row,
+      this.props.entitySetId,
+      this.props.propertyTypes,
+      this.props.entitySetId);
   }
 
   renderBackButton = () => {
@@ -87,7 +92,9 @@ export default class UserRow extends React.Component {
           entitySetId={this.props.entitySetId}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.props.propertyTypes}
-          onClick={this.props.onClick} />
+          onClick={this.props.onClick}
+          jumpFn={this.props.jumpFn}
+          breadcrumbs={this.props.breadcrumbs} />
     );
   }
 
@@ -113,6 +120,8 @@ export default class UserRow extends React.Component {
     userPage: PropTypes.bool,
     formatValueFn: PropTypes.func,
     entityId: PropTypes.string,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    jumpFn: PropTypes.func,
+    breadcrumbs: PropTypes.array
   }
 }
