@@ -2,26 +2,8 @@ import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 import ProfileSectionWrapper from './ProfileSectionWrapper';
+import SecureField from './SecureField';
 import styles from './styles.module.css';
-
-const onCopyClick = (e) => {
-  e.preventDefault();
-  console.log('click!');
-};
-
-const SecureField = ({ content }) => {
-  return (
-    <div
-        className={`${styles.uneditableField} ${styles.secureField}`}
-        data-value={content.value}>
-      <div className={styles.dots}>
-        {content.value.slice(0, 59)}
-      </div>
-      <div className={styles.copyButton} onClick={onCopyClick}>copy
-      </div>
-    </div>
-  );
-};
 
 const getValueField = (item) => {
   const editable = item.editable || false;
