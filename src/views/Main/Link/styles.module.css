@@ -130,3 +130,8 @@
   width: 900px;
   margin: auto;
 }
+
+.headerLink {
+  font-size: 12px;
+  font-style: italic;
+}

@@ -541,8 +541,11 @@ export class Link extends React.Component {
         <Page>
           <Page.Header>
             <Page.Title>Link</Page.Title>
+            <div className={styles.headerLink}><a href="https://help.thedataloom.com/guides/linking/" target="_blank">Click here for instructions</a></div>
           </Page.Header>
-          <Page.Body>{content}</Page.Body>
+          <Page.Body>
+            {content}
+          </Page.Body>
         </Page>
       </DocumentTitle>
     );
