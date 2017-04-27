@@ -3,13 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
-import { getEdmObject } from '../../edm/EdmStorage';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
-import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
-import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
-import * as edmActionFactories from '../../edm/EdmActionFactories';
-import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
@@ -23,12 +18,10 @@ class AllPermissions extends React.Component {
     actions: React.PropTypes.shape({
       getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
     }).isRequired,
-    params: PropTypes.object.isRequired,
-    entitySet: PropTypes.object,
+    entitySet: PropTypes.object.isRequired,
     entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     entityRolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
-    loadEntitySet: PropTypes.func.isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
     isGettingAcls: PropTypes.bool.isRequired,
     isGettingPermissions: PropTypes.bool.isRequired
@@ -60,7 +53,8 @@ class AllPermissions extends React.Component {
     const tables = [];
 
     propertyPermissions.keySeq().forEach((property) => {
-      if (propertyPermissions.hasIn([property, 'userPermissions']) && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+      if (propertyPermissions.hasIn([property, 'userPermissions'])
+        && propertyPermissions.hasIn([property, 'rolePermissions'])) {
         const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
         const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
 

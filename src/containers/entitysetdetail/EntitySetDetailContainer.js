@@ -15,7 +15,7 @@ class EntitySetDetailContainer extends React.Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     loadEntitySet: PropTypes.func.isRequired,
-    entitySet: PropTypes.object.isRequired,
+    entitySet: PropTypes.object,
     setEntitySet: PropTypes.func.isRequired
   }
 
