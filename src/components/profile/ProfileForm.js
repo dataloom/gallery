@@ -14,7 +14,8 @@ const SecureField = ({ content }) => {
     <div
         className={`${styles.uneditableField} ${styles.secureField}`}
         data-value={content.value}>
-      <div className={styles.dots}>dot dot dot
+      <div className={styles.dots}>
+        {content.value.slice(0, 59)}
       </div>
       <div className={styles.copyButton} onClick={onCopyClick}>copy
       </div>

@@ -47,21 +47,24 @@
 }
 
 .dots {
-  margin: 6px;
+  margin: 8px;
   float: left;
+  font-family: Symbola, serif;
+  -webkit-text-security: disc;
+  letter-spacing: 3px;
 }
 
 .copyButton {
   border: 1px solid #ccc;
   width: 60px;
   height: 24px;
-  background: lightgrey;
+  background: #eee;
   position: absolute;
   right: 0;
   margin: 4px;
   text-align: center;
   float: right;
-  color: black;
+  color: #555;
 }
 
 .copyButton:hover {
