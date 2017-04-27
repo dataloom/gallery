@@ -35,11 +35,12 @@ export function neuronSubscribeRequest(topic :string) :Object {
   };
 }
 
-export function neuronSubscribeSuccess(subscription :any) :Object {
+export function neuronSubscribeSuccess(subscription :any, destination :string) :Object {
 
   return {
     type: NeuronActionTypes.NEURON_SUBSCRIBE_SUCCESS,
-    subscription
+    subscription,
+    destination
   };
 }
 

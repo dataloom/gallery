@@ -33,8 +33,8 @@ export function initializeStompClient() :Object {
     stompClient = null;
   }
 
-  // TODO: get an actual URL
-  socketClient = new SockJS('http://localhost:8081/neuron');
+  // TODO: get an actual URL depending on the enviroment
+  socketClient = new SockJS('http://localhost:8081/notifier');
   stompClient = Stomp.over(socketClient);
 
   if (__PROD__) {

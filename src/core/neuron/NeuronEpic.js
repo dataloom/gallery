@@ -26,6 +26,9 @@ const RETRY_DELAY :number = 1000; // in milliseconds
 const MAX_RETRY_DELAY :number = 10 * 1000; // in milliseconds
 const MAX_RETRY_COUNT :number = 10;
 
+const ERROR_STOMP_CLIENT_NOT_CONNECTED :string = 'ERROR_STOMP_CLIENT_NOT_CONNECTED';
+const ERROR_STOMP_CLIENT_NOT_INITIALIZED :string = 'ERROR_STOMP_CLIENT_NOT_INITIALIZED';
+
 // TODO: figure out how to handle no-op situations
 const NEURON_NO_OP :Object = {
   type: 'NEURON_NO_OP'
@@ -47,7 +50,7 @@ function neuronConnectRequestEpic(action$ :Observable<Action>, reduxStore :Objec
 
   return action$
     .ofType(NeuronActionTypes.NEURON_CONNECT_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap(() => {
       return Observable
         .create((observer :Observer) => {
           initializeStompClient().connect(
@@ -85,9 +88,9 @@ function neuronConnectSuccessEpic(action$ :Observable<Action>) :Observable<Actio
 
   return action$
     .ofType(NeuronActionTypes.NEURON_CONNECT_SUCCESS)
-    .mergeMap(() => {
+    .map(() => {
       retryCount = 0;
-      return Observable.of(NEURON_NO_OP);
+      return NEURON_NO_OP;
     });
 }
 
@@ -106,31 +109,57 @@ function neuronConnectFailureEpic(action$ :Observable<Action>) :Observable<Actio
     });
 }
 
-function neuronSubscribeRequestEpic(action$ :Observable<Action>) :Observable<Action> {
+function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) :Observable<Action> {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_SUBSCRIBE_REQUEST)
     .mergeMap((action :Action) => {
       return Observable
         .create((observer :Observer) => {
-          const subscription = getStompClient().subscribe(`/topic/${action.topic}`, (frame :Object) => {
-            observer.next({
-              frame
+          const stompClient = getStompClient();
+          if (!stompClient) {
+            observer.error(ERROR_STOMP_CLIENT_NOT_INITIALIZED);
+          }
+          else if (!stompClient.connected) {
+            observer.error(ERROR_STOMP_CLIENT_NOT_CONNECTED);
+          }
+          else {
+            const destination :string = `/topic/${action.topic}`;
+            const subId :string = store.getState().getIn(['neuron', 'destToSubIdMap', destination]);
+            const subscriptions :Map = store.getState().getIn(['neuron', 'subscriptions']);
+            if (subscriptions.has(subId)) {
+              return;
+            }
+            const subscription = stompClient.subscribe(destination, (frame :Object) => {
+              observer.next({
+                frame
+              });
             });
-          });
-          observer.next({
-            subscription
-          });
+            observer.next({
+              subscription,
+              destination
+            });
+          }
         })
         .mergeMap((message :any) => {
           if (message.subscription) {
             return Observable.of(
-              NeuronActionFactory.neuronSubscribeSuccess(message.subscription)
+              NeuronActionFactory.neuronSubscribeSuccess(message.subscription, message.destination)
             );
           }
           return Observable.of(
             NeuronActionFactory.neuronOnMessage(message.frame)
           );
+        })
+        .retryWhen((errors :Observable) => {
+          return errors.mergeMap((error) => {
+            // if the error is that we're not connected, retry when we connect successfully
+            if (error === ERROR_STOMP_CLIENT_NOT_CONNECTED) {
+              return action$.ofType(NeuronActionTypes.NEURON_CONNECT_SUCCESS);
+            }
+            // otherwise, retry in 1s
+            return Observable.timer(1000);
+          });
         })
         .catch(() => {
           return Observable.of(
