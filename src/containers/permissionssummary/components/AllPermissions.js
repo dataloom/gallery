@@ -34,13 +34,8 @@ class AllPermissions extends React.Component {
     isGettingPermissions: PropTypes.bool.isRequired
   }
 
-  componentDidMount() {
-    const id = this.props.params.id;
-    this.props.loadEntitySet(id);
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+    if (Object.keys(this.props.entitySet).length === 0 && Object.keys(nextProps.entitySet).length > 0) {
       this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet);
     }
   }
@@ -129,16 +124,10 @@ class AllPermissions extends React.Component {
 // TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
 function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
-  const normalizedData = state.get('normalizedData');
   const permissionsSummary = state.get('permissionsSummary');
-  let entitySet;
-  const reference = entitySetDetail.get('entitySetReference');
-  if (reference) {
-    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
-  }
 
   return {
-    entitySet,
+    entitySet: entitySetDetail.get('entitySet').toJS(),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions'),
     propertyPermissions: permissionsSummary.get('propertyPermissions'),
@@ -154,17 +143,6 @@ function mapDispatchToProps(dispatch) {
   };
 
   return {
-    loadEntitySet: (id) => {
-      dispatch(actionFactories.entitySetDetailRequest(id));
-      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      dispatch(edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      ));
-    },
     actions: bindActionCreators(actions, dispatch)
   };
 }
