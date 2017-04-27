@@ -21,17 +21,15 @@ class TopUtilizersPage extends React.Component {
 
   render() {
     return (
-      <DocumentTitle title="Top Utilizers">
-        <Page>
-          <Page.Header>
-            <Page.Title>Top Utilizers</Page.Title>
-            <h3>{this.props.entitySet.get('title')}</h3>
-          </Page.Header>
-          <Page.Body>
-            {this.props.children}
-          </Page.Body>
-        </Page>
-      </DocumentTitle>
+      <div>
+        <Page.Header>
+          <Page.Title>Top Utilizers</Page.Title>
+          <h3>{this.props.entitySet.get('title')}</h3>
+        </Page.Header>
+        <Page.Body>
+          {this.props.children}
+        </Page.Body>
+      </div>
     );
   }
 }

@@ -477,7 +477,6 @@ function mapStateToProps(state) {
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
   const entitySet = entitySetDetail.get('entitySet').toJS();
-  console.log('entitySet:', entitySet);
   // let entitySet;
   let entitySetPermissions;
   const allPropertyTypeIds = [];
