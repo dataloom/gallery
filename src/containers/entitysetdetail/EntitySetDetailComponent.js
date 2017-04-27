@@ -103,12 +103,6 @@ class EntitySetDetailComponent extends React.Component {
         this.props.loadOwnedPropertyTypes(nextProps.entitySet.id, nextProps.allPropertyTypeIds);
       }
     }
-    // set entity set from here
-    if (!this.props.entitySet && nextProps.entitySet) {
-      console.log('ENTITY SET:', nextProps.entitySet);
-      this.props.setEntitySet(nextProps.entitySet);
-    }
-
   }
 
   setEditingPermissions = () => {
@@ -444,38 +438,36 @@ class EntitySetDetailComponent extends React.Component {
 
   render() {
     return (
-      <DocumentTitle title={this.getDocumentTitle()}>
-        <Page className={styles.page}>
-          <Page.Header>
-            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
-          </Page.Header>
-          <Page.Body>
-            {this.renderAddDataButton()}
-            <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-            <AsyncContent
-                {...this.props.asyncState}
-                content={() => {
-                  // TODO: Remove when removing denormalization
-                  const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                    return property.id;
-                  });
-                  return (
-                    <PropertyTypeList
-                        entitySetId={this.props.entitySet.id}
-                        propertyTypeIds={propertyTypeIds}
-                        className="propertyTypeStyleDefault" />
-                  );
-                }} />
-            {this.renderAddDataForm()}
-            {this.renderPermissionsPanel()}
-            {this.renderSearchEntitySet()}
-            {this.renderDeleteEntitySet()}
-            {this.renderConfirmDeleteModal()}
-            {this.renderIntegrationDetailsLink()}
-            {this.renderIntegrationDetailsModal()}
-          </Page.Body>
-        </Page>
-      </DocumentTitle>
+      <div>
+        <Page.Header>
+          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
+        </Page.Header>
+        <Page.Body>
+          {this.renderAddDataButton()}
+          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+          <AsyncContent
+              {...this.props.asyncState}
+              content={() => {
+                // TODO: Remove when removing denormalization
+                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                  return property.id;
+                });
+                return (
+                  <PropertyTypeList
+                      entitySetId={this.props.entitySet.id}
+                      propertyTypeIds={propertyTypeIds}
+                      className="propertyTypeStyleDefault" />
+                );
+              }} />
+          {this.renderAddDataForm()}
+          {this.renderPermissionsPanel()}
+          {this.renderSearchEntitySet()}
+          {this.renderDeleteEntitySet()}
+          {this.renderConfirmDeleteModal()}
+          {this.renderIntegrationDetailsLink()}
+          {this.renderIntegrationDetailsModal()}
+        </Page.Body>
+      </div>
     );
   }
 }
@@ -484,14 +476,15 @@ function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
-
-  let entitySet;
+  const entitySet = entitySetDetail.get('entitySet').toJS();
+  console.log('entitySet:', entitySet);
+  // let entitySet;
   let entitySetPermissions;
   const allPropertyTypeIds = [];
   const ownedPropertyTypeIds = {};
   const reference = entitySetDetail.get('entitySetReference');
-  if (reference) {
-    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
+  if (Object.keys(entitySet).length > 0 && reference) {
+    // entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
     entitySetPermissions = getPermissions(permissions, [entitySet.id]);
     entitySet.entityType.properties.forEach((propertyType) => {
       allPropertyTypeIds.push(propertyType.id);
@@ -529,9 +522,6 @@ function mapDispatchToProps(dispatch, ownProps) {
           include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
         }]
       ));
-    },
-    setEntitySet: (entitySet) => {
-      dispatch(actionFactories.setEntitySet(entitySet));
     },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());

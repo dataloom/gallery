@@ -12,6 +12,7 @@ import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
 import AdvancedDataSearch from '../../containers/entitysetsearch/AdvancedDataSearch';
+import EntitySetDetailContainer from '../../containers/entitysetdetail/EntitySetDetailContainer';
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import DatasetsComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
@@ -83,7 +84,9 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.CATALOG} component={CatalogComponent} onEnter={requireAuth} />
       <Route path={`${PageConsts.SEARCH}/:entitySetId`} component={EntitySetDataSearch} onEnter={requireAuth} />
       <Route path={`${PageConsts.ADVANCED_SEARCH}/:entitySetId`} component={AdvancedDataSearch} onEnter={requireAuth} />
-      <Route path={'entitysets/:id'} component={EntitySetDetailComponent} onEnter={requireAuth} />
+      <Route path={'entitysets/:id'} component={EntitySetDetailContainer} onEnter={requireAuth}>
+        <IndexRoute component={EntitySetDetailComponent} />
+      </Route>
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={'entitySets/:id/toputilizers'} component={TopUtilizersContainer} onEnter={requireAuth}>
         <IndexRoute component={TopUtilizersFormContainer} />
