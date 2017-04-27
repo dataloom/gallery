@@ -8,6 +8,13 @@ const titleProperties = {
   ],
   'general.case': [
     'publicsafety.case'
+  ],
+  'sample.person2': [
+    'general.lastname',
+    'general.firstname'
+  ],
+  'sample.bookings2': [
+    'publicsafety.datebooked2'
   ]
 };
 
