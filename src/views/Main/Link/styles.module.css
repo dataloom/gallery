@@ -38,10 +38,17 @@
   text-align: center;
 }
 
-.createEntityTypeButton {
-  margin-top: 30px;
+.propertyTypesButton, .entitySetsButton, .linkButton {
   text-align: center;
   display: inline-block;
+}
+
+.propertyTypesButton {
+  margin-top: 10px;
+}
+
+.entitySetsButton, .linkButton {
+  margin-top: 30px;
 }
 
 .error {
@@ -70,10 +77,6 @@
     height: 30px;
     min-width: 200px;
     text-align: center;
-}
-
-.linkButton {
-  margin-top: 80px;
 }
 
 .inputBox {
