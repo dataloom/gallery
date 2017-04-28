@@ -3,7 +3,7 @@ import { Table, Column, Cell } from 'fixed-data-table';
 import { EntityDataModelApi } from 'loom-data';
 import EntityRow from './EntityRow';
 import TextCell from './TextCell';
-import EntityTypeTitles from '../../utils/EntityTypeTitles';
+import getTitle from '../../utils/EntityTypeTitles';
 import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
@@ -45,7 +45,7 @@ export default class EntitySetSearchResults extends React.Component {
       .then((entityType) => {
         const crumb = {
           id: selectedId,
-          title: EntityTypeTitles.getTitle(entityType, selectedRow, selectedPropertyTypes),
+          title: getTitle(entityType, selectedRow, selectedPropertyTypes),
           row: selectedRow,
           propertyTypes: selectedPropertyTypes,
           entitySet: selectedEntitySet

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { EntityDataModelApi } from 'loom-data';
 import UserRow from './UserRow';
 import EntityRow from './EntityRow';
-import EntityTypeTitles from '../../utils/EntityTypeTitles';
+import getTitle from '../../utils/EntityTypeTitles';
 
 export default class EntitySetUserSearchResults extends React.Component {
   static propTypes = {
@@ -41,7 +41,7 @@ export default class EntitySetUserSearchResults extends React.Component {
       .then((entityType) => {
         const crumb = {
           id: selectedId,
-          title: EntityTypeTitles.getTitle(entityType, selectedRow, selectedPropertyTypes),
+          title: getTitle(entityType, selectedRow, selectedPropertyTypes),
           row: selectedRow,
           propertyTypes: selectedPropertyTypes,
           entitySet: selectedEntitySet
