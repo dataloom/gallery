@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 import { Table, Column, Cell } from 'fixed-data-table';
+import { EntityDataModelApi } from 'loom-data';
 import EntityRow from './EntityRow';
 import TextCell from './TextCell';
+import getTitle from '../../utils/EntityTypeTitles';
 import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
@@ -24,8 +26,9 @@ export default class EntitySetSearchResults extends React.Component {
       results: props.results,
       selectedId: undefined,
       selectedRow: undefined,
-      selectedEntitySetId: undefined,
-      selectedPropertyTypes: undefined
+      selectedEntitySet: undefined,
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     };
   }
 
@@ -36,14 +39,40 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   onRowSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
-    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes });
+    EntityDataModelApi.getEntitySet(selectedEntitySetId)
+    .then((selectedEntitySet) => {
+      EntityDataModelApi.getEntityType(selectedEntitySet.entityTypeId)
+      .then((entityType) => {
+        const crumb = {
+          id: selectedId,
+          title: getTitle(entityType, selectedRow, selectedPropertyTypes),
+          row: selectedRow,
+          propertyTypes: selectedPropertyTypes,
+          entitySet: selectedEntitySet
+        };
+        const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+        this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
+      });
+    });
+  }
+
+  jumpToRow = (index) => {
+    const crumb = this.state.breadcrumbs[index];
+    const breadcrumbs = this.state.breadcrumbs.slice(0, index + 1);
+    this.setState({
+      selectedId: crumb.id,
+      selectedRow: crumb.row,
+      selectedEntitySet: crumb.entitySet,
+      selectedPropertyTypes: crumb.propertyTypes,
+      breadcrumbs
+    });
   }
 
   onRowDeselect = () => {
     this.setState({
       selectedId: undefined,
       selectedRow: undefined,
-      selectedEntitySetId: undefined,
+      selectedEntitySet: undefined,
       selectedPropertyTypes: undefined
     });
   }
@@ -96,11 +125,13 @@ export default class EntitySetSearchResults extends React.Component {
       <EntityRow
           row={row}
           entityId={this.state.selectedId}
-          entitySetId={this.state.selectedEntitySetId}
+          entitySet={this.state.selectedEntitySet}
           backFn={this.onRowDeselect}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.state.selectedPropertyTypes}
-          onClick={this.onRowSelect} />
+          onClick={this.onRowSelect}
+          jumpFn={this.jumpToRow}
+          breadcrumbs={this.state.breadcrumbs} />
     );
   }
 
