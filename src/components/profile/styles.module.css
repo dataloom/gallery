@@ -28,8 +28,52 @@
   padding: 20px;
 }
 
-.controlLabel, .formControl, .contentLabel {
+.controlLabel,
+.formControl,
+.contentLabel,
+.uneditableField {
   font-size: 16px;
+}
+
+.uneditableField {
+  height: 34px;
+  border-radius: 3px;
+  color: grey;
+  position: relative;
+  padding: 6px 12px;
+}
+
+.uneditableFieldContent {
+  position: absolute;
+}
+
+.secureField {
+  border: 1px dashed grey;
+  position: relative;
+}
+
+.dots {
+  margin: 1px;
+  float: left;
+  -webkit-text-security: disc;
+  letter-spacing: 3px;
+}
+
+.copyButton {
+  border: 1px solid #ccc;
+  width: 56px;
+  background: #eee;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  float: right;
+  color: #555;
+  margin-right: 6px;
+  margin-top: -1px;
+}
+
+.copyButton:hover {
+  cursor: pointer;
 }
 
 .controlLabel {
@@ -41,7 +85,7 @@
   padding: 0 10px;
 }
 
-.formControl {
+.formControl, .uneditableField {
   -webkit-box-flex: 2 0 0;
   -webkit-flex: 2 0 0;
   -ms-flex: 2 0 0;

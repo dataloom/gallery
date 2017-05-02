@@ -3,13 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
-import { getEdmObject } from '../../edm/EdmStorage';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
-import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
-import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
-import * as edmActionFactories from '../../edm/EdmActionFactories';
-import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
@@ -23,24 +18,17 @@ class AllPermissions extends React.Component {
     actions: React.PropTypes.shape({
       getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
     }).isRequired,
-    params: PropTypes.object.isRequired,
-    entitySet: PropTypes.object,
+    entitySet: PropTypes.object.isRequired,
     entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     entityRolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
-    loadEntitySet: PropTypes.func.isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
     isGettingAcls: PropTypes.bool.isRequired,
     isGettingPermissions: PropTypes.bool.isRequired
   }
 
-  componentDidMount() {
-    const id = this.props.params.id;
-    this.props.loadEntitySet(id);
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet === undefined && nextProps.entitySet !== undefined) {
+    if (Object.keys(this.props.entitySet).length === 0 && Object.keys(nextProps.entitySet).length > 0) {
       this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet);
     }
   }
@@ -65,7 +53,8 @@ class AllPermissions extends React.Component {
     const tables = [];
 
     propertyPermissions.keySeq().forEach((property) => {
-      if (propertyPermissions.hasIn([property, 'userPermissions']) && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+      if (propertyPermissions.hasIn([property, 'userPermissions'])
+        && propertyPermissions.hasIn([property, 'rolePermissions'])) {
         const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
         const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
 
@@ -108,22 +97,20 @@ class AllPermissions extends React.Component {
 
   render() {
     return (
-      <DocumentTitle title="All Permissions">
-        <Page>
-          <Page.Header>
-            <Page.Title>Permissions Summary</Page.Title>
-            <h3 className={styles.headerTitle}>{this.getEntitySetTitle()}</h3>
-          </Page.Header>
-          <Page.Body>
-            {this.renderContent()}
-            <div className={styles.asterix}>
-              <div>* Default permissions are effectively public permissions. They are granted to all authenticated Loom users.
-              For readability, only people with permissions that are different than the default are displayed in the tables above.
-              To change default permissions, go to 'Manage Permissions' on the entity set detail view.</div>
-            </div>
-          </Page.Body>
-        </Page>
-      </DocumentTitle>
+      <div>
+        <Page.Header>
+          <Page.Title>Permissions Summary</Page.Title>
+          <h3 className={styles.headerTitle}>{this.getEntitySetTitle()}</h3>
+        </Page.Header>
+        <Page.Body>
+          {this.renderContent()}
+          <div className={styles.asterix}>
+            <div>* Default permissions are effectively public permissions. They are granted to all authenticated Loom users.
+            For readability, only people with permissions that are different than the default are displayed in the tables above.
+            To change default permissions, go to 'Manage Permissions' on the entity set detail view.</div>
+          </div>
+        </Page.Body>
+      </div>
     );
   }
 }
@@ -131,16 +118,10 @@ class AllPermissions extends React.Component {
 // TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
 function mapStateToProps(state) {
   const entitySetDetail = state.get('entitySetDetail');
-  const normalizedData = state.get('normalizedData');
   const permissionsSummary = state.get('permissionsSummary');
-  let entitySet;
-  const reference = entitySetDetail.get('entitySetReference');
-  if (reference) {
-    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
-  }
 
   return {
-    entitySet,
+    entitySet: entitySetDetail.get('entitySet').toJS(),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions'),
     propertyPermissions: permissionsSummary.get('propertyPermissions'),
@@ -156,17 +137,6 @@ function mapDispatchToProps(dispatch) {
   };
 
   return {
-    loadEntitySet: (id) => {
-      dispatch(actionFactories.entitySetDetailRequest(id));
-      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      dispatch(edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      ));
-    },
     actions: bindActionCreators(actions, dispatch)
   };
 }

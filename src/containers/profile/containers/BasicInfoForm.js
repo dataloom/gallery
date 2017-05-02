@@ -15,19 +15,22 @@ class BasicInfoForm extends React.Component {
     const firstNameDetails = {
       key: 'firstName',
       value: firstName,
-      label: 'First name'
+      label: 'First name',
+      editable: true
     };
 
     const lastNameDetails = {
       key: 'lastName',
       value: lastName,
-      label: 'Last name'
+      label: 'Last name',
+      editable: true
     };
 
     const emailDetails = {
       key: 'email',
       value: email,
-      label: 'Email address'
+      label: 'Email address',
+      editable: true
     };
 
     return [firstNameDetails, lastNameDetails, emailDetails];

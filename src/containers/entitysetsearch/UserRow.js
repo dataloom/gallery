@@ -8,7 +8,11 @@ export default class UserRow extends React.Component {
 
   selectUser = () => {
     if (this.props.userPage) return;
-    this.props.selectUserFn(this.props.entityId, this.props.row, this.props.entitySetId, this.props.propertyTypes);
+    this.props.selectUserFn(
+      this.props.entityId,
+      this.props.row,
+      this.props.entitySetId,
+      this.props.propertyTypes);
   }
 
   renderBackButton = () => {
@@ -84,10 +88,12 @@ export default class UserRow extends React.Component {
       <EntityRow
           row={this.getRowWithoutUserProfile()}
           entityId={this.props.entityId}
-          entitySetId={this.props.entitySetId}
+          entitySet={this.props.entitySet}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.props.propertyTypes}
-          onClick={this.props.onClick} />
+          onClick={this.props.onClick}
+          jumpFn={this.props.jumpFn}
+          breadcrumbs={this.props.breadcrumbs} />
     );
   }
 
@@ -103,7 +109,8 @@ export default class UserRow extends React.Component {
 
   static propTypes = {
     row: PropTypes.object.isRequired,
-    entitySetId: PropTypes.string.isRequired,
+    entitySetId: PropTypes.string,
+    entitySet: PropTypes.object,
     propertyTypes: PropTypes.array.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
@@ -113,6 +120,8 @@ export default class UserRow extends React.Component {
     userPage: PropTypes.bool,
     formatValueFn: PropTypes.func,
     entityId: PropTypes.string,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    jumpFn: PropTypes.func,
+    breadcrumbs: PropTypes.array
   }
 }

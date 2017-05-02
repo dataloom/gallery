@@ -24,7 +24,8 @@ export default class RowNeighbors extends React.Component {
   static propTypes = {
     neighbors: PropTypes.array.isRequired,
     onClick: PropTypes.func.isRequired,
-    formatValueFn: PropTypes.func.isRequired
+    formatValueFn: PropTypes.func.isRequired,
+    entitySetTitle: PropTypes.string
   }
 
   constructor(props) {
@@ -118,14 +119,17 @@ export default class RowNeighbors extends React.Component {
 
 
   renderNeighborGroupTitle = (neighbor, neighborId) => {
+    const entitySetTitle = this.props.entitySetTitle || '';
     const neighborTitle = (neighborId === NO_NEIGHBOR)
       ? <div className={styles.neighborGroupTitleUnclickable}>?</div>
       : (<Link to={`/entitysets/${neighborId}`} className={styles.neighborGroupTitle}>
         {neighbor.neighborEntitySet.title}
       </Link>);
     return (neighbor.src)
-      ? <div className={styles.neighborContainer}>{`${neighbor.associationEntitySet.title} `}{neighborTitle}</div>
-      : <div className={styles.neighborContainer}>{neighborTitle}{` ${neighbor.associationEntitySet.title}`}</div>;
+      ? <div className={styles.neighborContainer}>
+        {entitySetTitle} {`${neighbor.associationEntitySet.title}`} {neighborTitle}</div>
+    : <div className={styles.neighborContainer}>
+      {neighborTitle} {`${neighbor.associationEntitySet.title}`} {entitySetTitle}</div>;
   }
 
   renderNeighborGroup = (neighborGroup, neighborId, shouldShowTitle) => {
