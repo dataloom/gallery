@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 
@@ -8,11 +9,11 @@ import styles from '../styles.module.css';
 
 const getChildren = (rowData) => {
   return rowData.map((row) => {
-    return <TopUtilizersSelectionRowContainer id={row.id} />;
+    return <TopUtilizersSelectionRowContainer key={row.id} />;
   });
 };
 
-const TopUtilizersForm = ({ handleClick, rowData, onSubmit, entitySetId }) => {
+const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
 
   return (
     <ContentContainer>

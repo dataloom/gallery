@@ -461,38 +461,36 @@ class EntitySetDetailComponent extends React.Component {
 
   render() {
     return (
-      <DocumentTitle title={this.getDocumentTitle()}>
-        <Page className={styles.page}>
-          <Page.Header>
-            <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
-          </Page.Header>
-          <Page.Body>
-            {this.renderAddDataButton()}
-            <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
-            <AsyncContent
-                {...this.props.asyncState}
-                content={() => {
-                  // TODO: Remove when removing denormalization
-                  const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                    return property.id;
-                  });
-                  return (
-                    <PropertyTypeList
-                        entitySetId={this.props.entitySet.id}
-                        propertyTypeIds={propertyTypeIds}
-                        className="propertyTypeStyleDefault" />
-                  );
-                }} />
-            {this.renderAddDataForm()}
-            {this.renderPermissionsPanel()}
-            {this.renderSearchEntitySet()}
-            {this.renderDeleteEntitySet()}
-            {this.renderConfirmDeleteModal()}
-            {this.renderIntegrationDetailsLink()}
-            {this.renderIntegrationDetailsModal()}
-          </Page.Body>
-        </Page>
-      </DocumentTitle>
+      <div>
+        <Page.Header>
+          <AsyncContent {...this.props.asyncState} content={this.renderHeaderContent} />
+        </Page.Header>
+        <Page.Body>
+          {this.renderAddDataButton()}
+          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+          <AsyncContent
+              {...this.props.asyncState}
+              content={() => {
+                // TODO: Remove when removing denormalization
+                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
+                  return property.id;
+                });
+                return (
+                  <PropertyTypeList
+                      entitySetId={this.props.entitySet.id}
+                      propertyTypeIds={propertyTypeIds}
+                      className="propertyTypeStyleDefault" />
+                );
+              }} />
+          {this.renderAddDataForm()}
+          {this.renderPermissionsPanel()}
+          {this.renderSearchEntitySet()}
+          {this.renderDeleteEntitySet()}
+          {this.renderConfirmDeleteModal()}
+          {this.renderIntegrationDetailsLink()}
+          {this.renderIntegrationDetailsModal()}
+        </Page.Body>
+      </div>
     );
   }
 }
@@ -502,14 +500,14 @@ function mapStateToProps(state :Map, ownProps :Object) {
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
-
-  let entitySet;
+  const entitySet = entitySetDetail.get('entitySet').toJS();
+  // let entitySet;
   let entitySetPermissions;
   const allPropertyTypeIds = [];
   const ownedPropertyTypeIds = {};
   const reference = entitySetDetail.get('entitySetReference');
-  if (reference) {
-    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
+  if (Object.keys(entitySet).length > 0 && reference) {
+    // entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
     entitySetPermissions = getPermissions(permissions, [entitySet.id]);
     entitySet.entityType.properties.forEach((propertyType) => {
       allPropertyTypeIds.push(propertyType.id);
@@ -521,6 +519,7 @@ function mapStateToProps(state :Map, ownProps :Object) {
   else {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
+
 
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
