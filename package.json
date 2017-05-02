@@ -50,6 +50,7 @@
     "react-avatar": "^2.3.0",
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-date-picker": "^4.0.0",
+    "react-copy-to-clipboard": "^5.0.0",
     "react-document-title": "^2.0.2",
     "react-dom": "^15.4.0",
     "react-dropdown": "^1.1.0",

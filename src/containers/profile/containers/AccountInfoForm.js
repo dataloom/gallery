@@ -19,7 +19,8 @@ class AccountInfoForm extends React.Component {
     const jwt = {
       key: 'jwtToken',
       value: jwtToken,
-      label: 'JWT Token'
+      label: 'JWT Token',
+      secure: true
     };
 
     return [accountId, jwt];
