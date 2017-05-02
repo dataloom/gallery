@@ -7,7 +7,7 @@ import { getEdmObject } from '../../edm/EdmStorage';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import DocumentTitle from 'react-document-title';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
-import * as actionFactories from '../../entitysetdetail/EntitySetDetailActionFactories';
+import * as actionFactory from '../../entitysetdetail/EntitySetDetailActionFactory';
 import * as edmActionFactories from '../../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
@@ -157,7 +157,7 @@ function mapDispatchToProps(dispatch) {
 
   return {
     loadEntitySet: (id) => {
-      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(actionFactory.entitySetDetailRequest(id));
       dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
       dispatch(edmActionFactories.filteredEdmRequest(
         [{

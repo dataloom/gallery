@@ -17,9 +17,9 @@ import {
   combineEpics
 } from 'redux-observable';
 
+import * as AsyncActionFactory from '../async/AsyncActionFactory';
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
-import * as AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
   STATE as ASYNC_STATUS

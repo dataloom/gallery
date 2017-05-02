@@ -124,27 +124,27 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) 
             observer.error(ERROR_STOMP_CLIENT_NOT_CONNECTED);
           }
           else {
-            const destination :string = `/topic/${action.topic}`;
-            const subId :string = store.getState().getIn(['neuron', 'destToSubIdMap', destination]);
+            const topic :string = action.topic;
+            const subId :string = store.getState().getIn(['neuron', 'topicToSubIdMap', topic]);
             const subscriptions :Map = store.getState().getIn(['neuron', 'subscriptions']);
             if (subscriptions.has(subId)) {
               return;
             }
-            const subscription = stompClient.subscribe(destination, (frame :Object) => {
+            const subscription = stompClient.subscribe(topic, (frame :Object) => {
               observer.next({
                 frame
               });
             });
             observer.next({
               subscription,
-              destination
+              topic
             });
           }
         })
         .mergeMap((message :any) => {
           if (message.subscription) {
             return Observable.of(
-              NeuronActionFactory.neuronSubscribeSuccess(message.subscription, message.destination)
+              NeuronActionFactory.neuronSubscribeSuccess(message.subscription, message.topic)
             );
           }
           return Observable.of(
@@ -169,9 +169,18 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) 
     });
 }
 
+function neuronUnsubscribeRequestEpic(action$ :Observable<Action>, store :Object) :Observable<Action> {
+
+  return action$
+    .ofType(NeuronActionTypes.NEURON_SUBSCRIBE_REQUEST)
+    .map(() => {
+      // TODO: add unsubscribe logic
+      return NEURON_NO_OP;
+    });
+}
+
 function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
 
-  // TODO: this doesn't do anything yet
   return action$
     .ofType(NeuronActionTypes.NEURON_ON_MESSAGE)
     .map((action :Action) => {
@@ -199,5 +208,6 @@ export default combineEpics(
   neuronConnectSuccessEpic,
   neuronConnectFailureEpic,
   neuronSubscribeRequestEpic,
+  neuronUnsubscribeRequestEpic,
   neuronOnMessageEpic
 );

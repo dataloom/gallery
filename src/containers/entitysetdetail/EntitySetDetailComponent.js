@@ -1,4 +1,7 @@
 import React, { PropTypes } from 'react';
+
+import Immutable from 'immutable';
+
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
@@ -9,7 +12,7 @@ import classnames from 'classnames';
 import { EntityDataModelApi } from 'loom-data';
 import IntegrationDetailsModal from './IntegrationDetailsModal';
 
-import * as actionFactories from './EntitySetDetailActionFactories';
+import * as actionFactory from './EntitySetDetailActionFactory';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
@@ -30,6 +33,8 @@ import InlineEditableControl from '../../components/controls/InlineEditableContr
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
 
+import * as NeuronActionFactory from '../../core/neuron/NeuronActionFactory';
+
 const TitleControlsContainer = styled(StyledFlexContainer)`
   justify-content: space-between;
 `;
@@ -38,14 +43,6 @@ const ControlsContainer = styled(StyledFlexContainerStacked)`
   align-items: flex-end;
   flex: 1 0 auto;
 `;
-
-const permissionOptions = {
-  Discover: 'Discover',
-  Link: 'Link',
-  Read: 'Read',
-  Write: 'Write',
-  Owner: 'Owner'
-};
 
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
@@ -62,7 +59,10 @@ class EntitySetDetailComponent extends React.Component {
     loadEntitySet: PropTypes.func.isRequired,
     updateMetadata: PropTypes.func.isRequired,
     resetPermissions: PropTypes.func.isRequired,
-    loadOwnedPropertyTypes: PropTypes.func.isRequired
+    loadOwnedPropertyTypes: PropTypes.func.isRequired,
+
+    entitySetId: PropTypes.string.isRequired,
+    subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -81,8 +81,16 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentDidMount() {
+
     this.props.resetPermissions();
     this.props.loadEntitySet();
+
+    this.props.subscribeToEntitySetAclKeyRequest([this.props.entitySetId]);
+  }
+
+  componentWillUnmount() {
+
+    this.props.unsubscribeFromEntitySetAclKeyRequest([this.props.entitySetId]);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -103,6 +111,21 @@ class EntitySetDetailComponent extends React.Component {
         this.props.loadOwnedPropertyTypes(nextProps.entitySet.id, nextProps.allPropertyTypeIds);
       }
     }
+  }
+
+  shouldComponentUpdate(nextProps :Object, nextState :Object) {
+
+    // TODO: profile this equality checking process
+
+    const thisPropsImmutable = Immutable.fromJS(this.props);
+    const nextPropsImmutable = Immutable.fromJS(nextProps);
+    const propsEqual = thisPropsImmutable.equals(nextPropsImmutable);
+
+    const thisStateImmutable = Immutable.fromJS(this.state);
+    const nextStateImmutable = Immutable.fromJS(nextState);
+    const statesEqual = thisStateImmutable.equals(nextStateImmutable);
+
+    return !propsEqual || !statesEqual;
   }
 
   setEditingPermissions = () => {
@@ -474,7 +497,8 @@ class EntitySetDetailComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state :Map, ownProps :Object) {
+
   const entitySetDetail = state.get('entitySetDetail');
   const normalizedData = state.get('normalizedData');
   const permissions = state.get('permissions');
@@ -500,6 +524,7 @@ function mapStateToProps(state) {
 
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
+    entitySetId: ownProps.params.id,
     entitySet,
     entitySetPermissions,
     allPropertyTypeIds,
@@ -512,7 +537,7 @@ function mapDispatchToProps(dispatch, ownProps) {
 
   return {
     loadEntitySet: () => {
-      dispatch(actionFactories.entitySetDetailRequest(id));
+      dispatch(actionFactory.entitySetDetailRequest(id));
       dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
       // TODO: Move filter creation in helper function in EdmApi
       dispatch(edmActionFactories.filteredEdmRequest(
@@ -537,6 +562,12 @@ function mapDispatchToProps(dispatch, ownProps) {
         };
       });
       dispatch(PermissionsActionFactory.checkAuthorizationRequest(accessChecks));
+    },
+    subscribeToEntitySetAclKeyRequest: (aclKey :UUID[]) => {
+      dispatch(NeuronActionFactory.subscribeToAclKeyRequest(aclKey));
+    },
+    unsubscribeFromEntitySetAclKeyRequest: (aclKey :UUID[]) => {
+      dispatch(NeuronActionFactory.unsubscribeFromAclKeyRequest(aclKey));
     }
   };
 }

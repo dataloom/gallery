@@ -6,7 +6,7 @@ import DocumentTitle from 'react-document-title';
 
 import Page from '../../../components/page/Page.js';
 import * as actionFactory from '../TopUtilizersActionFactory';
-import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactories';
+import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactory';
 
 class TopUtilizersPage extends React.Component {
   static propTypes = {

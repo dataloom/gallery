@@ -9,7 +9,7 @@ import * as NeuronActionTypes from './NeuronActionTypes';
 const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   isConnected: false,
   subscriptions: {},
-  destToSubIdMap: {}
+  topicToSubIdMap: {}
 });
 
 export default function neuronReducer(state :Map<*, *> = INITIAL_STATE, action :Object) :Map<*, *> {
@@ -28,14 +28,23 @@ export default function neuronReducer(state :Map<*, *> = INITIAL_STATE, action :
     case NeuronActionTypes.NEURON_SUBSCRIBE_SUCCESS: {
 
       const subscription :Map = Immutable.fromJS(action.subscription);
-      subscription.set('destination', action.destination);
+      subscription.set('topic', action.topic);
 
       return state
         .setIn(['subscriptions', action.subscription.id], subscription)
-        .setIn(['destToSubIdMap', action.destination], action.subscription.id);
+        .setIn(['topicToSubIdMap', action.topic], action.subscription.id);
+    }
+
+    case NeuronActionTypes.NEURON_UNSUBSCRIBE_SUCCESS: {
+
+      const subscriptionId :string = state.getIn(['topicToSubIdMap', action.topic]);
+      return state
+        .deleteIn(['topicToSubIdMap', action.topic])
+        .deleteIn(['subscriptions', subscriptionId]);
     }
 
     case NeuronActionTypes.NEURON_SUBSCRIBE_FAILURE:
+    case NeuronActionTypes.NEURON_UNSUBSCRIBE_FAILURE:
     case NeuronActionTypes.NEURON_ON_MESSAGE:
       return state;
 

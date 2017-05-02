@@ -34,7 +34,7 @@ export function initializeStompClient() :Object {
   }
 
   // TODO: get an actual URL depending on the enviroment
-  socketClient = new SockJS('http://localhost:8081/notifier');
+  socketClient = new SockJS('http://localhost:8081/neuron');
   stompClient = Stomp.over(socketClient);
 
   if (__PROD__) {

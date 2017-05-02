@@ -27,7 +27,9 @@ export function neuronConnectFailure(frame :?any) :Object {
   };
 }
 
-export function neuronSubscribeRequest(topic :string) :Object {
+export function neuronSubscribeRequest(destination :string) :Object {
+
+  const topic = `/topic/${destination}`;
 
   return {
     type: NeuronActionTypes.NEURON_SUBSCRIBE_REQUEST,
@@ -35,12 +37,12 @@ export function neuronSubscribeRequest(topic :string) :Object {
   };
 }
 
-export function neuronSubscribeSuccess(subscription :any, destination :string) :Object {
+export function neuronSubscribeSuccess(subscription :any, topic :string) :Object {
 
   return {
     type: NeuronActionTypes.NEURON_SUBSCRIBE_SUCCESS,
     subscription,
-    destination
+    topic
   };
 }
 
@@ -48,6 +50,31 @@ export function neuronSubscribeFailure() :Object {
 
   return {
     type: NeuronActionTypes.NEURON_SUBSCRIBE_FAILURE
+  };
+}
+
+export function neuronUnsubscribeRequest(destination :string) :Object {
+
+  const topic = `/topic/${destination}`;
+
+  return {
+    type: NeuronActionTypes.NEURON_UNSUBSCRIBE_REQUEST,
+    topic
+  };
+}
+
+export function neuronUnsubscribeSuccess(topic :string) :Object {
+
+  return {
+    type: NeuronActionTypes.NEURON_UNSUBSCRIBE_SUCCESS,
+    topic
+  };
+}
+
+export function neuronUnsubscribeFailure() :Object {
+
+  return {
+    type: NeuronActionTypes.NEURON_UNSUBSCRIBE_FAILURE
   };
 }
 
@@ -65,4 +92,24 @@ export function neuronSignal(signal :any) :Object {
     type: NeuronActionTypes.NEURON_SIGNAL,
     signal
   };
+}
+
+/*
+ *
+ *
+ *
+ */
+
+export function subscribeToAclKeyRequest(aclKey :UUID[]) :Object {
+
+  const aclKeyPath :string = aclKey.join('/');
+  const destination :string = `aclkey/${aclKeyPath}`;
+  return neuronSubscribeRequest(destination);
+}
+
+export function unsubscribeFromAclKeyRequest(aclKey :UUID[]) :Object {
+
+  const aclKeyPath :string = aclKey.join('/');
+  const destination :string = `aclkey/${aclKeyPath}`;
+  return neuronUnsubscribeRequest(destination);
 }
