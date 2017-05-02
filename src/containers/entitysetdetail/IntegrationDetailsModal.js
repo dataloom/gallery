@@ -21,7 +21,7 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   };
 
   const getEntityDetails = () => {
-    if (entitySet) {
+    if (Object.keys(entitySet).length > 0) {
       return (
         <div>
           <h5>Entity Details</h5>
@@ -47,7 +47,7 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   };
 
   const getPropertyDetails = () => {
-    if (entitySet) {
+    if (Object.keys(entitySet).length > 0) {
       return (
         <div>
           <h5>Property Details</h5>

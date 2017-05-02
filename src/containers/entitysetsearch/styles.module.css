@@ -192,6 +192,32 @@
   background-image: linear-gradient(#66686a, #535557);
 }
 
+/* breadcrumbs */
+
+.breadcrumbsContainer {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.crumbLink {
+  color: #337ab7;
+}
+
+.crumbLink:hover {
+  color: #23527c;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.crumbActive {
+  color: #777;
+}
+
+.crumbDivider {
+  color: #777;
+}
+
+/* globals */
 
 :global .public_fixedDataTableRow_even:hover .public_fixedDataTableCell_main {
   background-color: #eeeff0;

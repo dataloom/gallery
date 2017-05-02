@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Promise from 'bluebird';
 import DocumentTitle from 'react-document-title';
 import { connect } from 'react-redux';
@@ -9,8 +10,7 @@ import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
-    results: PropTypes.array.isRequired,
-    entitySet: PropTypes.object.isRequired,
+    results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
     entitySetId: PropTypes.string.isRequired
   }
@@ -40,10 +40,6 @@ class TopUtilizersResultsContainer extends React.Component {
       });
     });
   }
-
-  // getPropertyTypes = () => {
-  //   return this.state.entitySet ? this.props.entitySet.entityType.properties : [];
-  // }
 
   formatValue = (rawValue) => {
     if (rawValue instanceof Array) {
@@ -91,7 +87,6 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    entitySet: topUtilizers.get('entitySet'),
     entitySetId: topUtilizers.get('entitySetId')
   };
 }
