@@ -100,10 +100,12 @@ export function updateOrganizationTitleRequest(organization :Organization) :Obje
   };
 }
 
-export function updateOrganizationTitleSuccess() :Object {
+export function updateOrganizationTitleSuccess(orgId :UUID, title :string) :Object {
 
   return {
-    type: OrgActionTypes.UPDATE_ORG_TITLE_SUCCESS
+    type: OrgActionTypes.UPDATE_ORG_TITLE_SUCCESS,
+    orgId,
+    title
   };
 }
 

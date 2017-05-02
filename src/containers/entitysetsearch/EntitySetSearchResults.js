@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Table, Column, Cell } from 'fixed-data-table';
+import { EntityDataModelApi } from 'loom-data';
 import EntityRow from './EntityRow';
 import TextCell from './TextCell';
+import getTitle from '../../utils/EntityTypeTitles';
+import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
 const MAX_TABLE_HEIGHT = 500;
@@ -13,7 +16,8 @@ export default class EntitySetSearchResults extends React.Component {
     results: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    formatValueFn: PropTypes.func.isRequired
+    formatValueFn: PropTypes.func.isRequired,
+    showCount: PropTypes.boolean
   }
 
   constructor(props) {
@@ -22,8 +26,9 @@ export default class EntitySetSearchResults extends React.Component {
       results: props.results,
       selectedId: undefined,
       selectedRow: undefined,
-      selectedEntitySetId: undefined,
-      selectedPropertyTypes: undefined
+      selectedEntitySet: undefined,
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     };
   }
 
@@ -34,41 +39,83 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   onRowSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
-    this.setState({ selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes });
+    EntityDataModelApi.getEntitySet(selectedEntitySetId)
+    .then((selectedEntitySet) => {
+      EntityDataModelApi.getEntityType(selectedEntitySet.entityTypeId)
+      .then((entityType) => {
+        const crumb = {
+          id: selectedId,
+          title: getTitle(entityType, selectedRow, selectedPropertyTypes),
+          row: selectedRow,
+          propertyTypes: selectedPropertyTypes,
+          entitySet: selectedEntitySet
+        };
+        const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+        this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
+      });
+    });
+  }
+
+  jumpToRow = (index) => {
+    const crumb = this.state.breadcrumbs[index];
+    const breadcrumbs = this.state.breadcrumbs.slice(0, index + 1);
+    this.setState({
+      selectedId: crumb.id,
+      selectedRow: crumb.row,
+      selectedEntitySet: crumb.entitySet,
+      selectedPropertyTypes: crumb.propertyTypes,
+      breadcrumbs
+    });
   }
 
   onRowDeselect = () => {
     this.setState({
       selectedId: undefined,
       selectedRow: undefined,
-      selectedEntitySetId: undefined,
+      selectedEntitySet: undefined,
       selectedPropertyTypes: undefined
     });
   }
 
+  renderTextCell = (field, columnWidth) => {
+    return (
+      <TextCell
+          results={this.state.results}
+          field={field}
+          formatValueFn={this.props.formatValueFn}
+          onClick={this.onRowSelect}
+          width={columnWidth}
+          entitySetId={this.props.entitySetId}
+          propertyTypes={this.props.propertyTypes} />
+    );
+  }
+
   renderColumns = () => {
-    const columnWidth = (TABLE_WIDTH - 1) / this.props.propertyTypes.length;
-    return this.props.propertyTypes.map((propertyType) => {
+    const numColumns = (this.props.showCount) ? this.props.propertyTypes.length + 1 : this.props.propertyTypes.length;
+    const columnWidth = (TABLE_WIDTH - 1) / numColumns;
+    const columns = [];
+    if (this.props.showCount) {
+      columns.push(
+        <Column
+            key="count"
+            header={<Cell className={styles.countHeaderCell}>Count</Cell>}
+            cell={this.renderTextCell('count', columnWidth)}
+            width={columnWidth} />
+      );
+    }
+    this.props.propertyTypes.forEach((propertyType) => {
       const key = (Object.keys(this.state.results[0])[0].indexOf('.') > -1)
         ? `${propertyType.type.namespace}.${propertyType.type.name}`
         : propertyType.id;
-      return (
+      columns.push(
         <Column
             key={key}
             header={<Cell>{propertyType.title}</Cell>}
-            cell={
-              <TextCell
-                  results={this.state.results}
-                  field={key}
-                  formatValueFn={this.props.formatValueFn}
-                  onClick={this.onRowSelect}
-                  width={columnWidth}
-                  entitySetId={this.props.entitySetId}
-                  propertyTypes={this.props.propertyTypes} />
-            }
+            cell={this.renderTextCell(key, columnWidth)}
             width={columnWidth} />
       );
     });
+    return columns;
   }
 
   renderSingleRow = () => {
@@ -78,11 +125,13 @@ export default class EntitySetSearchResults extends React.Component {
       <EntityRow
           row={row}
           entityId={this.state.selectedId}
-          entitySetId={this.state.selectedEntitySetId}
+          entitySet={this.state.selectedEntitySet}
           backFn={this.onRowDeselect}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.state.selectedPropertyTypes}
-          onClick={this.onRowSelect} />
+          onClick={this.onRowSelect}
+          jumpFn={this.jumpToRow}
+          breadcrumbs={this.state.breadcrumbs} />
     );
   }
 
