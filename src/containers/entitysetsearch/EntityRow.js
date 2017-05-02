@@ -16,12 +16,14 @@ const HEADERS = ['Property', 'Data'];
 export default class EntityRow extends React.Component {
   static propTypes = {
     row: PropTypes.object.isRequired,
-    entitySetId: PropTypes.string.isRequired,
+    entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     backFn: PropTypes.func,
     formatValueFn: PropTypes.func,
     entityId: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    jumpFn: PropTypes.func,
+    breadcrumbs: PropTypes.array
   }
 
   constructor(props) {
@@ -33,7 +35,7 @@ export default class EntityRow extends React.Component {
   }
 
   componentDidMount() {
-    this.loadNeighbors(this.props.entityId, this.props.entitySetId);
+    this.loadNeighbors(this.props.entityId, this.props.entitySet.id);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -42,7 +44,7 @@ export default class EntityRow extends React.Component {
         propertyIds: Object.keys(nextProps.row),
         neighbors: []
       });
-      this.loadNeighbors(nextProps.entityId, nextProps.entitySetId);
+      this.loadNeighbors(nextProps.entityId, nextProps.entitySet.id);
     }
   }
 
@@ -50,6 +52,15 @@ export default class EntityRow extends React.Component {
     SearchApi.searchEntityNeighbors(entitySetId, entityId).then((neighbors) => {
       this.setState({ neighbors });
     });
+  }
+
+  renderEntitySetTitle = () => {
+    if (!this.props.entitySet) return null;
+    return (
+      <div style={{ fontWeight: 'bold', fontSize: '16px', margin: '10px 0' }}>
+        {this.props.entitySet.title}
+      </div>
+    );
   }
 
   renderTable = () => {
@@ -137,14 +148,41 @@ export default class EntityRow extends React.Component {
       <RowNeighbors
           neighbors={this.state.neighbors}
           onClick={this.props.onClick}
-          formatValueFn={this.props.formatValueFn} />
+          formatValueFn={this.props.formatValueFn}
+          entitySetTitle={this.props.entitySet.title} />
     );
+  }
+
+  renderBreadcrumbs = () => {
+    const breadcrumbs = [];
+    breadcrumbs.push(<span className={styles.crumbLink} onClick={this.props.backFn}>Results</span>);
+    for (let i = 0; i < this.props.breadcrumbs.length; i += 1) {
+      const crumb = this.props.breadcrumbs[i];
+      breadcrumbs.push(<span className={styles.crumbDivider}> / </span>);
+
+      if (i + 1 === this.props.breadcrumbs.length) {
+        breadcrumbs.push(<span className={styles.crumbActive}>{crumb.title}</span>);
+      }
+      else {
+        breadcrumbs.push(
+          <span
+              className={styles.crumbLink}
+              onClick={() => {
+                this.props.jumpFn(i);
+              }}>
+            {crumb.title}
+          </span>
+        );
+      }
+    }
+    return (<div className={styles.breadcrumbsContainer}>{breadcrumbs}</div>);
   }
 
   render() {
     return (
       <div>
-        {this.renderBackButton()}
+        {this.renderBreadcrumbs()}
+        {this.renderEntitySetTitle()}
         {this.renderTable()}
         {this.renderNeighbors()}
       </div>
