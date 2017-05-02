@@ -161,6 +161,11 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       return state.deleteIn(['organizations', orgId]);
     }
 
+    case OrgActionTypes.UPDATE_ORG_TITLE_SUCCESS: {
+
+      return state.setIn(['organizations', action.orgId, 'title'], action.title);
+    }
+
     case OrgActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {
 
       const orgId :string = action.orgId;

@@ -1,9 +1,10 @@
-.pageWrapper {
-  /*position: relative;*/
+a {
+  color: inherit;
+  font-size: 16px;
 }
 
-.formWrapper {
-
+a:hover {
+  color: inherit;
 }
 
 .rowsWrapper {
@@ -16,6 +17,9 @@
 }
 
 .rowWrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
   padding: 6px 0;
 }
@@ -38,15 +42,6 @@
 
 .addLink {
   margin-bottom: 40px;
-}
-
-a {
-  color: inherit;
-  font-size: 16px;
-}
-
-a:hover {
-  color: inherit;
 }
 
 .plusIcon {
