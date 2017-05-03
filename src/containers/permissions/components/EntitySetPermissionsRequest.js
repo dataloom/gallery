@@ -1,3 +1,8 @@
+import {
+  DataModels,
+  Types
+} from 'loom-data';
+
 import React, { PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -7,7 +12,6 @@ import FontAwesome from 'react-fontawesome';
 import classnames from 'classnames';
 
 import { EntitySetPropType } from '../../edm/EdmModel';
-import { StatusPropType, RequestStatus } from '../PermissionsStorage';
 import { createPrincipalReference } from '../../principals/PrincipalsStorage';
 import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
 import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
@@ -17,12 +21,15 @@ import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFacto
 import { createAsyncComponent } from '../../async/components/AsyncContentComponent';
 import styles from './permissions.module.css';
 
+const { RequestStatus } = DataModels;
+const { RequestStateTypes } = Types;
+
 class EntitySetPermissionsRequest extends React.Component {
   static propTypes = {
     principal: PropTypes.any,
     principalId: PropTypes.string.isRequired,
     entitySetId: PropTypes.string.isRequired,
-    statuses: PropTypes.arrayOf(StatusPropType).isRequired,
+    // statuses: PropTypes.arrayOf(RequestStatus).isRequired,
 
     // Saving
     updateStatuses: PropTypes.func.isRequired,
@@ -38,7 +45,7 @@ class EntitySetPermissionsRequest extends React.Component {
     super(props);
     const selectedProperties = new Set();
     props.statuses.forEach((status) => {
-      selectedProperties.add(status.aclKey[1]);
+      selectedProperties.add(status.request.aclKey[1]);
     });
     this.state = {
       open: false,
@@ -57,7 +64,7 @@ class EntitySetPermissionsRequest extends React.Component {
         const updatedStatus :Object[] = Immutable
           .fromJS(defaultStatus)
           .set('status', requestStatus)
-          .setIn(['aclKey', 1], propertyTypeId)
+          .setIn(['request', 'aclKey', 1], propertyTypeId)
           .toJS();
         updatedStatuses.push(updatedStatus);
       });
@@ -66,11 +73,11 @@ class EntitySetPermissionsRequest extends React.Component {
   };
 
   approve = () => {
-    this.sendUpdateRequests(RequestStatus.APPROVED);
+    this.sendUpdateRequests(RequestStateTypes.APPROVED);
   };
 
   deny = () => {
-    this.sendUpdateRequests(RequestStatus.DECLINED);
+    this.sendUpdateRequests(RequestStateTypes.DECLINED);
   };
 
   toggleCheckbox = (checked, propertyTypeId) => {
@@ -113,7 +120,7 @@ class EntitySetPermissionsRequest extends React.Component {
     const propertyTypes = entitySet.entityType.properties;
     const reasonList = new Set();
     statuses.forEach((status) => {
-      reasonList.add(status.reason);
+      reasonList.add(status.request.reason);
     });
 
     const reasons = [];
@@ -122,7 +129,7 @@ class EntitySetPermissionsRequest extends React.Component {
     });
 
     const statusByPropertyTypeId = groupBy(statuses, (status) => {
-      return status.aclKey[1];
+      return status.request.aclKey[1];
     });
     const content = propertyTypes.map((propertyType) => {
       return this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.id]);
