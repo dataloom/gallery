@@ -87,7 +87,7 @@ function downloadTopUtilizersEpic(action$, state) {
           AnalysisApi.getTopUtilizers(entitySetId, topUtilizersDetailsList, 100, FileConsts.CSV)
         )
         .mergeMap((topUtilizersData) => {
-          FileService.downloadFile(topUtilizersData, 'Top Utilizers', FileConsts.CSV, () => {
+          FileService.saveFile(topUtilizersData, 'Top Utilizers', FileConsts.CSV, () => {
             return Observable
               .of(
                 actionFactory.downloadTopUtilizersSuccess()

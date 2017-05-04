@@ -75,7 +75,7 @@ class TopUtilizersResultsContainer extends React.Component {
   renderDownloadButton = () => {
     return (
       <div className={styles.downloadButton}>
-        <Button bsStyle="primary" onClick={this.props.downloadResults}>Download</Button>
+        <Button bsStyle="primary" onClick={this.props.downloadResults}>Download as CSV</Button>
       </div>
     );
   }
