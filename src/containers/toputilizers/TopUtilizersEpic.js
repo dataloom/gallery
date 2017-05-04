@@ -7,6 +7,8 @@ import {
 
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
+import FileService from '../../utils/FileService';
+import FileConsts from '../../utils/Consts/FileConsts';
 
 function getAssociationsEpic(action$) {
   return action$
@@ -72,8 +74,35 @@ function submitQueryEpic(action$, state) {
     });
 }
 
+function downloadTopUtilizersEpic(action$, state) {
+  return action$
+    .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
+    .mergeMap((action) => {
+      const topUtilizersState = state.getState().get('topUtilizers');
+      const entitySetId = topUtilizersState.get('entitySetId');
+      const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
+      const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
+      return Observable
+        .from(
+          AnalysisApi.getTopUtilizers(entitySetId, topUtilizersDetailsList, 100, FileConsts.CSV)
+        )
+        .mergeMap((topUtilizersData) => {
+          FileService.downloadFile(topUtilizersData, 'Top Utilizers', FileConsts.CSV, () => {
+            return Observable
+              .of(
+                actionFactory.downloadTopUtilizersSuccess()
+              );
+          });
+        })
+        .catch((err) => {
+          actionFactory.downloadTopUtilizersFailure(err);
+        });
+    });
+}
+
 export default combineEpics(
   getAssociationsEpic,
   getAllEntityTypesEpic,
-  submitQueryEpic
+  submitQueryEpic,
+  downloadTopUtilizersEpic
 );

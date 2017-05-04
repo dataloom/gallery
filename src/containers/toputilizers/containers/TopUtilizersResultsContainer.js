@@ -2,17 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Promise from 'bluebird';
 import DocumentTitle from 'react-document-title';
+import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { EntityDataModelApi } from 'loom-data';
 
+import * as actionFactory from '../TopUtilizersActionFactory';
 import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
+import styles from '../styles.module.css';
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
-    entitySetId: PropTypes.string.isRequired
+    entitySetId: PropTypes.string.isRequired,
+    downloadResults: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -67,8 +72,21 @@ class TopUtilizersResultsContainer extends React.Component {
     );
   }
 
+  renderDownloadButton = () => {
+    return (
+      <div className={styles.downloadButton}>
+        <Button bsStyle="primary" onClick={this.props.downloadResults}>Download</Button>
+      </div>
+    );
+  }
+
   renderContent = () => {
-    return this.props.isGettingResults ? <LoadingSpinner /> : this.renderTable();
+    return this.props.isGettingResults ? <LoadingSpinner /> : (
+      <div>
+        {this.renderTable()}
+        {this.renderDownloadButton()}
+      </div>
+    );
   }
 
   render() {
@@ -91,4 +109,12 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(TopUtilizersResultsContainer);
+function mapDispatchToProps(dispatch) {
+  const actions = {
+    downloadResults: actionFactory.downloadTopUtilizersRequest
+  };
+
+  return bindActionCreators(actions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TopUtilizersResultsContainer);
