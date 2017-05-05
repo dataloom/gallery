@@ -1,7 +1,11 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { Table, Column, Cell } from 'fixed-data-table';
+import { Button, ButtonGroup } from 'react-bootstrap';
+
+import EventTimeline from './EventTimeline';
 import TextCell from './TextCell';
+import EdmConsts from '../../utils/Consts/EdmConsts';
 import styles from './styles.module.css';
 
 const NO_NEIGHBOR = 'NO_NEIGHBOR';
@@ -9,6 +13,11 @@ const NO_NEIGHBOR = 'NO_NEIGHBOR';
 const TABLE_WIDTH = 1000;
 const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
+
+const NEIGHBOR_VIEW = {
+  TABLE: 'TABLE',
+  TIMELINE: 'TIMELINE'
+};
 
 export default class RowNeighbors extends React.Component {
 
@@ -21,21 +30,20 @@ export default class RowNeighbors extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      organizedNeighbors: this.organizeNeighbors(props.neighbors)
-    };
+    this.state = Object.assign(this.organizeNeighbors(props.neighbors), {
+      neighborView: NEIGHBOR_VIEW.TABLE
+    });
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.neighbors !== nextProps.neighbors) {
-      this.setState({
-        organizedNeighbors: this.organizeNeighbors(nextProps.neighbors)
-      });
+      this.setState(this.organizeNeighbors(nextProps.neighbors));
     }
   }
 
   organizeNeighbors = (neighbors) => {
     const organizedNeighbors = {};
+    const dateProps = {};
     neighbors.forEach((neighbor) => {
       const associationEntitySetId = neighbor.associationEntitySet.id;
       const neighborEntitySetId = (neighbor.neighborEntitySet) ? neighbor.neighborEntitySet.id : NO_NEIGHBOR;
@@ -44,15 +52,39 @@ export default class RowNeighbors extends React.Component {
         organizedNeighbors[associationEntitySetId] = {
           [neighborEntitySetId]: [neighbor]
         };
+        neighbor.associationPropertyTypes.forEach((propertyType) => {
+          if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+            if (dateProps[associationEntitySetId]) {
+              dateProps[associationEntitySetId].push(propertyType.id);
+            }
+            else {
+              dateProps[associationEntitySetId] = [propertyType.id];
+            }
+          }
+        });
       }
       else if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
         organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
+
+        if (neighbor.neighborPropertyTypes) {
+          neighbor.neighborPropertyTypes.forEach((propertyType) => {
+            if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+              if (dateProps[neighborEntitySetId]) {
+                dateProps[neighborEntitySetId].push(propertyType.id);
+              }
+              else {
+                dateProps[neighborEntitySetId] = [propertyType.id];
+              }
+            }
+          });
+        }
       }
       else {
         organizedNeighbors[associationEntitySetId][neighborEntitySetId].push(neighbor);
       }
     });
-    return organizedNeighbors;
+    const selectedDateProps = dateProps;
+    return { organizedNeighbors, dateProps, selectedDateProps };
   }
 
   renderColumns = (renderingAssociation, rowValues, neighborGroup, noNeighbor) => {
@@ -100,7 +132,7 @@ export default class RowNeighbors extends React.Component {
       {neighborTitle} {`${neighbor.associationEntitySet.title}`} {entitySetTitle}</div>;
   }
 
-  renderNeighborGroup = (neighborGroup, neighborId) => {
+  renderNeighborGroup = (neighborGroup, neighborId, shouldShowTitle) => {
     const noNeighbor = neighborId === NO_NEIGHBOR;
     const tableHeight = ((neighborGroup.length + 1) * ROW_HEIGHT) + TABLE_OFFSET;
 
@@ -114,9 +146,10 @@ export default class RowNeighbors extends React.Component {
     const neighborColumns = (noNeighbor) ? null :
       this.renderColumns(false, rowValues, neighborGroup[0], noNeighbor);
 
+    const title = (shouldShowTitle) ? this.renderNeighborGroupTitle(neighborGroup[0], neighborId) : null;
     return (
       <div key={neighborId}>
-        {this.renderNeighborGroupTitle(neighborGroup[0], neighborId)}
+        {title}
         <Table
             rowsCount={neighborGroup.length}
             rowHeight={ROW_HEIGHT}
@@ -133,7 +166,7 @@ export default class RowNeighbors extends React.Component {
   renderAssociationGroup = (associationGroup) => {
     const neighborGroups = Object.keys(associationGroup).map((neighborId) => {
       const neighborGroup = associationGroup[neighborId];
-      return this.renderNeighborGroup(neighborGroup, neighborId);
+      return this.renderNeighborGroup(neighborGroup, neighborId, true);
     });
     const title = Object.values(associationGroup)[0][0].associationEntitySet.title;
     return (
@@ -159,10 +192,43 @@ export default class RowNeighbors extends React.Component {
     return neighbors;
   }
 
+  renderTimeline = () => {
+    return (
+      <EventTimeline
+          organizedNeighbors={this.state.organizedNeighbors}
+          dateProps={this.state.dateProps}
+          renderNeighborGroupFn={this.renderNeighborGroup} />
+    );
+  }
+
+  renderViewToolbar = () => {
+    return (
+      <div className={styles.viewToolbar}>
+        <ButtonGroup>
+          <Button
+              onClick={() => {
+                this.setState({ neighborView: NEIGHBOR_VIEW.TABLE });
+              }}
+              active={this.state.neighborView === NEIGHBOR_VIEW.TABLE}>
+            Table</Button>
+          <Button
+              onClick={() => {
+                this.setState({ neighborView: NEIGHBOR_VIEW.TIMELINE });
+              }}
+              active={this.state.neighborView === NEIGHBOR_VIEW.TIMELINE}>
+            Timeline</Button>
+        </ButtonGroup>
+      </div>
+    );
+  }
+
   render() {
+    const content = (this.state.neighborView === NEIGHBOR_VIEW.TABLE)
+      ? this.renderNeighbors() : this.renderTimeline();
     return (
       <div>
-        {this.renderNeighbors()}
+        {this.renderViewToolbar()}
+        {content}
       </div>
     );
   }
