@@ -12,7 +12,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   },
   // TODO: Move to object reference
   entitySetId: null,
-  entitySetReference: null
+  entitySetReference: null,
+  entitySet: {}
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -27,6 +28,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         entitySetId: action.id,
         entitySetReference: null
       });
+
+    case actionTypes.SET_ENTITY_SET:
+      return state.set('entitySet', Immutable.fromJS(action.data));
 
     // TODO: Handle error case
     case edmActionTypes.EDM_OBJECT_RESOLVE:

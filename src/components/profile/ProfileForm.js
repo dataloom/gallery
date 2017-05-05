@@ -2,7 +2,29 @@ import React, { PropTypes } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 import ProfileSectionWrapper from './ProfileSectionWrapper';
+import SecureFieldView from './SecureFieldView';
 import styles from './styles.module.css';
+
+const getValueField = (item) => {
+  const editable = item.editable || false;
+  const secure = item.secure || false;
+  if (editable) {
+    return (<FormControl
+        className={styles.formControl}
+        type="text"
+        value={item.value}
+        disabled />);
+  }
+  if (secure) {
+    return <SecureFieldView content={item} />;
+  }
+
+  return (
+    <div className={styles.uneditableField}>
+      <div className={styles.uneditableFieldContent}>{item.value}</div>
+    </div>
+  );
+};
 
 const getFormItems = (content) => {
   const formItems = content.map((item) => {
@@ -11,11 +33,7 @@ const getFormItems = (content) => {
         <ControlLabel className={styles.controlLabel}>
           {item.label}
         </ControlLabel>
-        <FormControl
-            className={styles.formControl}
-            type="text"
-            value={item.value}
-            disabled />
+        {getValueField(item)}
       </div>
     );
   });
