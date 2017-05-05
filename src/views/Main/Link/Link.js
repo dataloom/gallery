@@ -18,6 +18,7 @@ import DefineLinkedEntitySet from './DefineLinkedEntitySet';
 import Page from '../../../components/page/Page';
 import DeleteButton from '../../../components/buttons/DeleteButton';
 import AddButton from '../../../components/buttons/AddButton';
+import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import styles from './styles.module.css';
 
 export class Link extends React.Component {
@@ -45,7 +46,14 @@ export class Link extends React.Component {
       chooseLinks: false,
       chooseLinkedEntityType: false,
       entityTypeCreated: false,
-      linkingEntityTypeId: ''
+      linkingEntityTypeId: '',
+      isLinking: false,
+      defineLinkedEntityTypeError: false,
+      createLinkedEntitySetError: false,
+      titleValue: '',
+      namespaceValue: '',
+      nameValue: '',
+      descriptionValue: '',
     };
   }
 
@@ -72,52 +80,8 @@ export class Link extends React.Component {
     });
   }
 
-  renderExistingLinks = () => {
-    return this.state.links.map((link) => {
-      let entitySetsString = '';
-      if (link.entitySets.length >= 1) {
-        entitySetsString = link.entitySets[0].name;
-      }
-      if (link.entitySets.length > 1) {
-        for (let i = 1; i < link.entitySets.length; i += 1) {
-          entitySetsString = entitySetsString.concat(', ').concat(link.entitySets[i].name);
-        }
-      }
-      return (
-        <tr key={link.propertyType.id}>
-          <td>
-            <DeleteButton
-                onClick={() => {
-                  this.removeLink(link.propertyType.id);
-                }} />
-          </td>
-          <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
-          <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
-        </tr>
-      );
-    });
-  }
-
   addRow = () => {
     this.setState({ newRow: true });
-  }
-
-  removeLink = (propertyTypeId) => {
-    const links = this.state.links.filter((link) => {
-      return link.propertyType.id !== propertyTypeId;
-    });
-    this.setState({ links });
-  }
-
-  renderAddRowButton = () => {
-    if (this.state.newRow) return null;
-    return (
-      <tr>
-        <td>
-          <AddButton onClick={this.addRow} />
-        </td>
-      </tr>
-    );
   }
 
   onPropertyTypeLinkChange = (e) => {
@@ -182,6 +146,67 @@ export class Link extends React.Component {
     });
   }
 
+  renderNotEnoughEntitySetsError = () => {
+    if (this.state.needsOneEntitySetError) {
+      return <div className={styles.error}>You must specify an entity set to link on.</div>;
+    }
+    return null;
+  }
+
+  chooseLinks = () => {
+    this.setState({
+      chooseLinks: true,
+      newRow: true
+    });
+  }
+
+  renderChooseLinksButton = () => {
+    if (this.state.selectedEntitySetIds.length < 1 || this.state.chooseLinks) return null;
+    return (
+      <div className={styles.createEntityTypeButtonContainer}>
+        <Button
+            bsStyle="primary"
+            onClick={this.chooseLinks}
+            className={styles.entitySetsButton}>
+          {'Confirm linked entity sets'}</Button>
+      </div>
+    );
+  }
+
+
+  removeLink = (propertyTypeId) => {
+    const links = this.state.links.filter((link) => {
+      return link.propertyType.id !== propertyTypeId;
+    });
+    this.setState({ links });
+  }
+
+  renderExistingLinks = () => {
+    return this.state.links.map((link) => {
+      let entitySetsString = '';
+      if (link.entitySets.length >= 1) {
+        entitySetsString = link.entitySets[0].name;
+      }
+      if (link.entitySets.length > 1) {
+        for (let i = 1; i < link.entitySets.length; i += 1) {
+          entitySetsString = entitySetsString.concat(', ').concat(link.entitySets[i].name);
+        }
+      }
+      return (
+        <tr key={link.propertyType.id}>
+          <td>
+            <DeleteButton
+                onClick={() => {
+                  this.removeLink(link.propertyType.id);
+                }} />
+          </td>
+          <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
+          <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
+        </tr>
+      );
+    });
+  }
+
   renderNewLink = () => {
     if (this.state.newRow) {
       return (
@@ -211,30 +236,14 @@ export class Link extends React.Component {
     return null;
   }
 
-  renderNotEnoughEntitySetsError = () => {
-    if (this.state.needsOneEntitySetError) {
-      return <div className={styles.error}>You must specify an entity set to link on.</div>;
-    }
-    return null;
-  }
-
-  chooseLinks = () => {
-    this.setState({
-      chooseLinks: true,
-      newRow: true
-    });
-  }
-
-  renderChooseLinksButton = () => {
-    if (this.state.selectedEntitySetIds.length < 1 || this.state.chooseLinks) return null;
+  renderAddRowButton = () => {
+    if (this.state.newRow) return null;
     return (
-      <div className={styles.createEntityTypeButtonContainer}>
-        <Button
-            bsStyle="primary"
-            onClick={this.chooseLinks}
-            className={styles.createEntityTypeButton}>
-          {'Define the links to join the entity sets'}</Button>
-      </div>
+      <tr>
+        <td>
+          <AddButton onClick={this.addRow} />
+        </td>
+      </tr>
     );
   }
 
@@ -338,7 +347,7 @@ export class Link extends React.Component {
       return ({ label: entitySet.name, value: entitySet.id });
     });
     return (
-      <div>
+      <div className={styles.step1Wrapper}>
         <div className={styles.explanationText}>Step 1. Choose entity sets to link.</div>
         <Select
             value={this.state.selectedEntitySetIds}
@@ -359,8 +368,8 @@ export class Link extends React.Component {
           <Button
               bsStyle="primary"
               onClick={this.chooseLinkedEntityType}
-              className={styles.createEntityTypeButton}>
-            {'Define the linked entity type to create'}</Button>
+              className={styles.propertyTypesButton}>
+            {'Confirm property links'}</Button>
         </div>
       );
     }
@@ -369,10 +378,21 @@ export class Link extends React.Component {
 
   renderDefineLinkedEntityType = () => {
     if (this.state.chooseLinkedEntityType) {
+      const entityTypeFormData = {
+        namespace: this.state.namespaceValue,
+        name: this.state.nameValue,
+        title: this.state.titleValue,
+        description: this.state.descriptionValue
+      }
       return (
         <DefineLinkedEntityType
             availablePropertyTypes={this.state.availablePropertyTypes}
-            linkFn={this.createLinkingEntityType} />
+            linkFn={this.createLinkingEntityType}
+            formData={entityTypeFormData}
+            handleNamespaceChange={this.handleNamespaceChange}
+            handleNameChange={this.handleNameChange}
+            handleTitleChange={this.handleTitleChange}
+            handleDescriptionChange={this.handleDescriptionChange} />
       );
     }
     return null;
@@ -383,6 +403,7 @@ export class Link extends React.Component {
   }
 
   performLink = (name, title, description, contacts) => {
+    this.setState({ isLinking: true });
     const entitySet = {
       name,
       title,
@@ -402,12 +423,16 @@ export class Link extends React.Component {
     .then(() => {
       this.setState({
         linkingSuccess: true,
-        linkingError: false
+        linkingError: false,
+        isLinking: false,
+        createLinkedEntitySetError: false
       });
     }).catch(() => {
       this.setState({
         linkingError: true,
-        linkingSuccess: false
+        linkingSuccess: false,
+        isLinking: false,
+        createLinkedEntitySetError: true
       });
     });
   }
@@ -426,7 +451,8 @@ export class Link extends React.Component {
         this.setState({
           entityTypeCreated: true,
           deidentified,
-          linkingEntityTypeId
+          linkingEntityTypeId,
+          defineLinkedEntityTypeError: false
         });
       }
       else {
@@ -440,19 +466,10 @@ export class Link extends React.Component {
       this.setState({
         entityTypeCreated: false,
         linkingError: true,
-        linkingSuccess: false
+        linkingSuccess: false,
+        defineLinkedEntityTypeError: true
       });
     });
-  }
-
-  renderLinkingStatus = () => {
-    if (this.state.linkingSuccess) {
-      return <div className={styles.success}>Success! Your linked entity set is being created.</div>;
-    }
-    else if (this.state.linkingError) {
-      return <div className={styles.error}>Unable to link entity sets.</div>;
-    }
-    return null;
   }
 
   getDefaultContact = () => {
@@ -464,23 +481,58 @@ export class Link extends React.Component {
     return defaultContact;
   }
 
+  renderDefineLinkedEntityTypeError = () => {
+    return this.state.defineLinkedEntityTypeError
+        ? <div className={styles.error}>An error occurred. Check that the Namespace + Name combination is unique.</div>
+        : null;
+  }
+
+    handleNamespaceChange = (e) => {
+      this.setState({ namespaceValue: e.target.value });
+    }
+
+    handleNameChange = (e) => {
+      this.setState({ nameValue: e.target.value });
+    }
+
+    handleTitleChange = (e) => {
+      this.setState({ titleValue: e.target.value });
+    }
+
+    handleDescriptionChange = (e) => {
+      this.setState({ descriptionValue: e.target.value });
+    }
+
   render() {
     let content;
-    if (this.state.linkingSuccess) {
+    if (this.state.isLinking) {
+      content = <LoadingSpinner />;
+    }
+    else if (this.state.linkingSuccess) {
       content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
     }
     else if (this.state.entityTypeCreated) {
-      content = <DefineLinkedEntitySet linkFn={this.performLink} defaultContact={this.getDefaultContact()} />;
+      const formData = {
+        namespace: this.state.namespace,
+        name: this.state.nameValue,
+        title: this.state.titleValue,
+        description: this.state.descriptionValue
+      }
+      content = (<DefineLinkedEntitySet
+          linkFn={this.performLink}
+          createLinkedEntitySetError={this.state.createLinkedEntitySetError}
+          defaultContact={this.getDefaultContact()}
+          formData={formData} />);
     }
     else {
       content = (
-        <div>
+        <div className={styles.contentWrapper}>
           {this.renderChooseEntitySets()}
           {this.renderChooseLinksButton()}
           {this.renderChooseLinks()}
           {this.renderDefineLinkedEntityTypeButton()}
           {this.renderDefineLinkedEntityType()}
-          {this.renderLinkingStatus()}
+          {this.renderDefineLinkedEntityTypeError()}
         </div>
       );
     }
@@ -489,8 +541,11 @@ export class Link extends React.Component {
         <Page>
           <Page.Header>
             <Page.Title>Link</Page.Title>
+            <div className={styles.headerLink}><a href="https://help.thedataloom.com/guides/linking/" target="_blank">Click here for instructions</a></div>
           </Page.Header>
-          <Page.Body>{content}</Page.Body>
+          <Page.Body>
+            {content}
+          </Page.Body>
         </Page>
       </DocumentTitle>
     );
