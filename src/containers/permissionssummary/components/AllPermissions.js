@@ -57,6 +57,7 @@ class AllPermissions extends React.Component {
         && propertyPermissions.hasIn([property, 'rolePermissions'])) {
         const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
         const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
+        console.log('userpermissions,', userPermissions.toJS());
 
         const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
         const roleTable = (<RolePermissionsTable
@@ -131,7 +132,7 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch) {
   const actions = {
     getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
   };
