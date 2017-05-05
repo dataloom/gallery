@@ -11,9 +11,9 @@ export default class DefineLinkedEntitySet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      title: '',
-      description: '',
+      name: props.formData.name,
+      title: props.formData.title,
+      description: props.formData.description,
       contact: props.defaultContact,
       noNameOrTitleError: false
     };
@@ -35,58 +35,61 @@ export default class DefineLinkedEntitySet extends React.Component {
     this.setState({ contact: e.target.value });
   }
 
-  renderNameField = () => {
+  renderInputFields = () => {
     return (
-      <div className={styles.inputRowSet}>
-        <label className={styles.inputLabel} htmlFor="name">Name:</label>
-        <input
-            id="name"
-            type="text"
-            value={this.state.name}
-            onChange={this.handleNameChange}
-            className={styles.longInputBox} />
-      </div>
-    );
-  }
-
-  renderTitleField = () => {
-    return (
-      <div className={styles.inputRowSet}>
-        <label className={styles.inputLabel} htmlFor="title">Title:</label>
-        <input
-            id="title"
-            type="text"
-            value={this.state.title}
-            onChange={this.handleTitleChange}
-            className={styles.longInputBox} />
-      </div>
-    );
-  }
-
-  renderDescriptionField = () => {
-    return (
-      <div className={styles.inputRowSet}>
-        <label className={styles.inputLabel} htmlFor="description">Description:</label>
-        <input
-            id="description"
-            type="text"
-            value={this.state.description}
-            onChange={this.handleDescriptionChange}
-            className={styles.longInputBox} />
-      </div>
-    );
-  }
-
-  renderContactField = () => {
-    return (
-      <div className={styles.inputRowSet}>
-        <label className={styles.inputLabel} htmlFor="contact">Contact:</label>
-        <input
-            id="contact"
-            type="text"
-            value={this.state.contact}
-            onChange={this.handleContactChange}
-            className={styles.longInputBox} />
+      <div className={styles.inputsWrapper_4}>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label htmlFor="name">Name:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="name"
+                type="text"
+                value={this.state.name}
+                onChange={this.handleNameChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="title">Title:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="title"
+                type="text"
+                value={this.state.title}
+                onChange={this.handleTitleChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="description">Description:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="description"
+                type="text"
+                value={this.state.description}
+                onChange={this.handleDescriptionChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="contact">Contact:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="contact"
+                type="text"
+                value={this.state.contact}
+                onChange={this.handleContactChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -103,7 +106,7 @@ export default class DefineLinkedEntitySet extends React.Component {
   }
 
   renderLinkButton = () => {
-    return (<Button bsStyle="primary" onClick={this.link}>Link</Button>);
+    return (<Button bsStyle="primary" onClick={this.link}>Create Entity Set</Button>);
   }
 
   renderError = () => {
@@ -113,20 +116,20 @@ export default class DefineLinkedEntitySet extends React.Component {
     return null;
   }
 
+  renderCreateLinkedEntitySetError = () => {
+    return this.props.createLinkedEntitySetError
+        ? <div className={styles.error}>An error occurred. Check that the name is unique to this entity set.</div>
+        : null;
+  }
+
   render() {
     return (
       <div className={styles.linkedDefinitionContainer}>
         <div className={styles.explanationText}>Step 4. Define your linked entity set.</div>
-        {this.renderNameField()}
-        <br />
-        {this.renderTitleField()}
-        <br />
-        {this.renderDescriptionField()}
-        <br />
-        {this.renderContactField()}
-        <br />
+        {this.renderInputFields()}
         {this.renderLinkButton()}
         {this.renderError()}
+        {this.renderCreateLinkedEntitySetError()}
       </div>
     );
   }
