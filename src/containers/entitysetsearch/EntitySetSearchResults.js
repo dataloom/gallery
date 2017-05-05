@@ -107,13 +107,17 @@ export default class EntitySetSearchResults extends React.Component {
       const key = (Object.keys(this.state.results[0])[0].indexOf('.') > -1)
         ? `${propertyType.type.namespace}.${propertyType.type.name}`
         : propertyType.id;
-      columns.push(
-        <Column
-            key={key}
-            header={<Cell>{propertyType.title}</Cell>}
-            cell={this.renderTextCell(key, columnWidth)}
-            width={columnWidth} />
-      );
+      if (propertyType.type.name !== 'mugshot'
+        && propertyType.type.name !== 'scars'
+        && propertyType.type.name !== 'tattoos') {
+        columns.push(
+          <Column
+              key={key}
+              header={<Cell>{propertyType.title}</Cell>}
+              cell={this.renderTextCell(key, columnWidth)}
+              width={columnWidth} />
+        );
+      }
     });
     return columns;
   }

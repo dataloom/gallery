@@ -90,6 +90,20 @@
   max-width: 100px;
 }
 
+.imgDataContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+.imgData {
+  max-height: 100px;
+  max-width: 100px;
+  margin: 10px;
+}
+
 .backButton {
   margin-bottom: 15px;
 }

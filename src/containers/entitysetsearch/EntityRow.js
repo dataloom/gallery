@@ -123,13 +123,25 @@ export default class EntityRow extends React.Component {
     return headers;
   }
 
-  getCellData() {
-    const { row } = this.props;
-    const { propertyIds } = this.state;
+  getImgCellData(propertyId) {
+    const images = this.props.row[propertyId].map((imgSrc) => {
+      return <img src={imgSrc} className={styles.imgData} role="presentation" />;
+    });
+    return <div className={styles.imgDataContainer}>{images}</div>;
+  }
 
-    return propertyIds.map((id) => {
-      const formatValue = this.props.formatValueFn([row][0][id]);
-      return formatValue;
+  getTextCellData(propertyId) {
+    return this.props.formatValueFn(this.props.row[propertyId]);
+  }
+
+  getCellData() {
+    return this.state.propertyIds.map((id) => {
+      const propertyName = this.props.propertyTypes.filter((propertyType) => {
+        const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+        return (id === propertyType.id || id === fqn);
+      })[0].type.name;
+      return (propertyName === 'mugshot' || propertyName === 'scars' || propertyName === 'tattoos')
+        ? this.getImgCellData(id) : this.getTextCellData(id);
     });
   }
 

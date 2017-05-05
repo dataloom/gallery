@@ -255,10 +255,12 @@ export default class EntitySetDataSearch extends React.Component {
       let firstName;
       let lastName;
       let dob;
+      let mugshot;
       this.state.propertyTypes.forEach((propertyType) => {
         if (propertyType.type.name.toLowerCase() === 'firstname') firstName = propertyType;
         else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = propertyType;
         else if (propertyType.type.name.toLowerCase() === 'dob') dob = propertyType;
+        else if (propertyType.type.name.toLowerCase() === 'mugshot') mugshot = propertyType;
       });
       let view = this.state.searchView;
       if (!view.length) {
@@ -279,6 +281,7 @@ export default class EntitySetDataSearch extends React.Component {
             firstName={firstName}
             lastName={lastName}
             dob={dob}
+            mugshot={mugshot}
             hidePaginationFn={this.hidePagination}
             formatValueFn={this.formatValue} />
       );

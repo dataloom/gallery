@@ -41,6 +41,16 @@ export default class UserRow extends React.Component {
       </div>);
   }
 
+  renderMugshot = () => {
+    let imgSrc = userProfileImg;
+    if (this.props.mugshot) {
+      const id = this.props.mugshot.id;
+      const fqn = `${this.props.mugshot.type.namespace}.${this.props.mugshot.type.name}`;
+      imgSrc = this.props.row[id][0] || this.props.row[fqn][0] || userProfileImg;
+    }
+    return <img src={imgSrc} className={styles.userIcon} role="presentation" />;
+  }
+
   getFormattedVal = (prop) => {
     const id = prop.id;
     const fqn = `${prop.type.namespace}.${prop.type.name}`;
@@ -68,7 +78,7 @@ export default class UserRow extends React.Component {
   renderUserProfile = () => {
     return (
       <div className={this.getClassName()} onClick={this.selectUser}>
-        <img src={userProfileImg} className={styles.userIcon} role="presentation" />
+        {this.renderMugshot()}
         <div className={styles.userProfileDetails}>
           <div className={styles.userProfileDetailItem}><b>First Name:</b> {this.getFirstNameVal()}</div>
           <div className={styles.userProfileDetailItem}><b>Last Name:</b> {this.getLastNameVal()}</div>
@@ -115,6 +125,7 @@ export default class UserRow extends React.Component {
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
     dob: PropTypes.object,
+    mugshot: PropTypes.object,
     selectUserFn: PropTypes.func,
     backFn: PropTypes.func,
     userPage: PropTypes.bool,

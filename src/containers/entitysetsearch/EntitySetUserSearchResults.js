@@ -12,6 +12,7 @@ export default class EntitySetUserSearchResults extends React.Component {
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
     dob: PropTypes.object,
+    mugshot: PropTypes.object,
     hidePaginationFn: PropTypes.func,
     formatValueFn: PropTypes.func
   }
@@ -93,6 +94,7 @@ export default class EntitySetUserSearchResults extends React.Component {
               firstName={this.props.firstName}
               lastName={this.props.lastName}
               dob={this.props.dob}
+              mugshot={this.props.mugshot}
               selectUserFn={this.onUserSelect}
               formatValueFn={this.props.formatValueFn}
               entityId={row.id} />
@@ -114,6 +116,7 @@ export default class EntitySetUserSearchResults extends React.Component {
           firstName={this.props.firstName}
           lastName={this.props.lastName}
           dob={this.props.dob}
+          mugshot={this.props.mugshot}
           backFn={this.onUserDeselect}
           userPage
           formatValueFn={this.props.formatValueFn}
