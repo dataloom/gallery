@@ -24,15 +24,12 @@ export default class DefineLinkedEntityType extends React.Component {
     const selectedPropertyTypes = Object.keys(props.availablePropertyTypes).filter((id) => {
       return (!props.availablePropertyTypes[id].piiField);
     });
+
     super(props);
     this.state = {
       availablePropertyTypes: props.availablePropertyTypes,
       selectedPropertyTypes,
       primaryKey: [],
-      titleValue: '',
-      namespaceValue: '',
-      nameValue: '',
-      descriptionValue: '',
       addPropValue: '',
       noPrimaryKeyError: false,
       noTypeOrTitleError: false,
@@ -137,13 +134,16 @@ export default class DefineLinkedEntityType extends React.Component {
     const {
       selectedPropertyTypes,
       primaryKey,
-      titleValue,
-      descriptionValue,
-      nameValue,
-      namespaceValue,
       deidentify
     } = this.state;
-    if (titleValue.length < 1 || namespaceValue.length < 1 || nameValue.length < 1) {
+    const {
+      title,
+      description,
+      name,
+      namespace
+    } = this.props.formData;
+
+    if (title.length < 1 || namespace.length < 1 || name.length < 1) {
       this.setState({ noTypeOrTitleError: true });
     }
     else if (primaryKey.length <= 0) {
@@ -152,11 +152,11 @@ export default class DefineLinkedEntityType extends React.Component {
     else {
       const entityType = {
         type: {
-          namespace: namespaceValue,
-          name: nameValue
+          namespace,
+          name
         },
-        title: titleValue,
-        description: descriptionValue,
+        title,
+        description,
         key: primaryKey,
         properties: selectedPropertyTypes,
         category: SecurableTypes.LinkingEntityType,
@@ -168,78 +168,6 @@ export default class DefineLinkedEntityType extends React.Component {
         noPrimaryKeyError: false
       });
     }
-  }
-
-  handleNamespaceChange = (e) => {
-    this.setState({ namespaceValue: e.target.value });
-  }
-
-  renderNamespaceField = () => {
-    return (
-      <span className={styles.inputRow}>
-        <label htmlFor="namespace">Namespace:</label>
-        <input
-            id="namespace"
-            type="text"
-            value={this.state.namespaceValue}
-            onChange={this.handleNamespaceChange}
-            className={styles.inputBox} />
-      </span>
-    );
-  }
-
-  handleNameChange = (e) => {
-    this.setState({ nameValue: e.target.value });
-  }
-
-  renderNameField = () => {
-    return (
-      <span className={styles.inputRow}>
-        <label className={styles.inputBox} htmlFor="name">Name:</label>
-        <input
-            id="name"
-            type="text"
-            value={this.state.nameValue}
-            onChange={this.handleNameChange}
-            className={styles.inputBox} />
-      </span>
-    );
-  }
-
-  handleTitleChange = (e) => {
-    this.setState({ titleValue: e.target.value });
-  }
-
-  renderTitleField = () => {
-    return (
-      <div className={styles.inputRow}>
-        <label htmlFor="title">Title:</label>
-        <input
-            id="title"
-            type="text"
-            value={this.state.titleValue}
-            onChange={this.handleTitleChange}
-            className={styles.longInputBox} />
-      </div>
-    );
-  }
-
-  handleDescriptionChange = (e) => {
-    this.setState({ descriptionValue: e.target.value });
-  }
-
-  renderDescriptionField = () => {
-    return (
-      <div className={styles.inputRow}>
-        <label htmlFor="description">Description:</label>
-        <input
-            id="description"
-            type="text"
-            value={this.state.descriptionValue}
-            onChange={this.handleDescriptionChange}
-            className={styles.longInputBox} />
-      </div>
-    );
   }
 
   handleDeidentifyChange = (e) => {
@@ -261,26 +189,72 @@ export default class DefineLinkedEntityType extends React.Component {
 
   renderDeidentify = () => {
     return (
-      <div className={styles.inputRow}>
+      <div className={styles.inputRowCheckbox}>
         <label className={styles.inputLabel} htmlFor="deidentify">Deidentify: </label>
         <input
             id="deidentify"
             type="checkbox"
             defaultChecked={this.state.deidentify}
-            onChange={this.handleDeidentifyChange}
-            className={styles.inputBox} />
+            onChange={this.handleDeidentifyChange} />
       </div>
     );
   }
 
   renderInputFields = () => {
     return (
-      <div>
-        {this.renderNamespaceField()}
-        {this.renderNameField()}
-        {this.renderTitleField()}
-        {this.renderDescriptionField()}
-        {this.renderDeidentify()}
+      <div className={styles.inputsWrapper_3}>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label htmlFor="namespace">Namespace:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="namespace"
+                type="text"
+                value={this.props.formData.namespaceValue}
+                onChange={this.props.handleNamespaceChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="name">Name:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="name"
+                type="text"
+                value={this.props.formData.nameValue}
+                onChange={this.props.handleNameChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="title">Title:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="title"
+                type="text"
+                value={this.props.formData.titleValue}
+                onChange={this.props.handleTitleChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
+        <div className={styles.inputRow}>
+          <div className={styles.col_1}>
+            <label className={styles.inputBox} htmlFor="description">Description:</label>
+          </div>
+          <div className={styles.col_4}>
+            <input
+                id="description"
+                type="text"
+                value={this.props.formData.descriptionValue}
+                onChange={this.props.handleDescriptionChange}
+                className={styles.inputBox} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -316,10 +290,11 @@ export default class DefineLinkedEntityType extends React.Component {
     return (
       <div className={styles.linkedDefinitionContainer}>
         <div className={styles.explanationText}>
-          Step 3. Define the linked entity type for returning your results.</div>
-        <br />
+          Step 3. Define the entity type for storing your linked results.
+        </div>
         <div className={styles.entityTypeTableWrapper}>
           {this.renderInputFields()}
+          {this.renderDeidentify()}
           <table>
             <tbody>
               <tr>
@@ -331,10 +306,13 @@ export default class DefineLinkedEntityType extends React.Component {
               {this.renderAddPropertyType()}
             </tbody>
           </table>
+          <div className={styles.note}>
+            Note: Make sure the primary key or combination of primary keys will be unique.
+          </div>
           <Button
               bsStyle="primary"
               onClick={this.link}
-              className={styles.linkButton}>Create linked entity type</Button>
+              className={styles.linkButton}>Confirm linked entity type</Button>
           {this.renderError()}
         </div>
       </div>
