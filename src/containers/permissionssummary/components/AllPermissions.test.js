@@ -21,31 +21,6 @@ describe('PermissionsSummary Component', function() {
       const entitySet = {};
     });
 
-    describe('loadEntitySet', function() {
-      it('should dispatch entitySetDetailRequest', function() {
-        mappedProps.loadEntitySet(id);
-
-        expect(dispatch).to.have.been.calledWith(ESDCActionFactory.entitySetDetailRequest(id));
-      });
-
-      it('should dispatch getEntitySetsAuthorizations', function() {
-        mappedProps.loadEntitySet(id);
-
-        expect(dispatch).to.have.been.calledWith(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      });
-
-      it('should dispatch filteredEdmRequest', function() {
-        const data = [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }];
-        mappedProps.loadEntitySet(id);
-
-        expect(dispatch).to.have.been.calledWith(EDMActionFactory.filteredEdmRequest(data));
-      });
-    });
-
     describe('getAllUsersAndRolesRequest', function() {
 
       it('should dispatch getAllUsersAndRolesRequest', function() {
