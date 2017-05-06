@@ -171,7 +171,8 @@
 }
 
 .titleLink, .titleLink:hover {
-  color: inherit
+  color: inherit;
+  font-size: inherit;
 }
 
 .spacerSmall {
