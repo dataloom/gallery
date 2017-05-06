@@ -28,7 +28,7 @@ export default class EntityRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      propertyIds: Object.keys(props.row),
+      propertyFqns: Object.keys(props.row),
       neighbors: []
     };
   }
@@ -40,7 +40,7 @@ export default class EntityRow extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.entityId !== this.props.entityId) {
       this.setState({
-        propertyIds: Object.keys(nextProps.row),
+        propertyFqns: Object.keys(nextProps.row),
         neighbors: []
       });
       this.loadNeighbors(nextProps.entityId, nextProps.entitySet.id);
@@ -63,10 +63,10 @@ export default class EntityRow extends React.Component {
   }
 
   renderTable = () => {
-    const tableHeight = ((this.state.propertyIds.length + 1) * ROW_HEIGHT) + TABLE_OFFSET;
+    const tableHeight = ((this.state.propertyFqns.length + 1) * ROW_HEIGHT) + TABLE_OFFSET;
     return (
       <Table
-          rowsCount={this.state.propertyIds.length}
+          rowsCount={this.state.propertyFqns.length}
           rowHeight={ROW_HEIGHT}
           headerHeight={ROW_HEIGHT}
           width={TABLE_WIDTH}
@@ -109,11 +109,11 @@ export default class EntityRow extends React.Component {
 
   getPropertyTitles() {
     const { propertyTypes } = this.props;
-    const { propertyIds } = this.state;
-    const headers = propertyIds.map((id) => {
+    const { propertyFqns } = this.state;
+    const headers = propertyFqns.map((headerFqn) => {
       const property = propertyTypes.filter((propertyType) => {
-        const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-        return (propertyType.id === id || fqn === id);
+        const propertyFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+        return propertyFqn === headerFqn;
       });
 
       return property[0].title;
@@ -142,7 +142,7 @@ export default class EntityRow extends React.Component {
   }
 
   getCellData() {
-    return this.state.propertyIds.map((fqn) => {
+    return this.state.propertyFqns.map((fqn) => {
       const propertyName = this.props.propertyTypes.filter((propertyType) => {
         return (fqn === `${propertyType.type.namespace}.${propertyType.type.name}`);
       })[0].type.name;
