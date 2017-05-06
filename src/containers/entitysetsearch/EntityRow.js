@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
 import { SearchApi } from 'loom-data';
 import PropertyTextCell from './PropertyTextCell';
@@ -7,7 +6,7 @@ import RowNeighbors from './RowNeighbors';
 import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
-const ROW_HEIGHT = 50;
+const ROW_HEIGHT = 60;
 const TABLE_OFFSET = 2;
 const PROPERTY_COLUMN_WIDTH = 200;
 const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
@@ -123,36 +122,34 @@ export default class EntityRow extends React.Component {
     return headers;
   }
 
-  getImgCellData(propertyId) {
-    const images = this.props.row[propertyId].map((imgSrc) => {
-      return <img src={imgSrc} className={styles.imgData} role="presentation" />;
+  getImgCellData(propertyFqn) {
+    let counter = 0;
+    const images = this.props.row[propertyFqn].map((imgSrc) => {
+      counter += 1;
+      return (
+        <img
+            key={`${propertyFqn}-${counter}`}
+            src={imgSrc}
+            className={styles.imgData}
+            role="presentation" />
+      );
     });
     return <div className={styles.imgDataContainer}>{images}</div>;
   }
 
-  getTextCellData(propertyId) {
-    return this.props.formatValueFn(this.props.row[propertyId]);
+  getTextCellData(propertyFqn) {
+    return this.props.formatValueFn(this.props.row[propertyFqn]);
   }
 
   getCellData() {
-    return this.state.propertyIds.map((id) => {
+    return this.state.propertyIds.map((fqn) => {
       const propertyName = this.props.propertyTypes.filter((propertyType) => {
-        const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-        return (id === propertyType.id || id === fqn);
+        return (fqn === `${propertyType.type.namespace}.${propertyType.type.name}`);
       })[0].type.name;
-      return (propertyName === 'mugshot' || propertyName === 'scars' || propertyName === 'tattoos')
-        ? this.getImgCellData(id) : this.getTextCellData(id);
+      const cell = (propertyName === 'mugshot' || propertyName === 'scars' || propertyName === 'tattoos')
+        ? this.getImgCellData(fqn) : this.getTextCellData(fqn);
+      return <div key={fqn}>{cell}</div>;
     });
-  }
-
-  renderBackButton = () => {
-    if (!this.props.backFn) return null;
-    return (
-      <div>
-        <Button onClick={this.props.backFn} bsStyle="primary" className={styles.backButton}>Back to results</Button>
-        <br />
-      </div>
-    );
   }
 
   renderNeighbors = () => {

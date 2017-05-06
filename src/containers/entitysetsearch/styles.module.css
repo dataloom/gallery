@@ -99,9 +99,9 @@
 }
 
 .imgData {
-  max-height: 100px;
-  max-width: 100px;
-  margin: 10px;
+  max-height: 40px;
+  max-width: 40px;
+  margin: 0 10px;
 }
 
 .backButton {

@@ -79,14 +79,14 @@ export default class EntitySetUserSearchResults extends React.Component {
   }
 
   renderAllUserResults = () => {
-    const firstNameId = this.props.firstName.id;
-    const lastNameId = this.props.lastName.id;
+    const firstNameFqn = `${this.props.firstName.type.namespace}.${this.props.firstName.type.name}`;
+    const lastNameFqn = `${this.props.lastName.type.namespace}.${this.props.lastName.type.name}`;
     const resultRows = [];
     this.state.results.forEach((row) => {
-      const propertyTypeIds = Object.keys(row).filter((id) => {
-        return (id !== 'id');
+      const propertyTypeFqns = Object.keys(row).filter((fqn) => {
+        return (fqn !== 'id');
       });
-      if (propertyTypeIds.includes(firstNameId) && propertyTypeIds.includes(lastNameId)) {
+      if (propertyTypeFqns.includes(firstNameFqn) && propertyTypeFqns.includes(lastNameFqn)) {
         resultRows.push(
           <UserRow
               key={row.id}
@@ -97,7 +97,7 @@ export default class EntitySetUserSearchResults extends React.Component {
               lastName={this.props.lastName}
               dob={this.props.dob}
               mugshot={this.props.mugshot}
-              selectUserFn={this.onUserSelect}
+              onClick={this.onUserSelect}
               formatValueFn={this.props.formatValueFn}
               entityId={row.id} />
         );
