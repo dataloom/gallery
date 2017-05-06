@@ -15,6 +15,20 @@ const titleProperties = {
   ],
   'sample.bookings2': [
     'publicsafety.datebooked2'
+  ],
+  'nc.PersonType': [
+    'nc.PersonSurName',
+    'nc.PersonGivenName'
+  ],
+  'publicsafety.GangType': [
+    'publicsafety.GangName'
+  ],
+  'general.LocationType': [
+    'nc.LocationCityName',
+    'nc.LocationStateName'
+  ],
+  'j.WarrantType': [
+    'j.WarrantLevelText'
   ]
 };
 
