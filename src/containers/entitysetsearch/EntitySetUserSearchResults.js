@@ -73,7 +73,8 @@ export default class EntitySetUserSearchResults extends React.Component {
       selectedId: undefined,
       selectedRow: undefined,
       selectedEntitySet: undefined,
-      selectedPropertyTypes: undefined
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     });
     this.props.hidePaginationFn(false);
   }

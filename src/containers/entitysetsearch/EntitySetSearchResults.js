@@ -75,7 +75,8 @@ export default class EntitySetSearchResults extends React.Component {
       selectedId: undefined,
       selectedRow: undefined,
       selectedEntitySet: undefined,
-      selectedPropertyTypes: undefined
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     });
   }
 
