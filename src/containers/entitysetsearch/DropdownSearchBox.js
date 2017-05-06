@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './styles.module.css';
@@ -61,11 +60,11 @@ export default class DropdownSearchBox extends React.Component {
           <FontAwesome name="search" className={styles.searchIcon} />
         </div>
         <input
-          onClick={this.handleClick}
-          onKeyUp={this.onKeyUp}
-          className={styles.searchBox}
-          type="text"
-          placeholder="Search entity set" />
+            onClick={this.handleClick}
+            onKeyUp={this.onKeyUp}
+            className={styles.searchBox}
+            type="text"
+            placeholder="Search entity set" />
       </div>
     );
   }

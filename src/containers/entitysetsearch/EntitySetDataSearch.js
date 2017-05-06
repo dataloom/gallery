@@ -140,7 +140,7 @@ export default class EntitySetDataSearch extends React.Component {
       searchTerm,
       start: ((this.state.page - 1) * MAX_HITS),
       maxHits: MAX_HITS
-    }
+    };
     SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
     .then((response) => {
       this.setState({
@@ -303,7 +303,9 @@ export default class EntitySetDataSearch extends React.Component {
           <Page.Header>
             <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
             <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
-            <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
+            <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>
+              Advanced Search
+            </Link>
           </Page.Header>
           <Page.Body>
             {this.renderErrorMessage()}

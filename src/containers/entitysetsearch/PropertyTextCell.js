@@ -9,7 +9,7 @@ export default class PropertyTextCell extends React.Component {
   }
 
   render() {
-    const { rowIndex, data } = this.props
+    const { rowIndex, data } = this.props;
     return (
       <Cell>
         <div className={styles.textCell}>
