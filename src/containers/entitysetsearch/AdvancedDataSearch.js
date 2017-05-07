@@ -10,6 +10,7 @@ import AdvancedSearchBox from './AdvancedSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
 import EntitySetUserSearchResults from './EntitySetUserSearchResults';
 import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
+import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../utils/Consts/StringConsts';
 import styles from './styles.module.css';
 
 const MAX_HITS = 50;
@@ -184,9 +185,9 @@ export default class AdvancedDataSearch extends React.Component {
     let lastName;
     let dob;
     this.state.propertyTypes.forEach((propertyType) => {
-      if (propertyType.type.name.toLowerCase() === 'firstname') firstName = propertyType;
-      else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = propertyType;
-      else if (propertyType.type.name.toLowerCase() === 'dob') dob = propertyType;
+      if (FIRST_NAMES.includes(propertyType.type.name.toLowerCase())) firstName = propertyType;
+      else if (LAST_NAMES.includes(propertyType.type.name.toLowerCase())) lastName = propertyType;
+      else if (DOBS.includes(propertyType.type.name.toLowerCase())) dob = propertyType;
     });
     if (firstName && lastName) {
       return (
