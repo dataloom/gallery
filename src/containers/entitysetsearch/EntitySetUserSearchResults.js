@@ -39,16 +39,18 @@ export default class EntitySetUserSearchResults extends React.Component {
     .then((selectedEntitySet) => {
       EntityDataModelApi.getEntityType(selectedEntitySet.entityTypeId)
       .then((entityType) => {
-        const crumb = {
-          id: selectedId,
-          title: getTitle(entityType, selectedRow, selectedPropertyTypes),
-          row: selectedRow,
-          propertyTypes: selectedPropertyTypes,
-          entitySet: selectedEntitySet
-        };
-        const breadcrumbs = this.state.breadcrumbs.concat(crumb);
-        this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
-        this.props.hidePaginationFn(true);
+        if (selectedId !== this.state.selectedId) {
+          const crumb = {
+            id: selectedId,
+            title: getTitle(entityType, selectedRow, selectedPropertyTypes),
+            row: selectedRow,
+            propertyTypes: selectedPropertyTypes,
+            entitySet: selectedEntitySet
+          };
+          const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+          this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
+          this.props.hidePaginationFn(true);
+        }
       });
     });
   }
