@@ -58,9 +58,12 @@ function getFormattedRow(row, propertyTypes) {
 
 export default function getTitle(entityType, row, propertyTypes) {
   const formattedRow = getFormattedRow(row, propertyTypes);
-  const titleValues = titleProperties[getFqn(entityType)].map((propertyTypeFqn) => {
-    return formattedRow[propertyTypeFqn];
-  });
-  if (titleValues.length === 0) return `[${entityType.title}]`;
-  return titleValues.join(', ');
+  const titleProps = titleProperties[getFqn(entityType)];
+  if (titleProps) {
+    const titleValues = titleProps.map((propertyTypeFqn) => {
+      return formattedRow[propertyTypeFqn];
+    });
+    if (titleValues.length) return titleValues.join(', ');
+  }
+  return `[${entityType.title}]`;
 }
