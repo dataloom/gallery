@@ -129,7 +129,7 @@ export default class EntityRow extends React.Component {
       return (
         <img
             key={`${propertyFqn}-${counter}`}
-            src={imgSrc}
+            src={`data:image/png;base64,${imgSrc}`}
             className={styles.imgData}
             role="presentation" />
       );

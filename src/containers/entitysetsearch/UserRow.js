@@ -35,7 +35,7 @@ export default class UserRow extends React.Component {
     if (this.props.mugshot) {
       const fqn = `${this.props.mugshot.type.namespace}.${this.props.mugshot.type.name}`;
       const mugshotList = this.props.row[fqn] || [];
-      if (mugshotList.length > 0 && mugshotList[0].length > 0) imgSrc = mugshotList[0];
+      if (mugshotList.length > 0 && mugshotList[0].length > 0) imgSrc = `data:image/png;base64,${mugshotList[0]}`;
     }
     return <img src={imgSrc} className={styles.userIcon} role="presentation" />;
   }
