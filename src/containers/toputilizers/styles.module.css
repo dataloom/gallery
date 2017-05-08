@@ -67,6 +67,11 @@ a:hover {
   color: white;
 }
 
+.downloadButton {
+  text-align: center;
+  margin-top: 15px;
+}
+
 .titleLink, .titleLink:hover {
   color: inherit;
   font-size: inherit;

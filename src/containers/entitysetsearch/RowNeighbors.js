@@ -97,6 +97,9 @@ export default class RowNeighbors extends React.Component {
     const columnWidth = (TABLE_WIDTH - 1) / numColumns;
     const allColumns = propertyTypes.map((propertyType) => {
       const field = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      const renderImage = (propertyType.type.name === 'mugshot'
+        || propertyType.type.name === 'scars'
+        || propertyType.type.name === 'tattoos');
       return (
         <Column
             key={`${entitySetId}-${propertyType.id}`}
@@ -109,7 +112,8 @@ export default class RowNeighbors extends React.Component {
                   onClick={this.props.onClick}
                   width={columnWidth}
                   entitySetId={entitySetId}
-                  propertyTypes={neighborGroup.neighborPropertyTypes} />
+                  propertyTypes={neighborGroup.neighborPropertyTypes}
+                  renderImage={renderImage} />
             }
             width={columnWidth} />
       );
