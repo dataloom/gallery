@@ -11,7 +11,8 @@ export default class TextCell extends React.Component {
     onClick: PropTypes.func.isRequired,
     width: PropTypes.number.isRequired,
     entitySetId: PropTypes.string,
-    propertyTypes: PropTypes.array.isRequired
+    propertyTypes: PropTypes.array.isRequired,
+    renderImage: PropTypes.bool
   }
 
   getClassName = () => {
@@ -34,12 +35,46 @@ export default class TextCell extends React.Component {
     return () => {};
   }
 
+  getImgCellData = (propertyFqn, rowValues) => {
+    let counter = 0;
+    console.log(rowValues)
+    console.log(propertyFqn)
+    const images = rowValues[propertyFqn].map((imgSrc) => {
+      counter += 1;
+      return (
+        <img
+            key={`${propertyFqn}-${counter}`}
+            src={`data:image/png;base64,${imgSrc}`}
+            className={styles.imgData}
+            role="presentation" />
+      );
+    });
+    return <div className={styles.imgDataContainer}>{images}</div>;
+  }
+
+  renderImage = () => {
+    const { rowIndex, field, results } = this.props;
+    let counter = 0;
+    const images = results[rowIndex][field].map((imgSrc) => {
+      counter += 1;
+      return (
+        <img
+            key={`${field}-${counter}`}
+            src={`data:image/png;base64,${imgSrc}`}
+            className={styles.imgData}
+            role="presentation" />
+      );
+    });
+    return <div className={styles.imgDataContainer}>{images}</div>;
+  }
+
   render() {
-    const { rowIndex, field, results, width } = this.props;
+    const { rowIndex, field, results, width, renderImage } = this.props;
+    const content = (renderImage) ? this.renderImage() : this.props.formatValueFn(results[rowIndex][field]);
     return (
       <Cell>
         <div className={this.getClassName()} onClick={this.getOnClickFn()} style={{ width }}>
-          {this.props.formatValueFn(results[rowIndex][field])}
+          {content}
         </div>
       </Cell>
     );
