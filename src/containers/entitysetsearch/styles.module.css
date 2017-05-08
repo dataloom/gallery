@@ -90,6 +90,20 @@
   max-width: 100px;
 }
 
+.imgDataContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+.imgData {
+  max-height: 40px;
+  max-width: 40px;
+  margin: 0 10px;
+}
+
 .backButton {
   margin-bottom: 15px;
 }
@@ -157,7 +171,8 @@
 }
 
 .titleLink, .titleLink:hover {
-  color: inherit
+  color: inherit;
+  font-size: inherit;
 }
 
 .spacerSmall {

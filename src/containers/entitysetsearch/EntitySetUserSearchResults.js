@@ -12,6 +12,7 @@ export default class EntitySetUserSearchResults extends React.Component {
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
     dob: PropTypes.object,
+    mugshot: PropTypes.object,
     hidePaginationFn: PropTypes.func,
     formatValueFn: PropTypes.func
   }
@@ -72,20 +73,21 @@ export default class EntitySetUserSearchResults extends React.Component {
       selectedId: undefined,
       selectedRow: undefined,
       selectedEntitySet: undefined,
-      selectedPropertyTypes: undefined
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     });
     this.props.hidePaginationFn(false);
   }
 
   renderAllUserResults = () => {
-    const firstNameId = this.props.firstName.id;
-    const lastNameId = this.props.lastName.id;
+    const firstNameFqn = `${this.props.firstName.type.namespace}.${this.props.firstName.type.name}`;
+    const lastNameFqn = `${this.props.lastName.type.namespace}.${this.props.lastName.type.name}`;
     const resultRows = [];
     this.state.results.forEach((row) => {
-      const propertyTypeIds = Object.keys(row).filter((id) => {
-        return (id !== 'id');
+      const propertyTypeFqns = Object.keys(row).filter((fqn) => {
+        return (fqn !== 'id');
       });
-      if (propertyTypeIds.includes(firstNameId) && propertyTypeIds.includes(lastNameId)) {
+      if (propertyTypeFqns.includes(firstNameFqn) && propertyTypeFqns.includes(lastNameFqn)) {
         resultRows.push(
           <UserRow
               key={row.id}
@@ -95,7 +97,8 @@ export default class EntitySetUserSearchResults extends React.Component {
               firstName={this.props.firstName}
               lastName={this.props.lastName}
               dob={this.props.dob}
-              selectUserFn={this.onUserSelect}
+              mugshot={this.props.mugshot}
+              onClick={this.onUserSelect}
               formatValueFn={this.props.formatValueFn}
               entityId={row.id} />
         );
@@ -116,6 +119,7 @@ export default class EntitySetUserSearchResults extends React.Component {
           firstName={this.props.firstName}
           lastName={this.props.lastName}
           dob={this.props.dob}
+          mugshot={this.props.mugshot}
           backFn={this.onUserDeselect}
           userPage
           formatValueFn={this.props.formatValueFn}

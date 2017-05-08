@@ -10,6 +10,7 @@ import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
 import EntitySetUserSearchResults from './EntitySetUserSearchResults';
 import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
+import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../utils/Consts/StringConsts';
 import styles from './styles.module.css';
 
 const MAX_HITS = 50;
@@ -112,8 +113,8 @@ export default class EntitySetDataSearch extends React.Component {
         let firstName = false;
         let lastName = false;
         propertyTypes.forEach((propertyType) => {
-          if (propertyType.type.name.toLowerCase() === 'firstname') firstName = true;
-          else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = true;
+          if (FIRST_NAMES.includes(propertyType.type.name.toLowerCase())) firstName = true;
+          else if (LAST_NAMES.includes(propertyType.type.name.toLowerCase())) lastName = true;
         });
         if (firstName && lastName) {
           personViewAvailable = true;
@@ -140,7 +141,7 @@ export default class EntitySetDataSearch extends React.Component {
       searchTerm,
       start: ((this.state.page - 1) * MAX_HITS),
       maxHits: MAX_HITS
-    }
+    };
     SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
     .then((response) => {
       this.setState({
@@ -255,10 +256,12 @@ export default class EntitySetDataSearch extends React.Component {
       let firstName;
       let lastName;
       let dob;
+      let mugshot;
       this.state.propertyTypes.forEach((propertyType) => {
-        if (propertyType.type.name.toLowerCase() === 'firstname') firstName = propertyType;
-        else if (propertyType.type.name.toLowerCase() === 'lastname') lastName = propertyType;
-        else if (propertyType.type.name.toLowerCase() === 'dob') dob = propertyType;
+        if (FIRST_NAMES.includes(propertyType.type.name.toLowerCase())) firstName = propertyType;
+        else if (LAST_NAMES.includes(propertyType.type.name.toLowerCase())) lastName = propertyType;
+        else if (DOBS.includes(propertyType.type.name.toLowerCase())) dob = propertyType;
+        else if (propertyType.type.name.toLowerCase() === 'mugshot') mugshot = propertyType;
       });
       let view = this.state.searchView;
       if (!view.length) {
@@ -279,6 +282,7 @@ export default class EntitySetDataSearch extends React.Component {
             firstName={firstName}
             lastName={lastName}
             dob={dob}
+            mugshot={mugshot}
             hidePaginationFn={this.hidePagination}
             formatValueFn={this.formatValue} />
       );
@@ -300,7 +304,9 @@ export default class EntitySetDataSearch extends React.Component {
           <Page.Header>
             <Page.Title>Search entity set{this.renderEntitySetTitle()}</Page.Title>
             <EntitySetSearchBox onSubmit={this.onSearchSubmit} initialSearch={this.props.location.query.searchTerm} />
-            <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>Advanced Search</Link>
+            <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>
+              Advanced Search
+            </Link>
           </Page.Header>
           <Page.Body>
             {this.renderErrorMessage()}

@@ -23,7 +23,7 @@ export default class TextCell extends React.Component {
     const rowValues = {};
     propertyTypes.forEach((propertyType) => {
       const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      const value = results[rowIndex][fqn] || results[rowIndex][propertyType.id];
+      const value = results[rowIndex][fqn];
       if (value) rowValues[fqn] = value;
     });
     if (this.props.entitySetId) {

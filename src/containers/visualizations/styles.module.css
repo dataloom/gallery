@@ -150,4 +150,5 @@
 
 .titleLink, .titleLink:hover {
   color: inherit;
+  font-size: inherit;
 }
