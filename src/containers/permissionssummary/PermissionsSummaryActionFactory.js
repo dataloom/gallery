@@ -56,6 +56,12 @@ export function getAllUsersAndRolesSuccess(users, roles) {
   };
 }
 
+export function getAllUsersAndRolesFailure() {
+  return {
+    type: actionTypes.GET_ALL_USERS_AND_ROLES_FAILURE,
+  };
+}
+
 export function setUserPermissions(property, data) {
   return {
     type: actionTypes.SET_USER_PERMISSIONS,

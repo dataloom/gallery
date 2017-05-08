@@ -90,6 +90,20 @@
   max-width: 100px;
 }
 
+.imgDataContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+}
+
+.imgData {
+  max-height: 40px;
+  max-width: 40px;
+  margin: 0 10px;
+}
+
 .backButton {
   margin-bottom: 15px;
 }
@@ -157,7 +171,8 @@
 }
 
 .titleLink, .titleLink:hover {
-  color: inherit
+  color: inherit;
+  font-size: inherit;
 }
 
 .spacerSmall {
@@ -190,6 +205,64 @@
 .countHeaderCell {
   color: white;
   background-image: linear-gradient(#66686a, #535557);
+}
+
+/* timeline */
+
+.viewToolbar {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.timelineContainer {
+  margin-left: -80px;
+}
+
+.timelineDate {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.timelineTitle {
+  font-size: 14px;
+}
+
+.checkboxContainer {
+  text-align: center;
+  padding: 20px;
+  background: #f3f5f7;
+  margin: 0;
+}
+
+.checkboxTitle {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.checkboxLabel {
+  margin-left: 5px;
+}
+
+.displayPreferencesTitleBar {
+  background: #f3f5f7;
+  padding: 15px;
+  margin: 20px 0 0 0;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.expandDisplayPreferencesButton {
+  background: #f3f5f7;
+  text-align: center;
+  margin: 0 0 20px 0;
+  width: 100%;
+  border: none;
+}
+
+.expandDisplayPreferencesButton:hover {
+  background: #e9edf0;
+  color: black;
 }
 
 /* breadcrumbs */

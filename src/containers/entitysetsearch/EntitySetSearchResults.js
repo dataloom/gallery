@@ -43,15 +43,17 @@ export default class EntitySetSearchResults extends React.Component {
     .then((selectedEntitySet) => {
       EntityDataModelApi.getEntityType(selectedEntitySet.entityTypeId)
       .then((entityType) => {
-        const crumb = {
-          id: selectedId,
-          title: getTitle(entityType, selectedRow, selectedPropertyTypes),
-          row: selectedRow,
-          propertyTypes: selectedPropertyTypes,
-          entitySet: selectedEntitySet
-        };
-        const breadcrumbs = this.state.breadcrumbs.concat(crumb);
-        this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
+        if (selectedId !== this.state.selectedId) {
+          const crumb = {
+            id: selectedId,
+            title: getTitle(entityType, selectedRow, selectedPropertyTypes),
+            row: selectedRow,
+            propertyTypes: selectedPropertyTypes,
+            entitySet: selectedEntitySet
+          };
+          const breadcrumbs = this.state.breadcrumbs.concat(crumb);
+          this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
+        }
       });
     });
   }
@@ -73,7 +75,8 @@ export default class EntitySetSearchResults extends React.Component {
       selectedId: undefined,
       selectedRow: undefined,
       selectedEntitySet: undefined,
-      selectedPropertyTypes: undefined
+      selectedPropertyTypes: undefined,
+      breadcrumbs: []
     });
   }
 
@@ -104,16 +107,18 @@ export default class EntitySetSearchResults extends React.Component {
       );
     }
     this.props.propertyTypes.forEach((propertyType) => {
-      const key = (Object.keys(this.state.results[0])[0].indexOf('.') > -1)
-        ? `${propertyType.type.namespace}.${propertyType.type.name}`
-        : propertyType.id;
-      columns.push(
-        <Column
-            key={key}
-            header={<Cell>{propertyType.title}</Cell>}
-            cell={this.renderTextCell(key, columnWidth)}
-            width={columnWidth} />
-      );
+      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      if (propertyType.type.name !== 'mugshot'
+        && propertyType.type.name !== 'scars'
+        && propertyType.type.name !== 'tattoos') {
+        columns.push(
+          <Column
+              key={fqn}
+              header={<Cell>{propertyType.title}</Cell>}
+              cell={this.renderTextCell(fqn, columnWidth)}
+              width={columnWidth} />
+        );
+      }
     });
     return columns;
   }

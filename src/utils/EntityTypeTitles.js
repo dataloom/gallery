@@ -15,6 +15,31 @@ const titleProperties = {
   ],
   'sample.bookings2': [
     'publicsafety.datebooked2'
+  ],
+  'nc.PersonType': [
+    'nc.PersonSurName',
+    'nc.PersonGivenName'
+  ],
+  'publicsafety.GangType': [
+    'publicsafety.GangName'
+  ],
+  'general.LocationType': [
+    'nc.LocationCityName',
+    'nc.LocationStateName'
+  ],
+  'j.WarrantType': [
+    'j.WarrantLevelText'
+  ],
+  'j.ServiceCallType': [
+    'publicsafety.CadEventNumber'
+  ],
+  'j.BookingType': [
+    'publicsafety.CustodyID',
+    'j.SubjectBooking'
+  ],
+  'j.ChargeType': [
+    'j.ArrestCharge',
+    'publicsafety.datereleased2'
   ]
 };
 
@@ -26,7 +51,7 @@ function getFormattedRow(row, propertyTypes) {
   if (Object.keys(row)[0].includes('.')) return row;
   const convertedRow = {};
   propertyTypes.forEach((propertyType) => {
-    if (row[propertyType.id]) convertedRow[this.getFqn(propertyType)] = row[propertyType.id];
+    if (row[propertyType.id]) convertedRow[getFqn(propertyType)] = row[propertyType.id];
   });
   return convertedRow;
 }

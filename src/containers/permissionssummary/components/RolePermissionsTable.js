@@ -23,7 +23,7 @@ export default class RolePermissionsTable extends React.Component {
           roleStr = 'Default for all users*';
         }
 
-        rows.push(<tr className={styles.mainRow} key={role}><td>{roleStr}</td><td>{permissionsStr}</td></tr>);
+        rows.push(<tr className={`${styles.mainRow} roleRow`} key={role}><td>{roleStr}</td><td>{permissionsStr}</td></tr>);
       });
     }
     return rows;
