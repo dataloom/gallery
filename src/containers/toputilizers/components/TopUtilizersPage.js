@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
@@ -9,6 +10,8 @@ import Page from '../../../components/page/Page';
 import {
   entitySetDetailRequest
 } from '../../entitysetdetail/EntitySetDetailActionFactory';
+
+import styles from '../styles.module.css';
 
 class TopUtilizersPage extends React.Component {
   static propTypes = {
@@ -21,12 +24,19 @@ class TopUtilizersPage extends React.Component {
     this.props.getEntitySetId();
   }
 
+  renderEntitySetTitle = () => {
+    return (
+      <span>: <Link
+          to={`/entitysets/${this.props.entitySet.get('id')}`}
+          className={styles.titleLink}>{this.props.entitySet.get('title')}</Link></span>
+    );
+  }
+
   render() {
     return (
       <div>
         <Page.Header>
-          <Page.Title>Top Utilizers</Page.Title>
-          <h3>{this.props.entitySet.get('title')}</h3>
+          <Page.Title>Top Utilizers{this.renderEntitySetTitle()}</Page.Title>
         </Page.Header>
         <Page.Body>
           {this.props.children}
