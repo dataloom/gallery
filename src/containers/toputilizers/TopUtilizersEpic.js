@@ -58,7 +58,7 @@ function submitQueryEpic(action$, state) {
       const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
       return Observable
         .from(
-          AnalysisApi.getTopUtilizers(entitySetId, topUtilizersDetailsList, 100)
+          AnalysisApi.getTopUtilizers(entitySetId, 100, topUtilizersDetailsList)
         )
         .mergeMap((results) => {
           return Observable
