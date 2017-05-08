@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DocumentTitle from 'react-document-title';
 
-import * as actionFactory from './EntitySetDetailActionFactories';
+import * as actionFactory from './EntitySetDetailActionFactory';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
 import { getEdmObject } from '../edm/EdmStorage';

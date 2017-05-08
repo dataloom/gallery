@@ -5,6 +5,9 @@ import Immutable from 'immutable';
 import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
+import * as actionFactory from '../../entitysetdetail/EntitySetDetailActionFactory';
+import * as edmActionFactories from '../../edm/EdmActionFactories';
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
 import UserPermissionsTable from './UserPermissionsTable';
 import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
@@ -138,6 +141,17 @@ export function mapDispatchToProps(dispatch) {
   };
 
   return {
+    loadEntitySet: (id) => {
+      dispatch(actionFactory.entitySetDetailRequest(id));
+      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
+      dispatch(edmActionFactories.filteredEdmRequest(
+        [{
+          type: 'EntitySet',
+          id,
+          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+        }]
+      ));
+    },
     actions: bindActionCreators(actions, dispatch)
   };
 }

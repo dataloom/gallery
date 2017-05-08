@@ -1,15 +1,21 @@
+import {
+  Types
+} from 'loom-data';
+
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import groupBy from 'lodash/groupBy';
 import classNames from 'classnames';
 
-import { createStatusAsyncReference, RequestStatus } from '../PermissionsStorage';
+import { createStatusAsyncReference } from '../PermissionsStorage';
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
 import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
 import { AsyncReferencePropType } from '../../async/AsyncStorage';
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
 import styles from './permissions.module.css';
+
+const { RequestStateTypes } = Types;
 
 class EntitySetPermissionsRequestList extends React.Component {
   static propTypes = {
@@ -37,10 +43,10 @@ class EntitySetPermissionsRequestList extends React.Component {
 
     const openStatuses = statuses.filter((status) => {
       if (status.status != null) {
-        return status.status === RequestStatus.SUBMITTED;
+        return status.status === RequestStateTypes.SUBMITTED;
       }
       else if (status.value != null) {
-        return status.value.status === RequestStatus.SUBMITTED;
+        return status.value.status === RequestStateTypes.SUBMITTED;
       }
       return false;
     });

@@ -6,8 +6,12 @@ import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 
 import Page from '../../../components/page/Page';
+
+import {
+  entitySetDetailRequest
+} from '../../entitysetdetail/EntitySetDetailActionFactory';
+
 import styles from '../styles.module.css';
-import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactories';
 
 class TopUtilizersPage extends React.Component {
   static propTypes = {
