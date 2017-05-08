@@ -72,3 +72,21 @@ export function submitTopUtilizersFailure() {
     type: actionTypes.SUBMIT_TOP_UTILIZERS_FAILURE
   };
 }
+
+export function downloadTopUtilizersRequest() {
+  return {
+    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST
+  };
+}
+
+export function downloadTopUtilizersSuccess() {
+  return {
+    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_SUCCESS
+  };
+}
+
+export function downloadTopUtilizersFailure() {
+  return {
+    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_FAILURE
+  };
+}
