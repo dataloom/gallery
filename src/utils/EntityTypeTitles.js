@@ -24,11 +24,22 @@ const titleProperties = {
     'publicsafety.GangName'
   ],
   'general.LocationType': [
-    'nc.LocationCityName',
+    'general.city',
     'nc.LocationStateName'
   ],
   'j.WarrantType': [
     'j.WarrantLevelText'
+  ],
+  'j.ServiceCallType': [
+    'publicsafety.CadEventNumber'
+  ],
+  'j.BookingType': [
+    'publicsafety.bookingid',
+    'j.SubjectBooking'
+  ],
+  'j.ChargeType': [
+    'j.ArrestCharge',
+    'publicsafety.datereleased2'
   ]
 };
 
