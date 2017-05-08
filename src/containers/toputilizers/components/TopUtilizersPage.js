@@ -1,41 +1,53 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
-import DocumentTitle from 'react-document-title';
 
-import Page from '../../../components/page/Page.js';
-import * as actionFactory from '../TopUtilizersActionFactory';
+import Page from '../../../components/page/Page';
+import styles from '../styles.module.css';
 import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactories';
 
 class TopUtilizersPage extends React.Component {
   static propTypes = {
-    getEntitySetId: PropTypes.func.isRequired
+    getEntitySetId: PropTypes.func.isRequired,
+    children: PropTypes.object.isRequired,
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   componentDidMount() {
     this.props.getEntitySetId();
   }
 
-  getEntitySetTitle = () => {
-    return this.props.entitySet ? this.props.entitySet.title : null;
+  renderEntitySetTitle = () => {
+    return (
+      <span>: <Link
+          to={`/entitysets/${this.props.entitySet.get('id')}`}
+          className={styles.titleLink}>{this.props.entitySet.get('title')}</Link></span>
+    );
   }
 
   render() {
     return (
-      <DocumentTitle>
-        <Page>
-          <Page.Header>
-            <Page.Title>Top Utilizers</Page.Title>
-            <h3>{this.getEntitySetTitle()}</h3>
-          </Page.Header>
-          <Page.Body>
-            {this.props.children}
-          </Page.Body>
-        </Page>
-      </DocumentTitle>
+      <div>
+        <Page.Header>
+          <Page.Title>Top Utilizers{this.renderEntitySetTitle()}</Page.Title>
+        </Page.Header>
+        <Page.Body>
+          {this.props.children}
+        </Page.Body>
+      </div>
     );
   }
+}
+
+function mapStateToProps(state) {
+  const entitySetDetail = state.get('entitySetDetail');
+
+  return {
+    entitySet: entitySetDetail.get('entitySet')
+  };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
@@ -46,4 +58,4 @@ function mapDispatchToProps(dispatch, ownProps) {
   return bindActionCreators(actions, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(TopUtilizersPage);
+export default connect(mapStateToProps, mapDispatchToProps)(TopUtilizersPage);

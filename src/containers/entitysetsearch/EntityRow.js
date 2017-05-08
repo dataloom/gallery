@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import { Table, Column, Cell } from 'fixed-data-table';
 import { SearchApi } from 'loom-data';
 import PropertyTextCell from './PropertyTextCell';
@@ -7,7 +6,7 @@ import RowNeighbors from './RowNeighbors';
 import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
-const ROW_HEIGHT = 50;
+const ROW_HEIGHT = 60;
 const TABLE_OFFSET = 2;
 const PROPERTY_COLUMN_WIDTH = 200;
 const COLUMN_WIDTH = (TABLE_WIDTH - PROPERTY_COLUMN_WIDTH);
@@ -29,7 +28,7 @@ export default class EntityRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      propertyIds: Object.keys(props.row),
+      propertyFqns: Object.keys(props.row),
       neighbors: []
     };
   }
@@ -41,7 +40,7 @@ export default class EntityRow extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.entityId !== this.props.entityId) {
       this.setState({
-        propertyIds: Object.keys(nextProps.row),
+        propertyFqns: Object.keys(nextProps.row),
         neighbors: []
       });
       this.loadNeighbors(nextProps.entityId, nextProps.entitySet.id);
@@ -64,10 +63,10 @@ export default class EntityRow extends React.Component {
   }
 
   renderTable = () => {
-    const tableHeight = ((this.state.propertyIds.length + 1) * ROW_HEIGHT) + TABLE_OFFSET;
+    const tableHeight = ((this.state.propertyFqns.length + 1) * ROW_HEIGHT) + TABLE_OFFSET;
     return (
       <Table
-          rowsCount={this.state.propertyIds.length}
+          rowsCount={this.state.propertyFqns.length}
           rowHeight={ROW_HEIGHT}
           headerHeight={ROW_HEIGHT}
           width={TABLE_WIDTH}
@@ -110,11 +109,11 @@ export default class EntityRow extends React.Component {
 
   getPropertyTitles() {
     const { propertyTypes } = this.props;
-    const { propertyIds } = this.state;
-    const headers = propertyIds.map((id) => {
+    const { propertyFqns } = this.state;
+    const headers = propertyFqns.map((headerFqn) => {
       const property = propertyTypes.filter((propertyType) => {
-        const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-        return (propertyType.id === id || fqn === id);
+        const propertyFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+        return propertyFqn === headerFqn;
       });
 
       return property[0].title;
@@ -123,24 +122,34 @@ export default class EntityRow extends React.Component {
     return headers;
   }
 
-  getCellData() {
-    const { row } = this.props;
-    const { propertyIds } = this.state;
-
-    return propertyIds.map((id) => {
-      const formatValue = this.props.formatValueFn([row][0][id]);
-      return formatValue;
+  getImgCellData(propertyFqn) {
+    let counter = 0;
+    const images = this.props.row[propertyFqn].map((imgSrc) => {
+      counter += 1;
+      return (
+        <img
+            key={`${propertyFqn}-${counter}`}
+            src={`data:image/png;base64,${imgSrc}`}
+            className={styles.imgData}
+            role="presentation" />
+      );
     });
+    return <div className={styles.imgDataContainer}>{images}</div>;
   }
 
-  renderBackButton = () => {
-    if (!this.props.backFn) return null;
-    return (
-      <div>
-        <Button onClick={this.props.backFn} bsStyle="primary" className={styles.backButton}>Back to results</Button>
-        <br />
-      </div>
-    );
+  getTextCellData(propertyFqn) {
+    return this.props.formatValueFn(this.props.row[propertyFqn]);
+  }
+
+  getCellData() {
+    return this.state.propertyFqns.map((fqn) => {
+      const propertyName = this.props.propertyTypes.filter((propertyType) => {
+        return (fqn === `${propertyType.type.namespace}.${propertyType.type.name}`);
+      })[0].type.name;
+      const cell = (propertyName === 'mugshot' || propertyName === 'scars' || propertyName === 'tattoos')
+        ? this.getImgCellData(fqn) : this.getTextCellData(fqn);
+      return <div key={fqn}>{cell}</div>;
+    });
   }
 
   renderNeighbors = () => {

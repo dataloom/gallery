@@ -16,12 +16,12 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
           namespace = property.type.namespace;
         }
       });
-      return (<li>{namespace}.{name}</li>);
+      return (<li key={key}>{namespace}.{name}</li>);
     });
   };
 
   const getEntityDetails = () => {
-    if (entitySet) {
+    if (Object.keys(entitySet).length > 0) {
       return (
         <div>
           <h5>Entity Details</h5>
@@ -42,12 +42,12 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   const getPropertyListItems = () => {
     const { properties } = entitySet.entityType;
     return properties.map((property) => (
-      <li><b>{property.title}: </b>{property.type.namespace}.{property.type.name}</li>
+      <li key={property.id}><b>{property.title}: </b>{property.type.namespace}.{property.type.name}</li>
     ));
   };
 
   const getPropertyDetails = () => {
-    if (entitySet) {
+    if (Object.keys(entitySet).length > 0) {
       return (
         <div>
           <h5>Property Details</h5>
@@ -77,7 +77,7 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
 IntegrationDetailsModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  entitySet: PropTypes.object.isRequired
+  entitySet: PropTypes.object
 };
 
 export default IntegrationDetailsModal;

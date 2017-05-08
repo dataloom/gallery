@@ -1,13 +1,15 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
 import FontAwesome from 'react-fontawesome';
+import Immutable from 'immutable';
 
 import styles from '../styles.module.css';
 
 const getOptions = (data) => {
-  if (!data) return [];
+  if (data.size === 0) return Immutable.List();
   return data.map((item) => {
-    return { value: item.id, label: item.title };
+    return { value: item.get('id'), label: item.get('title') };
   });
 };
 
@@ -26,22 +28,21 @@ const TopUtilizersSelectionRow = ({
   entityTypes,
   selectedAssociation,
   selectedArrow,
-  selectedEntities,
-  entityOptions
+  selectedEntities
 }) => {
 
   const associationOptions = getOptions(associations);
   const entityTypeOptions = getOptions(entityTypes);
   const arrowOptions = [
-    { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" />},
-    { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" />}
+    { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" /> },
+    { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" /> }
   ];
 
   return (
     <div className={styles.rowWrapper}>
       <Select
           className={styles.associationSelect}
-          options={associationOptions}
+          options={associationOptions.toJS()}
           value={selectedAssociation}
           onChange={selectAssociation}
           placeholder="Association"
@@ -55,7 +56,7 @@ const TopUtilizersSelectionRow = ({
           clearable={false} />
       <Select
           className={styles.entitySelect}
-          options={entityTypeOptions}
+          options={entityTypeOptions.toJS()}
           value={selectedEntities}
           onChange={selectEntity}
           placeholder="Entities"
@@ -69,7 +70,8 @@ TopUtilizersSelectionRow.propTypes = {
   selectAssociation: PropTypes.func.isRequired,
   selectArrow: PropTypes.func.isRequired,
   selectEntity: PropTypes.func.isRequired,
-  associations: PropTypes.object.isRequired,
+  associations: PropTypes.instanceOf(Immutable.List).isRequired,
+  entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
   selectedAssociation: PropTypes.object,
   selectedArrow: PropTypes.object,
   selectedEntities: PropTypes.array

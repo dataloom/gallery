@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 import EntityRow from './EntityRow';
 import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
@@ -8,21 +7,11 @@ export default class UserRow extends React.Component {
 
   selectUser = () => {
     if (this.props.userPage) return;
-    this.props.selectUserFn(
+    this.props.onClick(
       this.props.entityId,
       this.props.row,
       this.props.entitySetId,
       this.props.propertyTypes);
-  }
-
-  renderBackButton = () => {
-    if (!this.props.userPage) return null;
-    return (
-      <div>
-        <Button onClick={this.props.backFn} bsStyle="primary" className={styles.backButton}>Back to results</Button>
-        <br />
-      </div>
-    );
   }
 
   getFirstNameVal = () => {
@@ -41,10 +30,18 @@ export default class UserRow extends React.Component {
       </div>);
   }
 
+  renderMugshot = () => {
+    let imgSrc = userProfileImg;
+    if (this.props.mugshot) {
+      const fqn = `${this.props.mugshot.type.namespace}.${this.props.mugshot.type.name}`;
+      const mugshotList = this.props.row[fqn] || [];
+      if (mugshotList.length > 0 && mugshotList[0].length > 0) imgSrc = `data:image/png;base64,${mugshotList[0]}`;
+    }
+    return <img src={imgSrc} className={styles.userIcon} role="presentation" />;
+  }
+
   getFormattedVal = (prop) => {
-    const id = prop.id;
-    const fqn = `${prop.type.namespace}.${prop.type.name}`;
-    const value = this.props.row[id] || this.props.row[fqn] || '';
+    const value = this.props.row[`${prop.type.namespace}.${prop.type.name}`] || '';
     return this.props.formatValueFn(value);
   }
 
@@ -68,7 +65,7 @@ export default class UserRow extends React.Component {
   renderUserProfile = () => {
     return (
       <div className={this.getClassName()} onClick={this.selectUser}>
-        <img src={userProfileImg} className={styles.userIcon} role="presentation" />
+        {this.renderMugshot()}
         <div className={styles.userProfileDetails}>
           <div className={styles.userProfileDetailItem}><b>First Name:</b> {this.getFirstNameVal()}</div>
           <div className={styles.userProfileDetailItem}><b>Last Name:</b> {this.getLastNameVal()}</div>
@@ -93,6 +90,7 @@ export default class UserRow extends React.Component {
           propertyTypes={this.props.propertyTypes}
           onClick={this.props.onClick}
           jumpFn={this.props.jumpFn}
+          backFn={this.props.backFn}
           breadcrumbs={this.props.breadcrumbs} />
     );
   }
@@ -100,7 +98,6 @@ export default class UserRow extends React.Component {
   render() {
     return (
       <div className={this.getContainerClassName()}>
-        {this.renderBackButton()}
         {this.renderUserProfile()}
         {this.renderRow()}
       </div>
@@ -115,7 +112,7 @@ export default class UserRow extends React.Component {
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
     dob: PropTypes.object,
-    selectUserFn: PropTypes.func,
+    mugshot: PropTypes.object,
     backFn: PropTypes.func,
     userPage: PropTypes.bool,
     formatValueFn: PropTypes.func,
