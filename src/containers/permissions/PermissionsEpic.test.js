@@ -12,11 +12,13 @@ import * as AsyncActionFactory from '../async/AsyncActionFactory';
 describe('PermissionsEpic', function() {
   const status = {
     status: 'APPROVED',
-    aclKey: ['abc', '123'],
-    permissions: ['READ'],
     principal: {
       type: 'principal-type',
       id: 'principal-id'
+    },
+    request: {
+      aclKey: ['abc', '123'],
+      permissions: ['READ'],
     }
   };
 
