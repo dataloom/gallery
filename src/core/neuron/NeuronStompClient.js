@@ -33,8 +33,13 @@ export function initializeStompClient() :Object {
     stompClient = null;
   }
 
-  // TODO: get an actual URL depending on the enviroment
-  socketClient = new SockJS('http://localhost:8081/neuron');
+  // TODO: determining enviroment urls and ports needs to be refactored, perhaps somewhere in core/
+  const host = window.location.host;
+  const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
+  const baseUrl = (__PROD__) ? `https://api.${hostName}` : 'http://localhost:8081';
+  const neuronUrl = `${baseUrl}/neuron`;
+
+  socketClient = new SockJS(neuronUrl);
   stompClient = Stomp.over(socketClient);
 
   if (__PROD__) {
