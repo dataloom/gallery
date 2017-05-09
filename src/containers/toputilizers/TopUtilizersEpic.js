@@ -60,11 +60,9 @@ function getAssociationDetailsEpic(action$) {
           EntityDataModelApi.getAssociationTypeDetails(action.associationId)
         )
         .mergeMap((associationDetails) => {
-          console.log('details!')
-          console.log(associationDetails)
           return Observable
             .of(
-              actionFactory.getAssociationDetailsSuccess(associationDetails)
+              actionFactory.getAssociationDetailsSuccess(action.associationId, associationDetails)
             );
         })
         .catch((err) => {

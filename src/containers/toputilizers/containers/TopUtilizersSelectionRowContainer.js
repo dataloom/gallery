@@ -13,7 +13,8 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     selectEntity: PropTypes.func.isRequired,
     selectAssociation: PropTypes.func.isRequired,
     entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
-    entityTypeId: PropTypes.string.isRequired
+    entityTypeId: PropTypes.string.isRequired,
+    associationDetails: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -21,9 +22,21 @@ class TopUtilizersSelectionRowContainer extends React.Component {
 
     this.state = {
       selectedAssociation: null,
-      selectedArrow: null,
-      selectedEntities: []
+      selectedArrow: {},
+      selectedEntities: [],
+      arrowOptions: [],
+      entityTypeOptions: [],
+      srcEntityTypes: [],
+      dstEntityTypes: []
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.state.selectedAssociation) return;
+    const details = nextProps.associationDetails.get(this.state.selectedAssociation.value);
+    if (details && !this.props.associationDetails.get(this.state.selectedAssociation.value)) {
+      this.setNeighborAndArrowOptions(details);
+    }
   }
 
   formatEntityOptions = (entities) => {
@@ -32,13 +45,68 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     });
   }
 
-  selectAssociation = (data) => {
-    this.props.selectAssociation(data.value);
-    this.setState({ selectedAssociation: data });
+  setNeighborAndArrowOptions = (details) => {
+    let srcEntityTypes = details.src;
+    let dstEntityTypes = details.dst;
+    let entityTypeOptions = [];
+    let arrowOptions = [];
+
+    if (details.bidirectional) {
+      const combined = srcEntityTypes.concat(dstEntityTypes);
+      srcEntityTypes = combined;
+      dstEntityTypes = combined;
+      arrowOptions = [true, false];
+      entityTypeOptions = combined;
+    }
+    else {
+      if (srcEntityTypes.filter((entityType) => {
+        return entityType.id === this.props.entityTypeId;
+      }).length) {
+        arrowOptions.push(true);
+        entityTypeOptions = entityTypeOptions.concat(dstEntityTypes);
+      }
+
+      if (dstEntityTypes.filter((entityType) => {
+        return entityType.id === this.props.entityTypeId;
+      }).length) {
+        arrowOptions.push(false);
+        entityTypeOptions = entityTypeOptions.concat(srcEntityTypes);
+      }
+    }
+    entityTypeOptions = [...new Set(entityTypeOptions)];
+    this.setState({ arrowOptions, entityTypeOptions });
   }
 
-  selectArrow = (data) => {
-    this.setState({ selectedArrow: data });
+  selectAssociation = (data) => {
+    this.setState({
+      selectedAssociation: data,
+      selectedEntities: [],
+      selectedArrow: {},
+      arrowOptions: [],
+      entityTypeOptions: []
+    });
+    const associationDetails = this.props.associationDetails.get(data.value);
+    if (associationDetails) this.setNeighborAndArrowOptions(associationDetails);
+    else this.props.selectAssociation(data.value);
+  }
+
+  selectArrow = (selectedArrow) => {
+    if (!this.state.selectedAssociation || selectedArrow.value === this.state.selectedArrow.value) return;
+    const details = this.props.associationDetails.get(this.state.selectedAssociation.value);
+    if (!details) return;
+    let entityTypeOptions = [];
+    if (details.bidirectional) {
+      entityTypeOptions = [...new Set(details.src.concat(details.dst))];
+    }
+    else if (selectedArrow.value) {
+      entityTypeOptions = details.dst;
+    }
+    else entityTypeOptions = details.src;
+    this.setState({
+      selectedArrow,
+      entityTypeOptions,
+      selectedEntities: []
+    });
   }
 
   selectEntity = (selectedEntities) => {
@@ -58,11 +126,12 @@ class TopUtilizersSelectionRowContainer extends React.Component {
           selectAssociation={this.selectAssociation}
           selectArrow={this.selectArrow}
           selectEntity={this.selectEntity}
-          associations={this.props.associations}
-          entityTypes={this.props.entityTypes}
+          associations={this.props.associations.toJS()}
+          entityTypes={this.state.entityTypeOptions}
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}
-          selectedEntities={this.state.selectedEntities} />
+          selectedEntities={this.state.selectedEntities}
+          arrowDirections={this.state.arrowOptions} />
     );
   }
 }
@@ -73,6 +142,7 @@ function mapStateToProps(state) {
   return {
     associations: topUtilizers.get('associations'),
     entityTypes: topUtilizers.get('entityTypes'),
+    associationDetails: topUtilizers.get('associationDetails'),
     entityTypeId: topUtilizers.get('entitySet').entityTypeId
   };
 }

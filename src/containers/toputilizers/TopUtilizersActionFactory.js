@@ -83,9 +83,10 @@ export function getAssociationDetailsRequest(associationId) {
   };
 }
 
-export function getAssociationDetailsSuccess(associationDetails) {
+export function getAssociationDetailsSuccess(associationId, associationDetails) {
   return {
     type: actionTypes.GET_ASSOCIATION_DETAILS_SUCCESS,
+    associationId,
     associationDetails
   };
 }
