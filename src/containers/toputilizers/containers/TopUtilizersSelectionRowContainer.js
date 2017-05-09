@@ -11,7 +11,9 @@ class TopUtilizersSelectionRowContainer extends React.Component {
   static propTypes = {
     associations: PropTypes.instanceOf(Immutable.List).isRequired,
     selectEntity: PropTypes.func.isRequired,
-    entityTypes: PropTypes.instanceOf(Immutable.List).isRequired
+    selectAssociation: PropTypes.func.isRequired,
+    entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+    entityTypeId: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -31,6 +33,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
   }
 
   selectAssociation = (data) => {
+    this.props.selectAssociation(data.value);
     this.setState({ selectedAssociation: data });
   }
 
@@ -69,13 +72,15 @@ function mapStateToProps(state) {
 
   return {
     associations: topUtilizers.get('associations'),
-    entityTypes: topUtilizers.get('entityTypes')
+    entityTypes: topUtilizers.get('entityTypes'),
+    entityTypeId: topUtilizers.get('entitySet').entityTypeId
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    selectEntity: actionFactory.onEntitySelect
+    selectEntity: actionFactory.onEntitySelect,
+    selectAssociation: actionFactory.getAssociationDetailsRequest
   };
 
   return bindActionCreators(actions, dispatch);

@@ -51,6 +51,28 @@ function getAssociationsEpic(action$) {
     });
 }
 
+function getAssociationDetailsEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_ASSOCIATION_DETAILS_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(
+          EntityDataModelApi.getAssociationTypeDetails(action.associationId)
+        )
+        .mergeMap((associationDetails) => {
+          console.log('details!')
+          console.log(associationDetails)
+          return Observable
+            .of(
+              actionFactory.getAssociationDetailsSuccess(associationDetails)
+            );
+        })
+        .catch((err) => {
+          actionFactory.getAssociationDetailsFailure(err);
+        });
+    });
+}
+
 function getAllEntityTypesEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ENTITY_TYPES_REQUEST)
@@ -124,6 +146,7 @@ function downloadTopUtilizersEpic(action$, state) {
 export default combineEpics(
   getEntitySetEpic,
   getAssociationsEpic,
+  getAssociationDetailsEpic,
   getAllEntityTypesEpic,
   submitQueryEpic,
   downloadTopUtilizersEpic

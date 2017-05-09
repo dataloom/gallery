@@ -76,6 +76,27 @@ export function onEntitySelect(data) {
   };
 }
 
+export function getAssociationDetailsRequest(associationId) {
+  return {
+    type: actionTypes.GET_ASSOCIATION_DETAILS_REQUEST,
+    associationId
+  };
+}
+
+export function getAssociationDetailsSuccess(associationDetails) {
+  return {
+    type: actionTypes.GET_ASSOCIATION_DETAILS_SUCCESS,
+    associationDetails
+  };
+}
+
+export function getAssociationDetailsFailure(err) {
+  return {
+    type: actionTypes.GET_ASSOCIATION_DETAILS_FAILURE,
+    err
+  };
+}
+
 export function submitTopUtilizersRequest() {
   return {
     type: actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST
