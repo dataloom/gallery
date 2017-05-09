@@ -104,6 +104,11 @@
   margin: 0 10px;
 }
 
+.enlargedImageData {
+  max-height: 300px;
+  max-width: 300px;
+}
+
 .backButton {
   margin-bottom: 15px;
 }

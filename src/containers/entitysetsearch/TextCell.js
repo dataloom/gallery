@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Cell } from 'fixed-data-table';
+import RowImage from './components/RowImage';
 import styles from './styles.module.css';
 
 export default class TextCell extends React.Component {
@@ -35,35 +36,12 @@ export default class TextCell extends React.Component {
     return () => {};
   }
 
-  getImgCellData = (propertyFqn, rowValues) => {
-    let counter = 0;
-    console.log(rowValues)
-    console.log(propertyFqn)
-    const images = rowValues[propertyFqn].map((imgSrc) => {
-      counter += 1;
-      return (
-        <img
-            key={`${propertyFqn}-${counter}`}
-            src={`data:image/png;base64,${imgSrc}`}
-            className={styles.imgData}
-            role="presentation" />
-      );
-    });
-    return <div className={styles.imgDataContainer}>{images}</div>;
-  }
-
   renderImage = () => {
     const { rowIndex, field, results } = this.props;
     let counter = 0;
     const images = results[rowIndex][field].map((imgSrc) => {
       counter += 1;
-      return (
-        <img
-            key={`${field}-${counter}`}
-            src={`data:image/png;base64,${imgSrc}`}
-            className={styles.imgData}
-            role="presentation" />
-      );
+      return <RowImage key={`${field}-${counter}`} imgSrc={imgSrc} />;
     });
     return <div className={styles.imgDataContainer}>{images}</div>;
   }
