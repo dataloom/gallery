@@ -26,7 +26,9 @@ function getEntitySetEpic(action$) {
             );
         })
         .catch((err) => {
-          actionFactory.getEntitySetFailure(err);
+          return Observable.of(
+            actionFactory.getEntitySetFailure(err)
+          );
         });
     });
 }
@@ -46,7 +48,9 @@ function getAssociationsEpic(action$) {
             );
         })
         .catch((err) => {
-          actionFactory.getAssociationsFailure(err);
+          return Observable.of(
+            actionFactory.getAssociationsFailure(err)
+          );
         });
     });
 }
@@ -66,7 +70,9 @@ function getAssociationDetailsEpic(action$) {
             );
         })
         .catch((err) => {
-          actionFactory.getAssociationDetailsFailure(err);
+          return Observable.of(
+            actionFactory.getAssociationDetailsFailure(err)
+          );
         });
     });
 }
@@ -90,7 +96,9 @@ function submitQueryEpic(action$, state) {
             );
         })
         .catch((err) => {
-          actionFactory.submitTopUtilizersFailure(err);
+          return Observable.of(
+            actionFactory.submitTopUtilizersFailure(err)
+          );
         });
     });
 }
@@ -116,7 +124,9 @@ function downloadTopUtilizersEpic(action$, state) {
           });
         })
         .catch((err) => {
-          actionFactory.downloadTopUtilizersFailure(err);
+          return Observable.of(
+            actionFactory.downloadTopUtilizersFailure(err)
+          );
         });
     });
 }
