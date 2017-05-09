@@ -157,8 +157,9 @@ export default class AdvancedDataSearch extends React.Component {
   }
 
   onSearchSubmit = (searches) => {
-    this.executeSearch(searches, this.state.page);
-    this.setState({ searches });
+    const page = 1;
+    this.executeSearch(searches, page);
+    this.setState({ searches, page });
   }
 
   renderPagination = () => {
