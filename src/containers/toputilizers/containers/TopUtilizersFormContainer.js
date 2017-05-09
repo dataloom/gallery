@@ -10,9 +10,10 @@ import TopUtilizersResultsContainer from './TopUtilizersResultsContainer';
 class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
+    getEntitySetRequest: PropTypes.func.isRequired,
     getAllEntityTypesRequest: PropTypes.func.isRequired,
-    getAssociationsRequest: PropTypes.func.isRequired,
-    submitQuery: PropTypes.func.isRequired
+    submitQuery: PropTypes.func.isRequired,
+    entitySet: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -27,8 +28,8 @@ class TopUtilizersFormContainer extends React.Component {
   }
 
   componentDidMount() {
+    this.props.getEntitySetRequest(this.props.params.id);
     this.props.getAllEntityTypesRequest();
-    this.props.getAssociationsRequest();
   }
 
   handleClickAddParameter = (e) => {
@@ -59,7 +60,7 @@ class TopUtilizersFormContainer extends React.Component {
             handleClick={this.handleClickAddParameter}
             rowData={this.state.rowData}
             onSubmit={this.onSubmit}
-            entitySetId={this.props.entitySetId} />
+            entitySet={this.props.entitySet} />
         <br />
         {this.renderResultsContainer()}
       </div>
@@ -71,14 +72,15 @@ function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
 
   return {
-    entitySetId: topUtilizers.get('entitySetId')
+    entitySetId: topUtilizers.get('entitySetId'),
+    entitySet: topUtilizers.get('entitySet')
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch, ownProps) {
   const actions = {
+    getEntitySetRequest: actionFactory.getEntitySetRequest,
     getAllEntityTypesRequest: actionFactory.getAllEntityTypesRequest,
-    getAssociationsRequest: actionFactory.getAssociationsRequest,
     submitQuery: actionFactory.submitTopUtilizersRequest
   };
 

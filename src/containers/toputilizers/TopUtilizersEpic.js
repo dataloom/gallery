@@ -10,13 +10,34 @@ import * as actionFactory from './TopUtilizersActionFactory';
 import FileService from '../../utils/FileService';
 import FileConsts from '../../utils/Consts/FileConsts';
 
+function getEntitySetEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_ENTITY_SET_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(
+          EntityDataModelApi.getEntitySet(action.entitySetId)
+        )
+        .mergeMap((results) => {
+          return Observable
+            .of(
+              actionFactory.getEntitySetSuccess(results),
+              actionFactory.getAssociationsRequest(results.entityTypeId)
+            );
+        })
+        .catch((err) => {
+          actionFactory.getEntitySetFailure(err);
+        });
+    });
+}
+
 function getAssociationsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ASSOCIATIONS_REQUEST)
     .mergeMap((action) => {
       return Observable
         .from(
-          EntityDataModelApi.getAllAssociationEntityTypes()
+          EntityDataModelApi.getAllAvailableAssociationTypes(action.entityTypeId)
         )
         .mergeMap((results) => {
           return Observable
@@ -101,6 +122,7 @@ function downloadTopUtilizersEpic(action$, state) {
 }
 
 export default combineEpics(
+  getEntitySetEpic,
   getAssociationsEpic,
   getAllEntityTypesEpic,
   submitQueryEpic,

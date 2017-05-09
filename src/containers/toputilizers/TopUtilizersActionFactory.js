@@ -1,8 +1,30 @@
 import * as actionTypes from './TopUtilizersActionTypes';
 
-export function getAssociationsRequest() {
+export function getEntitySetRequest(entitySetId) {
   return {
-    type: actionTypes.GET_ASSOCIATIONS_REQUEST
+    type: actionTypes.GET_ENTITY_SET_REQUEST,
+    entitySetId
+  };
+}
+
+export function getEntitySetSuccess(entitySet) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_SUCCESS,
+    entitySet
+  };
+}
+
+export function getEntitySetFailure(err) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_FAILURE,
+    err
+  };
+}
+
+export function getAssociationsRequest(entityTypeId) {
+  return {
+    type: actionTypes.GET_ASSOCIATIONS_REQUEST,
+    entityTypeId
   };
 }
 
