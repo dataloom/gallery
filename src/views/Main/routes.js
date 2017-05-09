@@ -16,7 +16,6 @@ import EntitySetDetailContainer from '../../containers/entitysetdetail/EntitySet
 import EntitySetDetailComponent from '../../containers/entitysetdetail/EntitySetDetailComponent';
 import DatasetsComponent from '../../containers/datasets/DatasetsComponent';
 import PageConsts from '../../utils/Consts/PageConsts';
-import EnvConsts from '../../utils/Consts/EnvConsts';
 import { ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getDisplayName } from '../../containers/principals/PrincipalUtils';
 import AllPermissions from '../../containers/permissionssummary/components/AllPermissions';
@@ -45,7 +44,7 @@ const requireAuth = (nextState, replace) => {
     const authToken = auth.getToken();
     const host = window.location.host;
     const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
-    const baseUrl = (__DEV__) ? EnvConsts.LOCAL : `https://api.${hostName}`;
+    const baseUrl = (__DEV__) ? 'http://localhost:8080' : `https://api.${hostName}`;
     Loom.configure({ baseUrl, authToken });
   }
 };
