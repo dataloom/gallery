@@ -55,30 +55,34 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   componentDidMount() {
-    this.loadPropertyTypeIds(this.props.location.query.searchTerm);
+    const searchTerm = (this.props.location.query.searchTerm) ? this.props.location.query.searchTerm : '';
+    const page = (this.props.location.query.page) ? this.props.location.query.page : 1
+    this.loadPropertyTypeIds(searchTerm, page);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.location.key) {
+      const searchTerm = (nextProps.location.query.searchTerm) ? nextProps.location.query.searchTerm : '';
+      const page = (nextProps.location.query.page) ? nextProps.location.query.page : 1
       this.setState({
-        searchTerm: (nextProps.location.query.searchTerm) ? nextProps.location.query.searchTerm : '',
-        page: (nextProps.location.query.page) ? nextProps.location.query.page : 1,
+        searchTerm,
+        page,
         searchResults: [],
         totalHits: 0,
         asyncStatus: (nextProps.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING
       });
       if (nextProps.location.query.searchTerm) {
-        this.executeSearch(nextProps.location.query.searchTerm);
+        this.executeSearch(searchTerm, page);
       }
     }
   }
 
-  loadPropertyTypeIds = (searchTerm) => {
+  loadPropertyTypeIds = (searchTerm, page) => {
     EntityDataModelApi.getEntitySet(this.props.params.entitySetId)
     .then((entitySet) => {
       EntityDataModelApi.getEntityType(entitySet.entityTypeId)
       .then((entityType) => {
-        this.loadPropertyTypes(entityType.properties, searchTerm, entitySet.title);
+        this.loadPropertyTypes(entityType.properties, searchTerm, page, entitySet.title);
       }).catch(() => {
         this.setState({ loadError: true });
       });
@@ -87,7 +91,7 @@ export default class EntitySetDataSearch extends React.Component {
     });
   }
 
-  loadPropertyTypes = (propertyTypeIds, searchTerm, title) => {
+  loadPropertyTypes = (propertyTypeIds, searchTerm, page, title) => {
     const accessChecks = [];
     propertyTypeIds.forEach((propertyId) => {
       if (propertyId !== 'id') {
@@ -127,8 +131,8 @@ export default class EntitySetDataSearch extends React.Component {
           personViewAvailable,
           searchView
         });
-        if (searchTerm) {
-          this.executeSearch(searchTerm);
+        if (searchTerm && searchTerm.length) {
+          this.executeSearch(searchTerm, page);
         }
       }).catch(() => {
         this.setState({ loadError: true });
@@ -136,10 +140,10 @@ export default class EntitySetDataSearch extends React.Component {
     });
   }
 
-  executeSearch = (searchTerm) => {
+  executeSearch = (searchTerm, page) => {
     const searchRequest = {
       searchTerm,
-      start: ((this.state.page - 1) * MAX_HITS),
+      start: ((page - 1) * MAX_HITS),
       maxHits: MAX_HITS
     };
     SearchApi.searchEntitySetData(this.props.params.entitySetId, searchRequest)
