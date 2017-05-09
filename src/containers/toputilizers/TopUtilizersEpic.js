@@ -77,17 +77,14 @@ function getAssociationDetailsEpic(action$) {
     });
 }
 
-function submitQueryEpic(action$, state) {
+function submitQueryEpic(action$) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersState = state.getState().get('topUtilizers');
-      const entitySetId = topUtilizersState.get('entitySetId');
-      const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
-      const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
+      const topUtilizersDetailsList = Object.values(action.topUtilizersDetails);
       return Observable
         .from(
-          AnalysisApi.getTopUtilizers(entitySetId, 100, topUtilizersDetailsList)
+          AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList)
         )
         .mergeMap((results) => {
           return Observable
@@ -103,17 +100,14 @@ function submitQueryEpic(action$, state) {
     });
 }
 
-function downloadTopUtilizersEpic(action$, state) {
+function downloadTopUtilizersEpic(action$) {
   return action$
     .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersState = state.getState().get('topUtilizers');
-      const entitySetId = topUtilizersState.get('entitySetId');
-      const topUtilizersDetailsObj = topUtilizersState.get('topUtilizersDetailsList').toJS();
-      const topUtilizersDetailsList = Object.values(topUtilizersDetailsObj);
+      const topUtilizersDetailsList = Object.values(action.topUtilizersDetails);
       return Observable
         .from(
-          AnalysisApi.getTopUtilizers(entitySetId, 100, topUtilizersDetailsList, FileConsts.CSV)
+          AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList, FileConsts.CSV)
         )
         .mergeMap((topUtilizersData) => {
           FileService.saveFile(topUtilizersData, 'Top Utilizers', FileConsts.CSV, () => {

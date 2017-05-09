@@ -11,7 +11,8 @@ class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
     getEntitySetRequest: PropTypes.func.isRequired,
     submitQuery: PropTypes.func.isRequired,
-    entitySet: PropTypes.object.isRequired
+    entitySet: PropTypes.object.isRequired,
+    topUtilizersDetails: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -41,13 +42,13 @@ class TopUtilizersFormContainer extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.submitQuery();
+    this.props.submitQuery(this.props.params.id, this.props.topUtilizersDetails);
     this.setState({ showResultsTable: true });
   }
 
   renderResultsContainer = () => {
     if (!this.state.showResultsTable) return null;
-    return <TopUtilizersResultsContainer />;
+    return <TopUtilizersResultsContainer entitySetId={this.props.params.id} />;
   }
 
   render() {
@@ -69,7 +70,8 @@ function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
 
   return {
-    entitySet: topUtilizers.get('entitySet')
+    entitySet: topUtilizers.get('entitySet'),
+    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS()
   };
 }
 

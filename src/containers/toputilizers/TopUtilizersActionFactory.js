@@ -78,9 +78,11 @@ export function getAssociationDetailsFailure(err) {
   };
 }
 
-export function submitTopUtilizersRequest() {
+export function submitTopUtilizersRequest(entitySetId, topUtilizersDetails) {
   return {
-    type: actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST
+    type: actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST,
+    entitySetId,
+    topUtilizersDetails
   };
 }
 
@@ -97,9 +99,11 @@ export function submitTopUtilizersFailure() {
   };
 }
 
-export function downloadTopUtilizersRequest() {
+export function downloadTopUtilizersRequest(entitySetId, topUtilizersDetails) {
   return {
-    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST
+    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST,
+    entitySetId,
+    topUtilizersDetails
   };
 }
 
