@@ -12,7 +12,6 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     associations: PropTypes.instanceOf(Immutable.List).isRequired,
     selectEntity: PropTypes.func.isRequired,
     selectAssociation: PropTypes.func.isRequired,
-    entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     entityTypeId: PropTypes.string.isRequired,
     associationDetails: PropTypes.instanceOf(Immutable.Map).isRequired
   }
@@ -25,9 +24,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       selectedArrow: {},
       selectedEntities: [],
       arrowOptions: [],
-      entityTypeOptions: [],
-      srcEntityTypes: [],
-      dstEntityTypes: []
+      entityTypeOptions: []
     };
   }
 
@@ -141,7 +138,6 @@ function mapStateToProps(state) {
 
   return {
     associations: topUtilizers.get('associations'),
-    entityTypes: topUtilizers.get('entityTypes'),
     associationDetails: topUtilizers.get('associationDetails'),
     entityTypeId: topUtilizers.get('entitySet').entityTypeId
   };

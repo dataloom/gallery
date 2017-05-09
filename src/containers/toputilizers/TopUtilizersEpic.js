@@ -71,26 +71,6 @@ function getAssociationDetailsEpic(action$) {
     });
 }
 
-function getAllEntityTypesEpic(action$) {
-  return action$
-    .ofType(actionTypes.GET_ENTITY_TYPES_REQUEST)
-    .mergeMap((action) => {
-      return Observable
-        .from(
-          EntityDataModelApi.getAllEntityTypes()
-        )
-        .mergeMap((results) => {
-          return Observable
-            .of(
-              actionFactory.getAllEntityTypesSuccess(results)
-            );
-        })
-        .catch((err) => {
-          actionFactory.getAllEntityTypesFailure(err);
-        });
-    });
-}
-
 function submitQueryEpic(action$, state) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
@@ -145,7 +125,6 @@ export default combineEpics(
   getEntitySetEpic,
   getAssociationsEpic,
   getAssociationDetailsEpic,
-  getAllEntityTypesEpic,
   submitQueryEpic,
   downloadTopUtilizersEpic
 );
