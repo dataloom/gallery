@@ -147,23 +147,35 @@ describe('PermissionsSummaryReducer', function() {
     });
 
     it('should update property user permissions', function() {
-      const action = PSActionFactory.setUserPermissions(property, data);
-      const permissions = getUserPermissions(action, Immutable.fromJS(allUsersById));
-      const state = reducer(INITIAL_STATE, action);
 
-      expect(Promise.resolve(state)).to.eventually.have.deep.property(
+      const action = PSActionFactory.setUserPermissions(property, data);
+      const allUsersByIdMap = Immutable.fromJS(allUsersById);
+      const initialState = INITIAL_STATE.set('allUsersById', allUsersByIdMap);
+      const state = reducer(initialState, action);
+
+      const expectedPermissions = Immutable.fromJS(
+        getUserPermissions(action, allUsersByIdMap)
+      );
+
+      expect(state).to.have.deep.property(
         `propertyPermissions.${property.title}.userPermissions`
-      ).eql(Immutable.fromJS(permissions));
+      ).eql(expectedPermissions);
     });
 
     it('should update entity user permissions', function() {
-      const action = PSActionFactory.setUserPermissions(undefined, data);
-      const permissions = Immutable.fromJS(getUserPermissions(action, Immutable.fromJS(allUsersById)));
-      const state = reducer(INITIAL_STATE, action);
 
-      expect(Promise.resolve(state)).to.eventually.have.property(
+      const action = PSActionFactory.setUserPermissions(undefined, data);
+      const allUsersByIdMap = Immutable.fromJS(allUsersById);
+      const initialState = INITIAL_STATE.set('allUsersById', allUsersByIdMap);
+      const state = reducer(initialState, action);
+
+      const expectedPermissions = Immutable.fromJS(
+        getUserPermissions(action, allUsersByIdMap)
+      );
+
+      expect(state).to.have.property(
         'entityUserPermissions'
-      ).eql(permissions);
+      ).eql(expectedPermissions);
     });
   });
 
