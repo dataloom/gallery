@@ -9,7 +9,7 @@ import styles from '../styles.module.css';
 const getOptions = (data) => {
   if (data.size === 0) return Immutable.List();
   return data.map((item) => {
-    return { value: item.get('id'), label: item.get('title') };
+    return { value: item.id, label: item.title };
   });
 };
 
@@ -28,21 +28,25 @@ const TopUtilizersSelectionRow = ({
   entityTypes,
   selectedAssociation,
   selectedArrow,
-  selectedEntities
+  selectedEntities,
+  arrowDirections
 }) => {
 
   const associationOptions = getOptions(associations);
   const entityTypeOptions = getOptions(entityTypes);
-  const arrowOptions = [
-    { value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" /> },
-    { value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" /> }
-  ];
+  const arrowOptions = [];
+  if (arrowDirections.includes(true)) {
+    arrowOptions.push({ value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" /> });
+  }
+  if (arrowDirections.includes(false)) {
+    arrowOptions.push({ value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" /> });
+  }
 
   return (
     <div className={styles.rowWrapper}>
       <Select
           className={styles.associationSelect}
-          options={associationOptions.toJS()}
+          options={associationOptions}
           value={selectedAssociation}
           onChange={selectAssociation}
           placeholder="Association"
@@ -56,7 +60,7 @@ const TopUtilizersSelectionRow = ({
           clearable={false} />
       <Select
           className={styles.entitySelect}
-          options={entityTypeOptions.toJS()}
+          options={entityTypeOptions}
           value={selectedEntities}
           onChange={selectEntity}
           placeholder="Entities"
@@ -74,7 +78,8 @@ TopUtilizersSelectionRow.propTypes = {
   entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
   selectedAssociation: PropTypes.object,
   selectedArrow: PropTypes.object,
-  selectedEntities: PropTypes.array
+  selectedEntities: PropTypes.array,
+  arrowDirections: PropTypes.array.isRequired
 };
 
 export default TopUtilizersSelectionRow;
