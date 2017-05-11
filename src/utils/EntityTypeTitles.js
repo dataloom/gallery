@@ -40,6 +40,44 @@ const titleProperties = {
   'j.ChargeType': [
     'j.ArrestCharge',
     'publicsafety.datereleased2'
+  ],
+  'nc.PersonType2': [
+    'nc.PersonSurName',
+    'nc.PersonGivenName'
+  ],
+  'jciowa.JailBookingType2': [
+    'publicsafety.datebooked2'
+  ],
+  'jciowa.JailRecordType2': [
+    'publicsafety.ArrestID'
+  ],
+  'j.EnforcementOfficialType2': [
+    'j.EnforcementOfficialCategoryText',
+    'nc.PersonSurName'
+  ],
+  'jciowa.ChargeType': [
+    'j.ChargeSequenceID',
+    'j.CourtEventCase'
+  ],
+  'jciowa.ChargesType': [
+    'j.ChargeSequenceID',
+    'j.CourtEventCase'
+  ],
+  'jciowa.OffenseType': [
+    'publicsafety.OffenseViolatedStateStatute',
+    'publicsafety.OffenseViolatedLocalStatute'
+  ],
+  'jciowa.OffensesType': [
+    'publicsafety.OffenseViolatedStateStatute',
+    'publicsafety.OffenseViolatedLocalStatute'
+  ],
+  'jciowa.SentenceType': [
+    'publicsafety.SentenceTermDays',
+    'publicsafety.SentenceTermHours'
+  ],
+  'jciowa.SentencesType': [
+    'publicsafety.SentenceTermDays',
+    'publicsafety.SentenceTermHours'
   ]
 };
 
