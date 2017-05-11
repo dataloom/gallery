@@ -38,8 +38,10 @@ export default class TextCell extends React.Component {
 
   renderImage = () => {
     const { rowIndex, field, results } = this.props;
+    const value = results[rowIndex][field];
+    if (!value) return '';
     let counter = 0;
-    const images = results[rowIndex][field].map((imgSrc) => {
+    const images = value.map((imgSrc) => {
       counter += 1;
       return <RowImage key={`${field}-${counter}`} imgSrc={imgSrc} />;
     });
