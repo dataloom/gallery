@@ -1,8 +1,30 @@
 import * as actionTypes from './TopUtilizersActionTypes';
 
-export function getAssociationsRequest() {
+export function getEntitySetRequest(entitySetId) {
   return {
-    type: actionTypes.GET_ASSOCIATIONS_REQUEST
+    type: actionTypes.GET_ENTITY_SET_REQUEST,
+    entitySetId
+  };
+}
+
+export function getEntitySetSuccess(entitySet) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_SUCCESS,
+    entitySet
+  };
+}
+
+export function getEntitySetFailure(err) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_FAILURE,
+    err
+  };
+}
+
+export function getAssociationsRequest(entityTypeId) {
+  return {
+    type: actionTypes.GET_ASSOCIATIONS_REQUEST,
+    entityTypeId
   };
 }
 
@@ -16,26 +38,6 @@ export function getAssociationsSuccess(data) {
 export function getAssociationsFailure(err) {
   return {
     type: actionTypes.GET_ASSOCIATIONS_FAILURE,
-    err
-  };
-}
-
-export function getAllEntityTypesRequest() {
-  return {
-    type: actionTypes.GET_ENTITY_TYPES_REQUEST
-  };
-}
-
-export function getAllEntityTypesSuccess(data) {
-  return {
-    type: actionTypes.GET_ENTITY_TYPES_SUCCESS,
-    data
-  };
-}
-
-export function getAllEntityTypesFailure(err) {
-  return {
-    type: actionTypes.GET_ENTITY_TYPES_FAILURE,
     err
   };
 }
@@ -54,9 +56,33 @@ export function onEntitySelect(data) {
   };
 }
 
-export function submitTopUtilizersRequest() {
+export function getAssociationDetailsRequest(associationId) {
   return {
-    type: actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST
+    type: actionTypes.GET_ASSOCIATION_DETAILS_REQUEST,
+    associationId
+  };
+}
+
+export function getAssociationDetailsSuccess(associationId, associationDetails) {
+  return {
+    type: actionTypes.GET_ASSOCIATION_DETAILS_SUCCESS,
+    associationId,
+    associationDetails
+  };
+}
+
+export function getAssociationDetailsFailure(err) {
+  return {
+    type: actionTypes.GET_ASSOCIATION_DETAILS_FAILURE,
+    err
+  };
+}
+
+export function submitTopUtilizersRequest(entitySetId, topUtilizersDetails) {
+  return {
+    type: actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST,
+    entitySetId,
+    topUtilizersDetails
   };
 }
 
@@ -73,9 +99,11 @@ export function submitTopUtilizersFailure() {
   };
 }
 
-export function downloadTopUtilizersRequest() {
+export function downloadTopUtilizersRequest(entitySetId, topUtilizersDetails) {
   return {
-    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST
+    type: actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST,
+    entitySetId,
+    topUtilizersDetails
   };
 }
 
