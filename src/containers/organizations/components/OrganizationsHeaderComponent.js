@@ -15,6 +15,7 @@ import { bindActionCreators } from 'redux';
 import Button from '../../../components/buttons/Button';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
+import StyledHeaderTitle from './StyledHeaderTitle';
 
 import {
   searchOrganizationsRequest,
@@ -189,7 +190,7 @@ class OrganizationsHeaderComponent extends React.Component {
 
     return (
       <StyledFlexContainerStacked>
-        <h1>Organizations</h1>
+        <StyledHeaderTitle>Organizations</StyledHeaderTitle>
         <Actions>
           { this.renderSearch() }
           <ActionSeparator>OR</ActionSeparator>
