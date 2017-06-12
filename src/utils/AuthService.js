@@ -6,7 +6,7 @@ import Auth0Lock from 'auth0-lock';
 import * as Cookies from 'js-cookie';
 
 import { isTokenExpired } from './jwtHelper';
-import img from '../images/kryptnostic-logo-big.png';
+import img from '../images/empty-logo.png';
 import PageConsts from './Consts/PageConsts';
 
 export default class AuthService extends EventEmitter {
@@ -19,7 +19,7 @@ export default class AuthService extends EventEmitter {
         logo: img
       },
       languageDictionary: {
-        title: 'LOOM'
+        title: 'Lattice'
       },
       auth: {
         params: {
