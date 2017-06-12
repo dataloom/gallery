@@ -6,7 +6,7 @@ import Auth0Lock from 'auth0-lock';
 import * as Cookies from 'js-cookie';
 
 import { isTokenExpired } from './jwtHelper';
-import img from '../images/kryptnostic-logo-big.png';
+import img from '../images/empty-logo.png';
 import PageConsts from './Consts/PageConsts';
 
 export default class AuthService extends EventEmitter {
@@ -15,8 +15,12 @@ export default class AuthService extends EventEmitter {
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
       closable: false,
-      theme: {},
-      languageDictionary: {},
+      theme: {
+        logo: img
+      },
+      languageDictionary: {
+        title: 'Lattice'
+      },
       auth: {
         params: {
           scope: 'openid email user_metadata app_metadata nickname roles user_id'
