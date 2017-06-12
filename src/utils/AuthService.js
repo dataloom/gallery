@@ -15,12 +15,8 @@ export default class AuthService extends EventEmitter {
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
       closable: false,
-      theme: {
-        logo: img
-      },
-      languageDictionary: {
-        title: 'LOOM'
-      },
+      theme: {},
+      languageDictionary: {},
       auth: {
         params: {
           scope: 'openid email user_metadata app_metadata nickname roles user_id'

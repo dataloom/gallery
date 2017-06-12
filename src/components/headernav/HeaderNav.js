@@ -33,9 +33,7 @@ class HeaderNav extends React.Component {
       <header className={styles.headerNavWrapper}>
         <nav className={styles.headerNav}>
 
-          <div className={styles.headerNavLeft}>
-            <h2 className={`${styles.headerNavItem} ${styles.loom}`}>LOOM</h2>
-          </div>
+          <div className={styles.headerNavLeft} />
 
           <div className={styles.headerNavRight}>
             <div className={styles.headerNavItem}>
