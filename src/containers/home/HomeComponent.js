@@ -48,7 +48,7 @@ class HomeComponent extends React.Component {
       <DocumentTitle title="Home">
         <Page>
           <Page.Header>
-            <Page.Title>Welcome to Loom!</Page.Title>
+            <Page.Title>Welcome!</Page.Title>
             <div className={styles.welcomeInstructionsContainer}>
               <WelcomeInstructionsBox
                   title="JOIN"
