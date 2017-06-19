@@ -1,24 +1,17 @@
-/* @flow */
-import { Map } from 'immutable';
-import type { EdmObjectReference } from './EdmStorage';
-import type { EdmQueryParam } from '../Api';
+/*
+ * @flow
+ */
+
 import * as actionTypes from './EdmActionTypes';
 
-export function updateNormalizedData(normalizedData :Map<string, Map<string, *>>) {
-  return {
-    type: actionTypes.UPDATE_NORMALIZED_DATA,
-    normalizedData
-  };
-}
-
-export function filteredEdmRequest(edmQuery :EdmQueryParam[]) {
+export function filteredEdmRequest(edmQuery :Object[]) {
   return {
     type: actionTypes.FILTERED_EDM_REQUEST,
     edmQuery
   };
 }
 
-export function edmObjectResolve(reference :EdmObjectReference) {
+export function edmObjectResolve(reference) {
   return {
     type: actionTypes.EDM_OBJECT_RESOLVE,
     reference
@@ -31,7 +24,7 @@ export function allEntityTypesRequest() {
   };
 }
 
-export function allEntityTypesResolve(references :EdmObjectReference[]) {
+export function allEntityTypesResolve(references) {
   return {
     type: actionTypes.ALL_ENTITY_TYPES_RESOLVE,
     references
@@ -51,7 +44,7 @@ export function allPropertyTypesRequest() {
   };
 }
 
-export function allPropertyTypesResolve(references :EdmObjectReference[]) {
+export function allPropertyTypesResolve(references) {
   return {
     type: actionTypes.ALL_PROPERTY_TYPES_RESOLVE,
     references

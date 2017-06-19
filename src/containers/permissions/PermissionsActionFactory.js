@@ -2,21 +2,22 @@
  * @flow
  */
 
-import { DataModels } from 'loom-data';
+import {
+  DataModels,
+  Types
+} from 'loom-data';
 
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 
 import { updateAsyncReference } from '../async/AsyncActionFactory';
-import { createStatusAsyncReference } from './PermissionsStorage';
 
 import {
   ALL_PERMISSIONS,
-  RequestStatus,
-  Status,
-  AccessCheck
+  createStatusAsyncReference
 } from './PermissionsStorage';
 
 import type {
+  AccessCheck,
   Authorization,
   AuthNRequest,
   AclKey
@@ -26,6 +27,10 @@ const {
   Acl,
   AclData
 } = DataModels;
+
+const {
+  RequestStateTypes
+} = Types;
 
 export function checkAuthorizationRequest(accessChecks :AccessCheck[]) :Object {
 
@@ -112,7 +117,7 @@ export function loadOpenStatusesRequest(aclKeys :AclKey[]) {
   return {
     type: PermissionsActionTypes.LOAD_STATUSES,
     aclKeys,
-    reqStatus: RequestStatus.SUBMITTED
+    reqStatus: RequestStateTypes.SUBMITTED
   };
 }
 export function updateStatusesRequest(statuses :Status[]) {
@@ -123,7 +128,7 @@ export function updateStatusesRequest(statuses :Status[]) {
 }
 
 export function updateStatusSuccess(status :Status) {
-  return updateAsyncReference(createStatusAsyncReference(status.aclKey), status);
+  return updateAsyncReference(createStatusAsyncReference(status.request.aclKey), status);
 }
 
 export function getAclRequest(aclKey :UUID[]) :Object {

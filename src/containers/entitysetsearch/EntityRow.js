@@ -1,8 +1,10 @@
 import React, { PropTypes } from 'react';
 import { Table, Column, Cell } from 'fixed-data-table';
 import { SearchApi } from 'loom-data';
+
 import PropertyTextCell from './PropertyTextCell';
 import RowNeighbors from './RowNeighbors';
+import RowImage from './components/RowImage';
 import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
@@ -126,13 +128,7 @@ export default class EntityRow extends React.Component {
     let counter = 0;
     const images = this.props.row[propertyFqn].map((imgSrc) => {
       counter += 1;
-      return (
-        <img
-            key={`${propertyFqn}-${counter}`}
-            src={`data:image/png;base64,${imgSrc}`}
-            className={styles.imgData}
-            role="presentation" />
-      );
+      return <RowImage key={`${propertyFqn}-${counter}`} imgSrc={imgSrc} />;
     });
     return <div className={styles.imgDataContainer}>{images}</div>;
   }

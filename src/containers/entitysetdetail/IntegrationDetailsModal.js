@@ -1,11 +1,20 @@
-import React, { PropTypes } from 'react';
-import { Modal, Button, Table } from 'react-bootstrap';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
+import { Modal } from 'react-bootstrap';
+
 import styles from './entitysetdetail.module.css';
 
 const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   const getKeyListItems = () => {
-    const keys = entitySet.entityType.key;
-    const properties = entitySet.entityType.properties;
+    const keys = entitySet.getIn(['entityType', 'key'], Immutable.List());
+    const properties = entitySet.getIn(['entityType', 'properties'], Immutable.List());
 
     return keys.map((key) => {
       let name;
@@ -21,13 +30,16 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   };
 
   const getEntityDetails = () => {
-    if (Object.keys(entitySet).length > 0) {
+    if (!entitySet.isEmpty()) {
       return (
         <div>
           <h5>Entity Details</h5>
           <ul className={styles.list}>
-            <li><b>Entity Set Name: </b>{entitySet.name}</li>
-            <li><b>Entity Set Type: </b>{entitySet.entityType.type.namespace}.{entitySet.entityType.type.name}</li>
+            <li><b>Entity Set Name: </b>{entitySet.get('name')}</li>
+            <li>
+              <b>Entity Set Type: </b>
+              {entitySet.getIn(['entityType', 'type', 'namespace'])}.{entitySet.getIn(['entityType', 'type', 'name'])}
+            </li>
             <li><b>Primary Key(s): </b>
               <ul>
               {getKeyListItems()}
@@ -40,14 +52,23 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
   };
 
   const getPropertyListItems = () => {
-    const { properties } = entitySet.entityType;
-    return properties.map((property) => (
-      <li key={property.id}><b>{property.title}: </b>{property.type.namespace}.{property.type.name}</li>
-    ));
+
+    // const properties = entitySet.getIn(['entityType', 'properties'], Immutable.List());
+    // console.log(properties);
+    // console.log(properties.toJS());
+    // // return properties.map((property :Map) => (
+    // //   <li key={property.get('id')}><b>{property.get('title')}: </b>{property.type.namespace}.{property.type.name}</li>
+    // // ));
+    // const listItems = [];
+    // properties.forEach((propertyId, property) => {
+    //   console.log(propertyId, property);
+    // });
+
+    return [];
   };
 
   const getPropertyDetails = () => {
-    if (Object.keys(entitySet).length > 0) {
+    if (!entitySet.isEmpty()) {
       return (
         <div>
           <h5>Property Details</h5>
@@ -77,7 +98,7 @@ const IntegrationDetailsModal = ({ isOpen, onClose, entitySet }) => {
 IntegrationDetailsModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  entitySet: PropTypes.object
+  entitySet: PropTypes.instanceOf(Immutable.Map).isRequired
 };
 
 export default IntegrationDetailsModal;

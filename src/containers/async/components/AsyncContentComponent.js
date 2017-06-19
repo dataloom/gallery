@@ -1,10 +1,19 @@
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
 import map from 'lodash/map';
 import mapValues from 'lodash/mapValues';
 import isPlainObject from 'lodash/isPlainObject';
 import flatMapDeep from 'lodash/flatMapDeep';
 import isArrayLikeObject from 'lodash/isArrayLikeObject';
+
+import { connect } from 'react-redux';
 
 import LoadingSpinner from './LoadingSpinner';
 import DefaultAsyncErrorComponent from './DefaultAsyncErrorComponent';
@@ -33,9 +42,9 @@ function unpackValue(value) {
   return value;
 }
 
-export class AsyncContentComponent extends React.Component {
+class AsyncContentComponent extends React.Component {
   static propTypes = {
-    base: PropTypes.oneOfType([React.Component]).isRequired,
+    base: PropTypes.oneOfType([PropTypes.any]).isRequired,
     baseChildren: PropTypes.arrayOf(PropTypes.element),
     baseProps: PropTypes.object,
     // State Components
@@ -96,15 +105,15 @@ export function mapStateToProps(state, ownProps) {
   const dereferencedBaseProps = mapValues(baseProps, (value) => {
     return smartDereference(asyncContent, value);
   });
-
   return {
     baseProps: dereferencedBaseProps
   };
 }
 
-export const SmartAsyncContentComponent = connect(mapStateToProps)(AsyncContentComponent);
+const SmartAsyncContentComponent = connect(mapStateToProps)(AsyncContentComponent);
 
 export function createAsyncComponent(baseComponent, errorComponent = DefaultAsyncErrorComponent) {
+
   const propTypes = mapValues(baseComponent.propTypes, (propType, name) => {
     if (name === 'children') {
       return propType;

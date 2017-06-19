@@ -4,37 +4,40 @@
 
 import { combineReducers } from 'redux-immutable';
 
+import asyncReducer from '../../containers/async/AsyncReducer';
 import catalogReducer from '../../containers/catalog/CatalogReducer';
-import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
-import topUtilizersReducer from '../../containers/toputilizers/TopUtilizersReducer';
-import edmReducer from '../../containers/edm/EdmReducer';
-import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
-import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+import datasetsReducer from '../../containers/datasets/DatasetsReducer';
+import edmReducer from '../../containers/edm/EdmReducer';
+import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
+import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import permissionsSummaryReducer from '../../containers/permissionssummary/PermissionsSummaryReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
-import asyncReducer from '../../containers/async/AsyncReducer';
-import datasetsReducer from '../../containers/datasets/DatasetsReducer';
+// import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+import topUtilizersReducer from '../../containers/toputilizers/TopUtilizersReducer';
 import visualizationReducer from '../../containers/visualizations/VisualizationReducer';
+
+import neuronReducer from '../neuron/NeuronReducer';
 import routerReducer from '../router/RouterReducer';
 
 export default function reduxReducer() {
 
   return combineReducers({
+    async: asyncReducer,
     catalog: catalogReducer,
-    entitySetDetail: entitySetDetailReducer,
-    topUtilizers: topUtilizersReducer,
-    normalizedData: edmReducer,
-    organizations: organizationsReducer,
     createEntitySet: createEntitySetReducer,
-    securableObject: securableObjectReducer,
+    datasets: datasetsReducer,
+    edm: edmReducer,
+    entitySetDetail: entitySetDetailReducer,
+    neuron: neuronReducer,
+    organizations: organizationsReducer,
     permissions: permissionReducer,
     permissionsSummary: permissionsSummaryReducer,
     principals: principalsReducer,
-    async: asyncReducer,
-    datasets: datasetsReducer,
-    visualizations: visualizationReducer,
-    router: routerReducer
+    router: routerReducer,
+    // securableObject: securableObjectReducer,
+    topUtilizers: topUtilizersReducer,
+    visualizations: visualizationReducer
   });
 }

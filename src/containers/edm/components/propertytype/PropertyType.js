@@ -1,8 +1,14 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 
-import { PropertyTypePropType } from '../../EdmModel';
-import { createPropertyTypeReference, getEdmObjectSilent } from '../../EdmStorage';
 import { PermissionsPropType, getPermissions } from '../../../permissions/PermissionsStorage';
 import PropertyTypePermissions from './PropertyTypePermissions';
 import PropertyTypeTitle from './PropertyTypeTitle';
@@ -21,14 +27,14 @@ export const DEFAULT_EDITING = {
 
 // TODO: Make PropertyType a container that takes a PropertyType reference
 class PropertyType extends React.Component {
+
   static propTypes = {
-    propertyTypeId: PropTypes.string.isRequired,
     editing: EditingPropType,
     onChange: PropTypes.func,
     // Permissions are per-EntitySet. Passing entitySetId implies display permissions
     entitySetId: PropTypes.string,
     // Async Properties
-    propertyType: PropertyTypePropType,
+    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
     permissions: PermissionsPropType,
     // TODO: Move display logic to CSS
     requestingPermissions: PropTypes.bool
@@ -55,21 +61,22 @@ class PropertyType extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const normalizedData = state.get('normalizedData');
+
+  const async :Map = state.get('async');
   const permissionsState = state.get('permissions');
 
   const { entitySetId, propertyTypeId } = ownProps;
-
-  let { permissions, propertyType } = ownProps;
+  let { permissions } = ownProps;
 
   if (!permissions && entitySetId) {
     // TODO: Make permissions handle async states properly
     permissions = getPermissions(permissionsState, [entitySetId, propertyTypeId]);
   }
 
-  if (!propertyType) {
-    const reference = createPropertyTypeReference(propertyTypeId);
-    propertyType = getEdmObjectSilent(normalizedData.toJS(), reference, null);
+  let propertyType;
+  if (async.hasIn(['propertyTypes', propertyTypeId])) {
+    // TODO: fromJS() should happen in a reducer, not here
+    propertyType = Immutable.fromJS(async.getIn(['propertyTypes', propertyTypeId]).value);
   }
 
   return {

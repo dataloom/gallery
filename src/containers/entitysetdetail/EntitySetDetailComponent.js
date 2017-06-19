@@ -1,34 +1,46 @@
-import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import { connect } from 'react-redux';
-import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
-import DocumentTitle from 'react-document-title';
-import styled from 'styled-components';
-import FontAwesome from 'react-fontawesome';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
 import classnames from 'classnames';
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
+import styled from 'styled-components';
+
 import { EntityDataModelApi } from 'loom-data';
-import IntegrationDetailsModal from './IntegrationDetailsModal';
+import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
-import * as actionFactories from './EntitySetDetailActionFactories';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
-import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
-import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
-import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS, PERMISSIONS } from '../permissions/PermissionsStorage';
-import { getEdmObject } from '../edm/EdmStorage';
-import PropertyTypeList from '../edm/components/PropertyTypeList';
-import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
-import AddDataForm from '../entitysetforms/AddDataForm';
-import ActionDropdown from '../edm/components/ActionDropdown';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-import { EntitySetPropType } from '../edm/EdmModel';
-import Page from '../../components/page/Page';
-import PageConsts from '../../utils/Consts/PageConsts';
-import styles from './entitysetdetail.module.css';
-
 import InlineEditableControl from '../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
+import Page from '../../components/page/Page';
+import PageConsts from '../../utils/Consts/PageConsts';
+import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
+import PropertyTypeList from '../edm/components/PropertyTypeList';
+import ActionDropdown from '../edm/components/ActionDropdown';
+import AddDataForm from '../entitysetforms/AddDataForm';
+import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
+import IntegrationDetailsModal from './IntegrationDetailsModal';
+
+import * as NeuronActionFactory from '../../core/neuron/NeuronActionFactory';
+import * as edmActionFactories from '../edm/EdmActionFactories';
+import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
+
+import {
+  PermissionsPropType,
+  getPermissions,
+  DEFAULT_PERMISSIONS,
+  PERMISSIONS
+} from '../permissions/PermissionsStorage';
+
+import styles from './entitysetdetail.module.css';
 
 const TitleControlsContainer = styled(StyledFlexContainer)`
   justify-content: space-between;
@@ -39,30 +51,26 @@ const ControlsContainer = styled(StyledFlexContainerStacked)`
   flex: 1 0 auto;
 `;
 
-const permissionOptions = {
-  Discover: 'Discover',
-  Link: 'Link',
-  Read: 'Read',
-  Write: 'Write',
-  Owner: 'Owner'
-};
-
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
     router: PropTypes.object.isRequired,
 
     // Async content
-    entitySet: EntitySetPropType,
     entitySetPermissions: PermissionsPropType.isRequired,
-    allPropertyTypeIds: PropTypes.array.isRequired,
-    ownedPropertyTypeIds: PropTypes.object.isRequired,
 
     // Loading
-    loadEntitySet: PropTypes.func.isRequired,
+    // loadEntitySet: PropTypes.func.isRequired,
     updateMetadata: PropTypes.func.isRequired,
     resetPermissions: PropTypes.func.isRequired,
-    loadOwnedPropertyTypes: PropTypes.func.isRequired
+    loadOwnedPropertyTypes: PropTypes.func.isRequired,
+
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySetId: PropTypes.string.isRequired,
+    entityType: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
+    ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+    subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -81,29 +89,44 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   componentDidMount() {
+
     this.props.resetPermissions();
-    this.props.loadEntitySet();
+    // this.props.loadEntitySet();
+
+    this.props.subscribeToEntitySetAclKeyRequest([this.props.entitySetId]);
+  }
+
+  componentWillUnmount() {
+
+    this.props.unsubscribeFromEntitySetAclKeyRequest([this.props.entitySetId]);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.entitySet) {
-      if (!this.props.entitySet || this.props.entitySet.id !== nextProps.entitySet.id) {
+      if (!this.props.entitySet || this.props.entitySet.get('id') !== nextProps.entitySet.get('id')) {
         this.setState({
-          permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.title, true),
-          permissionsModalAclKey: [nextProps.entitySet.id]
+          permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.get('title'), true),
+          permissionsModalAclKey: [nextProps.entitySet.get('id')]
         });
       }
+
       let shouldLoad = false;
-      nextProps.allPropertyTypeIds.forEach((id) => {
-        if (!this.props.allPropertyTypeIds.includes(id)) {
+      // TODO: consider another way of doing this to avoid forEach() and includes()
+      nextProps.propertyTypeIds.forEach((propertyTypeId :string) => {
+        if (!this.props.propertyTypeIds.includes(propertyTypeId)) {
           shouldLoad = true;
         }
       });
+
       if (shouldLoad) {
-        this.props.loadOwnedPropertyTypes(nextProps.entitySet.id, nextProps.allPropertyTypeIds);
+        this.props.loadOwnedPropertyTypes(nextProps.entitySet.get('id'), nextProps.propertyTypeIds);
       }
     }
   }
+
+  // TODO: figure out how to implement this
+  // shouldComponentUpdate(nextProps :Object, nextState :Object) {
+  // }
 
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
@@ -111,16 +134,16 @@ class EntitySetDetailComponent extends React.Component {
 
   updateEntitySetTitle = (title) => {
     if (title && title.length) {
-      this.props.updateMetadata(this.props.entitySet.id, { title });
+      this.props.updateMetadata(this.props.entitySet.get('id'), { title });
     }
   }
 
   updateEntitySetDescription = (description) => {
-    if (description) this.props.updateMetadata(this.props.entitySet.id, { description });
+    if (description) this.props.updateMetadata(this.props.entitySet.get('id'), { description });
   }
 
   updateEntitySetContacts = (contacts) => {
-    if (contacts) this.props.updateMetadata(this.props.entitySet.id, { contacts: [contacts] });
+    if (contacts) this.props.updateMetadata(this.props.entitySet.get('id'), { contacts: [contacts] });
   }
 
   renderTitle = (title, isOwner) => {
@@ -154,23 +177,30 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderHeaderContent = () => {
+
     const { entitySet, entitySetPermissions } = this.props;
 
-    const contactValue = (entitySet.contacts.length > 0) ? entitySet.contacts.join(', ') : 'none';
+    if (!entitySet || entitySet.isEmpty()) {
+      return null;
+    }
+
+    const contactValue = (entitySet.get('contacts').size > 0) ? entitySet.get('contacts').join(', ') : 'none';
 
     return (
       <StyledFlexContainerStacked>
         <TitleControlsContainer>
           <div>
-            <Page.Title>{this.renderTitle(entitySet.title, entitySetPermissions.OWNER)}</Page.Title>
+            <Page.Title>{this.renderTitle(entitySet.get('title'), entitySetPermissions.OWNER)}</Page.Title>
             <div className={styles.descriptionTitle}>About this data</div>
-            {this.renderDescription(entitySet.description, entitySetPermissions.OWNER)}
-            <span className={styles.contacts}>{this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}</span>
+            {this.renderDescription(entitySet.get('description'), entitySetPermissions.OWNER)}
+            <span className={styles.contacts}>
+              {this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}
+            </span>
           </div>
 
           <ControlsContainer>
 
-            <ActionDropdown entitySetId={entitySet.id} className={classnames(styles.actionDropdown)} />
+            <ActionDropdown entitySetId={entitySet.get('id')} className={classnames(styles.actionDropdown)} />
             {
               entitySetPermissions.OWNER &&
               <Button bsStyle="info" onClick={this.setEditingPermissions} className={styles.managePermissions}>
@@ -182,8 +212,8 @@ class EntitySetDetailComponent extends React.Component {
         {
           entitySetPermissions.OWNER &&
           <EntitySetPermissionsRequestList
-              entitySetId={entitySet.id}
-              propertyTypeIds={this.props.allPropertyTypeIds} />
+              entitySetId={entitySet.get('id')}
+              propertyTypeIds={this.props.propertyTypeIds} />
         }
       </StyledFlexContainerStacked>
     );
@@ -202,36 +232,46 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   getPermissionsManagementOptions = () => {
-    if (!this.props.entitySetPermissions.OWNER) return null;
-    const propertyTypeOptions = Object.keys(this.props.ownedPropertyTypeIds).map((id) => {
-      const aclKey = [this.props.entitySet.id, id];
-      return (
+
+    if (!this.props.entitySetPermissions.OWNER) {
+      return null;
+    }
+
+    const propertyTypeOptions = [];
+    this.props.ownedPropertyTypes.forEach((propertyType :Map) => {
+
+      const propertyTypeId :string = propertyType.get('id');
+      const title :string = propertyType.get('title');
+      const aclKey :string[] = [this.props.entitySet.get('id'), propertyTypeId];
+
+      propertyTypeOptions.push(
         <MenuItem
-            eventKey={id}
-            key={id}
+            eventKey={propertyTypeId}
+            key={propertyTypeId}
             onClick={() => {
-              this.updateModalView(this.props.ownedPropertyTypeIds[id], aclKey);
+              this.updateModalView(title, aclKey);
             }}>
-          {this.props.ownedPropertyTypeIds[id]}
+          {title}
         </MenuItem>
       );
     });
-    const esAllTitle = this.loadESPermissionsTitle(this.props.entitySet.title, true);
-    const esOnlyTitle = this.loadESPermissionsTitle(this.props.entitySet.title, false);
+
+    const esAllTitle = this.loadESPermissionsTitle(this.props.entitySet.get('title'), true);
+    const esOnlyTitle = this.loadESPermissionsTitle(this.props.entitySet.get('title'), false);
 
     return (
       <SplitButton bsStyle="default" title={this.state.permissionsModalTitle} id="permissions-select">
         <MenuItem header>Dataset</MenuItem>
         <MenuItem
             onClick={() => {
-              this.updateModalView(esAllTitle, [this.props.entitySet.id], true);
+              this.updateModalView(esAllTitle, [this.props.entitySet.get('id')], true);
             }}
             eventKey={esAllTitle}>
           {esAllTitle}
         </MenuItem>
         <MenuItem
             onClick={() => {
-              this.updateModalView(esOnlyTitle, [this.props.entitySet.id]);
+              this.updateModalView(esOnlyTitle, [this.props.entitySet.get('id')]);
             }}
             eventKey={esOnlyTitle}>
           {esOnlyTitle}
@@ -256,14 +296,18 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderPermissionsPanel = () => {
-    if (!this.props.entitySet) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty()) {
+      return null;
+    }
+
     const aclKey = this.state.permissionsModalAclKey;
     let panel = null;
     if (aclKey.length === 1) {
       const aclKeysToUpdate = [aclKey];
       if (this.state.permissionsShouldUpdateAll) {
-        Object.keys(this.props.ownedPropertyTypeIds).forEach((id) => {
-          aclKeysToUpdate.push([this.props.entitySet.id, id]);
+        this.props.ownedPropertyTypes.forEach((propertyType :Map) => {
+          aclKeysToUpdate.push([this.props.entitySet.get('id'), propertyType.get('id')]);
         });
       }
       panel = <PermissionsPanel entitySetId={aclKey[0]} aclKeysToUpdate={aclKeysToUpdate} />;
@@ -287,10 +331,14 @@ class EntitySetDetailComponent extends React.Component {
   };
 
   renderSearchEntitySet = () => {
-    if (!this.props.entitySet) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty()) {
+      return null;
+    }
+
     return (
       <div className={styles.buttonWrapper}>
-        <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.id}`}>
+        <Link className={styles.buttonLink} to={`/search/${this.props.entitySet.get('id')}`}>
           <Button bsStyle="primary" className={styles.center}>
             <FontAwesome name="search" />
             <span className={styles.buttonText}>Search this entity set</span>
@@ -301,7 +349,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderAddDataForm = () => {
-    if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty() || !this.props.entitySetPermissions.WRITE) {
+      return null;
+    }
+
     return (
       <Modal
           show={this.state.addingData}
@@ -311,17 +363,21 @@ class EntitySetDetailComponent extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <AddDataForm
-              entitySetId={this.props.entitySet.id}
-              primaryKey={this.props.entitySet.entityType.key}
-              propertyTypes={this.props.entitySet.entityType.properties} />
+              entitySetId={this.props.entitySet.get('id')}
+              primaryKey={this.props.entityType.get('key')}
+              propertyTypes={this.props.ownedPropertyTypes} />
         </Modal.Body>
       </Modal>
     );
   }
 
   deleteEntitySet = () => {
-    if (!this.props.entitySet) return;
-    EntityDataModelApi.deleteEntitySet(this.props.entitySet.id)
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty()) {
+      return;
+    }
+
+    EntityDataModelApi.deleteEntitySet(this.props.entitySet.get('id'))
     .then(() => {
       this.props.router.push(`/${PageConsts.HOME}`);
     }).catch(() => {
@@ -357,7 +413,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderAddDataButton = () => {
-    if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty() || !this.props.entitySetPermissions.WRITE) {
+      return null;
+    }
+
     return (
       <div className={styles.buttonWrapper}>
         <Button
@@ -372,7 +432,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderIntegrationDetailsLink = () => {
-    if (!this.props.entitySet || !this.props.entitySetPermissions.WRITE) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty() || !this.props.entitySetPermissions.WRITE) {
+      return null;
+    }
+
     return (
       <div className={styles.buttonWrapper}>
         <Link
@@ -394,7 +458,11 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderDeleteEntitySet = () => {
-    if (!this.props.entitySet || !this.props.entitySetPermissions.OWNER) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty() || !this.props.entitySetPermissions.OWNER) {
+      return null;
+    }
+
     const error = (this.state.deleteError) ? <div className={styles.error}>Unable to delete entity set</div> : null;
     return (
       <div className={styles.buttonWrapper}>
@@ -411,13 +479,17 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   renderConfirmDeleteModal = () => {
-    if (!this.props.entitySet) return null;
+
+    if (!this.props.entitySet || this.props.entitySet.isEmpty()) {
+      return null;
+    }
+
     return (
       <Modal
           show={this.state.confirmingDelete}
           onHide={this.cancelDelete}>
         <Modal.Header closeButton>
-          <Modal.Title>Are you sure you want to delete {this.props.entitySet.title}?</Modal.Title>
+          <Modal.Title>Are you sure you want to delete {this.props.entitySet.get('title')}?</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className={styles.centerWrapper}>
@@ -433,7 +505,7 @@ class EntitySetDetailComponent extends React.Component {
   };
 
   getDocumentTitle = () => {
-    return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
+    return (this.props.entitySet) ? this.props.entitySet.get('title') : PageConsts.DEFAULT_DOCUMENT_TITLE;
   }
 
   render() {
@@ -449,12 +521,10 @@ class EntitySetDetailComponent extends React.Component {
               {...this.props.asyncState}
               content={() => {
                 // TODO: Remove when removing denormalization
-                const propertyTypeIds = this.props.entitySet.entityType.properties.map((property) => {
-                  return property.id;
-                });
+                const propertyTypeIds = this.props.entityType.get('properties', Immutable.List());
                 return (
                   <PropertyTypeList
-                      entitySetId={this.props.entitySet.id}
+                      entitySetId={this.props.entitySet.get('id')}
                       propertyTypeIds={propertyTypeIds}
                       className="propertyTypeStyleDefault" />
                 );
@@ -472,70 +542,73 @@ class EntitySetDetailComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const entitySetDetail = state.get('entitySetDetail');
-  const normalizedData = state.get('normalizedData');
+function mapStateToProps(state :Map, ownProps :Object) {
+
+
   const permissions = state.get('permissions');
-  const entitySet = entitySetDetail.get('entitySet').toJS();
-  // let entitySet;
+  const entitySetDetail = state.get('entitySetDetail');
+
+  const entitySetId :string = ownProps.params.id;
+  const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+
   let entitySetPermissions;
-  const allPropertyTypeIds = [];
-  const ownedPropertyTypeIds = {};
-  const reference = entitySetDetail.get('entitySetReference');
-  if (Object.keys(entitySet).length > 0 && reference) {
-    // entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
-    entitySetPermissions = getPermissions(permissions, [entitySet.id]);
-    entitySet.entityType.properties.forEach((propertyType) => {
-      allPropertyTypeIds.push(propertyType.id);
-      if (getPermissions(permissions, [entitySet.id, propertyType.id]).OWNER) {
-        ownedPropertyTypeIds[propertyType.id] = propertyType.title;
-      }
-    });
+  if (!entitySet.isEmpty()) {
+    entitySetPermissions = getPermissions(permissions, [entitySet.get('id')]);
   }
   else {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
+  const entityTypeId :string = entitySet.get('entityTypeId');
+  const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
+  const propertyTypeIds :List = entityType.get('properties', Immutable.List());
+  let ownedPropertyTypes :List = Immutable.List();
+
+  if (!propertyTypeIds.isEmpty()) {
+    propertyTypeIds.forEach((propertyTypeId :string) => {
+      if (getPermissions(permissions, [entitySetId, propertyTypeId]).OWNER) {
+        ownedPropertyTypes = ownedPropertyTypes.push(
+          state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map())
+        );
+      }
+    });
+  }
 
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
+    entitySetId,
     entitySetPermissions,
-    allPropertyTypeIds,
-    ownedPropertyTypeIds
+    entityType,
+    ownedPropertyTypes,
+    propertyTypeIds
   };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-  const id = ownProps.params.id;
 
   return {
-    loadEntitySet: () => {
-      dispatch(actionFactories.entitySetDetailRequest(id));
-      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      // TODO: Move filter creation in helper function in EdmApi
-      dispatch(edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      ));
-    },
     resetPermissions: () => {
       dispatch(psActionFactories.resetPermissions());
     },
     updateMetadata: (entitySetId, metadataUpdate) => {
       dispatch(edmActionFactories.updateEntitySetMetadataRequest(entitySetId, metadataUpdate));
     },
-    loadOwnedPropertyTypes: (entitySetId, propertyTypeIds) => {
-      const accessChecks = propertyTypeIds.map((id) => {
-        return {
-          aclKey: [entitySetId, id],
+    loadOwnedPropertyTypes: (entitySetId :string, propertyTypeIds :List<string>) => {
+      const accessChecks :Object[] = [];
+      propertyTypeIds.forEach((propertyTypeId :string) => {
+        accessChecks.push({
+          aclKey: [entitySetId, propertyTypeId],
           permissions: [PERMISSIONS.OWNER]
-        };
+        });
       });
       dispatch(PermissionsActionFactory.checkAuthorizationRequest(accessChecks));
+    },
+    subscribeToEntitySetAclKeyRequest: (aclKey :UUID[]) => {
+      dispatch(NeuronActionFactory.subscribeToAclKeyRequest(aclKey));
+    },
+    unsubscribeFromEntitySetAclKeyRequest: (aclKey :UUID[]) => {
+      dispatch(NeuronActionFactory.unsubscribeFromAclKeyRequest(aclKey));
     }
   };
 }

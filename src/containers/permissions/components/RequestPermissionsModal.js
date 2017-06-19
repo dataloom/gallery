@@ -8,14 +8,13 @@ import { Modal, Alert } from 'react-bootstrap';
 
 import AsyncContent from '../../../components/asynccontent/AsyncContent';
 import * as actionFactory from '../PermissionsActionFactory';
-import { getEdmObjectSilent, createEntitySetReference } from '../../edm/EdmStorage';
 import { EntitySetPropType } from '../../edm/EdmModel';
 import RequestPermissionsForm from './RequestPermissionsForm';
 
-export class RequestPermissionsModal extends React.Component {
+class RequestPermissionsModal extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
-    entitySetId: PropTypes.string,
+    entitySetId: PropTypes.string.isRequired,
     reason: PropTypes.string.isRequired,
     pidToRequestedPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
 
@@ -26,14 +25,8 @@ export class RequestPermissionsModal extends React.Component {
 
     asyncStatus: PropTypes.symbol.isRequired,
     // Async Objects
-    entitySet: EntitySetPropType,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string)
-  };
-
-  static defaultProps = {
-    entitySet: null,
-    propertyTypeIds: [],
-    entitySetId: null
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired
   };
 
   render() {
@@ -52,7 +45,7 @@ export class RequestPermissionsModal extends React.Component {
 
     let title;
     if (entitySet) {
-      title = `Request permissions on "${entitySet.title}"`;
+      title = `Request permissions on "${entitySet.get('title')}"`;
     }
 
     return (
@@ -81,26 +74,24 @@ export class RequestPermissionsModal extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const normalizedData = state.get('normalizedData').toJS();
-  const permissions = state.get('permissions');
+function mapStateToProps(state :Map) {
 
+  const permissions = state.get('permissions');
   const entitySetId = permissions.getIn(['requestPermissionsModal', 'entitySetId']);
-  let propertyTypeIds;
-  let entitySet;
+  const modalState = permissions.get('requestPermissionsModal');
+
+  let entitySet :Map = Immutable.Map();
+  let propertyTypeIds :List = Immutable.List();
 
   if (entitySetId) {
-    // TODO: Remove denormalization and replace with getting PropertyTypeIds directly
-    const reference = createEntitySetReference(entitySetId);
-    entitySet = getEdmObjectSilent(normalizedData, reference, null);
-    if (entitySet && entitySet.entityType) {
-      propertyTypeIds = entitySet.entityType.properties.map((property) => {
-        return property.id;
-      });
+    entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+    const entityTypeId :string = entitySet.get('entityTypeId');
+    const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
+    if (!entityType.isEmpty()) {
+      propertyTypeIds = entityType.get('properties');
     }
   }
 
-  const modalState = permissions.get('requestPermissionsModal');
   return {
     propertyTypeIds,
     entitySetId,

@@ -54,10 +54,13 @@ export default {
     BANNER_PLUGIN
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.css'],
+    extensions: ['.js', '.css'],
     modules: [
       APP_PATHS.ABS.SOURCE,
       APP_PATHS.ABS.NODE
     ]
+  },
+  node: {
+    net: 'empty'
   }
 };

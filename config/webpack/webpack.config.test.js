@@ -28,7 +28,8 @@ export default {
     DEFINE_PLUGIN,
     EXTRACT_TEXT_PLUGIN
   ],
-  devtool: 'inline-source-map',
+  // devtool: 'inline-source-map',
+  devtool: false,
   externals: {
     'react/addons': true,
     'react/lib/ExecutionEnvironment': true,

@@ -1,126 +1,177 @@
-/* @flow */
-import Immutable from 'immutable';
-import { Observable } from 'rxjs';
+/*
+ * @flow
+ */
+
+import { EntityDataModelApi } from 'loom-data';
 import { combineEpics } from 'redux-observable';
-import { normalize } from 'normalizr';
+import { Observable } from 'rxjs';
 
-import {
-  EntityDataModelApi
-} from 'loom-data';
-
-import * as EdmStorage from './EdmStorage';
+import * as AsyncActionFactory from '../async/AsyncActionFactory';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
-import * as AsyncActionFactory from '../async/AsyncActionFactory';
-
-function allPropertyTypesEpic(action$) {
-  return action$.ofType(actionTypes.ALL_PROPERTY_TYPES_REQUEST)
-    .mergeMap(action => {
-      return Observable.from(EntityDataModelApi.getAllPropertyTypes())
-        .map(propertyTypes => normalize(propertyTypes, [EdmStorage.PropertyTypeNschema]))
-        .flatMap(nData => {
-          const references = nData.result.map(id => {
-            return {
-              id,
-              collection: EdmStorage.COLLECTIONS.PROPERTY_TYPE
-            }
-          });
-          return [
-            actionFactories.updateNormalizedData(Immutable.fromJS(nData.entities)),
-            actionFactories.allPropertyTypesResolve(references)
-          ];
-        })
-        .catch(() => {
-          return Observable.of(
-            actionFactories.allPropertyTypesReject('Failed to load Property Types')
-          );
-        });
-    });
-}
-
-function allEntityTypesEpic(action$) {
-  return action$.ofType(actionTypes.ALL_ENTITY_TYPES_REQUEST)
-    .mergeMap(action => {
-      return Observable.from(EntityDataModelApi.getAllEntityTypes())
-        .map(entityTypes => normalize(entityTypes, [EdmStorage.EntityTypeNschema]))
-        .flatMap(nData => {
-          const references = nData.result.map(id => {
-            return {
-              id,
-              collection: EdmStorage.COLLECTIONS.ENTITY_TYPE
-            }
-          });
-          return [
-            actionFactories.updateNormalizedData(Immutable.fromJS(nData.entities)),
-            actionFactories.allEntityTypesResolve(references)
-          ];
-        })
-        .catch(() => {
-          return Observable.of(
-            actionFactories.allEntityTypesReject('Failed to load Entity Types')
-          );
-        });
-    });
-}
-
-/**
- * Listens for updateNormalizedData actions and dispatches object references
- */
-function referenceEpic(action$) {
-  return action$.ofType(actionTypes.UPDATE_NORMALIZED_DATA)
-    .pluck('normalizedData')
-    .mergeMap((normalizedData) => {
-      const references = EdmStorage.getReferencesFromNormalizedData(normalizedData);
-      // Old references
-      const actions = references.map(actionFactories.edmObjectResolve);
-
-      // Async code
-      for (const namespace of normalizedData.keys()) {
-        const namespaceData = normalizedData.get(namespace);
-        for (const id of namespaceData.keys()) {
-          const asyncReference = {
-            namespace,
-            id
-          };
-          const value = namespaceData.get(id);
-          actions.push(AsyncActionFactory.updateAsyncReference(asyncReference, value.toJS()));
-        }
-      }
-
-      return actions;
-    });
-}
-
-// TODO: Cancellation and Error handling
-function loadEdm(edmQuery) {
-  return Observable.from(EntityDataModelApi.getEntityDataModelProjection(edmQuery))
-    .map(Immutable.fromJS)
-    .map(actionFactories.updateNormalizedData);
-}
+import * as EdmActionFactory from './EdmActionFactory';
 
 function loadEdmEpic(action$) {
   // Filter on Action
   return action$.ofType(actionTypes.FILTERED_EDM_REQUEST)
   // Get Id(s)
     .map(action => action.edmQuery)
-    .mergeMap(loadEdm)
+    // .mergeMap(loadEdm)
+    .mergeMap((edmQuery) => {
+      return Observable
+        .from(EntityDataModelApi.getEntityDataModelProjection(edmQuery))
+        .mergeMap((response) => {
+          const actions :Object[] = [];
+          Object.keys(response).forEach((namespace :string) => {
+            const types :Object = response[namespace];
+            Object.keys(types).forEach((id :string) => {
+              actions.push(AsyncActionFactory.updateAsyncReference({ id, namespace }, types[id]));
+            });
+          });
+          return actions;
+        })
+        .catch(() => {
+          return Observable.of({
+            type: 'NO_OP'
+          });
+        });
+    });
 }
 
 function updateMetadataEpic(action$) {
   return action$.ofType(actionTypes.UPDATE_ENTITY_SET_METADATA_REQUEST)
-  .mergeMap((action :Action) => {
-    return Observable
-      .from(EntityDataModelApi.updateEntitySetMetaData(action.entitySetId, action.metadataUpdate))
-      .mergeMap(() => {
-        return Observable.of(
-          actionFactories.updateEntitySetMetadataResolve()
-        );
-      })
-      // Error Handling
-      .catch((error) => {
-        return Observable.of(actionFactories.updateEntitySetMetadataReject('Unable to update entity set metadata.'));
-      });
-  });
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(EntityDataModelApi.updateEntitySetMetaData(action.entitySetId, action.metadataUpdate))
+        .mergeMap(() => {
+          return Observable.of(
+            actionFactories.updateEntitySetMetadataResolve()
+          );
+        })
+        .catch(() => {
+          return Observable.of(actionFactories.updateEntitySetMetadataReject('Unable to update entity set metadata.'));
+        });
+    });
 }
 
-export default combineEpics(loadEdmEpic, referenceEpic, allEntityTypesEpic, allPropertyTypesEpic, updateMetadataEpic);
+/*
+ *
+ *
+ *
+ */
+
+function fetchAllEntitySetsEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(actionTypes.FETCH_ALL_ENTITY_SETS_REQUEST)
+    .mergeMap(() => {
+      return Observable
+        .from(EntityDataModelApi.getAllEntitySets())
+        .mergeMap((entitySets :Object[]) => {
+          return Observable.of(
+            EdmActionFactory.fetchAllEntitySetsSuccess(entitySets),
+            // HACK
+            {
+              type: 'UPDATE_ENTITY_SET_ASYNC_REFERENCES',
+              entitySets
+            }
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            EdmActionFactory.fetchAllEntitySetsFailure()
+          );
+        });
+    });
+}
+
+function fetchAllEntityTypesEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(actionTypes.FETCH_ALL_ENTITY_TYPES_REQUEST)
+    .mergeMap(() => {
+      return Observable
+        .from(EntityDataModelApi.getAllEntityTypes())
+        .mergeMap((entityTypes :Object[]) => {
+          return Observable.of(
+            EdmActionFactory.fetchAllEntityTypesSuccess(entityTypes),
+            // HACK
+            {
+              type: 'UPDATE_ENTITY_TYPE_ASYNC_REFERENCES',
+              entityTypes
+            }
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            EdmActionFactory.fetchAllEntityTypesFailure()
+          );
+        });
+    });
+}
+
+function fetchAllPropertyTypesEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(actionTypes.FETCH_ALL_PROPERTY_TYPES_REQUEST)
+    .mergeMap(() => {
+      return Observable
+        .from(EntityDataModelApi.getAllPropertyTypes())
+        .mergeMap((propertyTypes :Object[]) => {
+          return Observable.of(
+            EdmActionFactory.fetchAllPropertyTypesSuccess(propertyTypes),
+            // HACK
+            {
+              type: 'UPDATE_PROPERTY_TYPE_ASYNC_REFERENCES',
+              propertyTypes
+            }
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            EdmActionFactory.fetchAllPropertyTypesFailure()
+          );
+        });
+    });
+}
+
+function fetchEntitySetProjectionEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(actionTypes.FETCH_ENTITY_SET_PROJECTION_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(EntityDataModelApi.getEntityDataModelProjection(action.edmProjection))
+        .mergeMap((response) => {
+
+          const actions :Object[] = [
+            EdmActionFactory.fetchEntitySetProjectionSuccess(response)
+          ];
+
+          // TODO: figure out what to do with this async references pattern
+          Object.keys(response).forEach((namespace :string) => {
+            const types :Object = response[namespace];
+            Object.keys(types).forEach((id :string) => {
+              actions.push(AsyncActionFactory.updateAsyncReference({ id, namespace }, types[id]));
+            });
+          });
+
+          return actions;
+        })
+        .catch(() => {
+          return Observable.of(
+            EdmActionFactory.fetchEntitySetProjectionFailure()
+          );
+        });
+    });
+}
+
+export default combineEpics(
+  loadEdmEpic,
+  updateMetadataEpic,
+
+  fetchAllEntitySetsEpic,
+  fetchAllEntityTypesEpic,
+  fetchAllPropertyTypesEpic,
+  fetchEntitySetProjectionEpic
+);

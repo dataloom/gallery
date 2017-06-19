@@ -6,19 +6,21 @@ import { bindActionCreators } from 'redux';
 import Immutable from 'immutable';
 
 import Page from '../../../components/page/Page';
+
+// import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactory';
+
 import styles from '../styles.module.css';
-import { entitySetDetailRequest } from '../../entitysetdetail/EntitySetDetailActionFactories';
 
 class TopUtilizersPage extends React.Component {
   static propTypes = {
-    getEntitySetId: PropTypes.func.isRequired,
+    // getEntitySetId: PropTypes.func.isRequired,
     children: PropTypes.object.isRequired,
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
-  componentDidMount() {
-    this.props.getEntitySetId();
-  }
+  // componentDidMount() {
+  //   this.props.getEntitySetId();
+  // }
 
   renderEntitySetTitle = () => {
     return (
@@ -42,20 +44,23 @@ class TopUtilizersPage extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const entitySetDetail = state.get('entitySetDetail');
+function mapStateToProps(state :Map, ownProps :Object) :Object {
+
+  const entitySetId :string = ownProps.params.id;
 
   return {
-    entitySet: entitySetDetail.get('entitySet')
+    entitySetId,
+    entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map())
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
-  const actions = {
-    getEntitySetId: entitySetDetailRequest.bind(null, ownProps.params.id)
-  };
+// function mapDispatchToProps(dispatch, ownProps) {
+//
+//   const actions = {
+//     getEntitySetId: entitySetDetailRequest.bind(null, ownProps.params.id)
+//   };
+//
+//   return bindActionCreators(actions, dispatch);
+// }
 
-  return bindActionCreators(actions, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TopUtilizersPage);
+export default connect(mapStateToProps)(TopUtilizersPage);

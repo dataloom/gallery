@@ -2,22 +2,21 @@
 import Immutable from 'immutable';
 
 import * as actionTypes from './TopUtilizersActionTypes';
-import * as ESDActionTypes from '../entitysetdetail/EntitySetDetailActionTypes';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
-  entitySetId: '',
   entitySet: {},
   associations: [],
-  entityTypes: [],
   topUtilizersDetailsList: {},
   topUtilizersResults: [],
-  isGettingResults: false
+  isGettingResults: false,
+  associationDetails: Immutable.Map()
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
-    case actionTypes.GET_ENTITY_TYPES_REQUEST:
-      return state;
+
+    case actionTypes.GET_ENTITY_SET_SUCCESS:
+      return state.set('entitySet', action.entitySet);
 
     case actionTypes.GET_ASSOCIATIONS_SUCCESS: {
       const associations = Immutable.fromJS(action.data);
@@ -27,16 +26,8 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.GET_ASSOCIATIONS_FAILURE:
       return state;
 
-    case actionTypes.GET_ENTITY_TYPES_SUCCESS: {
-      const entityTypes = Immutable.fromJS(action.data);
-      return state.set('entityTypes', entityTypes);
-    }
-
-    case actionTypes.GET_ENTITY_TYPES_FAILURE:
-      return state;
-
-    case ESDActionTypes.ENTITY_SET_REQUEST:
-      return state.set('entitySetId', action.id);
+    case actionTypes.GET_ASSOCIATION_DETAILS_SUCCESS:
+      return state.setIn(['associationDetails', action.associationId], action.associationDetails);
 
     case actionTypes.SET_ENTITY_SET:
       return state.set('entitySet', action.data);

@@ -1,36 +1,51 @@
+/*
+ * @flow
+ */
+
 import React from 'react';
+
+import Immutable from 'immutable';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import DocumentTitle from 'react-document-title';
 
-import * as actionFactory from './EntitySetDetailActionFactories';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
-import { getEdmObject } from '../edm/EdmStorage';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
 import styles from './entitysetdetail.module.css';
 
+import { fetchEntitySetProjectionRequest } from '../edm/EdmActionFactory';
+import { getEntitySetsAuthorizations } from '../permissions/PermissionsActionFactory';
+import { entitySetDetailRequest } from './EntitySetDetailActionFactory';
+
 class EntitySetDetailContainer extends React.Component {
+
   static propTypes = {
+    actions: PropTypes.shape({
+      entitySetDetailRequest: PropTypes.func.isRequired,
+      fetchEntitySetProjectionRequest: PropTypes.func.isRequired,
+      getEntitySetsAuthorizations: PropTypes.func.isRequired
+    }).isRequired,
     children: PropTypes.object.isRequired,
-    loadEntitySet: PropTypes.func.isRequired,
-    entitySet: PropTypes.object,
-    setEntitySet: PropTypes.func.isRequired
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySetId: PropTypes.string.isRequired
   }
 
   componentDidMount() {
-    this.props.loadEntitySet();
-  }
 
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.entitySet && nextProps.entitySet) {
-      this.props.setEntitySet(nextProps.entitySet);
-    }
+    this.props.actions.entitySetDetailRequest(this.props.entitySetId);
+    this.props.actions.getEntitySetsAuthorizations([this.props.entitySetId]);
+
+    this.props.actions.fetchEntitySetProjectionRequest([{
+      type: 'EntitySet',
+      id: this.props.entitySetId,
+      include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+    }]);
   }
 
   getDocumentTitle = () => {
-    return (this.props.entitySet) ? this.props.entitySet.title : PageConsts.DEFAULT_DOCUMENT_TITLE;
+    return (!this.props.entitySet.isEmpty()) ? this.props.entitySet.get('title') : PageConsts.DEFAULT_DOCUMENT_TITLE;
   }
 
   render() {
@@ -44,40 +59,27 @@ class EntitySetDetailContainer extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const entitySetDetail = state.get('entitySetDetail');
-  const normalizedData = state.get('normalizedData');
+function mapStateToProps(state :Map, ownProps :Object) :Object {
 
-  let entitySet;
-  const reference = entitySetDetail.get('entitySetReference');
-  if (reference) {
-    entitySet = getEdmObject(normalizedData.toJS(), reference.toJS());
-  }
+  const entitySetId :string = ownProps.params.id;
+  const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
 
   return {
-    entitySet
+    entitySet,
+    entitySetId
   };
 }
 
-function mapDispatchToProps(dispatch, ownProps) {
-  const { id } = ownProps.params;
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    entitySetDetailRequest,
+    fetchEntitySetProjectionRequest,
+    getEntitySetsAuthorizations
+  };
 
   return {
-    loadEntitySet: () => {
-      dispatch(actionFactory.entitySetDetailRequest(id));
-      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      // TODO: Move filter creation in helper function in EdmApi
-      dispatch(edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      ));
-    },
-    setEntitySet: (entitySet) => {
-      dispatch(actionFactory.setEntitySet(entitySet));
-    }
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 

@@ -72,23 +72,23 @@ export const PrincipalPropType = PropTypes.shape({
   id: PropTypes.string.isRequired
 });
 
-export const RequestStatus = Object.freeze({
-  SUBMITTED: 'SUBMITTED',
-  APPROVED: 'APPROVED',
-  DECLINED: 'DECLINED'
-});
-export type Status = {
-  aclKey :AclKey,
-  principal :Principal,
-  permissions :string[],
-  status :string
-}
-export const StatusPropType = PropTypes.shape({
-  aclKey: AclKeyPropType.isRequired,
-  principal: PrincipalPropType.isRequired,
-  permissions: PropTypes.arrayOf(PropTypes.oneOf(ALL_PERMISSIONS)).isRequired,
-  status: PropTypes.string.isRequired
-});
+// export const RequestStatus = Object.freeze({
+//   SUBMITTED: 'SUBMITTED',
+//   APPROVED: 'APPROVED',
+//   DECLINED: 'DECLINED'
+// });
+// export type Status = {
+//   aclKey :AclKey,
+//   principal :Principal,
+//   permissions :string[],
+//   status :string
+// }
+// export const StatusPropType = PropTypes.shape({
+//   aclKey: AclKeyPropType.isRequired,
+//   principal: PrincipalPropType.isRequired,
+//   permissions: PropTypes.arrayOf(PropTypes.oneOf(ALL_PERMISSIONS)).isRequired,
+//   status: PropTypes.string.isRequired
+// });
 
 /* Async Stuff */
 export function createStatusAsyncReference(aclKey :AclKey) :AsyncReference {

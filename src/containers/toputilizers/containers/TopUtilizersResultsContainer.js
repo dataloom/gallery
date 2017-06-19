@@ -17,13 +17,14 @@ class TopUtilizersResultsContainer extends React.Component {
     results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
     entitySetId: PropTypes.string.isRequired,
-    downloadResults: PropTypes.func.isRequired
+    downloadResults: PropTypes.func.isRequired,
+    topUtilizersDetails: PropTypes.object.isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      entitySet: null,
+      entityType: null,
       propertyTypes: []
     };
   }
@@ -75,7 +76,11 @@ class TopUtilizersResultsContainer extends React.Component {
   renderDownloadButton = () => {
     return (
       <div className={styles.downloadButton}>
-        <Button bsStyle="primary" onClick={this.props.downloadResults}>Download as CSV</Button>
+        <Button
+            bsStyle="primary"
+            onClick={() => {
+              this.props.downloadResults(this.props.entitySetId, this.props.topUtilizersDetails);
+            }}>Download as CSV</Button>
       </div>
     );
   }
@@ -105,7 +110,7 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    entitySetId: topUtilizers.get('entitySetId')
+    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS()
   };
 }
 

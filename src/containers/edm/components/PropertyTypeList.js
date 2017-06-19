@@ -1,6 +1,14 @@
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
 import classnames from 'classnames';
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
+import { connect } from 'react-redux';
 
 import PropertyType, { EditingPropType, DEFAULT_EDITING } from './propertytype/PropertyType';
 import { checkAuthorizationRequest } from '../../permissions/PermissionsActionFactory';
@@ -9,7 +17,7 @@ import { createAccessCheck } from '../../permissions/PermissionsStorage';
 class PropertyTypeList extends React.Component {
   static propTypes = {
     className: PropTypes.string,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     editing: EditingPropType,
     onChange: PropTypes.func,
     // Implies permissions view
@@ -27,22 +35,25 @@ class PropertyTypeList extends React.Component {
   }
 
   renderContent() {
-    const { propertyTypeIds, entitySetId, editing, onChange, requestingPermissions } = this.props;
-    if (propertyTypeIds.length > 0) {
-      return propertyTypeIds.map((id) => {
-        return (
-          <PropertyType
-              entitySetId={entitySetId}
-              editing={editing}
-              propertyTypeId={id}
-              key={id}
-              onChange={onChange}
-              requestingPermissions={requestingPermissions} />
-        );
-      });
-    } else {
+
+    if (this.props.propertyTypeIds.isEmpty()) {
       return (<em>No property types</em>);
     }
+
+    const propertyTypes = [];
+    this.props.propertyTypeIds.forEach((propertyTypeId :string) => {
+      propertyTypes.push(
+        <PropertyType
+            entitySetId={this.props.entitySetId}
+            editing={this.props.editing}
+            propertyTypeId={propertyTypeId}
+            key={propertyTypeId}
+            onChange={this.props.onChange}
+            requestingPermissions={this.props.requestingPermissions} />
+      );
+    });
+
+    return propertyTypes;
   }
 
   render() {
@@ -63,17 +74,23 @@ class PropertyTypeList extends React.Component {
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
+
   const { entitySetId, propertyTypeIds } = ownProps;
 
   let loadPermissions;
   if (entitySetId) {
-    const accessChecks = propertyTypeIds.map((id) => {
-      return createAccessCheck([entitySetId, id]);
+    // const accessChecks = propertyTypeIds.map((id) => {
+    //   return createAccessCheck([entitySetId, id]);
+    // });
+    const accessChecks = [];
+    propertyTypeIds.forEach((propertyTypeId :string) => {
+      accessChecks.push(createAccessCheck([entitySetId, propertyTypeId]));
     });
     loadPermissions = () => {
       dispatch(checkAuthorizationRequest(accessChecks));
     };
-  } else {
+  }
+  else {
     loadPermissions = () => {};
   }
 

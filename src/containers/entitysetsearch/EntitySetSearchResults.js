@@ -17,7 +17,7 @@ export default class EntitySetSearchResults extends React.Component {
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     formatValueFn: PropTypes.func.isRequired,
-    showCount: PropTypes.boolean
+    showCount: PropTypes.bool
   }
 
   constructor(props) {

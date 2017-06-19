@@ -17,9 +17,9 @@ import {
   combineEpics
 } from 'redux-observable';
 
+import * as AsyncActionFactory from '../async/AsyncActionFactory';
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 import * as PermissionsActionFactory from './PermissionsActionFactory';
-import * as AsyncActionFactory from '../async/AsyncActionFactory';
 
 import {
   STATE as ASYNC_STATUS
@@ -34,13 +34,12 @@ import {
 import type {
   AccessCheck,
   AuthNRequest,
-  AclKey,
-  Status
+  AclKey
 } from './PermissionsStorage';
 
 const { Acl } = DataModels;
 
-function updateStatuses(statuses :Status[]) {
+function updateStatuses(statuses :RequestStatus[]) {
   return Observable.from(RequestsApi.updateRequestStatuses(statuses))
     .mergeMapTo(statuses)
     .map(PermissionsActionFactory.updateStatusSuccess)
@@ -72,7 +71,7 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
     .mergeMap((statuses) => {
       const statusByReferenceId = {};
       statuses.forEach((status) => {
-        statusByReferenceId[createStatusAsyncReference(status.aclKey).id] = status;
+        statusByReferenceId[createStatusAsyncReference(status.request.aclKey).id] = status;
       });
 
       return references.map((reference) => {

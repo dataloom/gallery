@@ -9,10 +9,10 @@ import TopUtilizersResultsContainer from './TopUtilizersResultsContainer';
 
 class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
-    entitySetId: PropTypes.string.isRequired,
-    getAllEntityTypesRequest: PropTypes.func.isRequired,
-    getAssociationsRequest: PropTypes.func.isRequired,
-    submitQuery: PropTypes.func.isRequired
+    getEntitySetRequest: PropTypes.func.isRequired,
+    submitQuery: PropTypes.func.isRequired,
+    entitySet: PropTypes.object.isRequired,
+    topUtilizersDetails: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -27,8 +27,7 @@ class TopUtilizersFormContainer extends React.Component {
   }
 
   componentDidMount() {
-    this.props.getAllEntityTypesRequest();
-    this.props.getAssociationsRequest();
+    this.props.getEntitySetRequest(this.props.params.id);
   }
 
   handleClickAddParameter = (e) => {
@@ -43,13 +42,13 @@ class TopUtilizersFormContainer extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.submitQuery();
+    this.props.submitQuery(this.props.params.id, this.props.topUtilizersDetails);
     this.setState({ showResultsTable: true });
   }
 
   renderResultsContainer = () => {
     if (!this.state.showResultsTable) return null;
-    return <TopUtilizersResultsContainer />;
+    return <TopUtilizersResultsContainer entitySetId={this.props.params.id} />;
   }
 
   render() {
@@ -59,7 +58,7 @@ class TopUtilizersFormContainer extends React.Component {
             handleClick={this.handleClickAddParameter}
             rowData={this.state.rowData}
             onSubmit={this.onSubmit}
-            entitySetId={this.props.entitySetId} />
+            entitySet={this.props.entitySet} />
         <br />
         {this.renderResultsContainer()}
       </div>
@@ -71,14 +70,14 @@ function mapStateToProps(state) {
   const topUtilizers = state.get('topUtilizers');
 
   return {
-    entitySetId: topUtilizers.get('entitySetId')
+    entitySet: topUtilizers.get('entitySet'),
+    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS()
   };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    getAllEntityTypesRequest: actionFactory.getAllEntityTypesRequest,
-    getAssociationsRequest: actionFactory.getAssociationsRequest,
+    getEntitySetRequest: actionFactory.getEntitySetRequest,
     submitQuery: actionFactory.submitTopUtilizersRequest
   };
 

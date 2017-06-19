@@ -39,10 +39,11 @@ elasticsearch -E cluster.name=loom_development
 ./gradlew :conductor:run
 ./gradlew :datastore:run
 ```
-4. Run the server on http://localhost:9000/gallery/ within the gallery project.
+4. Run the server on http://localhost:9000/gallery/ within the gallery project (`/gallery/` trailing slash required).
     * *Option 1:* Run normal dev server `cd gallery; npm run app`
     * *Option 2:* Run [webpack-dashboard](https://www.npmjs.com/package/webpack-dashboard) `cd gallery; npm run dev`
 
+**NOTE: Gallery will run on `/gallery/`, not `/gallery`; the trailing slash `/gallery/` is required.**
 
 ###Tests
 

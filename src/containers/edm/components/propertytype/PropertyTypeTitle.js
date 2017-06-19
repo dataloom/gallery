@@ -1,18 +1,27 @@
-import React from 'react';
-import { PropertyTypePropType } from '../../EdmModel';
+/*
+ * @flow
+ */
 
-/* Title */
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
 export default class PropertyTypeTitle extends React.Component {
+
   static propTypes = {
-    propertyType: PropertyTypePropType
+    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   render() {
-    const { propertyType } = this.props;
-    const content = propertyType === null ? null : propertyType.title;
+
+    let title = null; // legacy, consider just returning null
+    if (this.props.propertyType && !this.props.propertyType.isEmpty()) {
+      title = this.props.propertyType.get('title');
+    }
 
     return (
-      <div className="propertyTypeTitle">{content}</div>
+      <div className="propertyTypeTitle">{title}</div>
     );
   }
 }
