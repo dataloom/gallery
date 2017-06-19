@@ -34,13 +34,14 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
           errorMessage: ''
         }))
         .set('entitySets', Immutable.Map());
-        // .set('entitySetReferences', Immutable.List());
 
     case EdmActionTypes.FETCH_ALL_ENTITY_SETS_SUCCESS: {
 
       const entitySets :Map = Immutable.Map().withMutations((map :Map) => {
         action.entitySets.forEach((entitySet :Object) => {
-          map.set(entitySet.id, Immutable.fromJS(entitySet));
+          if (entitySet) {
+            map.set(entitySet.id, Immutable.fromJS(entitySet));
+          }
         });
       });
 
@@ -72,7 +73,9 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
       const entityTypes :Map = Immutable.Map().withMutations((map :Map) => {
         action.entityTypes.forEach((entityType :Object) => {
-          map.set(entityType.id, Immutable.fromJS(entityType));
+          if (entityType) {
+            map.set(entityType.id, Immutable.fromJS(entityType));
+          }
         });
       });
 
@@ -105,7 +108,9 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
       const propertyTypes :Map = Immutable.Map().withMutations((map :Map) => {
         action.propertyTypes.forEach((propertyType :Object) => {
-          map.set(propertyType.id, Immutable.fromJS(propertyType));
+          if (propertyType) {
+            map.set(propertyType.id, Immutable.fromJS(propertyType));
+          }
         });
       });
 
@@ -115,7 +120,6 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
           errorMessage: ''
         }))
         .set('propertyTypes', propertyTypes);
-        // .set('propertyTypeReferences', propertyTypeReferences);
     }
 
     case EdmActionTypes.FETCH_ALL_PROPERTY_TYPES_FAILURE:
@@ -125,7 +129,6 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
           errorMessage: action.errorMessage
         }))
         .set('propertyTypes', Immutable.Map());
-        // .set('propertyTypeReferences', Immutable.List());
 
     case EdmActionTypes.FETCH_ENTITY_SET_PROJECTION_REQUEST:
       return state;
@@ -138,21 +141,27 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
       const updatedEntitySets :Map = state.get('entitySets').withMutations((entitySets :Map) => {
         Object.keys(action.edm.entitySets).forEach((entitySetId :string) => {
           const entitySet = action.edm.entitySets[entitySetId];
-          entitySets.set(entitySet.id, Immutable.fromJS(entitySet));
+          if (entitySet) {
+            entitySets.set(entitySet.id, Immutable.fromJS(entitySet));
+          }
         });
       });
 
       const updatedEntityTypes :Map = state.get('entityTypes').withMutations((entityTypes :Map) => {
         Object.keys(action.edm.entityTypes).forEach((entityTypeId :string) => {
           const entityType = action.edm.entityTypes[entityTypeId];
-          entityTypes.set(entityType.id, Immutable.fromJS(entityType));
+          if (entityType) {
+            entityTypes.set(entityType.id, Immutable.fromJS(entityType));
+          }
         });
       });
 
       const updatedPropertyTypes :Map = state.get('propertyTypes').withMutations((entityTypes :Map) => {
         Object.keys(action.edm.propertyTypes).forEach((propertyTypeId :string) => {
           const propertyType = action.edm.propertyTypes[propertyTypeId];
-          entityTypes.set(propertyType.id, Immutable.fromJS(propertyType));
+          if (propertyType) {
+            entityTypes.set(propertyType.id, Immutable.fromJS(propertyType));
+          }
         });
       });
 
@@ -167,7 +176,9 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
       const updatedEntitySets :Map = state.get('entitySets').withMutations((entitySets :Map) => {
         Object.keys(action.entitySets).forEach((entitySetId :string) => {
           const entitySet = action.entitySets[entitySetId];
-          entitySets.set(entitySet.id, Immutable.fromJS(entitySet));
+          if (entitySet) {
+            entitySets.set(entitySet.id, Immutable.fromJS(entitySet));
+          }
         });
       });
 

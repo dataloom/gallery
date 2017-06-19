@@ -35,11 +35,13 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
 
       let newState :Map = state;
       action.entitySets.forEach((entitySet :Object) => {
-        const reference = {
-          id: entitySet.id,
-          namespace: 'entitySets'
-        };
-        newState = resolveReference(newState, reference, createCompleteValue(entitySet));
+        if (entitySet) {
+          const reference = {
+            id: entitySet.id,
+            namespace: 'entitySets'
+          };
+          newState = resolveReference(newState, reference, createCompleteValue(entitySet));
+        }
       });
 
       return newState;
@@ -49,11 +51,13 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
 
       let newState :Map = state;
       action.entityTypes.forEach((entityType :Object) => {
-        const reference = {
-          id: entityType.id,
-          namespace: 'entityTypes'
-        };
-        newState = resolveReference(newState, reference, createCompleteValue(entityType));
+        if (entityType) {
+          const reference = {
+            id: entityType.id,
+            namespace: 'entityTypes'
+          };
+          newState = resolveReference(newState, reference, createCompleteValue(entityType));
+        }
       });
 
       return newState;
@@ -63,11 +67,13 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
 
       let newState :Map = state;
       action.propertyTypes.forEach((propertyType :Object) => {
-        const reference = {
-          id: propertyType.id,
-          namespace: 'propertyTypes'
-        };
-        newState = resolveReference(newState, reference, createCompleteValue(propertyType));
+        if (propertyType) {
+          const reference = {
+            id: propertyType.id,
+            namespace: 'propertyTypes'
+          };
+          newState = resolveReference(newState, reference, createCompleteValue(propertyType));
+        }
       });
 
       return newState;

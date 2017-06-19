@@ -40,7 +40,8 @@ function ownedDatasetsIdsEpic(action$) {
           );
         })
         // Error Handling
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             actionFactories.getOwnedDatasetsIdsReject('Error loading owned entity set ids')
           );

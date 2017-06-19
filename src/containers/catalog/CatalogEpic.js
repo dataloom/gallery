@@ -29,14 +29,17 @@ function searchCatalog(filterParams) {
     .mergeMap((results) => {
       const entitySetIds :string[] = [];
       results.forEach((entitySet :Object) => {
-        entitySetIds.push(entitySet.id);
+        if (entitySet) {
+          entitySetIds.push(entitySet.id);
+        }
       });
       return Observable.of(
         actionFactories.catalogSearchResolve(entitySetIds, numHits),
         updateEntitySets(results)
       );
     })
-    .catch(() => {
+    .catch((e) => {
+      console.error(e);
       return Observable.of(
         actionFactories.catalogSearchReject('Error loading search results')
       );
