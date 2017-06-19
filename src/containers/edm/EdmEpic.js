@@ -30,9 +30,10 @@ function loadEdmEpic(action$) {
           });
           return actions;
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of({
-            type: 'NO_OP'
+            type: 'NO_OP' // TODO - need a better error action
           });
         });
     });
@@ -77,7 +78,8 @@ function fetchAllEntitySetsEpic(action$ :Observable<Action>) :Observable<Action>
             }
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             EdmActionFactory.fetchAllEntitySetsFailure()
           );
@@ -102,7 +104,8 @@ function fetchAllEntityTypesEpic(action$ :Observable<Action>) :Observable<Action
             }
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             EdmActionFactory.fetchAllEntityTypesFailure()
           );
@@ -127,7 +130,8 @@ function fetchAllPropertyTypesEpic(action$ :Observable<Action>) :Observable<Acti
             }
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             EdmActionFactory.fetchAllPropertyTypesFailure()
           );
@@ -158,7 +162,8 @@ function fetchEntitySetProjectionEpic(action$ :Observable<Action>) :Observable<A
 
           return actions;
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             EdmActionFactory.fetchEntitySetProjectionFailure()
           );
