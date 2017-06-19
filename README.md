@@ -43,6 +43,7 @@ elasticsearch -E cluster.name=loom_development
     * *Option 1:* Run normal dev server `cd gallery; npm run app`
     * *Option 2:* Run [webpack-dashboard](https://www.npmjs.com/package/webpack-dashboard) `cd gallery; npm run dev`
 
+NOTE: Gallery will run on `/gallery/`, not `/gallery`; the trailing slash `/gallery/` is required.
 
 ###Tests
 
