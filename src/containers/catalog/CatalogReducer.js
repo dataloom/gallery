@@ -1,21 +1,26 @@
-/* @flow */
+/*
+ * @flow
+ */
+
 import Immutable from 'immutable';
 
 import * as actionTypes from './CatalogActionTypes';
+
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 // TODO: Switch to references
-export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
-  asyncState: {
+export const INITIAL_STATE :Map<> = Immutable.fromJS({
+  asyncState: Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
-  },
-  entitySetIds: [],
-  allEntitySetReferences: []
+  }),
+  entitySetIds: Immutable.List()
 });
 
-export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, action:Object) {
+export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
+
   switch (action.type) {
+
     case actionTypes.CATALOG_SEARCH_REQUEST:
       return state.merge({
         asyncState: {
@@ -39,35 +44,8 @@ export default function reducer(state:Immutable.Map<*, *> = INITIAL_STATE, actio
           status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
         },
-        entitySetIds: action.entitySetIds,
+        entitySetIds: Immutable.fromJS(action.entitySetIds),
         numHits: action.numHits
-      });
-
-    case actionTypes.ALL_ENTITY_SETS_REQUEST:
-      return state.merge({
-        asyncState: {
-          status: ASYNC_STATUS.LOADING,
-          errorMessage: ''
-        },
-        allEntitySetReferences: []
-      });
-
-    case actionTypes.ALL_ENTITY_SETS_REJECT:
-      return state.merge({
-        asyncState: {
-          status: ASYNC_STATUS.ERROR,
-          errorMessage: action.errorMessage
-        },
-        allEntitySetReferences: []
-      });
-
-    case actionTypes.ALL_ENTITY_SETS_RESOLVE:
-      return state.merge({
-        asyncState: {
-          status: ASYNC_STATUS.SUCCESS,
-          errorMessage: ''
-        },
-        allEntitySetReferences: action.references
       });
 
     default:

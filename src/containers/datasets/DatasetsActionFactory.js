@@ -8,9 +8,11 @@ export function getOwnedDatasetsIdsRequest(pagingToken :String) {
   return returnVal;
 }
 
-export function getOwnedDatasetsIdsResolve() {
+export function getOwnedDatasetsIdsResolve(ownedEntitySetIds :string[], pagingToken :string) {
   return {
-    type: actionTypes.GET_OWNED_DATASETS_IDS_RESOLVE
+    type: actionTypes.GET_OWNED_DATASETS_IDS_RESOLVE,
+    ownedEntitySetIds,
+    pagingToken
   };
 }
 

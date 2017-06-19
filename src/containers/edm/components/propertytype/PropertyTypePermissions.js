@@ -1,11 +1,19 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
+
 import isFunction from 'lodash/isFunction';
 
-import { PropertyTypePropType } from '../../EdmModel';
 import { PermissionsPropType, PERMISSIONS } from '../../../permissions/PermissionsStorage';
 
 export class PropertyTypePermissionsStatic extends React.Component {
+
   static propTypes = {
     permissions: PermissionsPropType
   };
@@ -23,10 +31,11 @@ export class PropertyTypePermissionsStatic extends React.Component {
 }
 
 export class PropertyTypeEditPermissions extends React.Component {
+
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     // Async Properties
-    propertyType: PropertyTypePropType,
+    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
     permissions: PermissionsPropType
   };
 
@@ -41,7 +50,7 @@ export class PropertyTypeEditPermissions extends React.Component {
       requestedPermissions.push(PERMISSIONS.READ);
     }
 
-    onChange(propertyType.id, requestedPermissions);
+    onChange(propertyType.get('id'), requestedPermissions);
   };
 
   render() {
@@ -54,7 +63,7 @@ export class PropertyTypeEditPermissions extends React.Component {
       <div className="propertyTypePermissions editing">
         <input
             type="checkbox"
-            id={`ptp-${propertyType.id}`}
+            id={`ptp-${propertyType.get('id')}`}
             onChange={this.onChange}
             defaultChecked={canRead}
             disabled={!!canRead} />
@@ -64,6 +73,7 @@ export class PropertyTypeEditPermissions extends React.Component {
 }
 
 export default class PropertyTypePermissions extends React.Component {
+
   static propTypes = {
     editing: PropTypes.bool,
     onChange: (props) => {
@@ -73,7 +83,7 @@ export default class PropertyTypePermissions extends React.Component {
       }
     },
     // Async Properties
-    propertyType: PropertyTypePropType,
+    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
     permissions: PermissionsPropType
   };
 
@@ -91,9 +101,10 @@ export default class PropertyTypePermissions extends React.Component {
         <PropertyTypeEditPermissions
             onChange={onChange}
             permissions={permissions}
-            propertyType={propertyType} />);
-    } else {
-      return (<PropertyTypePermissionsStatic permissions={permissions} />);
+            propertyType={propertyType} />
+      );
     }
+
+    return (<PropertyTypePermissionsStatic permissions={permissions} />);
   }
 }

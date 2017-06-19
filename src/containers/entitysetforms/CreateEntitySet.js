@@ -1,23 +1,32 @@
-import React, { PropTypes } from 'react';
-import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 import Select from 'react-select';
-import classnames from 'classnames';
+
+import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import * as actionFactories from './CreateEntitySetActionFactories';
-import { getEdmObjectsShallow } from '../edm/EdmStorage';
-import { EntityTypePropType } from '../edm/EdmModel';
+import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
+import { createEntitySetRequest } from './CreateEntitySetActionFactories';
+
 
 class CreateEntitySet extends React.Component {
+
   static propTypes = {
+    actions: PropTypes.shape({
+      onCreate: PropTypes.func.isRequired,
+      fetchAllEntityTypesRequest: PropTypes.func.isRequired
+    }).isRequired,
     createEntitySetAsyncState: AsyncStatePropType.isRequired,
-    onCreate: PropTypes.func.isRequired,
-    loadEntityTypes: PropTypes.func.isRequired,
-    entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
-    className: PropTypes.string,
-    defaultContact: PropTypes.string
+    defaultContact: PropTypes.string,
+    entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   constructor(props) {
@@ -32,7 +41,7 @@ class CreateEntitySet extends React.Component {
   }
 
   componentDidMount() {
-    this.props.loadEntityTypes();
+    this.props.actions.fetchAllEntityTypesRequest();
   }
 
   onTitleChange = (event) => {
@@ -68,7 +77,7 @@ class CreateEntitySet extends React.Component {
   onSubmit = () => {
     const { title, name, description, entityTypeId, contact } = this.state;
 
-    this.props.onCreate({
+    this.props.actions.onCreate({
       title,
       name,
       description,
@@ -78,17 +87,23 @@ class CreateEntitySet extends React.Component {
   };
 
   getEntityTypeOptions() {
-    return this.props.entityTypes.map(entityType => {
-      return {
-        value: entityType.id,
-        label: entityType.title
-      };
+
+    const options = [];
+    this.props.entityTypes.forEach((entityType :Map) => {
+      if (!entityType.isEmpty()) {
+        options.push({
+          value: entityType.get('id'),
+          label: entityType.get('title')
+        });
+      }
     });
+
+    return options;
   }
 
   renderPending = () => {
     return (
-      <form onSubmit={this.onSubmit} className={classnames(this.props.className)}>
+      <form onSubmit={this.onSubmit}>
         <FormGroup>
           <ControlLabel>Title</ControlLabel>
           <FormControl type="text" onChange={this.onTitleChange} />
@@ -144,19 +159,27 @@ class CreateEntitySet extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const normalizedData = state.get('normalizedData').toJS(),
-    createEntitySetState = state.get('createEntitySet').toJS();
+
+  // const normalizedData = state.get('normalizedData').toJS(),
+  const createEntitySetState = state.get('createEntitySet').toJS();
+
+  const entityTypes :Map = state.getIn(['edm', 'entityTypes'], Immutable.Map());
+
   return {
-    entityTypes: getEdmObjectsShallow(normalizedData, createEntitySetState.entityTypeReferences),
+    entityTypes,
     createEntitySetAsyncState: createEntitySetState.createEntitySetAsyncState
   };
 }
 
-// TODO: Decide if/how to incorporate bindActionCreators
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    fetchAllEntityTypesRequest,
+    onCreate: createEntitySetRequest
+  };
+
   return {
-    onCreate: (entitySet) => { dispatch(actionFactories.createEntitySetRequest(entitySet)); },
-    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 

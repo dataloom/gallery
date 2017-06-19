@@ -1,23 +1,29 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+import DocumentTitle from 'react-document-title';
+
 import { Pagination } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { denormalize } from 'normalizr';
-import DocumentTitle from 'react-document-title';
+
 import Page from '../../components/page/Page';
-import { EntitySetPropType } from '../edm/EdmModel';
-import { EntitySetNschema } from '../edm/EdmStorage';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../securableobject/SecurableObjectSearch';
 import { catalogSearchRequest } from './CatalogActionFactories';
-import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
 import styles from '../entitysetsearch/styles.module.css';
 
 const MAX_HITS = 10;
 
 class CatalogComponent extends React.Component {
   static propTypes = {
-    asyncState: AsyncStatePropType.isRequired,
-    entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
+    asyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired,
     onSubmitSearch: PropTypes.func.isRequired,
     filterParams: FilterParamsPropType,
     numHits: PropTypes.number
@@ -63,15 +69,16 @@ class CatalogComponent extends React.Component {
           <Page.Header>
             <Page.Title>Browse the catalog</Page.Title>
             <SecurableObjectSearch
-              filterParams={this.props.filterParams}
-              onSubmit={this.props.onSubmitSearch}
-            />
+                filterParams={this.props.filterParams}
+                onSubmit={this.props.onSubmitSearch} />
           </Page.Header>
           <Page.Body>
-            <AsyncContent {...this.props.asyncState}
-              pendingContent={<h2>Please run a search</h2>}
-              content={() => <EntitySetList {...this.props} />}
-            />
+            <AsyncContent
+                {...this.props.asyncState.toJS()} // toJS() for now
+                pendingContent={<h2>Please run a search</h2>}
+                content={() => {
+                  return <EntitySetList entitySets={this.props.entitySets} />;
+                }} />
             {this.renderPagination()}
           </Page.Body>
         </Page>
@@ -98,22 +105,24 @@ function filterParamsFromLocation(location) {
     hasFilters = true;
     if (Array.isArray(pid)) {
       filterParams.propertyTypeIds = pid;
-    } else {
+    }
+    else {
       filterParams.propertyTypeIds = [pid];
     }
   }
   if (query.page) {
     filterParams.page = query.page;
     hasFilters = true;
-  } else {
+  }
+  else {
     filterParams.page = 1;
   }
 
   if (hasFilters) {
     return filterParams;
-  } else {
-    return null;
   }
+
+  return null;
 }
 
 function locationFromFilterParams(filterParams) {
@@ -139,23 +148,26 @@ function locationFromFilterParams(filterParams) {
 
   if (hasFilters) {
     return { query };
-  } else {
-    return {};
   }
+
+  return {};
 }
 
-function mapStateToProps(state, ownProps) {
-  const catalog = state.get('catalog').toJS();
-  const normalizedData = state.get('normalizedData').toJS();
+function mapStateToProps(state :Map<>, ownProps :Object) :Object {
+
+  const entitySetIds :List<string> = state.getIn(['catalog', 'entitySetIds'], Immutable.List());
+  let entitySets :Map = Immutable.Map();
+  entitySetIds.forEach((entitySetId :string) => {
+    entitySets = entitySets.set(
+      entitySetId, state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map())
+    );
+  });
+
   return {
-    asyncState: catalog.asyncState,
-    filterParams: filterParamsFromLocation(ownProps.location),
-    entitySets: denormalize(
-      catalog.entitySetIds,
-      [EntitySetNschema],
-      normalizedData
-    ),
-    numHits: catalog.numHits
+    entitySets,
+    asyncState: state.getIn(['catalog', 'asyncState']),
+    numHits: state.getIn(['catalog', 'numHits']),
+    filterParams: filterParamsFromLocation(ownProps.location)
   };
 }
 

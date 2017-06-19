@@ -38,5 +38,6 @@ const plugins = [
 export default Object.assign({}, baseWebpackConfig, {
   output,
   plugins,
-  devtool: 'nosources-source-map'
+  // devtool: 'nosources-source-map'
+  devtool: false
 });

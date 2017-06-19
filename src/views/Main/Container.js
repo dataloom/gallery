@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import DocumentTitle from 'react-document-title';
 import styles from './styles.module.css';
 
-import * as edmActionFactories from '../../containers/edm/EdmActionFactories';
 import HeaderNav from '../../components/headernav/HeaderNav';
 import SideNav from '../../components/sidenav/SideNav';
 import PageConsts from '../../utils/Consts/PageConsts';
@@ -17,8 +16,6 @@ class Container extends React.Component {
   static propTypes = {
     children: PropTypes.element,
     route: PropTypes.object,
-    loadPropertyTypes: PropTypes.func.isRequired,
-    loadEntityTypes: PropTypes.func.isRequired,
     fullName: PropTypes.string.isRequired,
     googleId: PropTypes.string.isRequired
   };
@@ -30,13 +27,6 @@ class Container extends React.Component {
   constructor(props) {
     super(props);
     this.state = props.route.profileFn();
-  }
-
-  componentDidMount() {
-    if (this.props.route.auth.loggedIn()) {
-      this.props.loadPropertyTypes();
-      this.props.loadEntityTypes();
-    }
   }
 
   getChildContext() {
@@ -101,15 +91,4 @@ function mapStateToProps() {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    loadPropertyTypes: () => {
-      dispatch(edmActionFactories.allPropertyTypesRequest());
-    },
-    loadEntityTypes: () => {
-      dispatch(edmActionFactories.allEntityTypesRequest());
-    }
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Container);
+export default connect(mapStateToProps)(Container);

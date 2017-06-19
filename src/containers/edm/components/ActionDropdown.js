@@ -1,41 +1,32 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
+
 import { DataApi } from 'loom-data';
 import { SplitButton, MenuItem } from 'react-bootstrap';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
-import {
-  Link,
-  hashHistory
-} from 'react-router';
-
-import {
-  createAuthnAsyncReference,
-  createAccessCheck,
-  AuthorizationPropType
-} from '../../permissions/PermissionsStorage';
-import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
-import {
-  getShallowEdmObjectSilent,
-  createEntitySetReference
-} from '../EdmStorage';
-import {
-  createEntityTypeAsyncReference
-} from '../EdmAsyncStorage';
-import {
-  EntityTypePropType
-} from '../EdmModel';
-import {
-  createAsyncComponent
-} from '../../async/components/AsyncContentComponent';
+import { Link, hashHistory } from 'react-router';
+import { bindActionCreators } from 'redux';
 
 import DropdownSearchBox from '../../../containers/entitysetsearch/DropdownSearchBox';
 import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 
+import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
+
+import { createAsyncComponent } from '../../async/components/AsyncContentComponent';
+import { createAuthnAsyncReference, createAccessCheck } from '../../permissions/PermissionsStorage';
+import { createEntityTypeAsyncReference } from '../EdmAsyncStorage';
+import { EntityTypePropType } from '../EdmModel';
 
 class ActionDropdown extends React.Component {
+
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
     // propertyTypeAuthorizations: PropTypes.arrayOf(AuthorizationPropType).isRequired,
@@ -147,6 +138,10 @@ class ActionDropdownWrapper extends React.Component {
   };
 
   componentDidMount() {
+
+    // TODO - this can be improved. when there's multiple of these on the page, a new request will be fired off
+    // to load permissions. there should be a way to combine all of these requests into a single request (perhaps with
+    // rxjs Observables)
     const { loadPropertyTypePermissions } = this.props;
     loadPropertyTypePermissions(this.getAclKeys());
   }
@@ -171,16 +166,14 @@ class ActionDropdownWrapper extends React.Component {
 ActionDropdownWrapper.Async = createAsyncComponent(ActionDropdownWrapper);
 
 function mapStateToProps(state, ownProps) {
-  const normalizedData = state.get('normalizedData').toJS();
+
   const { entitySetId } = ownProps;
 
+  const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
   let entityTypeAsyncReference;
-  // TODO: remove denormalization and replace with AsyncReferences
-  const reference = createEntitySetReference(entitySetId);
-  const entitySet = getShallowEdmObjectSilent(normalizedData, reference, null);
 
-  if (entitySet) {
-    entityTypeAsyncReference = createEntityTypeAsyncReference(entitySet.entityTypeId);
+  if (!entitySet.isEmpty()) {
+    entityTypeAsyncReference = createEntityTypeAsyncReference(entitySet.get('entityTypeId'));
   }
   else {
     // TODO: replace with actual empty reference in async/

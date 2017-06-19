@@ -1,27 +1,33 @@
-import React from 'react';
-import { PropertyTypePropType } from '../../EdmModel';
-import ExpandableText from '../../../../components/utils/ExpandableText';
+/*
+ * @flow
+ */
 
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
+import ExpandableText from '../../../../components/utils/ExpandableText';
 
 const MAX_DESCRIPTION_LENGTH = 300;
 
 export default class PropertyTypeDescription extends React.Component {
+
   static propTypes = {
-    propertyType: PropertyTypePropType
+    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   render() {
-    const { propertyType } = this.props;
-    let content;
 
-    if (propertyType) {
-      if (propertyType.description) {
-        content = (<ExpandableText text={propertyType.description} maxLength={MAX_DESCRIPTION_LENGTH} />);
-      } else {
-        content = (<em>No description</em>);
-      }
+    let description = (<em>No description</em>);
+    if (this.props.propertyType && !this.props.propertyType.isEmpty()) {
+      description = (
+        <ExpandableText text={this.props.propertyType.get('description')} maxLength={MAX_DESCRIPTION_LENGTH} />
+      );
     }
 
-    return (<div className="propertyTypeDescription">{content}</div>);
+    return (
+      <div className="propertyTypeDescription">{description}</div>
+    );
   }
 }

@@ -1,40 +1,42 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
 
-import isEmpty from 'lodash/isEmpty';
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 
 import EntitySet from './EntitySet';
-import { EntitySetPropType } from '../../containers/edm/EdmModel';
 import styles from './entityset.module.css';
 
 export default class EntitySetList extends React.Component {
+
   static propTypes = {
-    entitySets: PropTypes.arrayOf(EntitySetPropType).isRequired,
-    className: PropTypes.string
+    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   render() {
-    const { entitySets } = this.props;
 
-    let content;
-    if (isEmpty(entitySets)) {
-      content = (
+    if (this.props.entitySets.isEmpty()) {
+      return (
         <div className={styles.empty}>
           No entity sets found
         </div>
       );
     }
-    else {
-      content = entitySets.map((entitySet) => {
-        return (
-          <EntitySet
-              key={entitySet.id}
-              entitySet={entitySet} />
+
+    const content = [];
+    this.props.entitySets.forEach((entitySet :Map) => {
+      if (!entitySet.isEmpty()) {
+        content.push(
+          <EntitySet key={entitySet.get('id')} entitySet={entitySet} />
         );
-      });
-    }
+      }
+    });
 
     return (
-      <div className={this.props.className}>
+      <div>
         {content}
       </div>
     );

@@ -23,7 +23,7 @@ const routerHistory = initializeRouterHistory(reduxStore);
  * TODO: probably not the best place to initilize WebSockets / connect to Neuron, but this is the cleanest way to get
  * access to the redux store and dispatch()
  */
-initializeNeuron(reduxStore);
+// initializeNeuron(reduxStore);
 
 ReactDOM.render(
   <Provider store={reduxStore}>

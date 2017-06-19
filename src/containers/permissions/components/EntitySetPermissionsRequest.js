@@ -1,24 +1,27 @@
-import {
-  DataModels,
-  Types
-} from 'loom-data';
+/*
+ * @flow
+ */
 
-import React, { PropTypes } from 'react';
+import React from 'react';
+
+import classnames from 'classnames';
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+import FontAwesome from 'react-fontawesome';
+
+import groupBy from 'lodash/groupBy';
+
+import { DataModels, Types } from 'loom-data';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Immutable from 'immutable';
-import groupBy from 'lodash/groupBy';
-import FontAwesome from 'react-fontawesome';
-import classnames from 'classnames';
 
-import { EntitySetPropType } from '../../edm/EdmModel';
-import { createPrincipalReference } from '../../principals/PrincipalsStorage';
-import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
-import { createEntitySetReference, getEdmObjectSilent } from '../../edm/EdmStorage';
 import * as PermissionsActionFactory from '../PermissionsActionFactory';
 import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
 
 import { createAsyncComponent } from '../../async/components/AsyncContentComponent';
+import { createPrincipalReference } from '../../principals/PrincipalsStorage';
+import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
+
 import styles from './permissions.module.css';
 
 const { RequestStatus } = DataModels;
@@ -37,8 +40,8 @@ class EntitySetPermissionsRequest extends React.Component {
     loadPrincipal: PropTypes.func.isRequired,
 
     // TODO: Move to AsyncReference
-    entitySet: EntitySetPropType
-
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired
   };
 
   constructor(props) {
@@ -91,20 +94,20 @@ class EntitySetPermissionsRequest extends React.Component {
     this.setState({ selectedProperties });
   };
 
-  renderProperty(principalId, propertyType, defaultChecked) {
+  renderProperty(principalId, propertyType :Map, defaultChecked) {
     return (
-      <div className="propertyType" key={propertyType.id}>
+      <div className="propertyType" key={propertyType.get('id')}>
         <div className="propertyTypePermissions">
           <input
               type="checkbox"
-              id={`ptr-${principalId}-${propertyType.id}`}
+              id={`ptr-${principalId}-${propertyType.get('id')}`}
               defaultChecked={defaultChecked}
               onClick={(e) => {
-                this.toggleCheckbox(e.target.checked, propertyType.id);
+                this.toggleCheckbox(e.target.checked, propertyType.get('id'));
               }} />
         </div>
         <div className="propertyTypeTitle">
-          <label htmlFor={`ptr-${principalId}-${propertyType.id}`}>{propertyType.title}</label>
+          <label htmlFor={`ptr-${principalId}-${propertyType.get('id')}`}>{propertyType.get('title')}</label>
         </div>
       </div>
     );
@@ -116,8 +119,8 @@ class EntitySetPermissionsRequest extends React.Component {
 
   render() {
 
-    const { statuses, entitySet, principal } = this.props;
-    const propertyTypes = entitySet.entityType.properties;
+    const { statuses, entitySet, principal, propertyTypes } = this.props;
+
     const reasonList = new Set();
     statuses.forEach((status) => {
       reasonList.add(status.request.reason);
@@ -131,9 +134,14 @@ class EntitySetPermissionsRequest extends React.Component {
     const statusByPropertyTypeId = groupBy(statuses, (status) => {
       return status.request.aclKey[1];
     });
-    const content = propertyTypes.map((propertyType) => {
-      return this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.id]);
+
+    const content = [];
+    propertyTypes.forEach((propertyType :Map) => {
+      content.push(
+        this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.get('id')])
+      );
     });
+
     const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`
 
     return (
@@ -194,15 +202,28 @@ class EntitySetPermissionsRequestWrapper extends React.Component {
 
 EntitySetPermissionsRequestWrapper.Async = createAsyncComponent(EntitySetPermissionsRequestWrapper);
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state :Map, ownProps :Object) :Object {
 
-  const normalizedData = state.get('normalizedData').toJS();
-  const { principalId, entitySetId } = ownProps;
-  const entitySet = getEdmObjectSilent(normalizedData, createEntitySetReference(entitySetId), null);
+  const { entitySetId, principalId } = ownProps;
+
+  const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+  const entityTypeId :string = entitySet.get('entityTypeId');
+  const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
+  const propertyTypeIds :List = entityType.get('properties', Immutable.List());
+
+  let propertyTypes :List = Immutable.List();
+  if (!propertyTypeIds.isEmpty()) {
+    propertyTypeIds.forEach((propertyTypeId :string) => {
+      propertyTypes = propertyTypes.push(
+        state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map())
+      );
+    });
+  }
 
   return {
     entitySet,
-    principalId
+    principalId,
+    propertyTypes
   };
 }
 

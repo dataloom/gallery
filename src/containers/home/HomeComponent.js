@@ -1,45 +1,67 @@
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
-import DocumentTitle from 'react-document-title';
-import Page from '../../components/page/Page';
-import { EntitySetPropType } from '../edm/EdmModel';
-import { getShallowEdmObjectSilent } from '../edm/EdmStorage';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import WelcomeInstructionsBox from './WelcomeInstructionsBox';
-import EntitySetList from '../../components/entityset/EntitySetList';
-import { allEntitySetsRequest } from '../catalog/CatalogActionFactories';
-import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-import PageConsts from '../../utils/Consts/PageConsts';
+/*
+ * @flow
+ */
 
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+import DocumentTitle from 'react-document-title';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import AsyncContent from '../../components/asynccontent/AsyncContent';
+import EntitySetList from '../../components/entityset/EntitySetList';
+import Page from '../../components/page/Page';
 import joinImg from '../../images/icon-join.svg';
 import exploreImg from '../../images/icon-explore.svg';
 import visualizeImg from '../../images/icon-visualize.svg';
+import PageConsts from '../../utils/Consts/PageConsts';
+import WelcomeInstructionsBox from './WelcomeInstructionsBox';
+
+import {
+  fetchAllEntitySetsRequest,
+  fetchAllEntityTypesRequest,
+  fetchAllPropertyTypesRequest
+} from '../edm/EdmActionFactory';
+
 import styles from './styles.module.css';
 
 class HomeComponent extends React.Component {
+
   static propTypes = {
-    asyncState: AsyncStatePropType.isRequired,
-    entitySets: PropTypes.arrayOf(EntitySetPropType),
-    loadEntitySets: PropTypes.func.isRequired,
-    loadPropertyTypes: PropTypes.func.isRequired,
-    loadEntityTypes: PropTypes.func.isRequired
+    actions: PropTypes.shape({
+      fetchAllEntitySetsRequest: PropTypes.func.isRequired,
+      fetchAllEntityTypesRequest: PropTypes.func.isRequired,
+      fetchAllPropertyTypesRequest: PropTypes.func.isRequired
+    }).isRequired,
+    asyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   componentDidMount() {
-    this.props.loadEntitySets();
-    this.props.loadPropertyTypes();
-    this.props.loadEntityTypes();
+
+    this.props.actions.fetchAllEntitySetsRequest();
+    this.props.actions.fetchAllEntityTypesRequest();
+    this.props.actions.fetchAllPropertyTypesRequest();
   }
 
   renderAllEntitySets = () => {
-    if (this.props.entitySets !== undefined && this.props.entitySets.length > 0) {
-      return (<AsyncContent
-          {...this.props.asyncState}
-          pendingContent={<h2>Please run a search</h2>}
-          content={() => {
-            return (<EntitySetList entitySets={this.props.entitySets} />);
-          }} />);
+
+    if (this.props.entitySets.size > 0) {
+      return (
+        <AsyncContent
+            status={this.props.asyncState.get('status')}
+            pendingContent={<h2>Please run a search</h2>}
+            content={() => {
+              return (
+                <EntitySetList entitySets={this.props.entitySets} />
+              );
+            }} />
+      );
     }
+
     return null;
   }
 
@@ -79,35 +101,23 @@ class HomeComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const catalog = state.get('catalog').toJS();
-  const normalizedData = state.get('normalizedData').toJS();
-
-  let entitySets = [];
-  if (catalog && catalog.allEntitySetReferences) {
-    entitySets = catalog.allEntitySetReferences.map((reference) => {
-      return getShallowEdmObjectSilent(normalizedData, reference, null);
-    }).filter((entitySet) => {
-      return entitySet;
-    });
-  }
 
   return {
-    asyncState: catalog.asyncState,
-    entitySets
+    asyncState: state.getIn(['edm', 'asyncState'], Immutable.Map()),
+    entitySets: state.getIn(['edm', 'entitySets'], Immutable.Map())
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    fetchAllEntitySetsRequest,
+    fetchAllEntityTypesRequest,
+    fetchAllPropertyTypesRequest
+  };
+
   return {
-    loadEntitySets: () => {
-      dispatch(allEntitySetsRequest());
-    },
-    loadPropertyTypes: () => {
-      dispatch(edmActionFactories.allPropertyTypesRequest());
-    },
-    loadEntityTypes: () => {
-      dispatch(edmActionFactories.allEntityTypesRequest());
-    }
+    actions: bindActionCreators(actions, dispatch)
   };
 }
 

@@ -1,18 +1,26 @@
-import {
-  Types
-} from 'loom-data';
+/*
+ * @flow
+ */
 
-import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+
+import classnames from 'classnames';
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
 import groupBy from 'lodash/groupBy';
-import classNames from 'classnames';
 
-import { createStatusAsyncReference } from '../PermissionsStorage';
+import { Types } from 'loom-data';
+import { connect } from 'react-redux';
+
+import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
+import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
+
 import * as PermissionsAccessFactory from '../PermissionsActionFactory';
 
-import EntitySetPermissionsRequest from './EntitySetPermissionsRequest';
+import { createStatusAsyncReference } from '../PermissionsStorage';
 import { AsyncReferencePropType } from '../../async/AsyncStorage';
-import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
+
 import styles from './permissions.module.css';
 
 const { RequestStateTypes } = Types;
@@ -20,7 +28,7 @@ const { RequestStateTypes } = Types;
 class EntitySetPermissionsRequestList extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     className: PropTypes.string,
 
     // Loaders
@@ -32,8 +40,9 @@ class EntitySetPermissionsRequestList extends React.Component {
 
   componentDidMount() {
 
-    const aclKeys = this.props.propertyTypeIds.map((id) => {
-      return [this.props.entitySetId, id];
+    const aclKeys = [];
+    this.props.propertyTypeIds.forEach((propertyTypeId :string) => {
+      aclKeys.push([this.props.entitySetId, propertyTypeId]);
     });
 
     this.props.loadStatuses(aclKeys);
@@ -87,7 +96,7 @@ class EntitySetPermissionsRequestList extends React.Component {
     const { statusReferences, className } = this.props;
 
     return (
-      <div className={classNames(styles.permissionRequestList, className)}>
+      <div className={classnames(styles.permissionRequestList, className)}>
         <AsyncContentListComponent references={statusReferences} render={this.renderContent} />
       </div>
     );
@@ -95,10 +104,15 @@ class EntitySetPermissionsRequestList extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
+
   const { entitySetId, propertyTypeIds } = ownProps;
-  const statusReferences = propertyTypeIds
-    .map(id => [entitySetId, id])
-    .map(createStatusAsyncReference);
+
+  const statusReferences = [];
+  propertyTypeIds.forEach((propertyTypeId :string) => {
+    statusReferences.push(
+      createStatusAsyncReference([entitySetId, propertyTypeId])
+    );
+  });
 
   return {
     statusReferences

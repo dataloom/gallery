@@ -1,15 +1,16 @@
-/* @flow */
+/*
+ * @flow
+ */
+
 import { Observable } from 'rxjs';
-import { normalize } from 'normalizr';
-import Immutable from 'immutable';
 import { combineEpics } from 'redux-observable';
-import { AuthorizationApi, EntityDataModelApi } from 'loom-data';
+import { AuthorizationApi } from 'loom-data';
 
 import * as actionTypes from './DatasetsActionTypes';
 import * as actionFactories from './DatasetsActionFactory';
+
 import { Permission } from '../../core/permissions/Permission';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import { EntitySetNschema } from '../edm/EdmStorage';
+import { fetchEntitySetProjectionRequest } from '../edm/EdmActionFactory';
 
 function ownedDatasetsIdsEpic(action$) {
   return action$
@@ -18,53 +19,35 @@ function ownedDatasetsIdsEpic(action$) {
       return Observable
         .from(AuthorizationApi.getAccessibleObjects('EntitySet', Permission.OWNER.name, action.pagingToken))
         .mergeMap((response) => {
-          const edmDetailsSelectors = response.authorizedObjects.map((aclKey) => {
-            return {
+
+          const edmProjection :Object[] = [];
+          const ownedEntitySetIds :string[] = [];
+
+          response.authorizedObjects.forEach((aclKey) => {
+            const entitySetId :string = aclKey[0];
+            edmProjection.push({
               type: 'EntitySet',
-              id: aclKey[0],
+              id: entitySetId,
               include: ['EntitySet']
-            };
+            });
+            ownedEntitySetIds.push(entitySetId);
           });
+
+          // how do I do this correctly...?
           return Observable.of(
-            actionFactories.getOwnedDatasetsIdsResolve(),
-            actionFactories.getOwnedDatasetsDetailsRequest(edmDetailsSelectors, response.pagingToken)
+            actionFactories.getOwnedDatasetsIdsResolve(ownedEntitySetIds, response.pagingToken),
+            fetchEntitySetProjectionRequest(edmProjection)
           );
         })
         // Error Handling
-        .catch(error => {
-          console.error(error);
-          return Observable.of(actionFactories.getOwnedDatasetsIdsReject('Error loading owned entity set ids'))
-        });
-    });
-}
-
-function ownedDatasetsDetailsEpic(action$) {
-  return action$
-    .ofType(actionTypes.GET_OWNED_DATASETS_DETAILS_REQUEST)
-    .mergeMap((action :Action) => {
-      let entitySets = [];
-      return Observable
-        .from(EntityDataModelApi.getEntityDataModelProjection(action.edmDetailsSelectors))
-        .map((response) => {
-          entitySets = Object.values(response.entitySets);
-          return normalize(entitySets, [EntitySetNschema]);
-        })
-        .map(Immutable.fromJS)
-        .flatMap(normalizedData => {
-          return [
-            edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-            actionFactories.getOwnedDatasetsDetailsResolve(entitySets, action.pagingToken)
-          ]
-        })
-        // Error Handling
-        .catch(error => {
-          console.error(error);
-          return Observable.of(actionFactories.getOwnedDatasetsDetailsReject('Error loading owned entity set details'))
+        .catch(() => {
+          return Observable.of(
+            actionFactories.getOwnedDatasetsIdsReject('Error loading owned entity set ids')
+          );
         });
     });
 }
 
 export default combineEpics(
-  ownedDatasetsIdsEpic,
-  ownedDatasetsDetailsEpic
+  ownedDatasetsIdsEpic
 );
