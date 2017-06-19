@@ -12,9 +12,10 @@ const PROPERTY_TYPE_EDITING = {
 };
 
 export default class RequestPermissionsForm extends React.Component {
+
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
-    propertyTypeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     onSubmit: PropTypes.func.isRequired,
     onPermissionChange: PropTypes.func.isRequired,
     onReasonChange: PropTypes.func.isRequired,

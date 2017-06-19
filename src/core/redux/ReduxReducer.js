@@ -14,7 +14,7 @@ import organizationsReducer from '../../containers/organizations/reducers/Organi
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import permissionsSummaryReducer from '../../containers/permissionssummary/PermissionsSummaryReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
-import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
+// import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 import topUtilizersReducer from '../../containers/toputilizers/TopUtilizersReducer';
 import visualizationReducer from '../../containers/visualizations/VisualizationReducer';
 
@@ -28,15 +28,15 @@ export default function reduxReducer() {
     catalog: catalogReducer,
     createEntitySet: createEntitySetReducer,
     datasets: datasetsReducer,
+    edm: edmReducer,
     entitySetDetail: entitySetDetailReducer,
     neuron: neuronReducer,
-    normalizedData: edmReducer,
     organizations: organizationsReducer,
     permissions: permissionReducer,
     permissionsSummary: permissionsSummaryReducer,
     principals: principalsReducer,
     router: routerReducer,
-    securableObject: securableObjectReducer,
+    // securableObject: securableObjectReducer,
     topUtilizers: topUtilizersReducer,
     visualizations: visualizationReducer
   });

@@ -2,6 +2,8 @@
 import Immutable, { Map, fromJS } from 'immutable';
 
 import * as actionTypes from './DatasetsActionTypes';
+import * as EdmActionTypes from '../edm/EdmActionTypes';
+
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
 
 export const LOADING_ERROR = Symbol('loading error');
@@ -16,6 +18,7 @@ export const LOADING_ERROR = Symbol('loading error');
 const INITIAL_STATE:Map<*, *> = fromJS({
   asyncStatus: ASYNC_STATUS.PENDING,
   authorizedObjects: Immutable.List(),
+  ownedEntitySetIds: Immutable.List(),
   pagingToken: null,
   entitySets: Immutable.List(),
   finishedLoading: false,
@@ -35,20 +38,34 @@ export default function reducer(state:Map<*, *> = INITIAL_STATE, action:Object) 
         .set('asyncStatus', ASYNC_STATUS.ERROR)
         .set('errorMessage', action.errorMessage);
 
-    case actionTypes.GET_OWNED_DATASETS_DETAILS_RESOLVE: {
-      const newState = state
+    case actionTypes.GET_OWNED_DATASETS_IDS_RESOLVE: {
+
+      const newState :Map = state
         .set('pagingToken', action.pagingToken)
-        .set('entitySets', action.ownedDatasets)
-        .set('asyncStatus', ASYNC_STATUS.SUCCESS)
-        .set('finishedLoading', !action.pagingToken);
+        .set('finishedLoading', !action.pagingToken)
+        .set('ownedEntitySetIds', Immutable.fromJS(action.ownedEntitySetIds));
+
       if (!state.get('allPagingTokens').includes(action.pagingToken)) {
         return newState.set('allPagingTokens', state.get('allPagingTokens').push(action.pagingToken));
       }
+
       return newState;
     }
 
-    case actionTypes.RESET_DATASETS_PAGE:
-      return INITIAL_STATE;
+    // case actionTypes.GET_OWNED_DATASETS_DETAILS_RESOLVE: {
+    //   const newState = state
+    //     .set('pagingToken', action.pagingToken)
+    //     .set('entitySets', Immutable.fromJS(action.ownedDatasets))
+    //     .set('asyncStatus', ASYNC_STATUS.SUCCESS)
+    //     .set('finishedLoading', !action.pagingToken);
+    //   if (!state.get('allPagingTokens').includes(action.pagingToken)) {
+    //     return newState.set('allPagingTokens', state.get('allPagingTokens').push(action.pagingToken));
+    //   }
+    //   return newState;
+    // }
+
+    // case actionTypes.RESET_DATASETS_PAGE:
+    //   return INITIAL_STATE;
 
     default:
       return state;

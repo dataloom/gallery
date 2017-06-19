@@ -11,6 +11,17 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 import EntitySetList from '../../components/entityset/EntitySetList';
 import CreateEntitySet from '../entitysetforms/CreateEntitySet';
 import { createEntitySetReset } from '../entitysetforms/CreateEntitySetActionFactories.js';
+import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
+
+
+import {
+  fetchAllEntitySetsRequest,
+  fetchAllEntityTypesRequest,
+  fetchAllPropertyTypesRequest
+} from '../edm/EdmActionFactory';
+
+
+
 import styles from './datasets.module.css';
 
 class DatasetsComponent extends React.Component {
@@ -18,11 +29,14 @@ class DatasetsComponent extends React.Component {
     auth: PropTypes.object.isRequired,
     pagingToken: PropTypes.string,
     actions: PropTypes.shape({
+      createEntitySetReset: PropTypes.func.isRequired,
       getOwnedDatasetsIdsRequest: PropTypes.func.isRequired,
-      createEntitySetReset: PropTypes.func.isRequired
+      fetchAllEntitySetsRequest: PropTypes.func.isRequired,
+      fetchAllEntityTypesRequest: PropTypes.func.isRequired,
+      fetchAllPropertyTypesRequest: PropTypes.func.isRequired
     }).isRequired,
-    ownedEntitySets: PropTypes.instanceOf(Immutable.List).isRequired,
-    asyncStatus: AsyncStatePropType.isRequired,
+    ownedEntitySets: PropTypes.instanceOf(Immutable.Map).isRequired,
+    asyncStatus: PropTypes.any.isRequired,
     finishedLoading: PropTypes.bool.isRequired,
     errorMessage: PropTypes.string.isRequired,
     allPagingTokens: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -38,7 +52,15 @@ class DatasetsComponent extends React.Component {
   }
 
   componentDidMount() {
-    this.loadPage();
+
+    if (!this.props.finishedLoading) {
+      this.props.actions.getOwnedDatasetsIdsRequest(this.props.pagingToken);
+    }
+
+    // this can be improved... do we need to load *all*? probably not
+    this.props.actions.fetchAllEntitySetsRequest();
+    this.props.actions.fetchAllEntityTypesRequest();
+    this.props.actions.fetchAllPropertyTypesRequest();
   }
 
   onAddDataset = () => {
@@ -61,12 +83,6 @@ class DatasetsComponent extends React.Component {
     if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
     if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
     return defaultContact;
-  }
-
-  loadPage = () => {
-    if (!this.props.finishedLoading) {
-      this.props.actions.getOwnedDatasetsIdsRequest(this.props.pagingToken);
-    }
   }
 
   /*
@@ -144,13 +160,30 @@ class DatasetsComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
+
   const pagingToken = state.getIn(['datasets', 'pagingToken']);
   const allPagingTokens = state.getIn(['datasets', 'allPagingTokens']);
+  const ownedEntitySetIds :List<string> = state.getIn(['datasets', 'ownedEntitySetIds'], Immutable.List());
   const page = (pagingToken) ? allPagingTokens.indexOf(pagingToken) : allPagingTokens.size;
+
+  let ownedEntitySets :Map = Immutable.Map();
+  ownedEntitySetIds.forEach((ownedEntitySetId :string) => {
+    ownedEntitySets = ownedEntitySets.set(
+      ownedEntitySetId,
+      state.getIn(['edm', 'entitySets', ownedEntitySetId], Immutable.Map())
+    );
+  });
+
+  // HACK - need to figure out how to determing when loading is finished
+  let asyncStatus = state.getIn(['datasets', 'asyncStatus']);
+  if (!ownedEntitySets.isEmpty()) {
+    asyncStatus = ASYNC_STATUS.SUCCESS;
+  }
+
   return {
+    asyncStatus,
     pagingToken,
-    ownedEntitySets: state.getIn(['datasets', 'entitySets']),
-    asyncStatus: state.getIn(['datasets', 'asyncStatus']),
+    ownedEntitySets,
     finishedLoading: state.getIn(['datasets', 'finishedLoading']),
     errorMessage: state.getIn(['datasets', 'errorMessage']),
     allPagingTokens,
@@ -158,10 +191,14 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch :Function) :Object {
+
   const actions = {
+    createEntitySetReset,
     getOwnedDatasetsIdsRequest,
-    createEntitySetReset
+    fetchAllEntitySetsRequest,
+    fetchAllEntityTypesRequest,
+    fetchAllPropertyTypesRequest
   };
 
   return {

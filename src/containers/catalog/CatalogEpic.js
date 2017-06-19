@@ -1,37 +1,41 @@
-/* @flow */
-import { normalize } from 'normalizr';
-import Immutable from 'immutable';
+/*
+ * @flow
+ */
+
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
-import identity from 'lodash/identity';
 
-import { EntityDataModelApi, SearchApi, DataModel } from 'loom-data';
+import { SearchApi } from 'loom-data';
 
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import { EntitySetNschema, createEntitySetReference } from '../edm/EdmStorage';
+
+import { updateEntitySets } from '../edm/EdmActionFactory';
 
 // TODO: Move processing and storage into EDM
-function convertSearchResult(rawResult):DataModel.EntitySet {
-  return rawResult.entitySet
+function convertSearchResult(rawResult) {
+  return rawResult.entitySet;
 }
 
 // TODO: Save property types
 function searchCatalog(filterParams) {
   let numHits = 0;
-  return Observable.from(SearchApi.searchEntitySetMetaData(filterParams))
-    .map(rawResult => {
+  return Observable
+    .from(SearchApi.searchEntitySetMetaData(filterParams))
+    .map((rawResult) => {
       numHits = rawResult.numHits;
       return rawResult.hits.map(convertSearchResult);
     })
-    .map(result => normalize(result, [EntitySetNschema]))
-    .map(Immutable.fromJS)
-    .flatMap(normalizedData => [
-      edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-      actionFactories.catalogSearchResolve(normalizedData.get('result'), numHits)
-    ])
-    // Error Handling
+    .mergeMap((results) => {
+      const entitySetIds :string[] = [];
+      results.forEach((entitySet :Object) => {
+        entitySetIds.push(entitySet.id);
+      });
+      return Observable.of(
+        actionFactories.catalogSearchResolve(entitySetIds, numHits),
+        updateEntitySets(results)
+      );
+    })
     .catch(() => {
       return Observable.of(
         actionFactories.catalogSearchReject('Error loading search results')
@@ -47,28 +51,6 @@ function searchCatalogEpic(action$) {
     .mergeMap(searchCatalog);
 }
 
-function allEntitySetsEpic(action$) {
-  return action$.ofType(actionTypes.ALL_ENTITY_SETS_REQUEST)
-    .mergeMap(action => {
-      return Observable.from(EntityDataModelApi.getAllEntitySets())
-      .map((result) => {
-        // TODO: Remove filter hack when BE is updated
-        return normalize(result.filter(identity), [EntitySetNschema]);
-      })
-      .map(Immutable.fromJS)
-      .flatMap(normalizedData => {
-        return [
-          edmActionFactories.updateNormalizedData(normalizedData.get('entities')),
-          actionFactories.allEntitySetsResolve(normalizedData.get('result').map(createEntitySetReference))
-        ]
-      })
-      // Error Handling
-      .catch(() => {
-        return Observable.of(
-          actionFactories.allEntitySetsReject('Error loading entity sets')
-        );
-      });
-    });
-}
-
-export default combineEpics(searchCatalogEpic, allEntitySetsEpic);
+export default combineEpics(
+  searchCatalogEpic
+);

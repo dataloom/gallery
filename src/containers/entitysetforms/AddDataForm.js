@@ -1,10 +1,19 @@
-import React, { PropTypes } from 'react';
-import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import DatePicker from 'react-bootstrap-date-picker';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
 import moment from 'moment';
+import PropTypes from 'prop-types';
+import DatePicker from 'react-bootstrap-date-picker';
+
 import { AuthorizationApi, DataApi } from 'loom-data';
-import { Permission } from '../../core/permissions/Permission';
+import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
+
 import EdmConsts from '../../utils/Consts/EdmConsts';
+import { Permission } from '../../core/permissions/Permission';
 
 import styles from './entitysetforms.module.css';
 
@@ -12,8 +21,8 @@ export default class AddDataForm extends React.Component {
 
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
-    primaryKey: PropTypes.array.isRequired,
-    propertyTypes: PropTypes.array.isRequired
+    primaryKey: PropTypes.instanceOf(Immutable.List).isRequired,
+    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
   constructor(props) {
@@ -34,12 +43,14 @@ export default class AddDataForm extends React.Component {
 
   loadAuthorizedPropertyTypes = () => {
 
-    const accessChecks = this.props.propertyTypes.map((propertyType) => {
-      return {
-        aclKey: [this.props.entitySetId, propertyType.id],
+    const accessChecks = [];
+    this.props.propertyTypes.forEach((propertyType :Map) => {
+      accessChecks.push({
+        aclKey: [this.props.entitySetId, propertyType.get('id')],
         permissions: [Permission.WRITE.name]
-      };
+      });
     });
+
     AuthorizationApi.checkAuthorizations(accessChecks)
     .then((response) => {
       const propValues = {};
@@ -50,14 +61,16 @@ export default class AddDataForm extends React.Component {
       });
       let canWrite = true;
       this.props.primaryKey.forEach((keyPropId) => {
-        if (!Object.keys(propValues).includes(keyPropId)) canWrite = false;
+        if (!Object.keys(propValues).includes(keyPropId)) {
+          canWrite = false;
+        }
       });
       if (!canWrite) {
         this.setState({ noPermissions: true });
       }
       else {
         const authorizedPropertyTypes = this.props.propertyTypes.filter((propertyType) => {
-          return Object.keys(propValues).includes(propertyType.id);
+          return Object.keys(propValues).includes(propertyType.get('id'));
         });
         this.setState({ authorizedPropertyTypes, propValues });
       }
@@ -69,9 +82,10 @@ export default class AddDataForm extends React.Component {
   generateEntites = () => {
     const { propValues, authorizedPropertyTypes } = this.state;
     const localDateTimes = {};
-    authorizedPropertyTypes.forEach((propertyType) => {
-      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-        localDateTimes[propertyType.id] = [moment(propValues[propertyType.id]).format('YYYY-MM-DDThh:mm:ss')];
+    authorizedPropertyTypes.forEach((propertyType :Map) => {
+      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
+        const propertyTypeId :string = propertyType.get('id');
+        localDateTimes[propertyTypeId] = [moment(propValues[propertyTypeId]).format('YYYY-MM-DDThh:mm:ss')];
       }
     });
     const formattedValues = Object.assign({}, propValues, localDateTimes);
@@ -88,8 +102,8 @@ export default class AddDataForm extends React.Component {
     DataApi.createEntityData(this.props.entitySetId, '', entities)
     .then(() => {
       const propValues = {};
-      this.state.authorizedPropertyTypes.forEach((propertyType) => {
-        propValues[propertyType.id] = [''];
+      this.state.authorizedPropertyTypes.forEach((propertyType :Map) => {
+        propValues[propertyType.get('id')] = [''];
       });
       this.setState({
         createSuccess: true,
@@ -106,8 +120,8 @@ export default class AddDataForm extends React.Component {
 
   reset = () => {
     const propValues = {};
-    this.state.authorizedPropertyTypes.forEach((propertyType) => {
-      propValues[propertyType.id] = [''];
+    this.state.authorizedPropertyTypes.forEach((propertyType :Map) => {
+      propValues[propertyType.get('id')] = [''];
     });
     this.setState({
       propValues,
@@ -123,26 +137,26 @@ export default class AddDataForm extends React.Component {
   }
 
   renderPropertyTypeInputs = () => {
-    return this.state.authorizedPropertyTypes.map((propertyType) => {
+    return this.state.authorizedPropertyTypes.map((propertyType :Map) => {
       let input = (<FormControl
           type="text"
           onChange={(e) => {
-            this.updatePropertyTypeValue(propertyType.id, e.target.value);
+            this.updatePropertyTypeValue(propertyType.get('id'), e.target.value);
           }} />);
-      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-        const value = this.state.propValues[propertyType.id][0];
+      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
+        const value = this.state.propValues[propertyType.get('id')][0];
         input = (
           <DatePicker
-              id={`date-${propertyType.id}`}
+              id={`date-${propertyType.get('id')}`}
               value={value}
               showTodayButton
               onChange={(date) => {
-                this.updatePropertyTypeValue(propertyType.id, date);
+                this.updatePropertyTypeValue(propertyType.get('id'), date);
               }} />);
       }
       return (
-        <FormGroup key={propertyType.id}>
-          <ControlLabel>{propertyType.title}</ControlLabel>
+        <FormGroup key={propertyType.get('id')}>
+          <ControlLabel>{propertyType.get('title')}</ControlLabel>
           {input}
         </FormGroup>
       );

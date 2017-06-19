@@ -1,21 +1,24 @@
-import type { EdmObjectReference } from '../edm/EdmStorage';
+/*
+ * @flow
+ */
+
 import * as actionTypes from './CreateEntitySetActionTypes';
 
-export function createEntitySetRequest(entitySet:DataModels.EntitySet) {
+export function createEntitySetRequest(entitySet) {
   return {
     type: actionTypes.CREATE_ENTITY_SET_REQUEST,
     entitySet
   }
 }
 
-export function createEntitySetReject(errorMessage:string) {
+export function createEntitySetReject(errorMessage :string) {
   return {
     type: actionTypes.CREATE_ENTITY_SET_REJECT,
     errorMessage
   }
 }
 
-export function createEntitySetResolve(reference:EdmObjectReference) {
+export function createEntitySetResolve(reference) {
   return {
     type: actionTypes.CREATE_ENTITY_SET_RESOLVE,
     reference

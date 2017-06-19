@@ -27,6 +27,52 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
     case AsyncActionTypes.RESOLVE_ASYNC_REFERENCE:
       return resolveReference(state, action.reference, action.value);
 
+    /*
+     * HACK
+     */
+
+    case AsyncActionTypes.UPDATE_ENTITY_SET_ASYNC_REFERENCES: {
+
+      let newState :Map = state;
+      action.entitySets.forEach((entitySet :Object) => {
+        const reference = {
+          id: entitySet.id,
+          namespace: 'entitySets'
+        };
+        newState = resolveReference(newState, reference, createCompleteValue(entitySet));
+      });
+
+      return newState;
+    }
+
+    case AsyncActionTypes.UPDATE_ENTITY_TYPE_ASYNC_REFERENCES: {
+
+      let newState :Map = state;
+      action.entityTypes.forEach((entityType :Object) => {
+        const reference = {
+          id: entityType.id,
+          namespace: 'entityTypes'
+        };
+        newState = resolveReference(newState, reference, createCompleteValue(entityType));
+      });
+
+      return newState;
+    }
+
+    case AsyncActionTypes.UPDATE_PROPERTY_TYPE_ASYNC_REFERENCES: {
+
+      let newState :Map = state;
+      action.propertyTypes.forEach((propertyType :Object) => {
+        const reference = {
+          id: propertyType.id,
+          namespace: 'propertyTypes'
+        };
+        newState = resolveReference(newState, reference, createCompleteValue(propertyType));
+      });
+
+      return newState;
+    }
+
     default:
       return state;
   }

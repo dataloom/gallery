@@ -1,39 +1,35 @@
-/* @flow */
-import { Observable } from 'rxjs';
-import { normalize } from 'normalizr';
-import Immutable from 'immutable';
+/*
+ * @flow
+ */
 
-import {
-  EntityDataModelApi
-} from 'loom-data';
+import { EntityDataModelApi } from 'loom-data';
+import { Observable } from 'rxjs';
 
 import * as actionTypes from './CreateEntitySetActionTypes';
 import * as actionFactories from './CreateEntitySetActionFactories';
-import * as edmActionFactories from '../edm/EdmActionFactories';
-import { EntitySetNschema, COLLECTIONS } from '../edm/EdmStorage';
+
+import { COLLECTIONS } from '../edm/EdmAsyncStorage';
 
 function createEntitySet(entitySet) {
   return Observable.from(EntityDataModelApi.createEntitySets([entitySet]))
-    .map(response => {
+    .map((response) => {
       return Object.assign({}, entitySet, {
         id: response[entitySet.name]
       });
     })
-    .flatMap(savedEntitySet => {
-      const ndata = normalize(savedEntitySet, EntitySetNschema);
+    .mergeMap((savedEntitySet) => {
       const reference = {
         collection: COLLECTIONS.ENTITY_TYPE,
-        id: ndata.result
+        id: savedEntitySet.id
       };
-      return [
-        edmActionFactories.updateNormalizedData(Immutable.fromJS(ndata.entities)),
+      return Observable.of(
         actionFactories.createEntitySetResolve(reference)
-      ];
+      );
     })
-    // Error Handling
-    .catch(error => {
-      console.error(error);
-      return Observable.of(actionFactories.createEntitySetReject('Error saving entity set'))
+    .catch(() => {
+      return Observable.of(
+        actionFactories.createEntitySetReject('Error saving entity set')
+      );
     });
 }
 

@@ -44,7 +44,6 @@
     "lodash": "^4.17.4",
     "loom-data": "^0.23.1",
     "moment": "^2.17.1",
-    "normalizr": "^3.1.0",
     "prop-types": "^15.5.8",
     "react": "^15.4.0",
     "react-avatar": "^2.3.0",
@@ -74,7 +73,7 @@
   "devDependencies": {
     "babel-core": "^6.21.0",
     "babel-eslint": "^7.1.0",
-    "babel-loader": "^6.2.8",
+    "babel-loader": "^7.0.0",
     "babel-plugin-styled-components": "^1.0.0",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-flow-strip-types": "^6.21.0",
@@ -87,7 +86,7 @@
     "chai-enzyme": "^0.6.1",
     "chai-immutable": "^1.6.0",
     "chai-sinon": "^2.8.1",
-    "css-loader": "^0.26.0",
+    "css-loader": "^0.28.0",
     "enzyme": "^2.7.1",
     "eslint": "^3.16.0",
     "eslint-config-airbnb": "^14.1.0",
@@ -97,8 +96,8 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
     "eslint-plugin-react": "^6.8.0",
-    "extract-text-webpack-plugin": "^2.0.0-rc.3",
-    "file-loader": "^0.10.0",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "file-loader": "^0.11.0",
     "flow-bin": "^0.39.0",
     "html-webpack-plugin": "^2.26.0",
     "karma": "^1.5.0",
@@ -112,8 +111,8 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.2",
     "mocha": "^3.2.0",
-    "postcss-import": "^9.0.0",
-    "postcss-loader": "^1.2.1",
+    "postcss-import": "^10.0.0",
+    "postcss-loader": "^2.0.0",
     "precss": "^1.4.0",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",
@@ -121,16 +120,19 @@
     "redux-mock-store": "^1.2.3",
     "rimraf": "2.6.0",
     "sinon": "^1.17.7",
-    "style-loader": "^0.13.1",
+    "style-loader": "^0.18.0",
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
-    "webpack": "^2.2.0",
-    "webpack-dashboard": "^0.2.1",
-    "webpack-dev-server": "^2.4.0"
+    "webpack": "^2.6.0",
+    "webpack-bundle-analyzer": "^2.8.2",
+    "webpack-dashboard": "^0.4.0",
+    "webpack-dev-server": "^2.4.0",
+    "webpack-sources": "^1.0.0"
   },
   "scripts": {
     "app": "better-npm-run webpack-dev-server",
     "dev": "better-npm-run webpack-dashboard",
+    "build:dev": "better-npm-run build:dev",
     "build:prod": "better-npm-run build:prod",
     "clean": "rimraf build/*",
     "flow": "flow check",
@@ -141,6 +143,12 @@
     "test:bamboo": "better-npm-run test:bamboo"
   },
   "betterScripts": {
+    "build:dev": {
+      "command": "webpack --config config/webpack/webpack.config.babel.js",
+      "env": {
+        "BUILD": "development"
+      }
+    },
     "build:prod": {
       "command": "webpack --config config/webpack/webpack.config.babel.js",
       "env": {

@@ -1,16 +1,22 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Immutable from 'immutable';
-import { PermissionsPropType, getPermissions, DEFAULT_PERMISSIONS } from '../../permissions/PermissionsStorage';
+
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
-import * as psActionFactory from '../PermissionsSummaryActionFactory';
-import * as actionFactory from '../../entitysetdetail/EntitySetDetailActionFactory';
-import * as edmActionFactories from '../../edm/EdmActionFactories';
-import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
-import UserPermissionsTable from './UserPermissionsTable';
-import RolePermissionsTable from './RolePermissionsTable';
 import Page from '../../../components/page/Page';
+import RolePermissionsTable from './RolePermissionsTable';
+import UserPermissionsTable from './UserPermissionsTable';
+
+import * as psActionFactory from '../PermissionsSummaryActionFactory';
+
 import styles from '../styles.module.css';
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
@@ -21,7 +27,7 @@ class AllPermissions extends React.Component {
     actions: React.PropTypes.shape({
       getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
     }).isRequired,
-    entitySet: PropTypes.object.isRequired,
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
     entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     entityRolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -31,8 +37,9 @@ class AllPermissions extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (Object.keys(this.props.entitySet).length === 0 && Object.keys(nextProps.entitySet).length > 0) {
-      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet);
+
+    if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
+      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
     }
   }
 
@@ -57,10 +64,10 @@ class AllPermissions extends React.Component {
 
     propertyPermissions.keySeq().forEach((property) => {
       if (propertyPermissions.hasIn([property, 'userPermissions'])
-        && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+          && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+
         const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
         const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
-        console.log('userpermissions,', userPermissions.toJS());
 
         const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
         const roleTable = (<RolePermissionsTable
@@ -91,12 +98,17 @@ class AllPermissions extends React.Component {
 
   renderContent() {
     return (this.props.isGettingUsersRoles || this.props.isGettingAcls || this.props.isGettingPermissions)
-    ? <LoadingSpinner />
-    : this.renderTables();
+      ? <LoadingSpinner />
+      : this.renderTables();
   }
 
   getEntitySetTitle() {
-    return this.props.entitySet ? this.props.entitySet.title : null;
+
+    if (this.props.entitySet.isEmpty()) {
+      return null;
+    }
+
+    return this.props.entitySet.get('title');
   }
 
   render() {
@@ -120,12 +132,13 @@ class AllPermissions extends React.Component {
 }
 
 // TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
-function mapStateToProps(state) {
-  const entitySetDetail = state.get('entitySetDetail');
+function mapStateToProps(state :Map, ownProps :Object) :Object {
+
+  const entitySetId :string = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
 
   return {
-    entitySet: entitySetDetail.get('entitySet').toJS(),
+    entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map()),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
     entityRolePermissions: permissionsSummary.get('entityRolePermissions'),
     propertyPermissions: permissionsSummary.get('propertyPermissions'),
@@ -135,23 +148,13 @@ function mapStateToProps(state) {
   };
 }
 
-export function mapDispatchToProps(dispatch) {
+export function mapDispatchToProps(dispatch :Function) :Object {
+
   const actions = {
     getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
   };
 
   return {
-    loadEntitySet: (id) => {
-      dispatch(actionFactory.entitySetDetailRequest(id));
-      dispatch(PermissionsActionFactory.getEntitySetsAuthorizations([id]));
-      dispatch(edmActionFactories.filteredEdmRequest(
-        [{
-          type: 'EntitySet',
-          id,
-          include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
-        }]
-      ));
-    },
     actions: bindActionCreators(actions, dispatch)
   };
 }

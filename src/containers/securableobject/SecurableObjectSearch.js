@@ -1,15 +1,24 @@
-import React, { PropTypes } from 'react';
-import classnames from 'classnames';
-import Select from 'react-select';
-import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
+import Select from 'react-select';
+
+import { FormGroup, InputGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { EntityTypePropType, PropertyTypePropType } from '../edm/EdmModel';
-import { getEdmObjectsShallow } from '../edm/EdmStorage';
-import * as edmActionFactories from '../edm/EdmActionFactories';
+import {
+  fetchAllEntityTypesRequest,
+  fetchAllPropertyTypesRequest
+} from '../edm/EdmActionFactory';
+
 import styles from './securableobject.module.css';
-
 
 export const FilterParamsPropType = PropTypes.shape({
   searchTerm: PropTypes.string,
@@ -19,14 +28,16 @@ export const FilterParamsPropType = PropTypes.shape({
 });
 
 class SecurableObjectSearch extends React.Component {
+
   static propTypes = {
-    className: PropTypes.string,
-    entityTypes: PropTypes.arrayOf(EntityTypePropType).isRequired,
-    loadEntityTypes: PropTypes.func.isRequired,
-    propertyTypes: PropTypes.arrayOf(PropertyTypePropType).isRequired,
-    loadPropertyTypes: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    filterParams: FilterParamsPropType
+    actions: PropTypes.shape({
+      fetchAllEntityTypesRequest: PropTypes.func.isRequired,
+      fetchAllPropertyTypesRequest: PropTypes.func.isRequired
+    }).isRequired,
+    entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
+    filterParams: FilterParamsPropType,
+    onSubmit: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -40,8 +51,9 @@ class SecurableObjectSearch extends React.Component {
   }
 
   componentDidMount() {
-    this.props.loadEntityTypes();
-    this.props.loadPropertyTypes();
+
+    this.props.actions.fetchAllEntityTypesRequest();
+    this.props.actions.fetchAllPropertyTypesRequest();
   }
 
   onSearchTermChange = (event) => {
@@ -81,26 +93,38 @@ class SecurableObjectSearch extends React.Component {
   };
 
   getEntityTypeOptions() {
-    return this.props.entityTypes.map(entityType => {
-      return {
-        value: entityType.id,
-        label: entityType.title
-      };
+
+    const options = [];
+    this.props.entityTypes.forEach((entityType :Map) => {
+      if (!entityType.isEmpty()) {
+        options.push({
+          value: entityType.get('id'),
+          label: entityType.get('title')
+        });
+      }
     });
+
+    return options;
   }
 
   getPropertyTypeOptions() {
-    return this.props.propertyTypes.map(propertyType => {
-      return {
-        value: propertyType.id,
-        label: propertyType.title
-      };
+
+    const options = [];
+    this.props.propertyTypes.forEach((propertyType :Map) => {
+      if (!propertyType.isEmpty()) {
+        options.push({
+          value: propertyType.get('id'),
+          label: propertyType.get('title')
+        });
+      }
     });
+
+    return options;
   }
 
   render() {
     return (
-      <form onSubmit={this.onSubmit} className={classnames(this.props.className, styles.search)}>
+      <form onSubmit={this.onSubmit} className={styles.search}>
         <FormGroup className={styles.searchTerm}>
           <ControlLabel>Search Term</ControlLabel>
           <InputGroup>
@@ -140,21 +164,25 @@ class SecurableObjectSearch extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  const normalizedData = state.get('normalizedData').toJS(),
-    securableObject = state.get('securableObject').toJS();
+function mapStateToProps(state :Immutable.Map) :Object {
+
   return {
-    entityTypes: getEdmObjectsShallow(normalizedData, securableObject.entityTypeReferences),
-    propertyTypes: getEdmObjectsShallow(normalizedData, securableObject.propertyTypeReferences)
+    entityTypes: state.getIn(['edm', 'entityTypes']),
+    propertyTypes: state.getIn(['edm', 'propertyTypes'])
   };
 }
 
-// TODO: Decide if/how to incorporate bindActionCreators
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps(dispatch :Function) :Object {
+
+  const actions = {
+    fetchAllEntityTypesRequest,
+    fetchAllPropertyTypesRequest
+  };
+
   return {
-    loadPropertyTypes: () => { dispatch(edmActionFactories.allPropertyTypesRequest()); },
-    loadEntityTypes: () => { dispatch(edmActionFactories.allEntityTypesRequest()); }
+    actions: bindActionCreators(actions, dispatch)
   };
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(SecurableObjectSearch);

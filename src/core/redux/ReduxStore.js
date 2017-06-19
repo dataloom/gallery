@@ -29,7 +29,11 @@ export default function initializeReduxStore() :Object {
   ];
 
   /* eslint-disable no-underscore-dangle */
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      maxAge: 100
+    })
+    : compose;
   /* eslint-enable */
 
   const reduxStore = createStore(

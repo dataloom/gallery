@@ -1,31 +1,41 @@
-import React, { PropTypes } from 'react';
+/*
+ * @flow
+ */
+
+import React from 'react';
+
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 
 import ActionDropdown from '../../containers/edm/components/ActionDropdown';
-import { EntitySetPropType } from '../../containers/edm/EdmModel';
 import ExpandableText from '../utils/ExpandableText';
+
 import styles from './entityset.module.css';
 
 const MAX_DESCRIPTION_LENGTH = 300;
 
 /* EntitySet Components */
 export default class EntitySet extends React.Component {
+
   static propTypes = {
-    entitySet: EntitySetPropType.isRequired
+    entitySet: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   render() {
+
     const { entitySet } = this.props;
 
     let description;
-    if (entitySet.description) {
-      description = (<ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.description}/>);
-    } else {
+    if (entitySet.get('description')) {
+      description = (<ExpandableText maxLength={MAX_DESCRIPTION_LENGTH} text={entitySet.get('description')} />);
+    }
+    else {
       description = (<em>No description available</em>);
     }
 
     let contact;
-    if (entitySet.contacts && entitySet.contacts.length) {
-      const formattedContacts = entitySet.contacts.join(', ');
+    if (!entitySet.get('contacts').isEmpty()) {
+      const formattedContacts = entitySet.get('contacts').join(', ');
       contact = (<em className={styles.contacts}>{formattedContacts}</em>);
     }
     else {
@@ -36,11 +46,11 @@ export default class EntitySet extends React.Component {
       <article className={styles.entitySet}>
         <header>
           <h2 className={styles.title}>
-            {entitySet.title}
+            {entitySet.get('title')}
           </h2>
 
           <div className={styles.controls}>
-            <ActionDropdown entitySetId={entitySet.id} showDetails />
+            <ActionDropdown entitySetId={entitySet.get('id')} showDetails />
           </div>
           {contact}
         </header>
