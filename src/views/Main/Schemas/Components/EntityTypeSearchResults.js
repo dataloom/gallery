@@ -29,26 +29,42 @@ export default class EntityTypeSearchResults extends React.Component {
   }
 
   loadPropertyTypesForEntityTypes = () => {
+
     const propertyTypeIds = new Set();
+
     this.props.results.forEach((entityType) => {
       entityType.properties.forEach((propertyTypeId) => {
         propertyTypeIds.add(propertyTypeId);
       });
     });
-    Promise.map(propertyTypeIds, (propertyTypeId) => {
-      return EntityDataModelApi.getPropertyType(propertyTypeId);
-    }).then((propertyTypes) => {
-      const idToPropertyTypes = {};
-      propertyTypes.forEach((propertyType) => {
-        idToPropertyTypes[propertyType.id] = propertyType;
+
+    Promise
+      .map(propertyTypeIds, (propertyTypeId) => {
+        return EntityDataModelApi.getPropertyType(propertyTypeId);
+      })
+      .then((propertyTypes) => {
+        const idToPropertyTypes = {};
+        propertyTypes.forEach((propertyType) => {
+          if (propertyType) {
+            idToPropertyTypes[propertyType.id] = propertyType;
+          }
+        });
+        this.setState({ idToPropertyTypes });
+      })
+      .catch((e) => {
+        // TODO - handle error
+        console.error(e);
       });
-      this.setState({ idToPropertyTypes });
-    });
   }
 
   render() {
+
     const idToPropertyTypes = this.state.idToPropertyTypes;
-    if (!Object.keys(idToPropertyTypes).length) return null;
+
+    if (Object.keys(idToPropertyTypes).length <= 0) {
+      return null;
+    }
+
     const entityTypeList = this.props.results.map((entityType) => {
       return (<EntityType
           key={entityType.id}
