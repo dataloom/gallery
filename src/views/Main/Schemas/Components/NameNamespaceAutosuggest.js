@@ -67,35 +67,45 @@ export class NameNamespaceAutosuggest extends React.Component {
   }
 
   getSuggestions = (nameVal, namespaceVal) => {
-    if (!this.props || this.props === undefined) return null;
+
     const names = [];
     const namespaces = [];
+
+    if (!this.props) {
+      return Promise.resolve({ names, namespaces });
+    }
+
     const nameSet = new Set();
     const namespaceSet = new Set();
-    const inputName = ((nameVal === undefined) ? StringConsts.EMPTY : nameVal).trim().toLowerCase();
-    const inputNamespace = ((namespaceVal === undefined) ? StringConsts.EMPTY : namespaceVal).trim().toLowerCase();
-    return this.props.searchFn({
-      namespace: inputNamespace,
-      name: inputName,
-      start: 0,
-      maxHits: 20
-    }).then((propertyTypes) => {
-      propertyTypes.hits.forEach((suggestion) => {
-        if (!this.props.usedProperties.includes(suggestion.id)) {
-          const name = suggestion.type.name.trim().toLowerCase();
-          const namespace = suggestion.type.namespace.trim().toLowerCase();
-          if (!nameSet.has(name)) {
-            names.push({ label: name, value: name });
-            nameSet.add(name);
-          }
-          if (!namespaceSet.has(namespace)) {
-            namespaces.push({ label: namespace, value: namespace });
-            namespaceSet.add(namespace);
-          }
+    const inputName = (nameVal === undefined) ? StringConsts.EMPTY : nameVal;
+    const inputNamespace = (namespaceVal === undefined) ? StringConsts.EMPTY : namespaceVal;
+
+    return this.props
+      .searchFn({
+        namespace: inputNamespace.trim().toLowerCase(),
+        name: inputName.trim().toLowerCase(),
+        start: 0,
+        maxHits: 20
+      })
+      .then((propertyTypes) => {
+        if (propertyTypes) {
+          propertyTypes.hits.forEach((suggestion) => {
+            if (suggestion && !this.props.usedProperties.includes(suggestion.id)) {
+              const name = suggestion.type.name;
+              const namespace = suggestion.type.namespace;
+              if (!nameSet.has(name)) {
+                names.push({ label: name, value: name });
+                nameSet.add(name);
+              }
+              if (!namespaceSet.has(namespace)) {
+                namespaces.push({ label: namespace, value: namespace });
+                namespaceSet.add(namespace);
+              }
+            }
+          });
         }
+        return { namespaces, names };
       });
-      return { namespaces, names };
-    });
   }
 
   handleSubmit = () => {
@@ -114,8 +124,9 @@ export class NameNamespaceAutosuggest extends React.Component {
     }
     this.loadSuggestionValues(true, value)
     .then((suggestions) => {
-      const namespaceVal = (suggestions.namespaces.length === 1) ?
-        suggestions.namespaces[0].value : this.state.namespaceVal;
+      const namespaceVal = suggestions.namespaces.length === 1
+        ? suggestions.namespaces[0].value
+        : this.state.namespaceVal;
       if (this.props.onFQNChange) {
         this.props.onFQNChange({
           name: value,
