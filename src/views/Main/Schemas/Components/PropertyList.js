@@ -165,35 +165,48 @@ export class PropertyList extends React.Component {
   }
 
   renderNewRowInput = () => {
-    if (!this.context.isAdmin) return null;
-    const properties = this.props.properties.map((property) => {
-      return property.id;
+
+    if (!this.context.isAdmin) {
+      return null;
+    }
+
+    const propertyIds = [];
+    this.props.properties.forEach((property) => {
+      if (property) {
+        propertyIds.push(property.id);
+      }
     });
     const className = (this.state.newPropertyRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
           searchFn={SearchApi.searchPropertyTypesByFQN}
           className={className}
-          usedProperties={properties}
+          usedProperties={propertyIds}
           addProperty={this.addProperty} />
     );
   }
 
   render() {
+
     const { properties, entitySetName, editingPermissions, isOwner } = this.props;
     const propArray = (properties && properties.length > 0) ? properties : [];
-    const propertyList = propArray.map((prop) => {
-      return (
-        <Property
-            key={prop.id}
-            property={prop}
-            primaryKey={this.isPrimaryKey(prop)}
-            editingPermissions={editingPermissions}
-            entitySetName={entitySetName}
-            isOwner={isOwner}
-            verifyDeleteFn={this.verifyDelete} />
-      );
+
+    const propertyList = [];
+    propArray.forEach((prop) => {
+      if (prop) {
+        propertyList.push(
+          <Property
+              key={prop.id}
+              property={prop}
+              primaryKey={this.isPrimaryKey(prop)}
+              editingPermissions={editingPermissions}
+              entitySetName={entitySetName}
+              isOwner={isOwner}
+              verifyDeleteFn={this.verifyDelete} />
+        );
+      }
     });
+
     return (
       <div>
         <table>
