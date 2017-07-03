@@ -44,7 +44,7 @@ function updateStatuses(statuses :RequestStatus[]) {
     .mergeMapTo(statuses)
     .map(PermissionsActionFactory.updateStatusSuccess)
     .catch((e) => {
-      // TODO: add reall error handling: https://jira.thedataloom.com/browse/LOOMWEB-339
+      // TODO: add real error handling
       console.error(e);
       return { type: 'noop' };
     });
@@ -79,6 +79,11 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
         const value = status ? status : ASYNC_STATUS.NOT_FOUND;
         return AsyncActionFactory.updateAsyncReference(reference, value);
       });
+    })
+    .catch((e) => {
+      // TODO: add real error handling
+      console.error(e);
+      return { type: 'noop' };
     })
   );
 }
@@ -131,7 +136,8 @@ function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
         actions.push(PermissionsActionFactory.checkAuthorizationResolve(authorizations));
         return actions;
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error(e);
         // Async
         const actions = references.map((reference) => {
           return AsyncActionFactory.asyncReferenceError(reference, 'Error loading authorization');
@@ -170,7 +176,8 @@ function getAclEpic(action$ :Observable<Action>) :Observable<Action> {
             PermissionsActionFactory.getAclSuccess(action.aclKey, acl)
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             PermissionsActionFactory.getAclFailure(action.aclKey)
           );
@@ -189,7 +196,8 @@ function updateAclEpic(action$ :Observable<Action>) :Observable<Action> {
             PermissionsActionFactory.updateAclSuccess(action.aclData)
           );
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error(e);
           return Observable.of(
             PermissionsActionFactory.updateAclFailure(action.aclData)
           );

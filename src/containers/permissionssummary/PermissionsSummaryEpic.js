@@ -104,8 +104,11 @@ function getAllUsersAndRolesEpic(action$) {
               actionFactory.getAcls(entitySet)
             );
         })
-        .catch((err) => {
-          actionFactory.getAllUsersAndRolesFailure();
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            actionFactory.getAllUsersAndRolesFailure()
+          );
         });
     });
 }
@@ -118,6 +121,11 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   })
   .mergeMap((observables) => {
     return observables;
+  })
+  .catch((e) => {
+    // TODO: add real error handling
+    console.error(e);
+    return { type: 'noop' };
   });
 }
 
@@ -138,8 +146,11 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
             actionFactory.setUserPermissions(action.property, configuredAcls)
           );
         })
-        .catch((err) => {
-          actionFactory.getUserRolePermissionsFailure()
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            actionFactory.getUserRolePermissionsFailure()
+          );
         });
     });
 }
