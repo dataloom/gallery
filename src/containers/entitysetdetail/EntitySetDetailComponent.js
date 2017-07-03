@@ -74,7 +74,20 @@ class EntitySetDetailComponent extends React.Component {
   };
 
   constructor(props) {
+
     super(props);
+
+    let modalAclKey = [];
+    const entitySetId = this.props.entitySet.get('id');
+    if (entitySetId) {
+      modalAclKey = [entitySetId];
+    }
+
+    let modalTitle = '';
+    const entitySetTitle = this.props.entitySet.get('title');
+    if (entitySetTitle) {
+      modalTitle = this.loadESPermissionsTitle(entitySetTitle, true);
+    }
 
     this.state = {
       editingPermissions: false,
@@ -82,8 +95,8 @@ class EntitySetDetailComponent extends React.Component {
       addingData: false,
       deleteError: false,
       isIntegrationDetailsOpen: false,
-      permissionsModalTitle: '',
-      permissionsModalAclKey: [],
+      permissionsModalTitle: modalTitle,
+      permissionsModalAclKey: modalAclKey,
       permissionsShouldUpdateAll: true
     };
   }
@@ -227,6 +240,7 @@ class EntitySetDetailComponent extends React.Component {
     });
   }
 
+  // TODO - why is "shouldUpdatePropertyTypes" necessary...?
   loadESPermissionsTitle = (title, shouldUpdatePropertyTypes) => {
     return (shouldUpdatePropertyTypes) ? `${title} (dataset and all owned properties)` : `${title} (dataset only)`;
   }
