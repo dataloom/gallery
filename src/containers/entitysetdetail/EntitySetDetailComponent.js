@@ -70,7 +70,8 @@ class EntitySetDetailComponent extends React.Component {
     entityType: PropTypes.instanceOf(Immutable.Map).isRequired,
     propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
-    subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired
+    subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired,
+    unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired
   };
 
   constructor(props) {
