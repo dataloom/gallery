@@ -1,25 +1,22 @@
 import React, { PropTypes } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import DocumentTitle from 'react-document-title';
 import Immutable from 'immutable';
-import { Button, Modal, Pager } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-import { getOwnedDatasetsIdsRequest } from './DatasetsActionFactory';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Button, Modal, Pager } from 'react-bootstrap';
+
 import Page from '../../components/page/Page';
-import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import CreateEntitySet from '../entitysetforms/CreateEntitySet';
-import { createEntitySetReset } from '../entitysetforms/CreateEntitySetActionFactories.js';
-import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
-
-
+import { getOwnedDatasetsIdsRequest } from './DatasetsActionFactory';
+import { createEntitySetReset } from '../entitysetforms/CreateEntitySetActionFactories';
 import {
   fetchAllEntitySetsRequest,
   fetchAllEntityTypesRequest,
   fetchAllPropertyTypesRequest
 } from '../edm/EdmActionFactory';
-
 
 
 import styles from './datasets.module.css';
@@ -128,7 +125,7 @@ class DatasetsComponent extends React.Component {
           <Page.Header className={styles.pageHeader}>
             <Page.Title className={styles.pageTitle}>Your datasets</Page.Title>
             <Button bsStyle="primary" className={styles.control} onClick={this.onAddDataset}>
-              <FontAwesome name="plus-circle" size="lg"/> Dataset
+              <FontAwesome name="plus-circle" size="lg" /> Dataset
             </Button>
           </Page.Header>
 
@@ -149,8 +146,7 @@ class DatasetsComponent extends React.Component {
                   <div>
                     <EntitySetList entitySets={this.props.ownedEntitySets} />
                   </div>
-                )}
-            />
+                )} />
             {this.renderPagination()}
           </Page.Body>
         </Page>
