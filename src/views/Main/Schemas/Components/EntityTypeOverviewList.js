@@ -39,10 +39,10 @@ export class EntityTypeOverviewList extends React.Component {
       }
     };
   }
-
-  newEntityType = () => {
-    this.setState({ newEntityTypeRow: true });
-  }
+  //
+  // newEntityType = () => {
+  //   this.setState({ newEntityTypeRow: true });
+  // }
 
   updateFqns = () => {
     this.setState({
@@ -64,17 +64,11 @@ export class EntityTypeOverviewList extends React.Component {
   }
 
   addEntityType = (namespace, name) => {
-    EntityDataModelApi.getEntityTypeId({ namespace, name })
-    .then((id) => {
-      this.props.updateFn([id], ActionConsts.ADD, EdmConsts.PROPERTY_TYPE);
-      this.updateFqns();
-    }).catch(() => {
-      this.updateError();
-    });
+    // needs backend updates
   }
 
   deleteEntityType = (entityType) => {
-    this.props.updateFn([entityType.id], ActionConsts.REMOVE, EdmConsts.PROPERTY_TYPE);
+    // needs backend updates
   }
 
   renderNewRowButton = () => {
@@ -125,6 +119,7 @@ export class EntityTypeOverviewList extends React.Component {
       }
     });
 
+    // TODO once backend updates are in place for adding/removing entity types, update this
     return (
       <div>
         <table>
@@ -136,10 +131,8 @@ export class EntityTypeOverviewList extends React.Component {
               <th className={styles.tableCell}>Entity Type Title</th>
             </tr>
             {entityTypeList}
-            {this.renderNewRowInput()}
           </tbody>
         </table>
-        {this.renderNewRowButton()}
         <div className={this.state.error.display}>Unable to {this.state.error.action} entity type.</div>
       </div>
     );

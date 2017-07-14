@@ -13,23 +13,23 @@ export class EntityTypeOverview extends React.Component {
     isAdmin: PropTypes.bool
   }
 
-  renderDeleteButton = () => {
-    if (!this.context.isAdmin) return <td />;
-    return (
-      <td>
-        <DeleteButton
-            onClick={() => {
-              this.props.deleteFn(this.props.entityType);
-            }} />
-      </td>
-    );
-  }
+  // renderDeleteButton = () => {
+  //   if (!this.context.isAdmin) return <td />;
+  //   return (
+  //     <td>
+  //       <DeleteButton
+  //           onClick={() => {
+  //             this.props.deleteFn(this.props.entityType);
+  //           }} />
+  //     </td>
+  //   );
+  // }
 
   render() {
     const entityType = this.props.entityType;
     return (
       <tr className={styles.tableRows}>
-        {this.renderDeleteButton()}
+        <td />
         <td className={styles.tableCell}>{entityType.type.name}</td>
         <td className={styles.tableCell}>{entityType.type.namespace}</td>
         <td className={styles.tableCell}>{entityType.title}</td>
