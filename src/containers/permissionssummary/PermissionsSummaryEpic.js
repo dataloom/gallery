@@ -73,9 +73,8 @@ function getUsersAndRoles(users) {
   };
 }
 
-function createAclsObservables(action, entityType) {
-  const { entitySet } = action;
-  const { properties } = entityType;
+function createAclsObservables(entitySet) {
+  const { properties } = entitySet.entityType;
   const loadAclsObservables = properties.map((property) => {
     return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
   });
@@ -113,16 +112,28 @@ function getAllUsersAndRolesEpic(action$) {
     });
 }
 
+function assembleEntitySetProjection(edmDetails, entitySetId) {
+  const entitySet = edmDetails.entitySets[entitySetId];
+  entitySet.entityType = edmDetails.entityTypes[entitySet.entityTypeId];
+  entitySet.entityType.properties = Object.values(edmDetails.propertyTypes);
+  return entitySet;
+}
+
 function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
   .mergeMap((action :Action) => {
+    const edmQuery = [{
+      type: 'EntitySet',
+      id: action.entitySet.id,
+      include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
+    }];
     return Observable
       .from(
-        EntityDataModelApi.getEntityType(action.entitySet.entityTypeId)
+        EntityDataModelApi.getEntityDataModelProjection(edmQuery)
       )
-      .mergeMap((entityType) => {
-        return createAclsObservables(action, entityType);
+      .mergeMap((edmDetails) => {
+        return createAclsObservables(assembleEntitySetProjection(edmDetails, action.entitySet.id));
       })
       .mergeMap((observables) => {
         return observables;
