@@ -1,7 +1,7 @@
 import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
-import { PermissionsApi, PrincipalsApi } from 'loom-data';
+import { PermissionsApi, PrincipalsApi, EntityDataModelApi } from 'loom-data';
 import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
@@ -73,9 +73,9 @@ function getUsersAndRoles(users) {
   };
 }
 
-function createAclsObservables(action) {
+function createAclsObservables(action, entityType) {
   const { entitySet } = action;
-  const { properties } = action.entitySet.entityType;
+  const { properties } = entityType;
   const loadAclsObservables = properties.map((property) => {
     return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
   });
@@ -116,11 +116,22 @@ function getAllUsersAndRolesEpic(action$) {
 function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
-  .mergeMap((action) => {
-    return createAclsObservables(action);
-  })
-  .mergeMap((observables) => {
-    return observables;
+  .mergeMap((action :Action) => {
+    return Observable
+      .from(
+        EntityDataModelApi.getEntityType(action.entitySet.entityTypeId)
+      )
+      .mergeMap((entityType) => {
+        return createAclsObservables(action, entityType);
+      })
+      .mergeMap((observables) => {
+        return observables;
+      })
+      .catch((e) => {
+        // TODO: add real error handling
+        console.error(e);
+        return { type: 'noop' };
+      });
   })
   .catch((e) => {
     // TODO: add real error handling
