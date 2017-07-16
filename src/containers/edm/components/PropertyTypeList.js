@@ -65,6 +65,7 @@ class PropertyTypeList extends React.Component {
           <div className="propertyTypeListPermissions" />
           <div className="propertyTypeTitle">Property Title</div>
           <div className="propertyTypeListDescription">Description</div>
+          <div className="propertyTypeListDatatype">Datatype</div>
           <div className="propertyTypeListControls" />
         </div>
         {this.renderContent()}
