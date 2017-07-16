@@ -13,6 +13,7 @@ import { PermissionsPropType, getPermissions } from '../../../permissions/Permis
 import PropertyTypePermissions from './PropertyTypePermissions';
 import PropertyTypeTitle from './PropertyTypeTitle';
 import PropertyTypeDescription from './PropertyTypeDescription';
+import PropertyTypeDatatype from './PropertyTypeDatatype';
 
 // Default styles
 import '../propertype.module.css';
@@ -55,6 +56,7 @@ class PropertyType extends React.Component {
             onChange={onChange} />
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
+        <PropertyTypeDatatype propertyType={propertyType} />
       </div>
     );
   }

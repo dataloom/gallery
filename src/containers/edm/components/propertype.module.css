@@ -19,10 +19,12 @@
 :global .propertyTypeStyleDefault :global .propertyTypePermissions,
 :global .propertyTypeStyleDefault :global .propertyTypeTitle,
 :global .propertyTypeStyleDefault :global .propertyTypeDescription,
+:global .propertyTypeStyleDefault :global .propertyTypeDatatype,
 :global .propertyTypeStyleDefault :global .propertyTypeControls,
 :global .propertyTypeStyleDefault :global .propertyTypeListPermissions,
 :global .propertyTypeStyleDefault :global .propertyTypeListTitle,
 :global .propertyTypeStyleDefault :global .propertyTypeListDescription,
+:global .propertyTypeStyleDefault :global .propertyTypeListDatatype,
 :global .propertyTypeStyleDefault :global .propertyTypeListControls{
     display: table-cell;
     padding: 15px;
@@ -45,6 +47,13 @@
 :global .propertyTypeStyleDefault :global .propertyTypeListDescription {
     text-align: justify;
 }
+
+:global .propertyTypeStyleDefault :global .propertyTypeDatatype,
+:global .propertyTypeStyleDefault :global .propertyTypeListDatatype {
+    border-left: 1px solid #c9cfd3;
+    width: 180px;
+}
+
 :global .propertyTypeStyleDefault :global .propertyTypeControls {
     padding: 0 15px;
     width: 150px;
