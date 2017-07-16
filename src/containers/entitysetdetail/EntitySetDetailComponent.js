@@ -87,7 +87,7 @@ class EntitySetDetailComponent extends React.Component {
     let modalTitle = '';
     const entitySetTitle = this.props.entitySet.get('title');
     if (entitySetTitle) {
-      modalTitle = this.loadESPermissionsTitle(entitySetTitle, true);
+      modalTitle = this.loadESPermissionsTitle(entitySetTitle, false);
     }
 
     this.state = {
@@ -98,7 +98,7 @@ class EntitySetDetailComponent extends React.Component {
       isIntegrationDetailsOpen: false,
       permissionsModalTitle: modalTitle,
       permissionsModalAclKey: modalAclKey,
-      permissionsShouldUpdateAll: true
+      permissionsShouldUpdateAll: false
     };
   }
 
@@ -119,7 +119,7 @@ class EntitySetDetailComponent extends React.Component {
     if (nextProps.entitySet) {
       if (!this.props.entitySet || this.props.entitySet.get('id') !== nextProps.entitySet.get('id')) {
         this.setState({
-          permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.get('title'), true),
+          permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.get('title'), false),
           permissionsModalAclKey: [nextProps.entitySet.get('id')]
         });
       }
@@ -279,17 +279,17 @@ class EntitySetDetailComponent extends React.Component {
         <MenuItem header>Dataset</MenuItem>
         <MenuItem
             onClick={() => {
-              this.updateModalView(esAllTitle, [this.props.entitySet.get('id')], true);
-            }}
-            eventKey={esAllTitle}>
-          {esAllTitle}
-        </MenuItem>
-        <MenuItem
-            onClick={() => {
               this.updateModalView(esOnlyTitle, [this.props.entitySet.get('id')]);
             }}
             eventKey={esOnlyTitle}>
           {esOnlyTitle}
+        </MenuItem>
+        <MenuItem
+            onClick={() => {
+              this.updateModalView(esAllTitle, [this.props.entitySet.get('id')], true);
+            }}
+            eventKey={esAllTitle}>
+          {esAllTitle}
         </MenuItem>
         <MenuItem divider />
         <MenuItem header>Property Types</MenuItem>
