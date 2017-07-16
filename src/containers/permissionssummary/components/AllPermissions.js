@@ -36,8 +36,13 @@ class AllPermissions extends React.Component {
     isGettingPermissions: PropTypes.bool.isRequired
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidMount() {
+    if (!this.props.entitySet.isEmpty()) {
+      this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
+    }
+  }
 
+  componentWillReceiveProps(nextProps) {
     if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
       this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
     }
