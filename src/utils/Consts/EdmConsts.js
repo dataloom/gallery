@@ -67,6 +67,11 @@ const ANALYZERS = {
   metaphone: 'METAPHONE'
 };
 
+const ASSOCIATION_TYPE_FIELDS = {
+  src: 'src',
+  dst: 'dst'
+};
+
 export default {
   SCHEMA,
   ENTITY_SET,
@@ -82,5 +87,6 @@ export default {
   EDM_NUMBER_TYPES,
   EDM_GEOGRAPHY_TYPES,
   EDM_DATE_TYPES,
-  ANALYZERS
+  ANALYZERS,
+  ASSOCIATION_TYPE_FIELDS
 };

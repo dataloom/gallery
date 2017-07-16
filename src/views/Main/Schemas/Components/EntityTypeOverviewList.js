@@ -6,7 +6,6 @@ import {
 } from 'loom-data';
 
 import StringConsts from '../../../../utils/Consts/StringConsts';
-import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import AddButton from '../../../../components/buttons/AddButton';
 import styles from '../styles.module.css';
@@ -21,8 +20,9 @@ import {
 
 export class EntityTypeOverviewList extends React.Component {
   static propTypes = {
-    entityTypes: PropTypes.array,
-    updateFn: PropTypes.func
+    entityTypes: PropTypes.array.isRequired,
+    updateFn: PropTypes.func.isRequired,
+    field: PropTypes.string.isRequired
   }
 
   static contextTypes = {
@@ -39,10 +39,10 @@ export class EntityTypeOverviewList extends React.Component {
       }
     };
   }
-  //
-  // newEntityType = () => {
-  //   this.setState({ newEntityTypeRow: true });
-  // }
+
+  newEntityType = () => {
+    this.setState({ newEntityTypeRow: true });
+  }
 
   updateFqns = () => {
     this.setState({
@@ -64,11 +64,17 @@ export class EntityTypeOverviewList extends React.Component {
   }
 
   addEntityType = (namespace, name) => {
-    // needs backend updates
+    EntityDataModelApi.getEntityTypeId({ namespace, name })
+    .then((id) => {
+      this.props.updateFn(id, ActionConsts.ADD, this.props.field);
+      this.updateFqns();
+    }).catch(() => {
+      this.updateError();
+    });
   }
 
   deleteEntityType = (entityType) => {
-    // needs backend updates
+    this.props.updateFn(entityType.id, ActionConsts.REMOVE, this.props.field);
   }
 
   renderNewRowButton = () => {
@@ -93,7 +99,7 @@ export class EntityTypeOverviewList extends React.Component {
     const className = (this.state.newEntityTypeRow) ? StringConsts.EMPTY : styles.hidden;
     return (
       <NameNamespaceAutosuggest
-          searchFn={SearchApi.searchPropertyTypesByFQN}
+          searchFn={SearchApi.searchEntityTypesByFQN}
           className={className}
           usedProperties={entityTypeIds}
           addProperty={this.addEntityType} />
@@ -119,7 +125,6 @@ export class EntityTypeOverviewList extends React.Component {
       }
     });
 
-    // TODO once backend updates are in place for adding/removing entity types, update this
     return (
       <div>
         <table>
@@ -131,8 +136,10 @@ export class EntityTypeOverviewList extends React.Component {
               <th className={styles.tableCell}>Entity Type Title</th>
             </tr>
             {entityTypeList}
+            {this.renderNewRowInput()}
           </tbody>
         </table>
+        {this.renderNewRowButton()}
         <div className={this.state.error.display}>Unable to {this.state.error.action} entity type.</div>
       </div>
     );

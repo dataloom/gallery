@@ -8,6 +8,7 @@ import { PropertyList } from './PropertyList';
 import { EntityTypeOverviewList } from './EntityTypeOverviewList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
+import EdmConsts from '../../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 export class AssociationType extends React.Component {
@@ -52,12 +53,26 @@ export class AssociationType extends React.Component {
   }
 
   updateFn = () => {
-    EntityDataModelApi.getEntityType(this.props.associationType.entityType.id)
-    .then((entityType) => {
-      Promise.map(entityType.properties, (propertyId) => {
+    EntityDataModelApi.getAssociationType(this.props.associationType.entityType.id)
+    .then((associationType) => {
+      Promise.map(associationType.entityType.properties, (propertyId) => {
         return EntityDataModelApi.getPropertyType(propertyId);
       }).then((properties) => {
-        this.setState({ properties });
+        Promise.map(new Set(associationType.src.concat(associationType.dst)), (entityTypeId) => {
+          return EntityDataModelApi.getEntityType(entityTypeId);
+        }).then((entityTypes) => {
+          const entityTypeMap = {};
+          entityTypes.forEach((entityType) => {
+            entityTypeMap[entityType.id] = entityType;
+          });
+          const srcEntityTypes = associationType.src.map((id) => {
+            return entityTypeMap[id];
+          });
+          const dstEntityTypes = associationType.dst.map((id) => {
+            return entityTypeMap[id];
+          });
+          this.setState({ properties, srcEntityTypes, dstEntityTypes });
+        });
       });
     });
   }
@@ -70,29 +85,65 @@ export class AssociationType extends React.Component {
     FileService.saveFile(entityType, this.props.associationType.entityType.title, FileConsts.JSON, this.enableButton);
   }
 
-  updateEntityType = (newTypeUuid, action) => {
+  updateAssociationType = (newTypeId, action, field) => {
+    let updateFieldFn;
+    const id = this.props.associationType.entityType.id;
     if (action === ActionConsts.ADD) {
-      EntityDataModelApi.addPropertyTypeToEntityType(this.props.associationType.entityType.id, newTypeUuid[0])
+      if (field === EdmConsts.ASSOCIATION_TYPE_FIELDS.src) {
+        updateFieldFn = () => {
+          return EntityDataModelApi.addSrcEntityTypeToAssociationType(id, newTypeId);
+        };
+      }
+      else if (field === EdmConsts.ASSOCIATION_TYPE_FIELDS.dst) {
+        updateFieldFn = () => {
+          return EntityDataModelApi.addDstEntityTypeToAssociationType(id, newTypeId);
+        };
+      }
+    }
+    else if (action === ActionConsts.REMOVE) {
+      if (field === EdmConsts.ASSOCIATION_TYPE_FIELDS.src) {
+        updateFieldFn = () => {
+          return EntityDataModelApi.removeSrcEntityTypeFromAssociationType(id, newTypeId);
+        };
+      }
+      else if (field === EdmConsts.ASSOCIATION_TYPE_FIELDS.dst) {
+        updateFieldFn = () => {
+          return EntityDataModelApi.removeDstEntityTypeFromAssociationType(id, newTypeId);
+        };
+      }
+    }
+
+    if (updateFieldFn) {
+      updateFieldFn().then(() => {
+        this.updateFn();
+      });
+    }
+  }
+
+  updateAssociationEntityType = (newTypeId, action) => {
+    const entityTypeId = this.props.associationType.entityType.id;
+    if (action === ActionConsts.ADD) {
+      EntityDataModelApi.addPropertyTypeToEntityType(entityTypeId, newTypeId[0])
       .then(() => {
         this.updateFn();
       });
     }
     else if (action === ActionConsts.REMOVE) {
-      EntityDataModelApi.removePropertyTypeFromEntityType(this.props.associationType.entityType.id, newTypeUuid[0])
+      EntityDataModelApi.removePropertyTypeFromEntityType(entityTypeId, newTypeId[0])
       .then(() => {
         this.updateFn();
       });
     }
   }
 
-  updateEntityTypeTitle = (title) => {
+  updateAssociationTypeTitle = (title) => {
     EntityDataModelApi.updateEntityTypeMetaData(this.props.associationType.entityType.id, { title })
     .then(() => {
       this.updateFn();
     });
   }
 
-  updateEntityTypeDescription = (description) => {
+  updateAssociationTypeDescription = (description) => {
     EntityDataModelApi.updateEntityTypeMetaData(this.props.associationType.entityType.id, { description })
     .then(() => {
       this.updateFn();
@@ -101,12 +152,6 @@ export class AssociationType extends React.Component {
 
   render() {
     const entityType = this.props.associationType.entityType;
-    const srcFqns = this.state.srcEntityTypes.map((srcEntityType) => {
-      return srcEntityType.type;
-    });
-    const dstFqns = this.state.dstEntityTypes.map((dstEntityType) => {
-      return dstEntityType.type;
-    });
     return (
       <div>
         <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
@@ -117,14 +162,14 @@ export class AssociationType extends React.Component {
             placeholder="Association type title..."
             value={entityType.title}
             viewOnly={!this.context.isAdmin}
-            onChange={this.updateEntityTypeTitle} />
+            onChange={this.updateAssociationTypeTitle} />
         <InlineEditableControl
             type="textarea"
             size="small"
             placeholder="Association type description..."
             value={entityType.description}
             viewOnly={!this.context.isAdmin}
-            onChange={this.updateEntityTypeDescription} />
+            onChange={this.updateAssociationTypeDescription} />
         <div className={styles.spacerSmall} />
         <div className={styles.dropdownButtonContainer}>
           <Button bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
@@ -135,18 +180,22 @@ export class AssociationType extends React.Component {
             primaryKey={entityType.key}
             entityTypeName={entityType.type.name}
             entityTypeNamespace={entityType.type.namespace}
-            updateFn={this.updateEntityType}
+            updateFn={this.updateAssociationEntityType}
             editingPermissions={false} />
 
         <div className={styles.spacerMed} />
         <div className={styles.entityTypeLabel}>Source Entity Types</div>
         <EntityTypeOverviewList
-            entityTypes={this.state.srcEntityTypes} />
+            entityTypes={this.state.srcEntityTypes}
+            updateFn={this.updateAssociationType}
+            field={EdmConsts.ASSOCIATION_TYPE_FIELDS.src} />
 
 
         <div className={styles.entityTypeLabel}>Destination Entity Types</div>
         <EntityTypeOverviewList
-            entityTypes={this.state.dstEntityTypes} />
+            entityTypes={this.state.dstEntityTypes}
+            updateFn={this.updateAssociationType}
+            field={EdmConsts.ASSOCIATION_TYPE_FIELDS.dst} />
 
 
         <div className={styles.spacerBig} />

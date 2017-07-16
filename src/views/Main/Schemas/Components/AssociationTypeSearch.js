@@ -74,7 +74,6 @@ export default class AssociationTypeSearch extends React.Component {
       start: ((page - 1) * MAX_HITS),
       maxHits: MAX_HITS
     }).then((response) => {
-      console.log(response)
       this.setState({
         searchResults: response.hits,
         totalHits: response.numHits,
@@ -113,7 +112,7 @@ export default class AssociationTypeSearch extends React.Component {
     return (
       <div className={styles.createEdmObjectButtonWrapper}>
         <Button bsStyle="primary" className={styles.control} onClick={this.onCreateAssociationType}>
-          <FontAwesome name="plus-circle" size="lg" /> Entity Type
+          <FontAwesome name="plus-circle" size="lg" /> Association Type
         </Button>
       </div>
     );
@@ -123,13 +122,13 @@ export default class AssociationTypeSearch extends React.Component {
     return (
       <Modal show={this.state.isModalOpen} onHide={this.closeModal}>
         <Modal.Header closeButton>
-          <Modal.Title>Create an entity type</Modal.Title>
+          <Modal.Title>Create an association type</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <NewEdmObjectInput
               namespaces={this.state.allPropNamespaces}
               createSuccess={this.newAssociationTypeSuccess}
-              edmType={EdmConsts.ENTITY_TYPE_TITLE} />
+              edmType={EdmConsts.ASSOCIATION_TYPE_TITLE} />
         </Modal.Body>
       </Modal>
     );
