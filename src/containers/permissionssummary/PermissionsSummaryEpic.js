@@ -1,7 +1,7 @@
 import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
-import { PermissionsApi, PrincipalsApi } from 'loom-data';
+import { PermissionsApi, PrincipalsApi, EntityDataModelApi } from 'loom-data';
 import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
@@ -73,13 +73,11 @@ function getUsersAndRoles(users) {
   };
 }
 
-function createAclsObservables(action) {
-  const { entitySet } = action;
-  const { properties } = action.entitySet.entityType;
+function createAclsObservables(entitySetId, properties) {
   const loadAclsObservables = properties.map((property) => {
-    return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id, property));
+    return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySetId, property));
   });
-  loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySet.id)));
+  loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySetId)));
   return loadAclsObservables;
 }
 
@@ -113,14 +111,31 @@ function getAllUsersAndRolesEpic(action$) {
     });
 }
 
+
 function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   return action$
   .ofType(actionTypes.GET_ACLS)
-  .mergeMap((action) => {
-    return createAclsObservables(action);
-  })
-  .mergeMap((observables) => {
-    return observables;
+  .mergeMap((action :Action) => {
+    const edmQuery = [{
+      type: 'EntitySet',
+      id: action.entitySet.id,
+      include: ['PropertyTypeInEntitySet']
+    }];
+    return Observable
+      .from(
+        EntityDataModelApi.getEntityDataModelProjection(edmQuery)
+      )
+      .mergeMap((edmDetails) => {
+        return createAclsObservables(action.entitySet.id, Object.values(edmDetails.propertyTypes));
+      })
+      .mergeMap((observables) => {
+        return observables;
+      })
+      .catch((e) => {
+        // TODO: add real error handling
+        console.error(e);
+        return { type: 'noop' };
+      });
   })
   .catch((e) => {
     // TODO: add real error handling
