@@ -10,6 +10,7 @@ export class DataModelToolbar extends React.Component {
 
   dataModelLabels = [
     { label: 'Entity Types', type: EdmConsts.ENTITY_TYPE },
+    { label: 'Association Types', type: EdmConsts.ASSOCIATION_TYPE },
     { label: 'Property Types', type: EdmConsts.PROPERTY_TYPE },
     { label: 'Schemas', type: EdmConsts.SCHEMA }
   ]
