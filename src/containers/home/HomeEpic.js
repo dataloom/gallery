@@ -17,8 +17,12 @@ function loadHomeEntitySetsEpic(action$ :Observable<Action>) :Observable<Action>
     .ofType(actionTypes.HOME_ENTITY_SETS_REQUEST)
     .mergeMap((action :Action) => {
       let numHits = 0;
+      const searchOptions = {
+        start: action.start,
+        maxHits: action.maxHits
+      };
       return Observable
-        .from(SearchApi.loadHomePageEntitySets(action.start, action.maxHits))
+        .from(SearchApi.getEntitySets(searchOptions))
         .map((rawResult) => {
           numHits = rawResult.numHits;
           return rawResult.hits.map((result) => {
