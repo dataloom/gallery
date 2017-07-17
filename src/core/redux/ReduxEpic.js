@@ -9,6 +9,7 @@ import CreateEntitySetEpic from '../../containers/entitysetforms/CreateEntitySet
 import DatasetsEpic from '../../containers/datasets/DatasetsEpic';
 import EdmEpic from '../../containers/edm/EdmEpic';
 import EntitySetDetailEpic from '../../containers/entitysetdetail/EntitySetDetailEpic';
+import HomeEpic from '../../containers/home/HomeEpic';
 import OrganizationEpic from '../../containers/organizations/epics/OrganizationEpic';
 import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
 import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
@@ -26,6 +27,7 @@ export default function reduxEpic() {
     DatasetsEpic,
     EdmEpic,
     EntitySetDetailEpic,
+    HomeEpic,
     NeuronEpic,
     PermissionsEpic,
     PermissionsSummaryEpic,
