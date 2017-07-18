@@ -149,6 +149,7 @@ export default class EntityRow extends React.Component {
   }
 
   renderNeighbors = () => {
+    if (this.state.neighbors.length === 0) return null;
     return (
       <RowNeighbors
           neighbors={this.state.neighbors}
@@ -160,17 +161,18 @@ export default class EntityRow extends React.Component {
 
   renderBreadcrumbs = () => {
     const breadcrumbs = [];
-    breadcrumbs.push(<span className={styles.crumbLink} onClick={this.props.backFn}>Results</span>);
+    breadcrumbs.push(<span key="title" className={styles.crumbLink} onClick={this.props.backFn}>Results</span>);
     for (let i = 0; i < this.props.breadcrumbs.length; i += 1) {
       const crumb = this.props.breadcrumbs[i];
-      breadcrumbs.push(<span className={styles.crumbDivider}> / </span>);
+      breadcrumbs.push(<span key={`divider-${i}`} className={styles.crumbDivider}> / </span>);
 
       if (i + 1 === this.props.breadcrumbs.length) {
-        breadcrumbs.push(<span className={styles.crumbActive}>{crumb.title}</span>);
+        breadcrumbs.push(<span key={`crumb-${i}`} className={styles.crumbActive}>{crumb.title}</span>);
       }
       else {
         breadcrumbs.push(
           <span
+              key={`crumb-${i}`}
               className={styles.crumbLink}
               onClick={() => {
                 this.props.jumpFn(i);

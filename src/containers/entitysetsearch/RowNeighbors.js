@@ -227,6 +227,7 @@ export default class RowNeighbors extends React.Component {
   }
 
   render() {
+    if (this.props.neighbors.length === 0) return null;
     const content = (this.state.neighborView === NEIGHBOR_VIEW.TABLE)
       ? this.renderNeighbors() : this.renderTimeline();
     return (
