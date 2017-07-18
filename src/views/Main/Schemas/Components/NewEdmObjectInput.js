@@ -431,8 +431,8 @@ export class NewEdmObjectInput extends React.Component {
           <tbody>
             <tr className={propertyTypeClassName}>
               <th />
-              <th className={styles.newEdmCell}>Name</th>
               <th className={styles.newEdmCell}>Namespace</th>
+              <th className={styles.newEdmCell}>Name</th>
               <th className={styles.newEdmCell}>Primary Key</th>
             </tr>
             {this.renderPropertyTypesAdded()}
@@ -467,8 +467,8 @@ export class NewEdmObjectInput extends React.Component {
           <tbody>
             <tr className={entityTypeClassName}>
               <th />
-              <th className={styles.newEdmCell}>Name</th>
               <th className={styles.newEdmCell}>Namespace</th>
+              <th className={styles.newEdmCell}>Name</th>
             </tr>
             {this.renderSrcEntityTypesAdded()}
             <NameNamespaceAutosuggest
@@ -485,8 +485,8 @@ export class NewEdmObjectInput extends React.Component {
           <tbody>
             <tr className={entityTypeClassName}>
               <th />
-              <th className={styles.newEdmCell}>Name</th>
               <th className={styles.newEdmCell}>Namespace</th>
+              <th className={styles.newEdmCell}>Name</th>
             </tr>
             {this.renderDstEntityTypesAdded()}
             <NameNamespaceAutosuggest
