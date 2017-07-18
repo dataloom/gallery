@@ -68,6 +68,7 @@ class EntitySetDetailComponent extends React.Component {
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
     entitySetId: PropTypes.string.isRequired,
     entityType: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired,
@@ -468,7 +469,9 @@ class EntitySetDetailComponent extends React.Component {
       <IntegrationDetailsModal
           isOpen={this.state.isIntegrationDetailsOpen}
           onClose={this.closeIntegrationDetailsModal}
-          entitySet={this.props.entitySet} />
+          entitySet={this.props.entitySet}
+          entityType={this.props.entityType}
+          propertyTypes={this.props.propertyTypes} />
     );
   }
 
@@ -578,13 +581,13 @@ function mapStateToProps(state :Map, ownProps :Object) {
   const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
   const propertyTypeIds :List = entityType.get('properties', Immutable.List());
   let ownedPropertyTypes :List = Immutable.List();
-
+  let propertyTypes :List = Immutable.List();
   if (!propertyTypeIds.isEmpty()) {
     propertyTypeIds.forEach((propertyTypeId :string) => {
+      const pt = state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map());
+      propertyTypes = propertyTypes.push(pt);
       if (getPermissions(permissions, [entitySetId, propertyTypeId]).OWNER) {
-        ownedPropertyTypes = ownedPropertyTypes.push(
-          state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map())
-        );
+        ownedPropertyTypes = ownedPropertyTypes.push(pt);
       }
     });
   }
@@ -595,6 +598,7 @@ function mapStateToProps(state :Map, ownProps :Object) {
     entitySetId,
     entitySetPermissions,
     entityType,
+    propertyTypes,
     ownedPropertyTypes,
     propertyTypeIds
   };
