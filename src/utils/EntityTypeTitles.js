@@ -1,59 +1,61 @@
 const titleProperties = {
+  // PERSON
   'general.person': [
-    'general.lastname',
-    'general.firstname'
-  ],
-  'general.location': [
-    'general.address'
-  ],
-  'general.case': [
-    'publicsafety.case'
+    'nc.PersonSurName',
+    'nc.PersonGivenName'
   ],
   'sample.person2': [
     'general.lastname',
     'general.firstname'
   ],
-  'sample.bookings2': [
-    'publicsafety.datebooked2'
-  ],
   'nc.PersonType': [
     'nc.PersonSurName',
     'nc.PersonGivenName'
-  ],
-  'publicsafety.GangType': [
-    'publicsafety.GangName'
-  ],
-  'general.LocationType': [
-    'nc.LocationCityName',
-    'nc.LocationStateName'
-  ],
-  'j.WarrantType': [
-    'j.WarrantLevelText'
-  ],
-  'j.ServiceCallType': [
-    'publicsafety.CadEventNumber'
-  ],
-  'j.BookingType': [
-    'publicsafety.CustodyID',
-    'j.SubjectBooking'
-  ],
-  'j.ChargeType': [
-    'j.ArrestCharge',
-    'publicsafety.datereleased2'
   ],
   'nc.PersonType2': [
     'nc.PersonSurName',
     'nc.PersonGivenName'
   ],
+
+  // CASE
+  'general.case': [
+    'justice.courtcasenumber'
+  ],
+  'justice.case': [
+    'justice.courtcasenumber'
+  ],
+  'danecountywi.dacase': [
+    'justice.courtcasenumber'
+  ],
+
+  // LOCATION
+  'general.location': [
+    'general.address'
+  ],
+  'general.LocationType': [
+    'nc.LocationCityName',
+    'nc.LocationStateName'
+  ],
+
+  // BOOKINGS
+  'j.BookingType': [
+    'publicsafety.CustodyID',
+    'j.SubjectBooking'
+  ],
+  'sample.bookings2': [
+    'publicsafety.datebooked2'
+  ],
   'jciowa.JailBookingType2': [
     'publicsafety.datebooked2'
   ],
-  'jciowa.JailRecordType2': [
-    'publicsafety.ArrestID'
+  'jciowa.BookingType': [
+    'publicsafety.datebooked2'
   ],
-  'j.EnforcementOfficialType2': [
-    'j.EnforcementOfficialCategoryText',
-    'nc.PersonSurName'
+
+  // CHARGES
+  'j.ChargeType': [
+    'j.ArrestCharge',
+    'publicsafety.datereleased2'
   ],
   'jciowa.ChargeType': [
     'j.ChargeSequenceID',
@@ -63,6 +65,30 @@ const titleProperties = {
     'j.ChargeSequenceID',
     'j.CourtEventCase'
   ],
+  'jciowa.ChargesType2': [
+    'j.ChargeSequenceID',
+    'j.CourtEventCase'
+  ],
+
+  // JAIL RECORDS
+  'jciowa.JailRecordType': [
+    'publicsafety.ArrestID'
+  ],
+  'jciowa.JailRecordType2': [
+    'publicsafety.ArrestID'
+  ],
+
+  // ENFORCEMENT OFFICIALS
+  'j.EnforcementOfficialType': [
+    'j.EnforcementOfficialCategoryText',
+    'nc.PersonSurName'
+  ],
+  'j.EnforcementOfficialType2': [
+    'j.EnforcementOfficialCategoryText',
+    'nc.PersonSurName'
+  ],
+
+  // OFFENSE TYPES
   'jciowa.OffenseType': [
     'publicsafety.OffenseViolatedStateStatute',
     'publicsafety.OffenseViolatedLocalStatute'
@@ -71,6 +97,12 @@ const titleProperties = {
     'publicsafety.OffenseViolatedStateStatute',
     'publicsafety.OffenseViolatedLocalStatute'
   ],
+  'jciowa.OffensesType2': [
+    'publicsafety.OffenseViolatedStateStatute',
+    'publicsafety.OffenseViolatedLocalStatute'
+  ],
+
+  // SENTENCE TYPES
   'jciowa.SentenceType': [
     'publicsafety.SentenceTermDays',
     'publicsafety.SentenceTermHours'
@@ -78,6 +110,21 @@ const titleProperties = {
   'jciowa.SentencesType': [
     'publicsafety.SentenceTermDays',
     'publicsafety.SentenceTermHours'
+  ],
+  'jciowa.SentencesType2': [
+    'publicsafety.SentenceTermDays',
+    'publicsafety.SentenceTermHours'
+  ],
+
+  // OTHER
+  'publicsafety.GangType': [
+    'publicsafety.GangName'
+  ],
+  'j.WarrantType': [
+    'j.WarrantLevelText'
+  ],
+  'j.ServiceCallType': [
+    'publicsafety.CadEventNumber'
   ]
 };
 
