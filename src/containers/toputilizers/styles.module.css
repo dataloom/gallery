@@ -76,3 +76,12 @@ a:hover {
   color: inherit;
   font-size: inherit;
 }
+
+.displayToolbar {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.histogramPropertyDropdown {
+  text-align: center;
+}
