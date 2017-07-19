@@ -170,14 +170,8 @@ function mapStateToProps(state) {
     );
   });
 
-  // HACK - need to figure out how to determing when loading is finished
-  let asyncStatus = state.getIn(['datasets', 'asyncStatus']);
-  if (!ownedEntitySets.isEmpty()) {
-    asyncStatus = ASYNC_STATUS.SUCCESS;
-  }
-
   return {
-    asyncStatus,
+    asyncStatus: state.getIn(['datasets', 'asyncStatus']),
     pagingToken,
     ownedEntitySets,
     finishedLoading: state.getIn(['datasets', 'finishedLoading']),
