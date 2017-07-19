@@ -6,11 +6,10 @@ import styles from '../styles.module.css';
 
 const FIELDS_TO_IGNORE = ['count', 'id'];
 
-export default class TopUtilizersHistogramContainer extends React.Component {
+export default class TopUtilizersHistogram extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
-    propertyTypes: PropTypes.array.isRequired,
-    entitySetId: PropTypes.string.isRequired
+    propertyTypes: PropTypes.array.isRequired
   }
 
   constructor(props) {

@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
-import styles from '../styles.module.css';
 
-export default class TopUtilizersTableContainer extends React.Component {
+export default class TopUtilizersTable extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,

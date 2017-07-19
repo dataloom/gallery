@@ -8,8 +8,8 @@ import { bindActionCreators } from 'redux';
 import { EntityDataModelApi } from 'loom-data';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
-import TopUtilizersTableContainer from './TopUtilizersTableContainer';
-import TopUtilizersHistogramContainer from './TopUtilizersHistogramContainer';
+import TopUtilizersTable from '../components/TopUtilizersTable';
+import TopUtilizersHistogram from '../components/TopUtilizersHistogram';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import styles from '../styles.module.css';
 
@@ -106,13 +106,13 @@ class TopUtilizersResultsContainer extends React.Component {
 
   renderResults = () => {
     if (this.state.display === DISPLAYS.TABLE) {
-      return (<TopUtilizersTableContainer
+      return (<TopUtilizersTable
           results={this.props.results.toJS()}
           propertyTypes={this.state.propertyTypes}
           entitySetId={this.props.entitySetId} />);
     }
     else if (this.state.display === DISPLAYS.HISTOGRAM) {
-      return (<TopUtilizersHistogramContainer
+      return (<TopUtilizersHistogram
           results={this.props.results.toJS()}
           propertyTypes={this.state.propertyTypes}
           entitySetId={this.props.entitySetId} />);
