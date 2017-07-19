@@ -32,7 +32,7 @@ class TopUtilizersResultsContainer extends React.Component {
     this.state = {
       entityType: null,
       propertyTypes: [],
-      display: DISPLAYS.HISTOGRAM
+      display: DISPLAYS.TABLE
     };
   }
 
