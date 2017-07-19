@@ -82,6 +82,12 @@ a:hover {
   text-align: center;
 }
 
-.histogramPropertyDropdown {
+.histogramSection {
   text-align: center;
+}
+
+.histogramContainer {
+  display: inline-block;
+  height: 300px;
+  margin-top: 15px;
 }

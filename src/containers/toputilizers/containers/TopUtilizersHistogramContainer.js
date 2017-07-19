@@ -24,10 +24,6 @@ export default class TopUtilizersHistogramContainer extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('thanks for the props')
-  }
-
   formatResultData = (results) => {
     const formattedData = {};
     results.forEach((row) => {
@@ -76,9 +72,9 @@ export default class TopUtilizersHistogramContainer extends React.Component {
         </MenuItem>
       );
     });
-    const title = this.state.selectedProperty.title || 'Select a property'
+    const title = this.state.selectedProperty.title || 'Select a property';
     return (
-      <div className={styles.histogramPropertyDropdown}>
+      <div>
         <SplitButton bsStyle="default" title={title} id="property-select">
           {menuItems}
         </SplitButton>
@@ -87,25 +83,23 @@ export default class TopUtilizersHistogramContainer extends React.Component {
   }
 
   renderHistogram = () => {
-    if (!this.state.selectedProperty.type) return null;
-    const fqn = `${this.state.selectedProperty.type.namespace}.${this.state.selectedProperty.type.name}`;
-    if (fqn && fqn.length) {
-      console.log('rendering histogram, or trying to :/')
-      console.log(fqn)
-      console.log(this.state.formattedData);
-      console.log(this.state.formattedData[fqn]);
-      const propertyData = this.state.formattedData[fqn];
-      if (propertyData) {
-        return <HistogramVisualization data={propertyData} propertyType={this.state.selectedProperty} />;
+    let content;
+    if (this.state.selectedProperty.type) {
+      const fqn = `${this.state.selectedProperty.type.namespace}.${this.state.selectedProperty.type.name}`;
+      if (fqn && fqn.length) {
+        const propertyData = this.state.formattedData[fqn];
+        if (propertyData) {
+          content = <HistogramVisualization data={propertyData} propertyType={this.state.selectedProperty} />;
+        }
       }
     }
-    return null;
+    return <div className={styles.histogramContainer}>{content}</div>;
   }
 
   render() {
     if (this.props.propertyTypes.length === 0) return null;
     return (
-      <div>
+      <div className={styles.histogramSection}>
         {this.renderPropertySelection()}
         {this.renderHistogram()}
       </div>
