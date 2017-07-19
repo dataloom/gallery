@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SplitButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
 import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
 import styles from '../styles.module.css';
 
@@ -75,9 +75,9 @@ export default class TopUtilizersHistogramContainer extends React.Component {
     const title = this.state.selectedProperty.title || 'Select a property';
     return (
       <div>
-        <SplitButton bsStyle="default" title={title} id="property-select">
+        <DropdownButton bsStyle="default" title={title} id="property-select">
           {menuItems}
-        </SplitButton>
+        </DropdownButton>
       </div>
     );
   }
