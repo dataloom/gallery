@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Promise from 'bluebird';
 import DocumentTitle from 'react-document-title';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { EntityDataModelApi } from 'loom-data';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
@@ -16,7 +14,8 @@ class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
-    entitySetId: PropTypes.string.isRequired,
+    entitySet: PropTypes.object.isRequired,
+    propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
     topUtilizersDetails: PropTypes.object.isRequired
   }
@@ -24,27 +23,8 @@ class TopUtilizersResultsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      entityType: null,
-      propertyTypes: []
+      entityType: null
     };
-  }
-
-  componentDidMount() {
-    this.loadEntitySet();
-  }
-
-  loadEntitySet = () => {
-    EntityDataModelApi.getEntitySet(this.props.entitySetId)
-    .then((entitySet) => {
-      EntityDataModelApi.getEntityType(entitySet.entityTypeId)
-      .then((entityType) => {
-        Promise.map(entityType.properties, (propertyId) => {
-          return EntityDataModelApi.getPropertyType(propertyId);
-        }).then((propertyTypes) => {
-          this.setState({ entityType, propertyTypes });
-        });
-      });
-    });
   }
 
   formatValue = (rawValue) => {
@@ -62,13 +42,13 @@ class TopUtilizersResultsContainer extends React.Component {
   }
 
   renderTable = () => {
-    if (this.state.propertyTypes.length === 0) return null;
+    if (this.props.propertyTypes.length === 0) return null;
     return (
       <SearchResultsTable
           results={this.props.results.toJS()}
-          propertyTypes={this.state.propertyTypes}
+          propertyTypes={this.props.propertyTypes}
           formatValueFn={this.formatValue}
-          entitySetId={this.props.entitySetId}
+          entitySetId={this.props.entitySet.id}
           showCount />
     );
   }
@@ -79,7 +59,7 @@ class TopUtilizersResultsContainer extends React.Component {
         <Button
             bsStyle="primary"
             onClick={() => {
-              this.props.downloadResults(this.props.entitySetId, this.props.topUtilizersDetails);
+              this.props.downloadResults(this.props.entitySet.id, this.props.topUtilizersDetails);
             }}>Download as CSV</Button>
       </div>
     );
