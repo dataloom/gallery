@@ -178,7 +178,10 @@ class PermissionsPanel extends React.Component {
     .then((acls) => {
       this.updateStateAcls(acls.aces, updateSuccess);
     }).catch(() => {
-      this.setState({ updateError: true });
+      this.setState({
+        updateError: true,
+        updateSuccess: false
+      });
     });
   }
 
@@ -350,7 +353,11 @@ class PermissionsPanel extends React.Component {
   }
 
   changeRolesView = (newView) => {
-    this.setState({ rolesView: newView });
+    this.setState({
+      rolesView: newView,
+      updateSuccess: false,
+      updateError: false
+    });
   }
 
   updateRoles = (action, role, view) => {
@@ -432,19 +439,24 @@ class PermissionsPanel extends React.Component {
               options={roleOptions}
               onChange={this.handleNewRoleChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-            <Button
+          <Button
               bsStyle="primary"
               className={`${styles.spacerMargin}`}
+              disabled={this.state.newRoleValue.length === 0}
               onClick={() => {
                 this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
-              }}>Save</Button>
+              }}>Add</Button>
         </div>
       </div>
     );
   }
 
   changeEmailsView = (newView) => {
-    this.setState({ emailsView: newView });
+    this.setState({
+      emailsView: newView,
+      updateSuccess: false,
+      updateError: false
+    });
   }
 
   updateEmails = (action, userId, view) => {
@@ -512,12 +524,13 @@ class PermissionsPanel extends React.Component {
               options={emailOptions}
               onChange={this.handleNewEmailChange}
               className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
-            <Button
+          <Button
               bsStyle="primary"
               className={`${styles.spacerMargin}`}
+              disabled={this.state.newEmailValue.length === 0}
               onClick={() => {
                 this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
-              }}>Save</Button>
+              }}>Add</Button>
         </div>
       </div>
     );

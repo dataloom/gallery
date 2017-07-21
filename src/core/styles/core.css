@@ -23,6 +23,7 @@
 .errorMsg {
     color: red;
     padding-top: 10px;
+    text-align: center;
 }
 
 .name {
