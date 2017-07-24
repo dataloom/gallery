@@ -82,6 +82,7 @@
 .updateSuccess {
   color: green;
   padding-top: 10px;
+  text-align: center;
 }
 
 .permissionsBodyContainer {
@@ -164,4 +165,17 @@
   font-size: 16px;
   font-weight: bold;
   margin: 20px 0 5px 0;
+}
+
+.tableCellReorder {
+  padding: 5px 10px;
+  color: #767a7c;
+  border: 1px solid #d1d6da;
+  height: 30px;
+  min-width: 185px;
+}
+
+.listItem {
+  border: 1px solid #d1d6da;
+  cursor: pointer;
 }

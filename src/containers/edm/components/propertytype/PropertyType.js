@@ -45,6 +45,11 @@ class PropertyType extends React.Component {
     editing: DEFAULT_EDITING
   };
 
+  renderDatatype = () => {
+    if (this.props.requestingPermissions) return null;
+    return <PropertyTypeDatatype propertyType={this.props.propertyType} />;
+  }
+
   render() {
     const { propertyType, permissions, editing, onChange } = this.props;
     return (
@@ -56,7 +61,7 @@ class PropertyType extends React.Component {
             onChange={onChange} />
         <PropertyTypeTitle propertyType={propertyType} />
         <PropertyTypeDescription propertyType={propertyType} />
-        <PropertyTypeDatatype propertyType={propertyType} />
+        {this.renderDatatype()}
       </div>
     );
   }

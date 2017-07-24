@@ -1,14 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'react-document-title';
-import { Button } from 'react-bootstrap';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
-import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
+import TopUtilizersTable from '../components/TopUtilizersTable';
+import TopUtilizersHistogram from '../components/TopUtilizersHistogram';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import styles from '../styles.module.css';
+
+const DISPLAYS = {
+  TABLE: 'table',
+  HISTOGRAM: 'histogram'
+};
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
@@ -23,34 +29,8 @@ class TopUtilizersResultsContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      entityType: null
+      display: DISPLAYS.TABLE
     };
-  }
-
-  formatValue = (rawValue) => {
-    if (rawValue instanceof Array) {
-      let formattedValue = '';
-      if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
-      if (rawValue.length > 1) {
-        for (let i = 1; i < rawValue.length; i += 1) {
-          formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
-        }
-      }
-      return formattedValue;
-    }
-    return rawValue;
-  }
-
-  renderTable = () => {
-    if (this.props.propertyTypes.length === 0) return null;
-    return (
-      <SearchResultsTable
-          results={this.props.results.toJS()}
-          propertyTypes={this.props.propertyTypes}
-          formatValueFn={this.formatValue}
-          entitySetId={this.props.entitySet.id}
-          showCount />
-    );
   }
 
   renderDownloadButton = () => {
@@ -66,12 +46,57 @@ class TopUtilizersResultsContainer extends React.Component {
   }
 
   renderContent = () => {
-    return this.props.isGettingResults ? <LoadingSpinner /> : (
+    return this.props.isGettingResults ? <LoadingSpinner /> : this.renderResultsContainer();
+  }
+
+  renderResultsContainer = () => {
+    return (this.props.results.size === 0) ?
+    (
+      <div>No results found.</div>
+    ) : (
       <div>
-        {this.renderTable()}
+        {this.renderDisplayToolbar()}
+        {this.renderResults()}
         {this.renderDownloadButton()}
       </div>
     );
+  }
+
+  renderDisplayToolbar = () => {
+    return (
+      <div className={styles.displayToolbar}>
+        <ButtonGroup>
+          <Button
+              onClick={() => {
+                this.setState({ display: DISPLAYS.TABLE });
+              }}
+              active={this.state.display === DISPLAYS.TABLE}>
+            Table</Button>
+          <Button
+              onClick={() => {
+                this.setState({ display: DISPLAYS.HISTOGRAM });
+              }}
+              active={this.state.display === DISPLAYS.HISTOGRAM}>
+            Histogram</Button>
+        </ButtonGroup>
+      </div>
+    );
+  }
+
+  renderResults = () => {
+    if (this.state.display === DISPLAYS.TABLE) {
+      return (<TopUtilizersTable
+          results={this.props.results.toJS()}
+          propertyTypes={this.props.propertyTypes}
+          entitySetId={this.props.entitySet.id} />);
+    }
+    else if (this.state.display === DISPLAYS.HISTOGRAM) {
+      return (<TopUtilizersHistogram
+          results={this.props.results.toJS()}
+          propertyTypes={this.props.propertyTypes}
+          entitySetId={this.props.entitySet.id} />);
+    }
+    return null;
   }
 
   render() {

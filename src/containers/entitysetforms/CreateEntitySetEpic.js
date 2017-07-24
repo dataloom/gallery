@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 import * as actionTypes from './CreateEntitySetActionTypes';
 import * as actionFactories from './CreateEntitySetActionFactories';
 
+import * as datasetActionFactories from '../datasets/DatasetsActionFactory';
+
 import { COLLECTIONS } from '../edm/EdmAsyncStorage';
 
 function createEntitySet(entitySet) {
@@ -23,7 +25,8 @@ function createEntitySet(entitySet) {
         id: savedEntitySet.id
       };
       return Observable.of(
-        actionFactories.createEntitySetResolve(reference)
+        actionFactories.createEntitySetResolve(reference),
+        datasetActionFactories.getOwnedDatasetsIdsRequest(null)
       );
     })
     .catch(() => {

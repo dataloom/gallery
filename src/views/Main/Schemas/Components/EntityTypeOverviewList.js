@@ -131,8 +131,8 @@ export class EntityTypeOverviewList extends React.Component {
           <tbody>
             <tr>
               <th />
-              <th className={styles.tableCell}>Entity Type Name</th>
               <th className={styles.tableCell}>Entity Type Namespace</th>
+              <th className={styles.tableCell}>Entity Type Name</th>
               <th className={styles.tableCell}>Entity Type Title</th>
             </tr>
             {entityTypeList}
