@@ -13,8 +13,28 @@ export class PropertyType extends React.Component {
     isAdmin: PropTypes.bool
   }
 
-  renderPii = (prop) => {
-    return (prop.piiField) ? ' (PII)' : '';
+  renderPiiField = (prop) => {
+    let value = (prop.piiField) ? 'Contains PII' : '';
+    const optionalSpacer = (prop.piiField) ? <br /> : null;
+    if (this.context.isAdmin) {
+      value = (
+        <span>
+          Contains PII:&nbsp;
+          <input
+              type="checkbox"
+              defaultChecked={prop.piiField}
+              onChange={(e) => {
+                this.updatePropertyTypePii(e.target.checked);
+              }} />
+        </span>
+      );
+    }
+    return (
+      <div className={styles.italic}>
+        {optionalSpacer}
+        {value}
+      </div>
+    );
   }
 
   updatePropertyTypeTitle = (title) => {
@@ -25,11 +45,15 @@ export class PropertyType extends React.Component {
     EntityDataModelApi.updatePropertyTypeMetaData(this.props.propertyType.id, { description });
   }
 
+  updatePropertyTypePii = (piiField) => {
+    EntityDataModelApi.updatePropertyTypeMetaData(this.props.propertyType.id, { piiField });
+  }
+
   render() {
     const prop = this.props.propertyType;
     return (
       <div>
-        <div className={styles.italic}>{`${prop.type.namespace}.${prop.type.name}${this.renderPii(prop)}`}</div>
+        <div className={styles.italic}>{`${prop.type.namespace}.${prop.type.name}`}</div>
         <div className={styles.spacerSmall} />
         <InlineEditableControl
             type="text"
@@ -47,6 +71,7 @@ export class PropertyType extends React.Component {
             onChange={this.updatePropertyTypeDescription} />
         <div className={styles.spacerSmall} />
         <div className={styles.italic}>datatype: {prop.datatype}</div>
+        {this.renderPiiField(prop)}
         <div className={styles.spacerBig} />
         <hr />
       </div>
