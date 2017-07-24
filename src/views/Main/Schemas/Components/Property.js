@@ -39,8 +39,8 @@ export class Property extends React.Component {
     return (
       <tr className={styles.tableRows}>
         {this.renderDeleteButton()}
-        <td className={styles.tableCell}>{prop.type.name}</td>
         <td className={styles.tableCell}>{prop.type.namespace}</td>
+        <td className={styles.tableCell}>{prop.type.name}</td>
         <td className={styles.tableCell}>{prop.title}</td>
         {this.isPrimaryKey()}
       </tr>
