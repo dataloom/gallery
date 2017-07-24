@@ -107,6 +107,11 @@ export default class AuthService extends EventEmitter {
     this.storage.removeItem('id_token');
     this.storage.removeItem('profile');
 
-    Cookies.remove('authorization');
+    // when deleting a cookie, we must pass the exact same path and domain attributes that was used to set the cookie
+    // https://github.com/js-cookie/js-cookie
+    const prefix = (this.isLocal) ? '' : '.';
+    Cookies.remove('authorization', {
+      domain: `${prefix}${window.location.hostname}`
+    });
   }
 }
