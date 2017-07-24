@@ -76,3 +76,18 @@ a:hover {
   color: inherit;
   font-size: inherit;
 }
+
+.displayToolbar {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.histogramSection {
+  text-align: center;
+}
+
+.histogramContainer {
+  display: inline-block;
+  height: 300px;
+  margin-top: 15px;
+}
