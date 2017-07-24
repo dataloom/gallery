@@ -151,7 +151,7 @@ class EntitySetPermissionsRequest extends React.Component {
             <div className={styles.permissionRequestTitle}>
               <span className={styles.principalName}>{principalDisplayName} </span>
               requested permission on
-              <a onClick={this.toggleBody}> { statuses.length } properties</a>
+              <a onClick={this.toggleBody}> {statuses.length} {statuses.length === 1 ? 'property' : 'properties'}</a>
             </div>
             <button className={styles.approveButton} onClick={this.approve}>
               <FontAwesome name="thumbs-o-up" />
