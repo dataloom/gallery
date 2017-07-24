@@ -49,9 +49,7 @@ export default class RowNeighbors extends React.Component {
       const neighborEntitySetId = (neighbor.neighborEntitySet) ? neighbor.neighborEntitySet.id : NO_NEIGHBOR;
 
       if (!organizedNeighbors[associationEntitySetId]) {
-        organizedNeighbors[associationEntitySetId] = {
-          [neighborEntitySetId]: [neighbor]
-        };
+        organizedNeighbors[associationEntitySetId] = {};
         neighbor.associationPropertyTypes.forEach((propertyType) => {
           if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
             if (dateProps[associationEntitySetId]) {
@@ -63,7 +61,7 @@ export default class RowNeighbors extends React.Component {
           }
         });
       }
-      else if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
+      if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
         organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
 
         if (neighbor.neighborPropertyTypes) {
