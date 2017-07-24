@@ -38,8 +38,8 @@ export class EntityTypeFqn extends React.Component {
     return (
       <tr className={styles.tableRows}>
         {this.renderDeleteButton()}
-        <td className={styles.tableCell}>{fqn.type.name}</td>
         <td className={styles.tableCell}>{fqn.type.namespace}</td>
+        <td className={styles.tableCell}>{fqn.type.name}</td>
         <td className={styles.tableCell}>{fqn.title}</td>
       </tr>
     );
