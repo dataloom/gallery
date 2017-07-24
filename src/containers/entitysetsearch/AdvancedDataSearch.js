@@ -68,13 +68,15 @@ export default class AdvancedDataSearch extends React.Component {
     });
     AuthorizationApi.checkAuthorizations(accessChecks)
     .then((response) => {
-      const propsWithReadAccess = [];
+      const propsWithReadAccess = new Set();
       response.forEach((property) => {
         if (property.permissions.READ) {
-          propsWithReadAccess.push(property.aclKey[1]);
+          propsWithReadAccess.add(property.aclKey[1]);
         }
       });
-      const propertyTypePromises = propsWithReadAccess.map((propId) => {
+      const propertyTypePromises = propertyIds.filter((propertyId) => {
+        return propsWithReadAccess.has(propertyId);
+      }).map((propId) => {
         return EntityDataModelApi.getPropertyType(propId);
       });
       Promise.all(propertyTypePromises)

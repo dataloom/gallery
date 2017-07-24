@@ -103,13 +103,15 @@ export default class EntitySetDataSearch extends React.Component {
     });
     AuthorizationApi.checkAuthorizations(accessChecks)
     .then((aces) => {
-      const authorizedPropertyTypeIds = [];
+      const authorizedPropertyTypeIds = new Set();
       aces.forEach((ace) => {
         if (ace.permissions.READ) {
-          authorizedPropertyTypeIds.push(ace.aclKey[1]);
+          authorizedPropertyTypeIds.add(ace.aclKey[1]);
         }
       });
-      Promise.map(authorizedPropertyTypeIds, (propertyId) => {
+      Promise.map(propertyTypeIds.filter((propertyTypeId) => {
+        return authorizedPropertyTypeIds.has(propertyTypeId);
+      }), (propertyId) => {
         return EntityDataModelApi.getPropertyType(propertyId);
       }).then((propertyTypes) => {
         let personViewAvailable = false;
