@@ -5,6 +5,7 @@ import { EntityDataModelApi } from 'loom-data';
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import FileService from '../../../../utils/FileService';
 import { PropertyList } from './PropertyList';
+import { ReorderPropertyList } from './ReorderPropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
 import styles from '../styles.module.css';
@@ -22,7 +23,8 @@ export class EntityType extends React.Component {
   constructor() {
     super();
     this.state = {
-      properties: []
+      properties: [],
+      isReordering: false
     };
   }
 
@@ -85,6 +87,42 @@ export class EntityType extends React.Component {
     .then(() => this.updateFn());
   }
 
+  reorderCallback = (e, movedItem, itemsPreviousIndex, itemsNewIndex, reorderedArray) => {
+    const orderedIds = reorderedArray.map((propertyType) => {
+      return propertyType.id;
+    });
+    EntityDataModelApi.reorderPropertyTypesInEntityType(this.props.entityType.id, orderedIds)
+    .then(() => this.updateFn());
+  }
+
+  renderProperties = () => {
+    return (this.state.isReordering && this.context.isAdmin)
+      ? <ReorderPropertyList
+          properties={this.state.properties}
+          reorderCallback={this.reorderCallback} />
+      : <PropertyList
+          properties={this.state.properties}
+          primaryKey={this.props.entityType.key}
+          entityTypeName={this.props.entityType.type.name}
+          entityTypeNamespace={this.props.entityType.type.namespace}
+          updateFn={this.updateEntityType}
+          editingPermissions={false} />;
+  }
+
+  renderReorderButton = () => {
+    if (!this.context.isAdmin) return null;
+    const buttonText = (this.state.isReordering) ? 'Done reordering' : 'Reorder';
+    return (
+      <div style={{ textAlign: 'center', margin: '10px 0' }}>
+        <Button
+            bsStyle="default"
+            onClick={() => {
+              this.setState({ isReordering: !this.state.isReordering });
+            }}>{buttonText}</Button>
+      </div>
+    );
+  }
+
   render() {
     const entityType = this.props.entityType;
     return (
@@ -110,13 +148,8 @@ export class EntityType extends React.Component {
           <Button bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
         </div>
         <div className={styles.spacerMed} />
-        <PropertyList
-            properties={this.state.properties}
-            primaryKey={entityType.key}
-            entityTypeName={entityType.type.name}
-            entityTypeNamespace={entityType.type.namespace}
-            updateFn={this.updateEntityType}
-            editingPermissions={false} />
+        {this.renderProperties()}
+        {this.renderReorderButton()}
         <div className={styles.spacerBig} />
         <hr />
       </div>

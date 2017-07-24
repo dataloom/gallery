@@ -5,6 +5,7 @@ import { EntityDataModelApi } from 'loom-data';
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import FileService from '../../../../utils/FileService';
 import { PropertyList } from './PropertyList';
+import { ReorderPropertyList } from './ReorderPropertyList';
 import { EntityTypeOverviewList } from './EntityTypeOverviewList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
@@ -27,7 +28,8 @@ export class AssociationType extends React.Component {
     this.state = {
       properties: [],
       srcEntityTypes: [],
-      dstEntityTypes: []
+      dstEntityTypes: [],
+      isReordering: false
     };
   }
 
@@ -150,6 +152,44 @@ export class AssociationType extends React.Component {
     });
   }
 
+  reorderCallback = (e, movedItem, itemsPreviousIndex, itemsNewIndex, reorderedArray) => {
+    const orderedIds = reorderedArray.map((propertyType) => {
+      return propertyType.id;
+    });
+    EntityDataModelApi.reorderPropertyTypesInEntityType(this.props.associationType.entityType.id, orderedIds)
+    .then(() => this.updateFn());
+  }
+
+  renderProperties = () => {
+    const entityType = this.props.associationType.entityType;
+    return (this.state.isReordering && this.context.isAdmin)
+      ? <ReorderPropertyList
+          properties={this.state.properties}
+          reorderCallback={this.reorderCallback} />
+      : <PropertyList
+          properties={this.state.properties}
+          primaryKey={entityType.key}
+          entityTypeName={entityType.type.name}
+          entityTypeNamespace={entityType.type.namespace}
+          updateFn={this.updateAssociationEntityType}
+          editingPermissions={false} />;
+
+  }
+
+  renderReorderButton = () => {
+    if (!this.context.isAdmin) return null;
+    const buttonText = (this.state.isReordering) ? 'Done reordering' : 'Reorder';
+    return (
+      <div style={{ textAlign: 'center', margin: '10px 0' }}>
+        <Button
+            bsStyle="default"
+            onClick={() => {
+              this.setState({ isReordering: !this.state.isReordering });
+            }}>{buttonText}</Button>
+      </div>
+    );
+  }
+
   render() {
     const entityType = this.props.associationType.entityType;
     return (
@@ -175,14 +215,8 @@ export class AssociationType extends React.Component {
           <Button bsStyle="primary" onClick={this.downloadFile}>Download as JSON</Button>
         </div>
         <div className={styles.spacerMed} />
-        <PropertyList
-            properties={this.state.properties}
-            primaryKey={entityType.key}
-            entityTypeName={entityType.type.name}
-            entityTypeNamespace={entityType.type.namespace}
-            updateFn={this.updateAssociationEntityType}
-            editingPermissions={false} />
-
+        {this.renderProperties()}
+        {this.renderReorderButton()}
         <div className={styles.spacerMed} />
         <div className={styles.entityTypeLabel}>Source Entity Types</div>
         <EntityTypeOverviewList
