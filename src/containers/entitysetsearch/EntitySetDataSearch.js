@@ -6,6 +6,7 @@ import Promise from 'bluebird';
 import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
 import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
+import PropertyTypeFilter from './components/PropertyTypeFilter';
 import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
 import EntitySetUserSearchResults from './EntitySetUserSearchResults';
@@ -47,9 +48,10 @@ export default class EntitySetDataSearch extends React.Component {
       title: '',
       asyncStatus: (props.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING,
       propertyTypes: [],
+      selectedPropertyTypes: [],
       loadError: false,
       hidePagination: false,
-      personViewAvailable: false,
+      personViewProps: [],
       searchView: ''
     };
   }
@@ -112,23 +114,24 @@ export default class EntitySetDataSearch extends React.Component {
       Promise.map(authorizedPropertyTypeIds, (propertyId) => {
         return EntityDataModelApi.getPropertyType(propertyId);
       }).then((propertyTypes) => {
-        let personViewAvailable = false;
+        let personViewProps = [];
         let searchView = views.TABLE;
-        let firstName = false;
-        let lastName = false;
+        let firstName;
+        let lastName;
         propertyTypes.forEach((propertyType) => {
-          if (FIRST_NAMES.includes(propertyType.type.name.toLowerCase())) firstName = true;
-          else if (LAST_NAMES.includes(propertyType.type.name.toLowerCase())) lastName = true;
+          if (FIRST_NAMES.includes(propertyType.type.name.toLowerCase())) firstName = propertyType.id;
+          else if (LAST_NAMES.includes(propertyType.type.name.toLowerCase())) lastName = propertyType.id;
         });
         if (firstName && lastName) {
-          personViewAvailable = true;
+          personViewProps = [firstName, lastName];
           searchView = views.PERSON;
         }
         this.setState({
           propertyTypes,
+          selectedPropertyTypes: propertyTypes,
           title,
           loadError: false,
-          personViewAvailable,
+          personViewProps,
           searchView
         });
         if (searchTerm && searchTerm.length) {
@@ -231,8 +234,16 @@ export default class EntitySetDataSearch extends React.Component {
     this.setState({ searchView });
   }
 
+  personViewIsAvailable = () => {
+    const foundIds = [];
+    this.state.selectedPropertyTypes.forEach((propertyType) => {
+      if (this.state.personViewProps.includes(propertyType.id)) foundIds.push(propertyType.id);
+    });
+    return (foundIds.length === this.state.personViewProps.length);
+  }
+
   renderToggleSearchView = () => {
-    if (this.state.searchResults.length && this.state.personViewAvailable) {
+    if (this.state.searchResults.length && this.personViewIsAvailable()) {
       const personClass = (this.state.searchView === views.PERSON) ?
         `${styles.buttonStyle} ${styles.selectedButtonStyle}` : styles.buttonStyle;
       const tableClass = (this.state.searchView === views.TABLE) ?
@@ -256,12 +267,12 @@ export default class EntitySetDataSearch extends React.Component {
   }
 
   renderSearchResultType = () => {
-    if (this.state.personViewAvailable && this.state.searchView === views.PERSON) {
+    if (this.personViewIsAvailable() && this.state.searchView === views.PERSON) {
       let firstName;
       let lastName;
       let dob;
       let mugshot;
-      this.state.propertyTypes.forEach((propertyType) => {
+      this.state.selectedPropertyTypes.forEach((propertyType) => {
         if (FIRST_NAMES.includes(propertyType.type.name.toLowerCase())) firstName = propertyType;
         else if (LAST_NAMES.includes(propertyType.type.name.toLowerCase())) lastName = propertyType;
         else if (DOBS.includes(propertyType.type.name.toLowerCase())) dob = propertyType;
@@ -282,7 +293,7 @@ export default class EntitySetDataSearch extends React.Component {
         <EntitySetUserSearchResults
             results={this.state.searchResults}
             entitySetId={this.props.params.entitySetId}
-            propertyTypes={this.state.propertyTypes}
+            propertyTypes={this.state.selectedPropertyTypes}
             firstName={firstName}
             lastName={lastName}
             dob={dob}
@@ -295,8 +306,19 @@ export default class EntitySetDataSearch extends React.Component {
       <EntitySetSearchResults
           results={this.state.searchResults}
           entitySetId={this.props.params.entitySetId}
-          propertyTypes={this.state.propertyTypes}
+          propertyTypes={this.state.selectedPropertyTypes}
           formatValueFn={this.formatValue} />
+    );
+  }
+
+  renderPropertyTypeFilter = () => {
+    return (
+      <PropertyTypeFilter
+          propertyTypes={this.state.propertyTypes}
+          onListUpdate={(selectedPropertyTypes) => {
+            const searchView = (this.personViewIsAvailable()) ? this.state.searchView : views.TABLE;
+            this.setState({ selectedPropertyTypes, searchView });
+          }} />
     );
   }
 
@@ -311,6 +333,7 @@ export default class EntitySetDataSearch extends React.Component {
             <Link to={`/advanced_search/${this.props.params.entitySetId}`} className={styles.changeSearchView}>
               Advanced Search
             </Link>
+            {this.renderPropertyTypeFilter()}
           </Page.Header>
           <Page.Body>
             {this.renderErrorMessage()}
