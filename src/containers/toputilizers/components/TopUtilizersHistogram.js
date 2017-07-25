@@ -105,20 +105,6 @@ export default class TopUtilizersHistogram extends React.Component {
     };
   }
 
-  formatValue = (rawValue) => {
-    if (rawValue instanceof Array) {
-      let formattedValue = '';
-      if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
-      if (rawValue.length > 1) {
-        for (let i = 1; i < rawValue.length; i += 1) {
-          formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
-        }
-      }
-      return formattedValue;
-    }
-    return rawValue;
-  }
-
   renderPropertyTypeSelection = (isDrillDown) => {
     const selectedEntityType = (isDrillDown) ? this.state.selectedDrillDownEntityType : this.state.selectedEntityType;
     if (!selectedEntityType) return null;
