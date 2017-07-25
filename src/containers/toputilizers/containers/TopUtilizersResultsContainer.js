@@ -24,7 +24,8 @@ class TopUtilizersResultsContainer extends React.Component {
     isGettingResults: PropTypes.bool.isRequired,
     entitySetId: PropTypes.string.isRequired,
     downloadResults: PropTypes.func.isRequired,
-    topUtilizersDetails: PropTypes.object.isRequired
+    topUtilizersDetails: PropTypes.object.isRequired,
+    neighbors: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -151,11 +152,10 @@ class TopUtilizersResultsContainer extends React.Component {
       return (<TopUtilizersHistogram
           results={this.props.results.toJS()}
           propertyTypes={this.state.propertyTypes}
-          entitySetId={this.props.entitySetId}
           entityType={this.state.entityType}
           neighborEntityTypes={this.state.neighborEntityTypes}
           neighborPropertyTypes={this.state.neighborPropertyTypes}
-          topUtilizersDetails={this.props.topUtilizersDetails} />);
+          neighbors={this.props.neighbors} />);
     }
     return null;
   }
@@ -176,7 +176,8 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS()
+    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS(),
+    neighbors: topUtilizers.get('neighbors')
   };
 }
 

@@ -2,7 +2,8 @@ import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import {
   EntityDataModelApi,
-  AnalysisApi
+  AnalysisApi,
+  SearchApi
 } from 'loom-data';
 
 import * as actionTypes from './TopUtilizersActionTypes';
@@ -87,9 +88,13 @@ function submitQueryEpic(action$) {
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList)
         )
         .mergeMap((results) => {
+          const entityIds = results.map((result) => {
+            return result.id[0];
+          });
           return Observable
             .of(
-              actionFactory.submitTopUtilizersSuccess(results)
+              actionFactory.submitTopUtilizersSuccess(results),
+              actionFactory.getTopUtilizersNeighborsRequest(action.entitySetId, entityIds)
             );
         })
         .catch((err) => {
@@ -125,10 +130,33 @@ function downloadTopUtilizersEpic(action$) {
     });
 }
 
+function getTopUtilizersNeighborsEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(
+          SearchApi.searchEntityNeighborsBulk(action.entitySetId, action.entityIds)
+        )
+        .mergeMap((neighbors) => {
+          return Observable
+            .of(
+              actionFactory.getTopUtilizersNeighborsSuccess(neighbors)
+            );
+        })
+        .catch((err) => {
+          return Observable.of(
+            actionFactory.getTopUtilizersNeighborsFailure(err)
+          );
+        });
+    });
+}
+
 export default combineEpics(
   getEntitySetEpic,
   getAssociationsEpic,
   getAssociationDetailsEpic,
   submitQueryEpic,
-  downloadTopUtilizersEpic
+  downloadTopUtilizersEpic,
+  getTopUtilizersNeighborsEpic
 );

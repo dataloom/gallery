@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
-import { AnalysisApi } from 'loom-data';
-import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
 import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
 import styles from '../styles.module.css';
 
@@ -21,11 +19,10 @@ export default class TopUtilizersHistogram extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    entitySetId: PropTypes.string.isRequired,
     entityType: PropTypes.object.isRequired,
     neighborEntityTypes: PropTypes.array.isRequired,
     neighborPropertyTypes: PropTypes.object.isRequired,
-    topUtilizersDetails: PropTypes.array.isRequired
+    neighbors: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -35,10 +32,76 @@ export default class TopUtilizersHistogram extends React.Component {
       selectedPropertyType: DEFAULT_SELECTED_PROPERTY_TYPE,
       selectedDrillDownEntityType: DEFAULT_SELECTED_ENTITY_TYPE,
       selectedDrillDownPropertyType: DEFAULT_SELECTED_PROPERTY_TYPE,
-      resultValueCounts: [],
-      resultFieldNames: [],
-      drillDown: false,
-      asyncState: ASYNC_STATUS.PENDING
+      histogramData: {
+        counts: [],
+        fields: []
+      },
+      drillDown: false
+    };
+  }
+
+  getFieldValues = (utilizer, neighbors, entityTypeId, propertyType) => {
+    const values = [];
+    const propertyTypeFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+    if (entityTypeId === this.props.entityType.id && utilizer[propertyTypeFqn]) {
+      utilizer[propertyTypeFqn].forEach((value) => {
+        values.push(value);
+      });
+    }
+    neighbors.forEach((neighbor) => {
+      if (neighbor.neighborEntitySet && neighbor.neighborEntitySet.entityTypeId === entityTypeId
+        && neighbor.neighborDetails && neighbor.neighborDetails[propertyTypeFqn]) {
+        neighbor.neighborDetails[propertyTypeFqn].forEach((value) => {
+          values.push(value);
+        });
+      }
+    });
+    return values;
+  }
+
+  getHistogramData = (
+    selectedEntityType,
+    selectedPropertyType,
+    selectedDrillDownEntityType,
+    selectedDrillDownPropertyType,
+    drillDown) => {
+    const resultList = [];
+    const counts = {};
+    const fields = new Set();
+
+    const isSimple = (!drillDown || !selectedDrillDownEntityType.id || !selectedDrillDownPropertyType.id);
+    if (isSimple) fields.add('count');
+    this.props.results.forEach((utilizer) => {
+      const entityId = utilizer.id[0];
+      const primaryValues = (this.props.neighbors[entityId]) ? this.getFieldValues(
+        utilizer,
+        this.props.neighbors[entityId],
+        selectedEntityType.id,
+        selectedPropertyType) : [];
+      primaryValues.forEach((primaryValue) => {
+        if (!counts[primaryValue]) counts[primaryValue] = {};
+        const fieldNames = (isSimple) ? ['count'] : this.getFieldValues(
+          utilizer,
+          this.props.neighbors[entityId],
+          selectedDrillDownEntityType.id,
+          selectedDrillDownPropertyType);
+        fieldNames.forEach((fieldName) => {
+          fields.add(fieldName);
+          const newCount = (counts[primaryValue][fieldName]) ? counts[primaryValue][fieldName] + 1 : 1;
+          counts[primaryValue] = Object.assign(counts[primaryValue], { [fieldName]: newCount });
+        });
+      });
+    });
+    Object.keys(counts).forEach((barName) => {
+      const histogramValues = { name: barName };
+      Object.keys(counts[barName]).forEach((fieldName) => {
+        histogramValues[fieldName] = counts[barName][fieldName];
+      });
+      resultList.push(histogramValues);
+    });
+    return {
+      counts: resultList,
+      fields: Array.from(fields)
     };
   }
 
@@ -79,7 +142,17 @@ export default class TopUtilizersHistogram extends React.Component {
       menuItems.push(
         <MenuItem
             onClick={() => {
-              this.setState({ selectedPropertyType, selectedDrillDownPropertyType, selectedDrillDownEntityType });
+              this.setState({
+                selectedPropertyType,
+                selectedDrillDownPropertyType,
+                selectedDrillDownEntityType,
+                histogramData: this.getHistogramData(
+                  this.state.selectedEntityType,
+                  selectedPropertyType,
+                  selectedDrillDownEntityType,
+                  selectedDrillDownPropertyType,
+                  this.state.drillDown)
+              });
             }}
             key={key}
             eventKey={key}>
@@ -146,7 +219,16 @@ export default class TopUtilizersHistogram extends React.Component {
             bsSize="small"
             disabled={disabled}
             onClick={() => {
-              this.setState({ drillDown: !this.state.drillDown });
+              const histogramData = (this.state.drillDown) ? this.getHistogramData(
+                this.state.selectedEntityType,
+                this.state.selectedPropertyType,
+                {},
+                {},
+                !this.state.drillDown) : this.state.histogramData;
+              this.setState({
+                drillDown: !this.state.drillDown,
+                histogramData
+              });
             }}>{buttonText}</Button>
       </div>
     );
@@ -157,54 +239,13 @@ export default class TopUtilizersHistogram extends React.Component {
     return this.renderDropdownSelection(true);
   }
 
-  renderGenerateHistogramButton = () => {
-    let disabled = true;
-    if (this.state.selectedEntityType.id && this.state.selectedPropertyType.id) {
-      if (!this.state.selectedDrillDownEntityType.id || this.state.selectedDrillDownPropertyType.id) disabled = false;
-    }
-    const options = {
-      details: Object.values(this.props.topUtilizersDetails),
-      entityTypeId: this.state.selectedEntityType.id,
-      propertyTypeId: this.state.selectedPropertyType.id
-    };
-    if (this.state.drillDown && this.state.selectedDrillDownEntityType.id
-      && this.state.selectedDrillDownPropertyType.id) {
-      options.drillDownEntityTypeId = this.state.selectedDrillDownEntityType.id;
-      options.drillDownPropertyTypeId = this.state.selectedDrillDownPropertyType.id;
-    }
-    return (
-      <div className={styles.generateHistogramButtonRow}>
-        <Button
-            bsStyle="primary"
-            disabled={disabled}
-            onClick={() => {
-              this.setState({ asyncState: ASYNC_STATUS.LOADING });
-              AnalysisApi.getTopUtilizersHistogram(this.props.entitySetId, 100, options)
-              .then((result) => {
-                this.setState({
-                  resultValueCounts: result.counts,
-                  resultFieldNames: result.fields,
-                  asyncState: ASYNC_STATUS.SUCCESS
-                });
-              });
-            }}>Generate Histogram</Button>
-      </div>
-    );
-  }
-
   renderHistogram = () => {
-    return (
-      <div className={styles.histogramContainer}>
-        <AsyncContent
-            status={this.state.asyncState}
-            pendingContent={<div />}
-            content={() => {
-              return (
-                <HistogramVisualization counts={this.state.resultValueCounts} fields={this.state.resultFieldNames} />
-              );
-            }} />
-      </div>
-    );
+    let content;
+    const { counts, fields } = this.state.histogramData;
+    if (counts.length && fields.length) {
+      content = <HistogramVisualization counts={counts} fields={fields} />;
+    }
+    return <div className={styles.histogramContainer}>{content}</div>;
   }
 
   render() {
@@ -214,7 +255,6 @@ export default class TopUtilizersHistogram extends React.Component {
         {this.renderDropdownSelection(false)}
         {this.renderDrillDownSelection()}
         {this.renderDrillDownButton()}
-        {this.renderGenerateHistogramButton()}
         {this.renderHistogram()}
       </div>
     );
