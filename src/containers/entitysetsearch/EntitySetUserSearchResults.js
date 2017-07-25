@@ -90,7 +90,7 @@ export default class EntitySetUserSearchResults extends React.Component {
       if (propertyTypeFqns.includes(firstNameFqn) && propertyTypeFqns.includes(lastNameFqn)) {
         resultRows.push(
           <UserRow
-              key={row.id}
+              key={row.id[0]}
               row={row}
               entitySetId={this.props.entitySetId}
               propertyTypes={this.props.propertyTypes}
@@ -100,7 +100,7 @@ export default class EntitySetUserSearchResults extends React.Component {
               mugshot={this.props.mugshot}
               onClick={this.onUserSelect}
               formatValueFn={this.props.formatValueFn}
-              entityId={row.id} />
+              entityId={row.id[0]} />
         );
       }
     });
