@@ -31,7 +31,7 @@ export class Link extends React.Component {
     super(props);
     this.state = {
       allEntitySets: [],
-      selectedEntitySetIds: [],
+      selectedEntitySets: [],
       availablePropertyTypes: {},
       links: [],
       entityTypeIdToEntitySet: {},
@@ -53,7 +53,7 @@ export class Link extends React.Component {
       titleValue: '',
       namespaceValue: '',
       nameValue: '',
-      descriptionValue: '',
+      descriptionValue: ''
     };
   }
 
@@ -113,14 +113,8 @@ export class Link extends React.Component {
   getEntitySetsOptions = () => {
     const entitySetOptions = [];
     if (this.state.editingPropertyType && this.state.editingPropertyType.length > 0) {
-      const entityTypes = this.state.propertyTypeIdToEntityType[this.state.editingPropertyType];
-      entityTypes.forEach((entityType) => {
-        const entitySets = this.state.entityTypeIdToEntitySet[entityType.id];
-        entitySets.forEach((entitySet) => {
-          if (this.state.selectedEntitySetIds.includes(entitySet.id)) {
-            entitySetOptions.push({ label: entitySet.name, value: entitySet.id });
-          }
-        });
+      this.state.selectedEntitySets.forEach((entitySet) => {
+        entitySetOptions.push(entitySet);
       });
     }
     return entitySetOptions;
@@ -161,7 +155,7 @@ export class Link extends React.Component {
   }
 
   renderChooseLinksButton = () => {
-    if (this.state.selectedEntitySetIds.length < 1 || this.state.chooseLinks) return null;
+    if (this.state.selectedEntitySets.length < 1 || this.state.chooseLinks) return null;
     return (
       <div className={styles.createEntityTypeButtonContainer}>
         <Button
@@ -269,21 +263,17 @@ export class Link extends React.Component {
     );
   }
 
-  loadPropertyTypes = (entityTypes) => {
+  loadPropertyTypes = (entityType) => {
     const propertyTypeIdToEntityType = {};
-    const propertyTypeIds = new Set();
-    entityTypes.forEach((entityType) => {
-      entityType.properties.forEach((propertyTypeId) => {
-        propertyTypeIds.add(propertyTypeId);
-        if (propertyTypeIdToEntityType[propertyTypeId]) {
-          propertyTypeIdToEntityType[propertyTypeId].push(entityType);
-        }
-        else {
-          propertyTypeIdToEntityType[propertyTypeId] = [entityType];
-        }
-      });
+    entityType.properties.forEach((propertyTypeId) => {
+      if (propertyTypeIdToEntityType[propertyTypeId]) {
+        propertyTypeIdToEntityType[propertyTypeId].push(entityType);
+      }
+      else {
+        propertyTypeIdToEntityType[propertyTypeId] = [entityType];
+      }
     });
-    Promise.map(propertyTypeIds, (propertyTypeId) => {
+    Promise.map(entityType.properties, (propertyTypeId) => {
       return EntityDataModelApi.getPropertyType(propertyTypeId);
     }).then((propertyTypes) => {
       const availablePropertyTypes = {};
@@ -305,34 +295,25 @@ export class Link extends React.Component {
     });
   }
 
-  loadPropertyTypesForSelectedEntitySets = (selectedEntitySetIds) => {
-    const entityTypeIds = new Set();
-    selectedEntitySetIds.forEach((entitySetId) => {
-      const entitySet = this.state.allEntitySets.filter((entitySetObj) => {
-        return entitySetObj.id === entitySetId;
-      })[0];
-      entityTypeIds.add(entitySet.entityTypeId);
-    });
-    Promise.map(entityTypeIds, (entityTypeId) => {
-      return EntityDataModelApi.getEntityType(entityTypeId);
-    }).then((entityTypes) => {
-      this.loadPropertyTypes(entityTypes);
-    }).catch(() => {
-      this.setState({ loadEntitySetsError: true });
-    });
+  loadPropertyTypesForSelectedEntitySets = (selectedEntitySets) => {
+    if (selectedEntitySets.length) {
+      EntityDataModelApi.getEntityType(selectedEntitySets[0].entityTypeId)
+      .then((entityType) => {
+        this.loadPropertyTypes(entityType);
+      }).catch(() => {
+        this.setState({ loadEntitySetsError: true });
+      });
+    }
   }
 
-  onSelectedEntitySetChange = (options) => {
-    const selectedEntitySetIds = options.map((option) => {
-      return option.value;
-    });
-    const chooseLinks = (selectedEntitySetIds.length < 1) ? false : this.state.chooseLinks;
+  onSelectedEntitySetChange = (selectedEntitySets) => {
+    const chooseLinks = (selectedEntitySets.length < 1) ? false : this.state.chooseLinks;
     this.setState({
-      selectedEntitySetIds,
+      selectedEntitySets,
       chooseLinks,
       chooseLinkedEntityType: false
     });
-    this.loadPropertyTypesForSelectedEntitySets(selectedEntitySetIds);
+    this.loadPropertyTypesForSelectedEntitySets(selectedEntitySets);
   }
 
   renderLoadEntitySetsError = () => {
@@ -343,14 +324,26 @@ export class Link extends React.Component {
   }
 
   renderChooseEntitySets = () => {
-    const entitySetOptions = this.state.allEntitySets.map((entitySet) => {
-      return ({ label: entitySet.name, value: entitySet.id });
+    const entitySetOptions = [];
+    this.state.allEntitySets.forEach((entitySet) => {
+      if (!this.state.selectedEntitySets.length ||
+        entitySet.entityTypeId === this.state.selectedEntitySets[0].entityTypeId) {
+        entitySetOptions.push({
+          label: entitySet.name,
+          value: entitySet.id,
+          entityTypeId: entitySet.entityTypeId,
+          id: entitySet.id
+        });
+      }
+    });
+    const selectedEntitySetIds = this.state.selectedEntitySets.map((selectedEntitySet) => {
+      return selectedEntitySet.id;
     });
     return (
       <div className={styles.step1Wrapper}>
         <div className={styles.explanationText}>Step 1. Choose entity sets to link.</div>
         <Select
-            value={this.state.selectedEntitySetIds}
+            value={selectedEntitySetIds}
             options={entitySetOptions}
             multi
             onChange={this.onSelectedEntitySetChange} />
@@ -360,7 +353,7 @@ export class Link extends React.Component {
   }
 
   renderDefineLinkedEntityTypeButton = () => {
-    if (this.state.selectedEntitySetIds.length > 0
+    if (this.state.selectedEntitySets.length > 0
       && this.state.links.length >= 1
       && !this.state.chooseLinkedEntityType) {
       return (
@@ -383,7 +376,7 @@ export class Link extends React.Component {
         name: this.state.nameValue,
         title: this.state.titleValue,
         description: this.state.descriptionValue
-      }
+      };
       return (
         <DefineLinkedEntityType
             availablePropertyTypes={this.state.availablePropertyTypes}
@@ -440,9 +433,9 @@ export class Link extends React.Component {
   createLinkingEntityType = (entityType, deidentified) => {
     let entityTypeIds = new Set();
     this.state.allEntitySets.forEach((entitySet) => {
-      if (this.state.selectedEntitySetIds.includes(entitySet.id)) {
-        entityTypeIds.add(entitySet.entityTypeId);
-      }
+      this.state.selectedEntitySets.forEach((selectedEntitySet) => {
+        if (selectedEntitySet.id === entitySet.id) entityTypeIds.add(entitySet.entityTypeId);
+      });
     });
     entityTypeIds = Array.from(entityTypeIds);
     LinkingApi.createLinkingEntityType({ entityType, entityTypeIds, deidentified })
@@ -487,21 +480,21 @@ export class Link extends React.Component {
         : null;
   }
 
-    handleNamespaceChange = (e) => {
-      this.setState({ namespaceValue: e.target.value });
-    }
+  handleNamespaceChange = (e) => {
+    this.setState({ namespaceValue: e.target.value });
+  }
 
-    handleNameChange = (e) => {
-      this.setState({ nameValue: e.target.value });
-    }
+  handleNameChange = (e) => {
+    this.setState({ nameValue: e.target.value });
+  }
 
-    handleTitleChange = (e) => {
-      this.setState({ titleValue: e.target.value });
-    }
+  handleTitleChange = (e) => {
+    this.setState({ titleValue: e.target.value });
+  }
 
-    handleDescriptionChange = (e) => {
-      this.setState({ descriptionValue: e.target.value });
-    }
+  handleDescriptionChange = (e) => {
+    this.setState({ descriptionValue: e.target.value });
+  }
 
   render() {
     let content;
@@ -517,7 +510,7 @@ export class Link extends React.Component {
         name: this.state.nameValue,
         title: this.state.titleValue,
         description: this.state.descriptionValue
-      }
+      };
       content = (<DefineLinkedEntitySet
           linkFn={this.performLink}
           createLinkedEntitySetError={this.state.createLinkedEntitySetError}
