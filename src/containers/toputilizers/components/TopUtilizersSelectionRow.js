@@ -7,7 +7,7 @@ import Immutable from 'immutable';
 import styles from '../styles.module.css';
 
 const getOptions = (data) => {
-  if (data.size === 0) return Immutable.List();
+  if (data.size === 0) return [];
   return data.map((item) => {
     return { value: item.id, label: item.title };
   });
@@ -74,8 +74,8 @@ TopUtilizersSelectionRow.propTypes = {
   selectAssociation: PropTypes.func.isRequired,
   selectArrow: PropTypes.func.isRequired,
   selectEntity: PropTypes.func.isRequired,
-  associations: PropTypes.instanceOf(Immutable.List).isRequired,
-  entityTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+  associations: PropTypes.array.isRequired,
+  entityTypes: PropTypes.array.isRequired,
   selectedAssociation: PropTypes.object,
   selectedArrow: PropTypes.object,
   selectedEntities: PropTypes.array,
