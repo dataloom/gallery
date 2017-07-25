@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import { AnalysisApi } from 'loom-data';
+import AsyncContent, { ASYNC_STATUS } from '../../../components/asynccontent/AsyncContent';
 import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
 import styles from '../styles.module.css';
 
@@ -36,7 +37,8 @@ export default class TopUtilizersHistogram extends React.Component {
       selectedDrillDownPropertyType: DEFAULT_SELECTED_PROPERTY_TYPE,
       resultValueCounts: [],
       resultFieldNames: [],
-      drillDown: false
+      drillDown: false,
+      asyncState: ASYNC_STATUS.PENDING
     };
   }
 
@@ -176,11 +178,13 @@ export default class TopUtilizersHistogram extends React.Component {
             bsStyle="primary"
             disabled={disabled}
             onClick={() => {
+              this.setState({ asyncState: ASYNC_STATUS.LOADING });
               AnalysisApi.getTopUtilizersHistogram(this.props.entitySetId, 100, options)
               .then((result) => {
                 this.setState({
                   resultValueCounts: result.counts,
-                  resultFieldNames: result.fields
+                  resultFieldNames: result.fields,
+                  asyncState: ASYNC_STATUS.SUCCESS
                 });
               });
             }}>Generate Histogram</Button>
@@ -189,11 +193,18 @@ export default class TopUtilizersHistogram extends React.Component {
   }
 
   renderHistogram = () => {
-    let content;
-    if (this.state.resultValueCounts.length && this.state.resultFieldNames.length) {
-      content = <HistogramVisualization counts={this.state.resultValueCounts} fields={this.state.resultFieldNames} />;
-    }
-    return <div className={styles.histogramContainer}>{content}</div>;
+    return (
+      <div className={styles.histogramContainer}>
+        <AsyncContent
+            status={this.state.asyncState}
+            pendingContent={<div />}
+            content={() => {
+              return (
+                <HistogramVisualization counts={this.state.resultValueCounts} fields={this.state.resultFieldNames} />
+              );
+            }} />
+      </div>
+    );
   }
 
   render() {
