@@ -7,41 +7,40 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import * as formatter from './FormatUtils';
-import EdmConsts from '../../utils/Consts/EdmConsts';
 import styles from './styles.module.css';
 
 export class HistogramVisualization extends React.Component {
 
   static propTypes = {
-    data: PropTypes.object,
-    propertyType: PropTypes.object
+    counts: PropTypes.array.isRequired,
+    fields: PropTypes.array.isRequired
   }
 
   render() {
-    const { data, propertyType } = this.props;
-    if (data === undefined) return null;
-    const barData = Object.keys(data).map((rawName) => {
-      const name = (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype))
-        ? formatter.formatDate(rawName) : rawName;
-      return {
-        name,
-        count: data[rawName]
-      };
+    const data = this.props.counts.map((section) => {
+      const formattedObj = {};
+      Object.keys(section).forEach((key) => {
+        formattedObj[key] = (key === 'name') ? section[key] : parseInt(section[key], 10);
+      });
+      return formattedObj;
     });
+    const bars = this.props.fields.map((fieldName) => {
+      return <Bar key={fieldName} dataKey={fieldName} fill="#8884d8" />;
+    });
+
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>
           <BarChart
               width={600}
               height={300}
-              data={barData}
+              data={data}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Bar dataKey="count" fill="#8884d8" />
+            {bars}
           </BarChart>
         </div>
       </div>

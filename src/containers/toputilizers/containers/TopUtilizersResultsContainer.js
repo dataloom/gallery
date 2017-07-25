@@ -32,12 +32,20 @@ class TopUtilizersResultsContainer extends React.Component {
     this.state = {
       entityType: null,
       propertyTypes: [],
-      display: DISPLAYS.TABLE
+      display: DISPLAYS.TABLE,
+      neighborEntityTypes: [],
+      neighborPropertyTypes: {}
     };
   }
 
   componentDidMount() {
     this.loadEntitySet();
+    const neighborTypeIds = new Set();
+    Object.values(this.props.topUtilizersDetails).forEach((detailsObj) => {
+      detailsObj.neighborTypeIds.forEach((id) => {
+        neighborTypeIds.add(id);
+      });
+    });
   }
 
   loadEntitySet = () => {
@@ -49,7 +57,35 @@ class TopUtilizersResultsContainer extends React.Component {
           return EntityDataModelApi.getPropertyType(propertyId);
         }).then((propertyTypes) => {
           this.setState({ entityType, propertyTypes });
+          this.loadNeighborTypes();
         });
+      });
+    });
+  }
+
+  loadNeighborTypes = () => {
+    const neighborTypeIds = new Set();
+    Object.values(this.props.topUtilizersDetails).forEach((detailsObj) => {
+      detailsObj.neighborTypeIds.forEach((id) => {
+        neighborTypeIds.add(id);
+      });
+    });
+    Promise.map(neighborTypeIds, (entityTypeId) => {
+      return EntityDataModelApi.getEntityType(entityTypeId);
+    }).then((neighborEntityTypes) => {
+      const neighborPropertyTypes = {};
+      neighborEntityTypes.forEach((entityType) => {
+        entityType.properties.forEach((propertyTypeId) => {
+          neighborPropertyTypes[propertyTypeId] = {};
+        });
+      });
+      Promise.map(Object.keys(neighborPropertyTypes), (propertyTypeId) => {
+        return EntityDataModelApi.getPropertyType(propertyTypeId);
+      }).then((propertyTypes) => {
+        propertyTypes.forEach((propertyType) => {
+          neighborPropertyTypes[propertyType.id] = propertyType;
+        });
+        this.setState({ neighborEntityTypes, neighborPropertyTypes });
       });
     });
   }
@@ -115,7 +151,11 @@ class TopUtilizersResultsContainer extends React.Component {
       return (<TopUtilizersHistogram
           results={this.props.results.toJS()}
           propertyTypes={this.state.propertyTypes}
-          entitySetId={this.props.entitySetId} />);
+          entitySetId={this.props.entitySetId}
+          entityType={this.state.entityType}
+          neighborEntityTypes={this.state.neighborEntityTypes}
+          neighborPropertyTypes={this.state.neighborPropertyTypes}
+          topUtilizersDetails={this.props.topUtilizersDetails} />);
     }
     return null;
   }
