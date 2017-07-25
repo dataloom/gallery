@@ -17,7 +17,7 @@ const DEFAULT_SELECTED_PROPERTY_TYPE = {
 
 export default class TopUtilizersHistogram extends React.Component {
   static propTypes = {
-    results: PropTypes.object.isRequired,
+    results: PropTypes.array.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     entityType: PropTypes.object.isRequired,
     neighborEntityTypes: PropTypes.array.isRequired,
