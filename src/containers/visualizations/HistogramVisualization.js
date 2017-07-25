@@ -16,6 +16,10 @@ export class HistogramVisualization extends React.Component {
     fields: PropTypes.array.isRequired
   }
 
+  shouldComponentUpdate(nextProps) {
+    return (nextProps.counts !== this.props.counts || nextProps.fields !== this.props.fields);
+  }
+
   render() {
     const data = this.props.counts.map((section) => {
       const formattedObj = {};
