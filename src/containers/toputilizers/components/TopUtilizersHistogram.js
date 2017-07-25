@@ -40,6 +40,19 @@ export default class TopUtilizersHistogram extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (Object.keys(nextProps.neighbors).length !== Object.keys(this.props.neighbors).length
+      && this.state.selectedEntityType.id && this.state.selectedPropertyType.id) {
+      this.setState({ histogramData: this.getHistogramData(
+        this.state.selectedEntityType,
+        this.state.selectedPropertyType,
+        this.state.selectedDrillDownEntityType,
+        this.state.selectedDrillDownPropertyType,
+        this.state.drillDown,
+        nextProps.neighbors) });
+    }
+  }
+
   getFieldValues = (utilizer, neighbors, entityTypeId, propertyType) => {
     const values = [];
     const propertyTypeFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
@@ -64,25 +77,27 @@ export default class TopUtilizersHistogram extends React.Component {
     selectedPropertyType,
     selectedDrillDownEntityType,
     selectedDrillDownPropertyType,
-    drillDown) => {
+    drillDown,
+    optionalNeighbors) => {
     const resultList = [];
     const counts = {};
     const fields = new Set();
 
+    const neighbors = optionalNeighbors || this.props.neighbors;
     const isSimple = (!drillDown || !selectedDrillDownEntityType.id || !selectedDrillDownPropertyType.id);
     if (isSimple) fields.add('count');
     this.props.results.forEach((utilizer) => {
       const entityId = utilizer.id[0];
-      const primaryValues = (this.props.neighbors[entityId]) ? this.getFieldValues(
+      const primaryValues = (neighbors[entityId]) ? this.getFieldValues(
         utilizer,
-        this.props.neighbors[entityId],
+        neighbors[entityId],
         selectedEntityType.id,
         selectedPropertyType) : [];
       primaryValues.forEach((primaryValue) => {
         if (!counts[primaryValue]) counts[primaryValue] = {};
         const fieldNames = (isSimple) ? ['count'] : this.getFieldValues(
           utilizer,
-          this.props.neighbors[entityId],
+          neighbors[entityId],
           selectedDrillDownEntityType.id,
           selectedDrillDownPropertyType);
         fieldNames.forEach((fieldName) => {
