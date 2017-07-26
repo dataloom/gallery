@@ -11,12 +11,14 @@ import { EntityDataModelApi } from 'loom-data';
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersTable from '../components/TopUtilizersTable';
 import TopUtilizersHistogram from '../components/TopUtilizersHistogram';
+import TopUtilizersMultiHistogram from '../components/TopUtilizersMultiHistogram';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import styles from '../styles.module.css';
 
 const DISPLAYS = {
   TABLE: 'table',
-  HISTOGRAM: 'histogram'
+  HISTOGRAM: 'histogram',
+  MULTI_HISTOGRAM: 'multi_histogram'
 };
 
 class TopUtilizersResultsContainer extends React.Component {
@@ -135,6 +137,12 @@ class TopUtilizersResultsContainer extends React.Component {
               }}
               active={this.state.display === DISPLAYS.HISTOGRAM}>
             Histogram</Button>
+          <Button
+              onClick={() => {
+                this.setState({ display: DISPLAYS.MULTI_HISTOGRAM });
+              }}
+              active={this.state.display === DISPLAYS.MULTI_HISTOGRAM}>
+            Multi-Histogram</Button>
         </ButtonGroup>
       </div>
     );
@@ -154,6 +162,23 @@ class TopUtilizersResultsContainer extends React.Component {
           entityType={this.state.entityType}
           neighborEntityTypes={this.state.neighborEntityTypes}
           neighborPropertyTypes={this.state.neighborPropertyTypes}
+          neighbors={this.props.neighbors} />);
+    }
+
+    else if (this.state.display === DISPLAYS.MULTI_HISTOGRAM) {
+      const allPropertyTypes = Object.assign({}, this.state.neighborPropertyTypes);
+      this.state.propertyTypes.forEach((propertyType) => {
+        allPropertyTypes[propertyType.id] = propertyType;
+      });
+      const allEntityTypes = {};
+      [this.state.entityType].concat(this.state.neighborEntityTypes).forEach((entityType) => {
+        allEntityTypes[entityType.id] = entityType;
+      });
+      return (<TopUtilizersMultiHistogram
+          results={this.props.results.toJS()}
+          entityType={this.state.entityType}
+          allEntityTypes={allEntityTypes}
+          allPropertyTypes={allPropertyTypes}
           neighbors={this.props.neighbors} />);
     }
     return null;
