@@ -12,7 +12,7 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     associations: PropTypes.instanceOf(Immutable.List).isRequired,
     selectEntity: PropTypes.func.isRequired,
     selectAssociation: PropTypes.func.isRequired,
-    entityTypeId: PropTypes.string.isRequired,
+    entityTypeId: PropTypes.string,
     associationDetails: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
