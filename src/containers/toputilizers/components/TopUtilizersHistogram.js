@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
 import styles from '../styles.module.css';
@@ -22,7 +23,7 @@ export default class TopUtilizersHistogram extends React.Component {
     entityType: PropTypes.object.isRequired,
     neighborEntityTypes: PropTypes.array.isRequired,
     neighborPropertyTypes: PropTypes.object.isRequired,
-    neighbors: PropTypes.object.isRequired
+    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -41,7 +42,7 @@ export default class TopUtilizersHistogram extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (Object.keys(nextProps.neighbors).length !== Object.keys(this.props.neighbors).length
+    if (nextProps.neighbors.keySeq().size !== this.props.neighbors.keySeq().size
       && this.state.selectedEntityType.id && this.state.selectedPropertyType.id) {
       this.setState({ histogramData: this.getHistogramData(
         this.state.selectedEntityType,
@@ -62,9 +63,9 @@ export default class TopUtilizersHistogram extends React.Component {
       });
     }
     neighbors.forEach((neighbor) => {
-      if (neighbor.neighborEntitySet && neighbor.neighborEntitySet.entityTypeId === entityTypeId
-        && neighbor.neighborDetails && neighbor.neighborDetails[propertyTypeFqn]) {
-        neighbor.neighborDetails[propertyTypeFqn].forEach((value) => {
+      if (neighbor.has('neighborEntitySet') && neighbor.getIn(['neighborEntitySet', 'entityTypeId']) === entityTypeId
+        && neighbor.has('neighborDetails')) {
+        neighbor.getIn(['neighborDetails', propertyTypeFqn], []).forEach((value) => {
           values.push(value);
         });
       }
@@ -88,16 +89,16 @@ export default class TopUtilizersHistogram extends React.Component {
     if (isSimple) fields.add('count');
     this.props.results.forEach((utilizer) => {
       const entityId = utilizer.id[0];
-      const primaryValues = (neighbors[entityId]) ? this.getFieldValues(
+      const primaryValues = (neighbors.get(entityId)) ? this.getFieldValues(
         utilizer,
-        neighbors[entityId],
+        neighbors.get(entityId),
         selectedEntityType.id,
         selectedPropertyType) : [];
       primaryValues.forEach((primaryValue) => {
         if (!counts[primaryValue]) counts[primaryValue] = {};
         const fieldNames = (isSimple) ? ['count'] : this.getFieldValues(
           utilizer,
-          neighbors[entityId],
+          neighbors.get(entityId),
           selectedDrillDownEntityType.id,
           selectedDrillDownPropertyType);
         fieldNames.forEach((fieldName) => {
