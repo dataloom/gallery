@@ -14,7 +14,7 @@ import RequestPermissionsForm from './RequestPermissionsForm';
 class RequestPermissionsModal extends React.Component {
   static propTypes = {
     show: PropTypes.bool.isRequired,
-    entitySetId: PropTypes.string.isRequired,
+    entitySetId: PropTypes.string,
     reason: PropTypes.string.isRequired,
     pidToRequestedPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
 
@@ -42,6 +42,8 @@ class RequestPermissionsModal extends React.Component {
       show,
       onHide,
       asyncStatus } = this.props;
+
+    if (!entitySetId) return null;
 
     let title;
     if (entitySet) {

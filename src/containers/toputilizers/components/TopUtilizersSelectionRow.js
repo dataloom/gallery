@@ -7,7 +7,7 @@ import Immutable from 'immutable';
 import styles from '../styles.module.css';
 
 const getOptions = (data) => {
-  if (data.size === 0) return Immutable.List();
+  if (data.size === 0) return [];
   return data.map((item) => {
     return { value: item.id, label: item.title };
   });

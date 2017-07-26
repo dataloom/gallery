@@ -139,7 +139,7 @@ function mapStateToProps(state) {
   return {
     associations: topUtilizers.get('associations'),
     associationDetails: topUtilizers.get('associationDetails'),
-    entityTypeId: topUtilizers.get('entitySet').entityTypeId
+    entityTypeId: topUtilizers.get('entitySet').entityTypeId || ''
   };
 }
 
