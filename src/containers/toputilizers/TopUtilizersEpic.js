@@ -2,9 +2,10 @@ import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import {
   EntityDataModelApi,
-  AnalysisApi,
-  SearchApi
+  AnalysisApi
 } from 'loom-data';
+
+import { SearchApi } from 'lattice';
 
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
