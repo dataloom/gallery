@@ -42,7 +42,7 @@ export default class TopUtilizersHistogram extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.neighbors.keySeq().size !== this.props.neighbors.keySeq().size
+    if (nextProps.neighbors.size !== this.props.neighbors.size
       && this.state.selectedEntityType.id && this.state.selectedPropertyType.id) {
       this.setState({ histogramData: this.getHistogramData(
         this.state.selectedEntityType,
