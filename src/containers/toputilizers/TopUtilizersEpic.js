@@ -83,7 +83,7 @@ function submitQueryEpic(action$) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersDetailsList = Array.from(action.topUtilizersDetails.values());
+      const topUtilizersDetailsList = action.topUtilizersDetails.valueSeq();
       return Observable
         .from(
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList)
@@ -110,7 +110,7 @@ function downloadTopUtilizersEpic(action$) {
   return action$
     .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersDetailsList = Array.from(action.topUtilizersDetails.values());
+      const topUtilizersDetailsList = action.topUtilizersDetails.valueSeq();
       return Observable
         .from(
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList, FileConsts.CSV)

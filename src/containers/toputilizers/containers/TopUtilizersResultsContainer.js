@@ -44,7 +44,7 @@ class TopUtilizersResultsContainer extends React.Component {
   componentDidMount() {
     this.loadEntitySet();
     const neighborTypeIds = new Set();
-    Array.from(this.props.topUtilizersDetails.values()).forEach((detailsObj) => {
+    this.props.topUtilizersDetails.valueSeq().forEach((detailsObj) => {
       detailsObj.get('neighborTypeIds').forEach((id) => {
         neighborTypeIds.add(id);
       });
@@ -65,7 +65,7 @@ class TopUtilizersResultsContainer extends React.Component {
 
   loadNeighborTypes = () => {
     const neighborTypeIds = new Set();
-    Array.from(this.props.topUtilizersDetails.values()).forEach((detailsObj) => {
+    this.props.topUtilizersDetails.valueSeq().forEach((detailsObj) => {
       detailsObj.get('neighborTypeIds').forEach((id) => {
         neighborTypeIds.add(id);
       });
