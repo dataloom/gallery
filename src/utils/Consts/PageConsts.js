@@ -3,7 +3,6 @@ const DEFAULT_DOCUMENT_TITLE = 'Gallery';
 const HOME = 'home';
 const CATALOG = 'catalog';
 const LOGIN = 'login';
-const SETTINGS = 'settings';
 const VISUALIZE = 'visualize';
 const DATA_MODEL = 'datamodel';
 const DATASETS = 'datasets';
@@ -19,7 +18,6 @@ export default {
   HOME,
   CATALOG,
   LOGIN,
-  SETTINGS,
   VISUALIZE,
   DATA_MODEL,
   DATASETS,
