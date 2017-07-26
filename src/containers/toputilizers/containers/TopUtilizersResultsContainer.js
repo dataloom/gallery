@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
+import Immutable from 'immutable';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -25,7 +26,7 @@ class TopUtilizersResultsContainer extends React.Component {
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
-    topUtilizersDetails: PropTypes.object.isRequired,
+    topUtilizersDetails: PropTypes.instanceOf(Immutable.Map).isRequired,
     neighbors: PropTypes.object.isRequired
   }
 
@@ -43,8 +44,8 @@ class TopUtilizersResultsContainer extends React.Component {
   componentDidMount() {
     this.loadEntitySet();
     const neighborTypeIds = new Set();
-    Object.values(this.props.topUtilizersDetails).forEach((detailsObj) => {
-      detailsObj.neighborTypeIds.forEach((id) => {
+    Array.from(this.props.topUtilizersDetails.values()).forEach((detailsObj) => {
+      detailsObj.get('neighborTypeIds').forEach((id) => {
         neighborTypeIds.add(id);
       });
     });
@@ -64,8 +65,8 @@ class TopUtilizersResultsContainer extends React.Component {
 
   loadNeighborTypes = () => {
     const neighborTypeIds = new Set();
-    Object.values(this.props.topUtilizersDetails).forEach((detailsObj) => {
-      detailsObj.neighborTypeIds.forEach((id) => {
+    Array.from(this.props.topUtilizersDetails.values()).forEach((detailsObj) => {
+      detailsObj.get('neighborTypeIds').forEach((id) => {
         neighborTypeIds.add(id);
       });
     });
@@ -174,7 +175,7 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS(),
+    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList'),
     neighbors: topUtilizers.get('neighbors')
   };
 }
