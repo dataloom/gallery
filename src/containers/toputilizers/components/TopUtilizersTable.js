@@ -4,7 +4,7 @@ import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
 
 export default class TopUtilizersTable extends React.Component {
   static propTypes = {
-    results: PropTypes.object.isRequired,
+    results: PropTypes.array.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired
   }

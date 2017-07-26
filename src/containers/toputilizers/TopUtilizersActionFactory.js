@@ -118,3 +118,24 @@ export function downloadTopUtilizersFailure() {
     type: actionTypes.DOWNLOAD_TOP_UTILIZERS_FAILURE
   };
 }
+
+export function getTopUtilizersNeighborsRequest(entitySetId, entityIds) {
+  return {
+    type: actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_REQUEST,
+    entitySetId,
+    entityIds
+  };
+}
+
+export function getTopUtilizersNeighborsSuccess(neighbors) {
+  return {
+    type: actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_SUCCESS,
+    neighbors
+  };
+}
+
+export function getTopUtilizersNeighborsFailure() {
+  return {
+    type: actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_FAILURE
+  };
+}

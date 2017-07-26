@@ -102,7 +102,7 @@ function mapStateToProps(state, ownProps) {
       if (propertyType) propertyTypes.push(propertyType.toJS());
     });
   }
-  const topUtilizersDetails = state.getIn(['topUtilizers', 'topUtilizersDetailsList'], Immutable.Map()).toJS();
+  const topUtilizersDetails = state.getIn(['topUtilizers', 'topUtilizersDetailsList'], Immutable.Map());
 
   return { entitySet, propertyTypes, topUtilizersDetails };
 }
