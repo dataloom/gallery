@@ -35,6 +35,7 @@ export default class AuthService extends EventEmitter {
     this.login = this.login.bind(this);
     this.storage = localStorage;
     this.isLocal = isLocal;
+    this.domain = location.hostname.split('.').splice(-2).join('.');
   }
 
   doAuthentication(authResult) {
@@ -93,7 +94,7 @@ export default class AuthService extends EventEmitter {
     this.storage.setItem('id_token', idToken);
     const prefix = (this.isLocal) ? '' : '.';
     Cookies.set('authorization', `Bearer ${idToken}`, {
-      domain: `${prefix}${window.location.hostname}`
+      domain: `${prefix}${this.domain}`
     });
   }
 
@@ -111,7 +112,7 @@ export default class AuthService extends EventEmitter {
     // https://github.com/js-cookie/js-cookie
     const prefix = (this.isLocal) ? '' : '.';
     Cookies.remove('authorization', {
-      domain: `${prefix}${window.location.hostname}`
+      domain: `${prefix}${this.domain}`
     });
   }
 }
