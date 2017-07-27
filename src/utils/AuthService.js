@@ -9,8 +9,11 @@ import { isTokenExpired } from './jwtHelper';
 import img from '../images/empty-logo.png';
 import PageConsts from './Consts/PageConsts';
 
+// injected by Webpack.DefinePlugin
+declare var __DEV__;
+
 export default class AuthService extends EventEmitter {
-  constructor(clientId, domain, isLocal) {
+  constructor(clientId, domain) {
     super();
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
@@ -34,7 +37,6 @@ export default class AuthService extends EventEmitter {
     // binds login functions to keep this context
     this.login = this.login.bind(this);
     this.storage = localStorage;
-    this.isLocal = isLocal;
     this.domain = location.hostname.split('.').splice(-2).join('.');
   }
 
@@ -92,7 +94,7 @@ export default class AuthService extends EventEmitter {
   setToken(idToken) {
     // Saves user token to localStorage
     this.storage.setItem('id_token', idToken);
-    const prefix = (this.isLocal) ? '' : '.';
+    const prefix = (__DEV__) ? '' : '.';
     Cookies.set('authorization', `Bearer ${idToken}`, {
       domain: `${prefix}${this.domain}`
     });
@@ -110,7 +112,7 @@ export default class AuthService extends EventEmitter {
 
     // when deleting a cookie, we must pass the exact same path and domain attributes that was used to set the cookie
     // https://github.com/js-cookie/js-cookie
-    const prefix = (this.isLocal) ? '' : '.';
+    const prefix = (__DEV__) ? '' : '.';
     Cookies.remove('authorization', {
       domain: `${prefix}${this.domain}`
     });
