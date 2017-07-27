@@ -123,9 +123,9 @@ export default class TopUtilizersHistogram extends React.Component {
     if (!counts.length) return null;
     const title = `${entityType.title}: ${propertyType.title}`;
     return (
-      <div className={styles.histogramContainer} key={id}>
+      <div className={styles.wrappingHistogramContainer} key={id}>
         <h2>{title}</h2>
-        <HistogramVisualization counts={counts} fields={[COUNT_FIELD]} />
+        <HistogramVisualization counts={counts} fields={[COUNT_FIELD]} height={225} width={450} />
       </div>
     );
   }
@@ -140,7 +140,7 @@ export default class TopUtilizersHistogram extends React.Component {
   render() {
     if (!this.props.entityType) return null;
     return (
-      <div className={styles.histogramSection}>
+      <div className={styles.multiHistogramSection}>
         {this.renderHistograms()}
       </div>
     );

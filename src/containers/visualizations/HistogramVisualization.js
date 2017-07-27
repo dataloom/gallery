@@ -13,7 +13,9 @@ export class HistogramVisualization extends React.Component {
 
   static propTypes = {
     counts: PropTypes.array.isRequired,
-    fields: PropTypes.array.isRequired
+    fields: PropTypes.array.isRequired,
+    height: PropTypes.number,
+    width: PropTypes.number
   }
 
   shouldComponentUpdate(nextProps) {
@@ -24,13 +26,15 @@ export class HistogramVisualization extends React.Component {
     const bars = this.props.fields.map((fieldName) => {
       return <Bar key={fieldName} dataKey={fieldName} fill="#8884d8" />;
     });
+    const width = this.props.width || 600;
+    const height = this.props.height || 300;
 
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>
           <BarChart
-              width={600}
-              height={300}
+              width={width}
+              height={height}
               data={this.props.counts}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
