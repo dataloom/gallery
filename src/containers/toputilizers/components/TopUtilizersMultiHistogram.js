@@ -7,7 +7,7 @@ import styles from '../styles.module.css';
 
 const COUNT_FIELD = 'count';
 
-export default class TopUtilizersHistogram extends React.Component {
+export default class TopUtilizersMultiHistogram extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
     entityType: PropTypes.object.isRequired,
@@ -19,20 +19,22 @@ export default class TopUtilizersHistogram extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      histogramData: this.getAllHistogramData(
-        props.entityType,
-        props.allEntityTypes,
-        props.allPropertyTypes,
-        props.neighbors)
+      utilizerIdToCounts: {},
+      valuesToUtilizerIds: {},
+      filters: {},
+      histogramData: {}
     };
   }
 
+  componentDidMount() {
+    const { entityType, allEntityTypes, allPropertyTypes, results, neighbors } = this.props;
+    this.getCountsAndValues(entityType, allEntityTypes, allPropertyTypes, results, neighbors);
+  }
+
   componentWillReceiveProps(nextProps) {
-    const { entityType, allEntityTypes, allPropertyTypes, neighbors } = nextProps;
+    const { entityType, allEntityTypes, allPropertyTypes, results, neighbors } = nextProps;
     if (neighbors.size !== this.props.neighbors.size) {
-      this.setState({
-        histogramData: this.getAllHistogramData(entityType, allEntityTypes, allPropertyTypes, neighbors)
-      });
+      this.getCountsAndValues(entityType, allEntityTypes, allPropertyTypes, results, neighbors);
     }
   }
 
@@ -45,14 +47,13 @@ export default class TopUtilizersHistogram extends React.Component {
     return fqnToPropertyType;
   }
 
-  getFormattedHistogramData = (histogramCounts, allPropertyTypes) => {
+  getFormattedHistogramData = (histogramCounts) => {
     const histogramData = {};
-    const fqnToPropertyType = this.getFqnToPropertyType(allPropertyTypes);
     Object.entries(histogramCounts).forEach((entityTypeEntry) => {
       const entityTypeId = entityTypeEntry[0];
       Object.entries(entityTypeEntry[1]).forEach((propertyTypeEntry) => {
         const histogramValuesList = [];
-        const propertyTypeId = fqnToPropertyType[propertyTypeEntry[0]].id;
+        const propertyTypeId = propertyTypeEntry[0];
         const histogramId = this.getHistogramId(entityTypeId, propertyTypeId);
         Object.entries(propertyTypeEntry[1]).forEach((barEntry) => {
           histogramValuesList.push({
@@ -66,45 +67,145 @@ export default class TopUtilizersHistogram extends React.Component {
     return histogramData;
   }
 
-  getAllHistogramData = (utilizerEntityType, allEntityTypes, allPropertyTypes, neighbors) => {
-    const histogramCounts = {};
+  filteredValuesPresent = (valuesFiltered, valuesPresent) => {
+    let filteredValuesPresent = true;
+    valuesFiltered.forEach((valueFilter) => {
+      if (!valuesPresent.includes(valueFilter)) filteredValuesPresent = false;
+    });
+    return filteredValuesPresent;
+  }
+
+  getCountsAndValues = (utilizerEntityType, allEntityTypes, allPropertyTypes, results, neighbors) => {
+    const utilizerIdToCounts = {};
+    const valuesToUtilizerIds = {};
+    const fqnToPropertyType = this.getFqnToPropertyType(allPropertyTypes);
 
     Object.values(allEntityTypes).forEach((entityType) => {
-      histogramCounts[entityType.id] = {};
+      valuesToUtilizerIds[entityType.id] = {};
       entityType.properties.forEach((propertyId) => {
         const fqn = `${allPropertyTypes[propertyId].type.namespace}.${allPropertyTypes[propertyId].type.name}`;
-        histogramCounts[entityType.id][fqn] = {};
+        valuesToUtilizerIds[entityType.id][fqnToPropertyType[fqn].id] = {};
       });
     });
 
+
     this.props.results.forEach((utilizer) => {
       const entityId = utilizer.id[0];
+      utilizerIdToCounts[entityId] = { [utilizerEntityType.id]: {} };
+
       Object.entries(utilizer).forEach((entry) => {
+
         const propertyTypeFqn = entry[0];
         if (propertyTypeFqn !== 'count' && propertyTypeFqn !== 'id') {
+          const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
+          utilizerIdToCounts[entityId][utilizerEntityType.id][propertyTypeId] = {};
           entry[1].forEach((value) => {
-            const prevCount = histogramCounts[utilizerEntityType.id][propertyTypeFqn][value] || 0;
-            histogramCounts[utilizerEntityType.id][propertyTypeFqn][value] = prevCount + 1;
+            const newIdSet = (valuesToUtilizerIds[utilizerEntityType.id][propertyTypeId][value])
+              ? valuesToUtilizerIds[utilizerEntityType.id][propertyTypeId][value].add(entityId) : new Set([entityId]);
+            valuesToUtilizerIds[utilizerEntityType.id][propertyTypeId][value] = newIdSet;
+            const prevVal = utilizerIdToCounts[entityId][utilizerEntityType.id][propertyTypeId][value] || 0;
+            utilizerIdToCounts[entityId][utilizerEntityType.id][propertyTypeId][value] = prevVal + 1;
           });
         }
       });
+
       const utilizerNeighbors = neighbors.get(entityId) || [];
       utilizerNeighbors.forEach((neighbor) => {
         if (neighbor.has('neighborEntitySet') && neighbor.has('neighborDetails')) {
           const entityTypeId = neighbor.getIn(['neighborEntitySet', 'entityTypeId']);
+          if (!utilizerIdToCounts[entityId][entityTypeId]) utilizerIdToCounts[entityId][entityTypeId] = {};
+
           neighbor.get('neighborDetails').entrySeq().forEach((entry) => {
             const propertyTypeFqn = entry[0];
+            const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
+            if (!utilizerIdToCounts[entityId][entityTypeId][propertyTypeId]) {
+              utilizerIdToCounts[entityId][entityTypeId][propertyTypeId] = {};
+            }
+
             entry[1].forEach((value) => {
-              const prevCount = histogramCounts[entityTypeId][propertyTypeFqn][value] || 0;
-              histogramCounts[entityTypeId][propertyTypeFqn][value] = prevCount + 1;
+              const newIdSet = (valuesToUtilizerIds[entityTypeId][propertyTypeId][value])
+                ? valuesToUtilizerIds[entityTypeId][propertyTypeId][value].add(entityId) : new Set([entityId]);
+              valuesToUtilizerIds[entityTypeId][propertyTypeId][value] = newIdSet;
+              const prevVal = utilizerIdToCounts[entityId][entityTypeId][propertyTypeId][value] || 0;
+              utilizerIdToCounts[entityId][entityTypeId][propertyTypeId][value] = prevVal + 1;
             });
           });
         }
       });
+    });
+    this.getHistogramData({}, utilizerIdToCounts, valuesToUtilizerIds, allEntityTypes);
+  }
 
+  getFilteredUtilizerIds = (filters, valuesToUtilizerIds, utilizerIdToCounts) => {
+    let utilizerIds = Object.keys(utilizerIdToCounts);
+    if (Object.keys(filters).length) {
+      let filteredUtilizerIds = new Set();
+      let filteredUtilizerIdsWasSet = false;
+      Object.entries(filters).forEach((entityTypeEntry) => {
+
+        const entityTypeId = entityTypeEntry[0];
+        Object.entries(entityTypeEntry[1]).forEach((propertyTypeEntry) => {
+          const propertyTypeId = propertyTypeEntry[0];
+          const propertyTypeFilteredUtilizerIds = new Set();
+          propertyTypeEntry[1].forEach((value) => {
+            valuesToUtilizerIds[entityTypeId][propertyTypeId][value].forEach((utilizerId) => {
+              propertyTypeFilteredUtilizerIds.add(utilizerId);
+            });
+          });
+          if (!filteredUtilizerIdsWasSet) {
+            filteredUtilizerIds = propertyTypeFilteredUtilizerIds;
+            filteredUtilizerIdsWasSet = true;
+          }
+          else {
+            filteredUtilizerIds = new Set([...filteredUtilizerIds].filter((utilizerId) => {
+              return propertyTypeFilteredUtilizerIds.has(utilizerId);
+            }));
+          }
+        });
+      });
+      utilizerIds = filteredUtilizerIds;
+    }
+    return utilizerIds;
+  }
+
+  getHistogramData = (
+    optionalFilters,
+    optionalUtilizerIdToCounts,
+    optionalValuesToUtilizerIds,
+    optionalAllEntityTypes) => {
+    const filters = optionalFilters || this.state.filters;
+    const utilizerIdToCounts = optionalUtilizerIdToCounts || this.state.utilizerIdToCounts;
+    const valuesToUtilizerIds = optionalValuesToUtilizerIds || this.state.valuesToUtilizerIds;
+    const allEntityTypes = optionalAllEntityTypes || this.props.allEntityTypes;
+
+    const histogramCounts = {};
+
+    const utilizerIds = this.getFilteredUtilizerIds(filters, valuesToUtilizerIds, utilizerIdToCounts);
+
+    Object.values(this.props.allEntityTypes).forEach((entityType) => {
+      histogramCounts[entityType.id] = {};
+      entityType.properties.forEach((propertyId) => {
+        histogramCounts[entityType.id][propertyId] = {};
+      });
     });
 
-    return this.getFormattedHistogramData(histogramCounts, allPropertyTypes);
+    utilizerIds.forEach((utilizerId) => {
+      Object.entries(utilizerIdToCounts[utilizerId]).forEach((entityTypeEntry) => {
+        const entityTypeId = entityTypeEntry[0];
+        Object.entries(entityTypeEntry[1]).forEach((propertyTypeEntry) => {
+          const propertyTypeId = propertyTypeEntry[0];
+          Object.entries(propertyTypeEntry[1]).forEach((valueEntry) => {
+            const value = valueEntry[0];
+            const count = valueEntry[1];
+            const prevCount = histogramCounts[entityTypeId][propertyTypeId][value] || 0;
+            histogramCounts[entityTypeId][propertyTypeId][value] = prevCount + count;
+          });
+        });
+      });
+    });
+    const histogramData = this.getFormattedHistogramData(histogramCounts, allEntityTypes);
+
+    this.setState({ filters, utilizerIdToCounts, valuesToUtilizerIds, histogramData });
   }
 
   getHistogramId = (entityTypeId, propertyTypeId) => {
@@ -119,13 +220,49 @@ export default class TopUtilizersHistogram extends React.Component {
     };
   }
 
+  onFilterSelect = (entityTypeId, propertyTypeId, filter) => {
+    const filters = this.state.filters;
+
+    // remove filter if it's currently set
+    if (filters[entityTypeId] && filters[entityTypeId][propertyTypeId]
+      && filters[entityTypeId][propertyTypeId].includes(filter)) {
+      const propertyFilters = filters[entityTypeId][propertyTypeId];
+      propertyFilters.splice(propertyFilters.indexOf(filter), 1);
+      filters[entityTypeId][propertyTypeId] = propertyFilters;
+      if (!filters[entityTypeId][propertyTypeId].length) delete filters[entityTypeId][propertyTypeId];
+      if (!Object.values(filters[entityTypeId]).length) delete filters[entityTypeId];
+    }
+
+    // otherwise add the filter
+    else if (!filters[entityTypeId]) {
+      filters[entityTypeId] = { [propertyTypeId]: [filter] };
+    }
+    else {
+      const propertyFilters = filters[entityTypeId][propertyTypeId] || [];
+      if (!propertyFilters.includes(filter)) propertyFilters.push(filter);
+      filters[entityTypeId][propertyTypeId] = propertyFilters;
+    }
+    this.getHistogramData(filters);
+  }
+
   renderSingleHistogram = (counts, entityType, propertyType, id) => {
     if (!counts.length) return null;
+    const filters = this.state.filters;
     const title = `${entityType.title}: ${propertyType.title}`;
+    const propertyFilters = (filters[entityType.id] && filters[entityType.id][propertyType.id])
+      ? filters[entityType.id][propertyType.id] : [];
     return (
       <div className={styles.wrappingHistogramContainer} key={id}>
         <h2>{title}</h2>
-        <HistogramVisualization counts={counts} fields={[COUNT_FIELD]} height={225} width={450} />
+        <HistogramVisualization
+            counts={counts}
+            fields={[COUNT_FIELD]}
+            height={225}
+            width={450}
+            filters={propertyFilters}
+            onClick={(filter) => {
+              this.onFilterSelect(entityType.id, propertyType.id, filter);
+            }} />
       </div>
     );
   }

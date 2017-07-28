@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import {
+  Cell,
   BarChart,
   Bar,
   CartesianGrid,
@@ -15,7 +16,9 @@ export class HistogramVisualization extends React.Component {
     counts: PropTypes.array.isRequired,
     fields: PropTypes.array.isRequired,
     height: PropTypes.number,
-    width: PropTypes.number
+    width: PropTypes.number,
+    onClick: PropTypes.func,
+    filters: PropTypes.array
   }
 
   shouldComponentUpdate(nextProps) {
@@ -24,7 +27,26 @@ export class HistogramVisualization extends React.Component {
 
   render() {
     const bars = this.props.fields.map((fieldName) => {
-      return <Bar key={fieldName} dataKey={fieldName} fill="#8884d8" />;
+      return (
+        <Bar
+            key={fieldName}
+            dataKey={fieldName}
+            fill="#8884d8"
+            onClick={(bar) => {
+              this.props.onClick(bar.name);
+            }}>
+          {
+            this.props.counts.map((entry) => {
+              return (
+                <Cell
+                    key={entry.name}
+                    fill={this.props.filters.includes(entry.name) ? '#4203c5' : '#8884d8'} />
+              );
+            })
+          }
+
+        </Bar>
+      );
     });
     const width = this.props.width || 600;
     const height = this.props.height || 300;
