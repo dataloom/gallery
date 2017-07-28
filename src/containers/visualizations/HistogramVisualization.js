@@ -21,6 +21,13 @@ export class HistogramVisualization extends React.Component {
     filters: PropTypes.array
   }
 
+  static defaultProps = {
+    height: 300,
+    width: 600,
+    onClick: () => {},
+    filters: []
+  }
+
   shouldComponentUpdate(nextProps) {
     return (nextProps.counts !== this.props.counts || nextProps.fields !== this.props.fields);
   }
@@ -48,15 +55,13 @@ export class HistogramVisualization extends React.Component {
         </Bar>
       );
     });
-    const width = this.props.width || 600;
-    const height = this.props.height || 300;
 
     return (
       <div className={styles.visualizationContainer}>
         <div className={styles.visualizationWrapper}>
           <BarChart
-              width={width}
-              height={height}
+              width={this.props.width}
+              height={this.props.height}
               data={this.props.counts}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
