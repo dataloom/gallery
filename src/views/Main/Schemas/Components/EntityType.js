@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 import { Promise } from 'bluebird';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import FileService from '../../../../utils/FileService';
 import { PropertyList } from './PropertyList';
