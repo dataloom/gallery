@@ -7,7 +7,6 @@ import Container from './Container';
 import { DataModel } from './Schemas/DataModel';
 import Login from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
-import { Settings } from './Settings/Settings';
 import Visualize from '../../containers/visualizations/Visualize';
 import { Link } from './Link/Link';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
@@ -34,7 +33,7 @@ declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
 declare var __DEV__;
 
-const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DEV__);
+const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__);
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
@@ -93,7 +92,6 @@ export const makeMainRoutes = () => {
         </Route>
       </Route>
       <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
-      <Route path={PageConsts.SETTINGS} component={Settings} onEnter={requireAdmin} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASETS} component={DatasetsComponent} onEnter={requireAuth} />
       <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
