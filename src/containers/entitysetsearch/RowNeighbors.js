@@ -45,6 +45,7 @@ export default class RowNeighbors extends React.Component {
     const organizedNeighbors = {};
     const dateProps = {};
     neighbors.forEach((neighbor) => {
+      if (!neighbor) return;
       const associationEntitySetId = neighbor.associationEntitySet.id;
       const neighborEntitySetId = (neighbor.neighborEntitySet) ? neighbor.neighborEntitySet.id : NO_NEIGHBOR;
 
@@ -141,7 +142,7 @@ export default class RowNeighbors extends React.Component {
     const rowValues = neighborGroup.map((neighbor) => {
       const row = (noNeighbor) ? neighbor.associationDetails :
         Object.assign({}, neighbor.associationDetails, neighbor.neighborDetails);
-      if (!noNeighbor) row.id = neighbor.neighborId;
+      if (!noNeighbor) row.id = [neighbor.neighborId];
       return row;
     });
     const associationColumns = this.renderColumns(true, rowValues, neighborGroup[0], noNeighbor);
