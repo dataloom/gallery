@@ -27,7 +27,7 @@ class TopUtilizersResultsContainer extends React.Component {
     propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
     topUtilizersDetails: PropTypes.instanceOf(Immutable.Map).isRequired,
-    neighbors: PropTypes.object.isRequired
+    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
