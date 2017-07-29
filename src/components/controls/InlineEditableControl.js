@@ -163,14 +163,16 @@ export default class InlineEditableControl extends React.Component {
     placeholder: React.PropTypes.string,
     value: React.PropTypes.string,
     viewOnly: React.PropTypes.bool,
-    onChange: React.PropTypes.func
+    onChange: React.PropTypes.func,
+    onChangeConfirm: React.PropTypes.func
   };
 
   static defaultProps = {
     placeholder: 'Click to edit...',
     value: '',
     viewOnly: false,
-    onChange: () => {}
+    onChange: () => {},
+    onChangeConfirm: undefined
   };
 
   control :any
@@ -210,7 +212,20 @@ export default class InlineEditableControl extends React.Component {
     if (prevState.previousValue !== this.state.currentValue
         && prevState.editable === true
         && this.state.editable === false) {
-      this.props.onChange(this.state.currentValue);
+      if (this.props.onChangeConfirm) {
+        this.props.onChangeConfirm(this.state.currentValue)
+        .then((success) => {
+          if (!success) {
+            this.setState({
+              currentValue: prevState.previousValue,
+              previousValue: ''
+            });
+          }
+        });
+      }
+      else {
+        this.props.onChange(this.state.currentValue);
+      }
     }
   }
 

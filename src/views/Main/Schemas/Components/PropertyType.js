@@ -49,11 +49,34 @@ export class PropertyType extends React.Component {
     EntityDataModelApi.updatePropertyTypeMetaData(this.props.propertyType.id, { piiField });
   }
 
+  updatePropertyTypeFqn = (fqn) => {
+    const fqnArray = fqn.split('.');
+    if (fqnArray.length !== 2) return Promise.resolve(false);
+
+    return EntityDataModelApi.updatePropertyTypeMetaData(this.props.propertyType.id, {
+      type: {
+        namespace: fqnArray[0],
+        name: fqnArray[1]
+      }
+    }).then(() => {
+      return true;
+    }).catch(() => {
+      return false;
+    });
+  }
+
   render() {
     const prop = this.props.propertyType;
     return (
       <div>
-        <div className={styles.italic}>{`${prop.type.namespace}.${prop.type.name}`}</div>
+        <InlineEditableControl
+            type="text"
+            size="small"
+            placeholder="Property type full qualified name"
+            value={`${prop.type.namespace}.${prop.type.name}`}
+            viewOnly={!this.context.isAdmin}
+            onChangeConfirm={this.updatePropertyTypeFqn}
+            shouldChange={this.shouldUpdatePropertyTypeFqn} />
         <div className={styles.spacerSmall} />
         <InlineEditableControl
             type="text"
