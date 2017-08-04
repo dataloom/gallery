@@ -12,10 +12,12 @@
 
 .linkSelection {
   margin-top: 40px;
+  text-align: center;
 }
 
 .linkTable {
   margin-left: 6px;
+  display: inline-block;
 }
 
 .explanationText {
