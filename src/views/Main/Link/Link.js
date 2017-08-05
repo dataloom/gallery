@@ -37,9 +37,6 @@ export class Link extends React.Component {
       entityTypeIdToEntitySet: {},
       propertyTypeIdToEntityType: {},
       newRow: false,
-      editingPropertyType: '',
-      editingEntitySets: [],
-      needsOneEntitySetError: false,
       loadEntitySetsError: false,
       linkingError: false,
       linkingSuccess: false,
@@ -84,67 +81,30 @@ export class Link extends React.Component {
     this.setState({ newRow: true });
   }
 
-  onPropertyTypeLinkChange = (e) => {
-    const editingPropertyType = (e && e.value) ? e.value : '';
-    this.setState({
-      editingPropertyType,
-      editingEntitySets: [],
-      needsOneEntitySetError: false
-    });
-  }
-
-  onEntitySetsLinkChange = (options) => {
-    const editingEntitySets = options.map((option) => {
-      return option.value;
-    });
-    this.setState({ editingEntitySets });
-  }
-
   getPropertyTypeOptions() {
     const availablePropertyTypes = Object.assign({}, this.state.availablePropertyTypes);
-    this.state.links.forEach((link) => {
-      delete availablePropertyTypes[link.propertyType.id];
+    this.state.links.forEach((linkPropertyType) => {
+      delete availablePropertyTypes[linkPropertyType.id];
     });
     return Object.values(availablePropertyTypes).map((propertyType) => {
       return { label: propertyType.title, value: propertyType.id };
     });
   }
 
-  getEntitySetsOptions = () => {
-    const entitySetOptions = [];
-    if (this.state.editingPropertyType && this.state.editingPropertyType.length > 0) {
-      this.state.selectedEntitySets.forEach((entitySet) => {
-        entitySetOptions.push(entitySet);
+  saveLink = (e) => {
+    if (e && e.value && this.state.availablePropertyTypes[e.value]) {
+      const propertyType = this.state.availablePropertyTypes[e.value];
+      const links = this.state.links;
+      if (links.filter((linkPropertyType) => {
+        return linkPropertyType.id === propertyType.id;
+      }).length === 0) {
+        links.push(propertyType);
+      }
+      this.setState({
+        links,
+        newRow: false
       });
     }
-    return entitySetOptions;
-  }
-
-  saveLink = () => {
-    if (this.state.editingEntitySets.length < 1) {
-      this.setState({ needsOneEntitySetError: true });
-      return;
-    }
-    const propertyType = this.state.availablePropertyTypes[this.state.editingPropertyType];
-    const entitySets = this.state.allEntitySets.filter((entitySet) => {
-      return this.state.editingEntitySets.includes(entitySet.id);
-    });
-    const links = this.state.links;
-    links.push({ propertyType, entitySets });
-    this.setState({
-      links,
-      newRow: false,
-      editingPropertyType: '',
-      editingEntitySets: [],
-      needsOneEntitySetError: false
-    });
-  }
-
-  renderNotEnoughEntitySetsError = () => {
-    if (this.state.needsOneEntitySetError) {
-      return <div className={styles.error}>You must specify an entity set to link on.</div>;
-    }
-    return null;
   }
 
   chooseLinks = () => {
@@ -169,33 +129,23 @@ export class Link extends React.Component {
 
 
   removeLink = (propertyTypeId) => {
-    const links = this.state.links.filter((link) => {
-      return link.propertyType.id !== propertyTypeId;
+    const links = this.state.links.filter((linkPropertyType) => {
+      return linkPropertyType.id !== propertyTypeId;
     });
     this.setState({ links });
   }
 
   renderExistingLinks = () => {
-    return this.state.links.map((link) => {
-      let entitySetsString = '';
-      if (link.entitySets.length >= 1) {
-        entitySetsString = link.entitySets[0].name;
-      }
-      if (link.entitySets.length > 1) {
-        for (let i = 1; i < link.entitySets.length; i += 1) {
-          entitySetsString = entitySetsString.concat(', ').concat(link.entitySets[i].name);
-        }
-      }
+    return this.state.links.map((linkPropertyType) => {
       return (
-        <tr key={link.propertyType.id}>
+        <tr key={linkPropertyType.id}>
           <td>
             <DeleteButton
                 onClick={() => {
-                  this.removeLink(link.propertyType.id);
+                  this.removeLink(linkPropertyType.id);
                 }} />
           </td>
-          <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{link.propertyType.title}</td>
-          <td className={`${styles.entitySetsSelect} ${styles.linkBox}`}>{entitySetsString}</td>
+          <td className={`${styles.propertyTypeSelect} ${styles.linkBox}`}>{linkPropertyType.title}</td>
         </tr>
       );
     });
@@ -210,19 +160,7 @@ export class Link extends React.Component {
             <Select
                 className={styles.propertyTypeSelect}
                 options={this.getPropertyTypeOptions()}
-                value={this.state.editingPropertyType}
-                onChange={this.onPropertyTypeLinkChange} />
-          </td>
-          <td>
-            <Select
-                className={styles.entitySetsSelect}
-                options={this.getEntitySetsOptions()}
-                value={this.state.editingEntitySets}
-                onChange={this.onEntitySetsLinkChange}
-                multi />
-          </td>
-          <td>
-            <Button bsStyle="info" onClick={this.saveLink} className={styles.spacerLeft}>Add links</Button>
+                onChange={this.saveLink} />
           </td>
         </tr>
       );
@@ -248,17 +186,11 @@ export class Link extends React.Component {
         <div className={styles.explanationText}>Step 2. Choose property types to link.</div>
         <table className={styles.linkTable}>
           <tbody>
-            <tr>
-              <th />
-              <th>Property Type</th>
-              <th>Entity Sets</th>
-            </tr>
             {this.renderExistingLinks()}
             {this.renderNewLink()}
             {this.renderAddRowButton()}
           </tbody>
         </table>
-        {this.renderNotEnoughEntitySetsError()}
       </div>
     );
   }
@@ -283,11 +215,8 @@ export class Link extends React.Component {
       this.setState({
         availablePropertyTypes,
         propertyTypeIdToEntityType,
-        editingPropertyType: '',
-        editingEntitySets: [],
         links: [],
         newRow: true,
-        needsOneEntitySetError: false,
         loadEntitySetsError: false
       });
     }).catch(() => {
@@ -404,10 +333,10 @@ export class Link extends React.Component {
       contacts,
       entityTypeId: this.state.linkingEntityTypeId
     };
-    const linkingProperties = this.state.links.map((link) => {
+    const linkingProperties = this.state.links.map((linkPropertyType) => {
       const propertyMap = {};
-      link.entitySets.forEach((linkEntitySet) => {
-        propertyMap[linkEntitySet.id] = link.propertyType.id;
+      this.state.selectedEntitySets.forEach((linkEntitySet) => {
+        propertyMap[linkEntitySet.id] = linkPropertyType.id;
       });
       return propertyMap;
     });
