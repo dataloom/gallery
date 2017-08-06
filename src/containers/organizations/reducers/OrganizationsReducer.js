@@ -5,9 +5,9 @@
 import Immutable from 'immutable';
 
 import {
-  DataModels,
+  Models,
   Types
-} from 'loom-data';
+} from 'lattice';
 
 import * as PermissionsActionTypes from '../../permissions/PermissionsActionTypes';
 import * as PrincipalsActionTypes from '../../principals/PrincipalsActionTypes';
@@ -21,8 +21,10 @@ const {
   Ace,
   Organization,
   Principal,
-  PrincipalBuilder
-} = DataModels;
+  PrincipalBuilder,
+  Role,
+  RoleBuilder
+} = Models;
 
 const {
   ActionTypes,
@@ -193,29 +195,32 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
 
-      const newRolePrincipal :Principal = (new PrincipalBuilder())
-        .setType(PrincipalTypes.ROLE)
-        .setId(action.role)
+
+      const newRole :Role = (new RoleBuilder())
+        .setId(action.roleId)
+        .setOrganizationId(action.role.organizationId)
+        .setTitle(action.role.title)
         .build();
 
-      const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
-      const updatedRoles :List<Principal> = currentRoles.push(Immutable.Map(newRolePrincipal));
-      return state.setIn(['organizations', action.orgId, 'roles'], updatedRoles);
+      const orgId :UUID = action.role.organizationId;
+      const currentRoles :List<Role> = state.getIn(['organizations', orgId, 'roles'], Immutable.List());
+      const updatedRoles :List<Role> = currentRoles.push(Immutable.Map(newRole));
+      return state.setIn(['organizations', orgId, 'roles'], updatedRoles);
     }
 
     case OrgActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
 
-      const currentRoles :List<Principal> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
+      const currentRoles :List<Role> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
 
       const index :number = currentRoles.findIndex((role) => {
-        return role.get('id') === action.role;
+        return role.get('id') === action.roleId;
       });
 
       if (index < 0) {
         return state;
       }
 
-      const updatedRoles :List<Principal> = currentRoles.delete(index);
+      const updatedRoles :List<Role> = currentRoles.delete(index);
       return state.setIn(['organizations', action.orgId, 'roles'], updatedRoles);
     }
 

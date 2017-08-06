@@ -37,13 +37,13 @@ import {
 } from '../../permissions/PermissionsActionFactory';
 
 import {
-  fetchUsersRequest,
-  addRoleToUserRequest,
-  removeRoleFromUserRequest
+  fetchUsersRequest
 } from '../../principals/PrincipalsActionFactory';
 
 import {
-  removeMemberFromOrganizationRequest
+  addRoleToMemberRequest,
+  removeMemberFromOrganizationRequest,
+  removeRoleFromMemberRequest
 } from '../actions/OrganizationActionFactory';
 
 const {
@@ -129,10 +129,10 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
+    addRoleToMemberRequest,
     fetchUsersRequest,
     removeMemberFromOrganizationRequest,
-    addRoleToUserRequest,
-    removeRoleFromUserRequest,
+    removeRoleFromMemberRequest,
     updateAclRequest
   };
 
@@ -145,10 +145,10 @@ class OrganizationMembersSectionComponent extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
+      addRoleToMemberRequest: React.PropTypes.func.isRequired,
       fetchUsersRequest: React.PropTypes.func.isRequired,
       removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
-      addRoleToUserRequest: React.PropTypes.func.isRequired,
-      removeRoleFromUserRequest: React.PropTypes.func.isRequired,
+      removeRoleFromMemberRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     members: React.PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -294,24 +294,24 @@ class OrganizationMembersSectionComponent extends React.Component {
     );
   }
 
-  addRoleToMember = (memberId :string, roleId :string) => {
+  addRoleToMember = (roleId :UUID, memberId :string) => {
 
-    if (!memberId || !roleId) {
+    if (!roleId || !memberId) {
       // TODO: this shouldn't happen, how do we handle it?
       return;
     }
 
-    this.props.actions.addRoleToUserRequest(memberId, roleId);
+    this.props.actions.addRoleToMemberRequest(this.props.organization.get('id'), roleId, memberId);
   }
 
-  removeRoleFromMember = (memberId :string, roleId :string) => {
+  removeRoleFromMember = (roleId :UUID, memberId :string) => {
 
-    if (!memberId || !roleId) {
+    if (!roleId || !memberId) {
       // TODO: this shouldn't happen, how do we handle it?
       return;
     }
 
-    this.props.actions.removeRoleFromUserRequest(memberId, roleId);
+    this.props.actions.removeRoleFromMemberRequest(this.props.organization.get('id'), roleId, memberId);
   }
 
   renderMemberRoles = () => {
@@ -322,8 +322,8 @@ class OrganizationMembersSectionComponent extends React.Component {
       return null;
     }
 
-    const orgRolesPrincipals :Immutable.List<Principal> = this.props.organization.get('roles', Immutable.List());
-    if (orgRolesPrincipals.isEmpty()) {
+    const orgRoles :Immutable.List<Role> = this.props.organization.get('roles', Immutable.List());
+    if (orgRoles.isEmpty()) {
       // TODO: we need a better UX to handle this case
       return (
         <MemberRolesContainer>
@@ -338,23 +338,23 @@ class OrganizationMembersSectionComponent extends React.Component {
     );
 
     // TODO: add "..." when role names are too long
-    const memberRolesElements = orgRolesPrincipals.map((rolePrincipal :Immutable.Map<string, Principal>) => {
-      const memberHasRole :boolean = memberRoles.includes(rolePrincipal.get('id'));
+    const memberRolesElements = orgRoles.map((role :Immutable.Map<string, any>) => {
+      const memberHasRole :boolean = memberRoles.includes(role.get('id'));
       return (
         <RoleBadge
-            key={rolePrincipal.get('id')}
+            key={role.get('id')}
             selected={memberHasRole}
             onClick={() => {
               if (isOwner) {
                 if (memberHasRole) {
-                  this.removeRoleFromMember(this.state.selectedMemberId, rolePrincipal.get('id'));
+                  this.removeRoleFromMember(role.get('id'), this.state.selectedMemberId);
                 }
                 else {
-                  this.addRoleToMember(this.state.selectedMemberId, rolePrincipal.get('id'));
+                  this.addRoleToMember(role.get('id'), this.state.selectedMemberId);
                 }
               }
             }}>
-          { rolePrincipal.get('id') }
+          { role.get('title') }
         </RoleBadge>
       );
     });

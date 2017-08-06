@@ -5,8 +5,10 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import { Models } from 'lattice';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -20,13 +22,29 @@ import {
   removeRoleFromOrganizationRequest
 } from '../actions/OrganizationActionFactory';
 
+const {
+  Role,
+  RoleBuilder
+} = Models;
+
 const RolesListContainer = styled.div`
   width: 400px;
 `;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 
-  return {};
+  const roleItems :List<Map<string, string>> = ownProps.organization
+    .get('roles', Immutable.List())
+    .map((role :Map<string, any>) => {
+      return Immutable.fromJS({
+        id: role.get('id'),
+        value: role.get('title')
+      });
+    });
+
+  return {
+    roleItems
+  };
 }
 
 function mapDispatchToProps(dispatch :Function) {
@@ -44,21 +62,27 @@ function mapDispatchToProps(dispatch :Function) {
 class OrganizationRolesSectionComponent extends React.Component {
 
   static propTypes = {
-    actions: React.PropTypes.shape({
-      addRoleToOrganizationRequest: React.PropTypes.func.isRequired,
-      removeRoleFromOrganizationRequest: React.PropTypes.func.isRequired
+    actions: PropTypes.shape({
+      addRoleToOrganizationRequest: PropTypes.func.isRequired,
+      removeRoleFromOrganizationRequest: PropTypes.func.isRequired
     }).isRequired,
-    organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
+    organization: PropTypes.instanceOf(Immutable.Map).isRequired,
+    roleItems: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
-  addRole = (role :string) => {
+  addRole = (roleTitle :string) => {
 
-    this.props.actions.addRoleToOrganizationRequest(this.props.organization.get('id'), role);
+    const role :Role = (new RoleBuilder())
+      .setOrganizationId(this.props.organization.get('id'))
+      .setTitle(roleTitle)
+      .build();
+
+    this.props.actions.addRoleToOrganizationRequest(role);
   }
 
-  removeRole = (role :string) => {
+  removeRole = (roleId :UUID) => {
 
-    this.props.actions.removeRoleFromOrganizationRequest(this.props.organization.get('id'), role);
+    this.props.actions.removeRoleFromOrganizationRequest(this.props.organization.get('id'), roleId);
   }
 
   isValidRole = (role :string) => {
@@ -69,12 +93,9 @@ class OrganizationRolesSectionComponent extends React.Component {
   render() {
 
     const isOwner :boolean = this.props.organization.get('isOwner', false);
-    const roles :Immutable.List = this.props.organization.get('roles', Immutable.List()).map((role :Immutable.Map) => {
-      return role.get('id');
-    });
 
     let sectionContent;
-    if (roles.isEmpty() && !isOwner) {
+    if (this.props.roleItems.isEmpty() && !isOwner) {
       sectionContent = (
         <span>No roles.</span>
       );
@@ -84,7 +105,7 @@ class OrganizationRolesSectionComponent extends React.Component {
         <RolesListContainer>
           <SimpleListGroup
               placeholder="Add new role..."
-              values={roles}
+              items={this.props.roleItems}
               isValid={this.isValidRole}
               viewOnly={!isOwner}
               onAdd={this.addRole}
