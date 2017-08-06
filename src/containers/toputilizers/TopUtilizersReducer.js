@@ -65,7 +65,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingResults', false);
 
     case actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_SUCCESS:
-      return state.set('neighbors', action.neighbors);
+      return state.set('neighbors', Immutable.fromJS(action.neighbors));
 
     default:
       return state;
