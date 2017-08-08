@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { connect } from 'react-redux';
@@ -25,9 +26,29 @@ const DomainsListContainer = styled.div`
   width: 400px;
 `;
 
-function mapStateToProps(state :Immutable.Map, ownProps :Object) {
+let idCounter = 0;
+function getUniqueId() :string {
 
-  return {};
+  idCounter += 1;
+  return `${idCounter}`;
+}
+
+function mapStateToProps(state :Map, ownProps :Object) {
+
+  const emailDomainItems :OrderedMap<> = Immutable.OrderedMap().withMutations((map :OrderedMap<>) => {
+    ownProps.organization.get('emails', Immutable.List()).forEach((email :string) => {
+      const id :string = getUniqueId();
+      const item :Map<> = Immutable.fromJS({
+        id,
+        value: email
+      });
+      map.set(id, item);
+    });
+  });
+
+  return {
+    emailDomainItems
+  };
 }
 
 function mapDispatchToProps(dispatch :Function) {
@@ -45,11 +66,12 @@ function mapDispatchToProps(dispatch :Function) {
 class OrganizationDomainsSectionComponent extends React.Component {
 
   static propTypes = {
-    actions: React.PropTypes.shape({
-      addDomainToOrganizationRequest: React.PropTypes.func.isRequired,
-      removeDomainFromOrganizationRequest: React.PropTypes.func.isRequired
+    actions: PropTypes.shape({
+      addDomainToOrganizationRequest: PropTypes.func.isRequired,
+      removeDomainFromOrganizationRequest: PropTypes.func.isRequired
     }).isRequired,
-    organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
+    emailDomainItems: PropTypes.instanceOf(Immutable.Map).isRequired,
+    organization: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
 
@@ -58,9 +80,10 @@ class OrganizationDomainsSectionComponent extends React.Component {
     this.props.actions.addDomainToOrganizationRequest(this.props.organization.get('id'), domain);
   }
 
-  removeDomain = (domain :string) => {
+  removeDomain = (emailDomainId :string) => {
 
-    this.props.actions.removeDomainFromOrganizationRequest(this.props.organization.get('id'), domain);
+    const emailDomain :string = this.props.emailDomainItems.get(emailDomainId).get('value');
+    this.props.actions.removeDomainFromOrganizationRequest(this.props.organization.get('id'), emailDomain);
   }
 
   isValidDomain = (domain :string) => {
@@ -71,10 +94,9 @@ class OrganizationDomainsSectionComponent extends React.Component {
   render() {
 
     const isOwner :boolean = this.props.organization.get('isOwner', false);
-    const emailDomains :Immutable.List = this.props.organization.get('emails', Immutable.List());
 
     let sectionContent;
-    if (emailDomains.isEmpty() && !isOwner) {
+    if (this.props.emailDomainItems.isEmpty() && !isOwner) {
       sectionContent = (
         <span>No domains.</span>
       );
@@ -84,7 +106,7 @@ class OrganizationDomainsSectionComponent extends React.Component {
         <DomainsListContainer>
           <SimpleListGroup
               placeholder="Add new domain..."
-              values={emailDomains}
+              items={this.props.emailDomainItems.toList()} // toList() or valueSeq() ...?
               isValid={this.isValidDomain}
               viewOnly={!isOwner}
               onAdd={this.addDomain}

@@ -218,7 +218,8 @@ class OrganizationDetailsComponent extends React.Component {
   }
 
   render() {
-    const title = (this.props.organization) ? this.props.organization.get('title') : 'Organizations';
+
+    const title :string = this.props.organization.get('title', 'Organizations');
 
     if (this.props.isCreatingOrg) {
       return (

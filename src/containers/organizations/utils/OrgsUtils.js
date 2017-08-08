@@ -48,7 +48,7 @@ export function sortOrganizations(visibleOrgIds, organizations, auth) {
     const organization :Immutable.Map = organizations.get(orgId, Immutable.Map());
 
     let isMemberOfOrg :boolean = false;
-    organization.get('members').forEach((memberObj :Object) => {
+    organization.get('members', Immutable.List()).forEach((memberObj :Object) => {
       if (memberObj.get('id') === currentUserId) {
         isMemberOfOrg = true;
       }

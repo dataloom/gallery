@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Immutable from 'immutable';
+import PropTypes from 'prop-types';
 
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
 
@@ -16,13 +17,6 @@ import {
   StyledListItem
 } from './StyledListGroupComponents';
 
-let idCounter = 0;
-function getUniqueId() {
-
-  idCounter += 1;
-  return idCounter;
-}
-
 /*
  * TODO: allow for a max count before scrollbar
  */
@@ -30,15 +24,12 @@ function getUniqueId() {
 export default class SimpleListGroup extends React.Component {
 
   static propTypes = {
-    placeholder: React.PropTypes.string,
-    values: React.PropTypes.oneOfType([
-      React.PropTypes.arrayOf(React.PropTypes.string),
-      React.PropTypes.instanceOf(Immutable.List)
-    ]).isRequired,
-    isValid: React.PropTypes.func,
-    viewOnly: React.PropTypes.bool,
-    onAdd: React.PropTypes.func,
-    onRemove: React.PropTypes.func
+    placeholder: PropTypes.string,
+    items: PropTypes.instanceOf(Immutable.List).isRequired,
+    isValid: PropTypes.func,
+    viewOnly: PropTypes.bool,
+    onAdd: PropTypes.func,
+    onRemove: PropTypes.func
   };
 
   static defaultProps = {
@@ -51,7 +42,7 @@ export default class SimpleListGroup extends React.Component {
 
   state :{
     inputValue :string,
-    values :string[]
+    items :string[]
   }
 
   constructor(props :Object) {
@@ -60,7 +51,7 @@ export default class SimpleListGroup extends React.Component {
 
     this.state = {
       inputValue: '',
-      values: this.props.values
+      items: this.props.items
     };
   }
 
@@ -128,17 +119,17 @@ export default class SimpleListGroup extends React.Component {
 
   renderListItems = () => {
 
-    return this.props.values.map((value :string) => {
+    return this.props.items.map((item :Map<string, string>) => {
       return (
-        <StyledListItem key={`${value}_${getUniqueId()}`}>
-          <StyledElement>{ value }</StyledElement>
+        <StyledListItem key={item.get('id')}>
+          <StyledElement>{ item.get('value') }</StyledElement>
           {
             this.props.viewOnly
               ? null
               : (
                 <RemoveButton
                     onClick={() => {
-                      this.removeItem(value);
+                      this.removeItem(item.get('id'));
                     }} />
               )
           }
