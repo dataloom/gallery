@@ -95,3 +95,17 @@ a:hover {
 .generateHistogramButtonRow {
   margin-top: 10px;
 }
+
+.multiHistogramSection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.wrappingHistogramContainer {
+  height: 300px;
+  width: 450px;
+  margin-top: 15px;
+}
