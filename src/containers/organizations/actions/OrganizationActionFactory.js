@@ -2,11 +2,14 @@
  * @flow
  */
 
-import { DataModels } from 'loom-data';
+import { Models } from 'lattice';
 
 import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 
-const { Organization } = DataModels;
+const {
+  Organization,
+  Role
+} = Models;
 
 /*
  * simple actions
@@ -166,53 +169,55 @@ export function removeDomainFromOrganizationFailure() :Object {
   };
 }
 
-export function addRoleToOrganizationRequest(orgId :UUID, role :string) :Object {
+export function addRoleToOrganizationRequest(role :Role) :Object {
 
   return {
     type: OrgActionTypes.ADD_ROLE_TO_ORG_REQUEST,
-    orgId,
     role
   };
 }
 
-export function addRoleToOrganizationSuccess(orgId :UUID, role :string) :Object {
+export function addRoleToOrganizationSuccess(role :Role, roleId :UUID) :Object {
 
   return {
     type: OrgActionTypes.ADD_ROLE_TO_ORG_SUCCESS,
-    orgId,
+    role,
+    roleId
+  };
+}
+
+export function addRoleToOrganizationFailure(role :Role) :Object {
+
+  return {
+    type: OrgActionTypes.ADD_ROLE_TO_ORG_FAILURE,
     role
   };
 }
 
-export function addRoleToOrganizationFailure() :Object {
-
-  return {
-    type: OrgActionTypes.ADD_ROLE_TO_ORG_FAILURE
-  };
-}
-
-export function removeRoleFromOrganizationRequest(orgId :UUID, role :string) :Object {
+export function removeRoleFromOrganizationRequest(orgId :UUID, roleId :UUID) :Object {
 
   return {
     type: OrgActionTypes.REMOVE_ROLE_FROM_ORG_REQUEST,
     orgId,
-    role
+    roleId
   };
 }
 
-export function removeRoleFromOrganizationSuccess(orgId :UUID, role :string) :Object {
+export function removeRoleFromOrganizationSuccess(orgId :UUID, roleId :UUID) :Object {
 
   return {
     type: OrgActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS,
     orgId,
-    role
+    roleId
   };
 }
 
-export function removeRoleFromOrganizationFailure() :Object {
+export function removeRoleFromOrganizationFailure(orgId :UUID, roleId :UUID) :Object {
 
   return {
-    type: OrgActionTypes.REMOVE_ROLE_FROM_ORG_FAILURE
+    type: OrgActionTypes.REMOVE_ROLE_FROM_ORG_FAILURE,
+    orgId,
+    roleId
   };
 }
 
@@ -263,5 +268,65 @@ export function removeMemberFromOrganizationFailure() :Object {
 
   return {
     type: OrgActionTypes.REMOVE_MEMBER_FROM_ORG_FAILURE
+  };
+}
+
+export function addRoleToMemberRequest(orgId :UUID, roleId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgActionTypes.ADD_ROLE_TO_MEMBER_REQUEST,
+    orgId,
+    roleId,
+    memberId
+  };
+}
+
+export function addRoleToMemberSuccess(orgId :UUID, roleId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgActionTypes.ADD_ROLE_TO_MEMBER_SUCCESS,
+    orgId,
+    roleId,
+    memberId
+  };
+}
+
+export function addRoleToMemberFailure(orgId :UUID, roleId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgActionTypes.ADD_ROLE_TO_MEMBER_FAILURE,
+    orgId,
+    roleId,
+    memberId
+  };
+}
+
+export function removeRoleFromMemberRequest(orgId :UUID, roleId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgActionTypes.REMOVE_ROLE_FROM_MEMBER_REQUEST,
+    orgId,
+    roleId,
+    memberId
+  };
+}
+
+export function removeRoleFromMemberSuccess(orgId :UUID, roleId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgActionTypes.REMOVE_ROLE_FROM_MEMBER_SUCCESS,
+    orgId,
+    roleId,
+    memberId
+  };
+}
+
+export function removeRoleFromMemberFailure(orgId :UUID, roleId :UUID, memberId :string) :Object {
+
+  return {
+    type: OrgActionTypes.REMOVE_ROLE_FROM_MEMBER_FAILURE,
+    orgId,
+    roleId,
+    memberId
   };
 }
