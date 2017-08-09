@@ -20,8 +20,8 @@ export class EntityType extends React.Component {
     isAdmin: PropTypes.bool
   }
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       properties: [],
       isReordering: false
@@ -49,7 +49,7 @@ export class EntityType extends React.Component {
       Promise.map(entityType.properties, (propertyId) => {
         return EntityDataModelApi.getPropertyType(propertyId);
       }).then((properties) => {
-        this.setState({ properties });
+        this.setState({ entityType, properties });
       });
     });
   }
@@ -85,6 +85,25 @@ export class EntityType extends React.Component {
   updateEntityTypeDescription = (description) => {
     EntityDataModelApi.updateEntityTypeMetaData(this.props.entityType.id, { description })
     .then(() => this.updateFn());
+  }
+
+  updateEntityTypeFqn = (fqn) => {
+    const fqnArray = fqn.split('.');
+    if (fqnArray.length !== 2) return Promise.resolve(false);
+    return EntityDataModelApi.updateEntityTypeMetaData(this.props.entityType.id, {
+      type: {
+        namespace: fqnArray[0],
+        name: fqnArray[1]
+      }
+    })
+    .then(() => {
+      this.updateFn();
+      return true;
+    })
+    .catch(() => {
+      this.updateFn();
+      return false;
+    });
   }
 
   reorderCallback = (e, movedItem, itemsPreviousIndex, itemsNewIndex, reorderedArray) => {
@@ -127,7 +146,13 @@ export class EntityType extends React.Component {
     const entityType = this.props.entityType;
     return (
       <div>
-        <div className={styles.italic}>{`${entityType.type.namespace}.${entityType.type.name}`}</div>
+        <InlineEditableControl
+            type="text"
+            size="small"
+            placeholder="Entity type full qualified name..."
+            value={`${entityType.type.namespace}.${entityType.type.name}`}
+            viewOnly={!this.context.isAdmin}
+            onChangeConfirm={this.updateEntityTypeFqn} />
         <div className={styles.spacerSmall} />
         <InlineEditableControl
             type="text"
