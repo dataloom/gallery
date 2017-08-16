@@ -86,36 +86,62 @@ export default class RowNeighbors extends React.Component {
     return { organizedNeighbors, dateProps, selectedDateProps };
   }
 
+  columnIsEmpty = (fqn, results) => {
+    let empty = true;
+    results.forEach((row) => {
+      if (row[fqn] && row[fqn].length) empty = false;
+    });
+    return empty;
+  }
+
+  getColumnNamesToShow = (neighborGroup, noNeighbor, rowValues) => {
+    const columnNamesToShow = [];
+    neighborGroup.associationPropertyTypes.forEach((propertyType) => {
+      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      if (!this.columnIsEmpty(fqn, rowValues)) columnNamesToShow.push(fqn);
+    });
+    if (!noNeighbor) {
+      neighborGroup.neighborPropertyTypes.forEach((propertyType) => {
+        const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+        if (!this.columnIsEmpty(fqn, rowValues)) columnNamesToShow.push(fqn);
+      });
+    }
+    return columnNamesToShow;
+  }
+
   renderColumns = (renderingAssociation, rowValues, neighborGroup, noNeighbor) => {
     const entitySetId = (noNeighbor) ? null : neighborGroup.neighborEntitySet.id;
-    let numColumns = neighborGroup.associationPropertyTypes.length;
-    if (!noNeighbor) numColumns += neighborGroup.neighborPropertyTypes.length;
+    const columnNamesToShow = this.getColumnNamesToShow(neighborGroup, noNeighbor, rowValues);
+    const numColumns = columnNamesToShow.length;
     const propertyTypes = (renderingAssociation) ?
       neighborGroup.associationPropertyTypes : neighborGroup.neighborPropertyTypes;
 
     const columnWidth = (TABLE_WIDTH - 1) / numColumns;
-    const allColumns = propertyTypes.map((propertyType) => {
+    const allColumns = [];
+    propertyTypes.forEach((propertyType) => {
       const field = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      const renderImage = (propertyType.type.name === 'mugshot'
-        || propertyType.type.name === 'scars'
-        || propertyType.type.name === 'tattoos');
-      return (
-        <Column
-            key={`${entitySetId}-${propertyType.id}`}
-            header={<Cell>{propertyType.title}</Cell>}
-            cell={
-              <TextCell
-                  results={rowValues}
-                  field={field}
-                  formatValueFn={this.props.formatValueFn}
-                  onClick={this.props.onClick}
-                  width={columnWidth}
-                  entitySetId={entitySetId}
-                  propertyTypes={neighborGroup.neighborPropertyTypes}
-                  renderImage={renderImage} />
-            }
-            width={columnWidth} />
-      );
+      if (columnNamesToShow.includes(field)) {
+        const renderImage = (propertyType.type.name === 'mugshot'
+          || propertyType.type.name === 'scars'
+          || propertyType.type.name === 'tattoos');
+        allColumns.push(
+          <Column
+              key={`${entitySetId}-${propertyType.id}`}
+              header={<Cell>{propertyType.title}</Cell>}
+              cell={
+                <TextCell
+                    results={rowValues}
+                    field={field}
+                    formatValueFn={this.props.formatValueFn}
+                    onClick={this.props.onClick}
+                    width={columnWidth}
+                    entitySetId={entitySetId}
+                    propertyTypes={neighborGroup.neighborPropertyTypes}
+                    renderImage={renderImage} />
+              }
+              width={columnWidth} />
+        );
+      }
     });
     return allColumns;
   }
