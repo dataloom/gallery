@@ -5,7 +5,8 @@ import styles from '../styles.module.css';
 export default class PropertyTypeSearchResults extends React.Component {
 
   static propTypes = {
-    results: PropTypes.array
+    results: PropTypes.array,
+    onUpdate: PropTypes.func
   };
 
   constructor(props, context) {
@@ -25,6 +26,7 @@ export default class PropertyTypeSearchResults extends React.Component {
     const propertyTypeList = this.props.results.map((propertyType) => {
       return (<PropertyType
           key={propertyType.id}
+          updateFn={this.props.onUpdate}
           propertyType={propertyType} />);
     });
 
