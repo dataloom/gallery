@@ -12,8 +12,8 @@ import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
   static propTypes = {
-    entityType: PropTypes.object,
-    idToPropertyTypes: PropTypes.object,
+    entityType: PropTypes.shape({}),
+    idToPropertyTypes: PropTypes.shape({}),
     updateFn: PropTypes.func
   }
 
