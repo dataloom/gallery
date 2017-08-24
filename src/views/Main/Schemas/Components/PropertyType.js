@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Button } from 'react-bootstrap';
 import { EntityDataModelApi } from 'loom-data';
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import { PropertyTypePropType } from '../../../../containers/edm/EdmModel';
@@ -6,7 +7,8 @@ import styles from '../styles.module.css';
 
 export class PropertyType extends React.Component {
   static propTypes = {
-    propertyType: PropertyTypePropType.isRequired
+    propertyType: PropertyTypePropType.isRequired,
+    updateFn: PropTypes.func.isRequired
   };
 
   static contextTypes = {
@@ -65,6 +67,22 @@ export class PropertyType extends React.Component {
     });
   }
 
+  deletePropertyType = () => {
+    EntityDataModelApi.deletePropertyType(this.props.propertyType.id)
+    .then(() => {
+      this.props.updateFn();
+    });
+  }
+
+  renderDeleteButton = () => {
+    if (!this.context.isAdmin) return null;
+    return (
+      <div style={{ textAlign: 'center', margin: '10px 0' }}>
+        <Button bsStyle="danger" onClick={this.deletePropertyType}>Delete</Button>
+      </div>
+    );
+  }
+
   render() {
     const prop = this.props.propertyType;
     return (
@@ -95,6 +113,7 @@ export class PropertyType extends React.Component {
         <div className={styles.spacerSmall} />
         <div className={styles.italic}>datatype: {prop.datatype}</div>
         {this.renderPiiField(prop)}
+        {this.renderDeleteButton()}
         <div className={styles.spacerBig} />
         <hr />
       </div>

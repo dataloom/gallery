@@ -12,8 +12,9 @@ import styles from '../styles.module.css';
 
 export class EntityType extends React.Component {
   static propTypes = {
-    entityType: PropTypes.object,
-    idToPropertyTypes: PropTypes.object
+    entityType: PropTypes.shape({}),
+    idToPropertyTypes: PropTypes.shape({}),
+    updateFn: PropTypes.func
   }
 
   static contextTypes = {
@@ -106,6 +107,13 @@ export class EntityType extends React.Component {
     });
   }
 
+  deleteEntityType = () => {
+    EntityDataModelApi.deleteEntityType(this.props.entityType.id)
+    .then(() => {
+      this.props.updateFn();
+    });
+  }
+
   reorderCallback = (e, movedItem, itemsPreviousIndex, itemsNewIndex, reorderedArray) => {
     const orderedIds = reorderedArray.map((propertyType) => {
       return propertyType.id;
@@ -138,6 +146,15 @@ export class EntityType extends React.Component {
             onClick={() => {
               this.setState({ isReordering: !this.state.isReordering });
             }}>{buttonText}</Button>
+      </div>
+    );
+  }
+
+  renderDeleteButton = () => {
+    if (!this.context.isAdmin) return null;
+    return (
+      <div style={{ textAlign: 'center', margin: '10px 0' }}>
+        <Button bsStyle="danger" onClick={this.deleteEntityType}>Delete</Button>
       </div>
     );
   }
@@ -175,6 +192,7 @@ export class EntityType extends React.Component {
         <div className={styles.spacerMed} />
         {this.renderProperties()}
         {this.renderReorderButton()}
+        {this.renderDeleteButton()}
         <div className={styles.spacerBig} />
         <hr />
       </div>
