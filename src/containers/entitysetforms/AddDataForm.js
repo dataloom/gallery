@@ -79,21 +79,44 @@ export default class AddDataForm extends React.Component {
     });
   }
 
+  getEntityId = (primaryKeyIds, formattedValues) => {
+    const pKeyVals = [];
+    primaryKeyIds.forEach((pKey) => {
+      const rawValues = formattedValues[pKey] || [];
+      const encodedValues = [];
+      rawValues.forEach((value) => {
+        encodedValues.push(btoa(value));
+      });
+      pKeyVals.push(btoa(encodeURI(encodedValues.join(','))));
+    });
+    return pKeyVals.join(',');
+  }
+
   generateEntites = () => {
     const { propValues, authorizedPropertyTypes } = this.state;
-    const localDateTimes = {};
+    const formattedValues = {};
     authorizedPropertyTypes.forEach((propertyType :Map) => {
-      if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
-        const propertyTypeId :string = propertyType.get('id');
-        localDateTimes[propertyTypeId] = [moment(propValues[propertyTypeId]).format('YYYY-MM-DDThh:mm:ss')];
+      const propertyTypeId :string = propertyType.get('id');
+      if (propValues[propertyTypeId]) {
+        const filteredValues = propValues[propertyTypeId].filter((value) => {
+          return (value.length);
+        });
+        if (filteredValues.length) {
+          if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
+            const formattedDates = filteredValues.map((value) => {
+              return moment(value).format('YYYY-MM-DDThh:mm:ss');
+            });
+            formattedValues[propertyTypeId] = formattedDates;
+          }
+          else {
+            formattedValues[propertyTypeId] = filteredValues;
+          }
+        }
       }
     });
-    const formattedValues = Object.assign({}, propValues, localDateTimes);
-    const entityKey = this.props.primaryKey.map((keyId) => {
-      const utf8Val = (formattedValues[keyId].length > 0) ? encodeURI(formattedValues[keyId][0]) : '';
-      return btoa(utf8Val);
-    }).join(',');
-    return { [entityKey]: formattedValues };
+
+    const entityId = this.getEntityId(this.props.primaryKey, formattedValues);
+    return { [entityId]: formattedValues };
   }
 
   onSubmit = (e) => {
