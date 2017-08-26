@@ -63,7 +63,8 @@ export default class TopUtilizersHistogram extends React.Component {
       });
     }
     neighbors.forEach((neighbor) => {
-      if (neighbor.has('neighborEntitySet') && neighbor.getIn(['neighborEntitySet', 'entityTypeId']) === entityTypeId
+      if (neighbor && neighbor.has('neighborEntitySet')
+        && neighbor.getIn(['neighborEntitySet', 'entityTypeId']) === entityTypeId
         && neighbor.has('neighborDetails')) {
         neighbor.getIn(['neighborDetails', propertyTypeFqn], []).forEach((value) => {
           values.push(value);
