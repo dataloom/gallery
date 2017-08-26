@@ -79,12 +79,10 @@ export default class TopUtilizersMultiHistogram extends React.Component {
     const utilizerIdToCounts = {};
     const valuesToUtilizerIds = {};
     const fqnToPropertyType = this.getFqnToPropertyType(allPropertyTypes);
-
     Object.values(allEntityTypes).forEach((entityType) => {
       valuesToUtilizerIds[entityType.id] = {};
       entityType.properties.forEach((propertyId) => {
-        const fqn = `${allPropertyTypes[propertyId].type.namespace}.${allPropertyTypes[propertyId].type.name}`;
-        valuesToUtilizerIds[entityType.id][fqnToPropertyType[fqn].id] = {};
+        valuesToUtilizerIds[entityType.id][propertyId] = {};
       });
     });
 
@@ -94,7 +92,6 @@ export default class TopUtilizersMultiHistogram extends React.Component {
       utilizerIdToCounts[entityId] = { [utilizerEntityType.id]: {} };
 
       Object.entries(utilizer).forEach((entry) => {
-
         const propertyTypeFqn = entry[0];
         if (propertyTypeFqn !== 'count' && propertyTypeFqn !== 'id') {
           const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
@@ -110,27 +107,33 @@ export default class TopUtilizersMultiHistogram extends React.Component {
       });
 
       const utilizerNeighbors = neighbors.get(entityId) || [];
+      const allEntityTypeIds = new Set(Object.keys(this.props.allEntityTypes));
       utilizerNeighbors.forEach((neighbor) => {
         if (neighbor.has('neighborEntitySet') && neighbor.has('neighborDetails')) {
           const entityTypeId = neighbor.getIn(['neighborEntitySet', 'entityTypeId']);
-          if (!utilizerIdToCounts[entityId][entityTypeId]) utilizerIdToCounts[entityId][entityTypeId] = {};
-
-          neighbor.get('neighborDetails').entrySeq().forEach((entry) => {
-            const propertyTypeFqn = entry[0];
-            const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
-            if (!utilizerIdToCounts[entityId][entityTypeId][propertyTypeId]) {
-              utilizerIdToCounts[entityId][entityTypeId][propertyTypeId] = {};
+          if (allEntityTypeIds.has(entityTypeId)) {
+            if (!utilizerIdToCounts[entityId][entityTypeId]) {
+              utilizerIdToCounts[entityId][entityTypeId] = {};
             }
 
-            entry[1].forEach((value) => {
-              const newIdSet = (valuesToUtilizerIds[entityTypeId][propertyTypeId][value])
-                ? valuesToUtilizerIds[entityTypeId][propertyTypeId][value].add(entityId) : new Set([entityId]);
-              valuesToUtilizerIds[entityTypeId][propertyTypeId][value] = newIdSet;
-              const prevVal = utilizerIdToCounts[entityId][entityTypeId][propertyTypeId][value] || 0;
-              utilizerIdToCounts[entityId][entityTypeId][propertyTypeId][value] = prevVal + 1;
+            neighbor.get('neighborDetails').entrySeq().forEach((entry) => {
+              const propertyTypeFqn = entry[0];
+              const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
+              if (!utilizerIdToCounts[entityId][entityTypeId][propertyTypeId]) {
+                utilizerIdToCounts[entityId][entityTypeId][propertyTypeId] = {};
+              }
+
+              entry[1].forEach((value) => {
+                const newIdSet = (valuesToUtilizerIds[entityTypeId][propertyTypeId][value])
+                  ? valuesToUtilizerIds[entityTypeId][propertyTypeId][value].add(entityId) : new Set([entityId]);
+                valuesToUtilizerIds[entityTypeId][propertyTypeId][value] = newIdSet;
+                const prevVal = utilizerIdToCounts[entityId][entityTypeId][propertyTypeId][value] || 0;
+                utilizerIdToCounts[entityId][entityTypeId][propertyTypeId][value] = prevVal + 1;
+              });
             });
-          });
+          }
         }
+
       });
     });
     this.getHistogramData({}, utilizerIdToCounts, valuesToUtilizerIds, allEntityTypes);
