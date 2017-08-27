@@ -222,7 +222,7 @@ export default class EventTimeline extends React.Component {
     );
   }
 
-  renderEvent = (date, dateDetails) => {
+  renderEvent = (date, dateDetails, key) => {
     const propertyType = dateDetails.propertyType;
     const associationEntitySet = dateDetails.row.associationEntitySet;
     const neighborEntitySet = dateDetails.row.neighborEntitySet;
@@ -247,6 +247,7 @@ export default class EventTimeline extends React.Component {
     const formattedDate = `${dateObj.toDateString()} ${dateObj.toLocaleTimeString()}`;
     return (
       <TimelineEvent
+          key={key}
           title={<div className={styles.timelineTitle}>{title}</div>}
           createdAt={<div className={styles.timelineDate}>{formattedDate}</div>}
           contentStyle={{ boxShadow: 'none' }}
@@ -262,9 +263,9 @@ export default class EventTimeline extends React.Component {
       return new Date(date1).getTime() - new Date(date2).getTime();
     });
     const events = [];
-    orderedDates.forEach((date) => {
-      datesToProps[date].forEach((dateDetails) => {
-        events.push(this.renderEvent(date, dateDetails));
+    orderedDates.forEach((date, dateIndex) => {
+      datesToProps[date].forEach((dateDetails, detailsIndex) => {
+        events.push(this.renderEvent(date, dateDetails, `${dateIndex}-${detailsIndex}`));
       });
     });
     return events;
