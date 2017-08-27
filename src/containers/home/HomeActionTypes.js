@@ -1,0 +1,7 @@
+/*
+ * @flow
+ */
+
+export const HOME_ENTITY_SETS_REQUEST :string = 'HOME_ENTITY_SETS_REQUEST';
+export const HOME_ENTITY_SETS_SUCCESS :string = 'HOME_ENTITY_SETS_SUCCESS';
+export const HOME_ENTITY_SETS_FAILURE :string = 'HOME_ENTITY_SETS_FAILURE';

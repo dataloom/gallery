@@ -10,6 +10,7 @@ import createEntitySetReducer from '../../containers/entitysetforms/CreateEntity
 import datasetsReducer from '../../containers/datasets/DatasetsReducer';
 import edmReducer from '../../containers/edm/EdmReducer';
 import entitySetDetailReducer from '../../containers/entitysetdetail/EntitySetDetailReducer';
+import homeReducer from '../../containers/home/homeReducer';
 import organizationsReducer from '../../containers/organizations/reducers/OrganizationsReducer';
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import permissionsSummaryReducer from '../../containers/permissionssummary/PermissionsSummaryReducer';
@@ -30,6 +31,7 @@ export default function reduxReducer() {
     datasets: datasetsReducer,
     edm: edmReducer,
     entitySetDetail: entitySetDetailReducer,
+    home: homeReducer,
     neuron: neuronReducer,
     organizations: organizationsReducer,
     permissions: permissionReducer,

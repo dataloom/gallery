@@ -1,11 +1,13 @@
 const SCHEMA = 'schema';
 const ENTITY_SET = 'entitySet';
 const ENTITY_TYPE = 'entityType';
+const ASSOCIATION_TYPE = 'associationType';
 const PROPERTY_TYPE = 'propertyType';
 
 const SCHEMA_TITLE = 'Schema';
 const ENTITY_SET_TITLE = 'Entity Set';
 const ENTITY_TYPE_TITLE = 'Entity Type';
+const ASSOCIATION_TYPE_TITLE = 'Association Type';
 const PROPERTY_TYPE_TITLE = 'Property Type';
 
 const EDM_PRIMITIVE_TYPES = [
@@ -65,18 +67,26 @@ const ANALYZERS = {
   metaphone: 'METAPHONE'
 };
 
+const ASSOCIATION_TYPE_FIELDS = {
+  src: 'src',
+  dst: 'dst'
+};
+
 export default {
   SCHEMA,
   ENTITY_SET,
   ENTITY_TYPE,
+  ASSOCIATION_TYPE,
   SCHEMA_TITLE,
   ENTITY_SET_TITLE,
   ENTITY_TYPE_TITLE,
+  ASSOCIATION_TYPE_TITLE,
   PROPERTY_TYPE_TITLE,
   PROPERTY_TYPE,
   EDM_PRIMITIVE_TYPES,
   EDM_NUMBER_TYPES,
   EDM_GEOGRAPHY_TYPES,
   EDM_DATE_TYPES,
-  ANALYZERS
+  ANALYZERS,
+  ASSOCIATION_TYPE_FIELDS
 };

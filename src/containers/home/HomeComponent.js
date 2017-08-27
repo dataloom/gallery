@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import DocumentTitle from 'react-document-title';
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Pager } from 'react-bootstrap';
 
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import EntitySetList from '../../components/entityset/EntitySetList';
@@ -20,43 +20,77 @@ import visualizeImg from '../../images/icon-visualize.svg';
 import PageConsts from '../../utils/Consts/PageConsts';
 import WelcomeInstructionsBox from './WelcomeInstructionsBox';
 
+import { homeEntitySetsRequest } from './HomeActionFactories';
+
 import {
-  fetchAllEntitySetsRequest,
   fetchAllEntityTypesRequest,
   fetchAllPropertyTypesRequest
 } from '../edm/EdmActionFactory';
 
 import styles from './styles.module.css';
 
+const MAX_ENTITY_SETS = 10;
+
 class HomeComponent extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      fetchAllEntitySetsRequest: PropTypes.func.isRequired,
-      fetchAllEntityTypesRequest: PropTypes.func.isRequired,
-      fetchAllPropertyTypesRequest: PropTypes.func.isRequired
+      loadEntitySetPage: PropTypes.func.isRequired,
+      fetchAllEntityTypes: PropTypes.func.isRequired,
+      fetchAllPropertyTypes: PropTypes.func.isRequired
     }).isRequired,
     asyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
-    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired
+    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired,
+    numHits: PropTypes.number.isRequired
   };
 
-  componentDidMount() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      page: 0
+    };
+  }
 
-    this.props.actions.fetchAllEntitySetsRequest();
-    this.props.actions.fetchAllEntityTypesRequest();
-    this.props.actions.fetchAllPropertyTypesRequest();
+  componentDidMount() {
+    this.props.actions.loadEntitySetPage(this.state.page);
+    this.props.actions.fetchAllEntityTypes();
+    this.props.actions.fetchAllPropertyTypes();
+  }
+
+  goBack = () => {
+    const page = this.state.page - 1;
+    this.setState({ page });
+    this.props.actions.loadEntitySetPage(page);
+  }
+
+  goForward = () => {
+    const page = this.state.page + 1;
+    this.setState({ page });
+    this.props.actions.loadEntitySetPage(page);
   }
 
   renderAllEntitySets = () => {
-
     if (this.props.entitySets.size > 0) {
       return (
         <AsyncContent
             status={this.props.asyncState.get('status')}
-            pendingContent={<h2>Please run a search</h2>}
+            errorMessage={this.props.asyncState.get('errorMessage')}
+            pendingContent={<h2>Loading entity sets</h2>}
             content={() => {
               return (
-                <EntitySetList entitySets={this.props.entitySets} />
+                <div>
+                  <EntitySetList entitySets={this.props.entitySets} />
+                  <Pager>
+                    <Pager.Item
+                        previous
+                        disabled={this.state.page === 0}
+                        onClick={this.goBack}>&larr;</Pager.Item>
+                    <Pager.Item
+                        next
+                        disabled={this.props.numHits <= ((this.state.page + 1) * MAX_ENTITY_SETS)}
+                        onClick={this.goForward}>&rarr;</Pager.Item>
+                  </Pager>
+                </div>
               );
             }} />
       );
@@ -102,22 +136,34 @@ class HomeComponent extends React.Component {
 
 function mapStateToProps(state) {
 
+  const entitySetIds :List<string> = state.getIn(['home', 'entitySetIds'], Immutable.List());
+  let entitySets :Map = Immutable.Map();
+  entitySetIds.forEach((entitySetId :string) => {
+    entitySets = entitySets.set(
+      entitySetId, state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map())
+    );
+  });
+
   return {
-    asyncState: state.getIn(['edm', 'asyncState'], Immutable.Map()),
-    entitySets: state.getIn(['edm', 'entitySets'], Immutable.Map())
+    asyncState: state.getIn(['home', 'asyncState'], Immutable.Map()),
+    numHits: state.getIn(['home', 'numHits'], 0),
+    entitySets
   };
 }
 
 function mapDispatchToProps(dispatch :Function) :Object {
-
-  const actions = {
-    fetchAllEntitySetsRequest,
-    fetchAllEntityTypesRequest,
-    fetchAllPropertyTypesRequest
-  };
-
   return {
-    actions: bindActionCreators(actions, dispatch)
+    actions: {
+      loadEntitySetPage: (page) => {
+        dispatch(homeEntitySetsRequest(page * MAX_ENTITY_SETS, MAX_ENTITY_SETS));
+      },
+      fetchAllEntityTypes: () => {
+        dispatch(fetchAllEntityTypesRequest());
+      },
+      fetchAllPropertyTypes: () => {
+        dispatch(fetchAllPropertyTypesRequest());
+      }
+    }
   };
 }
 

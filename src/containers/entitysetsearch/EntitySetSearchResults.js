@@ -93,8 +93,26 @@ export default class EntitySetSearchResults extends React.Component {
     );
   }
 
+  columnIsEmpty = (fqn) => {
+    let empty = true;
+    this.state.results.forEach((row) => {
+      if (row[fqn] && row[fqn].length) empty = false;
+    });
+    return empty;
+  }
+
+  getColumnNamesToShow = () => {
+    const columnNamesToShow = new Set();
+    this.props.propertyTypes.forEach((propertyType) => {
+      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      if (!this.columnIsEmpty(fqn)) columnNamesToShow.add(fqn);
+    });
+    return columnNamesToShow;
+  }
+
   renderColumns = () => {
-    const numColumns = (this.props.showCount) ? this.props.propertyTypes.length + 1 : this.props.propertyTypes.length;
+    const columnNamesToShow = this.getColumnNamesToShow();
+    const numColumns = (this.props.showCount) ? columnNamesToShow.size + 1 : columnNamesToShow.size;
     const columnWidth = (TABLE_WIDTH - 1) / numColumns;
     const columns = [];
     if (this.props.showCount) {
@@ -108,16 +126,18 @@ export default class EntitySetSearchResults extends React.Component {
     }
     this.props.propertyTypes.forEach((propertyType) => {
       const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      if (propertyType.type.name !== 'mugshot'
-        && propertyType.type.name !== 'scars'
-        && propertyType.type.name !== 'tattoos') {
-        columns.push(
-          <Column
-              key={fqn}
-              header={<Cell>{propertyType.title}</Cell>}
-              cell={this.renderTextCell(fqn, columnWidth)}
-              width={columnWidth} />
-        );
+      if (columnNamesToShow.has(fqn)) {
+        if (propertyType.type.name !== 'mugshot'
+          && propertyType.type.name !== 'scars'
+          && propertyType.type.name !== 'tattoos') {
+          columns.push(
+            <Column
+                key={fqn}
+                header={<Cell>{propertyType.title}</Cell>}
+                cell={this.renderTextCell(fqn, columnWidth)}
+                width={columnWidth} />
+          );
+        }
       }
     });
     return columns;

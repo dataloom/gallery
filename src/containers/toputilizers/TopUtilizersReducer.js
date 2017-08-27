@@ -9,7 +9,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   topUtilizersDetailsList: {},
   topUtilizersResults: [],
   isGettingResults: false,
-  associationDetails: Immutable.Map()
+  associationDetails: Immutable.Map(),
+  neighbors: Immutable.Map()
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -62,6 +63,9 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.SUBMIT_TOP_UTILIZERS_FAILURE:
       return state.set('isGettingResults', false);
+
+    case actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_SUCCESS:
+      return state.set('neighbors', Immutable.fromJS(action.neighbors));
 
     default:
       return state;

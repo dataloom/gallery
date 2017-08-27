@@ -4,6 +4,7 @@ import DocumentTitle from 'react-document-title';
 import Page from '../../../components/page/Page';
 import { SchemaList } from './Components/SchemaList';
 import EntityTypeSearch from './Components/EntityTypeSearch';
+import AssociationTypeSearch from './Components/AssociationTypeSearch';
 import PropertyTypeSearch from './Components/PropertyTypeSearch';
 import { DataModelToolbar } from './Components/DataModelToolbar';
 import EdmConsts from '../../../utils/Consts/EdmConsts';
@@ -42,6 +43,11 @@ export class DataModel extends React.Component {
         return (
           <DocumentTitle title="Property Types">
             <PropertyTypeSearch location={this.props.location} />
+          </DocumentTitle>);
+      case EdmConsts.ASSOCIATION_TYPE:
+        return (
+          <DocumentTitle title="Association Types">
+            <AssociationTypeSearch location={this.props.location} />
           </DocumentTitle>);
       case EdmConsts.ENTITY_TYPE:
       default:

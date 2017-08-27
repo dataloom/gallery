@@ -1,76 +1,95 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Promise from 'bluebird';
 import DocumentTitle from 'react-document-title';
-import { Button } from 'react-bootstrap';
+import Promise from 'bluebird';
+import Immutable from 'immutable';
+import { Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { EntityDataModelApi } from 'loom-data';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
-import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
+import TopUtilizersTable from '../components/TopUtilizersTable';
+import TopUtilizersHistogram from '../components/TopUtilizersHistogram';
+import TopUtilizersMultiHistogram from '../components/TopUtilizersMultiHistogram';
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import styles from '../styles.module.css';
+
+const DISPLAYS = {
+  TABLE: 'table',
+  HISTOGRAM: 'histogram',
+  MULTI_HISTOGRAM: 'multi_histogram'
+};
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
-    entitySetId: PropTypes.string.isRequired,
+    entitySet: PropTypes.object.isRequired,
+    propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
-    topUtilizersDetails: PropTypes.object.isRequired
+    topUtilizersDetails: PropTypes.instanceOf(Immutable.Map).isRequired,
+    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
       entityType: null,
-      propertyTypes: []
+      propertyTypes: [],
+      display: DISPLAYS.TABLE,
+      neighborEntityTypes: [],
+      neighborPropertyTypes: {}
     };
   }
 
   componentDidMount() {
     this.loadEntitySet();
-  }
-
-  loadEntitySet = () => {
-    EntityDataModelApi.getEntitySet(this.props.entitySetId)
-    .then((entitySet) => {
-      EntityDataModelApi.getEntityType(entitySet.entityTypeId)
-      .then((entityType) => {
-        Promise.map(entityType.properties, (propertyId) => {
-          return EntityDataModelApi.getPropertyType(propertyId);
-        }).then((propertyTypes) => {
-          this.setState({ entityType, propertyTypes });
-        });
+    const neighborTypeIds = new Set();
+    this.props.topUtilizersDetails.valueSeq().forEach((detailsObj) => {
+      detailsObj.get('neighborTypeIds').forEach((id) => {
+        neighborTypeIds.add(id);
       });
     });
   }
 
-  formatValue = (rawValue) => {
-    if (rawValue instanceof Array) {
-      let formattedValue = '';
-      if (rawValue.length > 0) formattedValue = formattedValue.concat(rawValue[0]);
-      if (rawValue.length > 1) {
-        for (let i = 1; i < rawValue.length; i += 1) {
-          formattedValue = formattedValue.concat(', ').concat(rawValue[i]);
-        }
-      }
-      return formattedValue;
-    }
-    return rawValue;
+  loadEntitySet = () => {
+    EntityDataModelApi.getEntityType(this.props.entitySet.entityTypeId)
+    .then((entityType) => {
+      Promise.map(entityType.properties, (propertyId) => {
+        return EntityDataModelApi.getPropertyType(propertyId);
+      }).then((propertyTypes) => {
+        this.setState({ entityType, propertyTypes });
+        this.loadNeighborTypes();
+      });
+    });
   }
 
-  renderTable = () => {
-    if (this.state.propertyTypes.length === 0) return null;
-    return (
-      <SearchResultsTable
-          results={this.props.results.toJS()}
-          propertyTypes={this.state.propertyTypes}
-          formatValueFn={this.formatValue}
-          entitySetId={this.props.entitySetId}
-          showCount />
-    );
+  loadNeighborTypes = () => {
+    const neighborTypeIds = new Set();
+    this.props.topUtilizersDetails.valueSeq().forEach((detailsObj) => {
+      detailsObj.get('neighborTypeIds').forEach((id) => {
+        neighborTypeIds.add(id);
+      });
+    });
+    Promise.map(neighborTypeIds, (entityTypeId) => {
+      return EntityDataModelApi.getEntityType(entityTypeId);
+    }).then((neighborEntityTypes) => {
+      const neighborPropertyTypes = {};
+      neighborEntityTypes.forEach((entityType) => {
+        entityType.properties.forEach((propertyTypeId) => {
+          neighborPropertyTypes[propertyTypeId] = {};
+        });
+      });
+      Promise.map(Object.keys(neighborPropertyTypes), (propertyTypeId) => {
+        return EntityDataModelApi.getPropertyType(propertyTypeId);
+      }).then((propertyTypes) => {
+        propertyTypes.forEach((propertyType) => {
+          neighborPropertyTypes[propertyType.id] = propertyType;
+        });
+        this.setState({ neighborEntityTypes, neighborPropertyTypes });
+      });
+    });
   }
 
   renderDownloadButton = () => {
@@ -79,19 +98,90 @@ class TopUtilizersResultsContainer extends React.Component {
         <Button
             bsStyle="primary"
             onClick={() => {
-              this.props.downloadResults(this.props.entitySetId, this.props.topUtilizersDetails);
+              this.props.downloadResults(this.props.entitySet.id, this.props.topUtilizersDetails);
             }}>Download as CSV</Button>
       </div>
     );
   }
 
   renderContent = () => {
-    return this.props.isGettingResults ? <LoadingSpinner /> : (
+    return this.props.isGettingResults ? <LoadingSpinner /> : this.renderResultsContainer();
+  }
+
+  renderResultsContainer = () => {
+    return (this.props.results.size === 0) ?
+    (
+      <div>No results found.</div>
+    ) : (
       <div>
-        {this.renderTable()}
+        {this.renderDisplayToolbar()}
+        {this.renderResults()}
         {this.renderDownloadButton()}
       </div>
     );
+  }
+
+  renderDisplayToolbar = () => {
+    return (
+      <div className={styles.displayToolbar}>
+        <ButtonGroup>
+          <Button
+              onClick={() => {
+                this.setState({ display: DISPLAYS.TABLE });
+              }}
+              active={this.state.display === DISPLAYS.TABLE}>
+            Table</Button>
+          <Button
+              onClick={() => {
+                this.setState({ display: DISPLAYS.HISTOGRAM });
+              }}
+              active={this.state.display === DISPLAYS.HISTOGRAM}>
+            Histogram</Button>
+          <Button
+              onClick={() => {
+                this.setState({ display: DISPLAYS.MULTI_HISTOGRAM });
+              }}
+              active={this.state.display === DISPLAYS.MULTI_HISTOGRAM}>
+            Multi-Histogram</Button>
+        </ButtonGroup>
+      </div>
+    );
+  }
+
+  renderResults = () => {
+    if (this.state.display === DISPLAYS.TABLE) {
+      return (<TopUtilizersTable
+          results={this.props.results.toJS()}
+          propertyTypes={this.props.propertyTypes}
+          entitySetId={this.props.entitySet.id} />);
+    }
+    else if (this.state.display === DISPLAYS.HISTOGRAM) {
+      return (<TopUtilizersHistogram
+          results={this.props.results.toJS()}
+          propertyTypes={this.state.propertyTypes}
+          entityType={this.state.entityType}
+          neighborEntityTypes={this.state.neighborEntityTypes}
+          neighborPropertyTypes={this.state.neighborPropertyTypes}
+          neighbors={this.props.neighbors} />);
+    }
+
+    else if (this.state.display === DISPLAYS.MULTI_HISTOGRAM) {
+      const allPropertyTypes = Object.assign({}, this.state.neighborPropertyTypes);
+      this.state.propertyTypes.forEach((propertyType) => {
+        allPropertyTypes[propertyType.id] = propertyType;
+      });
+      const allEntityTypes = {};
+      [this.state.entityType].concat(this.state.neighborEntityTypes).forEach((entityType) => {
+        allEntityTypes[entityType.id] = entityType;
+      });
+      return (<TopUtilizersMultiHistogram
+          results={this.props.results.toJS()}
+          entityType={this.state.entityType}
+          allEntityTypes={allEntityTypes}
+          allPropertyTypes={allPropertyTypes}
+          neighbors={this.props.neighbors} />);
+    }
+    return null;
   }
 
   render() {
@@ -110,7 +200,8 @@ function mapStateToProps(state) {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
-    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList').toJS()
+    topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList'),
+    neighbors: topUtilizers.get('neighbors')
   };
 }
 

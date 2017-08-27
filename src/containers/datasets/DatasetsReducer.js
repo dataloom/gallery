@@ -43,7 +43,8 @@ export default function reducer(state:Map<*, *> = INITIAL_STATE, action:Object) 
       const newState :Map = state
         .set('pagingToken', action.pagingToken)
         .set('finishedLoading', !action.pagingToken)
-        .set('ownedEntitySetIds', Immutable.fromJS(action.ownedEntitySetIds));
+        .set('ownedEntitySetIds', Immutable.fromJS(action.ownedEntitySetIds))
+        .set('asyncStatus', ASYNC_STATUS.SUCCESS);
 
       if (!state.get('allPagingTokens').includes(action.pagingToken)) {
         return newState.set('allPagingTokens', state.get('allPagingTokens').push(action.pagingToken));

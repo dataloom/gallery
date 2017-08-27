@@ -5,6 +5,8 @@ import {
   AnalysisApi
 } from 'loom-data';
 
+import { SearchApi } from 'lattice';
+
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
 import FileService from '../../utils/FileService';
@@ -81,15 +83,19 @@ function submitQueryEpic(action$) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersDetailsList = Object.values(action.topUtilizersDetails);
+      const topUtilizersDetailsList = action.topUtilizersDetails.valueSeq();
       return Observable
         .from(
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList)
         )
         .mergeMap((results) => {
+          const entityIds = results.map((result) => {
+            return result.id[0];
+          });
           return Observable
             .of(
-              actionFactory.submitTopUtilizersSuccess(results)
+              actionFactory.submitTopUtilizersSuccess(results),
+              actionFactory.getTopUtilizersNeighborsRequest(action.entitySetId, entityIds)
             );
         })
         .catch((err) => {
@@ -104,7 +110,7 @@ function downloadTopUtilizersEpic(action$) {
   return action$
     .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersDetailsList = Object.values(action.topUtilizersDetails);
+      const topUtilizersDetailsList = action.topUtilizersDetails.valueSeq();
       return Observable
         .from(
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList, FileConsts.CSV)
@@ -125,10 +131,33 @@ function downloadTopUtilizersEpic(action$) {
     });
 }
 
+function getTopUtilizersNeighborsEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(
+          SearchApi.searchEntityNeighborsBulk(action.entitySetId, action.entityIds)
+        )
+        .mergeMap((neighbors) => {
+          return Observable
+            .of(
+              actionFactory.getTopUtilizersNeighborsSuccess(neighbors)
+            );
+        })
+        .catch((err) => {
+          return Observable.of(
+            actionFactory.getTopUtilizersNeighborsFailure(err)
+          );
+        });
+    });
+}
+
 export default combineEpics(
   getEntitySetEpic,
   getAssociationsEpic,
   getAssociationDetailsEpic,
   submitQueryEpic,
-  downloadTopUtilizersEpic
+  downloadTopUtilizersEpic,
+  getTopUtilizersNeighborsEpic
 );
