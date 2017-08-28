@@ -10,10 +10,10 @@ import {
 import {
   EntityDataModelApi,
   LinkingApi
-} from 'loom-data';
+} from 'lattice';
 
 import AuthService from '../../../utils/AuthService';
-import DefineLinkedEntityType from './DefineLinkedEntityType';
+import SelectIncludedFields from './SelectIncludedFields';
 import DefineLinkedEntitySet from './DefineLinkedEntitySet';
 import Page from '../../../components/page/Page';
 import DeleteButton from '../../../components/buttons/DeleteButton';
@@ -41,8 +41,7 @@ export class Link extends React.Component {
       linkingError: false,
       linkingSuccess: false,
       chooseLinks: false,
-      chooseLinkedEntityType: false,
-      entityTypeCreated: false,
+      selectFieldsToInclude: false,
       linkingEntityTypeId: '',
       isLinking: false,
       defineLinkedEntityTypeError: false,
@@ -50,7 +49,8 @@ export class Link extends React.Component {
       titleValue: '',
       namespaceValue: '',
       nameValue: '',
-      descriptionValue: ''
+      descriptionValue: '',
+      selectedFieldIds: []
     };
   }
 
@@ -240,7 +240,7 @@ export class Link extends React.Component {
     this.setState({
       selectedEntitySets,
       chooseLinks,
-      chooseLinkedEntityType: false
+      selectFieldsToInclude: false
     });
     this.loadPropertyTypesForSelectedEntitySets(selectedEntitySets);
   }
@@ -281,15 +281,15 @@ export class Link extends React.Component {
     );
   }
 
-  renderDefineLinkedEntityTypeButton = () => {
+  renderSelectFieldsButton = () => {
     if (this.state.selectedEntitySets.length > 0
       && this.state.links.length >= 1
-      && !this.state.chooseLinkedEntityType) {
+      && !this.state.selectFieldsToInclude) {
       return (
         <div className={styles.createEntityTypeButtonContainer}>
           <Button
               bsStyle="primary"
-              onClick={this.chooseLinkedEntityType}
+              onClick={this.selectFieldsToInclude}
               className={styles.propertyTypesButton}>
             {'Confirm property links'}</Button>
         </div>
@@ -298,30 +298,19 @@ export class Link extends React.Component {
     return null;
   }
 
-  renderDefineLinkedEntityType = () => {
-    if (this.state.chooseLinkedEntityType) {
-      const entityTypeFormData = {
-        namespace: this.state.namespaceValue,
-        name: this.state.nameValue,
-        title: this.state.titleValue,
-        description: this.state.descriptionValue
-      };
+  renderSelectFields = () => {
+    if (this.state.selectFieldsToInclude) {
       return (
-        <DefineLinkedEntityType
+        <SelectIncludedFields
             availablePropertyTypes={this.state.availablePropertyTypes}
-            linkFn={this.createLinkingEntityType}
-            formData={entityTypeFormData}
-            handleNamespaceChange={this.handleNamespaceChange}
-            handleNameChange={this.handleNameChange}
-            handleTitleChange={this.handleTitleChange}
-            handleDescriptionChange={this.handleDescriptionChange} />
+            selectPropertiesFn={this.confirmSelectedFields} />
       );
     }
     return null;
   }
 
-  chooseLinkedEntityType = () => {
-    this.setState({ chooseLinkedEntityType: true });
+  selectFieldsToInclude = () => {
+    this.setState({ selectFieldsToInclude: true });
   }
 
   performLink = (name, title, description, contacts) => {
@@ -331,7 +320,7 @@ export class Link extends React.Component {
       title,
       description,
       contacts,
-      entityTypeId: this.state.linkingEntityTypeId
+      entityTypeId: this.state.selectedEntitySets[0].entityTypeId
     };
     const linkingProperties = this.state.links.map((linkPropertyType) => {
       const propertyMap = {};
@@ -341,7 +330,9 @@ export class Link extends React.Component {
       return propertyMap;
     });
     const linkingEntitySet = { entitySet, linkingProperties };
-    LinkingApi.linkEntitySets(linkingEntitySet)
+    const propertyTypes = this.state.selectedFieldIds;
+    const linkingRequest = { linkingEntitySet, propertyTypes };
+    LinkingApi.linkEntitySets(linkingRequest)
     .then(() => {
       this.setState({
         linkingSuccess: true,
@@ -359,39 +350,8 @@ export class Link extends React.Component {
     });
   }
 
-  createLinkingEntityType = (entityType, deidentified) => {
-    let entityTypeIds = new Set();
-    this.state.allEntitySets.forEach((entitySet) => {
-      this.state.selectedEntitySets.forEach((selectedEntitySet) => {
-        if (selectedEntitySet.id === entitySet.id) entityTypeIds.add(entitySet.entityTypeId);
-      });
-    });
-    entityTypeIds = Array.from(entityTypeIds);
-    LinkingApi.createLinkingEntityType({ entityType, entityTypeIds, deidentified })
-    .then((linkingEntityTypeId) => {
-      if (linkingEntityTypeId) {
-        this.setState({
-          entityTypeCreated: true,
-          deidentified,
-          linkingEntityTypeId,
-          defineLinkedEntityTypeError: false
-        });
-      }
-      else {
-        this.setState({
-          entityTypeCreated: false,
-          linkingError: true,
-          linkingSuccess: false
-        });
-      }
-    }).catch(() => {
-      this.setState({
-        entityTypeCreated: false,
-        linkingError: true,
-        linkingSuccess: false,
-        defineLinkedEntityTypeError: true
-      });
-    });
+  confirmSelectedFields = (selectedFieldIds) => {
+    this.setState({ selectedFieldIds });
   }
 
   getDefaultContact = () => {
@@ -401,12 +361,6 @@ export class Link extends React.Component {
     if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
     if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
     return defaultContact;
-  }
-
-  renderDefineLinkedEntityTypeError = () => {
-    return this.state.defineLinkedEntityTypeError
-        ? <div className={styles.error}>An error occurred. Check that the Namespace + Name combination is unique.</div>
-        : null;
   }
 
   handleNamespaceChange = (e) => {
@@ -433,7 +387,7 @@ export class Link extends React.Component {
     else if (this.state.linkingSuccess) {
       content = <div className={styles.linkingSuccessMsg}>Success! Your linked entity set is being created.</div>;
     }
-    else if (this.state.entityTypeCreated) {
+    else if (this.state.selectedFieldIds.length) {
       const formData = {
         namespace: this.state.namespace,
         name: this.state.nameValue,
@@ -452,9 +406,8 @@ export class Link extends React.Component {
           {this.renderChooseEntitySets()}
           {this.renderChooseLinksButton()}
           {this.renderChooseLinks()}
-          {this.renderDefineLinkedEntityTypeButton()}
-          {this.renderDefineLinkedEntityType()}
-          {this.renderDefineLinkedEntityTypeError()}
+          {this.renderSelectFieldsButton()}
+          {this.renderSelectFields()}
         </div>
       );
     }
@@ -463,7 +416,6 @@ export class Link extends React.Component {
         <Page>
           <Page.Header>
             <Page.Title>Link</Page.Title>
-            <div className={styles.headerLink}><a href="https://help.thedataloom.com/guides/linking/" target="_blank">Click here for instructions</a></div>
           </Page.Header>
           <Page.Body>
             {content}
