@@ -330,8 +330,8 @@ export class Link extends React.Component {
       return propertyMap;
     });
     const linkingEntitySet = { entitySet, linkingProperties };
-    const propertyTypes = this.state.selectedFieldIds;
-    const linkingRequest = { linkingEntitySet, propertyTypes };
+    const propertyTypeIds = this.state.selectedFieldIds;
+    const linkingRequest = { linkingEntitySet, propertyTypeIds };
     LinkingApi.linkEntitySets(linkingRequest)
     .then(() => {
       this.setState({
