@@ -50,13 +50,6 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
-const requireAdmin = (nextState, replace) => {
-  requireAuth(nextState, replace);
-  if (!auth.getProfile().roles.includes(ADMIN)) {
-    replace({ pathname: `/${PageConsts.HOME}` });
-  }
-};
-
 const isAdmin = () => {
   return (auth.loggedIn() && auth.getProfile().hasOwnProperty('roles') && auth.getProfile().roles.includes(ADMIN));
 };
@@ -99,7 +92,7 @@ export const makeMainRoutes = () => {
         <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
       </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
-      <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors*/}
+      <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors */}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
