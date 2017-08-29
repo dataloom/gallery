@@ -105,7 +105,7 @@ export default class TopUtilizersMultiHistogram extends React.Component {
         }
       });
 
-      const utilizerNeighbors = neighbors.get(entityId) || [];
+      const utilizerNeighbors = neighbors.get(entityId, Immutable.List());
       const allEntityTypeIds = new Set(Object.keys(this.props.allEntityTypes));
       utilizerNeighbors.forEach((neighbor) => {
         if (neighbor && neighbor.has('neighborEntitySet') && neighbor.has('neighborDetails')) {
