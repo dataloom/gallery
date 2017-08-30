@@ -61,9 +61,7 @@ export default class TopUtilizersHistogram extends React.Component {
         this.state.selectedDrillDownEntityType,
         this.state.selectedDrillDownPropertyType,
         this.state.drillDown,
-        nextProps.neighbors,
-        this.state.selectedPropertyTypeDateGroup,
-        this.state.selectedDrillDownPropertyTypeDateGroup) });
+        nextProps.neighbors) });
     }
   }
 
@@ -115,13 +113,17 @@ export default class TopUtilizersHistogram extends React.Component {
     selectedDrillDownPropertyType,
     drillDown,
     optionalNeighbors,
-    selectedPropertyTypeDateGroup,
-    selectedDrillDownPropertyTypeDateGroup) => {
+    optionalSelectedPropertyTypeDateGroup,
+    optionalSelectedDrillDownPropertyTypeDateGroup) => {
     const resultList = [];
     const counts = {};
     const fields = new Set();
 
     const neighbors = optionalNeighbors || this.props.neighbors;
+    const selectedPropertyTypeDateGroup =
+      optionalSelectedPropertyTypeDateGroup || this.state.selectedPropertyTypeDateGroup;
+    const selectedDrillDownPropertyTypeDateGroup =
+      optionalSelectedDrillDownPropertyTypeDateGroup || this.state.selectedDrillDownPropertyTypeDateGroup;
     const isSimple = (!drillDown || !selectedDrillDownEntityType.id || !selectedDrillDownPropertyType.id);
     if (isSimple) fields.add('count');
     this.props.results.forEach((utilizer) => {
@@ -205,10 +207,7 @@ export default class TopUtilizersHistogram extends React.Component {
                   selectedPropertyType,
                   selectedDrillDownEntityType,
                   selectedDrillDownPropertyType,
-                  this.state.drillDown,
-                  this.props.neighbors,
-                  this.state.selectedPropertyTypeDateGroup,
-                  this.state.selectedDrillDownPropertyTypeDateGroup)
+                  this.state.drillDown)
               });
             }}
             key={key}
@@ -329,10 +328,7 @@ export default class TopUtilizersHistogram extends React.Component {
                 this.state.selectedPropertyType,
                 {},
                 {},
-                !this.state.drillDown,
-                this.props.neighbors,
-                this.state.selectedPropertyTypeDateGroup,
-                this.state.selectedDrillDownPropertyTypeDateGroup) : this.state.histogramData;
+                !this.state.drillDown) : this.state.histogramData;
               this.setState({
                 drillDown: !this.state.drillDown,
                 histogramData
