@@ -7,7 +7,7 @@ import getTitle from '../../utils/EntityTypeTitles';
 import styles from './styles.module.css';
 
 const TABLE_WIDTH = 1000;
-const MAX_TABLE_HEIGHT = 500;
+const MAX_TABLE_HEIGHT = 700;
 const ROW_HEIGHT = 50;
 const TABLE_OFFSET = 2;
 
@@ -112,8 +112,7 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderColumns = () => {
     const columnNamesToShow = this.getColumnNamesToShow();
-    const numColumns = (this.props.showCount) ? columnNamesToShow.size + 1 : columnNamesToShow.size;
-    const columnWidth = (TABLE_WIDTH - 1) / numColumns;
+    const columnWidth = 120;
     const columns = [];
     if (this.props.showCount) {
       columns.push(
