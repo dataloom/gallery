@@ -25,6 +25,8 @@ const DATE_GROUPING_OPTIONS = {
   YEAR: 'Year'
 };
 
+const OTHER_LABEL = 'Other...';
+
 export default class TopUtilizersHistogram extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
@@ -143,9 +145,11 @@ export default class TopUtilizersHistogram extends React.Component {
           selectedDrillDownPropertyType,
           selectedDrillDownPropertyTypeDateGroup);
         fieldNames.forEach((fieldName) => {
-          fields.add(fieldName);
-          const newCount = (counts[primaryValue][fieldName]) ? counts[primaryValue][fieldName] + 1 : 1;
-          counts[primaryValue] = Object.assign(counts[primaryValue], { [fieldName]: newCount });
+          const shouldAdd = (Object.keys(counts[primaryValue]).length < 9) || counts[primaryValue][fieldName];
+          const formattedName = (shouldAdd) ? fieldName : OTHER_LABEL;
+          fields.add(formattedName);
+          const newCount = (counts[primaryValue][formattedName]) ? counts[primaryValue][formattedName] + 1 : 1;
+          counts[primaryValue] = Object.assign(counts[primaryValue], { [formattedName]: newCount });
         });
       });
     });
@@ -159,12 +163,14 @@ export default class TopUtilizersHistogram extends React.Component {
     });
     return {
       counts: resultList,
-      fields: this.sortValuesAndDates(Array.from(fields), selectedDrillDownPropertyType)
+      fields: this.sortValuesAndDates(Array.from(fields), selectedDrillDownPropertyType, true)
     };
   }
 
-  sortValuesAndDates = (arr, propertyType) => {
+  sortValuesAndDates = (arr, propertyType, otherLabel) => {
     return arr.sort((v1, v2) => {
+      if (otherLabel && v1 === OTHER_LABEL) return 1;
+      if (otherLabel && v2 === OTHER_LABEL) return -1;
       const isDate = EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype);
       const formatted1 = (isDate) ? new Date(v1) : v1;
       const formatted2 = (isDate) ? new Date(v2) : v2;
