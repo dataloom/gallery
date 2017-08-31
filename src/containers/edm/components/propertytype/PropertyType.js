@@ -38,7 +38,8 @@ class PropertyType extends React.Component {
     propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
     permissions: PermissionsPropType,
     // TODO: Move display logic to CSS
-    requestingPermissions: PropTypes.bool
+    requestingPermissions: PropTypes.bool,
+    customSettings: PropTypes.object
   };
 
   static defaultProps = {
@@ -51,7 +52,7 @@ class PropertyType extends React.Component {
   }
 
   render() {
-    const { propertyType, permissions, editing, onChange } = this.props;
+    const { propertyType, permissions, editing, onChange, customSettings } = this.props;
     return (
       <div className="propertyType">
         <PropertyTypePermissions
@@ -59,8 +60,8 @@ class PropertyType extends React.Component {
             permissions={permissions}
             editing={editing.permissions}
             onChange={onChange} />
-        <PropertyTypeTitle propertyType={propertyType} />
-        <PropertyTypeDescription propertyType={propertyType} />
+        <PropertyTypeTitle propertyType={propertyType} customSettings={customSettings} />
+        <PropertyTypeDescription propertyType={propertyType} customSettings={customSettings} />
         {this.renderDatatype()}
       </div>
     );
@@ -71,6 +72,7 @@ function mapStateToProps(state, ownProps) {
 
   const async :Map = state.get('async');
   const permissionsState = state.get('permissions');
+  const edm = state.get('edm');
 
   const { entitySetId, propertyTypeId } = ownProps;
   let { permissions } = ownProps;
@@ -86,9 +88,12 @@ function mapStateToProps(state, ownProps) {
     propertyType = Immutable.fromJS(async.getIn(['propertyTypes', propertyTypeId]).value);
   }
 
+  const customSettings = edm.getIn(['entitySetPropertyMetadata', entitySetId, propertyTypeId], Immutable.Map());
+
   return {
     propertyType,
-    permissions
+    permissions,
+    customSettings
   };
 }
 

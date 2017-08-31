@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -72,7 +72,8 @@ class EntitySetDetailComponent extends React.Component {
     propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired,
-    unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired
+    unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired,
+    loadEntitySetPropertyMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -109,6 +110,8 @@ class EntitySetDetailComponent extends React.Component {
     // this.props.loadEntitySet();
 
     this.props.subscribeToEntitySetAclKeyRequest([this.props.entitySetId]);
+    this.props.loadEntitySetPropertyMetadata(this.props.entitySetId);
+
   }
 
   componentWillUnmount() {
@@ -628,6 +631,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     unsubscribeFromEntitySetAclKeyRequest: (aclKey :UUID[]) => {
       dispatch(NeuronActionFactory.unsubscribeFromAclKeyRequest(aclKey));
+    },
+    loadEntitySetPropertyMetadata: (entitySetId) => {
+      dispatch(edmActionFactories.getAllEntitySetPropertyMetadataRequest(entitySetId));
     }
   };
 }
