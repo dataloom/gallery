@@ -39,7 +39,9 @@ class PropertyType extends React.Component {
     permissions: PermissionsPropType,
     // TODO: Move display logic to CSS
     requestingPermissions: PropTypes.bool,
-    customSettings: PropTypes.object
+    customSettings: PropTypes.object,
+    isOwner: PropTypes.bool,
+    updateCustomSettings: PropTypes.func
   };
 
   static defaultProps = {
@@ -51,8 +53,16 @@ class PropertyType extends React.Component {
     return <PropertyTypeDatatype propertyType={this.props.propertyType} />;
   }
 
+  updateTitle = (title) => {
+    this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { title });
+  }
+
+  updateDescription = (description) => {
+    this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { description });
+  }
+
   render() {
-    const { propertyType, permissions, editing, onChange, customSettings } = this.props;
+    const { propertyType, permissions, editing, onChange, customSettings, isOwner } = this.props;
     return (
       <div className="propertyType">
         <PropertyTypePermissions
@@ -60,8 +70,16 @@ class PropertyType extends React.Component {
             permissions={permissions}
             editing={editing.permissions}
             onChange={onChange} />
-        <PropertyTypeTitle propertyType={propertyType} customSettings={customSettings} />
-        <PropertyTypeDescription propertyType={propertyType} customSettings={customSettings} />
+        <PropertyTypeTitle
+            propertyType={propertyType}
+            customSettings={customSettings}
+            isOwner={isOwner}
+            updateTitle={this.updateTitle} />
+        <PropertyTypeDescription
+            propertyType={propertyType}
+            customSettings={customSettings}
+            isOwner={isOwner}
+            updateDescription={this.updateDescription} />
         {this.renderDatatype()}
       </div>
     );

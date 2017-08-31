@@ -73,7 +73,8 @@ class EntitySetDetailComponent extends React.Component {
     ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired,
     unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired,
-    loadEntitySetPropertyMetadata: PropTypes.func.isRequired
+    loadEntitySetPropertyMetadata: PropTypes.func.isRequired,
+    updateEntitySetPropertyMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -547,7 +548,9 @@ class EntitySetDetailComponent extends React.Component {
                   <PropertyTypeList
                       entitySetId={this.props.entitySet.get('id')}
                       propertyTypeIds={propertyTypeIds}
-                      className="propertyTypeStyleDefault" />
+                      className="propertyTypeStyleDefault"
+                      isOwner={this.props.entitySetPermissions.OWNER}
+                      updateCustomSettings={this.props.updateEntitySetPropertyMetadata} />
                 );
               }} />
           {this.renderAddDataForm()}
@@ -634,6 +637,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     loadEntitySetPropertyMetadata: (entitySetId) => {
       dispatch(edmActionFactories.getAllEntitySetPropertyMetadataRequest(entitySetId));
+    },
+    updateEntitySetPropertyMetadata: (entitySetId, propertyTypeId, metadataUpdate) => {
+      dispatch(edmActionFactories.updateEntitySetPropertyMetadataRequest(entitySetId, propertyTypeId, metadataUpdate));
     }
   };
 }

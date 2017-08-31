@@ -23,7 +23,9 @@ class PropertyTypeList extends React.Component {
     // Implies permissions view
     entitySetId: PropTypes.string,
     loadPermissions: PropTypes.func.isRequired,
-    requestingPermissions: PropTypes.bool
+    requestingPermissions: PropTypes.bool,
+    isOwner: PropTypes.bool,
+    updateCustomSettings: PropTypes.func
   };
 
   static defaultProps = {
@@ -49,7 +51,9 @@ class PropertyTypeList extends React.Component {
             propertyTypeId={propertyTypeId}
             key={propertyTypeId}
             onChange={this.props.onChange}
-            requestingPermissions={this.props.requestingPermissions} />
+            requestingPermissions={this.props.requestingPermissions}
+            isOwner={this.props.isOwner}
+            updateCustomSettings={this.props.updateCustomSettings} />
       );
     });
 
