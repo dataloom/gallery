@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
+import moment from 'moment';
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
+import EdmConsts from '../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
 
 const DEFAULT_SELECTED_ENTITY_TYPE = {
@@ -13,8 +15,17 @@ const DEFAULT_SELECTED_ENTITY_TYPE = {
 
 const DEFAULT_SELECTED_PROPERTY_TYPE = {
   title: 'Select a property type',
-  fqn: ''
+  fqn: '',
+  datatype: ''
 };
+
+const DATE_GROUPING_OPTIONS = {
+  DAY: 'Day',
+  MONTH: 'Month',
+  YEAR: 'Year'
+};
+
+const OTHER_LABEL = 'Other...';
 
 export default class TopUtilizersHistogram extends React.Component {
   static propTypes = {
@@ -31,8 +42,10 @@ export default class TopUtilizersHistogram extends React.Component {
     this.state = {
       selectedEntityType: DEFAULT_SELECTED_ENTITY_TYPE,
       selectedPropertyType: DEFAULT_SELECTED_PROPERTY_TYPE,
+      selectedPropertyTypeDateGroup: DATE_GROUPING_OPTIONS.MONTH,
       selectedDrillDownEntityType: DEFAULT_SELECTED_ENTITY_TYPE,
       selectedDrillDownPropertyType: DEFAULT_SELECTED_PROPERTY_TYPE,
+      selectedDrillDownPropertyTypeDateGroup: DATE_GROUPING_OPTIONS.MONTH,
       histogramData: {
         counts: [],
         fields: []
@@ -54,12 +67,30 @@ export default class TopUtilizersHistogram extends React.Component {
     }
   }
 
-  getFieldValues = (utilizer, neighbors, entityTypeId, propertyType) => {
+  formatDate = (date, dateGroup) => {
+    if (!date.isValid()) return date;
+    switch (dateGroup) {
+      case DATE_GROUPING_OPTIONS.DAY:
+        return date.format('MM/DD/YYYY');
+
+      case DATE_GROUPING_OPTIONS.YEAR:
+        return date.format('YYYY');
+
+      case DATE_GROUPING_OPTIONS.MONTH:
+      default:
+        return date.format('MMM, YYYY');
+    }
+  }
+
+  getFieldValues = (utilizer, neighbors, entityTypeId, propertyType, dateGroup) => {
     const values = [];
     const propertyTypeFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
     if (entityTypeId === this.props.entityType.id && utilizer[propertyTypeFqn]) {
       utilizer[propertyTypeFqn].forEach((value) => {
-        values.push(value);
+        if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+          values.push(this.formatDate(moment(value), dateGroup));
+        }
+        else values.push(value);
       });
     }
     neighbors.forEach((neighbor) => {
@@ -67,7 +98,10 @@ export default class TopUtilizersHistogram extends React.Component {
         && neighbor.getIn(['neighborEntitySet', 'entityTypeId']) === entityTypeId
         && neighbor.has('neighborDetails')) {
         neighbor.getIn(['neighborDetails', propertyTypeFqn], []).forEach((value) => {
-          values.push(value);
+          if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+            values.push(this.formatDate(moment(value), dateGroup));
+          }
+          else values.push(value);
         });
       }
     });
@@ -80,12 +114,18 @@ export default class TopUtilizersHistogram extends React.Component {
     selectedDrillDownEntityType,
     selectedDrillDownPropertyType,
     drillDown,
-    optionalNeighbors) => {
+    optionalNeighbors,
+    optionalSelectedPropertyTypeDateGroup,
+    optionalSelectedDrillDownPropertyTypeDateGroup) => {
     const resultList = [];
     const counts = {};
     const fields = new Set();
 
     const neighbors = optionalNeighbors || this.props.neighbors;
+    const selectedPropertyTypeDateGroup =
+      optionalSelectedPropertyTypeDateGroup || this.state.selectedPropertyTypeDateGroup;
+    const selectedDrillDownPropertyTypeDateGroup =
+      optionalSelectedDrillDownPropertyTypeDateGroup || this.state.selectedDrillDownPropertyTypeDateGroup;
     const isSimple = (!drillDown || !selectedDrillDownEntityType.id || !selectedDrillDownPropertyType.id);
     if (isSimple) fields.add('count');
     this.props.results.forEach((utilizer) => {
@@ -94,22 +134,27 @@ export default class TopUtilizersHistogram extends React.Component {
         utilizer,
         neighbors.get(entityId),
         selectedEntityType.id,
-        selectedPropertyType) : [];
+        selectedPropertyType,
+        selectedPropertyTypeDateGroup) : [];
       primaryValues.forEach((primaryValue) => {
         if (!counts[primaryValue]) counts[primaryValue] = {};
         const fieldNames = (isSimple) ? ['count'] : this.getFieldValues(
           utilizer,
           neighbors.get(entityId),
           selectedDrillDownEntityType.id,
-          selectedDrillDownPropertyType);
+          selectedDrillDownPropertyType,
+          selectedDrillDownPropertyTypeDateGroup);
         fieldNames.forEach((fieldName) => {
-          fields.add(fieldName);
-          const newCount = (counts[primaryValue][fieldName]) ? counts[primaryValue][fieldName] + 1 : 1;
-          counts[primaryValue] = Object.assign(counts[primaryValue], { [fieldName]: newCount });
+          const shouldAdd = (Object.keys(counts[primaryValue]).length < 9) || counts[primaryValue][fieldName];
+          const formattedName = (shouldAdd) ? fieldName : OTHER_LABEL;
+          fields.add(formattedName);
+          const newCount = (counts[primaryValue][formattedName]) ? counts[primaryValue][formattedName] + 1 : 1;
+          counts[primaryValue] = Object.assign(counts[primaryValue], { [formattedName]: newCount });
         });
       });
     });
-    Object.keys(counts).forEach((barName) => {
+
+    this.sortValuesAndDates(Object.keys(counts), selectedPropertyType).forEach((barName) => {
       const histogramValues = { name: barName };
       Object.keys(counts[barName]).forEach((fieldName) => {
         histogramValues[fieldName] = counts[barName][fieldName];
@@ -118,8 +163,22 @@ export default class TopUtilizersHistogram extends React.Component {
     });
     return {
       counts: resultList,
-      fields: Array.from(fields)
+      fields: this.sortValuesAndDates(Array.from(fields), selectedDrillDownPropertyType, true)
     };
+  }
+
+  sortValuesAndDates = (arr, propertyType, otherLabel) => {
+    return arr.sort((v1, v2) => {
+      if (otherLabel && v1 === OTHER_LABEL) return 1;
+      if (otherLabel && v2 === OTHER_LABEL) return -1;
+      const isDate = EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype);
+      const formatted1 = (isDate) ? new Date(v1) : v1;
+      const formatted2 = (isDate) ? new Date(v2) : v2;
+
+      if (formatted1 < formatted2) return -1;
+      if (formatted1 > formatted2) return 1;
+      return 0;
+    });
   }
 
   renderPropertyTypeSelection = (isDrillDown) => {
@@ -166,6 +225,53 @@ export default class TopUtilizersHistogram extends React.Component {
     return menuItems;
   }
 
+  renderDateGroupingSelection = (propertyType, isDrillDown) => {
+    if (!propertyType || !EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) return null;
+    const title = (isDrillDown) ?
+      this.state.selectedDrillDownPropertyTypeDateGroup : this.state.selectedPropertyTypeDateGroup;
+
+    const menuItems = [];
+    Object.keys(DATE_GROUPING_OPTIONS).forEach((dateGroupKey) => {
+      const groupLabel = DATE_GROUPING_OPTIONS[dateGroupKey];
+      const selectedPropertyTypeDateGroup = (isDrillDown) ?
+        this.state.selectedPropertyTypeDateGroup : groupLabel;
+      const selectedDrillDownPropertyTypeDateGroup =
+        (isDrillDown) ? groupLabel : this.state.selectedDrillDownPropertyTypeDateGroup;
+      const key = (isDrillDown) ? `${groupLabel}-drilldown` : `${groupLabel}-primary`;
+
+      menuItems.push(
+        <MenuItem
+            onClick={() => {
+              this.setState({
+                selectedPropertyTypeDateGroup,
+                selectedDrillDownPropertyTypeDateGroup,
+                histogramData: this.getHistogramData(
+                  this.state.selectedEntityType,
+                  this.state.selectedPropertyType,
+                  this.state.selectedDrillDownEntityType,
+                  this.state.selectedDrillDownPropertyType,
+                  this.state.drillDown,
+                  this.props.neighbors,
+                  selectedPropertyTypeDateGroup,
+                  selectedDrillDownPropertyTypeDateGroup)
+              });
+            }}
+            key={key}
+            eventKey={key}>
+          {groupLabel}
+        </MenuItem>
+      );
+    });
+    return (
+      <DropdownButton
+          bsStyle="default"
+          title={title}
+          id="date-group-select">
+        {menuItems}
+      </DropdownButton>
+    );
+  }
+
   renderDropdownSelection = (isDrillDown) => {
     const selectedEntityType = (isDrillDown) ? this.state.selectedDrillDownEntityType : this.state.selectedEntityType;
     const selectedPropertyType = (isDrillDown) ? this.state.selectedDrillDownPropertyType
@@ -208,6 +314,7 @@ export default class TopUtilizersHistogram extends React.Component {
             disabled={!selectedEntityType.id}>
           {this.renderPropertyTypeSelection(isDrillDown)}
         </DropdownButton>
+        {this.renderDateGroupingSelection(selectedPropertyType, isDrillDown)}
       </div>
     );
   }
