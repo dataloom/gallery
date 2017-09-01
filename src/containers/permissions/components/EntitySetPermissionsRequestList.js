@@ -35,7 +35,8 @@ class EntitySetPermissionsRequestList extends React.Component {
     loadStatuses: PropTypes.func.isRequired,
 
     // Async
-    statusReferences: PropTypes.arrayOf(AsyncReferencePropType).isRequired
+    statusReferences: PropTypes.arrayOf(AsyncReferencePropType).isRequired,
+    customSettings: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   componentDidMount() {
@@ -80,7 +81,8 @@ class EntitySetPermissionsRequestList extends React.Component {
               entitySetId={this.props.entitySetId}
               principalId={principalId}
               statuses={statusesByPrincipalId[principalId]}
-              key={principalId} />
+              key={principalId}
+              customSettings={this.props.customSettings} />
         );
       });
 

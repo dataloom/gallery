@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
 import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
-import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
+import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'lattice';
 import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
 import PropertyTypeFilter from './components/PropertyTypeFilter';
@@ -48,6 +48,7 @@ export default class EntitySetDataSearch extends React.Component {
       title: '',
       asyncStatus: (props.location.query.searchTerm) ? ASYNC_STATUS.LOADING : ASYNC_STATUS.PENDING,
       propertyTypes: [],
+      entitySetPropertyMetadata: {},
       selectedPropertyTypes: [],
       loadError: false,
       hidePagination: false,
@@ -60,6 +61,7 @@ export default class EntitySetDataSearch extends React.Component {
     const searchTerm = (this.props.location.query.searchTerm) ? this.props.location.query.searchTerm : '';
     const page = (this.props.location.query.page) ? this.props.location.query.page : 1
     this.loadPropertyTypeIds(searchTerm, page);
+    this.loadEntitySetPropertyMetadata();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,6 +79,13 @@ export default class EntitySetDataSearch extends React.Component {
         this.executeSearch(searchTerm, page);
       }
     }
+  }
+
+  loadEntitySetPropertyMetadata = () => {
+    EntityDataModelApi.getAllEntitySetPropertyMetadata(this.props.params.entitySetId)
+    .then((entitySetPropertyMetadata) => {
+      this.setState({ entitySetPropertyMetadata });
+    });
   }
 
   loadPropertyTypeIds = (searchTerm, page) => {
@@ -296,6 +305,7 @@ export default class EntitySetDataSearch extends React.Component {
             results={this.state.searchResults}
             entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.selectedPropertyTypes}
+            entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
             firstName={firstName}
             lastName={lastName}
             dob={dob}
@@ -309,6 +319,7 @@ export default class EntitySetDataSearch extends React.Component {
           results={this.state.searchResults}
           entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.selectedPropertyTypes}
+          entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
           formatValueFn={this.formatValue} />
     );
   }
@@ -317,6 +328,7 @@ export default class EntitySetDataSearch extends React.Component {
     return (
       <PropertyTypeFilter
           propertyTypes={this.state.propertyTypes}
+          entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
           onListUpdate={(selectedPropertyTypes) => {
             const searchView = (this.personViewIsAvailable()) ? this.state.searchView : views.TABLE;
             this.setState({ selectedPropertyTypes, searchView });

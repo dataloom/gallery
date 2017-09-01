@@ -7,11 +7,16 @@ export default class UserRow extends React.Component {
 
   selectUser = () => {
     if (this.props.userPage) return;
-    this.props.onClick(
-      this.props.entityId,
-      this.props.row,
-      this.props.entitySetId,
-      this.props.propertyTypes);
+    const { entityId, row, entitySetId, propertyTypes } = this.props;
+    const rowValues = {};
+    propertyTypes.forEach((propertyType) => {
+      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      const value = row[fqn];
+      if (value) rowValues[fqn] = value;
+    });
+    if (this.props.entitySetId) {
+      this.props.onClick(entityId, rowValues, entitySetId, propertyTypes);
+    }
   }
 
   getFirstNameVal = () => {
@@ -88,6 +93,7 @@ export default class UserRow extends React.Component {
           entitySet={this.props.entitySet}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.props.propertyTypes}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
           onClick={this.props.onClick}
           jumpFn={this.props.jumpFn}
           backFn={this.props.backFn}
@@ -109,6 +115,7 @@ export default class UserRow extends React.Component {
     entitySetId: PropTypes.string,
     entitySet: PropTypes.object,
     propertyTypes: PropTypes.array.isRequired,
+    entitySetPropertyMetadata: PropTypes.object.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
     dob: PropTypes.object,
