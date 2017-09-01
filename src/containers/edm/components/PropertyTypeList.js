@@ -61,7 +61,8 @@ class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { className } = this.props;
+    const { className, isOwner } = this.props;
+    const defaultShow = (isOwner) ? <div className="propertyTypeListDefaultShow">Show by Default</div> : null;
 
     return (
       <div className={classnames('propertyTypeList', className)}>
@@ -70,6 +71,7 @@ class PropertyTypeList extends React.Component {
           <div className="propertyTypeTitle">Property Title</div>
           <div className="propertyTypeListDescription">Description</div>
           <div className="propertyTypeListDatatype">Datatype</div>
+          {defaultShow}
           <div className="propertyTypeListControls" />
         </div>
         {this.renderContent()}

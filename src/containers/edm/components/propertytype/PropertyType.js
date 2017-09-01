@@ -14,6 +14,7 @@ import PropertyTypePermissions from './PropertyTypePermissions';
 import PropertyTypeTitle from './PropertyTypeTitle';
 import PropertyTypeDescription from './PropertyTypeDescription';
 import PropertyTypeDatatype from './PropertyTypeDatatype';
+import PropertyTypeDefaultShow from './PropertyTypeDefaultShow';
 
 // Default styles
 import '../propertype.module.css';
@@ -53,6 +54,16 @@ class PropertyType extends React.Component {
     return <PropertyTypeDatatype propertyType={this.props.propertyType} />;
   }
 
+  renderDefaultShow = () => {
+    if (this.props.requestingPermissions || !this.props.isOwner) return null;
+    return (
+      <PropertyTypeDefaultShow
+          propertyType={this.props.propertyType}
+          customSettings={this.props.customSettings}
+          updateDefaultShow={this.updateDefaultShow} />
+    );
+  }
+
   updateTitle = (title) => {
     this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { title });
   }
@@ -61,8 +72,13 @@ class PropertyType extends React.Component {
     this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { description });
   }
 
+  updateDefaultShow = (defaultShow) => {
+    this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { defaultShow });
+  }
+
   render() {
     const { propertyType, permissions, editing, onChange, customSettings, isOwner } = this.props;
+
     return (
       <div className="propertyType">
         <PropertyTypePermissions
@@ -81,6 +97,7 @@ class PropertyType extends React.Component {
             isOwner={isOwner}
             updateDescription={this.updateDescription} />
         {this.renderDatatype()}
+        {this.renderDefaultShow()}
       </div>
     );
   }
