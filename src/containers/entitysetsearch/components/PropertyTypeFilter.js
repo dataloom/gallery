@@ -14,7 +14,7 @@ export default class PropertyTypeFilter extends React.Component {
     super(props);
     this.state = {
       show: false,
-      selectedProperties: []
+      selectedProperties: new Set()
     };
   }
 
@@ -25,7 +25,7 @@ export default class PropertyTypeFilter extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { propertyTypes, entitySetPropertyMetadata } = nextProps;
     if (this.props.propertyTypes.length !== propertyTypes.length
-      || Object.keys(this.props.entitySetPropertyMetadata).length !== Object.keys(entitySetPropertyMetadata).length) {
+      || this.props.entitySetPropertyMetadata.size !== entitySetPropertyMetadata.size) {
       this.loadDefaultSelectedProps(propertyTypes, entitySetPropertyMetadata);
     }
   }
@@ -34,8 +34,8 @@ export default class PropertyTypeFilter extends React.Component {
     const selectedProperties = new Set();
     [...this.getAllPropertyTypeIds(propertyTypes)]
     .forEach((propertyTypeId) => {
-      if ((!entitySetPropertyMetadata || !entitySetPropertyMetadata[propertyTypeId])
-        || entitySetPropertyMetadata[propertyTypeId].defaultShow) {
+      if ((!entitySetPropertyMetadata || !entitySetPropertyMetadata.get(propertyTypeId))
+        || entitySetPropertyMetadata.getIn([propertyTypeId, 'defaultShow'])) {
         selectedProperties.add(propertyTypeId);
       }
     });
@@ -70,8 +70,9 @@ export default class PropertyTypeFilter extends React.Component {
   }
 
   renderCheckbox = (propertyType) => {
-    const title = (this.props.entitySetPropertyMetadata[propertyType.id]) ?
-      this.props.entitySetPropertyMetadata[propertyType.id].title : propertyType.title;
+    const title = this.props.entitySetPropertyMetadata.getIn([propertyType.id, 'title'], propertyType.title);
+    // const title = (this.props.entitySetPropertyMetadata.get(propertyType.id]) ?
+    //   this.props.entitySetPropertyMetadata[propertyType.id].title : propertyType.title;
     return (
       <div key={propertyType.id}>
         <input

@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
 import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
+import Immutable from 'immutable';
 import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'lattice';
 import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
@@ -328,7 +329,7 @@ export default class EntitySetDataSearch extends React.Component {
     return (
       <PropertyTypeFilter
           propertyTypes={this.state.propertyTypes}
-          entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
+          entitySetPropertyMetadata={Immutable.fromJS(this.state.entitySetPropertyMetadata)}
           onListUpdate={(selectedPropertyTypes) => {
             const searchView = (this.personViewIsAvailable()) ? this.state.searchView : views.TABLE;
             this.setState({ selectedPropertyTypes, searchView });

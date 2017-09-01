@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 import SearchResultsTable from '../../entitysetsearch/EntitySetSearchResults';
 
 export default class TopUtilizersTable extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    entitySetId: PropTypes.string.isRequired
+    entitySetId: PropTypes.string.isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   formatValue = (rawValue) => {
@@ -31,6 +33,7 @@ export default class TopUtilizersTable extends React.Component {
           propertyTypes={this.props.propertyTypes}
           formatValueFn={this.formatValue}
           entitySetId={this.props.entitySetId}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata.toJS()}
           showCount />
     );
   }

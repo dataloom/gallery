@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import { fetchEntitySetProjectionRequest } from '../../edm/EdmActionFactory';
+import { getAllEntitySetPropertyMetadataRequest } from '../../edm/EdmActionFactories';
 import TopUtilizersForm from '../components/TopUtilizersForm';
 import TopUtilizersResultsContainer from './TopUtilizersResultsContainer';
 import PropertyTypeFilter from '../../entitysetsearch/components/PropertyTypeFilter';
@@ -13,10 +14,12 @@ class TopUtilizersFormContainer extends React.Component {
   static propTypes = {
     getEntitySetProjection: PropTypes.func.isRequired,
     getEntitySetRequest: PropTypes.func.isRequired,
+    getAllEntitySetPropertyMetadata: PropTypes.func.isRequired,
     submitQuery: PropTypes.func.isRequired,
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    topUtilizersDetails: PropTypes.object.isRequired
+    topUtilizersDetails: PropTypes.object.isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -33,6 +36,7 @@ class TopUtilizersFormContainer extends React.Component {
   componentDidMount() {
     this.props.getEntitySetRequest();
     this.props.getEntitySetProjection();
+    this.props.getAllEntitySetPropertyMetadata();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -68,6 +72,7 @@ class TopUtilizersFormContainer extends React.Component {
     return (
       <PropertyTypeFilter
           propertyTypes={this.props.propertyTypes}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
           onListUpdate={(selectedPropertyTypes) => {
             this.setState({ selectedPropertyTypes });
           }} />
@@ -104,7 +109,10 @@ function mapStateToProps(state, ownProps) {
   }
   const topUtilizersDetails = state.getIn(['topUtilizers', 'topUtilizersDetailsList'], Immutable.Map());
 
-  return { entitySet, propertyTypes, topUtilizersDetails };
+  const entitySetPropertyMetadata = state
+    .getIn(['edm', 'entitySetPropertyMetadata', ownProps.params.id], Immutable.Map());
+
+  return { entitySet, propertyTypes, topUtilizersDetails, entitySetPropertyMetadata };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
@@ -121,6 +129,9 @@ function mapDispatchToProps(dispatch, ownProps) {
         id: ownProps.params.id,
         include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
       }]));
+    },
+    getAllEntitySetPropertyMetadata: () => {
+      dispatch(getAllEntitySetPropertyMetadataRequest(ownProps.params.id));
     }
   };
 

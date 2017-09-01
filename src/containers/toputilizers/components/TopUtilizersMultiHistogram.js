@@ -12,7 +12,8 @@ export default class TopUtilizersMultiHistogram extends React.Component {
     entityType: PropTypes.object.isRequired,
     allEntityTypes: PropTypes.object.isRequired,
     allPropertyTypes: PropTypes.object.isRequired,
-    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
+    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -249,8 +250,10 @@ export default class TopUtilizersMultiHistogram extends React.Component {
 
   renderSingleHistogram = (counts, entityType, propertyType, id) => {
     if (!counts.length) return null;
+    const propertyTypeTitle = this.props.entitySetPropertyMetadata
+      .getIn([propertyType.id, 'title'], propertyType.title);
     const filters = this.state.filters;
-    const title = `${entityType.title}: ${propertyType.title}`;
+    const title = `${entityType.title}: ${propertyTypeTitle}`;
     const propertyFilters = (filters[entityType.id] && filters[entityType.id][propertyType.id])
       ? filters[entityType.id][propertyType.id] : [];
     return (
