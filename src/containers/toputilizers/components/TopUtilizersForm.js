@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
+import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
 
 import ContentContainer from '../../../components/applayout/ContentContainer';
@@ -8,13 +9,12 @@ import TopUtilizersSelectionRowContainer from '../containers/TopUtilizersSelecti
 import styles from '../styles.module.css';
 
 const getChildren = (rowData) => {
-  return rowData.map((row) => {
-    return <TopUtilizersSelectionRowContainer key={row.id} />;
+  return rowData.map((row, index) => {
+    return <TopUtilizersSelectionRowContainer key={index} rowNum={index} />;
   });
 };
 
 const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
-
   return (
     <ContentContainer>
       <form className={styles.formWrapper} onSubmit={onSubmit}>
@@ -39,7 +39,7 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
 
 TopUtilizersForm.propTypes = {
   handleClick: PropTypes.func.isRequired,
-  rowData: PropTypes.array.isRequired,
+  rowData: PropTypes.instanceOf(Immutable.List).isRequired,
   onSubmit: PropTypes.func.isRequired
 };
 

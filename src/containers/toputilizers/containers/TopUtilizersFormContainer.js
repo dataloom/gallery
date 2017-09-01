@@ -14,16 +14,16 @@ class TopUtilizersFormContainer extends React.Component {
     getEntitySetProjection: PropTypes.func.isRequired,
     getEntitySetRequest: PropTypes.func.isRequired,
     submitQuery: PropTypes.func.isRequired,
+    addDetailsRow: PropTypes.func.isRequired,
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    topUtilizersDetails: PropTypes.object.isRequired
+    topUtilizersDetailsList: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
       counter: 0,
-      rowData: [{ id: 0 }],
       entitySets: [],
       showResultsTable: false,
       selectedPropertyTypes: props.propertyTypes
@@ -43,17 +43,13 @@ class TopUtilizersFormContainer extends React.Component {
 
   handleClickAddParameter = (e) => {
     e.preventDefault();
-    this.setState({ counter: ++this.state.counter });
-    const rowData = this.state.rowData;
-    if (this.state.counter <= 10) {
-      rowData.push({ id: this.state.counter });
-    }
-    this.setState({ rowData });
+    this.props.addDetailsRow();
   }
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.submitQuery(this.props.params.id, this.props.topUtilizersDetails);
+    console.log('on submit')
+    this.props.submitQuery(this.props.params.id, this.props.topUtilizersDetailsList.toJS());
     this.setState({ showResultsTable: true });
   }
 
@@ -79,7 +75,7 @@ class TopUtilizersFormContainer extends React.Component {
       <div>
         <TopUtilizersForm
             handleClick={this.handleClickAddParameter}
-            rowData={this.state.rowData}
+            rowData={this.props.topUtilizersDetailsList}
             onSubmit={this.onSubmit}
             entitySet={this.props.entitySet} />
         <br />
@@ -102,9 +98,9 @@ function mapStateToProps(state, ownProps) {
       if (propertyType) propertyTypes.push(propertyType.toJS());
     });
   }
-  const topUtilizersDetails = state.getIn(['topUtilizers', 'topUtilizersDetailsList'], Immutable.Map());
+  const topUtilizersDetailsList = state.getIn(['topUtilizers', 'topUtilizersDetailsList'], Immutable.List());
 
-  return { entitySet, propertyTypes, topUtilizersDetails };
+  return { entitySet, propertyTypes, topUtilizersDetailsList };
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
@@ -121,6 +117,9 @@ function mapDispatchToProps(dispatch, ownProps) {
         id: ownProps.params.id,
         include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
       }]));
+    },
+    addDetailsRow: () => {
+      dispatch(actionFactory.addDetailsRow());
     }
   };
 

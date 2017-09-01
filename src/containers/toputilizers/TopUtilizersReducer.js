@@ -6,8 +6,8 @@ import * as actionTypes from './TopUtilizersActionTypes';
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   entitySet: {},
   associations: [],
-  topUtilizersDetailsList: {},
-  topUtilizersResults: [],
+  topUtilizersDetailsList: [{}],
+  topUtilizersResults: Immutable.List(),
   isGettingResults: false,
   associationDetails: Immutable.Map(),
   neighbors: Immutable.Map()
@@ -38,20 +38,19 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       const neighborTypeIds = selectedEntities.map((entity) => {
         return entity.value;
       });
-      const mergeObj = {
-        topUtilizersDetailsList: {
-          [selectedAssociation.value]: {
-            associationTypeId: selectedAssociation.value,
-            neighborTypeIds,
-            utilizerIsSrc: selectedArrow.value
-          }
-        }
+      const details = {
+        associationTypeId: selectedAssociation.value,
+        neighborTypeIds,
+        utilizerIsSrc: selectedArrow.value
       };
-      return state.mergeDeep(mergeObj);
+      const updatedList = state.get('topUtilizersDetailsList').set(action.rowNum, Immutable.fromJS(details));
+      return state.set('topUtilizersDetailsList', updatedList);
     }
 
     case actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST:
-      return state.set('isGettingResults', true);
+      return state.set('isGettingResults', true)
+        .set('topUtilizersResults', Immutable.List())
+        .set('neighbors', Immutable.Map());
 
     case actionTypes.SUBMIT_TOP_UTILIZERS_SUCCESS: {
       const newState = {
@@ -66,6 +65,16 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_SUCCESS:
       return state.set('neighbors', Immutable.fromJS(action.neighbors));
+
+    case actionTypes.ADD_DETAILS_ROW: {
+      const newList = state.get('topUtilizersDetailsList').push(Immutable.Map());
+      return state.set('topUtilizersDetailsList', newList);
+    }
+
+    case actionTypes.REMOVE_DETAILS_ROW: {
+      const newList = state.get('topUtilizersDetailsList').delete(action.deleteIndex);
+      return state.set('topUtilizersDetailsList', newList);
+    }
 
     default:
       return state;

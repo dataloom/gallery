@@ -28,7 +28,7 @@ class TopUtilizersResultsContainer extends React.Component {
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
-    topUtilizersDetails: PropTypes.instanceOf(Immutable.Map).isRequired,
+    topUtilizersDetails: PropTypes.instanceOf(Immutable.List).isRequired,
     neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
@@ -46,8 +46,8 @@ class TopUtilizersResultsContainer extends React.Component {
   componentDidMount() {
     this.loadEntitySet();
     const neighborTypeIds = new Set();
-    this.props.topUtilizersDetails.valueSeq().forEach((detailsObj) => {
-      detailsObj.get('neighborTypeIds').forEach((id) => {
+    this.props.topUtilizersDetails.forEach((detailsObj) => {
+      detailsObj.get('neighborTypeIds', []).forEach((id) => {
         neighborTypeIds.add(id);
       });
     });
@@ -67,8 +67,8 @@ class TopUtilizersResultsContainer extends React.Component {
 
   loadNeighborTypes = () => {
     const neighborTypeIds = new Set();
-    this.props.topUtilizersDetails.valueSeq().forEach((detailsObj) => {
-      detailsObj.get('neighborTypeIds').forEach((id) => {
+    this.props.topUtilizersDetails.forEach((detailsObj) => {
+      detailsObj.get('neighborTypeIds', []).forEach((id) => {
         neighborTypeIds.add(id);
       });
     });
