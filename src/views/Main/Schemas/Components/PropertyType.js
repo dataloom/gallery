@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
-import { EntityDataModelApi } from 'loom-data';
+import { Button, ButtonGroup, Modal } from 'react-bootstrap';
+import { EntityDataModelApi } from 'lattice';
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 import { PropertyTypePropType } from '../../../../containers/edm/EdmModel';
 import styles from '../styles.module.css';
@@ -13,6 +13,13 @@ export class PropertyType extends React.Component {
 
   static contextTypes = {
     isAdmin: PropTypes.bool
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      verifyingDelete: false
+    };
   }
 
   renderPiiField = (prop) => {
@@ -71,6 +78,8 @@ export class PropertyType extends React.Component {
     EntityDataModelApi.deletePropertyType(this.props.propertyType.id)
     .then(() => {
       this.props.updateFn();
+    }).catch(() => {
+      this.setState({ verifyingDelete: true });
     });
   }
 
@@ -80,6 +89,44 @@ export class PropertyType extends React.Component {
       <div style={{ textAlign: 'center', margin: '10px 0' }}>
         <Button bsStyle="danger" onClick={this.deletePropertyType}>Delete</Button>
       </div>
+    );
+  }
+
+  closeModal = () => {
+    this.setState({ verifyingDelete: false });
+  }
+
+  confirmDelete = () => {
+    EntityDataModelApi.forceDeletePropertyType(this.props.propertyType.id)
+    .then(() => {
+      this.setState({ verifyingDelete: false });
+      this.props.updateFn();
+    });
+  }
+
+  cancelDelete = () => {
+    this.setState({ verifyingDelete: false });
+  }
+
+  renderConfirmDeleteModal = () => {
+    return (
+      <Modal show={this.state.verifyingDelete} onHide={this.closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Verify Delete</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            Unable to delete property type {this.props.propertyType.title}: this property type may already
+            be associated with an entity set. Would you like to try to force delete the property anyway?
+          </div>
+          <div className={styles.buttonContainer}>
+            <ButtonGroup >
+              <Button onClick={this.confirmDelete} bsStyle="danger">Delete</Button>
+              <Button onClick={this.cancelDelete} bsStyle="default">Cancel</Button>
+            </ButtonGroup>
+          </div>
+        </Modal.Body>
+      </Modal>
     );
   }
 
@@ -114,6 +161,7 @@ export class PropertyType extends React.Component {
         <div className={styles.italic}>datatype: {prop.datatype}</div>
         {this.renderPiiField(prop)}
         {this.renderDeleteButton()}
+        {this.renderConfirmDeleteModal()}
         <div className={styles.spacerBig} />
         <hr />
       </div>
