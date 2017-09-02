@@ -58,14 +58,15 @@ export default class TopUtilizersHistogram extends React.Component {
     if (nextProps.neighbors.size !== this.props.neighbors.size
       && this.state.selectedEntityType.id && this.state.selectedPropertyType.id) {
       this.setState({ histogramData: this.getHistogramData(
-        this.state.selectedEntityType,
-        this.state.selectedPropertyType,
-        this.state.selectedDrillDownEntityType,
-        this.state.selectedDrillDownPropertyType,
-        this.state.drillDown,
-        nextProps.neighbors) });
+          this.state.selectedEntityType,
+          this.state.selectedPropertyType,
+          this.state.selectedDrillDownEntityType,
+          this.state.selectedDrillDownPropertyType,
+          this.state.drillDown,
+          nextProps.neighbors) });
     }
   }
+
 
   formatDate = (date, dateGroup) => {
     if (!date.isValid()) return date;

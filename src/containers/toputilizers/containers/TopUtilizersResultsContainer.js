@@ -25,6 +25,7 @@ class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
     results: PropTypes.object.isRequired,
     isGettingResults: PropTypes.bool.isRequired,
+    isGettingNeighbors: PropTypes.bool.isRequired,
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
@@ -148,6 +149,42 @@ class TopUtilizersResultsContainer extends React.Component {
     );
   }
 
+  renderHistogram = () => {
+    if (this.props.isGettingNeighbors) return <LoadingSpinner />;
+    return (
+      <TopUtilizersHistogram
+          results={this.props.results.toJS()}
+          propertyTypes={this.state.propertyTypes}
+          entityType={this.state.entityType}
+          neighborEntityTypes={this.state.neighborEntityTypes}
+          neighborPropertyTypes={this.state.neighborPropertyTypes}
+          neighbors={this.props.neighbors} />
+    );
+  }
+
+  renderMultiHistogram = () => {
+    if (this.props.isGettingNeighbors) return <LoadingSpinner />;
+
+    const allPropertyTypes = Object.assign({}, this.state.neighborPropertyTypes);
+    this.state.propertyTypes.forEach((propertyType) => {
+      allPropertyTypes[propertyType.id] = propertyType;
+    });
+
+    const allEntityTypes = {};
+    [this.state.entityType].concat(this.state.neighborEntityTypes).forEach((entityType) => {
+      allEntityTypes[entityType.id] = entityType;
+    });
+
+    return (
+      <TopUtilizersMultiHistogram
+          results={this.props.results.toJS()}
+          entityType={this.state.entityType}
+          allEntityTypes={allEntityTypes}
+          allPropertyTypes={allPropertyTypes}
+          neighbors={this.props.neighbors} />
+    );
+  }
+
   renderResults = () => {
     if (this.state.display === DISPLAYS.TABLE) {
       return (<TopUtilizersTable
@@ -156,30 +193,11 @@ class TopUtilizersResultsContainer extends React.Component {
           entitySetId={this.props.entitySet.id} />);
     }
     else if (this.state.display === DISPLAYS.HISTOGRAM) {
-      return (<TopUtilizersHistogram
-          results={this.props.results.toJS()}
-          propertyTypes={this.state.propertyTypes}
-          entityType={this.state.entityType}
-          neighborEntityTypes={this.state.neighborEntityTypes}
-          neighborPropertyTypes={this.state.neighborPropertyTypes}
-          neighbors={this.props.neighbors} />);
+      return this.renderHistogram();
     }
 
     else if (this.state.display === DISPLAYS.MULTI_HISTOGRAM) {
-      const allPropertyTypes = Object.assign({}, this.state.neighborPropertyTypes);
-      this.state.propertyTypes.forEach((propertyType) => {
-        allPropertyTypes[propertyType.id] = propertyType;
-      });
-      const allEntityTypes = {};
-      [this.state.entityType].concat(this.state.neighborEntityTypes).forEach((entityType) => {
-        allEntityTypes[entityType.id] = entityType;
-      });
-      return (<TopUtilizersMultiHistogram
-          results={this.props.results.toJS()}
-          entityType={this.state.entityType}
-          allEntityTypes={allEntityTypes}
-          allPropertyTypes={allPropertyTypes}
-          neighbors={this.props.neighbors} />);
+      return this.renderMultiHistogram();
     }
     return null;
   }
@@ -199,6 +217,7 @@ function mapStateToProps(state) {
   return {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
+    isGettingNeighbors: topUtilizers.get('isGettingNeighbors'),
     associations: topUtilizers.get('associations'),
     topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList'),
     neighbors: topUtilizers.get('neighbors')
