@@ -71,11 +71,12 @@ export class EntityType extends React.Component {
       });
     }
     else if (action === ActionConsts.REMOVE) {
-      EntityDataModelApi.removePropertyTypeFromEntityType(this.props.entityType.id, newTypeUuid[0])
+      EntityDataModelApi.forceRemovePropertyTypeFromEntityType(this.props.entityType.id, newTypeUuid[0])
       .then(() => {
         this.updateFn();
       });
     }
+    else this.updateFn();
   }
 
   updateEntityTypeTitle = (title) => {
@@ -132,6 +133,7 @@ export class EntityType extends React.Component {
           primaryKey={this.props.entityType.key}
           entityTypeName={this.props.entityType.type.name}
           entityTypeNamespace={this.props.entityType.type.namespace}
+          entityTypeId={this.props.entityType.id}
           updateFn={this.updateEntityType}
           editingPermissions={false} />;
   }
