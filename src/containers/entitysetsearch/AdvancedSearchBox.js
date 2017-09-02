@@ -6,7 +6,8 @@ import searchStyles from './styles.module.css';
 export default class AdvancedSearchBox extends React.Component {
   static propTypes = {
     onSubmit: PropTypes.func.isRequired,
-    propertyTypes: PropTypes.array.isRequired
+    propertyTypes: PropTypes.array.isRequired,
+    entitySetPropertyMetadata: PropTypes.object.isRequired
   }
 
   constructor(props) {
@@ -60,9 +61,11 @@ export default class AdvancedSearchBox extends React.Component {
 
   renderSearchBoxes = () => {
     return this.props.propertyTypes.map((propertyType) => {
+      const title = (this.props.entitySetPropertyMetadata[propertyType.id]) ?
+        this.props.entitySetPropertyMetadata[propertyType.id].title : propertyType.title;
       return (
         <InputGroup key={propertyType.id}>
-          <ControlLabel>{propertyType.title}</ControlLabel>
+          <ControlLabel>{title}</ControlLabel>
           <br />
           <div className={searchStyles.formItemWrapper}>
             <FormControl

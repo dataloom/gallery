@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { Pagination } from 'react-bootstrap';
 import DocumentTitle from 'react-document-title';
 import Promise from 'bluebird';
-import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'loom-data';
+import { AuthorizationApi, SearchApi, EntityDataModelApi } from 'lattice';
 import { Permission } from '../../core/permissions/Permission';
 import Page from '../../components/page/Page';
 import AdvancedSearchBox from './AdvancedSearchBox';
@@ -35,6 +35,7 @@ export default class AdvancedDataSearch extends React.Component {
       title: '',
       asyncStatus: ASYNC_STATUS.PENDING,
       propertyTypes: [],
+      entitySetPropertyMetadata: {},
       loadError: false,
       hidePagination: false,
       searches: {}
@@ -43,6 +44,14 @@ export default class AdvancedDataSearch extends React.Component {
 
   componentDidMount() {
     this.loadPropertyIds();
+    this.loadEntitySetPropertyMetadata();
+  }
+
+  loadEntitySetPropertyMetadata = () => {
+    EntityDataModelApi.getAllEntitySetPropertyMetadata(this.props.params.entitySetId)
+    .then((entitySetPropertyMetadata) => {
+      this.setState({ entitySetPropertyMetadata });
+    });
   }
 
   loadPropertyIds = () => {
@@ -198,6 +207,7 @@ export default class AdvancedDataSearch extends React.Component {
             results={this.state.searchResults}
             entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.propertyTypes}
+            entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
             firstName={firstName}
             lastName={lastName}
             dob={dob}
@@ -210,6 +220,7 @@ export default class AdvancedDataSearch extends React.Component {
           results={this.state.searchResults}
           entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.propertyTypes}
+          entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
           formatValueFn={this.formatValue} />
     );
   }
@@ -219,7 +230,8 @@ export default class AdvancedDataSearch extends React.Component {
     return (
       <AdvancedSearchBox
           onSubmit={this.onSearchSubmit}
-          propertyTypes={this.state.propertyTypes} />
+          propertyTypes={this.state.propertyTypes}
+          entitySetPropertyMetadata={this.state.entitySetPropertyMetadata} />
     );
   }
 

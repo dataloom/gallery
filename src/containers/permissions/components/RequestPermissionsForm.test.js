@@ -46,6 +46,7 @@ describe('RequestPermissionsForm', function() {
     const pidToRequestedPermissions = Map({
       [propertyTypeId]: READ_PERMISSION_REQUESTED
     });
+    const customSettings = Immutable.Map();
 
     const wrapper = shallow(
       <RequestPermissionsForm
@@ -55,6 +56,7 @@ describe('RequestPermissionsForm', function() {
           onSubmit={onSubmit}
           propertyTypeIds={propertyTypeIds}
           reason={reason}
+          customSettings={customSettings}
           pidToRequestedPermissions={pidToRequestedPermissions} />
     );
 

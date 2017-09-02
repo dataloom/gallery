@@ -19,6 +19,7 @@ export default class EntityRow extends React.Component {
     row: PropTypes.object.isRequired,
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    entitySetPropertyMetadata: PropTypes.object.isRequired,
     backFn: PropTypes.func,
     formatValueFn: PropTypes.func,
     entityId: PropTypes.string.isRequired,
@@ -117,8 +118,11 @@ export default class EntityRow extends React.Component {
         const propertyFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
         return propertyFqn === headerFqn;
       });
+      if (property.length === 0) return '';
 
-      return property[0].title;
+      return (this.props.entitySetPropertyMetadata[property[0].id]) ?
+        this.props.entitySetPropertyMetadata[property[0].id].title : property[0].title;
+
     });
 
     return headers;
@@ -139,9 +143,11 @@ export default class EntityRow extends React.Component {
 
   getCellData() {
     return this.state.propertyFqns.map((fqn) => {
-      const propertyName = this.props.propertyTypes.filter((propertyType) => {
+      const propertyNames = this.props.propertyTypes.filter((propertyType) => {
         return (fqn === `${propertyType.type.namespace}.${propertyType.type.name}`);
-      })[0].type.name;
+      });
+      if (!propertyNames.length) return this.getTextCellData(fqn);
+      const propertyName = propertyNames[0].type.name;
       const cell = (propertyName === 'mugshot' || propertyName === 'scars' || propertyName === 'tattoos')
         ? this.getImgCellData(fqn) : this.getTextCellData(fqn);
       return <div key={fqn}>{cell}</div>;

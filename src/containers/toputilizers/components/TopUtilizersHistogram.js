@@ -34,7 +34,8 @@ export default class TopUtilizersHistogram extends React.Component {
     entityType: PropTypes.object.isRequired,
     neighborEntityTypes: PropTypes.array.isRequired,
     neighborPropertyTypes: PropTypes.object.isRequired,
-    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
+    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -172,6 +173,7 @@ export default class TopUtilizersHistogram extends React.Component {
     return arr.sort((v1, v2) => {
       if (otherLabel && v1 === OTHER_LABEL) return 1;
       if (otherLabel && v2 === OTHER_LABEL) return -1;
+
       const isDate = EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype);
       const formatted1 = (isDate) ? new Date(v1) : v1;
       const formatted2 = (isDate) ? new Date(v2) : v2;
@@ -202,6 +204,7 @@ export default class TopUtilizersHistogram extends React.Component {
         selectedDrillDownEntityType = DEFAULT_SELECTED_ENTITY_TYPE;
         selectedDrillDownPropertyType = DEFAULT_SELECTED_PROPERTY_TYPE;
       }
+      const title = this.props.entitySetPropertyMetadata.getIn([propertyType.id, 'title'], propertyType.title);
       menuItems.push(
         <MenuItem
             onClick={() => {
@@ -219,7 +222,7 @@ export default class TopUtilizersHistogram extends React.Component {
             }}
             key={key}
             eventKey={key}>
-          {propertyType.title}
+          {title}
         </MenuItem>
       );
     });
@@ -303,6 +306,9 @@ export default class TopUtilizersHistogram extends React.Component {
       );
     });
 
+    const title = this.props.entitySetPropertyMetadata
+      .getIn([selectedPropertyType.id, 'title'], selectedPropertyType.title);
+
     return (
       <div className={styles.generateHistogramButtonRow}>
         <DropdownButton bsStyle="default" title={selectedEntityType.title} id="entity-type-select">
@@ -310,7 +316,7 @@ export default class TopUtilizersHistogram extends React.Component {
         </DropdownButton>
         <DropdownButton
             bsStyle="default"
-            title={selectedPropertyType.title}
+            title={title}
             id="property-select"
             disabled={!selectedEntityType.id}>
           {this.renderPropertyTypeSelection(isDrillDown)}
