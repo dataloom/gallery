@@ -2,8 +2,9 @@
  * @flow
  */
 
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi, LinkingApi } from 'lattice';
 import { Observable } from 'rxjs';
+import { combineEpics } from 'redux-observable';
 
 import * as actionTypes from './CreateEntitySetActionTypes';
 import * as actionFactories from './CreateEntitySetActionFactories';
@@ -44,4 +45,24 @@ function createEntitySetEpic(action$) {
     .mergeMap(createEntitySet);
 }
 
-export default createEntitySetEpic;
+function createLinkedEntitySetEpic(action$) {
+  return action$
+  .ofType(actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST)
+  .mergeMap((action :Action) => {
+    return Observable
+      .from(LinkingApi.linkEntitySets(action.linkingRequest))
+      .mergeMap(() => {
+        console.log('epic create')
+        return Observable.of(actionFactories.createLinkedEntitySetResolve());
+      })
+      .catch((e) => {
+        console.error(e);
+        return Observable.of(actionFactories.createLinkedEntitySetReject('Error creating linked entity set'));
+      });
+  });
+}
+
+export default combineEpics(
+  createEntitySetEpic,
+  createLinkedEntitySetEpic
+);

@@ -14,7 +14,7 @@ import { bindActionCreators } from 'redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
-import { createEntitySetRequest } from './CreateEntitySetActionFactories';
+import { createEntitySetRequest, createLinkedEntitySetRequest } from './CreateEntitySetActionFactories';
 
 const ENTITY_SET_TYPES = {
   ENTITY_SET: 'Entity Set',
@@ -26,7 +26,8 @@ class CreateEntitySet extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      onCreate: PropTypes.func.isRequired,
+      onCreateEntitySet: PropTypes.func.isRequired,
+      onCreateLinkedEntitySet: PropTypes.func.isRequired,
       fetchAllEntityTypesRequest: PropTypes.func.isRequired
     }).isRequired,
     createEntitySetAsyncState: AsyncStatePropType.isRequired,
@@ -44,7 +45,6 @@ class CreateEntitySet extends React.Component {
       name: '',
       contact: props.defaultContact,
       entityTypeId: null,
-      linkedEntityTypeId: null,
       entitySetIds: []
     };
   }
@@ -55,7 +55,9 @@ class CreateEntitySet extends React.Component {
 
   onTypeChange = (option) => {
     this.setState({
-      type: option.value
+      type: option.value,
+      entityTypeId: null,
+      entitySetIds: []
     });
   }
 
@@ -89,21 +91,36 @@ class CreateEntitySet extends React.Component {
   };
 
   onEntitySetsChange = (entitySetIds) => {
-    const linkedEntityTypeId = (entitySetIds.length) ? entitySetIds[0].entityTypeId : null;
-    this.setState({ entitySetIds, linkedEntityTypeId });
+    const entityTypeId = (entitySetIds.length) ? entitySetIds[0].entityTypeId : null;
+    this.setState({ entitySetIds, entityTypeId });
   }
 
   onSubmit = () => {
-    const { title, name, description, entityTypeId, contact } = this.state;
+    const { type, title, name, description, contact, entityTypeId, entitySetIds } = this.state;
 
-    this.props.actions.onCreate({
+    const entitySet = {
       title,
       name,
       description,
       entityTypeId,
       contacts: [contact]
-    });
-  };
+    };
+
+    if (type === ENTITY_SET_TYPES.ENTITY_SET) this.props.actions.onCreateEntitySet(entitySet);
+    else {
+      const propertyTypeIds = this.props.entityTypes.getIn([entityTypeId, 'properties'], Immutable.List()).toJS();
+      const linkingProperties = propertyTypeIds.map((propertyTypeId) => {
+        const linkMap = {};
+        entitySetIds.forEach((entitySetOption) => {
+          linkMap[entitySetOption.value] = propertyTypeId;
+        });
+        return linkMap;
+      });
+      const linkingEntitySet = { entitySet, linkingProperties };
+      console.log({ linkingEntitySet, propertyTypeIds });
+      this.props.actions.onCreateLinkedEntitySet({ linkingEntitySet, propertyTypeIds });
+    }
+  }
 
   getTypeOptions = () => {
 
@@ -139,7 +156,7 @@ class CreateEntitySet extends React.Component {
     const options = [];
 
     this.props.entitySets.valueSeq().forEach((entitySet) => {
-      if (!this.state.linkedEntityTypeId || this.state.linkedEntityTypeId === entitySet.get('entityTypeId')) {
+      if (!this.state.entityTypeId || this.state.entityTypeId === entitySet.get('entityTypeId')) {
         options.push({
           value: entitySet.get('id'),
           label: entitySet.get('title'),
@@ -251,7 +268,8 @@ function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
     fetchAllEntityTypesRequest,
-    onCreate: createEntitySetRequest
+    onCreateLinkedEntitySet: createLinkedEntitySetRequest,
+    onCreateEntitySet: createEntitySetRequest
   };
 
   return {
