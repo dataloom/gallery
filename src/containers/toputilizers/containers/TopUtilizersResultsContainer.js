@@ -29,7 +29,8 @@ class TopUtilizersResultsContainer extends React.Component {
     propertyTypes: PropTypes.array.isRequired,
     downloadResults: PropTypes.func.isRequired,
     topUtilizersDetails: PropTypes.instanceOf(Immutable.Map).isRequired,
-    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired
+    neighbors: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -153,7 +154,8 @@ class TopUtilizersResultsContainer extends React.Component {
       return (<TopUtilizersTable
           results={this.props.results.toJS()}
           propertyTypes={this.props.propertyTypes}
-          entitySetId={this.props.entitySet.id} />);
+          entitySetId={this.props.entitySet.id}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />);
     }
     else if (this.state.display === DISPLAYS.HISTOGRAM) {
       return (<TopUtilizersHistogram
@@ -162,7 +164,8 @@ class TopUtilizersResultsContainer extends React.Component {
           entityType={this.state.entityType}
           neighborEntityTypes={this.state.neighborEntityTypes}
           neighborPropertyTypes={this.state.neighborPropertyTypes}
-          neighbors={this.props.neighbors} />);
+          neighbors={this.props.neighbors}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />);
     }
 
     else if (this.state.display === DISPLAYS.MULTI_HISTOGRAM) {
@@ -179,7 +182,8 @@ class TopUtilizersResultsContainer extends React.Component {
           entityType={this.state.entityType}
           allEntityTypes={allEntityTypes}
           allPropertyTypes={allPropertyTypes}
-          neighbors={this.props.neighbors} />);
+          neighbors={this.props.neighbors}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />);
     }
     return null;
   }
@@ -193,15 +197,18 @@ class TopUtilizersResultsContainer extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
   const topUtilizers = state.get('topUtilizers');
+  const entitySetPropertyMetadata = state
+    .getIn(['edm', 'entitySetPropertyMetadata', ownProps.entitySet.id], Immutable.Map());
 
   return {
     results: topUtilizers.get('topUtilizersResults'),
     isGettingResults: topUtilizers.get('isGettingResults'),
     associations: topUtilizers.get('associations'),
     topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList'),
-    neighbors: topUtilizers.get('neighbors')
+    neighbors: topUtilizers.get('neighbors'),
+    entitySetPropertyMetadata
   };
 }
 

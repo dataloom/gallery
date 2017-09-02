@@ -134,6 +134,13 @@ const STYLE_MAP = {
     margin: '0 0 0 -13px',
     padding: '6px 12px'
   },
+  medium_small: {
+    fontSize: '16px',
+    inputFontSize: '14px',
+    lineHeight: '18px',
+    margin: '0 0 0 -13px',
+    padding: '8px 12px'
+  },
   medium: {
     fontSize: '20px',
     inputFontSize: '18px',

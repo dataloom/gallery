@@ -23,7 +23,9 @@ class PropertyTypeList extends React.Component {
     // Implies permissions view
     entitySetId: PropTypes.string,
     loadPermissions: PropTypes.func.isRequired,
-    requestingPermissions: PropTypes.bool
+    requestingPermissions: PropTypes.bool,
+    isOwner: PropTypes.bool,
+    updateCustomSettings: PropTypes.func
   };
 
   static defaultProps = {
@@ -49,7 +51,9 @@ class PropertyTypeList extends React.Component {
             propertyTypeId={propertyTypeId}
             key={propertyTypeId}
             onChange={this.props.onChange}
-            requestingPermissions={this.props.requestingPermissions} />
+            requestingPermissions={this.props.requestingPermissions}
+            isOwner={this.props.isOwner}
+            updateCustomSettings={this.props.updateCustomSettings} />
       );
     });
 
@@ -57,7 +61,8 @@ class PropertyTypeList extends React.Component {
   }
 
   render() {
-    const { className } = this.props;
+    const { className, isOwner } = this.props;
+    const defaultShow = (isOwner) ? <div className="propertyTypeListDefaultShow">Show by Default</div> : null;
 
     return (
       <div className={classnames('propertyTypeList', className)}>
@@ -66,6 +71,7 @@ class PropertyTypeList extends React.Component {
           <div className="propertyTypeTitle">Property Title</div>
           <div className="propertyTypeListDescription">Description</div>
           <div className="propertyTypeListDatatype">Datatype</div>
+          {defaultShow}
           <div className="propertyTypeListControls" />
         </div>
         {this.renderContent()}

@@ -16,6 +16,7 @@ export default class EntitySetSearchResults extends React.Component {
     results: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    entitySetPropertyMetadata: PropTypes.object.isRequired,
     formatValueFn: PropTypes.func.isRequired,
     showCount: PropTypes.bool
   }
@@ -129,10 +130,13 @@ export default class EntitySetSearchResults extends React.Component {
         if (propertyType.type.name !== 'mugshot'
           && propertyType.type.name !== 'scars'
           && propertyType.type.name !== 'tattoos') {
+
+          const title = (this.props.entitySetPropertyMetadata[propertyType.id]) ?
+            this.props.entitySetPropertyMetadata[propertyType.id].title : propertyType.title;
           columns.push(
             <Column
                 key={fqn}
-                header={<Cell>{propertyType.title}</Cell>}
+                header={<Cell>{title}</Cell>}
                 cell={this.renderTextCell(fqn, columnWidth)}
                 width={columnWidth} />
           );
@@ -153,6 +157,7 @@ export default class EntitySetSearchResults extends React.Component {
           backFn={this.onRowDeselect}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.state.selectedPropertyTypes}
+          entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
           onClick={this.onRowSelect}
           jumpFn={this.jumpToRow}
           breadcrumbs={this.state.breadcrumbs} />
