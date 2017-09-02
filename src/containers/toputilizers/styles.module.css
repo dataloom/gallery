@@ -109,3 +109,25 @@ a:hover {
   width: 450px;
   margin-top: 15px;
 }
+
+.deleteButtonContainer {
+  padding: 0;
+  width: 35px;
+  height: 35px;
+}
+
+.hiddenButton {
+  border: none;
+  background: none;
+}
+
+.primaryLabel {
+  text-align: center;
+  font-size: 16px;
+}
+
+.drillDownLabel {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 25px;
+}

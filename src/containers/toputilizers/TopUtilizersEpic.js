@@ -83,10 +83,9 @@ function submitQueryEpic(action$) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersDetailsList = action.topUtilizersDetails.valueSeq();
       return Observable
         .from(
-          AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList)
+          AnalysisApi.getTopUtilizers(action.entitySetId, 100, action.topUtilizersDetails)
         )
         .mergeMap((results) => {
           const entityIds = results.map((result) => {
@@ -110,10 +109,9 @@ function downloadTopUtilizersEpic(action$) {
   return action$
     .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      const topUtilizersDetailsList = action.topUtilizersDetails.valueSeq();
       return Observable
         .from(
-          AnalysisApi.getTopUtilizers(action.entitySetId, 100, topUtilizersDetailsList, FileConsts.CSV)
+          AnalysisApi.getTopUtilizers(action.entitySetId, 100, action.topUtilizersDetails, FileConsts.CSV)
         )
         .mergeMap((topUtilizersData) => {
           FileService.saveFile(topUtilizersData, 'Top Utilizers', FileConsts.CSV, () => {

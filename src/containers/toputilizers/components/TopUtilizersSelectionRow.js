@@ -29,7 +29,9 @@ const TopUtilizersSelectionRow = ({
   selectedAssociation,
   selectedArrow,
   selectedEntities,
-  arrowDirections
+  arrowDirections,
+  removeRow,
+  showDelete
 }) => {
 
   const associationOptions = getOptions(associations);
@@ -40,6 +42,18 @@ const TopUtilizersSelectionRow = ({
   }
   if (arrowDirections.includes(false)) {
     arrowOptions.push({ value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" /> });
+  }
+
+  let deleteButton;
+  if (showDelete) {
+    deleteButton = (
+      <button
+          type="button"
+          className={styles.hiddenButton}
+          onClick={removeRow}>
+        <FontAwesome name="times" size="2x" />
+      </button>
+    );
   }
 
   return (
@@ -66,6 +80,8 @@ const TopUtilizersSelectionRow = ({
           placeholder="Entities"
           disabled={isDisabled(selectedAssociation, selectedArrow)}
           multi />
+      <div className={styles.deleteButtonContainer}>{deleteButton}</div>
+
     </div>
   );
 };
@@ -79,7 +95,9 @@ TopUtilizersSelectionRow.propTypes = {
   selectedAssociation: PropTypes.object,
   selectedArrow: PropTypes.object,
   selectedEntities: PropTypes.array,
-  arrowDirections: PropTypes.array.isRequired
+  arrowDirections: PropTypes.array.isRequired,
+  removeRow: PropTypes.func.isRequired,
+  showDelete: PropTypes.bool.isRequired
 };
 
 export default TopUtilizersSelectionRow;

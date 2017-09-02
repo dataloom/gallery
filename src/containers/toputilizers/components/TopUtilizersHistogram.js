@@ -59,14 +59,15 @@ export default class TopUtilizersHistogram extends React.Component {
     if (nextProps.neighbors.size !== this.props.neighbors.size
       && this.state.selectedEntityType.id && this.state.selectedPropertyType.id) {
       this.setState({ histogramData: this.getHistogramData(
-        this.state.selectedEntityType,
-        this.state.selectedPropertyType,
-        this.state.selectedDrillDownEntityType,
-        this.state.selectedDrillDownPropertyType,
-        this.state.drillDown,
-        nextProps.neighbors) });
+          this.state.selectedEntityType,
+          this.state.selectedPropertyType,
+          this.state.selectedDrillDownEntityType,
+          this.state.selectedDrillDownPropertyType,
+          this.state.drillDown,
+          nextProps.neighbors) });
     }
   }
+
 
   formatDate = (date, dateGroup) => {
     if (!date.isValid()) return date;
@@ -364,6 +365,32 @@ export default class TopUtilizersHistogram extends React.Component {
     return <div className={styles.histogramContainer}>{content}</div>;
   }
 
+  renderHistogramLabel = () => {
+    const {
+      selectedEntityType,
+      selectedPropertyType,
+      selectedDrillDownEntityType,
+      selectedDrillDownPropertyType,
+      drillDown
+    } = this.state;
+
+    let primaryLabel = '';
+    let drillDownLabel = '';
+
+    if (selectedEntityType.id && selectedPropertyType.id) {
+      primaryLabel = `${selectedEntityType.title}: ${selectedPropertyType.title}`;
+    }
+    if (drillDown && selectedDrillDownEntityType.id && selectedDrillDownPropertyType.id) {
+      drillDownLabel = `drill down by ${selectedDrillDownEntityType.title}: ${selectedDrillDownPropertyType.title}`;
+    }
+    return (
+      <div>
+        <div className={styles.primaryLabel}>{primaryLabel}</div>
+        <div className={styles.drillDownLabel}>{drillDownLabel}</div>
+      </div>
+    );
+  }
+
   render() {
     if (this.props.propertyTypes.length === 0) return null;
     return (
@@ -372,6 +399,7 @@ export default class TopUtilizersHistogram extends React.Component {
         {this.renderDrillDownSelection()}
         {this.renderDrillDownButton()}
         {this.renderHistogram()}
+        {this.renderHistogramLabel()}
       </div>
     );
   }

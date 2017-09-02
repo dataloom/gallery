@@ -49,9 +49,10 @@ export function setEntitySet(data) {
   };
 }
 
-export function onEntitySelect(data) {
+export function onEntitySelect(rowNum, data) {
   return {
     type: actionTypes.ON_ENTITY_SELECT,
+    rowNum,
     data
   };
 }
@@ -137,5 +138,18 @@ export function getTopUtilizersNeighborsSuccess(neighbors) {
 export function getTopUtilizersNeighborsFailure() {
   return {
     type: actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_FAILURE
+  };
+}
+
+export function addDetailsRow() {
+  return {
+    type: actionTypes.ADD_DETAILS_ROW
+  };
+}
+
+export function removeRow(deleteIndex) {
+  return {
+    type: actionTypes.REMOVE_DETAILS_ROW,
+    deleteIndex
   };
 }
