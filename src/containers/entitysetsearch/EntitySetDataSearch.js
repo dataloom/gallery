@@ -14,7 +14,7 @@ import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncC
 import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../utils/Consts/StringConsts';
 import styles from './styles.module.css';
 
-const MAX_HITS = 50;
+const MAX_HITS = 12;
 const views = {
   PERSON: 'personView',
   TABLE: 'tableView'
