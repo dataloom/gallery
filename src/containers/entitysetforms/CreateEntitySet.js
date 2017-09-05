@@ -21,6 +21,7 @@ const ENTITY_SET_TYPES = {
   LINKED_ENTITY_SET: 'Linked Entity Set'
 };
 
+const PERSON_TYPE_FQN = 'general.person';
 
 class CreateEntitySet extends React.Component {
 
@@ -33,7 +34,8 @@ class CreateEntitySet extends React.Component {
     createEntitySetAsyncState: AsyncStatePropType.isRequired,
     defaultContact: PropTypes.string,
     entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
-    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired
+    entitySets: PropTypes.instanceOf(Immutable.Map).isRequired,
+    personEntityTypeId: PropTypes.string.isRequired
   };
 
   constructor(props) {
@@ -54,9 +56,10 @@ class CreateEntitySet extends React.Component {
   }
 
   onTypeChange = (option) => {
+    const entityTypeId = (option.value === ENTITY_SET_TYPES.LINKED_ENTITY_SET) ? this.props.personEntityTypeId : null;
     this.setState({
       type: option.value,
-      entityTypeId: null,
+      entityTypeId,
       entitySetIds: []
     });
   }
@@ -117,7 +120,6 @@ class CreateEntitySet extends React.Component {
         return linkMap;
       });
       const linkingEntitySet = { entitySet, linkingProperties };
-      console.log({ linkingEntitySet, propertyTypeIds });
       this.props.actions.onCreateLinkedEntitySet({ linkingEntitySet, propertyTypeIds });
     }
   }
@@ -257,9 +259,17 @@ function mapStateToProps(state) {
   const entityTypes :Map = state.getIn(['edm', 'entityTypes'], Immutable.Map());
   const entitySets :Map = state.getIn(['edm', 'entitySets'], Immutable.Map());
 
+  let personEntityTypeId = '';
+  entityTypes.valueSeq().forEach((entityType) => {
+    const namespace = `${entityType.getIn(['type', 'namespace'])}`;
+    const name = `${entityType.getIn(['type', 'name'])}`;
+    if (`${namespace}.${name}` === PERSON_TYPE_FQN) personEntityTypeId = entityType.get('id');
+  });
+
   return {
     entityTypes,
     entitySets,
+    personEntityTypeId,
     createEntitySetAsyncState: createEntitySetState.createEntitySetAsyncState
   };
 }

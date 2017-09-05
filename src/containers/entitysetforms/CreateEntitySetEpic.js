@@ -52,7 +52,6 @@ function createLinkedEntitySetEpic(action$) {
     return Observable
       .from(LinkingApi.linkEntitySets(action.linkingRequest))
       .mergeMap(() => {
-        console.log('epic create')
         return Observable.of(actionFactories.createLinkedEntitySetResolve());
       })
       .catch((e) => {
