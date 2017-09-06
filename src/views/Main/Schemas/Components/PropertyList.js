@@ -9,7 +9,7 @@ import {
 import {
   EntityDataModelApi,
   SearchApi
-} from 'loom-data';
+} from 'lattice';
 
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -31,6 +31,7 @@ export class PropertyList extends React.Component {
     primaryKey: PropTypes.array,
     entityTypeName: PropTypes.string,
     entityTypeNamespace: PropTypes.string,
+    entityTypeId: PropTypes.string,
     updateFn: PropTypes.func,
     editingPermissions: PropTypes.bool,
     entitySetName: PropTypes.string,
@@ -89,10 +90,16 @@ export class PropertyList extends React.Component {
   }
 
   verifyDelete = (property) => {
-    if (this.props.entityTypeNamespace !== undefined && this.props.entityTypeName !== undefined) {
-      this.setState({
-        verifyingDelete: true,
-        propertyToDelete: property
+    const { entityTypeNamespace, entityTypeName, entityTypeId } = this.props;
+    if (entityTypeNamespace && entityTypeName && entityTypeId) {
+      EntityDataModelApi.removePropertyTypeFromEntityType(entityTypeId, property.id)
+      .then(() => {
+        this.props.updateFn();
+      }).catch(() => {
+        this.setState({
+          verifyingDelete: true,
+          propertyToDelete: property
+        });
       });
     }
     else {
@@ -135,7 +142,8 @@ export class PropertyList extends React.Component {
         </Modal.Header>
         <Modal.Body>
           <div>
-            Are you sure you want to delete property type {prop} and all associated data from entity type {entityType}?
+            Unable to delete property type {prop} from entity type {entityType}: this entity type may
+            already be associated with an entity set. Would you like to try to force delete the property anyway?
           </div>
           <div className={styles.buttonContainer}>
             <ButtonGroup >

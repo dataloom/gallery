@@ -14,6 +14,7 @@ import PropertyTypePermissions from './PropertyTypePermissions';
 import PropertyTypeTitle from './PropertyTypeTitle';
 import PropertyTypeDescription from './PropertyTypeDescription';
 import PropertyTypeDatatype from './PropertyTypeDatatype';
+import PropertyTypeDefaultShow from './PropertyTypeDefaultShow';
 
 // Default styles
 import '../propertype.module.css';
@@ -38,7 +39,10 @@ class PropertyType extends React.Component {
     propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
     permissions: PermissionsPropType,
     // TODO: Move display logic to CSS
-    requestingPermissions: PropTypes.bool
+    requestingPermissions: PropTypes.bool,
+    customSettings: PropTypes.object,
+    isOwner: PropTypes.bool,
+    updateCustomSettings: PropTypes.func
   };
 
   static defaultProps = {
@@ -50,8 +54,31 @@ class PropertyType extends React.Component {
     return <PropertyTypeDatatype propertyType={this.props.propertyType} />;
   }
 
+  renderDefaultShow = () => {
+    if (this.props.requestingPermissions || !this.props.isOwner) return null;
+    return (
+      <PropertyTypeDefaultShow
+          propertyType={this.props.propertyType}
+          customSettings={this.props.customSettings}
+          updateDefaultShow={this.updateDefaultShow} />
+    );
+  }
+
+  updateTitle = (title) => {
+    this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { title });
+  }
+
+  updateDescription = (description) => {
+    this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { description });
+  }
+
+  updateDefaultShow = (defaultShow) => {
+    this.props.updateCustomSettings(this.props.entitySetId, this.props.propertyType.get('id'), { defaultShow });
+  }
+
   render() {
-    const { propertyType, permissions, editing, onChange } = this.props;
+    const { propertyType, permissions, editing, onChange, customSettings, isOwner } = this.props;
+
     return (
       <div className="propertyType">
         <PropertyTypePermissions
@@ -59,9 +86,18 @@ class PropertyType extends React.Component {
             permissions={permissions}
             editing={editing.permissions}
             onChange={onChange} />
-        <PropertyTypeTitle propertyType={propertyType} />
-        <PropertyTypeDescription propertyType={propertyType} />
+        <PropertyTypeTitle
+            propertyType={propertyType}
+            customSettings={customSettings}
+            isOwner={isOwner}
+            updateTitle={this.updateTitle} />
+        <PropertyTypeDescription
+            propertyType={propertyType}
+            customSettings={customSettings}
+            isOwner={isOwner}
+            updateDescription={this.updateDescription} />
         {this.renderDatatype()}
+        {this.renderDefaultShow()}
       </div>
     );
   }
@@ -71,6 +107,7 @@ function mapStateToProps(state, ownProps) {
 
   const async :Map = state.get('async');
   const permissionsState = state.get('permissions');
+  const edm = state.get('edm');
 
   const { entitySetId, propertyTypeId } = ownProps;
   let { permissions } = ownProps;
@@ -86,9 +123,12 @@ function mapStateToProps(state, ownProps) {
     propertyType = Immutable.fromJS(async.getIn(['propertyTypes', propertyTypeId]).value);
   }
 
+  const customSettings = edm.getIn(['entitySetPropertyMetadata', entitySetId, propertyTypeId], Immutable.Map());
+
   return {
     propertyType,
-    permissions
+    permissions,
+    customSettings
   };
 }
 

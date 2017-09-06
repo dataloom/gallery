@@ -6,21 +6,44 @@ import styles from '../styles.module.css';
 export default class PropertyTypeFilter extends React.Component {
   static propTypes = {
     propertyTypes: PropTypes.array.isRequired,
-    onListUpdate: PropTypes.func.isRequired
+    onListUpdate: PropTypes.func.isRequired,
+    entitySetPropertyMetadata: PropTypes.object.isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
       show: false,
-      selectedProperties: this.getAllPropertyTypeIds(this.props.propertyTypes)
+      selectedProperties: new Set()
     };
   }
 
+  componentDidMount() {
+    this.loadDefaultSelectedProps(this.props.propertyTypes, this.props.entitySetPropertyMetadata);
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (this.props.propertyTypes.length !== nextProps.propertyTypes.length) {
-      this.setState({ selectedProperties: this.getAllPropertyTypeIds(nextProps.propertyTypes) });
+    const { propertyTypes, entitySetPropertyMetadata } = nextProps;
+    if (this.props.propertyTypes.length !== propertyTypes.length
+      || this.props.entitySetPropertyMetadata.size !== entitySetPropertyMetadata.size) {
+      this.loadDefaultSelectedProps(propertyTypes, entitySetPropertyMetadata);
     }
+  }
+
+  loadDefaultSelectedProps = (propertyTypes, entitySetPropertyMetadata) => {
+    const selectedProperties = new Set();
+    [...this.getAllPropertyTypeIds(propertyTypes)]
+    .forEach((propertyTypeId) => {
+      if ((!entitySetPropertyMetadata || !entitySetPropertyMetadata.get(propertyTypeId))
+        || entitySetPropertyMetadata.getIn([propertyTypeId, 'defaultShow'])) {
+        selectedProperties.add(propertyTypeId);
+      }
+    });
+    this.setState({ selectedProperties });
+    const filteredPropertyTypes = propertyTypes.filter((propertyType) => {
+      return selectedProperties.has(propertyType.id);
+    });
+    this.props.onListUpdate(filteredPropertyTypes);
   }
 
   getAllPropertyTypeIds = (propertyTypes) => {
@@ -47,6 +70,9 @@ export default class PropertyTypeFilter extends React.Component {
   }
 
   renderCheckbox = (propertyType) => {
+    const title = this.props.entitySetPropertyMetadata.getIn([propertyType.id, 'title'], propertyType.title);
+    // const title = (this.props.entitySetPropertyMetadata.get(propertyType.id]) ?
+    //   this.props.entitySetPropertyMetadata[propertyType.id].title : propertyType.title;
     return (
       <div key={propertyType.id} style={{ float: 'left'}}>
         <input
@@ -57,7 +83,7 @@ export default class PropertyTypeFilter extends React.Component {
             onChange={(e) => {
               this.updateChecked(e, propertyType.id);
             }} />
-        <label htmlFor={propertyType.id} className={styles.checkboxLabel}>{propertyType.title}</label>
+        <label htmlFor={propertyType.id} className={styles.checkboxLabel}>{title}</label>
       </div>
     );
   }

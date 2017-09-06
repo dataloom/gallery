@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
 
@@ -171,6 +171,51 @@ function fetchEntitySetProjectionEpic(action$ :Observable<Action>) :Observable<A
     });
 }
 
+function getAllEntitySetPropertyMetadataEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(EntityDataModelApi.getAllEntitySetPropertyMetadata(action.entitySetId))
+        .mergeMap((entitySetPropertyMetadata) => {
+          return Observable.of(
+            actionFactories.getAllEntitySetPropertyMetadataResolve(action.entitySetId, entitySetPropertyMetadata),
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            actionFactories.getAllEntitySetPropertyMetadataReject(e)
+          );
+        });
+    });
+}
+
+function updateEntitySetPropertyMetadataEpic(action$ :Observable<Action>) :Observable<Action> {
+
+  return action$
+    .ofType(actionTypes.UPDATE_ENTITY_SET_PROPERTY_METADATA_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(EntityDataModelApi.updateEntitySetPropertyMetadata(
+          action.entitySetId,
+          action.propertyTypeId,
+          action.update))
+        .mergeMap(() => {
+          return Observable.of(
+            actionFactories.updateEntitySetPropertyMetadataResolve(),
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            actionFactories.updateEntitySetPropertyMetadataReject(e)
+          );
+        });
+    });
+}
+
 export default combineEpics(
   loadEdmEpic,
   updateMetadataEpic,
@@ -178,5 +223,7 @@ export default combineEpics(
   fetchAllEntitySetsEpic,
   fetchAllEntityTypesEpic,
   fetchAllPropertyTypesEpic,
-  fetchEntitySetProjectionEpic
+  fetchEntitySetProjectionEpic,
+  getAllEntitySetPropertyMetadataEpic,
+  updateEntitySetPropertyMetadataEpic
 );

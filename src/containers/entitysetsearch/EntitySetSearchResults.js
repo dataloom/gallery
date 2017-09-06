@@ -69,6 +69,7 @@ export default class EntitySetSearchResults extends React.Component {
     results: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    entitySetPropertyMetadata: PropTypes.object.isRequired,
     hidePaginationFn: PropTypes.func.isRequired
   }
 
