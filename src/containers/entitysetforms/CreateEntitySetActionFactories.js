@@ -32,8 +32,6 @@ export function createEntitySetReset() {
 }
 
 export function createLinkedEntitySetRequest(linkingRequest :Object) {
-  console.log('create')
-  console.log(linkingRequest)
   return {
     type: actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST,
     linkingRequest
