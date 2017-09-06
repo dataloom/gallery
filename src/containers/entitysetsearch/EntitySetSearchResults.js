@@ -7,85 +7,61 @@ import React from 'react';
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import { EntityDataModelApi, Models } from 'lattice';
-import { Grid, ScrollSync } from 'react-virtualized';
+import { EntityDataModelApi, SearchApi, Models } from 'lattice';
+import { Button, ButtonGroup } from 'react-bootstrap';
+import { Link } from 'react-router';
 
-import EntityRow from './EntityRow';
-import TextCell from './TextCell';
-import getTitle from '../../utils/EntityTypeTitles';
+import DataTable from './components/DataTable';
+import PersonCard from './components/PersonCard';
+import RowImage from './components/RowImage';
+import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../utils/Consts/StringConsts';
+import { getTitleV2 } from '../../utils/EntityTypeTitles';
+
 import styles from './styles.module.css';
 
-const COLUMN_MIN_WIDTH = 100;
-const COLUMN_MAX_WIDTH = 500;
-const ROW_MIN_HEIGHT = 50;
-const GRID_MAX_HEIGHT = 600;
-const GRID_MAX_WIDTH = 980; // from page.module.css .content{}
+type SetMultiMap = Map<string, Set<any>>;
+type ListSetMultiMap = List<SetMultiMap>;
 
 const {
   FullyQualifiedName
 } = Models;
 
-const TableContainer = styled.div`
-  border: 1px solid #eeeeee;
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: column;
-  overflow: hidden;
+// TODO: REMOVE
+const NEIGHBOR_ENTITY_SET_MISSING = 'NEIGHBOR_ENTITY_SET_MISSING';
+// TODO: REMOVE
+
+const BreadcrumbsContainer = styled.div`
+  font-size: 16px;
+  margin-bottom: 20px;
 `;
 
-const TableHeadContainer = styled.div`
-  background-color: #f8f8f8;
-  border-bottom: 1px solid #eeeeee;
-  color: #424242;
-  display: flex;
-  height: ${ROW_MIN_HEIGHT}px;
-  width: ${GRID_MAX_WIDTH}px;
-`;
-
-const TableBodyContainer = styled.div`
-  color: #424242;
-  display: flex;
-  height: ${(props :Object) => {
-    const height = props.gridHeight ? props.gridHeight : GRID_MAX_HEIGHT;
-    // -1 to compensate for the border-bottom of each cell
-    return `${height - 1}px`;
+const Breadcrumb = styled.span`
+  color: ${(props :Object) => {
+    return props.link ? '#337ab7' : '#777777';
   }};
-  width: ${GRID_MAX_WIDTH}px;
-`;
-
-const TableHeadGrid = styled(Grid)`
-  outline: none;
-  overflow: hidden !important;
-`;
-
-const TableBodyGrid = styled(Grid)`
-  cursor: pointer;
-  outline: none;
-`;
-
-const TableHeadCell = styled.div`
-  align-items: center;
-  display: flex;
-  font-weight: bold;
-  padding: 10px;
-  max-width: 500px;
-`;
-
-const TableBodyCell = styled.div`
-  align-items: center;
-  border-bottom: 1px solid #eeeeee;
-  display: flex;
-  padding: 10px;
-  max-width: 500px;
   ${(props :Object) => {
-    if (props.highlight) {
+    if (props.link) {
       return css`
-        background-color: #f8f8f8;
+        &:hover {
+          color: #23527c;
+          cursor: pointer;
+          text-decoration: underline;
+        }
       `;
     }
     return '';
   }}
 `;
+
+const ImageCellContainer = styled.div`
+  display: flex;
+`;
+
+let keyCounter = 0;
+const getKeyCounter = () => {
+  keyCounter += 1;
+  return keyCounter;
+};
 
 export default class EntitySetSearchResults extends React.Component {
 
@@ -93,371 +69,210 @@ export default class EntitySetSearchResults extends React.Component {
     results: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
-    formatValueFn: PropTypes.func.isRequired,
-    showCount: PropTypes.bool
+    hidePaginationFn: PropTypes.func.isRequired
   }
 
   state :{
-    columnHeaders :List<string>,
-    columnHeaderToWidthMap :Map<string, number>,
-    hoveredColumnIndex :number,
-    hoveredRowIndex :number,
-    results :Object[]
+    breadcrumbs :Object[],
+    searchResults :List<Map<string, any>>,
+    neighborView :string,
+    neighborResults :Map<string, Map<string, any>>,
+    selectedEntity :Map<string, any>,
+    selectedEntityId :UUID,
+    selectedEntitySet :Map<string, any>
   }
-
-  tableHeadGrid :Grid;
-  tableBodyGrid :Grid;
 
   constructor(props :Object) {
 
     super(props);
 
-    const columnHeaders = this.getColumnHeaders(props.propertyTypes);
-    const columnHeaderToWidthMap = this.getColumnHeaderToWidthMap(columnHeaders, props.results);
+    const searchResults :List<Map<string, any>> = Immutable.fromJS(props.results);
 
     this.state = {
-      columnHeaders,
-      columnHeaderToWidthMap,
-      hoveredColumnIndex: -1,
-      hoveredRowIndex: -1,
-      results: props.results,
-      selectedId: undefined,
-      selectedRow: undefined,
-      selectedEntitySet: undefined,
-      selectedPropertyTypes: undefined,
-      breadcrumbs: []
+      searchResults,
+      breadcrumbs: [],
+      neighborView: 'TABLE',
+      neighborResults: Immutable.Map(),
+      selectedEntity: Immutable.Map(),
+      selectedEntityId: undefined,
+      selectedEntitySet: Immutable.Map()
     };
   }
 
   componentWillReceiveProps(nextProps :Object) {
 
-    const propertyTypes = nextProps.propertyTypes;
-    const results = nextProps.results;
-    const columnHeaders = this.getColumnHeaders(propertyTypes);
-    const columnHeaderToWidthMap = this.getColumnHeaderToWidthMap(columnHeaders, results);
+    const searchResults :List<Map<string, any>> = Immutable.fromJS(nextProps.results);
 
     this.setState({
-      columnHeaders,
-      columnHeaderToWidthMap,
-      results
+      searchResults
     });
   }
 
-  componentWillUpdate(nextProps :Object, nextState :Object) {
+  organizeNeighborResults = (neighbors :Object[]) => {
 
-    if (!this.state.columnHeaderToWidthMap.equals(nextState.columnHeaderToWidthMap)) {
-      // https://github.com/bvaughn/react-virtualized/issues/136#issuecomment-190440226
-      this.tableHeadGrid.recomputeGridSize();
-      this.tableBodyGrid.recomputeGridSize();
-    }
-  }
-
-  getColumnHeaders = (propertyTypes :Object[]) => {
-
-    return Immutable.List().withMutations((list :List<string>) => {
-      propertyTypes.forEach((propertyType :Object) => {
-        const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.type);
-        list.push(fqn.getFullyQualifiedName());
-      });
-    });
-  }
-
-  getColumnHeaderToWidthMap = (columnHeaders :List<string>, results :Object[]) => {
-
-    return Immutable.Map().withMutations((map :Map<string, number>) => {
-
-      // iterate through the results, column by column, and compute an estimated width for each column
-      columnHeaders.forEach((header :string) => {
-
-        // find the widest cell in the column
-        let columnWidth :number = 0;
-        let isColumnEmpty :boolean = true;
-
-        results.forEach((row) => {
-          const cell = row[header];
-          if (cell) {
-            const cellValue = cell[0]; // TODO: how do we handle when this has more than 1 elements?
-            if (cellValue) {
-              isColumnEmpty = false;
-              const cellWidth = `${cellValue}`.length;
-              if (cellWidth > columnWidth) {
-                columnWidth = cellWidth;
-              }
-            }
-          }
-        });
-
-        // compare the header cell width with the widest cell in the table
-        const headerCellWidth = `${header}`.length;
-        const newColumnWidth = (headerCellWidth > columnWidth) ? headerCellWidth : columnWidth;
-
-        // assume 10px per character. not the best approach, but an ok aproximation for now.
-        let columnWidthInPixels = newColumnWidth * 10;
-
-        // ensure column will have a minimum width
-        if (columnWidthInPixels < COLUMN_MIN_WIDTH) {
-          columnWidthInPixels = COLUMN_MIN_WIDTH;
+    const organizedNeighbors = {};
+    neighbors.forEach((neighbor :Object) => {
+      if (!neighbor) {
+        return;
+      }
+      const associationEntitySetId :UUID = neighbor.associationEntitySet.id;
+      if (associationEntitySetId) {
+        if (!organizedNeighbors[associationEntitySetId]) {
+          organizedNeighbors[associationEntitySetId] = {};
         }
-        // ensure column will have a maximum width
-        else if (columnWidthInPixels > COLUMN_MAX_WIDTH) {
-          columnWidthInPixels = COLUMN_MAX_WIDTH;
+        const neighborEntitySetId :UUID | string = (neighbor.neighborEntitySet)
+          ? neighbor.neighborEntitySet.id
+          : NEIGHBOR_ENTITY_SET_MISSING;
+        if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
+          organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
         }
-
-        // store the computed column width. empty columns will not be rendered
-        if (isColumnEmpty) {
-          columnWidthInPixels = 0; // indicates an empty column
-        }
-        map.set(header, columnWidthInPixels);
-      });
-    });
-  }
-
-  onRowSelect = (selectedId, selectedRow, selectedEntitySetId, selectedPropertyTypes) => {
-    EntityDataModelApi.getEntitySet(selectedEntitySetId)
-    .then((selectedEntitySet) => {
-      EntityDataModelApi.getEntityType(selectedEntitySet.entityTypeId)
-      .then((entityType) => {
-        if (selectedId !== this.state.selectedId) {
-          const crumb = {
-            id: selectedId,
-            title: getTitle(entityType, selectedRow, selectedPropertyTypes),
-            row: selectedRow,
-            propertyTypes: selectedPropertyTypes,
-            entitySet: selectedEntitySet
-          };
-          const breadcrumbs = this.state.breadcrumbs.concat(crumb);
-          this.setState({ selectedId, selectedRow, selectedEntitySet, selectedPropertyTypes, breadcrumbs });
-        }
-      });
-    });
-  }
-
-  jumpToRow = (index) => {
-    const crumb = this.state.breadcrumbs[index];
-    const breadcrumbs = this.state.breadcrumbs.slice(0, index + 1);
-    this.setState({
-      selectedId: crumb.id,
-      selectedRow: crumb.row,
-      selectedEntitySet: crumb.entitySet,
-      selectedPropertyTypes: crumb.propertyTypes,
-      breadcrumbs
-    });
-  }
-
-  onRowDeselect = () => {
-    this.setState({
-      selectedId: undefined,
-      selectedRow: undefined,
-      selectedEntitySet: undefined,
-      selectedPropertyTypes: undefined,
-      breadcrumbs: []
-    });
-  }
-
-  renderTextCell = (field :string, rowIndex :number) => {
-    return (
-      <TextCell
-          results={this.state.results}
-          field={field}
-          formatValueFn={this.props.formatValueFn}
-          onClick={this.onRowSelect}
-          entitySetId={this.props.entitySetId}
-          propertyTypes={this.props.propertyTypes}
-          rowIndex={rowIndex} />
-    );
-  }
-
-  columnIsEmpty = (fqn) => {
-    let empty = true;
-    this.state.results.forEach((row) => {
-      if (row[fqn] && row[fqn].length) empty = false;
-    });
-    return empty;
-  }
-
-  getColumnNamesToShow = () => {
-    const columnNamesToShow = new Set();
-    this.props.propertyTypes.forEach((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      if (!this.columnIsEmpty(fqn)) columnNamesToShow.add(fqn);
-    });
-    return columnNamesToShow;
-  }
-
-  renderColumns = () => {
-    const columnNamesToShow = this.getColumnNamesToShow();
-    const columnWidth = 120;
-    const columns = [];
-    if (this.props.showCount) {
-      columns.push(
-        <Column
-            key="count"
-            header={<Cell className={styles.countHeaderCell}>Count</Cell>}
-            cell={this.renderTextCell('count', columnWidth)}
-            width={columnWidth} />
-      );
-    }
-    this.props.propertyTypes.forEach((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-      if (columnNamesToShow.has(fqn)) {
-        if (propertyType.type.name !== 'mugshot'
-          && propertyType.type.name !== 'scars'
-          && propertyType.type.name !== 'tattoos') {
-          columns.push(
-            <Column
-                key={fqn}
-                header={<Cell>{propertyType.title}</Cell>}
-                cell={this.renderTextCell(fqn, columnWidth)}
-                width={columnWidth} />
-          );
+        else {
+          organizedNeighbors[associationEntitySetId][neighborEntitySetId].push(neighbor);
         }
       }
     });
-    return columns;
+
+    return Immutable.fromJS(organizedNeighbors);
   }
 
-  renderSingleRow = () => {
-    const row = Object.assign({}, this.state.selectedRow);
-    delete row.id;
-    return (
-      <EntityRow
-          row={row}
-          entityId={this.state.selectedId}
-          entitySet={this.state.selectedEntitySet}
-          backFn={this.onRowDeselect}
-          formatValueFn={this.props.formatValueFn}
-          propertyTypes={this.state.selectedPropertyTypes}
-          onClick={this.onRowSelect}
-          jumpFn={this.jumpToRow}
-          breadcrumbs={this.state.breadcrumbs} />
-    );
+  personPropertiesExist = (properties :FullyQualifiedName[]) => {
+
+    if (!properties || properties.length === 0) {
+      return false;
+    }
+
+    let hasFirstName :boolean = false;
+    let hasLastName :boolean = false;
+    let hasMugshot :boolean = false;
+
+    properties.forEach((fqn :FullyQualifiedName) => {
+      if (FIRST_NAMES.includes(fqn.getName().toLowerCase())) {
+        hasFirstName = true;
+      }
+      if (LAST_NAMES.includes(fqn.getName().toLowerCase())) {
+        hasLastName = true;
+      }
+      if (fqn.getName().toLowerCase() === 'mugshot') {
+        hasMugshot = true;
+      }
+    });
+
+    return hasFirstName && hasLastName && hasMugshot;
   }
 
-  setTableHeadGrid = (tableHeadGridRef :any) => {
+  onEntitySelect = (selectedEntityId :UUID, selectedEntitySetId :UUID, selectedEntity :Map<string, any>) => {
 
-    this.tableHeadGrid = tableHeadGridRef;
+    if (selectedEntityId === this.state.selectedEntityId) {
+      return;
+    }
+
+    this.props.hidePaginationFn(true);
+
+    EntityDataModelApi
+      .getEntitySet(selectedEntitySetId)
+      .then((entitySet) => {
+        EntityDataModelApi
+          .getEntityType(entitySet.entityTypeId)
+          .then((entityType) => {
+            SearchApi
+              .searchEntityNeighbors(selectedEntitySetId, selectedEntityId)
+              .then((neighbors) => {
+                const neighborResults = this.organizeNeighborResults(neighbors);
+                const selectedEntitySet = Immutable.fromJS(entitySet);
+                const crumb = {
+                  neighborResults,
+                  selectedEntity,
+                  selectedEntityId,
+                  selectedEntitySet,
+                  title: getTitleV2(entityType, selectedEntity)
+                };
+                this.setState({
+                  neighborResults,
+                  selectedEntity,
+                  selectedEntityId,
+                  selectedEntitySet,
+                  breadcrumbs: this.state.breadcrumbs.concat(crumb)
+                });
+              });
+          });
+      });
   }
 
-  setTableBodyGrid = (tableBodyGridRef :any) => {
-
-    this.tableBodyGrid = tableBodyGridRef;
+  backToSearchResults = () => {
+    this.setState({
+      breadcrumbs: [],
+      neighborResults: Immutable.Map(),
+      selectedEntity: Immutable.Map(),
+      selectedEntityId: undefined,
+      selectedEntitySet: Immutable.Map()
+    });
+    this.props.hidePaginationFn(false);
   }
 
-  isColumnEmpty = (columnIndex :number) => {
-    const columnWidth = this.state.columnHeaderToWidthMap.get(this.state.columnHeaders.get(columnIndex));
-    return columnWidth === 0;
+  jumpToSelectedEntity = (index :number) => {
+    const crumb = this.state.breadcrumbs[index];
+    this.setState({
+      breadcrumbs: this.state.breadcrumbs.slice(0, index + 1),
+      neighborResults: crumb.neighborResults,
+      selectedEntity: crumb.selectedEntity,
+      selectedEntityId: crumb.selectedEntityId,
+      selectedEntitySet: crumb.selectedEntitySet
+    });
   }
 
-  getGridColumnWidth = ({ index }) => {
-    return this.state.columnHeaderToWidthMap.get(this.state.columnHeaders.get(index));
-  };
+  renderBreadcrumbs = () => {
 
-  getGridRowHeight = ({ index }) => {
-    return ROW_MIN_HEIGHT; // TODO: implement more intelligently
-  };
-
-  renderGridHeaderCell = ({ columnIndex, key, style }) => {
-
-    if (this.isColumnEmpty(columnIndex)) {
+    if (this.state.searchResults.size === 0) {
       return null;
     }
 
-    return (
-      <TableHeadCell key={key} style={style}>
-        {this.state.columnHeaders.get(columnIndex)}
-      </TableHeadCell>
+    const breadcrumbs = [];
+
+    breadcrumbs.push(
+      <Breadcrumb key={`bc-${getKeyCounter()}`}>{'/ '}</Breadcrumb>
     );
-  }
 
-  renderGridCell = ({ columnIndex, key, rowIndex, style, parent }) => {
-
-    if (this.isColumnEmpty(columnIndex)) {
-      return null;
+    if (this.state.breadcrumbs.length === 0) {
+      breadcrumbs.push(
+        <Breadcrumb key={`bc-${getKeyCounter()}`}>{'Search Results'}</Breadcrumb>
+      );
+    }
+    else {
+      breadcrumbs.push(
+        <Breadcrumb
+            link
+            key={`bc-${getKeyCounter()}`}
+            onClick={this.backToSearchResults}>
+          {'Search Results'}
+        </Breadcrumb>
+      );
     }
 
-    const setState = this.setState.bind(this);
-    const columnHeader = this.state.columnHeaders.get(columnIndex);
+    this.state.breadcrumbs.forEach((crumb :Object, index :number) => {
+
+      breadcrumbs.push(<Breadcrumb key={`bc-${getKeyCounter()}`}>{' / '}</Breadcrumb>);
+
+      if (index + 1 === this.state.breadcrumbs.length) {
+        breadcrumbs.push(<Breadcrumb key={`bc-${getKeyCounter()}`}>{crumb.title}</Breadcrumb>);
+      }
+      else {
+        breadcrumbs.push(
+          <Breadcrumb
+              link
+              key={`bc-${getKeyCounter()}`}
+              onClick={() => {
+                this.jumpToSelectedEntity(index);
+              }}>
+            {crumb.title}
+          </Breadcrumb>
+        );
+      }
+    });
 
     return (
-      <TableBodyCell
-          key={key}
-          style={style}
-          highlight={rowIndex === this.state.hoveredRowIndex}
-          onMouseLeave={() => {
-            setState({
-              hoveredColumnIndex: -1,
-              hoveredRowIndex: -1
-            });
-            parent.forceUpdate();
-          }}
-          onMouseOver={() => {
-            setState({
-              hoveredColumnIndex: columnIndex,
-              hoveredRowIndex: rowIndex
-            });
-            parent.forceUpdate();
-          }}>
-        {/* {this.state.results[rowIndex][this.state.columnHeaders.get(columnIndex)]} */}
-        {this.renderTextCell(columnHeader, rowIndex)}
-      </TableBodyCell>
-    );
-  }
-
-  renderGrid = () => {
-
-    const columnCount = this.state.columnHeaders.size;
-    const rowCount = this.state.results.length;
-
-    const overscanColumnCount = 4;
-    const overscanRowCount = 4;
-
-    // this doesn't seem necessary, but the "height" prop is required :/
-    let gridHeight = rowCount * ROW_MIN_HEIGHT;
-    if (gridHeight > GRID_MAX_HEIGHT) {
-      gridHeight = GRID_MAX_HEIGHT;
-    }
-
-    return (
-      <ScrollSync>
-        {
-          ({ onScroll, scrollLeft }) => {
-            return (
-              <TableContainer>
-                <TableHeadContainer>
-                  <TableHeadGrid
-                      cellRenderer={this.renderGridHeaderCell}
-                      columnCount={columnCount}
-                      columnWidth={this.getGridColumnWidth}
-                      estimatedColumnSize={COLUMN_MIN_WIDTH}
-                      height={ROW_MIN_HEIGHT}
-                      innerRef={this.setTableHeadGrid}
-                      overscanColumnCount={overscanColumnCount}
-                      overscanRowCount={overscanRowCount}
-                      rowHeight={ROW_MIN_HEIGHT}
-                      rowCount={1}
-                      scrollLeft={scrollLeft}
-                      width={GRID_MAX_WIDTH} />
-                </TableHeadContainer>
-                <TableBodyContainer gridHeight={gridHeight}>
-                  <TableBodyGrid
-                      cellRenderer={this.renderGridCell}
-                      columnCount={columnCount}
-                      columnWidth={this.getGridColumnWidth}
-                      estimatedColumnSize={COLUMN_MIN_WIDTH}
-                      height={gridHeight}
-                      innerRef={this.setTableBodyGrid}
-                      onScroll={onScroll}
-                      overscanColumnCount={overscanColumnCount}
-                      overscanRowCount={overscanRowCount}
-                      rowCount={rowCount}
-                      rowHeight={this.getGridRowHeight}
-                      width={GRID_MAX_WIDTH} />
-                </TableBodyContainer>
-              </TableContainer>
-            );
-          }
-        }
-      </ScrollSync>
+      <BreadcrumbsContainer>
+        {breadcrumbs}
+      </BreadcrumbsContainer>
     );
   }
 
@@ -467,17 +282,385 @@ export default class EntitySetSearchResults extends React.Component {
     );
   }
 
-  render() {
-    let content;
-    if (this.state.selectedId) {
-      content = this.renderSingleRow();
-    }
-    else {
-      content = (this.state.results.length < 1) ? this.renderNoResults() : this.renderGrid();
-    }
+  getSearchResultsDataTableHeaders = () => {
+
+    // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
+    return Immutable.List().withMutations((list :List<Map<string, string>>) => {
+      this.props.propertyTypes.forEach((propertyType :Map<string, any>) => {
+        const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.type);
+        list.push(Immutable.fromJS({
+          id: fqn.getFullyQualifiedName(),
+          value: propertyType.title
+        }));
+      });
+    });
+  }
+
+  renderSearchResultsDataTable = () => {
+
+    const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
+
+    const onClick = (selectedRowIndex :number, selectedRowData) => {
+      const selectedEntityId :UUID = this.state.searchResults.getIn([selectedRowIndex, 'id', 0]);
+      const selectedEntity = Immutable.fromJS({
+        headers,
+        data: selectedRowData
+      });
+      this.onEntitySelect(selectedEntityId, this.props.entitySetId, selectedEntity);
+    };
+
     return (
-      <div>{content}</div>
+      <DataTable
+          data={this.state.searchResults}
+          headers={headers}
+          onRowClick={onClick} />
     );
   }
 
+  renderSearchResultsPersonList = () => {
+
+    const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
+
+    const personList = this.state.searchResults.map((personResult :Map<string, any>) => {
+      const onClick = () => {
+        const selectedEntityId :UUID = personResult.getIn(['id', 0]);
+        const selectedEntity = Immutable.fromJS({
+          headers,
+          data: personResult
+        });
+        this.onEntitySelect(selectedEntityId, this.props.entitySetId, selectedEntity);
+      };
+
+      return (
+        <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} />
+      );
+    });
+
+    return personList;
+  }
+
+
+  getImageCellData(data) {
+
+    const images = data.map((imgSrc :string) => {
+      return <RowImage key={`img-${getKeyCounter()}`} imgSrc={imgSrc} />;
+    });
+
+    return (
+      <ImageCellContainer>
+        {images}
+      </ImageCellContainer>
+    );
+  }
+
+  renderSelectedEntityDataTable = () => {
+
+    const propertyHeader :string = 'Property';
+    const dataHeader :string = 'Data';
+    const headers :List<string> = Immutable.fromJS([
+      { id: propertyHeader, value: propertyHeader },
+      { id: dataHeader, value: dataHeader }
+    ]);
+
+    const getImageCellData = this.getImageCellData.bind(this);
+
+    /*
+     * we need to convert the selected row into the correct structure which DataTable expects for the 'data' prop.
+     * in other words, we need to expand/invert the selected row into a list, where each element of the list is a
+     * property from the selected row. in other words, we need to convert the selected row, which is an object
+     * structured as SetMultiMap, into an object structured as ListSetMultiMap.
+     *
+     * in other words, turn this (the selected row):
+     *
+     *   { "id": ["some_id"], "fqn.1": ['some_data'], "fqn.2": ["some_more_data"] }
+     *
+     * ... into this (what DataTable expects for the 'data' prop):
+     *
+     *   [
+     *     { "Property": ["id"], "Data": ["some_id"] },
+     *     { "Property": ["fqn.1"], "Data": ["some_data"] },
+     *     { "Property": ["fqn.2"], "Data": ["some_more_data"] },
+     *   ]
+     */
+    const data :ListSetMultiMap = Immutable.List().withMutations((list :ListSetMultiMap) => {
+      this.state.selectedEntity.get('headers', []).forEach((header :Map<string, string>) => {
+
+        const headerId :string = header.get('id');
+        if (this.state.selectedEntity.hasIn(['data', headerId])) {
+
+          let dataValue :any = this.state.selectedEntity.getIn(['data', headerId]);
+
+          // HACK: for displaying images in the table
+          if (headerId.toLowerCase().indexOf('mugshot') !== -1) {
+            dataValue = getImageCellData(dataValue);
+          }
+
+          const item :Map<string, any> = Immutable.Map()
+            .set(propertyHeader, header.get('value'))
+            .set(dataHeader, dataValue);
+          list.push(item);
+        }
+      });
+    });
+
+    const headerIds :FullyQualifiedName[] = this.state.selectedEntity
+      .get('headers', [])
+      .map((header :Map<string, string>) => {
+        return new FullyQualifiedName(header.get('id'));
+      })
+      .toJS();
+
+    return (
+      <div>
+        {
+          (this.personPropertiesExist(headerIds))
+            ? <PersonCard data={this.state.selectedEntity.get('data')} />
+            : null
+        }
+        <DataTable
+            data={data}
+            excludeEmptyColumns={false}
+            headers={headers} />
+      </div>
+    );
+  }
+
+  renderNeighborsViewToolbar = () => {
+
+    return (
+      <div className={styles.viewToolbar}>
+        <ButtonGroup>
+          <Button
+              onClick={() => {
+                this.setState({ neighborView: 'TABLE' });
+              }}
+              active={this.state.neighborView === 'TABLE'}>
+            Table
+          </Button>
+          <Button
+              onClick={() => {
+                this.setState({ neighborView: 'TIMELINE' });
+              }}
+              active={this.state.neighborView === 'TIMELINE'}>
+            Timeline
+          </Button>
+        </ButtonGroup>
+      </div>
+    );
+  }
+
+
+  renderNeighborsTimeline = () => {
+
+    return null;
+  }
+
+  getNeighborGroupDataTableTitle = (neighbor :Map<string, any>) => {
+
+    let entitySetTitle :string = '';
+    if (this.state.selectedEntitySet.has('title')) {
+      entitySetTitle = this.state.selectedEntitySet.get('title');
+    }
+
+    const neighborEntitySetId :UUID = neighbor.getIn(['neighborEntitySet', 'id']);
+    const neighborEntitySetTitle :UUID = neighbor.getIn(['neighborEntitySet', 'title']);
+    const associationEntitySetTitle :UUID = neighbor.getIn(['associationEntitySet', 'title']);
+
+    const neighborTitle = (neighborEntitySetId === NEIGHBOR_ENTITY_SET_MISSING)
+      ? (
+        <span className={styles.missingTitle}>?</span>
+      )
+      : (
+        <Link to={`/entitysets/${neighborEntitySetId}`} className={styles.neighborGroupDataTableTitleLink}>
+          {neighborEntitySetTitle}
+        </Link>
+      );
+
+    return (neighbor.get('src'))
+      ? (
+        <div className={styles.neighborGroupDataTableTitle}>
+          <p>{entitySetTitle}</p>
+          <p>{associationEntitySetTitle}</p>
+          <p>{neighborTitle}</p>
+        </div>
+      )
+      : (
+        <div className={styles.neighborGroupDataTableTitle}>
+          <p>{neighborTitle}</p>
+          <p>{associationEntitySetTitle}</p>
+          <p>{entitySetTitle}</p>
+        </div>
+      );
+  }
+
+  getNeighborGroupDataTable = (neighborGroup, neighborGroupData, neighborGroupHeaders) => {
+
+    const firstNeighbor :Map<string, any> = neighborGroup.first();
+    const title :string = this.getNeighborGroupDataTableTitle(firstNeighbor);
+    const neighborEntitySetId :UUID = firstNeighbor.getIn(['neighborEntitySet', 'id']);
+
+    const onClick = (selectedRowIndex :number, selectedRowData) => {
+      const neighborEntityId :UUID = neighborGroup.getIn([selectedRowIndex, 'neighborId']);
+      const selectedEntity = Immutable.fromJS({
+        data: selectedRowData,
+        headers: neighborGroupHeaders
+      });
+      this.onEntitySelect(neighborEntityId, neighborEntitySetId, selectedEntity);
+    };
+
+    return (
+      <div key={`${neighborEntitySetId}-${getKeyCounter()}`}>
+        {title}
+        <DataTable
+            data={neighborGroupData}
+            headers={neighborGroupHeaders}
+            onRowClick={onClick} />
+      </div>
+    );
+  }
+
+  renderNeighborDataTables = () => {
+
+    if (!this.state.neighborResults || this.state.neighborResults.isEmpty()) {
+      return null;
+    }
+
+    const associationGroupSection = [];
+
+    this.state.neighborResults.forEach((associationGroup :Map<UUID, List<any>>, associationEntitySetId :UUID) => {
+
+      const neighborGroupSection = [];
+
+      associationGroup.forEach((neighborGroup :List<any>, neighborEntitySetId :UUID) => {
+
+        if (neighborEntitySetId === NEIGHBOR_ENTITY_SET_MISSING) {
+          console.error('!!! NEIGHBOR_ENTITY_SET_MISSING !!!');
+        }
+
+        const neighborGroupData :List<Map<string, any>> = neighborGroup.map((neighbor :Map<string, any>) => {
+
+          const associationDetails :Map<string, any> = neighbor.get('associationDetails', Immutable.Map());
+          const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
+
+          // TODO: how do we handle duplicate keys with different values? is that even possible?
+          let mergedDetails :Map<string, any> = associationDetails.merge(neighborDetails);
+
+          if (neighbor.has('neighborId')) {
+            mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));
+          }
+
+          return mergedDetails;
+        });
+
+        const neighborGroupHeaders :List<Map<string, string>> = Immutable.List()
+          .withMutations((headers :List<Map<string, string>>) => {
+            // each neighbor in the neighbor group has identical PropertyTypes, so we only need one neighbor
+            neighborGroup.first().get('associationPropertyTypes', Immutable.List())
+              .forEach((propertyType :Map<string, any>) => {
+                const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
+                headers.push(Immutable.Map({
+                  id: fqn.getFullyQualifiedName(),
+                  value: propertyType.get('title')
+                }));
+              });
+            neighborGroup.first().get('neighborPropertyTypes', Immutable.List())
+              .forEach((propertyType :Map<string, any>) => {
+                const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
+                headers.push(Immutable.Map({
+                  id: fqn.getFullyQualifiedName(),
+                  value: propertyType.get('title')
+                }));
+              });
+          });
+
+        const neighborGroupDataTable = this.getNeighborGroupDataTable(
+          neighborGroup,
+          neighborGroupData,
+          neighborGroupHeaders
+        );
+
+        neighborGroupSection.push(
+          neighborGroupDataTable
+        );
+      }); // end associationGroup.forEach()
+
+      const title :string = associationGroup.first().first().getIn(['associationEntitySet', 'title']);
+
+      associationGroupSection.push((
+        <div key={`${associationEntitySetId}-${getKeyCounter()}`}>
+          <div className={styles.spacerSmall} />
+          <hr />
+          <div className={styles.spacerSmall} />
+          <div className={styles.associationGroupTitle}>{title}</div>
+          {neighborGroupSection}
+        </div>
+      ));
+
+    }); // end neighborResults.forEach()
+
+    return associationGroupSection;
+  }
+
+
+  renderNeighbors = () => {
+
+    // return (
+    //   <div>
+    //     {this.renderNeighborsViewToolbar()}
+    //     {
+    //       (this.state.neighborView === 'TABLE')
+    //         ? this.renderNeighborDataTables()
+    //         : this.renderNeighborsTimeline()
+    //     }
+    //   </div>
+    // );
+
+    return (
+      <div>
+        {this.renderNeighborDataTables()}
+      </div>
+    );
+  }
+
+  renderSearchResultsContent = () => {
+
+    const properties :FullyQualifiedName[] = this.props.propertyTypes.map((propertyType) => {
+      return new FullyQualifiedName(propertyType.type);
+    });
+
+    return (
+      <div>
+        {this.renderBreadcrumbs()}
+        {
+          (this.personPropertiesExist(properties))
+            ? this.renderSearchResultsPersonList()
+            : this.renderSearchResultsDataTable()
+        }
+      </div>
+    );
+  }
+
+  renderSelectedEntityContent = () => {
+
+    return (
+      <div>
+        {this.renderBreadcrumbs()}
+        {this.renderSelectedEntityDataTable()}
+        {this.renderNeighbors()}
+      </div>
+    );
+  }
+
+  render() {
+
+    if (this.state.searchResults.size === 0) {
+      return this.renderNoResults();
+    }
+
+    return (
+      (this.state.selectedEntityId)
+        ? this.renderSelectedEntityContent()
+        : this.renderSearchResultsContent()
+    );
+  }
 }
