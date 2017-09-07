@@ -5,6 +5,7 @@
 import * as React from 'react';
 
 import Immutable from 'immutable';
+import FontAwesome from 'react-fontawesome';
 import styled, { css } from 'styled-components';
 import { Grid, ScrollSync } from 'react-virtualized';
 
@@ -81,6 +82,9 @@ const TableHeadCell = styled.div`
     }
     return '';
   }}
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const TableBodyCell = styled.div`
@@ -107,6 +111,14 @@ const TableBodyCell = styled.div`
   }}
 `;
 
+const SortIcon = styled.span`
+  font-size: 11px;
+`;
+
+const HeaderText = styled.span`
+  margin-left: 5px;
+`;
+
 type SetMultiMap = Map<string, Set<any>>;
 type ListSetMultiMap = List<SetMultiMap>;
 
@@ -118,10 +130,12 @@ type Props = {
 };
 
 type State = {
+  data :ListSetMultiMap,
   headerIdToWidthMap :Map<string, number>,
   hoveredColumnIndex :number,
   hoveredRowIndex :number,
-  lastColumnOverrideMaxWidth :boolean
+  lastColumnOverrideMaxWidth :boolean,
+  sortOrder :number // 0 = original, 1 = asc, 2 = desc
 };
 
 // TODO: should the 'data' prop be ListSetMultiMap, or is that too specific to search results data?
@@ -162,8 +176,10 @@ class DataTable extends React.Component<Props, State> {
     this.state = {
       headerIdToWidthMap,
       lastColumnOverrideMaxWidth,
+      data: props.data,
       hoveredColumnIndex: -1,
-      hoveredRowIndex: -1
+      hoveredRowIndex: -1,
+      sortOrder: 0
     };
   }
 
@@ -200,7 +216,10 @@ class DataTable extends React.Component<Props, State> {
 
   componentWillUpdate(nextProps :Object, nextState :Object) {
 
-    if (!this.state.headerIdToWidthMap.equals(nextState.headerIdToWidthMap)) {
+    const data :boolean = !this.state.data.equals(nextState.data);
+    const headerIdToWidthMap :boolean = !this.state.headerIdToWidthMap.equals(nextState.headerIdToWidthMap);
+
+    if (!data || !headerIdToWidthMap) {
       if (this.tableHeadGrid && this.tableBodyGrid) {
         // https://github.com/bvaughn/react-virtualized/issues/136#issuecomment-190440226
         this.tableHeadGrid.recomputeGridSize();
@@ -296,20 +315,94 @@ class DataTable extends React.Component<Props, State> {
     return ROW_MIN_HEIGHT; // TODO: implement more intelligently
   };
 
+  getCellValue = (rowIndex :number, columnIndex :number) => {
+
+    const header :string = this.props.headers.getIn([columnIndex, 'id']);
+    let cellValue :string = this.state.data.getIn([rowIndex, header], '');
+    if (Immutable.isIndexed(cellValue)) {
+      cellValue = cellValue.join(' ; ');
+    }
+
+    return cellValue;
+  }
+
+  getCellValueInRow = (row :Map<string, any>, columnIndex :number) => {
+
+    const header :string = this.props.headers.getIn([columnIndex, 'id'], '');
+
+    let cellValue :string = row.get(header, '');
+    if (Immutable.isIndexed(cellValue)) {
+      cellValue = cellValue.join(' ; ');
+    }
+
+    return cellValue;
+  }
+
+  sortDataByColumn = (columnIndex :number) => {
+
+    const getCellValueInRow = this.getCellValueInRow.bind(this);
+
+    // sortOrder === 0 means going 0 -> 1, which means sort ascending
+    if (this.state.sortOrder === 0) {
+
+      const sortedData = this.state.data.sort((row1, row2) => {
+        const cellValue1 :string = getCellValueInRow(row1, columnIndex);
+        const cellValue2 :string = getCellValueInRow(row2, columnIndex);
+        if (cellValue1.length === 0) {
+          return 1; // move empty string to the end
+        }
+        else if (cellValue2.length === 0) {
+          return -1; // keep empty string at the end
+        }
+        return cellValue1.localeCompare(cellValue2);
+      });
+
+      this.setState({
+        data: sortedData,
+        sortOrder: 1
+      });
+    }
+    // sortOrder === 1 means going 1 -> 2, which means sort descending
+    else if (this.state.sortOrder === 1) {
+
+      this.setState({
+        data: this.state.data.reverse(), // we've already sorted ascending, so we just need to reverse
+        sortOrder: 2
+      });
+    }
+    // sortOrder === 2 means going 2 -> 0, which means use original order
+    else {
+
+      this.setState({
+        data: this.props.data,
+        sortOrder: 0
+      });
+    }
+  }
+
   renderGridHeaderCell = (params :Object) => {
 
     if (this.isColumnEmpty(params.columnIndex)) {
       return null;
     }
 
+    const sortDataByColumn = this.sortDataByColumn.bind(this);
     const setMaxWidth = !this.state.lastColumnOverrideMaxWidth || !this.isLastColumn(params.columnIndex);
 
     return (
       <TableHeadCell
           key={params.key}
           style={params.style}
-          setMaxWidth={setMaxWidth}>
-        {this.props.headers.getIn([params.columnIndex, 'value'])}
+          setMaxWidth={setMaxWidth}
+          onClick={() => {
+            sortDataByColumn(params.columnIndex);
+          }}>
+        <SortIcon>
+          <FontAwesome name="sort" />
+        </SortIcon>
+        <HeaderText>
+          {this.props.headers.getIn([params.columnIndex, 'value'])}
+        </HeaderText>
       </TableHeadCell>
     );
   }
@@ -322,12 +415,7 @@ class DataTable extends React.Component<Props, State> {
 
     const setState = this.setState.bind(this);
     const setMaxWidth = !this.state.lastColumnOverrideMaxWidth || !this.isLastColumn(params.columnIndex);
-
-    const header :string = this.props.headers.getIn([params.columnIndex, 'id'], '');
-    let cellValue = this.props.data.getIn([params.rowIndex, header]);
-    if (cellValue && Immutable.isIndexed(cellValue)) {
-      cellValue = cellValue.join(' ; ');
-    }
+    const cellValue :string = this.getCellValue(params.rowIndex, params.columnIndex);
 
     return (
       <TableBodyCell
@@ -336,7 +424,7 @@ class DataTable extends React.Component<Props, State> {
           highlight={params.rowIndex === this.state.hoveredRowIndex}
           setMaxWidth={setMaxWidth}
           onClick={() => {
-            this.props.onRowClick(params.rowIndex, this.props.data.get(params.rowIndex));
+            this.props.onRowClick(params.rowIndex, this.state.data.get(params.rowIndex));
           }}
           onMouseLeave={() => {
             setState({
@@ -362,7 +450,7 @@ class DataTable extends React.Component<Props, State> {
   render() {
 
     const columnCount :number = this.props.headers.size;
-    const rowCount :number = this.props.data.size;
+    const rowCount :number = this.state.data.size;
 
     if (rowCount === 0) {
       return (
