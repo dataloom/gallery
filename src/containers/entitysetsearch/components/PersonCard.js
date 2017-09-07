@@ -89,11 +89,14 @@ class PersonCard extends React.Component<Props, State> {
     let firstNameValue;
     this.props.data.forEach((value, key) => {
       if (key !== 'id') {
-        const fqn = new FullyQualifiedName(key);
-        if (FIRST_NAMES.includes(fqn.getName().toLowerCase())) {
-          firstNameValue = value;
-          return false; // break out of loop
+        try {
+          const fqn = new FullyQualifiedName(key);
+          if (FIRST_NAMES.includes(fqn.getName().toLowerCase())) {
+            firstNameValue = value;
+            return false; // break out of loop
+          }
         }
+        catch (e) {}
       }
     })
 
@@ -109,11 +112,14 @@ class PersonCard extends React.Component<Props, State> {
     let lastNameValue;
     this.props.data.forEach((value, key) => {
       if (key !== 'id') {
-        const fqn = new FullyQualifiedName(key);
-        if (LAST_NAMES.includes(fqn.getName().toLowerCase())) {
-          lastNameValue = value;
-          return false; // break out of loop
+        try {
+          const fqn = new FullyQualifiedName(key);
+          if (LAST_NAMES.includes(fqn.getName().toLowerCase())) {
+            lastNameValue = value;
+            return false; // break out of loop
+          }
         }
+        catch (e) {}
       }
     });
 
@@ -149,11 +155,14 @@ class PersonCard extends React.Component<Props, State> {
     let mugshotValue;
     this.props.data.forEach((value, key) => {
       if (key !== 'id') {
-        const fqn = new FullyQualifiedName(key);
-        if (fqn.getName().toLowerCase() === 'mugshot') {
-          mugshotValue = value;
-          return false; // break out of loop
+        try {
+          const fqn = new FullyQualifiedName(key);
+          if (fqn.getName().toLowerCase() === 'mugshot') {
+            mugshotValue = value;
+            return false; // break out of loop
+          }
         }
+        catch (e) {}
       }
     });
 
