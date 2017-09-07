@@ -210,8 +210,11 @@ class DataTable extends React.Component<Props, State> {
       this.setState({
         headerIdToWidthMap,
         lastColumnOverrideMaxWidth,
+        data: nextProps.data,
         hoveredColumnIndex: -1,
-        hoveredRowIndex: -1
+        hoveredRowIndex: -1,
+        sortedColumnIndex: -1,
+        sortOrder: 0
       });
     }
   }
@@ -363,6 +366,9 @@ class DataTable extends React.Component<Props, State> {
         }
         else if (cellValue2.length === 0) {
           return -1; // keep empty string at the end
+        }
+        if (React.isValidElement(cellValue1)) {
+          return 1; // not sure what to do with React components/elements. for now, move them to the end
         }
         return cellValue1.localeCompare(cellValue2);
       });

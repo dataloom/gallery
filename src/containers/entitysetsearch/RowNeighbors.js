@@ -82,8 +82,8 @@ export default class RowNeighbors extends React.Component {
         organizedNeighbors[associationEntitySetId][neighborEntitySetId].push(neighbor);
       }
     });
-    const selectedDateProps = dateProps;
-    return { organizedNeighbors, dateProps, selectedDateProps };
+
+    return { organizedNeighbors, dateProps };
   }
 
   columnIsEmpty = (fqn, results) => {

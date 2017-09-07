@@ -14,7 +14,9 @@ import { Link } from 'react-router';
 import DataTable from './components/DataTable';
 import PersonCard from './components/PersonCard';
 import RowImage from './components/RowImage';
-import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../utils/Consts/StringConsts';
+import EventTimeline from './EventTimeline';
+import EdmConsts from '../../utils/Consts/EdmConsts';
+import { FIRST_NAMES, LAST_NAMES } from '../../utils/Consts/StringConsts';
 import { getTitleV2 } from '../../utils/EntityTypeTitles';
 
 import styles from './styles.module.css';
@@ -77,6 +79,7 @@ export default class EntitySetSearchResults extends React.Component {
     breadcrumbs :Object[],
     searchResults :List<Map<string, any>>,
     neighborView :string,
+    neighborDateProps :Object,
     neighborResults :Map<string, Map<string, any>>,
     selectedEntity :Map<string, any>,
     selectedEntityId :UUID,
@@ -93,6 +96,7 @@ export default class EntitySetSearchResults extends React.Component {
       searchResults,
       breadcrumbs: [],
       neighborView: 'TABLE',
+      neighborDateProps: {},
       neighborResults: Immutable.Map(),
       selectedEntity: Immutable.Map(),
       selectedEntityId: undefined,
@@ -109,9 +113,12 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
-  organizeNeighborResults = (neighbors :Object[]) => {
+  processNeighborResults = (neighbors :Object[]) => {
 
+    // TODO: dateProps logic is just copied over from RowNeighbors. consider redoing this.
+    const dateProps = {};
     const organizedNeighbors = {};
+
     neighbors.forEach((neighbor :Object) => {
       if (!neighbor) {
         return;
@@ -120,12 +127,34 @@ export default class EntitySetSearchResults extends React.Component {
       if (associationEntitySetId) {
         if (!organizedNeighbors[associationEntitySetId]) {
           organizedNeighbors[associationEntitySetId] = {};
+          neighbor.associationPropertyTypes.forEach((propertyType) => {
+            if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+              if (dateProps[associationEntitySetId]) {
+                dateProps[associationEntitySetId].push(propertyType.id);
+              }
+              else {
+                dateProps[associationEntitySetId] = [propertyType.id];
+              }
+            }
+          });
         }
         const neighborEntitySetId :UUID | string = (neighbor.neighborEntitySet)
           ? neighbor.neighborEntitySet.id
           : NEIGHBOR_ENTITY_SET_MISSING;
         if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
           organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
+          if (neighbor.neighborPropertyTypes) {
+            neighbor.neighborPropertyTypes.forEach((propertyType) => {
+              if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+                if (dateProps[neighborEntitySetId]) {
+                  dateProps[neighborEntitySetId].push(propertyType.id);
+                }
+                else {
+                  dateProps[neighborEntitySetId] = [propertyType.id];
+                }
+              }
+            });
+          }
         }
         else {
           organizedNeighbors[associationEntitySetId][neighborEntitySetId].push(neighbor);
@@ -133,7 +162,10 @@ export default class EntitySetSearchResults extends React.Component {
       }
     });
 
-    return Immutable.fromJS(organizedNeighbors);
+    return {
+      neighborDateProps: dateProps,
+      neighborResults: Immutable.fromJS(organizedNeighbors)
+    };
   }
 
   personPropertiesExist = (properties :FullyQualifiedName[]) => {
@@ -178,7 +210,7 @@ export default class EntitySetSearchResults extends React.Component {
             SearchApi
               .searchEntityNeighbors(selectedEntitySetId, selectedEntityId)
               .then((neighbors) => {
-                const neighborResults = this.organizeNeighborResults(neighbors);
+                const { neighborDateProps, neighborResults } = this.processNeighborResults(neighbors);
                 const selectedEntitySet = Immutable.fromJS(entitySet);
                 const crumb = {
                   neighborResults,
@@ -188,6 +220,7 @@ export default class EntitySetSearchResults extends React.Component {
                   title: getTitleV2(entityType, selectedEntity)
                 };
                 this.setState({
+                  neighborDateProps,
                   neighborResults,
                   selectedEntity,
                   selectedEntityId,
@@ -405,7 +438,7 @@ export default class EntitySetSearchResults extends React.Component {
     });
 
     const headerIds :FullyQualifiedName[] = this.state.selectedEntity
-      .get('headers', [])
+      .get('headers', Immutable.List())
       .map((header :Map<string, string>) => {
         return new FullyQualifiedName(header.get('id'));
       })
@@ -453,7 +486,17 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderNeighborsTimeline = () => {
 
-    return null;
+    return (
+      <EventTimeline
+          organizedNeighbors={this.state.neighborResults.toJS()}
+          dateProps={this.state.neighborDateProps}
+          renderNeighborGroupFn={(dateFilteredNeighbors) => {
+            const neighborGroup = Immutable.fromJS(dateFilteredNeighbors);
+            const neighborGroupHeaders = this.getNeighborGroupHeaders(neighborGroup);
+            const neighborGroupData = this.getNeighborGroupData(neighborGroup);
+            return this.getNeighborGroupDataTable(neighborGroup, neighborGroupData, neighborGroupHeaders);
+          }} />
+    );
   }
 
   getNeighborGroupDataTableTitle = (neighbor :Map<string, any>) => {
@@ -494,6 +537,47 @@ export default class EntitySetSearchResults extends React.Component {
       );
   }
 
+  getNeighborGroupHeaders = (neighborGroup :List<any>) => {
+
+    return Immutable.List().withMutations((headers :List<Map<string, string>>) => {
+      // each neighbor in the neighbor group has identical PropertyTypes, so we only need one neighbor
+      neighborGroup.first().get('associationPropertyTypes', Immutable.List())
+        .forEach((propertyType :Map<string, any>) => {
+          const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
+          headers.push(Immutable.Map({
+            id: fqn.getFullyQualifiedName(),
+            value: propertyType.get('title')
+          }));
+        });
+      neighborGroup.first().get('neighborPropertyTypes', Immutable.List())
+        .forEach((propertyType :Map<string, any>) => {
+          const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
+          headers.push(Immutable.Map({
+            id: fqn.getFullyQualifiedName(),
+            value: propertyType.get('title')
+          }));
+        });
+    });
+  }
+
+  getNeighborGroupData = (neighborGroup :List<any>) => {
+
+    return neighborGroup.map((neighbor :Map<string, any>) => {
+
+      const associationDetails :Map<string, any> = neighbor.get('associationDetails', Immutable.Map());
+      const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
+
+      // TODO: how do we handle duplicate keys with different values? is that even possible?
+      let mergedDetails :Map<string, any> = associationDetails.merge(neighborDetails);
+
+      if (neighbor.has('neighborId')) {
+        mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));
+      }
+
+      return mergedDetails;
+    });
+  }
+
   getNeighborGroupDataTable = (neighborGroup, neighborGroupData, neighborGroupHeaders) => {
 
     const firstNeighbor :Map<string, any> = neighborGroup.first();
@@ -501,6 +585,7 @@ export default class EntitySetSearchResults extends React.Component {
     const neighborEntitySetId :UUID = firstNeighbor.getIn(['neighborEntitySet', 'id']);
 
     const onClick = (selectedRowIndex :number, selectedRowData) => {
+      debugger;
       const neighborEntityId :UUID = neighborGroup.getIn([selectedRowIndex, 'neighborId']);
       const selectedEntity = Immutable.fromJS({
         data: selectedRowData,
@@ -538,42 +623,8 @@ export default class EntitySetSearchResults extends React.Component {
           console.error('!!! NEIGHBOR_ENTITY_SET_MISSING !!!');
         }
 
-        const neighborGroupData :List<Map<string, any>> = neighborGroup.map((neighbor :Map<string, any>) => {
-
-          const associationDetails :Map<string, any> = neighbor.get('associationDetails', Immutable.Map());
-          const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
-
-          // TODO: how do we handle duplicate keys with different values? is that even possible?
-          let mergedDetails :Map<string, any> = associationDetails.merge(neighborDetails);
-
-          if (neighbor.has('neighborId')) {
-            mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));
-          }
-
-          return mergedDetails;
-        });
-
-        const neighborGroupHeaders :List<Map<string, string>> = Immutable.List()
-          .withMutations((headers :List<Map<string, string>>) => {
-            // each neighbor in the neighbor group has identical PropertyTypes, so we only need one neighbor
-            neighborGroup.first().get('associationPropertyTypes', Immutable.List())
-              .forEach((propertyType :Map<string, any>) => {
-                const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
-                headers.push(Immutable.Map({
-                  id: fqn.getFullyQualifiedName(),
-                  value: propertyType.get('title')
-                }));
-              });
-            neighborGroup.first().get('neighborPropertyTypes', Immutable.List())
-              .forEach((propertyType :Map<string, any>) => {
-                const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
-                headers.push(Immutable.Map({
-                  id: fqn.getFullyQualifiedName(),
-                  value: propertyType.get('title')
-                }));
-              });
-          });
-
+        const neighborGroupData = this.getNeighborGroupData(neighborGroup);
+        const neighborGroupHeaders = this.getNeighborGroupHeaders(neighborGroup);
         const neighborGroupDataTable = this.getNeighborGroupDataTable(
           neighborGroup,
           neighborGroupData,
@@ -605,20 +656,14 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderNeighbors = () => {
 
-    // return (
-    //   <div>
-    //     {this.renderNeighborsViewToolbar()}
-    //     {
-    //       (this.state.neighborView === 'TABLE')
-    //         ? this.renderNeighborDataTables()
-    //         : this.renderNeighborsTimeline()
-    //     }
-    //   </div>
-    // );
-
     return (
       <div>
-        {this.renderNeighborDataTables()}
+        {this.renderNeighborsViewToolbar()}
+        {
+          (this.state.neighborView === 'TABLE')
+            ? this.renderNeighborDataTables()
+            : this.renderNeighborsTimeline()
+        }
       </div>
     );
   }
