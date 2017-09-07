@@ -222,10 +222,12 @@ class DataTable extends React.Component<Props, State> {
 
   componentWillUpdate(nextProps :Object, nextState :Object) {
 
+    const headers :boolean = !this.props.headers.equals(nextProps.headers);
+
     const data :boolean = !this.state.data.equals(nextState.data);
     const headerIdToWidthMap :boolean = !this.state.headerIdToWidthMap.equals(nextState.headerIdToWidthMap);
 
-    if (!data || !headerIdToWidthMap) {
+    if (!headers || !data || !headerIdToWidthMap) {
       if (this.tableHeadGrid && this.tableBodyGrid) {
         // https://github.com/bvaughn/react-virtualized/issues/136#issuecomment-190440226
         this.tableHeadGrid.recomputeGridSize();
