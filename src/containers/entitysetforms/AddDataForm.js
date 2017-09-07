@@ -22,7 +22,8 @@ export default class AddDataForm extends React.Component {
   static propTypes = {
     entitySetId: PropTypes.string.isRequired,
     primaryKey: PropTypes.instanceOf(Immutable.List).isRequired,
-    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired
+    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -161,25 +162,28 @@ export default class AddDataForm extends React.Component {
 
   renderPropertyTypeInputs = () => {
     return this.state.authorizedPropertyTypes.map((propertyType :Map) => {
+      const id = propertyType.get('id');
       let input = (<FormControl
           type="text"
           onChange={(e) => {
-            this.updatePropertyTypeValue(propertyType.get('id'), e.target.value);
+            this.updatePropertyTypeValue(id, e.target.value);
           }} />);
       if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
-        const value = this.state.propValues[propertyType.get('id')][0];
+        const value = this.state.propValues[id][0];
         input = (
           <DatePicker
-              id={`date-${propertyType.get('id')}`}
+              id={`date-${id}`}
               value={value}
               showTodayButton
               onChange={(date) => {
-                this.updatePropertyTypeValue(propertyType.get('id'), date);
+                this.updatePropertyTypeValue(id, date);
               }} />);
       }
+
+      const title = this.props.entitySetPropertyMetadata.getIn([id, 'title'], propertyType.get('title'));
       return (
-        <FormGroup key={propertyType.get('id')}>
-          <ControlLabel>{propertyType.get('title')}</ControlLabel>
+        <FormGroup key={id}>
+          <ControlLabel>{title}</ControlLabel>
           {input}
         </FormGroup>
       );

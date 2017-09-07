@@ -41,7 +41,8 @@ class EntitySetPermissionsRequest extends React.Component {
 
     // TODO: Move to AsyncReference
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
-    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired
+    propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+    customSettings: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   constructor(props) {
@@ -95,19 +96,21 @@ class EntitySetPermissionsRequest extends React.Component {
   };
 
   renderProperty(principalId, propertyType :Map, defaultChecked) {
+    const propertyTypeId = propertyType.get('id');
+    const title = this.props.customSettings.getIn([propertyTypeId, 'title'], propertyType.get('title'));
     return (
-      <div className="propertyType" key={propertyType.get('id')}>
+      <div className="propertyType" key={propertyTypeId}>
         <div className="propertyTypePermissions">
           <input
               type="checkbox"
-              id={`ptr-${principalId}-${propertyType.get('id')}`}
+              id={`ptr-${principalId}-${propertyTypeId}`}
               defaultChecked={defaultChecked}
               onClick={(e) => {
-                this.toggleCheckbox(e.target.checked, propertyType.get('id'));
+                this.toggleCheckbox(e.target.checked, propertyTypeId);
               }} />
         </div>
         <div className="propertyTypeTitle">
-          <label htmlFor={`ptr-${principalId}-${propertyType.get('id')}`}>{propertyType.get('title')}</label>
+          <label htmlFor={`ptr-${principalId}-${propertyTypeId}`}>{title}</label>
         </div>
       </div>
     );

@@ -12,7 +12,6 @@ export default class RowImage extends React.Component {
       <img
           src={`data:image/png;base64,${this.props.imgSrc}`}
           className={className}
-          role="presentation"
           onClick={this.enlargeImage} />
     );
   }

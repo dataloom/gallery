@@ -152,3 +152,17 @@ export default function getTitle(entityType, row, propertyTypes) {
   }
   return `[${entityType.title}]`;
 }
+
+// just a copy of getTitle, but passing in selectedEntity instead
+// this should all just be temporary
+export function getTitleV2(entityType, selectedEntity) {
+  const formattedRow = selectedEntity.get('data').toJS();
+  const titleProps = titleProperties[getFqn(entityType)];
+  if (titleProps) {
+    const titleValues = titleProps.map((propertyTypeFqn) => {
+      return formattedRow[propertyTypeFqn];
+    });
+    if (titleValues.length) return titleValues.join(', ');
+  }
+  return `[${entityType.title}]`;
+}

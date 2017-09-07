@@ -1,7 +1,7 @@
-export const default1 = '#217ca3';
-export const default2 = '#cb0000';
-export const default3 = '#bdaec6';
-export const default4 = '#265c00';
+export const default1 = '#745fb5';
+export const default2 = '#77dab2';
+export const default3 = '#26a6ce';
+export const default4 = '#f05f70';
 export const default5 = '#fa6775';
 export const default6 = '#ee693f';
 export const default7 = '#f9dc24';

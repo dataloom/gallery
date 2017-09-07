@@ -20,7 +20,8 @@ export const INITIAL_STATE :Map<> = Immutable.fromJS({
   // new stuff
   entitySets: Immutable.Map(),
   entityTypes: Immutable.Map(),
-  propertyTypes: Immutable.Map()
+  propertyTypes: Immutable.Map(),
+  entitySetPropertyMetadata: Immutable.Map()
 });
 
 export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
@@ -183,6 +184,11 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
       });
 
       return state.set('entitySets', updatedEntitySets);
+    }
+
+    case EdmActionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_SUCCESS: {
+      return state
+        .setIn(['entitySetPropertyMetadata', action.entitySetId], Immutable.fromJS(action.entitySetPropertyMetadata));
     }
 
     default:

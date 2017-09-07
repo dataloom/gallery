@@ -26,7 +26,8 @@ class RequestPermissionsModal extends React.Component {
     asyncStatus: PropTypes.symbol.isRequired,
     // Async Objects
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
-    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired
+    propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
+    customSettings: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   render() {
@@ -41,7 +42,8 @@ class RequestPermissionsModal extends React.Component {
       entitySetId,
       show,
       onHide,
-      asyncStatus } = this.props;
+      asyncStatus,
+      customSettings } = this.props;
 
     if (!entitySetId) return null;
 
@@ -66,7 +68,8 @@ class RequestPermissionsModal extends React.Component {
                     pidToRequestedPermissions={pidToRequestedPermissions}
                     onReasonChange={onReasonChange}
                     onPermissionChange={onPermissionChange}
-                    onSubmit={onSubmit} />
+                    onSubmit={onSubmit}
+                    customSettings={customSettings} />
               }
               content={<Alert bsStyle="success">Request made</Alert>}
               errorMessage="Failed to make request" />
@@ -84,6 +87,7 @@ function mapStateToProps(state :Map) {
 
   let entitySet :Map = Immutable.Map();
   let propertyTypeIds :List = Immutable.List();
+  let customSettings :Map = Immutable.Map();
 
   if (entitySetId) {
     entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
@@ -92,12 +96,14 @@ function mapStateToProps(state :Map) {
     if (!entityType.isEmpty()) {
       propertyTypeIds = entityType.get('properties');
     }
+    customSettings = state.getIn(['edm', 'entitySetPropertyMetadata', entitySetId], Immutable.Map());
   }
 
   return {
     propertyTypeIds,
     entitySetId,
     entitySet,
+    customSettings,
     pidToRequestedPermissions: modalState.get('pidToRequestedPermissions'),
     reason: modalState.get('reason'),
     show: modalState.get('show'),

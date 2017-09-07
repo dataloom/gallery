@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
@@ -71,8 +71,11 @@ class EntitySetDetailComponent extends React.Component {
     propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+    entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired,
     subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired,
-    unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired
+    unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired,
+    loadEntitySetPropertyMetadata: PropTypes.func.isRequired,
+    updateEntitySetPropertyMetadata: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -109,6 +112,8 @@ class EntitySetDetailComponent extends React.Component {
     // this.props.loadEntitySet();
 
     this.props.subscribeToEntitySetAclKeyRequest([this.props.entitySetId]);
+    this.props.loadEntitySetPropertyMetadata(this.props.entitySetId);
+
   }
 
   componentWillUnmount() {
@@ -228,7 +233,8 @@ class EntitySetDetailComponent extends React.Component {
           entitySetPermissions.OWNER &&
           <EntitySetPermissionsRequestList
               entitySetId={entitySet.get('id')}
-              propertyTypeIds={this.props.propertyTypeIds} />
+              propertyTypeIds={this.props.propertyTypeIds}
+              customSettings={this.props.entitySetPropertyMetadata} />
         }
       </StyledFlexContainerStacked>
     );
@@ -257,8 +263,9 @@ class EntitySetDetailComponent extends React.Component {
     this.props.ownedPropertyTypes.forEach((propertyType :Map) => {
 
       const propertyTypeId :string = propertyType.get('id');
-      const title :string = propertyType.get('title');
       const aclKey :string[] = [this.props.entitySet.get('id'), propertyTypeId];
+      const title :string = this.props.entitySetPropertyMetadata
+        .getIn([propertyTypeId, 'title'], propertyType.get('title'));
 
       propertyTypeOptions.push(
         <MenuItem
@@ -381,7 +388,8 @@ class EntitySetDetailComponent extends React.Component {
           <AddDataForm
               entitySetId={this.props.entitySet.get('id')}
               primaryKey={this.props.entityType.get('key')}
-              propertyTypes={this.props.ownedPropertyTypes} />
+              propertyTypes={this.props.ownedPropertyTypes}
+              entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />
         </Modal.Body>
       </Modal>
     );
@@ -544,7 +552,9 @@ class EntitySetDetailComponent extends React.Component {
                   <PropertyTypeList
                       entitySetId={this.props.entitySet.get('id')}
                       propertyTypeIds={propertyTypeIds}
-                      className="propertyTypeStyleDefault" />
+                      className="propertyTypeStyleDefault"
+                      isOwner={this.props.entitySetPermissions.OWNER}
+                      updateCustomSettings={this.props.updateEntitySetPropertyMetadata} />
                 );
               }} />
           {this.renderAddDataForm()}
@@ -592,6 +602,8 @@ function mapStateToProps(state :Map, ownProps :Object) {
     });
   }
 
+  const entitySetPropertyMetadata = state.getIn(['edm', 'entitySetPropertyMetadata', entitySetId], Immutable.Map());
+
   return {
     asyncState: entitySetDetail.get('asyncState').toJS(),
     entitySet,
@@ -600,7 +612,8 @@ function mapStateToProps(state :Map, ownProps :Object) {
     entityType,
     propertyTypes,
     ownedPropertyTypes,
-    propertyTypeIds
+    propertyTypeIds,
+    entitySetPropertyMetadata
   };
 }
 
@@ -628,6 +641,12 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     unsubscribeFromEntitySetAclKeyRequest: (aclKey :UUID[]) => {
       dispatch(NeuronActionFactory.unsubscribeFromAclKeyRequest(aclKey));
+    },
+    loadEntitySetPropertyMetadata: (entitySetId) => {
+      dispatch(edmActionFactories.getAllEntitySetPropertyMetadataRequest(entitySetId));
+    },
+    updateEntitySetPropertyMetadata: (entitySetId, propertyTypeId, metadataUpdate) => {
+      dispatch(edmActionFactories.updateEntitySetPropertyMetadataRequest(entitySetId, propertyTypeId, metadataUpdate));
     }
   };
 }

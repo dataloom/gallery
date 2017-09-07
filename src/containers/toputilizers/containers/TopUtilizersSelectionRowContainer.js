@@ -12,8 +12,10 @@ class TopUtilizersSelectionRowContainer extends React.Component {
     associations: PropTypes.instanceOf(Immutable.List).isRequired,
     selectEntity: PropTypes.func.isRequired,
     selectAssociation: PropTypes.func.isRequired,
+    removeRow: PropTypes.func.isRequired,
     entityTypeId: PropTypes.string,
-    associationDetails: PropTypes.instanceOf(Immutable.Map).isRequired
+    associationDetails: PropTypes.instanceOf(Immutable.Map).isRequired,
+    rowNum: PropTypes.number.isRequired
   }
 
   constructor(props) {
@@ -114,10 +116,15 @@ class TopUtilizersSelectionRowContainer extends React.Component {
       selectedEntities
     };
     this.setState({ selectedEntities });
-    this.props.selectEntity(data);
+    this.props.selectEntity(this.props.rowNum, data);
   }
 
+  removeRow = () => {
+    this.props.removeRow(this.props.rowNum);
+  };
+
   render() {
+    const showDelete = this.props.rowNum > 0;
     return (
       <TopUtilizersSelectionRow
           selectAssociation={this.selectAssociation}
@@ -128,7 +135,9 @@ class TopUtilizersSelectionRowContainer extends React.Component {
           selectedAssociation={this.state.selectedAssociation}
           selectedArrow={this.state.selectedArrow}
           selectedEntities={this.state.selectedEntities}
-          arrowDirections={this.state.arrowOptions} />
+          arrowDirections={this.state.arrowOptions}
+          removeRow={this.removeRow}
+          showDelete={showDelete} />
     );
   }
 }
@@ -146,7 +155,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   const actions = {
     selectEntity: actionFactory.onEntitySelect,
-    selectAssociation: actionFactory.getAssociationDetailsRequest
+    selectAssociation: actionFactory.getAssociationDetailsRequest,
+    removeRow: actionFactory.removeRow
   };
 
   return bindActionCreators(actions, dispatch);

@@ -20,7 +20,8 @@ export default class RequestPermissionsForm extends React.Component {
     onPermissionChange: PropTypes.func.isRequired,
     onReasonChange: PropTypes.func.isRequired,
     pidToRequestedPermissions: PropTypes.instanceOf(Immutable.Map),
-    reason: PropTypes.string
+    reason: PropTypes.string,
+    customSettings: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
   static defaultProps = {
@@ -48,7 +49,7 @@ export default class RequestPermissionsForm extends React.Component {
   };
 
   render() {
-    const { propertyTypeIds, entitySetId, onPermissionChange, reason } = this.props;
+    const { propertyTypeIds, entitySetId, onPermissionChange, reason, customSettings } = this.props;
 
     return (
       <form className={styles.rqm} onSubmit={this.onSubmit}>
@@ -62,6 +63,7 @@ export default class RequestPermissionsForm extends React.Component {
             propertyTypeIds={propertyTypeIds}
             editing={PROPERTY_TYPE_EDITING}
             onChange={onPermissionChange}
+            customSettings={customSettings}
             requestingPermissions />
         <Button type="submit" bsStyle="primary" className={styles.submitButton}>Submit</Button>
       </form>

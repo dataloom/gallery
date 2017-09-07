@@ -78,3 +78,47 @@ export function updateEntitySetMetadataReject(errorMessage :string) {
     errorMessage
   };
 }
+
+export function getAllEntitySetPropertyMetadataRequest(entitySetId :string) {
+  return {
+    type: actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_REQUEST,
+    entitySetId
+  };
+}
+
+export function getAllEntitySetPropertyMetadataResolve(entitySetId :string, entitySetPropertyMetadata :Object) {
+  return {
+    type: actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_SUCCESS,
+    entitySetId,
+    entitySetPropertyMetadata
+  };
+}
+
+export function getAllEntitySetPropertyMetadataReject(errorMessage :string) {
+  return {
+    type: actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_FAILURE,
+    errorMessage
+  };
+}
+
+export function updateEntitySetPropertyMetadataRequest(entitySetId :string, propertyTypeId :string, update :Object) {
+  return {
+    type: actionTypes.UPDATE_ENTITY_SET_PROPERTY_METADATA_REQUEST,
+    entitySetId,
+    propertyTypeId,
+    update
+  };
+}
+
+export function updateEntitySetPropertyMetadataResolve() {
+  return {
+    type: actionTypes.UPDATE_ENTITY_SET_PROPERTY_METADATA_SUCCESS
+  };
+}
+
+export function updateEntitySetPropertyMetadataReject(errorMessage :string) {
+  return {
+    type: actionTypes.UPDATE_ENTITY_SET_PROPERTY_METADATA_FAILURE,
+    errorMessage
+  };
+}

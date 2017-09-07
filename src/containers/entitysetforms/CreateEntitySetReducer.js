@@ -44,6 +44,7 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
       });
 
     case actionTypes.CREATE_ENTITY_SET_REQUEST:
+    case actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST:
       return state.merge({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.LOADING,
@@ -51,6 +52,7 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
         }
       });
     case actionTypes.CREATE_ENTITY_SET_REJECT:
+    case actionTypes.CREATE_LINKED_ENTITY_SET_REJECT:
       return state.merge({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -58,6 +60,7 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
         }
       });
     case actionTypes.CREATE_ENTITY_SET_RESOLVE:
+    case actionTypes.CREATE_LINKED_ENTITY_SET_RESOLVE:
       return state.merge({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
