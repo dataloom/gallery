@@ -75,6 +75,10 @@ export default class EntitySetSearchResults extends React.Component {
     hidePaginationFn: PropTypes.func.isRequired
   }
 
+  static defaultProps = {
+    hidePaginationFn: () => {}
+  }
+
   state :{
     breadcrumbs :Object[],
     searchResults :List<Map<string, any>>,
@@ -320,11 +324,14 @@ export default class EntitySetSearchResults extends React.Component {
 
     // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
     return Immutable.List().withMutations((list :List<Map<string, string>>) => {
-      this.props.propertyTypes.forEach((propertyType :Map<string, any>) => {
+      this.props.propertyTypes.forEach((propertyType :Object) => {
+        const title :string = (this.props.entitySetPropertyMetadata[propertyType.id])
+          ? this.props.entitySetPropertyMetadata[propertyType.id].title
+          : propertyType.title;
         const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.type);
         list.push(Immutable.fromJS({
           id: fqn.getFullyQualifiedName(),
-          value: propertyType.title
+          value: title
         }));
       });
     });
@@ -585,7 +592,6 @@ export default class EntitySetSearchResults extends React.Component {
     const neighborEntitySetId :UUID = firstNeighbor.getIn(['neighborEntitySet', 'id']);
 
     const onClick = (selectedRowIndex :number, selectedRowData) => {
-      debugger;
       const neighborEntityId :UUID = neighborGroup.getIn([selectedRowIndex, 'neighborId']);
       const selectedEntity = Immutable.fromJS({
         data: selectedRowData,

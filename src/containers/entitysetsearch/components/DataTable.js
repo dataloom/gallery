@@ -142,6 +142,7 @@ type State = {
 // TODO: should the 'data' prop be ListSetMultiMap, or is that too specific to search results data?
 // TODO: allow table dimensions to be configurable
 // TODO: compute estimated row heights similar to how column widths are computed
+// TODO: really long header names without character breaks are overflowing: HELLO_WORLD_HELLO_WORLD_HELLO_WORLD
 class DataTable extends React.Component<Props, State> {
 
   static defaultProps = {
@@ -265,8 +266,8 @@ class DataTable extends React.Component<Props, State> {
         const headerCellWidth :number = `${header.get('value')}`.length;
         const newColumnWidth :number = (headerCellWidth > columnWidth) ? headerCellWidth : columnWidth;
 
-        // assume 10px per character. not the best approach, but an ok aproximation for now.
-        let columnWidthInPixels :number = newColumnWidth * 10;
+        // assume 12px per character. not the best approach, but an ok aproximation for now.
+        let columnWidthInPixels :number = newColumnWidth * 12;
 
         // ensure column will have a minimum width
         if (columnWidthInPixels < COLUMN_MIN_WIDTH) {
