@@ -378,7 +378,9 @@ export default class EntitySetSearchResults extends React.Component {
 
     const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
 
-    const personList = this.state.searchResults.map((personResult :Map<string, any>) => {
+    const personList = [];
+    this.state.searchResults.forEach((personResult :Map<string, any>) => {
+
       const onClick = () => {
         const selectedEntityId :UUID = personResult.getIn(['id', 0]);
         const selectedEntity = Immutable.fromJS({
@@ -388,12 +390,16 @@ export default class EntitySetSearchResults extends React.Component {
         this.onEntitySelect(selectedEntityId, this.props.entitySetId, selectedEntity);
       };
 
-      return (
+      personList.push(
         <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} />
       );
     });
 
-    return personList;
+    return (
+      <div>
+        {personList}
+      </div>
+    );
   }
 
 
@@ -696,14 +702,21 @@ export default class EntitySetSearchResults extends React.Component {
       return new FullyQualifiedName(propertyType.type);
     });
 
+    // return (
+    //   <div>
+    //     {this.renderBreadcrumbs()}
+    //     {
+    //       (this.personPropertiesExist(properties))
+    //         ? this.renderSearchResultsPersonList()
+    //         : this.renderSearchResultsDataTable()
+    //     }
+    //   </div>
+    // );
+
     return (
       <div>
         {this.renderBreadcrumbs()}
-        {
-          (this.personPropertiesExist(properties))
-            ? this.renderSearchResultsPersonList()
-            : this.renderSearchResultsDataTable()
-        }
+        {this.renderSearchResultsDataTable()}
       </div>
     );
   }
@@ -726,9 +739,13 @@ export default class EntitySetSearchResults extends React.Component {
     }
 
     return (
-      (this.state.selectedEntityId)
-        ? this.renderSelectedEntityContent()
-        : this.renderSearchResultsContent()
+      <div>
+        {
+          (this.state.selectedEntityId)
+            ? this.renderSelectedEntityContent()
+            : this.renderSearchResultsContent()
+        }
+      </div>
     );
   }
 }
