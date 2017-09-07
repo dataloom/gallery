@@ -79,11 +79,6 @@ class PersonCard extends React.Component<Props, State> {
     return rawValue;
   }
 
-  getFormattedVal = (fqn) => {
-    const value = this.props.row[fqn] || '';
-    return this.formatValue(value);
-  }
-
   getFirstNameVal = () => {
 
     let firstNameValue;
@@ -135,11 +130,14 @@ class PersonCard extends React.Component<Props, State> {
     let dobValue;
     this.props.data.forEach((value, key) => {
       if (key !== 'id') {
-        const fqn = new FullyQualifiedName(key);
-        if (DOBS.includes(fqn.getName().toLowerCase())) {
-          dobValue = value;
-          return false; // break out of loop
+        try {
+          const fqn = new FullyQualifiedName(key);
+          if (DOBS.includes(fqn.getName().toLowerCase())) {
+            dobValue = value;
+            return false; // break out of loop
+          }
         }
+        catch (e) {}
       }
     });
 
