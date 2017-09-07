@@ -10,7 +10,6 @@ export default class TextCell extends React.Component {
     field: PropTypes.string,
     formatValueFn: PropTypes.func,
     onClick: PropTypes.func.isRequired,
-    width: PropTypes.number.isRequired,
     entitySetId: PropTypes.string,
     propertyTypes: PropTypes.array.isRequired,
     renderImage: PropTypes.bool
@@ -49,11 +48,11 @@ export default class TextCell extends React.Component {
   }
 
   render() {
-    const { rowIndex, field, results, width, renderImage } = this.props;
+    const { rowIndex, field, results, renderImage } = this.props;
     const content = (renderImage) ? this.renderImage() : this.props.formatValueFn(results[rowIndex][field]);
     return (
       <Cell>
-        <div className={this.getClassName()} onClick={this.getOnClickFn()} style={{ width }}>
+        <div className={this.getClassName()} onClick={this.getOnClickFn()}>
           {content}
         </div>
       </Cell>

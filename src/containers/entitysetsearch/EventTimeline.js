@@ -153,6 +153,7 @@ export default class EventTimeline extends React.Component {
       <div key={aclKeyString}>
         <input
             type="checkbox"
+            id={aclKeyString}
             name={aclKeyString}
             checked={this.state.selectedProps.has(aclKeyString)}
             onChange={(e) => {

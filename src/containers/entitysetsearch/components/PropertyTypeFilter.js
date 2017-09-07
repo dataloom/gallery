@@ -74,9 +74,10 @@ export default class PropertyTypeFilter extends React.Component {
     // const title = (this.props.entitySetPropertyMetadata.get(propertyType.id]) ?
     //   this.props.entitySetPropertyMetadata[propertyType.id].title : propertyType.title;
     return (
-      <div key={propertyType.id}>
+      <div key={propertyType.id} style={{ float: 'left'}}>
         <input
             type="checkbox"
+            id={propertyType.id}
             name={propertyType.id}
             checked={this.state.selectedProperties.has(propertyType.id)}
             onChange={(e) => {
