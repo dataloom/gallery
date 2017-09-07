@@ -323,7 +323,7 @@ export default class EntitySetSearchResults extends React.Component {
   getSearchResultsDataTableHeaders = () => {
 
     // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
-    return Immutable.List().withMutations((list :List<Map<string, string>>) => {
+    let headers = Immutable.List().withMutations((list :List<Map<string, string>>) => {
       this.props.propertyTypes.forEach((propertyType :Object) => {
         const title :string = (this.props.entitySetPropertyMetadata[propertyType.id])
           ? this.props.entitySetPropertyMetadata[propertyType.id].title
@@ -335,6 +335,22 @@ export default class EntitySetSearchResults extends React.Component {
         }));
       });
     });
+
+    let showCountColumn = false;
+    this.state.searchResults.forEach((result) => {
+      if (result.has('count')) {
+        showCountColumn = true;
+      }
+    });
+
+    if (showCountColumn) {
+      headers = headers.unshift(Immutable.fromJS({
+        id: 'count',
+        value: 'Count'
+      }));
+    }
+
+    return headers;
   }
 
   renderSearchResultsDataTable = () => {
