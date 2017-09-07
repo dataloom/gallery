@@ -172,7 +172,7 @@ export default class EntitySetSearchResults extends React.Component {
     };
   }
 
-  personPropertiesExist = (properties :FullyQualifiedName[]) => {
+  personPropertiesExist = (properties :any[]) => {
 
     if (!properties || properties.length === 0) {
       return false;
@@ -182,15 +182,18 @@ export default class EntitySetSearchResults extends React.Component {
     let hasLastName :boolean = false;
     let hasMugshot :boolean = false;
 
-    properties.forEach((fqn :FullyQualifiedName) => {
-      if (FIRST_NAMES.includes(fqn.getName().toLowerCase())) {
-        hasFirstName = true;
-      }
-      if (LAST_NAMES.includes(fqn.getName().toLowerCase())) {
-        hasLastName = true;
-      }
-      if (fqn.getName().toLowerCase() === 'mugshot') {
-        hasMugshot = true;
+    properties.forEach((property :string | FullyQualifiedName) => {
+      if (property) {
+        const value :string = (typeof property === 'string') ? property : property.getName();
+        if (FIRST_NAMES.includes(value.toLowerCase())) {
+          hasFirstName = true;
+        }
+        if (LAST_NAMES.includes(value.toLowerCase())) {
+          hasLastName = true;
+        }
+        if (value.toLowerCase() === 'mugshot') {
+          hasMugshot = true;
+        }
       }
     });
 
@@ -328,11 +331,16 @@ export default class EntitySetSearchResults extends React.Component {
         const title :string = (this.props.entitySetPropertyMetadata[propertyType.id])
           ? this.props.entitySetPropertyMetadata[propertyType.id].title
           : propertyType.title;
-        const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.type);
-        list.push(Immutable.fromJS({
-          id: fqn.getFullyQualifiedName(),
-          value: title
-        }));
+        try {
+          const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.type);
+          list.push(Immutable.fromJS({
+            id: fqn.getFullyQualifiedName(),
+            value: title
+          }));
+        }
+        catch (e) {
+          console.error('EntitySetSearchResults', e);
+        }
       });
     });
 
@@ -378,7 +386,9 @@ export default class EntitySetSearchResults extends React.Component {
 
     const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
 
-    const personList = this.state.searchResults.map((personResult :Map<string, any>) => {
+    const personList = [];
+    this.state.searchResults.forEach((personResult :Map<string, any>) => {
+
       const onClick = () => {
         const selectedEntityId :UUID = personResult.getIn(['id', 0]);
         const selectedEntity = Immutable.fromJS({
@@ -388,7 +398,7 @@ export default class EntitySetSearchResults extends React.Component {
         this.onEntitySelect(selectedEntityId, this.props.entitySetId, selectedEntity);
       };
 
-      return (
+      personList.push(
         <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} />
       );
     });
@@ -463,7 +473,12 @@ export default class EntitySetSearchResults extends React.Component {
     const headerIds :FullyQualifiedName[] = this.state.selectedEntity
       .get('headers', Immutable.List())
       .map((header :Map<string, string>) => {
-        return new FullyQualifiedName(header.get('id'));
+        try {
+          return new FullyQualifiedName(header.get('id'));
+        }
+        catch (e) {
+          header.get('id');
+        }
       })
       .toJS();
 
@@ -642,7 +657,7 @@ export default class EntitySetSearchResults extends React.Component {
       associationGroup.forEach((neighborGroup :List<any>, neighborEntitySetId :UUID) => {
 
         if (neighborEntitySetId === NEIGHBOR_ENTITY_SET_MISSING) {
-          console.error('!!! NEIGHBOR_ENTITY_SET_MISSING !!!');
+          console.log('no neighborEntitySetId')
         }
 
         const neighborGroupData = this.getNeighborGroupData(neighborGroup);
@@ -693,7 +708,13 @@ export default class EntitySetSearchResults extends React.Component {
   renderSearchResultsContent = () => {
 
     const properties :FullyQualifiedName[] = this.props.propertyTypes.map((propertyType) => {
-      return new FullyQualifiedName(propertyType.type);
+      try {
+        return new FullyQualifiedName(propertyType.type);
+      }
+      catch (e) {
+        console.error('EntitySetSearchResults', e);
+        return '';
+      }
     });
 
     return (
@@ -726,9 +747,13 @@ export default class EntitySetSearchResults extends React.Component {
     }
 
     return (
-      (this.state.selectedEntityId)
-        ? this.renderSelectedEntityContent()
-        : this.renderSearchResultsContent()
+      <div>
+        {
+          (this.state.selectedEntityId)
+            ? this.renderSelectedEntityContent()
+            : this.renderSearchResultsContent()
+        }
+      </div>
     );
   }
 }
