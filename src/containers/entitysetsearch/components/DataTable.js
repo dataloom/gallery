@@ -135,6 +135,7 @@ type State = {
   hoveredColumnIndex :number,
   hoveredRowIndex :number,
   lastColumnOverrideMaxWidth :boolean,
+  sortedColumnIndex :number,
   sortOrder :number // 0 = original, 1 = asc, 2 = desc
 };
 
@@ -179,6 +180,7 @@ class DataTable extends React.Component<Props, State> {
       data: props.data,
       hoveredColumnIndex: -1,
       hoveredRowIndex: -1,
+      sortedColumnIndex: -1,
       sortOrder: 0
     };
   }
@@ -342,8 +344,16 @@ class DataTable extends React.Component<Props, State> {
 
     const getCellValueInRow = this.getCellValueInRow.bind(this);
 
+    let sortOrder :number = this.state.sortOrder;
+
+    // clicking on the same column should continue the sort order cycle
+    // clicking on a different column should reset the sort order cycle
+    if (columnIndex !== this.state.sortedColumnIndex) {
+      sortOrder = 0;
+    }
+
     // sortOrder === 0 means going 0 -> 1, which means sort ascending
-    if (this.state.sortOrder === 0) {
+    if (sortOrder === 0) {
 
       const sortedData = this.state.data.sort((row1, row2) => {
         const cellValue1 :string = getCellValueInRow(row1, columnIndex);
@@ -359,14 +369,16 @@ class DataTable extends React.Component<Props, State> {
 
       this.setState({
         data: sortedData,
+        sortedColumnIndex: columnIndex,
         sortOrder: 1
       });
     }
     // sortOrder === 1 means going 1 -> 2, which means sort descending
-    else if (this.state.sortOrder === 1) {
+    else if (sortOrder === 1) {
 
       this.setState({
         data: this.state.data.reverse(), // we've already sorted ascending, so we just need to reverse
+        sortedColumnIndex: columnIndex,
         sortOrder: 2
       });
     }
@@ -375,6 +387,7 @@ class DataTable extends React.Component<Props, State> {
 
       this.setState({
         data: this.props.data,
+        sortedColumnIndex: columnIndex,
         sortOrder: 0
       });
     }
