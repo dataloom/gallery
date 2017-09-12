@@ -1,11 +1,10 @@
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import {
+  AnalysisApi,
   EntityDataModelApi,
-  AnalysisApi
-} from 'loom-data';
-
-import { SearchApi } from 'lattice';
+  SearchApi
+} from 'lattice';
 
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
@@ -83,6 +82,11 @@ function submitQueryEpic(action$) {
   return action$
     .ofType(actionTypes.SUBMIT_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
+      if (!action.topUtilizersDetails[0].associationTypeId) {
+        return Observable.of(
+          actionFactory.submitTopUtilizersFailure('Top utilizers query cannot be empty.')
+        );
+      }
       return Observable
         .from(
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, action.topUtilizersDetails)
@@ -109,6 +113,11 @@ function downloadTopUtilizersEpic(action$) {
   return action$
     .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
+      if (!action.topUtilizersDetails[0].associationTypeId) {
+        return Observable.of(
+          actionFactory.submitTopUtilizersFailure('Top utilizers query cannot be empty.')
+        );
+      }
       return Observable
         .from(
           AnalysisApi.getTopUtilizers(action.entitySetId, 100, action.topUtilizersDetails, FileConsts.CSV)
