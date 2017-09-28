@@ -217,7 +217,8 @@ export default class EntitySetSearchResults extends React.Component {
             SearchApi
               .searchEntityNeighbors(selectedEntitySetId, selectedEntityId)
               .then((neighbors) => {
-                const { neighborDateProps, neighborResults } = this.processNeighborResults(neighbors);
+                const neighborList = neighbors || [];
+                const { neighborDateProps, neighborResults } = this.processNeighborResults(neighborList);
                 const selectedEntitySet = Immutable.fromJS(entitySet);
                 const crumb = {
                   neighborResults,
