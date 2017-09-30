@@ -28,6 +28,8 @@ import OrganizationsContainerComponent from '../../containers/organizations/comp
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
 import OrganizationsListComponent from '../../containers/organizations/components/OrganizationsListComponent';
 
+import FlightGenerator from '../../containers/flightgenerator/FlightGenerator';
+
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
@@ -96,6 +98,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
+      <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAuth} />
       <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
