@@ -56,6 +56,11 @@ const isAdmin = () => {
   return (auth.loggedIn() && auth.getProfile().hasOwnProperty('roles') && auth.getProfile().roles.includes(ADMIN));
 };
 
+const requireAdmin = (nextState, replace) => {
+  requireAuth();
+  if (!isAdmin()) replace({ pathname: `/${PageConsts.HOME}` });
+};
+
 const getName = () => {
   if (auth.loggedIn()) {
     return getDisplayName(auth.getProfile());
@@ -98,7 +103,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
-      <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAuth} />
+      <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAdmin} />
       <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );
