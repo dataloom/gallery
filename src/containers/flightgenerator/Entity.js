@@ -11,39 +11,46 @@ export default class Entity extends React.Component {
     entity: PropTypes.shape({
       entitySetId: PropTypes.string.isRequired,
       alias: PropTypes.string.isRequired,
-      properties: PropTypes.object.isRequired
+      properties: PropTypes.object.isRequired,
+      dateFormats: PropTypes.object
     }).isRequired,
     index: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     allEntitySetsAsMap: PropTypes.object.isRequired,
     allEntityTypesAsMap: PropTypes.object.isRequired,
-    allPropertyTypesAsMap: PropTypes.object.isRequired
+    allPropertyTypesAsMap: PropTypes.object.isRequired,
+    usedAliases: PropTypes.array.isRequired
   }
-  
+
   removeEntity = () => {
     this.props.onDelete(this.props.index);
   }
 
   handleEntitySetChange = (event) => {
-    const { index, allEntityTypesAsMap, allEntitySetsAsMap, onChange } = this.props;
+    const { index, allEntityTypesAsMap, allEntitySetsAsMap, onChange, usedAliases } = this.props;
     const entitySetId = event.value;
     const properties = {};
     allEntityTypesAsMap[allEntitySetsAsMap[entitySetId].entityTypeId].properties.forEach((id) => {
       properties[id] = '';
     });
-    const entity = {
-      entitySetId,
-      alias: allEntitySetsAsMap[entitySetId].title.concat(' Entity'),
-      properties
-    };
+    const baseAlias = allEntitySetsAsMap[entitySetId].title.concat(' Entity');
+    let alias = baseAlias;
+    let counter = 1;
+    while (usedAliases.includes(alias)) {
+      alias = baseAlias.concat(` (${counter})`);
+      counter += 1;
+    }
+    const entity = { entitySetId, alias, properties };
     onChange(entity, index);
   }
 
   handleAliasChange = (alias) => {
-    const { entity, index, onChange } = this.props;
+    const { entity, index, onChange, usedAliases } = this.props;
+    if (usedAliases.includes(alias)) return Promise.resolve(false);
     const newEntity = Object.assign({}, entity, { alias });
     onChange(newEntity, index);
+    return Promise.resolve(true);
   }
 
   handlePropertyChange = (event, propertyTypeId) => {
@@ -51,6 +58,14 @@ export default class Entity extends React.Component {
     const newValue = event.target.value;
     const properties = Object.assign({}, entity.properties, { [propertyTypeId]: newValue });
     const newEntity = Object.assign({}, entity, { properties });
+    onChange(newEntity, index);
+  }
+
+  handleDateFormatChange = (newFormat, propertyTypeId) => {
+    const { entity, index, onChange } = this.props;
+    const format = { [propertyTypeId]: newFormat };
+    const dateFormats = (entity.dateFormats) ? Object.assign({}, entity.dateFormats, format) : format;
+    const newEntity = Object.assign({}, entity, { dateFormats });
     onChange(newEntity, index);
   }
 
@@ -91,8 +106,27 @@ export default class Entity extends React.Component {
             size="medium"
             placeholder="Entity alias"
             value={alias}
-            onChange={this.handleAliasChange} />
+            onChangeConfirm={this.handleAliasChange} />
       </div>
+    );
+  }
+
+  renderDateFormatInput = (property) => {
+    if (property.datatype !== 'Date') return null;
+    let value = '';
+    if (this.props.entity.dateFormats && this.props.entity.dateFormats[property.id]) {
+      value = this.props.entity.dateFormats[property.id];
+    }
+    return (
+      <td className={styles.tableCell}>
+        <input
+            type="text"
+            placeholder="Date format"
+            value={value}
+            onChange={(event) => {
+              this.handleDateFormatChange(event.target.value, property.id);
+            }} />
+      </td>
     );
   }
 
@@ -115,6 +149,7 @@ export default class Entity extends React.Component {
                   this.handlePropertyChange(e, propertyTypeId);
                 }} />
           </td>
+          {this.renderDateFormatInput(property)}
         </tr>
       );
     });

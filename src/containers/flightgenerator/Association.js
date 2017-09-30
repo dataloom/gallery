@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { Button } from 'react-bootstrap';
 
-import InlineEditableControl from '../../components/controls/InlineEditableControl';
 import styles from './styles.module.css';
 
 export default class Association extends React.Component {
@@ -13,7 +12,8 @@ export default class Association extends React.Component {
       alias: PropTypes.string.isRequired,
       properties: PropTypes.object.isRequired,
       src: PropTypes.string.isRequired,
-      dst: PropTypes.string.isRequired
+      dst: PropTypes.string.isRequired,
+      dateFormats: PropTypes.object
     }).isRequired,
     index: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -58,6 +58,14 @@ export default class Association extends React.Component {
     const properties = Object.assign({}, association.properties, { [propertyTypeId]: newValue });
     const newAssociation = Object.assign({}, association, { properties });
     onChange(newAssociation, index);
+  }
+
+  handleDateFormatChange = (newFormat, propertyTypeId) => {
+    const { association, index, onChange } = this.props;
+    const format = { [propertyTypeId]: newFormat };
+    const dateFormats = (association.dateFormats) ? Object.assign({}, association.dateFormats, format) : format;
+    const newEntity = Object.assign({}, association, { dateFormats });
+    onChange(newEntity, index);
   }
 
   handleSrcChange = (event) => {
@@ -118,6 +126,25 @@ export default class Association extends React.Component {
     );
   }
 
+  renderDateFormatInput = (property) => {
+    if (property.datatype !== 'Date') return null;
+    let value = '';
+    if (this.props.association.dateFormats && this.props.association.dateFormats[property.id]) {
+      value = this.props.association.dateFormats[property.id];
+    }
+    return (
+      <td className={styles.tableCell}>
+        <input
+            type="text"
+            placeholder="Date format"
+            value={value}
+            onChange={(event) => {
+              this.handleDateFormatChange(event.target.value, property.id);
+            }} />
+      </td>
+    );
+  }
+
   renderProperties = () => {
     const properties = Object.keys(this.props.association.properties).map((propertyTypeId) => {
       const property = this.props.allPropertyTypesAsMap[propertyTypeId];
@@ -137,6 +164,7 @@ export default class Association extends React.Component {
                   this.handlePropertyChange(e, propertyTypeId);
                 }} />
           </td>
+          {this.renderDateFormatInput(property)}
         </tr>
       );
     });

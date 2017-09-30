@@ -23,6 +23,14 @@ const DEFAULT_ASSOCIATION = {
   properties: {}
 };
 
+const PARSE_FNS = {
+  Int16: 'parseShort',
+  Int32: 'parseInt',
+  Int64: 'parseLong',
+  Double: 'parseDouble',
+  Decimal: 'parseDouble'
+};
+
 export default class FlightGenerator extends React.Component {
 
   constructor(props) {
@@ -122,13 +130,36 @@ export default class FlightGenerator extends React.Component {
 
   }
 
-  getPropertyFlightText = (properties) => {
+  getPropertyFlightText = (properties, dateFormats) => {
     let text = '';
     Object.keys(properties).forEach((propertyTypeId) => {
       if (properties[propertyTypeId].length) {
         const property = this.state.allPropertyTypesAsMap[propertyTypeId];
         const fqn = `${property.type.namespace}.${property.type.name}`;
-        text = text.concat(`\n.addProperty( "${fqn}", "${properties[propertyTypeId]}" )`);
+        const simple = `\n.addProperty( "${fqn}", "${properties[propertyTypeId]}" )`;
+        const warning = `\n// Property ${fqn} uses datatype ${property.datatype} and may require additional parsing`;
+        if (property.datatype !== 'String') {
+          if (PARSE_FNS[property.datatype]) {
+            // property is something we can parse
+            text = text.concat(`\n.addProperty( "${fqn}" ).value( row -> Parsers.${PARSE_FNS[property.datatype]}( row.getAs( "${properties[propertyTypeId]}" ) ) ).ok()`);
+          }
+          else if (property.datatype === 'Date') {
+            if (dateFormats && dateFormats[property.id]) {
+              // property is a date and has a parser
+              text = text.concat(`\n.addProperty( "${fqn}" ).value( row -> Parsers.parseDate( row.getAs( "${properties[propertyTypeId]}" ), "${dateFormats[property.id]}" ) ).ok()`);
+            }
+            else {
+              // property is a date but no parser is specified for it
+              text = text.concat(warning).concat(simple);
+            }
+          }
+          else {
+            // property is something other than a string that we don't have a parser for
+            text = text.concat(warning).concat(simple);
+          }
+        }
+        // property is a string. how nice for us
+        else text = text.concat(simple);
       }
     });
     return text;
@@ -137,7 +168,7 @@ export default class FlightGenerator extends React.Component {
   getEntityFlightText = (entity) => {
     let text = `\n.addEntity( "${entity.alias}" )`;
     text = text.concat(`\n.to( "${this.state.allEntitySetsAsMap[entity.entitySetId].name}" )`);
-    text = text.concat(this.getPropertyFlightText(entity.properties));
+    text = text.concat(this.getPropertyFlightText(entity.properties, entity.dateFormats));
     text = text.concat('\n.endEntity()\n');
     return text;
   }
@@ -147,7 +178,7 @@ export default class FlightGenerator extends React.Component {
     text = text.concat(`\n.to( "${this.state.allEntitySetsAsMap[association.entitySetId].name}" )`);
     text = text.concat(`\n.fromEntity( "${association.src}" )`);
     text = text.concat(`\n.toEntity( "${association.dst}" )`);
-    text = text.concat(this.getPropertyFlightText(association.properties));
+    text = text.concat(this.getPropertyFlightText(association.properties, association.dateFormats));
     text = text.concat('\n.endAssociation()\n');
     return text;
   }
@@ -174,7 +205,11 @@ export default class FlightGenerator extends React.Component {
     }
     flight = flight.concat('\n.done();');
 
-    this.setState({ generatedFlight: flight });
+    this.setState({
+      generatedFlight: flight,
+      generateModalOpen: false,
+      generateValidateMessage: ''
+    });
   }
 
   addNewEntity = () => {
@@ -227,7 +262,13 @@ export default class FlightGenerator extends React.Component {
 
   renderEntities = () => {
     const { allEntitySetsAsMap, allEntityTypesAsMap, allPropertyTypesAsMap } = this.state;
+    const entityAliases = this.state.entityMappings.map((entity) => {
+      return entity.alias;
+    });
     const entities = this.state.entityMappings.map((entityMapping, index) => {
+      const usedAliases = entityAliases.filter((alias, aIndex) => {
+        return aIndex !== index;
+      });
       return (
         <div key={index}>
           <Entity
@@ -237,7 +278,8 @@ export default class FlightGenerator extends React.Component {
               onDelete={this.onEntityDelete}
               allEntitySetsAsMap={allEntitySetsAsMap}
               allEntityTypesAsMap={allEntityTypesAsMap}
-              allPropertyTypesAsMap={allPropertyTypesAsMap} />
+              allPropertyTypesAsMap={allPropertyTypesAsMap}
+              usedAliases={usedAliases} />
           <hr />
         </div>
       );
