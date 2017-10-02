@@ -28,7 +28,8 @@ const PARSE_FNS = {
   Int32: 'parseInt',
   Int64: 'parseLong',
   Double: 'parseDouble',
-  Decimal: 'parseDouble'
+  Decimal: 'parseDouble',
+  Guid: 'parseUUID'
 };
 
 export default class FlightGenerator extends React.Component {
