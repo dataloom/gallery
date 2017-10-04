@@ -5,6 +5,15 @@ import { Button } from 'react-bootstrap';
 
 import styles from './styles.module.css';
 
+const timeZonesMap = {
+  'UTC (Universal Coordinated Time)': '0',
+  'EST (New York)': '-5',
+  'CST (Chicago)': '-6',
+  'MST (Denver)': '-7',
+  'PST (Los Angeles)': '-8'
+};
+
+
 export default class Association extends React.Component {
   static propTypes = {
     association: PropTypes.shape({
@@ -13,7 +22,8 @@ export default class Association extends React.Component {
       properties: PropTypes.object.isRequired,
       src: PropTypes.string.isRequired,
       dst: PropTypes.string.isRequired,
-      dateFormats: PropTypes.object
+      dateFormats: PropTypes.object,
+      timeZones: PropTypes.object
     }).isRequired,
     index: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -30,16 +40,24 @@ export default class Association extends React.Component {
   }
 
   handleEntitySetChange = (event) => {
-    const { index, allAssociationTypesAsMap, allEntitySetsAsMap, onChange } = this.props;
+    const { index, allAssociationTypesAsMap, allPropertyTypesAsMap, allEntitySetsAsMap, onChange } = this.props;
     const entitySetId = event.value;
     const properties = {};
+    const dateFormats = {};
+    const timeZones = {};
     allAssociationTypesAsMap[allEntitySetsAsMap[entitySetId].entityTypeId].entityType.properties.forEach((id) => {
       properties[id] = '';
+      if (allPropertyTypesAsMap[id].datatype === 'Date') {
+        dateFormats[id] = '';
+        timeZones[id] = '0';
+      }
     });
     const association = {
       entitySetId,
       alias: allEntitySetsAsMap[entitySetId].title.concat(' Entity'),
       properties,
+      dateFormats,
+      timeZones,
       src: '',
       dst: ''
     };
@@ -66,6 +84,14 @@ export default class Association extends React.Component {
     const dateFormats = (association.dateFormats) ? Object.assign({}, association.dateFormats, format) : format;
     const newEntity = Object.assign({}, association, { dateFormats });
     onChange(newEntity, index);
+  }
+
+  handleTimeZoneChange = (newTimeZone, propertyTypeId) => {
+    const { association, index, onChange } = this.props;
+    const timeZone = { [propertyTypeId]: newTimeZone };
+    const timeZones = (association.timeZones) ? Object.assign({}, association.timeZones, timeZone) : timeZone;
+    const newAssociation = Object.assign({}, association, { timeZones });
+    onChange(newAssociation, index);
   }
 
   handleSrcChange = (event) => {
@@ -128,20 +154,41 @@ export default class Association extends React.Component {
 
   renderDateFormatInput = (property) => {
     if (property.datatype !== 'Date') return null;
-    let value = '';
+    let formatValue = '';
+    let timeZoneValue = '';
     if (this.props.association.dateFormats && this.props.association.dateFormats[property.id]) {
-      value = this.props.association.dateFormats[property.id];
+      formatValue = this.props.association.dateFormats[property.id];
     }
+    if (this.props.association.timeZones && this.props.association.timeZones[property.id]) {
+      timeZoneValue = this.props.association.timeZones[property.id];
+    }
+    const timeZoneOptions = Object.keys(timeZonesMap).map((timeZone) => {
+      const offset = timeZonesMap[timeZone];
+      return { label: timeZone, value: offset };
+    });
     return (
-      <td className={styles.tableCell}>
-        <input
-            type="text"
-            placeholder="Date format"
-            value={value}
-            onChange={(event) => {
-              this.handleDateFormatChange(event.target.value, property.id);
-            }} />
-      </td>
+      <div>
+        <td className={styles.tableCell}>
+          <input
+              type="text"
+              placeholder="Date format"
+              value={formatValue}
+              onChange={(event) => {
+                this.handleDateFormatChange(event.target.value, property.id);
+              }} />
+        </td>
+        <td className={styles.tableCell} style={{ width: '500px' }}>
+          <Select
+              value={timeZoneValue}
+              options={timeZoneOptions}
+              clearable={false}
+              backspaceRemoves={false}
+              deleteRemoves={false}
+              onChange={(event) => {
+                this.handleTimeZoneChange(event.value, property.id);
+              }} />
+        </td>
+      </div>
     );
   }
 

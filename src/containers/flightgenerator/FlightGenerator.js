@@ -131,7 +131,11 @@ export default class FlightGenerator extends React.Component {
 
   }
 
-  getPropertyFlightText = (properties, dateFormats) => {
+  getDateHelperName = (index) => {
+    return `dateHelper${index}`;
+  }
+
+  getPropertyFlightText = (properties, dateFormats, timeZones, dateHelpers) => {
     let text = '';
     Object.keys(properties).forEach((propertyTypeId) => {
       if (properties[propertyTypeId].length) {
@@ -145,9 +149,17 @@ export default class FlightGenerator extends React.Component {
             text = text.concat(`\n.addProperty( "${fqn}" ).value( row -> Parsers.${PARSE_FNS[property.datatype]}( row.getAs( "${properties[propertyTypeId]}" ) ) ).ok()`);
           }
           else if (property.datatype === 'Date') {
-            if (dateFormats && dateFormats[property.id]) {
-              // property is a date and has a parser
-              text = text.concat(`\n.addProperty( "${fqn}" ).value( row -> Parsers.parseDate( row.getAs( "${properties[propertyTypeId]}" ), "${dateFormats[property.id]}" ) ).ok()`);
+            if (dateFormats && timeZones && dateFormats[property.id] && timeZones[property.id]) {
+              const format = dateFormats[property.id];
+              const offset = timeZones[property.id];
+              let helperIndex = -1;
+              dateHelpers.forEach((helper, i) => {
+                if (helper[0] === format && helper[1] === offset) helperIndex = i;
+              });
+              if (helperIndex > -1) {
+                // property is a date and has a parser
+                text = text.concat(`\n.addProperty( "${fqn}" ).value( row -> ${this.getDateHelperName(helperIndex)}.parse( row.getAs( "${properties[propertyTypeId]}" ) ) ).ok()`);
+              }
             }
             else {
               // property is a date but no parser is specified for it
@@ -166,22 +178,49 @@ export default class FlightGenerator extends React.Component {
     return text;
   }
 
-  getEntityFlightText = (entity) => {
+  getEntityFlightText = (entity, dateHelpers) => {
     let text = `\n.addEntity( "${entity.alias}" )`;
     text = text.concat(`\n.to( "${this.state.allEntitySetsAsMap[entity.entitySetId].name}" )`);
-    text = text.concat(this.getPropertyFlightText(entity.properties, entity.dateFormats));
+    text = text.concat(this.getPropertyFlightText(entity.properties, entity.dateFormats, entity.timeZones, dateHelpers));
     text = text.concat('\n.endEntity()\n');
     return text;
   }
 
-  getAssociationFlightText = (association, index) => {
+  getAssociationFlightText = (association, index, dateHelpers) => {
     let text = `\n.addAssociation( "association${index}" )`;
     text = text.concat(`\n.to( "${this.state.allEntitySetsAsMap[association.entitySetId].name}" )`);
     text = text.concat(`\n.fromEntity( "${association.src}" )`);
     text = text.concat(`\n.toEntity( "${association.dst}" )`);
-    text = text.concat(this.getPropertyFlightText(association.properties, association.dateFormats));
+    text = text.concat(this.getPropertyFlightText(association.properties, association.dateFormats, association.timeZones, dateHelpers));
     text = text.concat('\n.endAssociation()\n');
     return text;
+  }
+
+  getDateHelpers = (entities, associations) => {
+    const formatsToTimeZones = {};
+    entities.concat(associations).forEach((entity) => {
+      Object.keys(entity.dateFormats).forEach((id) => {
+        if (entity.properties[id].length) {
+          const format = entity.dateFormats[id];
+          const timeZone = entity.timeZones[id];
+          if (formatsToTimeZones[format]) {
+            if (!formatsToTimeZones[format].includes(timeZone)) {
+              formatsToTimeZones[format].push(timeZone);
+            }
+          }
+          else {
+            formatsToTimeZones[format] = [timeZone];
+          }
+        }
+      });
+    });
+    const helpers = [];
+    Object.keys(formatsToTimeZones).forEach((format) => {
+      formatsToTimeZones[format].forEach((timeZone) => {
+        helpers.push([format, timeZone]);
+      });
+    });
+    return helpers;
   }
 
   generate = () => {
@@ -191,16 +230,26 @@ export default class FlightGenerator extends React.Component {
     const associations = this.state.associationMappings.filter((association) => {
       return this.associationIsValid(association);
     });
-    let flight = 'Flight flight = Flight.newFlight()';
+    const dateHelpers = this.getDateHelpers(entities, associations);
+    let flight = '';
+    if (dateHelpers.length) flight = flight.concat('// These DateTimeHelpers go above the "public static void main" line');
+    dateHelpers.forEach((helper, index) => {
+      const name = this.getDateHelperName(index);
+      const format = helper[0];
+      const offset = helper[1];
+      flight = flight.concat(`\nprivate static final DateTimeHelper ${name} = new DateTimeHelper( DateTimeZone.forOffsetHours( ${offset} ), "${format}" );`);
+    });
+
+    flight = flight.concat('\n\n\nFlight flight = Flight.newFlight()');
     flight = flight.concat('\n.createEntities()\n');
     entities.forEach((entity) => {
-      flight = flight.concat(this.getEntityFlightText(entity));
+      flight = flight.concat(this.getEntityFlightText(entity, dateHelpers));
     });
     flight = flight.concat('\n.endEntities()');
     if (associations.length) {
       flight = flight.concat('\n.createAssociations()\n');
       associations.forEach((association, index) => {
-        flight = flight.concat(this.getAssociationFlightText(association, index));
+        flight = flight.concat(this.getAssociationFlightText(association, index, dateHelpers));
       });
       flight = flight.concat('\n.endAssociations()');
     }
