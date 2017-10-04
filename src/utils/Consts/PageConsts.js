@@ -12,6 +12,7 @@ const ADVANCED_SEARCH = 'advanced_search';
 const ORGS = 'orgs';
 const ENTITY_SETS = 'entitysets';
 const EDIT_ACCOUNT = 'edit_account';
+const FLIGHT = 'flight';
 
 export default {
   DEFAULT_DOCUMENT_TITLE,
@@ -26,5 +27,6 @@ export default {
   ADVANCED_SEARCH,
   ORGS,
   ENTITY_SETS,
-  EDIT_ACCOUNT
+  EDIT_ACCOUNT,
+  FLIGHT
 };
