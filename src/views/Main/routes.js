@@ -28,6 +28,8 @@ import OrganizationsContainerComponent from '../../containers/organizations/comp
 import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
 import OrganizationsListComponent from '../../containers/organizations/components/OrganizationsListComponent';
 
+import FlightGenerator from '../../containers/flightgenerator/FlightGenerator';
+
 // injected by Webpack.DefinePlugin
 declare var __AUTH0_CLIENT_ID__;
 declare var __AUTH0_DOMAIN__;
@@ -52,6 +54,11 @@ const requireAuth = (nextState, replace) => {
 
 const isAdmin = () => {
   return (auth.loggedIn() && auth.getProfile().hasOwnProperty('roles') && auth.getProfile().roles.includes(ADMIN));
+};
+
+const requireAdmin = (nextState, replace) => {
+  requireAuth();
+  if (!isAdmin()) replace({ pathname: `/${PageConsts.HOME}` });
 };
 
 const getName = () => {
@@ -96,6 +103,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
+      <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAdmin} />
       <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );

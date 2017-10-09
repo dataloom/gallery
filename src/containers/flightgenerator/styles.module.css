@@ -1,0 +1,29 @@
+.deleteButton {
+  margin: 20px 0;
+}
+
+.alias {
+  margin: 20px 0;
+}
+
+.propertyName {
+  font-size: 16px;
+}
+
+.tableCell {
+  padding: 5px;
+}
+
+.generateButton {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.center {
+  text-align: center;
+}
+
+.flight {
+  white-space: pre;
+  margin-bottom: 50px;
+}

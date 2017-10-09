@@ -47,11 +47,17 @@ export default class EventTimeline extends React.Component {
   }
 
   getPropDetails = (propertyType, propertyValues, dateProps, row) => {
+    const dateDetails = {};
     const dateFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
-    const date = new Date(propertyValues[dateFqn]);
-    const body = { propertyType, row };
-    const dateValues = (dateProps[date]) ? dateProps[date].concat(body) : [body];
-    return { [date]: dateValues };
+    if (propertyValues[dateFqn]) {
+      propertyValues[dateFqn].forEach((dateStr) => {
+        const date = new Date(dateStr);
+        const body = { propertyType, row };
+        const dateValues = (dateProps[date]) ? dateProps[date].concat(body) : [body];
+        dateDetails[date] = dateValues;
+      });
+    }
+    return dateDetails;
   }
 
   getPropDetailsForRow = (row, dateProps, datesToProps) => {
