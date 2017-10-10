@@ -12,7 +12,8 @@ import styles from './styles.module.css';
 const DEFAULT_ENTITY = {
   entitySetId: '',
   alias: '',
-  properties: {}
+  properties: {},
+  useCurrentSync: false
 };
 
 const DEFAULT_ASSOCIATION = {
@@ -20,7 +21,8 @@ const DEFAULT_ASSOCIATION = {
   dst: '',
   entitySetId: '',
   alias: '',
-  properties: {}
+  properties: {},
+  useCurrentSync: false
 };
 
 const PARSE_FNS = {
@@ -178,9 +180,14 @@ export default class FlightGenerator extends React.Component {
     return text;
   }
 
+  getCurrentSyncText = (entity) => {
+    return (entity.useCurrentSync) ? '\n.useCurrentSync()' : '';
+  }
+
   getEntityFlightText = (entity, dateHelpers) => {
     let text = `\n.addEntity( "${entity.alias}" )`;
     text = text.concat(`\n.to( "${this.state.allEntitySetsAsMap[entity.entitySetId].name}" )`);
+    text = text.concat(this.getCurrentSyncText(entity));
     text = text.concat(this.getPropertyFlightText(entity.properties, entity.dateFormats, entity.timeZones, dateHelpers));
     text = text.concat('\n.endEntity()\n');
     return text;
@@ -191,6 +198,7 @@ export default class FlightGenerator extends React.Component {
     text = text.concat(`\n.to( "${this.state.allEntitySetsAsMap[association.entitySetId].name}" )`);
     text = text.concat(`\n.fromEntity( "${association.src}" )`);
     text = text.concat(`\n.toEntity( "${association.dst}" )`);
+    text = text.concat(this.getCurrentSyncText(association));
     text = text.concat(this.getPropertyFlightText(association.properties, association.dateFormats, association.timeZones, dateHelpers));
     text = text.concat('\n.endAssociation()\n');
     return text;

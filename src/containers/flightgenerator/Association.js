@@ -19,6 +19,7 @@ export default class Association extends React.Component {
     association: PropTypes.shape({
       entitySetId: PropTypes.string.isRequired,
       alias: PropTypes.string.isRequired,
+      useCurrentSync: PropTypes.bool.isRequired,
       properties: PropTypes.object.isRequired,
       src: PropTypes.string.isRequired,
       dst: PropTypes.string.isRequired,
@@ -52,7 +53,7 @@ export default class Association extends React.Component {
         timeZones[id] = '0';
       }
     });
-    const association = {
+    const association = Object.assign({}, this.props.association, {
       entitySetId,
       alias: allEntitySetsAsMap[entitySetId].title.concat(' Entity'),
       properties,
@@ -60,7 +61,7 @@ export default class Association extends React.Component {
       timeZones,
       src: '',
       dst: ''
-    };
+    });
     onChange(association, index);
   }
 
@@ -103,6 +104,12 @@ export default class Association extends React.Component {
   handleDstChange = (event) => {
     const { association, index, onChange } = this.props;
     const newAssociation = Object.assign({}, association, { dst: event.value });
+    onChange(newAssociation, index);
+  }
+
+  handleCurrentSyncChange = () => {
+    const { association, index, onChange } = this.props;
+    const newAssociation = Object.assign({}, association, { useCurrentSync: !association.useCurrentSync });
     onChange(newAssociation, index);
   }
 
@@ -265,6 +272,22 @@ export default class Association extends React.Component {
     );
   }
 
+  renderCurrentSync = () => {
+    if (!this.props.association.entitySetId.length) return null;
+    const useCurrentSync = this.props.association.useCurrentSync;
+    const name = `association${this.props.index}-sync`;
+    return (
+      <div className={styles.currentSync}>
+        <input
+            name={name}
+            type="checkbox"
+            checked={!useCurrentSync}
+            onChange={this.handleCurrentSyncChange} />
+        <label className={styles.currentSyncLabel} htmlFor={name}>Overwrite existing data for entity set?</label>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -272,6 +295,7 @@ export default class Association extends React.Component {
         {this.renderEntitySetSelection()}
         {this.renderSrcSelection()}
         {this.renderDstSelection()}
+        {this.renderCurrentSync()}
         {this.renderProperties()}
       </div>
     );

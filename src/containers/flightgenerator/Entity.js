@@ -19,6 +19,7 @@ export default class Entity extends React.Component {
     entity: PropTypes.shape({
       entitySetId: PropTypes.string.isRequired,
       alias: PropTypes.string.isRequired,
+      useCurrentSync: PropTypes.bool.isRequired,
       properties: PropTypes.object.isRequired,
       dateFormats: PropTypes.object,
       timeZones: PropTypes.object
@@ -56,7 +57,7 @@ export default class Entity extends React.Component {
       alias = baseAlias.concat(` (${counter})`);
       counter += 1;
     }
-    const entity = { entitySetId, alias, properties, dateFormats, timeZones };
+    const entity = Object.assign({}, this.props.entity, { entitySetId, alias, properties, dateFormats, timeZones });
     onChange(entity, index);
   }
 
@@ -66,6 +67,12 @@ export default class Entity extends React.Component {
     const newEntity = Object.assign({}, entity, { alias });
     onChange(newEntity, index);
     return Promise.resolve(true);
+  }
+
+  handleCurrentSyncChange = () => {
+    const { entity, index, onChange } = this.props;
+    const newEntity = Object.assign({}, entity, { useCurrentSync: !entity.useCurrentSync });
+    onChange(newEntity, index);
   }
 
   handlePropertyChange = (event, propertyTypeId) => {
@@ -130,6 +137,22 @@ export default class Entity extends React.Component {
             placeholder="Entity alias"
             value={alias}
             onChangeConfirm={this.handleAliasChange} />
+      </div>
+    );
+  }
+
+  renderCurrentSync = () => {
+    if (!this.props.entity.alias.length) return null;
+    const useCurrentSync = this.props.entity.useCurrentSync;
+    const name = `${this.props.entity.alias}-sync`;
+    return (
+      <div className={styles.currentSync}>
+        <input
+            name={name}
+            type="checkbox"
+            checked={!useCurrentSync}
+            onChange={this.handleCurrentSyncChange} />
+        <label className={styles.currentSyncLabel} htmlFor={name}>Overwrite existing data for entity set?</label>
       </div>
     );
   }
@@ -212,6 +235,7 @@ export default class Entity extends React.Component {
         {this.renderDeleteButton()}
         {this.renderEntitySetSelection()}
         {this.renderAlias()}
+        {this.renderCurrentSync()}
         {this.renderProperties()}
       </div>
     );
