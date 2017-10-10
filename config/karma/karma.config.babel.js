@@ -1,6 +1,6 @@
 import WEBPACK_CONFIG from '../webpack/webpack.config.test';
 
-const TESTS_PATH = 'src/**/*.test.js';
+const TESTS_PATH = 'src/**/AsyncReducer.test.js';
 const CHAI_CONFIG_PATH = 'config/chai/*.js';
 
 import {
