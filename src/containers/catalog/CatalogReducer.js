@@ -22,7 +22,7 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
     case actionTypes.CATALOG_SEARCH_REQUEST:
-      return state.merge({
+      return state.mergeDeep({
         asyncState: {
           status: ASYNC_STATUS.LOADING,
           errorMessage: ''
@@ -31,7 +31,7 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
       });
 
     case actionTypes.CATALOG_SEARCH_REJECT:
-      return state.merge({
+      return state.mergeDeep({
         asyncState: {
           status: ASYNC_STATUS.ERROR,
           errorMessage: action.errorMessage
@@ -39,7 +39,7 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
       });
 
     case actionTypes.CATALOG_SEARCH_RESOLVE:
-      return state.merge({
+      return state.mergeDeep({
         asyncState: {
           status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''

@@ -26,7 +26,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingUsersRoles', false);
 
     case actionTypes.GET_ALL_USERS_AND_ROLES_SUCCESS:
-      return state.merge({
+      return state.mergeDeep({
         isGettingUsersRoles: false,
         allUsersById: action.users,
         allRolesList: action.roles
@@ -58,7 +58,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         };
         return state.mergeDeep(rolePermissionsMerge);
       }
-      return state.merge({
+      return state.mergeDeep({
         entityRolePermissions: rolePermissions
       });
     }
@@ -77,7 +77,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         return state.mergeDeep(userPermissionsMerge);
       }
 
-      return state.merge({
+      return state.mergeDeep({
         entityUserPermissions: userPermissions
       });
     }

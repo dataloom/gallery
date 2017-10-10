@@ -58,7 +58,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         isGettingResults: false,
         topUtilizersResults: action.data
       };
-      return state.merge(newState);
+      return state.mergeDeep(newState);
     }
 
     case actionTypes.SUBMIT_TOP_UTILIZERS_FAILURE:
