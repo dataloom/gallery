@@ -607,7 +607,7 @@ export default class EntitySetSearchResults extends React.Component {
       const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
 
       // TODO: how do we handle duplicate keys with different values? is that even possible?
-      let mergedDetails :Map<string, any> = associationDetails.merge(neighborDetails);
+      let mergedDetails :Map<string, any> = associationDetails.mergeDeep(neighborDetails);
 
       if (neighbor.has('neighborId')) {
         mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));

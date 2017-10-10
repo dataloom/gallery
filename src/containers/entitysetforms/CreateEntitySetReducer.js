@@ -20,7 +20,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
 export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Object) {
   switch (action.type) {
     case edmActionTypes.ALL_ENTITY_TYPES_REQUEST:
-      return state.merge({
+      return state.mergeDeep({
         entityTypesAsyncState: {
           status: ASYNC_STATUS.LOADING,
             errorMessage: ''
@@ -28,14 +28,14 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
         entityTypeReferences: []
       });
     case edmActionTypes.ALL_ENTITY_TYPES_REJECT:
-      return state.merge({
+      return state.mergeDeep({
         entityTypesAsyncState: {
           status: ASYNC_STATUS.ERROR,
           errorMessage: action.errorMessage
         }
       });
     case edmActionTypes.ALL_ENTITY_TYPES_RESOLVE:
-      return state.merge({
+      return state.mergeDeep({
         entityTypesAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
@@ -45,7 +45,7 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
 
     case actionTypes.CREATE_ENTITY_SET_REQUEST:
     case actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST:
-      return state.merge({
+      return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.LOADING,
           errorMessage: ''
@@ -53,7 +53,7 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
       });
     case actionTypes.CREATE_ENTITY_SET_REJECT:
     case actionTypes.CREATE_LINKED_ENTITY_SET_REJECT:
-      return state.merge({
+      return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.ERROR,
           errorMessage: action.errorMessage
@@ -61,14 +61,14 @@ export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Obje
       });
     case actionTypes.CREATE_ENTITY_SET_RESOLVE:
     case actionTypes.CREATE_LINKED_ENTITY_SET_RESOLVE:
-      return state.merge({
+      return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
         }
       });
     case actionTypes.CREATE_ENTITY_SET_RESET:
-      return state.merge({
+      return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.PENDING,
           errorMessage: ''
