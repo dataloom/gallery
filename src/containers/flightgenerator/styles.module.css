@@ -27,3 +27,12 @@
   white-space: pre;
   margin-bottom: 50px;
 }
+
+.currentSync {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.currentSyncLabel {
+  margin-left: 5px;
+}
