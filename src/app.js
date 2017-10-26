@@ -14,7 +14,7 @@ import { Router } from 'react-router';
 import initializeReduxStore from './core/redux/ReduxStore';
 import initializeRouterHistory from './core/router/RouterHistory';
 
-import { initializeNeuron } from './core/neuron/NeuronEpic';
+// import { initializeNeuron } from './core/neuron/NeuronEpic';
 import { makeMainRoutes } from './views/Main/routes';
 
 import './core/styles/global/index.css';
@@ -26,7 +26,7 @@ const routerHistory = initializeRouterHistory(reduxStore);
  * TODO: probably not the best place to initilize WebSockets / connect to Neuron, but this is the cleanest way to get
  * access to the redux store and dispatch()
  */
-initializeNeuron(reduxStore);
+// initializeNeuron(reduxStore);
 
 ReactDOM.render(
   <Provider store={reduxStore}>
