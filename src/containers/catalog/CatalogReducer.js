@@ -14,7 +14,8 @@ export const INITIAL_STATE :Map<> = Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
   }),
-  entitySetIds: Immutable.List()
+  entitySetIds: Immutable.List(),
+  numHits: 0
 });
 
 export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
@@ -22,31 +23,34 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
     case actionTypes.CATALOG_SEARCH_REQUEST:
-      return state.mergeDeep({
-        asyncState: {
+      return state
+        .set('asyncState', Immutable.fromJS({
           status: ASYNC_STATUS.LOADING,
           errorMessage: ''
-        },
-        entitySetIds: []
-      });
+        }))
+        .set('entitySetIds', Immutable.List())
+        .set('numHits', 0);
 
     case actionTypes.CATALOG_SEARCH_REJECT:
-      return state.mergeDeep({
-        asyncState: {
+      return state
+        .set('asyncState', Immutable.fromJS({
           status: ASYNC_STATUS.ERROR,
           errorMessage: action.errorMessage
-        }
-      });
+        }))
+        .set('entitySetIds', Immutable.List())
+        .set('numHits', 0);
 
     case actionTypes.CATALOG_SEARCH_RESOLVE:
-      return state.mergeDeep({
-        asyncState: {
+      return state
+        .set('asyncState', Immutable.fromJS({
           status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
-        },
-        entitySetIds: Immutable.fromJS(action.entitySetIds),
-        numHits: action.numHits
-      });
+        }))
+        .set('entitySetIds', Immutable.fromJS(action.entitySetIds))
+        .set('numHits', action.numHits);
+
+    case actionTypes.CATALOG_CLEAR:
+      return INITIAL_STATE;
 
     default:
       return state;
