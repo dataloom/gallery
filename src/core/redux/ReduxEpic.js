@@ -4,6 +4,7 @@
 
 import { combineEpics } from 'redux-observable';
 
+import AppEpic from '../../containers/app/AppEpic';
 import CatalogEpic from '../../containers/catalog/CatalogEpic';
 import CreateEntitySetEpic from '../../containers/entitysetforms/CreateEntitySetEpic';
 import DatasetsEpic from '../../containers/datasets/DatasetsEpic';
@@ -22,6 +23,7 @@ import NeuronEpic from '../neuron/NeuronEpic';
 
 export default function reduxEpic() {
   return combineEpics(
+    AppEpic,
     CatalogEpic,
     CreateEntitySetEpic,
     DatasetsEpic,
