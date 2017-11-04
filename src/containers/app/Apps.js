@@ -57,6 +57,15 @@ const NoOrganizationsText = styled.div`
   margin-bottom: 20px;
 `;
 
+const ErrorMessageWrapper = styled.div`
+  text-align: center;
+`;
+
+const ErrorMessage = styled.div`
+  font-size: 14px;
+  color: red;
+`;
+
 class Apps extends React.Component {
   static propTypes = {
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -168,6 +177,16 @@ class Apps extends React.Component {
     this.closeInstallModal()
   }
 
+  renderError = () => {
+    const error = this.props.errorMessage;
+    if (!error || !error.length) return null;
+    return (
+      <ErrorMessageWrapper>
+        <ErrorMessage>{error}</ErrorMessage>
+      </ErrorMessageWrapper>
+    );
+  }
+
   renderModalBody = () => {
     if (!this.props.organizations.size) {
       return (
@@ -213,6 +232,7 @@ class Apps extends React.Component {
             <Page.Title>Browse Apps</Page.Title>
           </Page.Header>
           <Page.Body>
+            {this.renderError()}
             {this.renderApps()}
             {this.renderInstallModal()}
           </Page.Body>

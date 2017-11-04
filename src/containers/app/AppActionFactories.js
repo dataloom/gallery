@@ -41,6 +41,7 @@ export function installAppSuccess() {
 
 export function installAppFailure(errorMessage :string) {
   return {
-    type: actionTypes.INSTALL_APP_FAILURE
+    type: actionTypes.INSTALL_APP_FAILURE,
+    errorMessage
   };
 }

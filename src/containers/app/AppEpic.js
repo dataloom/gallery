@@ -23,7 +23,7 @@ function getAppsEpic(action$) {
         .catch((e) => {
           console.error(e);
           return Observable.of(
-            actionFactories.getAppsFailure('Error loading apps')
+            actionFactories.getAppsFailure('Unable to load apps')
           );
         });
     });
@@ -43,7 +43,7 @@ function installAppEpic(action$) {
         .catch((e) => {
           console.error(e);
           return Observable.of(
-            actionFactories.installAppFailure('Error installing app')
+            actionFactories.installAppFailure('Unable to install app')
           );
         });
     });
