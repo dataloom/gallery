@@ -80,7 +80,6 @@ export class AssociationTypeFqnList extends React.Component {
   }
 
   renderNewRowInput = () => {
-    console.log(this.props.searchFn)
     const associationTypeFqns = this.props.associationTypeFqns;
     if (!this.context.isAdmin) return null;
     const className = (this.state.newEntityTypeRow) ? StringConsts.EMPTY : styles.hidden;
