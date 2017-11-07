@@ -9,6 +9,7 @@ import Avatar from 'react-avatar';
 import AccountMenu from './AccountMenu';
 import AuthService from '../../utils/AuthService';
 import PageConsts from '../../utils/Consts/PageConsts';
+import logoImg from '../../images/logo.png';
 import styles from './headernav.module.css';
 
 class HeaderNav extends React.Component {
@@ -33,7 +34,10 @@ class HeaderNav extends React.Component {
       <header className={styles.headerNavWrapper}>
         <nav className={styles.headerNav}>
 
-          <div className={styles.headerNavLeft} />
+          <div className={styles.headerNavLeft}>
+            <img className={styles.logo} src={logoImg} role="presentation" />
+            <div className={styles.openLattice}>OPENLATTICE</div>
+          </div>
 
           <div className={styles.headerNavRight}>
             <div className={styles.headerNavItem}>
