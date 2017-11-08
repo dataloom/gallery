@@ -19,7 +19,7 @@ import visualizeIcon from '../../images/icon-nav-visualize.svg';
 import organizationsIcon from '../../images/icon-nav-organizations.svg';
 import FontAwesome from 'react-fontawesome';
 
-const HELP_URL = 'https://help.thedataloom.com/';
+const HELP_URL = 'https://help.openlattice.com/';
 
 
 class SideNav extends React.Component {
