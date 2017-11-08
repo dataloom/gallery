@@ -599,6 +599,14 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
+  removeDuplicates = (list1 :List<any>, list2 :List<any>) => {
+    const valueSet = new Set();
+    list1.concat(list2).forEach((val) => {
+      valueSet.add(val);
+    });
+    return Immutable.List(valueSet);
+  }
+
   getNeighborGroupData = (neighborGroup :List<any>) => {
 
     return neighborGroup.map((neighbor :Map<string, any>) => {
@@ -607,7 +615,7 @@ export default class EntitySetSearchResults extends React.Component {
       const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
 
       // TODO: how do we handle duplicate keys with different values? is that even possible?
-      let mergedDetails :Map<string, any> = associationDetails.mergeDeep(neighborDetails);
+      let mergedDetails :Map<string, any> = associationDetails.mergeWith(this.removeDuplicates, neighborDetails);
 
       if (neighbor.has('neighborId')) {
         mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));
