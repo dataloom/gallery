@@ -600,11 +600,11 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   removeDuplicates = (list1 :List<any>, list2 :List<any>) => {
-    const valueSet = new Set();
+    const valueSet = Immutable.Set();
     list1.concat(list2).forEach((val) => {
       valueSet.add(val);
     });
-    return Immutable.List(valueSet);
+    return valueSet.toList();
   }
 
   getNeighborGroupData = (neighborGroup :List<any>) => {
