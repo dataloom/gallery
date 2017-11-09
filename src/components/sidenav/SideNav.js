@@ -20,6 +20,7 @@ import organizationsIcon from '../../images/icon-nav-organizations.svg';
 import FontAwesome from 'react-fontawesome';
 
 const HELP_URL = 'https://help.openlattice.com/';
+const SUPPORT_URL = 'https://support.openlattice.com/'
 
 
 class SideNav extends React.Component {
@@ -53,6 +54,15 @@ class SideNav extends React.Component {
     );
   }
 
+  getSupportLink = () => {
+    console.log('support')
+    return (
+      <div className={styles.support}>
+        <a href={SUPPORT_URL} target="_blank">Report Issue</a>
+      </div>
+    );
+  }
+
   render() {
     return (
       <nav className={styles.sideNav}>
@@ -64,6 +74,7 @@ class SideNav extends React.Component {
         {/*{ this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }*/}
         { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
         { this.getSideNavHelpItemLayout(HELP_URL, 'Help') }
+        { this.getSupportLink() }
       </nav>
     );
   }
