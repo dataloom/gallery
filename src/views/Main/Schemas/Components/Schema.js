@@ -101,7 +101,7 @@ export class Schema extends React.Component {
         </div>
         <div className={styles.spacerMed} />
         <EntityTypeFqnList
-            entityTypeFqns={schema.entityTypes}
+            entityTypeFqns={this.state.entityTypes}
             updateSchemaFn={this.updateSchema}  />
         <br />
         <div className={styles.spacerMed} />

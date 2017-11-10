@@ -6,7 +6,7 @@ import Auth0Lock from 'auth0-lock';
 import * as Cookies from 'js-cookie';
 
 import { isTokenExpired } from './jwtHelper';
-import img from '../images/empty-logo.png';
+import img from '../images/logo.png';
 import PageConsts from './Consts/PageConsts';
 
 // injected by Webpack.DefinePlugin
@@ -22,7 +22,7 @@ export default class AuthService extends EventEmitter {
         logo: img
       },
       languageDictionary: {
-        title: 'Lattice'
+        title: 'OpenLattice'
       },
       auth: {
         params: {

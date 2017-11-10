@@ -43,3 +43,13 @@
 .sideNavIcon {
   height: 25px;
 }
+
+.support, .support :visited {
+  text-align: center;
+  color: #ffffff;
+  bottom: 10px;
+  position: fixed;
+  width: 100px;
+  font-size: 10px;
+  font-weight: 300;
+}

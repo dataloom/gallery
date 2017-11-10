@@ -1,6 +1,6 @@
 # gallery
 
-Gallery provides Loom's UI for interacting with the entity data model, as well as downloading and visualizing datasets.
+Gallery provides OpenLattice's UI for interacting with the entity data model, as well as downloading and visualizing datasets.
 
 
 ##Setup for Mac
@@ -26,7 +26,7 @@ npm install
 
 *Steps 3 and 4 assume you're in [loom](https://github.com/dataloom/loom) root*
 
-1. Run cassandra 
+1. Run cassandra
 ```
 cassandra
 ```
@@ -53,8 +53,8 @@ Test suite is Karma, Mocha, Chai. The default test run - `npm test` - runs Karma
 
 To add a tests for `foo.js`, create a `foo.test.js` file adjacent to `foo.js`. The karma will automatically pick up and run it.
 
-If you're actively writing tests, you may want to debug them in a browser. 
-Karma supports running tests in a browser, and auto-reloading test code when it changes. 
+If you're actively writing tests, you may want to debug them in a browser.
+Karma supports running tests in a browser, and auto-reloading test code when it changes.
 The following command starts Chrome and runs tests in the browser. You can debug it with Chrome dev tools.
 ```
 npm run test:dev
@@ -62,7 +62,7 @@ npm run test:dev
 
 **Adding Chai Plugins**
 
-To add a Chai plugin, add the import and call of `chai.use(plugin)` to `config/chai/plugins.config` 
+To add a Chai plugin, add the import and call of `chai.use(plugin)` to `config/chai/plugins.config`
 
 
 ###Building for prod
