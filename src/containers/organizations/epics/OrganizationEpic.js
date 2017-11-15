@@ -36,6 +36,7 @@ function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
           const org :Organization = (new OrganizationBuilder())
             .setId(orgId)
             .setTitle(action.organization.title)
+            .setPrincipal(action.organization.principal)
             .build();
           return Observable.of(
             push(`/orgs/${orgId}`), // this must happen first, otherwise things break elsewhere
