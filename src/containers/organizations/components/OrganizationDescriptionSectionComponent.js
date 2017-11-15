@@ -52,6 +52,7 @@ class OrganizationDescriptionSectionComponent extends React.Component {
     const org :Organization = (new OrganizationBuilder())
       .setId(this.props.organization.get('id'))
       .setTitle(this.props.organization.get('title'))
+      .setPrincipal(this.props.organization.get('principal'))
       .setDescription(description)
       .build();
 

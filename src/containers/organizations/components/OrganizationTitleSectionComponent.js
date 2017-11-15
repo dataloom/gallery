@@ -113,11 +113,12 @@ class OrganizationTitleSectionComponent extends React.Component {
     const orgId :boolean = this.props.organization.get('id');
     const orgBuilder :OrganizationBuilder = new OrganizationBuilder();
 
+    const principal :Principal = (new PrincipalBuilder())
+      .setType(PrincipalTypes.ORGANIZATION)
+      .setId(title.replace(/\W/g, ''))
+      .build();
+
     if (!isNonEmptyString(orgId)) {
-      const principal :Principal = (new PrincipalBuilder())
-        .setType(PrincipalTypes.ORGANIZATION)
-        .setId(title.replace(/\W/g, ''))
-        .build();
 
       const org :Organization = orgBuilder
         .setTitle(title)
@@ -129,6 +130,7 @@ class OrganizationTitleSectionComponent extends React.Component {
       const org :Organization = orgBuilder
         .setId(orgId)
         .setTitle(title)
+        .setPrincipal(principal)
         .build();
       this.props.actions.updateOrganizationTitleRequest(org);
     }
