@@ -200,6 +200,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         .setId(action.roleId)
         .setOrganizationId(action.role.organizationId)
         .setTitle(action.role.title)
+        .setPrincipal(action.role.principal)
         .build();
 
       const orgId :UUID = action.role.organizationId;

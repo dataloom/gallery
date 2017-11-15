@@ -339,7 +339,8 @@ class OrganizationMembersSectionComponent extends React.Component {
 
     // TODO: add "..." when role names are too long
     const memberRolesElements = orgRoles.map((role :Immutable.Map<string, any>) => {
-      const memberHasRole :boolean = memberRoles.includes(role.get('id'));
+      const roleId = role.get('principal').get('id');
+      const memberHasRole :boolean = memberRoles.includes(roleId);
       return (
         <RoleBadge
             key={role.get('id')}
@@ -347,7 +348,7 @@ class OrganizationMembersSectionComponent extends React.Component {
             onClick={() => {
               if (isOwner) {
                 if (memberHasRole) {
-                  this.removeRoleFromMember(role.get('id'), this.state.selectedMemberId);
+                  this.removeRoleFromMember(role.get('aclKey'), this.state.selectedMemberId);
                 }
                 else {
                   this.addRoleToMember(role.get('id'), this.state.selectedMemberId);

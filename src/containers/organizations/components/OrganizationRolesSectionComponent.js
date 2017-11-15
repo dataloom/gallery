@@ -8,7 +8,7 @@ import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import { Models } from 'lattice';
+import { Models, Types } from 'lattice';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -23,9 +23,15 @@ import {
 } from '../actions/OrganizationActionFactory';
 
 const {
+  Principal,
+  PrincipalBuilder,
   Role,
   RoleBuilder
 } = Models;
+
+const {
+  PrincipalTypes
+} = Types;
 
 const RolesListContainer = styled.div`
   width: 400px;
@@ -38,7 +44,8 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
     .map((role :Map<string, any>) => {
       return Immutable.fromJS({
         id: role.get('id'),
-        value: role.get('title')
+        value: role.get('title'),
+        principal: role.get('principal')
       });
     });
 
@@ -72,9 +79,15 @@ class OrganizationRolesSectionComponent extends React.Component {
 
   addRole = (roleTitle :string) => {
 
+    const principal :Principal = (new PrincipalBuilder())
+      .setType(PrincipalTypes.ROLE)
+      .setId(roleTitle.replace(/\W/g, ''))
+      .build();
+
     const role :Role = (new RoleBuilder())
       .setOrganizationId(this.props.organization.get('id'))
       .setTitle(roleTitle)
+      .setPrincipal(principal)
       .build();
 
     this.props.actions.addRoleToOrganizationRequest(role);
