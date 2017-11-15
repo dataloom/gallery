@@ -108,16 +108,9 @@ const RoleBadge = styled(StyledBadge)`
 `;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
-
-  const users :Immutable.List = state.getIn(['principals', 'users'], Immutable.Map());
-
   const members :Immutable.Map = Immutable.Map().withMutations((map :Immutable.Map) => {
-    ownProps.organization.get('members', Immutable.List()).forEach((member :Immutable.Map) => {
-      const memberId = member.get('id');
-      const user = users.get(memberId);
-      if (user) {
-        map.set(memberId, user);
-      }
+    ownProps.users.forEach((member :Immutable.Map) => {
+      map.set(member.get('principal').get('principal').get('id'), member);
     });
   });
 
@@ -151,6 +144,7 @@ class OrganizationMembersSectionComponent extends React.Component {
       removeRoleFromMemberRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
+    users: React.PropTypes.instanceOf(Immutable.List).isRequired,
     members: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
   }
@@ -168,18 +162,6 @@ class OrganizationMembersSectionComponent extends React.Component {
       selectedMemberId: '',
       showMemberRoles: false
     };
-  }
-
-  componentDidMount() {
-
-    const memberIds :string[] = this.props.organization
-      .get('members', Immutable.List())
-      .map((member :Immutable.Map) => {
-        return member.get('id');
-      }).toJS();
-
-    // TODO: figure out why componentDidMount() happens multiple times
-    this.props.actions.fetchUsersRequest(memberIds);
   }
 
   handleOnClickRemoveMember = (userId :string) => {
@@ -257,7 +239,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     const memberList = [];
     this.props.members.forEach((member :Immutable.Map) => {
 
-      const memberId :string = member.get('user_id');
+      const memberId :string = member.get('principal').get('principal').get('id');
       const label :string = OrgsUtils.getUserNameLabelValue(member);
 
       const memberListItem = (
@@ -335,23 +317,25 @@ class OrganizationMembersSectionComponent extends React.Component {
     const memberRoles :Immutable.List<string> = this.props.members.getIn(
       [this.state.selectedMemberId, 'roles'],
       Immutable.List()
-    );
+    ).map((role) => {
+      return role.get('id');
+    });
 
     // TODO: add "..." when role names are too long
     const memberRolesElements = orgRoles.map((role :Immutable.Map<string, any>) => {
-      const roleId = role.get('principal').get('id');
+      const roleId = role.get('id');
       const memberHasRole :boolean = memberRoles.includes(roleId);
       return (
         <RoleBadge
-            key={role.get('id')}
+            key={roleId}
             selected={memberHasRole}
             onClick={() => {
               if (isOwner) {
                 if (memberHasRole) {
-                  this.removeRoleFromMember(role.get('aclKey'), this.state.selectedMemberId);
+                  this.removeRoleFromMember(roleId, this.state.selectedMemberId);
                 }
                 else {
-                  this.addRoleToMember(role.get('id'), this.state.selectedMemberId);
+                  this.addRoleToMember(roleId, this.state.selectedMemberId);
                 }
               }
             }}>
