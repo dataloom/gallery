@@ -8,9 +8,7 @@ import * as actionTypes from './AppActionTypes';
 
 export const INITIAL_STATE :Map<> = Immutable.fromJS({
   apps: Immutable.List(),
-  errorMessage: '',
-  allOrganizations: Immutable.List(),
-  ownedOrganizations: Immutable.List()
+  errorMessage: ''
 });
 
 export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {

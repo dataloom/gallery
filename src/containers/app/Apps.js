@@ -12,7 +12,7 @@ import styled, {
 
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
-import * as actionFactory from './AppActionFactories';
+import * as actionFactory from './AppActionFactory';
 
 const AppSectionContainer = styled.div`
   display: flex;

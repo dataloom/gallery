@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import * as actionTypes from './AppActionTypes';
 
 export function getApps() {

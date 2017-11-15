@@ -8,7 +8,7 @@ import { combineEpics } from 'redux-observable';
 import { AppApi } from 'lattice';
 
 import * as actionTypes from './AppActionTypes';
-import * as actionFactories from './AppActionFactories';
+import * as actionFactory from './AppActionFactory';
 
 function getAppsEpic(action$) {
   return action$.ofType(actionTypes.GET_APPS_REQUEST)
@@ -17,13 +17,13 @@ function getAppsEpic(action$) {
         .from(AppApi.getApps())
         .mergeMap((apps) => {
           return Observable.of(
-            actionFactories.getAppsSuccess(apps)
+            actionFactory.getAppsSuccess(apps)
           );
         })
         .catch((e) => {
           console.error(e);
           return Observable.of(
-            actionFactories.getAppsFailure('Unable to load apps')
+            actionFactory.getAppsFailure('Unable to load apps')
           );
         });
     });
@@ -37,13 +37,13 @@ function installAppEpic(action$) {
         .from(AppApi.installApp(appId, organizationId, prefix))
         .mergeMap(() => {
           return Observable.of(
-            actionFactories.installAppSuccess()
+            actionFactory.installAppSuccess()
           );
         })
         .catch((e) => {
           console.error(e);
           return Observable.of(
-            actionFactories.installAppFailure('Unable to install app')
+            actionFactory.installAppFailure('Unable to install app')
           );
         });
     });
