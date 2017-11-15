@@ -220,7 +220,7 @@ class CreateEntitySet extends React.Component {
         </FormGroup>
 
         <FormGroup>
-          <ControlLabel>Owner Contact</ControlLabel>
+          <ControlLabel>Contact</ControlLabel>
           <FormControl
               type="text"
               value={this.state.contact}

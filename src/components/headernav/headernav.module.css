@@ -1,10 +1,17 @@
-.loom {
-  margin: 0 0 0 10px;
+.openLattice {
+  margin: 0 0 0 30px;
   font-size: 18px;
   /* Current Font Supports max 600 weight */
   font-weight: 600;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
   color: #4e5150;
+  font-family: 'Raleway', sans-serif;
+}
+
+
+.logo {
+  height: 60px;
+  margin: 0 0 0 13px;
 }
 
 .headerNavWrapper {
@@ -16,7 +23,7 @@
 
 .headerNav {
   border: none;
-  padding: 20px;
+  padding: 7px;
   display: flex;
   flex: 1 0 auto;
   justify-content: space-between;

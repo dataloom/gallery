@@ -444,7 +444,7 @@ class PermissionsPanel extends React.Component {
               className={`${styles.spacerMargin}`}
               disabled={this.state.newRoleValue.length === 0}
               onClick={() => {
-                this.updateRoles(ActionConsts.SET, newRoleValue, rolesView);
+                this.updateRoles(ActionConsts.ADD, newRoleValue, rolesView);
               }}>Add</Button>
         </div>
       </div>
@@ -529,7 +529,7 @@ class PermissionsPanel extends React.Component {
               className={`${styles.spacerMargin}`}
               disabled={this.state.newEmailValue.length === 0}
               onClick={() => {
-                this.updateEmails(ActionConsts.SET, newEmailValue, emailsView);
+                this.updateEmails(ActionConsts.ADD, newEmailValue, emailsView);
               }}>Add</Button>
         </div>
       </div>
