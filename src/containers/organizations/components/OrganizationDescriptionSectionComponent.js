@@ -7,7 +7,7 @@ import React from 'react';
 import Immutable from 'immutable';
 import styled from 'styled-components';
 
-import { DataModels } from 'loom-data';
+import { Models } from 'lattice';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +20,7 @@ import { updateOrganizationDescriptionRequest } from '../actions/OrganizationAct
 const {
   Organization,
   OrganizationBuilder
-} = DataModels;
+} = Models;
 
 function mapStateToProps(state :Immutable.Map, ownProps :Object) {
 
@@ -52,7 +52,7 @@ class OrganizationDescriptionSectionComponent extends React.Component {
     const org :Organization = (new OrganizationBuilder())
       .setId(this.props.organization.get('id'))
       .setTitle(this.props.organization.get('title'))
-      .setPrincipal(this.props.organization.get('principal'))
+      .setPrincipal(this.props.organization.get('principal').toJS())
       .setDescription(description)
       .build();
 
