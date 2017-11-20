@@ -54,6 +54,10 @@ class SideNav extends React.Component {
     );
   }
 
+  getSpacer = () => {
+    return <div className={ styles.spacer } />;
+  }
+
   getSupportLink = () => {
     console.log('support')
     return (
@@ -74,6 +78,7 @@ class SideNav extends React.Component {
         {/*{ this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') }*/}
         { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
         { this.getSideNavHelpItemLayout(HELP_URL, 'Help') }
+        { this.getSpacer() }
         { this.getSupportLink() }
       </nav>
     );
