@@ -148,15 +148,16 @@ class PersonCard extends React.Component<Props, State> {
     return this.formatValue(dobValue.toJS());
   }
 
-  getMugshotImgSrc = () => {
+  getPictureImgSrc = () => {
 
-    let mugshotValue;
+    let pictureValue;
     this.props.data.forEach((value, key) => {
       if (key !== 'id') {
         try {
           const fqn = new FullyQualifiedName(key);
-          if (fqn.getName().toLowerCase() === 'mugshot') {
-            mugshotValue = value;
+          const fqnName = fqn.getName().toLowerCase();
+          if (fqnName === 'mugshot' || fqnName === 'picture') {
+            pictureValue = value;
             return false; // break out of loop
           }
         }
@@ -165,9 +166,9 @@ class PersonCard extends React.Component<Props, State> {
     });
 
     let imgSrc = defaultUserIcon;
-    if (mugshotValue && !mugshotValue.isEmpty()) {
-      const mugshotSrc = mugshotValue.get(0);
-      imgSrc = `data:image/png;base64,${mugshotSrc}`;
+    if (pictureValue && !pictureValue.isEmpty()) {
+      const pictureSrc = pictureValue.get(0);
+      imgSrc = `data:image/png;base64,${pictureSrc}`;
     }
 
     return imgSrc;
@@ -178,7 +179,7 @@ class PersonCard extends React.Component<Props, State> {
     return (
       <PersonCardOuter onClick={this.props.onClick}>
         <PersonCardInner>
-          <Picture src={this.getMugshotImgSrc()} role="presentation" />
+          <Picture src={this.getPictureImgSrc()} role="presentation" />
           <UserDetails>
             <DetailItem><b>First Name:</b> {this.getFirstNameVal()}</DetailItem>
             <DetailItem><b>Last Name:</b> {this.getLastNameVal()}</DetailItem>
