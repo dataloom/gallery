@@ -39,8 +39,9 @@
 }
 
 .headerNavRight {
-  display: flex;
   align-items: center;
+  display: flex;
+  margin-right: 20px;
 }
 
 .headerNavRight .headerNavItem {
@@ -69,5 +70,7 @@
 #dropdown {
   border-style: none;
   border-radius: 50%;
+  height: 40px;
   padding: 0;
+  width: 40px;
 }
