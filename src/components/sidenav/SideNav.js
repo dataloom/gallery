@@ -59,7 +59,6 @@ class SideNav extends React.Component {
   }
 
   getSupportLink = () => {
-    console.log('support')
     return (
       <div className={styles.support}>
         <a href={SUPPORT_URL} target="_blank">Report Issue</a>

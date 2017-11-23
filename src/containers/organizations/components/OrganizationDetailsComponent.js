@@ -25,7 +25,8 @@ import OrganizationTitleSectionComponent from './OrganizationTitleSectionCompone
 import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 
 import {
-  deleteOrganizationRequest
+  deleteOrganizationRequest,
+  fetchMembersRequest
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -56,7 +57,8 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
       organization: Immutable.fromJS({
         isOwner: true
       }),
-      organizationId: ''
+      organizationId: '',
+      members: Immutable.List()
     };
   }
 
@@ -72,12 +74,15 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
     mode = MODES.EDIT;
   }
 
+  const members = state.getIn(['organizations', 'members'], Immutable.List());
+
   return {
     isCreatingOrg,
     isFetchingOrg,
     mode,
     organization,
-    organizationId
+    organizationId,
+    members
   };
 }
 
@@ -85,7 +90,8 @@ function mapDispatchToProps(dispatch :Function) {
 
   const actions = {
     deleteOrganizationRequest,
-    fetchOrganizationRequest
+    fetchOrganizationRequest,
+    fetchMembersRequest
   };
 
   return {
@@ -111,6 +117,7 @@ class OrganizationDetailsComponent extends React.Component {
 
     if ((this.props.mode === MODES.VIEW || this.props.mode === MODES.EDIT)) {
       this.props.actions.fetchOrganizationRequest(this.props.organizationId);
+      this.props.actions.fetchMembersRequest(this.props.organizationId);
     }
   }
 
@@ -171,7 +178,7 @@ class OrganizationDetailsComponent extends React.Component {
     }
 
     return (
-      <OrganizationMembersSectionComponent organization={this.props.organization} />
+      <OrganizationMembersSectionComponent organization={this.props.organization} users={this.props.members} />
     );
   }
 

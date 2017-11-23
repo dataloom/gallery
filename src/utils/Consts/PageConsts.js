@@ -13,6 +13,7 @@ const ORGS = 'orgs';
 const ENTITY_SETS = 'entitysets';
 const EDIT_ACCOUNT = 'edit_account';
 const FLIGHT = 'flight';
+const APP = 'app';
 
 export default {
   DEFAULT_DOCUMENT_TITLE,
@@ -28,5 +29,6 @@ export default {
   ORGS,
   ENTITY_SETS,
   EDIT_ACCOUNT,
-  FLIGHT
+  FLIGHT,
+  APP
 };

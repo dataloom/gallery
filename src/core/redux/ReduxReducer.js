@@ -4,6 +4,7 @@
 
 import { combineReducers } from 'redux-immutable';
 
+import appReducer from '../../containers/app/AppReducer';
 import asyncReducer from '../../containers/async/AsyncReducer';
 import catalogReducer from '../../containers/catalog/CatalogReducer';
 import createEntitySetReducer from '../../containers/entitysetforms/CreateEntitySetReducer';
@@ -25,6 +26,7 @@ import routerReducer from '../router/RouterReducer';
 export default function reduxReducer() {
 
   return combineReducers({
+    app: appReducer,
     async: asyncReducer,
     catalog: catalogReducer,
     createEntitySet: createEntitySetReducer,
