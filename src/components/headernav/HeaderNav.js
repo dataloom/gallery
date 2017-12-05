@@ -1,22 +1,15 @@
-/*
- * @flow
- */
-
 import React from 'react';
+
+import PropTypes from 'prop-types';
 import { hashHistory } from 'react-router';
-import Avatar from 'react-avatar';
 
 import AccountMenu from './AccountMenu';
 import AuthService from '../../utils/AuthService';
 import PageConsts from '../../utils/Consts/PageConsts';
+import logoImg from '../../images/logo.png';
 import styles from './headernav.module.css';
 
 class HeaderNav extends React.Component {
-
-  getAvatar = () => {
-    const { fullName, googleId } = this.props;
-    return <Avatar name={fullName} googleId={googleId} size={30} round />;
-  }
 
   onLogoutClick = () => {
     this.props.auth.logout();
@@ -33,14 +26,17 @@ class HeaderNav extends React.Component {
       <header className={styles.headerNavWrapper}>
         <nav className={styles.headerNav}>
 
-          <div className={styles.headerNavLeft} />
+          <div className={styles.headerNavLeft}>
+            <img className={styles.logo} src={logoImg} role="presentation" />
+            <div className={styles.openLattice}>OPENLATTICE</div>
+          </div>
 
           <div className={styles.headerNavRight}>
             <div className={styles.headerNavItem}>
               { greeting }
             </div>
             <div className={styles.headerNavItem}>
-              <AccountMenu avatar={this.getAvatar()} onLogoutClick={this.onLogoutClick} />
+              <AccountMenu onLogoutClick={this.onLogoutClick} />
             </div>
           </div>
 
@@ -51,11 +47,11 @@ class HeaderNav extends React.Component {
 }
 
 HeaderNav.propTypes = {
-  auth: React.PropTypes.instanceOf(AuthService),
-  isAdmin: React.PropTypes.bool,
-  name: React.PropTypes.string,
-  fullName: React.PropTypes.string,
-  googleId: React.PropTypes.string
+  auth: PropTypes.instanceOf(AuthService),
+  isAdmin: PropTypes.bool,
+  name: PropTypes.string,
+  fullName: PropTypes.string,
+  googleId: PropTypes.string
 };
 
 export default HeaderNav;

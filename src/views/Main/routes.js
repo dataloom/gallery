@@ -9,6 +9,7 @@ import Login from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import Visualize from '../../containers/visualizations/Visualize';
 import { Link } from './Link/Link';
+import Apps from '../../containers/app/Apps';
 import CatalogComponent from '../../containers/catalog/CatalogComponent';
 import EntitySetDataSearch from '../../containers/entitysetsearch/EntitySetDataSearch';
 import AdvancedDataSearch from '../../containers/entitysetsearch/AdvancedDataSearch';
@@ -104,6 +105,7 @@ export const makeMainRoutes = () => {
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
       <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAuth} />
+      <Route path={PageConsts.APP} component={Apps} onEnter={requireAuth} />
       <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>
   );

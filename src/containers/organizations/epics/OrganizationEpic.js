@@ -36,6 +36,7 @@ function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
           const org :Organization = (new OrganizationBuilder())
             .setId(orgId)
             .setTitle(action.organization.title)
+            .setPrincipal(action.organization.principal)
             .build();
           return Observable.of(
             push(`/orgs/${orgId}`), // this must happen first, otherwise things break elsewhere
@@ -193,7 +194,8 @@ function addMemberToOrganizationEpic(action$ :Observable<Action>) :Observable<Ac
         .from(OrganizationsApi.addMemberToOrganization(action.orgId, action.memberId))
         .mergeMap(() => {
           return Observable.of(
-            OrgActionFactory.addMemberToOrganizationSuccess(action.orgId, action.memberId)
+            OrgActionFactory.addMemberToOrganizationSuccess(action.orgId, action.memberId),
+            OrgActionFactory.fetchMembersRequest(action.orgId)
           );
         })
         .catch(() => {
@@ -213,7 +215,8 @@ function removeMemberFromOrganizationEpic(action$ :Observable<Action>) :Observab
         .from(OrganizationsApi.removeMemberFromOrganization(action.orgId, action.memberId))
         .mergeMap(() => {
           return Observable.of(
-            OrgActionFactory.removeMemberFromOrganizationSuccess(action.orgId, action.memberId)
+            OrgActionFactory.removeMemberFromOrganizationSuccess(action.orgId, action.memberId),
+            OrgActionFactory.fetchMembersRequest(action.orgId)
           );
         })
         .catch(() => {
@@ -234,7 +237,7 @@ function addRoleToMemberEpic(action$ :Observable<Action>) :Observable<Action> {
         .mergeMap(() => {
           return Observable.of(
             OrgActionFactory.addRoleToMemberSuccess(action.orgId, action.roleId, action.memberId),
-            PrincipalsActionFactory.fetchUserRequest(action.memberId) // reload user
+            OrgActionFactory.fetchMembersRequest(action.orgId) // reload user
           );
         })
         .catch(() => {
@@ -255,12 +258,31 @@ function removeRoleFromMemberEpic(action$ :Observable<Action>) :Observable<Actio
         .mergeMap(() => {
           return Observable.of(
             OrgActionFactory.removeRoleFromMemberSuccess(action.orgId, action.roleId, action.memberId),
-            PrincipalsActionFactory.fetchUserRequest(action.memberId) // reload user
+            OrgActionFactory.fetchMembersRequest(action.orgId) // reload user
           );
         })
         .catch(() => {
           return Observable.of(
             OrgActionFactory.removeRoleFromMemberFailure(action.orgId, action.roleId, action.memberId)
+          );
+        });
+    });
+}
+
+function fetchMembersEpic(action$ :Observable<Action>) :Observable<Action> {
+  return action$
+    .ofType(OrgActionTypes.FETCH_MEMBERS_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(OrganizationsApi.getAllMembers(action.orgId))
+        .mergeMap((members :Object[]) => {
+          return Observable.of(
+            OrgActionFactory.fetchMembersSuccess(members)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.fetchMembersFailure()
           );
         });
     });
@@ -278,5 +300,6 @@ export default combineEpics(
   addMemberToOrganizationEpic,
   removeMemberFromOrganizationEpic,
   addRoleToMemberEpic,
-  removeRoleFromMemberEpic
+  removeRoleFromMemberEpic,
+  fetchMembersEpic
 );

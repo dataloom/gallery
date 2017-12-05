@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import Page from '../../components/page/Page';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import SecurableObjectSearch, { FilterParamsPropType } from '../securableobject/SecurableObjectSearch';
-import { catalogSearchRequest } from './CatalogActionFactories';
+import { catalogSearchRequest, clearCatalog } from './CatalogActionFactories';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import styles from '../entitysetsearch/styles.module.css';
 
@@ -25,6 +25,7 @@ class CatalogComponent extends React.Component {
     asyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
     entitySets: PropTypes.instanceOf(Immutable.Map).isRequired,
     onSubmitSearch: PropTypes.func.isRequired,
+    onUnmount: PropTypes.func.isRequired,
     filterParams: FilterParamsPropType,
     numHits: PropTypes.number
   };
@@ -33,6 +34,10 @@ class CatalogComponent extends React.Component {
     if (this.props.filterParams) {
       this.props.onSubmitSearch(this.props.filterParams);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.onUnmount();
   }
 
   handlePageSelect = (page) => {
@@ -183,6 +188,9 @@ function mapDispatchToProps(dispatch, ownProps) {
       ownProps.router.push(newLocation);
       const searchParams = Object.assign({}, filterParams, { start, maxHits });
       dispatch(catalogSearchRequest(searchParams));
+    },
+    onUnmount: () => {
+      dispatch(clearCatalog());
     }
   };
 }

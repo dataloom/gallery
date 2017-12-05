@@ -29,4 +29,4 @@ export const DEFINE_PLUGIN = new Webpack.DefinePlugin({
   __AUTH0_DOMAIN__: JSON.stringify(AUTH0_DOMAIN)
 });
 
-export const EXTRACT_TEXT_PLUGIN = new ExtractTextPlugin(`${APP_PATHS.REL.STATIC_CSS}/${APP_CONFIG.APP_CSS}`);
+export const EXTRACT_TEXT_PLUGIN = new ExtractTextPlugin(`${APP_PATHS.REL.STATIC_CSS}/app.[hash:8].css`);

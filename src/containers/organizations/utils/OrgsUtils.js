@@ -10,11 +10,13 @@ export function getUserNameLabelValue(member :Immutable.Map) :string {
     return '';
   }
 
+  const profile = member.get('profile', member);
+
   // https://auth0.com/docs/api/authentication#user-profile
-  const memberId :string = member.get('user_id');
-  const nickname :string = member.get('nickname');
-  const username :string = member.get('username');
-  const email :string = member.get('email');
+  const memberId :string = profile.get('user_id');
+  const nickname :string = profile.get('nickname');
+  const username :string = profile.get('username');
+  const email :string = profile.get('email');
 
   let label :string = nickname || username;
 

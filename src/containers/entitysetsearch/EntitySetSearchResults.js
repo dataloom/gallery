@@ -180,7 +180,7 @@ export default class EntitySetSearchResults extends React.Component {
 
     let hasFirstName :boolean = false;
     let hasLastName :boolean = false;
-    let hasMugshot :boolean = false;
+    let hasPicture :boolean = false;
 
     properties.forEach((property :string | FullyQualifiedName) => {
       if (property) {
@@ -191,13 +191,13 @@ export default class EntitySetSearchResults extends React.Component {
         if (LAST_NAMES.includes(value.toLowerCase())) {
           hasLastName = true;
         }
-        if (value.toLowerCase() === 'mugshot') {
-          hasMugshot = true;
+        if (value.toLowerCase() === 'mugshot' || value.toLowerCase() === 'picture') {
+          hasPicture = true;
         }
       }
     });
 
-    return hasFirstName && hasLastName && hasMugshot;
+    return hasFirstName && hasLastName && hasPicture;
   }
 
   onEntitySelect = (selectedEntityId :UUID, selectedEntitySetId :UUID, selectedEntity :Map<string, any>) => {
@@ -364,7 +364,14 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderSearchResultsDataTable = () => {
 
-    const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
+    let headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
+
+    // it doesn't make sense to show pictures in the data table as they are base64 encoded strings
+    // removing the picture column also helps with performance since the picture string is very large
+    headers = headers.filterNot((header :Map<string, string>) => {
+      const id :string = header.get('id', '').toLowerCase();
+      return id.includes('mugshot') || id.includes('picture');
+    });
 
     const onClick = (selectedRowIndex :number, selectedRowData) => {
       const selectedEntityId :UUID = this.state.searchResults.getIn([selectedRowIndex, 'id', 0]);
@@ -453,13 +460,14 @@ export default class EntitySetSearchResults extends React.Component {
     const data :ListSetMultiMap = Immutable.List().withMutations((list :ListSetMultiMap) => {
       this.state.selectedEntity.get('headers', []).forEach((header :Map<string, string>) => {
 
-        const headerId :string = header.get('id');
+        const headerId :string = header.get('id', '');
         if (this.state.selectedEntity.hasIn(['data', headerId])) {
 
           let dataValue :any = this.state.selectedEntity.getIn(['data', headerId]);
 
           // HACK: for displaying images in the table
-          if (headerId.toLowerCase().indexOf('mugshot') !== -1) {
+          const headerIdLC :string = headerId.toLowerCase();
+          if (headerIdLC.includes('mugshot') || headerIdLC.includes('picture')) {
             dataValue = getImageCellData(dataValue);
           }
 
@@ -599,6 +607,14 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
+  removeDuplicates = (list1 :List<any>, list2 :List<any>) => {
+    let valueSet = Immutable.Set();
+    list1.concat(list2).forEach((val) => {
+      valueSet = valueSet.add(val);
+    });
+    return valueSet.toList();
+  }
+
   getNeighborGroupData = (neighborGroup :List<any>) => {
 
     return neighborGroup.map((neighbor :Map<string, any>) => {
@@ -607,7 +623,7 @@ export default class EntitySetSearchResults extends React.Component {
       const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
 
       // TODO: how do we handle duplicate keys with different values? is that even possible?
-      let mergedDetails :Map<string, any> = associationDetails.mergeDeep(neighborDetails);
+      let mergedDetails :Map<string, any> = associationDetails.mergeWith(this.removeDuplicates, neighborDetails);
 
       if (neighbor.has('neighborId')) {
         mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));

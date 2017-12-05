@@ -47,7 +47,8 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   isSearchingUsers: false,
   organizations: Immutable.Map(),
   visibleOrganizationIds: Immutable.Set(),
-  usersSearchResults: Immutable.Map()
+  usersSearchResults: Immutable.Map(),
+  members: Immutable.List()
 });
 
 export default function organizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
@@ -200,6 +201,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         .setId(action.roleId)
         .setOrganizationId(action.role.organizationId)
         .setTitle(action.role.title)
+        .setPrincipal(action.role.principal)
         .build();
 
       const orgId :UUID = action.role.organizationId;
@@ -384,6 +386,9 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
       const decoratedOrganization :Immutable.Map = organization.set('isPublic', isPublic);
       return state.setIn(['organizations', orgId], decoratedOrganization);
     }
+
+    case OrgActionTypes.FETCH_MEMBERS_SUCCESS:
+      return state.set('members', Immutable.fromJS(action.members));
 
     default:
       return state;

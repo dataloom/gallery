@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import {
-  DataModels,
+  Models,
   Types
-} from 'loom-data';
+} from 'lattice';
 
 import InlineEditableControl from '../../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
@@ -43,7 +43,7 @@ const {
   OrganizationBuilder,
   Principal,
   PrincipalBuilder
-} = DataModels;
+} = Models;
 
 const {
   ActionTypes,
@@ -113,9 +113,16 @@ class OrganizationTitleSectionComponent extends React.Component {
     const orgId :boolean = this.props.organization.get('id');
     const orgBuilder :OrganizationBuilder = new OrganizationBuilder();
 
+    const principal :Principal = (new PrincipalBuilder())
+      .setType(PrincipalTypes.ORGANIZATION)
+      .setId(title.replace(/\W/g, ''))
+      .build();
+
     if (!isNonEmptyString(orgId)) {
+
       const org :Organization = orgBuilder
         .setTitle(title)
+        .setPrincipal(principal)
         .build();
       this.props.actions.createOrganizationRequest(org);
     }
@@ -123,6 +130,7 @@ class OrganizationTitleSectionComponent extends React.Component {
       const org :Organization = orgBuilder
         .setId(orgId)
         .setTitle(title)
+        .setPrincipal(principal)
         .build();
       this.props.actions.updateOrganizationTitleRequest(org);
     }
