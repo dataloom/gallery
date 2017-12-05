@@ -26,3 +26,9 @@ export function catalogSearchReject(errorMessage:string) {
     errorMessage
   };
 }
+
+export function clearCatalog() {
+  return {
+    type: actionTypes.CATALOG_CLEAR
+  };
+}

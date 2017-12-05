@@ -330,3 +330,26 @@ export function removeRoleFromMemberFailure(orgId :UUID, roleId :UUID, memberId 
     memberId
   };
 }
+
+export function fetchMembersRequest(orgId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.FETCH_MEMBERS_REQUEST,
+    orgId
+  };
+}
+
+export function fetchMembersSuccess(members :Object[]) :Object {
+
+  return {
+    type: OrgActionTypes.FETCH_MEMBERS_SUCCESS,
+    members
+  };
+}
+
+export function fetchMembersFailure() :Object {
+
+  return {
+    type: OrgActionTypes.FETCH_MEMBERS_FAILURE
+  };
+}

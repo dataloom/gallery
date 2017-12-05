@@ -3,12 +3,12 @@
  */
 
 import {
-  DataModels,
+  Models,
   Types,
   AuthorizationApi,
   OrganizationsApi,
   SearchApi
-} from 'loom-data';
+} from 'lattice';
 
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
@@ -18,7 +18,7 @@ import * as PermissionsActionFactory from '../../permissions/PermissionsActionFa
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as OrgsActionFactory from '../actions/OrganizationsActionFactory';
 
-const { Organization } = DataModels;
+const { Organization } = Models;
 const { PermissionTypes } = Types;
 
 /*

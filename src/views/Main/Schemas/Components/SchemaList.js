@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import { Schema } from './Schema';
 import { NewEdmObjectInput } from './NewEdmObjectInput';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -18,12 +18,19 @@ export class SchemaList extends React.Component {
     this.state = {
       schemas: [],
       loadSchemasError: false,
-      isModalOpen: false
+      isModalOpen: false,
+      associationTypes: []
     };
   }
 
   componentDidMount() {
     this.updateFn();
+    EntityDataModelApi.getAllAssociationEntityTypes().then((associationTypesFull) => {
+      const associationTypes = associationTypesFull.map((associationType) => {
+        return associationType.entityType;
+      });
+      this.setState({ associationTypes });
+    });
   }
 
   errorClass = {
@@ -87,12 +94,14 @@ export class SchemaList extends React.Component {
   }
 
   render() {
-    const { schemas, loadSchemasError } = this.state;
+    const { schemas, loadSchemasError, associationTypes } = this.state;
+
     const schemaList = schemas.map((schema) => {
       return (<Schema
           key={`${schema.fqn.namespace}.${schema.fqn.name}`}
           schema={schema}
-          updateFn={this.updateFn} />);
+          updateFn={this.updateFn}
+          associationTypes={associationTypes} />);
     });
     return (
       <div>
