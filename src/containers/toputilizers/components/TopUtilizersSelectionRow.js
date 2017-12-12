@@ -6,98 +6,81 @@ import Immutable from 'immutable';
 
 import styles from '../styles.module.css';
 
-const getOptions = (data) => {
-  if (data.size === 0) return [];
-  return data.map((item) => {
-    return { value: item.id, label: item.title };
-  });
+const getEdgeValue = (associationTypeId, neighborTypeId, src) => {
+  return (src ? [associationTypeId, neighborTypeId] : [associationTypeId, neighborTypeId]).join('|');
 };
 
-const isDisabled = (selectedAssociation, selectedArrow) => {
-  if (!selectedAssociation || !selectedArrow) {
-    return true;
-  }
-  return false;
+const getNeighborTypeOptions = (neighborTypes) => {
+  return neighborTypes.map((neighborType) => {
+    const assocId = neighborType.getIn(['associationEntityType', 'id']);
+    const assocTitle = neighborType.getIn(['associationEntityType', 'title']);
+    const neighborId = neighborType.getIn(['neighborEntityType', 'id']);
+    const neighborTitle = neighborType.getIn(['neighborEntityType', 'title']);
+    const src = neighborType.get('src');
+
+    const label = (src ? [assocTitle, neighborTitle] : [neighborTitle, assocTitle]).join(' ');
+    return {
+      value: getEdgeValue(assocId, neighborId, src),
+      label,
+      assocId,
+      assocTitle,
+      neighborId,
+      neighborTitle,
+      src
+    };
+  }).toJS();
 };
 
 const TopUtilizersSelectionRow = ({
-  selectAssociation,
-  selectArrow,
-  selectEntity,
-  associations,
-  entityTypes,
-  selectedAssociation,
-  selectedArrow,
-  selectedEntities,
-  arrowDirections,
-  removeRow,
-  showDelete
+  entitySetTitle,
+  neighborTypes,
+  updateEdgeTypes,
+  selectedEdges
 }) => {
 
-  const associationOptions = getOptions(associations);
-  const entityTypeOptions = getOptions(entityTypes);
-  const arrowOptions = [];
-  if (arrowDirections.includes(true)) {
-    arrowOptions.push({ value: true, label: <FontAwesome className={styles.arrowIcon} name="arrow-right" /> });
-  }
-  if (arrowDirections.includes(false)) {
-    arrowOptions.push({ value: false, label: <FontAwesome className={styles.arrowIcon} name="arrow-left" /> });
-  }
+  const neighborTypeOptions = getNeighborTypeOptions(neighborTypes);
 
-  let deleteButton;
-  if (showDelete) {
-    deleteButton = (
-      <button
-          type="button"
-          className={styles.hiddenButton}
-          onClick={removeRow}>
-        <FontAwesome name="times" size="2x" />
-      </button>
+  const selectedEdgeValues = selectedEdges.map((edge) => {
+    const assocId = edge.get('associationTypeId', '');
+    const neighborId = edge.get('neighborTypeIds', Immutable.List()).get(0);
+    const src = edge.get('utilizerIsSrc');
+    return getEdgeValue(assocId, neighborId, src);
+  }).toJS();
+
+  const optionRenderer = (option) => {
+    const entitySet = <span className={styles.entitySetOptionWrapper}>{entitySetTitle}</span>;
+    const neighbor = <span className={styles.optionType}>{option.neighborTitle}</span>;
+    return (
+      <span>
+        { option.src ? entitySet : neighbor }
+        <FontAwesome name="arrow-right" />
+        <span className={styles.optionType}>{option.assocTitle}</span>
+        <FontAwesome name="arrow-right" />
+        { option.src ? neighbor : entitySet }
+      </span>
     );
-  }
+  };
 
   return (
     <div className={styles.rowWrapper}>
       <Select
-          className={styles.associationSelect}
-          options={associationOptions}
-          value={selectedAssociation}
-          onChange={selectAssociation}
-          placeholder="Association"
-          clearable={false} />
-      <Select
-          className={styles.arrowSelect}
-          options={arrowOptions}
-          value={selectedArrow}
-          onChange={selectArrow}
-          placeholder="Ownership"
-          clearable={false} />
-      <Select
-          className={styles.entitySelect}
-          options={entityTypeOptions}
-          value={selectedEntities}
-          onChange={selectEntity}
-          placeholder="Entities"
-          disabled={isDisabled(selectedAssociation, selectedArrow)}
+          className={styles.neighborTypeSelect}
+          options={neighborTypeOptions}
+          optionRenderer={optionRenderer}
+          value={selectedEdgeValues}
+          onChange={updateEdgeTypes}
+          placeholder="Neighbors"
+          clearable={false}
           multi />
-      <div className={styles.deleteButtonContainer}>{deleteButton}</div>
-
     </div>
   );
 };
 
 TopUtilizersSelectionRow.propTypes = {
-  selectAssociation: PropTypes.func.isRequired,
-  selectArrow: PropTypes.func.isRequired,
-  selectEntity: PropTypes.func.isRequired,
-  associations: PropTypes.array.isRequired,
-  entityTypes: PropTypes.array.isRequired,
-  selectedAssociation: PropTypes.object,
-  selectedArrow: PropTypes.object,
-  selectedEntities: PropTypes.array,
-  arrowDirections: PropTypes.array.isRequired,
-  removeRow: PropTypes.func.isRequired,
-  showDelete: PropTypes.bool.isRequired
+  entitySetTitle: PropTypes.string.isRequired,
+  neighborTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+  updateEdgeTypes: PropTypes.func.isRequired,
+  selectedEdges: PropTypes.instanceOf(Immutable.List).isRequired
 };
 
 export default TopUtilizersSelectionRow;

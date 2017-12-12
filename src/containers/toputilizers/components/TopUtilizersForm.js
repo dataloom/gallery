@@ -1,20 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import Immutable from 'immutable';
-import FontAwesome from 'react-fontawesome';
 
 import ContentContainer from '../../../components/applayout/ContentContainer';
 import TopUtilizersSelectionRowContainer from '../containers/TopUtilizersSelectionRowContainer';
 import styles from '../styles.module.css';
 
-const getChildren = (rowData) => {
-  return rowData.map((row, index) => {
-    return <TopUtilizersSelectionRowContainer key={index} rowNum={index} />;
-  });
-};
+const TopUtilizersForm = ({ onSubmit, entitySet }) => {
+  const entitySetTitle = entitySet.title || '';
 
-const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
   return (
     <ContentContainer>
       <form className={styles.formWrapper} onSubmit={onSubmit}>
@@ -22,12 +16,7 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
           Select search parameters
         </div>
         <div className={styles.rowsWrapper}>
-          {getChildren(rowData)}
-        </div>
-        <div className={styles.addLink}>
-          <a href="#" className={styles.addLink} onClick={handleClick}>
-            <FontAwesome className={styles.plusIcon} name="plus" />Add search parameter
-          </a>
+          <TopUtilizersSelectionRowContainer entitySetTitle={entitySetTitle} />
         </div>
         <div className={styles.buttonWrapper}>
           <Button type="submit" className={styles.submitButton}>Find top utilizers</Button>
@@ -38,9 +27,8 @@ const TopUtilizersForm = ({ handleClick, rowData, onSubmit }) => {
 };
 
 TopUtilizersForm.propTypes = {
-  handleClick: PropTypes.func.isRequired,
-  rowData: PropTypes.instanceOf(Immutable.List).isRequired,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  entitySet: PropTypes.object.isRequired
 };
 
 export default TopUtilizersForm;

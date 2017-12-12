@@ -22,8 +22,7 @@ function getEntitySetEpic(action$) {
         .mergeMap((results) => {
           return Observable
             .of(
-              actionFactory.getEntitySetSuccess(results),
-              actionFactory.getAssociationsRequest(results.entityTypeId)
+              actionFactory.getEntitySetSuccess(results)
             );
         })
         .catch((err) => {
@@ -160,11 +159,34 @@ function getTopUtilizersNeighborsEpic(action$) {
     });
 }
 
+function getNeighborTypesEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_NEIGHBOR_TYPES_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(
+          AnalysisApi.getNeighborTypes(action.entitySetId)
+        )
+        .mergeMap((neighbors) => {
+          return Observable
+            .of(
+              actionFactory.getNeighborTypesSuccess(neighbors)
+            );
+        })
+        .catch((err) => {
+          return Observable.of(
+            actionFactory.getNeighborTypesFailure(err)
+          );
+        });
+    });
+}
+
 export default combineEpics(
   getEntitySetEpic,
   getAssociationsEpic,
   getAssociationDetailsEpic,
   submitQueryEpic,
   downloadTopUtilizersEpic,
-  getTopUtilizersNeighborsEpic
+  getTopUtilizersNeighborsEpic,
+  getNeighborTypesEpic
 );
