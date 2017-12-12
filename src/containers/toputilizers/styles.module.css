@@ -24,6 +24,10 @@ a:hover {
   padding: 6px 0;
 }
 
+.neighborTypeSelect {
+  width: 100%;
+}
+
 .associationSelect {
   width: 50%;
 }
@@ -130,4 +134,17 @@ a:hover {
   text-align: center;
   font-size: 14px;
   margin-bottom: 25px;
+}
+
+.optionType {
+  border: 1px solid gray;
+  border-radius: 3px;
+  background: #eee;
+  padding: 3px;
+  margin: 0 5px;
+}
+
+.entitySetOptionWrapper {
+  margin: 0 5px;
+  color: #aaa;
 }

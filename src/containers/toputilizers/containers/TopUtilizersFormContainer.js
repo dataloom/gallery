@@ -15,8 +15,8 @@ class TopUtilizersFormContainer extends React.Component {
     getEntitySetProjection: PropTypes.func.isRequired,
     getEntitySetRequest: PropTypes.func.isRequired,
     getAllEntitySetPropertyMetadata: PropTypes.func.isRequired,
+    getNeighborTypes: PropTypes.func.isRequired,
     submitQuery: PropTypes.func.isRequired,
-    addDetailsRow: PropTypes.func.isRequired,
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
     topUtilizersDetailsList: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -37,17 +37,13 @@ class TopUtilizersFormContainer extends React.Component {
     this.props.getEntitySetRequest();
     this.props.getEntitySetProjection();
     this.props.getAllEntitySetPropertyMetadata();
+    this.props.getNeighborTypes();
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.propertyTypes.length !== nextProps.propertyTypes.length) {
       this.setState({ selectedPropertyTypes: nextProps.propertyTypes });
     }
-  }
-
-  handleClickAddParameter = (e) => {
-    e.preventDefault();
-    this.props.addDetailsRow();
   }
 
   onSubmit = (e) => {
@@ -78,8 +74,6 @@ class TopUtilizersFormContainer extends React.Component {
     return (
       <div>
         <TopUtilizersForm
-            handleClick={this.handleClickAddParameter}
-            rowData={this.props.topUtilizersDetailsList}
             onSubmit={this.onSubmit}
             entitySet={this.props.entitySet} />
         <br />
@@ -125,11 +119,11 @@ function mapDispatchToProps(dispatch, ownProps) {
         include: ['EntitySet', 'EntityType', 'PropertyTypeInEntitySet']
       }]));
     },
-    addDetailsRow: () => {
-      dispatch(actionFactory.addDetailsRow());
-    },
     getAllEntitySetPropertyMetadata: () => {
       dispatch(getAllEntitySetPropertyMetadataRequest(ownProps.params.id));
+    },
+    getNeighborTypes: () => {
+      dispatch(actionFactory.getNeighborTypesRequest(ownProps.params.id));
     }
   };
 

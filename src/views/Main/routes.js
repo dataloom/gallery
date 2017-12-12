@@ -104,7 +104,7 @@ export const makeMainRoutes = () => {
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
       <Route path={'entitysets/:id/allpermissions'} component={AllPermissions} onEnter={requireAuth} />
       <Route path={PageConsts.EDIT_ACCOUNT} component={EditProfile} onEnter={requireAuth} />
-      <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAdmin} />
+      <Route path={PageConsts.FLIGHT} component={FlightGenerator} onEnter={requireAuth} />
       <Route path={PageConsts.APP} component={Apps} onEnter={requireAuth} />
       <Route path="*" component={HomeComponent} onEnter={requireAuth} />
     </Route>

@@ -141,15 +141,29 @@ export function getTopUtilizersNeighborsFailure() {
   };
 }
 
-export function addDetailsRow() {
+export function getNeighborTypesRequest(entitySetId) {
   return {
-    type: actionTypes.ADD_DETAILS_ROW
+    type: actionTypes.GET_NEIGHBOR_TYPES_REQUEST,
+    entitySetId
   };
 }
 
-export function removeRow(deleteIndex) {
+export function getNeighborTypesSuccess(neighborTypes) {
   return {
-    type: actionTypes.REMOVE_DETAILS_ROW,
-    deleteIndex
+    type: actionTypes.GET_NEIGHBOR_TYPES_SUCCESS,
+    neighborTypes
+  };
+}
+
+export function getNeighborTypesFailure() {
+  return {
+    type: actionTypes.GET_NEIGHBOR_TYPES_FAILURE
+  };
+}
+
+export function updateEdgeTypes(edgeTypes) {
+  return {
+    type: actionTypes.UPDATE_EDGE_TYPES,
+    edgeTypes
   };
 }
