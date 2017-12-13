@@ -8,7 +8,7 @@ import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { DataApi } from 'loom-data';
+import { DataApi } from 'lattice';
 import { SplitButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link, hashHistory } from 'react-router';

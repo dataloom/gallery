@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Table, Column, Cell } from 'fixed-data-table';
-import { SearchApi } from 'loom-data';
+import { SearchApi } from 'lattice';
 
 import PropertyTextCell from './PropertyTextCell';
 import RowNeighbors from './RowNeighbors';

@@ -134,7 +134,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
         const decoratedOrganization :Immutable.Map = organization
           .set('isOwner', authorization.permissions[PermissionTypes.OWNER] === true)
-          .set('permissions', Immutable.fromJS(authorization.permissions))
+          .set('permissions', Immutable.fromJS(authorization.permissions));
 
         newState = newState.setIn(['organizations', orgId], decoratedOrganization);
       });

@@ -8,7 +8,7 @@ import {
 import {
   PermissionsApi,
   PrincipalsApi
-} from 'loom-data';
+} from 'lattice';
 
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';
@@ -35,7 +35,7 @@ const views = {
 const orders = {
   FIRST: 'first',
   LAST: 'last'
-}
+};
 
 const permissionLevels = {
   hidden: [],
@@ -43,7 +43,13 @@ const permissionLevels = {
   link: [Permission.LINK.name],
   read: [Permission.READ.name],
   write: [Permission.WRITE.name],
-  owner: [Permission.DISCOVER.name, Permission.LINK.name, Permission.READ.name, Permission.WRITE.name, Permission.OWNER.name]
+  owner: [
+    Permission.DISCOVER.name,
+    Permission.LINK.name,
+    Permission.READ.name,
+    Permission.WRITE.name,
+    Permission.OWNER.name
+  ]
 };
 
 const viewLabels = {
@@ -204,17 +210,19 @@ class PermissionsPanel extends React.Component {
   }
 
   getSelectedClassName = (view) => {
-    return (view === this.state.view) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
+    return (view === this.state.view)
+      ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
   getFirstLastClassName = (order) => {
-    var firstLastClassName;
+    let firstLastClassName;
     if (order) {
       if (order === 'first') {
         firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
+      }
+      else if (order === 'last') {
         firstLastClassName = styles.lastEdmButton;
-      };
+      }
 
       return firstLastClassName;
     }
@@ -223,8 +231,8 @@ class PermissionsPanel extends React.Component {
   }
 
   getClassName = (view, order) => {
-    var selectedClassName = this.getSelectedClassName(view);
-    var firstLastClassName = this.getFirstLastClassName(order);
+    const selectedClassName = this.getSelectedClassName(view);
+    const firstLastClassName = this.getFirstLastClassName(order);
 
     return `${selectedClassName} ${firstLastClassName}`;
   }
@@ -268,7 +276,6 @@ class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissions = () => {
-    const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const selectedPermissions = this.state.globalValue.map((name) => {
       return name.toUpperCase();
     });
@@ -286,24 +293,26 @@ class PermissionsPanel extends React.Component {
   }
 
   buttonStyle = (view, viewState, order) => {
-    var buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
-    var buttonFirstLastStyle = this.buttonFirstLastStyle(order);
+    const buttonSelectedStyle = this.buttonSelectedStyle(view, viewState);
+    const buttonFirstLastStyle = this.buttonFirstLastStyle(order);
 
     return `${buttonSelectedStyle} ${buttonFirstLastStyle}`;
   }
 
   buttonSelectedStyle = (view, viewState) => {
-    return (view === viewState) ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
+    return (view === viewState)
+      ? `${styles.edmNavbarButton} ${styles.edmNavbarButtonSelected}` : styles.edmNavbarButton;
   }
 
   buttonFirstLastStyle = (order) => {
-    var firstLastClassName;
+    let firstLastClassName;
     if (order) {
       if (order === 'first') {
         firstLastClassName = styles.firstEdmButton;
-      } else if (order === 'last') {
+      }
+      else if (order === 'last') {
         firstLastClassName = styles.lastEdmButton;
-      };
+      }
 
       return firstLastClassName;
     }
@@ -312,7 +321,9 @@ class PermissionsPanel extends React.Component {
   }
 
   updateGlobalPermissionState = (permission, checked) => {
-    const globalValue = this.state.globalValue.filter(permissionOption => permissionOption !== permission);
+    const globalValue = this.state.globalValue.filter((permissionOption) => {
+      return permissionOption !== permission;
+    });
     if (checked) globalValue.push(permission);
     this.setState({ globalValue });
   }
@@ -320,7 +331,9 @@ class PermissionsPanel extends React.Component {
   getGlobalView = () => {
     const optionNames = (this.props.propertyTypeId) ? Object.keys(permissionOptions) : Object.keys(accessOptions);
     const options = optionNames
-      .filter(name => name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden)
+      .filter((name) => {
+        return name !== accessOptions.Owner && name !== accessOptions.Write && name !== accessOptions.Hidden;
+      })
       .map((option) => {
         const checkboxName = `global-${option}`;
         return (

@@ -1,4 +1,4 @@
-import { RequestsApi, AuthorizationApi } from 'loom-data';
+import { RequestsApi, AuthorizationApi } from 'lattice';
 import { expect } from 'chai';
 import '../../../config/chai/chai.config';
 

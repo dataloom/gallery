@@ -2,7 +2,7 @@
  * @flow
  */
 
-import { SearchApi } from 'loom-data';
+import { SearchApi } from 'lattice';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
 

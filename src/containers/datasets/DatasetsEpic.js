@@ -4,7 +4,7 @@
 
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
-import { AuthorizationApi } from 'loom-data';
+import { AuthorizationApi } from 'lattice';
 
 import * as actionTypes from './DatasetsActionTypes';
 import * as actionFactories from './DatasetsActionFactory';

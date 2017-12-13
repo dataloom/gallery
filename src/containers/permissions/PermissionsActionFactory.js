@@ -3,9 +3,9 @@
  */
 
 import {
-  DataModels,
+  Models,
   Types
-} from 'loom-data';
+} from 'lattice';
 
 import * as PermissionsActionTypes from './PermissionsActionTypes';
 
@@ -26,7 +26,7 @@ import type {
 const {
   Acl,
   AclData
-} = DataModels;
+} = Models;
 
 const {
   RequestStateTypes

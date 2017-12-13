@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 import {
   EntityDataModelApi,
   SearchApi
-} from 'loom-data';
+} from 'lattice';
 
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import ActionConsts from '../../../../utils/Consts/ActionConsts';

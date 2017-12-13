@@ -6,8 +6,8 @@ import {
   AuthorizationApi,
   PermissionsApi,
   RequestsApi,
-  DataModels
-} from 'loom-data';
+  Models
+} from 'lattice';
 
 import {
   Observable
@@ -37,7 +37,7 @@ import type {
   AclKey
 } from './PermissionsStorage';
 
-const { Acl } = DataModels;
+const { Acl } = Models;
 
 function updateStatuses(statuses :RequestStatus[]) {
   return Observable.from(RequestsApi.updateRequestStatuses(statuses))

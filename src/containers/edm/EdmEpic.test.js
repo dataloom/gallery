@@ -1,4 +1,4 @@
-import { RequestsApi } from 'loom-data';
+import { RequestsApi } from 'lattice';
 import { expect } from 'chai';
 import '../../../config/chai/chai.config';
 import { fromJS } from 'immutable';
