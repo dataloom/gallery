@@ -93,7 +93,7 @@ IntegrationDetailsModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
   entityType: PropTypes.instanceOf(Immutable.Map).isRequired,
-  propertyTypes: PropTypes.array.isRequired
+  propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired
 };
 
 export default IntegrationDetailsModal;
