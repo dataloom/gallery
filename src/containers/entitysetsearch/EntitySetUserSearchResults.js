@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import UserRow from './UserRow';
 import EntityRow from './EntityRow';
 import getTitle from '../../utils/EntityTypeTitles';

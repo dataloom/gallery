@@ -8,7 +8,7 @@ import {
   XAxis,
   YAxis
 } from 'recharts';
-import { DataModels } from 'loom-data';
+import { Models } from 'lattice';
 import * as formatter from './FormatUtils';
 import EdmConsts from '../../utils/Consts/EdmConsts';
 import styles from './styles.module.css';
@@ -84,7 +84,7 @@ export class LineChartVisualization extends React.Component {
   }
 
   render() {
-    const { FullyQualifiedName } = DataModels;
+    const { FullyQualifiedName } = Models;
     if (!this.props.xProp) return null;
 
     const xProp = JSON.parse(this.props.xProp);

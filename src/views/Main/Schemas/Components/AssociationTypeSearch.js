@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { hashHistory } from 'react-router';
 import { Button, Modal, Pagination } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-import { SearchApi } from 'loom-data';
+import { SearchApi } from 'lattice';
 import AsyncContent, { ASYNC_STATUS } from '../../../../components/asynccontent/AsyncContent';
 import DataModelSearchBox from './DataModelSearchBox';
 import AssociationTypeSearchResults from './AssociationTypeSearchResults';

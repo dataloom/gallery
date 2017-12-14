@@ -1,6 +1,5 @@
 import React from 'react';
 import { IndexRedirect, IndexRoute, Route } from 'react-router';
-import Loom from 'loom-data';
 import Lattice from 'lattice';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
@@ -48,7 +47,6 @@ const requireAuth = (nextState, replace) => {
     const host = window.location.host;
     const hostName = (host.startsWith('www.')) ? host.substring('www.'.length) : host;
     const baseUrl = (__DEV__) ? 'http://localhost:8080' : `https://api.${hostName}`;
-    Loom.configure({ baseUrl, authToken });
     Lattice.configure({ baseUrl, authToken });
   }
 };

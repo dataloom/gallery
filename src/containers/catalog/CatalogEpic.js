@@ -5,7 +5,7 @@
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 
-import { SearchApi } from 'loom-data';
+import { SearchApi } from 'lattice';
 
 import * as actionTypes from './CatalogActionTypes';
 import * as actionFactories from './CatalogActionFactories';

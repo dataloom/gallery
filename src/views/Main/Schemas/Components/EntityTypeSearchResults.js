@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import Promise from 'bluebird';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import { EntityType } from './EntityType';
 import styles from '../styles.module.css';
 

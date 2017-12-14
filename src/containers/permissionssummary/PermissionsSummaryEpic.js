@@ -1,7 +1,7 @@
 import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
-import { PermissionsApi, PrincipalsApi, EntityDataModelApi } from 'loom-data';
+import { PermissionsApi, PrincipalsApi, EntityDataModelApi } from 'lattice';
 import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
