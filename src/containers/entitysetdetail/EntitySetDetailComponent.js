@@ -21,7 +21,7 @@ import StyledFlexContainer from '../../components/flex/StyledFlexContainer';
 import StyledFlexContainerStacked from '../../components/flex/StyledFlexContainerStacked';
 import Page from '../../components/page/Page';
 import PageConsts from '../../utils/Consts/PageConsts';
-import PermissionsPanel from '../../views/Main/Schemas/Components/PermissionsPanel';
+import PermissionsPanel from '../permissionspanel/PermissionsPanel';
 import PropertyTypeList from '../edm/components/PropertyTypeList';
 import ActionDropdown from '../edm/components/ActionDropdown';
 import AddDataForm from '../entitysetforms/AddDataForm';

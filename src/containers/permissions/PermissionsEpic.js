@@ -193,7 +193,8 @@ function updateAclEpic(action$ :Observable<Action>) :Observable<Action> {
         .from(PermissionsApi.updateAcl(action.aclData))
         .mergeMap(() => {
           return Observable.of(
-            PermissionsActionFactory.updateAclSuccess(action.aclData)
+            PermissionsActionFactory.updateAclSuccess(action.aclData),
+            PermissionsActionFactory.getAclRequest(action.aclData.acl.aclKey)
           );
         })
         .catch((e) => {
