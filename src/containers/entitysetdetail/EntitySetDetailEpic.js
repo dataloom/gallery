@@ -6,12 +6,36 @@ import Immutable from 'immutable';
 
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
+import { DataApi } from 'lattice';
 
 import * as NeuronActionTypes from '../../core/neuron/NeuronActionTypes';
 import * as NeuronSignalTypes from '../../core/neuron/NeuronSignalTypes';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import * as actionTypes from './EntitySetDetailActionTypes';
+import * as actionFactory from './EntitySetDetailActionFactory';
 
 import { ALL_PERMISSIONS } from '../permissions/PermissionsStorage';
+
+function getEntitySetSizeEpic(action$ :Observable<Action>) :Observable<Action> {
+  return action$
+    .ofType(actionTypes.GET_ENTITY_SET_SIZE_REQUEST)
+    .mergeMap((action :Action) => {
+      return Observable
+        .from(DataApi.getEntitySetSize(action.id))
+        .mergeMap((size) => {
+          return Observable.of(
+            actionFactory.getEntitySetSizeSuccess(size)
+          );
+        })
+        // Error Handling
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            actionFactory.getEntitySetSizeFailure('Unable to load entity set size.')
+          );
+        });
+    });
+}
 
 function neuronSignalEntitySetPermissionRequestEpic(action$ :Observable<Action>, store :Object) :Observable<Action> {
 
@@ -79,5 +103,6 @@ function neuronSignalEntitySetPermissionRequestEpic(action$ :Observable<Action>,
 }
 
 export default combineEpics(
+  getEntitySetSizeEpic,
   neuronSignalEntitySetPermissionRequestEpic
 );
