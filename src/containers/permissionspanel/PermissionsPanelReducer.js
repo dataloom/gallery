@@ -11,8 +11,7 @@ import {
 
 export const LOADING_ERROR = Symbol('loading error');
 
-const DEFAULT_USER_ACLS = fromJS({ DISCOVER: [], LINK: [], READ: [], WRITE: [], OWNER: [] });
-const DEFAULT_ROLE_ACLS = fromJS({ DISCOVER: [], LINK: [], READ: [], WRITE: [] });
+const DEFAULT_ACLS = { DISCOVER: [], LINK: [], READ: [], WRITE: [], OWNER: [] };
 
 const INITIAL_STATE:Map<*, *> = fromJS({
   users: Immutable.Map(),
@@ -37,17 +36,17 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
         .set('loadRolesError', '');
 
     case permissionActionTypes.GET_ACL_SUCCESS: {
-      let userAcls = DEFAULT_USER_ACLS;
-      let roleAcls = DEFAULT_ROLE_ACLS;
+      let userAcls = fromJS(DEFAULT_ACLS);
+      let roleAcls = fromJS(DEFAULT_ACLS);
 
       action.acl.aces.forEach((ace) => {
         const id = ace.principal.id;
         ace.permissions.forEach((permission) => {
           if (ace.principal.type === USER) {
-            userAcls = userAcls.set(permission, userAcls.get(permission).push(id));
+            userAcls = userAcls.set(permission, userAcls.get(permission, Immutable.List()).push(id));
           }
           else if (ace.principal.type === ROLE) {
-            roleAcls = roleAcls.set(permission, roleAcls.get(permission).push(id));
+            roleAcls = roleAcls.set(permission, roleAcls.get(permission, Immutable.List()).push(id));
           }
         });
       });
