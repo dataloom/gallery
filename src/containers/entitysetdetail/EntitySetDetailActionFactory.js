@@ -13,3 +13,24 @@ export function setEntitySet(data) {
     data
   };
 }
+
+export function getEntitySetSizeRequest(id) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_SIZE_REQUEST,
+    id
+  };
+}
+
+export function getEntitySetSizeSuccess(size) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_SIZE_SUCCESS,
+    size
+  };
+}
+
+export function getEntitySetSizeFailure(errorMessage) {
+  return {
+    type: actionTypes.GET_ENTITY_SET_SIZE_FAILURE,
+    errorMessage
+  };
+}
