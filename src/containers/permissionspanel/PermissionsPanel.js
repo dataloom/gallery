@@ -78,16 +78,6 @@ class PermissionsPanel extends React.Component {
     }
   }
 
-  getPermission = (permissions) => {
-    const newPermissions = [];
-    if (permissions.includes(Permission.OWNER.name)) return [Permission.OWNER.getFriendlyName()];
-    if (permissions.includes(Permission.WRITE.name)) newPermissions.push(Permission.WRITE.getFriendlyName());
-    if (permissions.includes(Permission.READ.name)) newPermissions.push(Permission.READ.getFriendlyName());
-    if (permissions.includes(Permission.LINK.name)) newPermissions.push(Permission.LINK.getFriendlyName());
-    if (permissions.includes(Permission.DISCOVER.name)) newPermissions.push(Permission.DISCOVER.getFriendlyName());
-    return newPermissions;
-  }
-
   getAclKey = () => {
     const { entitySetId, propertyTypeId } = this.props;
     const aclKey = propertyTypeId ? [entitySetId, propertyTypeId] : [entitySetId];
