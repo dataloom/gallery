@@ -15,7 +15,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   // TODO: Move to object reference
   entitySetId: null,
   entitySetReference: {},
-  entitySet: {}
+  entitySet: {},
+  size: null
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -61,6 +62,13 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
         }))
         .set('entitySetReference', action.reference);
     }
+
+    case actionTypes.GET_ENTITY_SET_SIZE_SUCCESS:
+      return state.set('size', action.size);
+
+    case actionTypes.GET_ENTITY_SET_SIZE_REQUEST:
+    case actionTypes.GET_ENTITY_SET_SIZE_FAILURE:
+      return state.set('size', null);
 
     default:
       return state;

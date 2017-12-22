@@ -75,7 +75,8 @@ class EntitySetDetailComponent extends React.Component {
     subscribeToEntitySetAclKeyRequest: PropTypes.func.isRequired,
     unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired,
     loadEntitySetPropertyMetadata: PropTypes.func.isRequired,
-    updateEntitySetPropertyMetadata: PropTypes.func.isRequired
+    updateEntitySetPropertyMetadata: PropTypes.func.isRequired,
+    size: PropTypes.number
   };
 
   constructor(props) {
@@ -534,6 +535,17 @@ class EntitySetDetailComponent extends React.Component {
     return (this.props.entitySet) ? this.props.entitySet.get('title') : PageConsts.DEFAULT_DOCUMENT_TITLE;
   }
 
+  getDataHeader = () => {
+    const size = this.props.size;
+    const sizeLabel = (size !== null && size !== undefined) ? `(${size} entities)` : null;
+    return (
+      <h2 className={styles.propertyTypeTitle}>
+        Data in Entity Set
+        <span className={styles.numEntitiesLabel}>{sizeLabel}</span>
+      </h2>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -542,7 +554,7 @@ class EntitySetDetailComponent extends React.Component {
         </Page.Header>
         <Page.Body>
           {this.renderAddDataButton()}
-          <h2 className={styles.propertyTypeTitle}>Data in Entity Set</h2>
+          {this.getDataHeader()}
           <AsyncContent
               {...this.props.asyncState}
               content={() => {
@@ -601,6 +613,7 @@ function mapStateToProps(state :Map, ownProps :Object) {
       }
     });
   }
+  const size = entitySetDetail.get('size');
 
   const entitySetPropertyMetadata = state.getIn(['edm', 'entitySetPropertyMetadata', entitySetId], Immutable.Map());
 
@@ -613,7 +626,8 @@ function mapStateToProps(state :Map, ownProps :Object) {
     propertyTypes,
     ownedPropertyTypes,
     propertyTypeIds,
-    entitySetPropertyMetadata
+    entitySetPropertyMetadata,
+    size
   };
 }
 

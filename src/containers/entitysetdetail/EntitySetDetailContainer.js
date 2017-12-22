@@ -17,7 +17,7 @@ import styles from './entitysetdetail.module.css';
 
 import { fetchEntitySetProjectionRequest } from '../edm/EdmActionFactory';
 import { getEntitySetsAuthorizations } from '../permissions/PermissionsActionFactory';
-import { entitySetDetailRequest } from './EntitySetDetailActionFactory';
+import { getEntitySetSizeRequest, entitySetDetailRequest } from './EntitySetDetailActionFactory';
 
 class EntitySetDetailContainer extends React.Component {
 
@@ -25,7 +25,8 @@ class EntitySetDetailContainer extends React.Component {
     actions: PropTypes.shape({
       entitySetDetailRequest: PropTypes.func.isRequired,
       fetchEntitySetProjectionRequest: PropTypes.func.isRequired,
-      getEntitySetsAuthorizations: PropTypes.func.isRequired
+      getEntitySetsAuthorizations: PropTypes.func.isRequired,
+      getEntitySetSizeRequest: PropTypes.func.isRequred
     }).isRequired,
     children: PropTypes.object.isRequired,
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -35,6 +36,7 @@ class EntitySetDetailContainer extends React.Component {
   componentDidMount() {
 
     this.props.actions.entitySetDetailRequest(this.props.entitySetId);
+    this.props.actions.getEntitySetSizeRequest(this.props.entitySetId);
     this.props.actions.getEntitySetsAuthorizations([this.props.entitySetId]);
 
     this.props.actions.fetchEntitySetProjectionRequest([{
@@ -75,7 +77,8 @@ function mapDispatchToProps(dispatch :Function) :Object {
   const actions = {
     entitySetDetailRequest,
     fetchEntitySetProjectionRequest,
-    getEntitySetsAuthorizations
+    getEntitySetsAuthorizations,
+    getEntitySetSizeRequest
   };
 
   return {
