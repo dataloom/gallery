@@ -14,6 +14,7 @@ import HomeEpic from '../../containers/home/HomeEpic';
 import OrganizationEpic from '../../containers/organizations/epics/OrganizationEpic';
 import OrganizationsEpic from '../../containers/organizations/epics/OrganizationsEpic';
 import PermissionsEpic from '../../containers/permissions/PermissionsEpic';
+import PermissionsPanelEpic from '../../containers/permissionspanel/PermissionsPanelEpic';
 import PermissionsSummaryEpic from '../../containers/permissionssummary/PermissionsSummaryEpic';
 import PrincipalsEpic from '../../containers/principals/PrincipalsEpic';
 import VisualizationEpic from '../../containers/visualizations/VisualizationEpic';
@@ -32,6 +33,7 @@ export default function reduxEpic() {
     HomeEpic,
     NeuronEpic,
     PermissionsEpic,
+    PermissionsPanelEpic,
     PermissionsSummaryEpic,
     PrincipalsEpic,
     OrganizationEpic,

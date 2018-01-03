@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import values from 'lodash/values';
 
-import { PrincipalsApi } from 'loom-data';
+import { PrincipalsApi } from 'lattice';
 
 import { createPrincipalReference } from './PrincipalsStorage';
 import AsyncActionFactory from '../async/AsyncActionFactory';

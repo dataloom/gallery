@@ -48,6 +48,7 @@ class TopUtilizersFormContainer extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
+    if (!this.props.topUtilizersDetailsList.size) return;
     this.props.submitQuery(this.props.params.id, this.props.topUtilizersDetailsList.toJS());
     this.setState({ showResultsTable: true });
   }

@@ -3,12 +3,12 @@
  */
 
 import {
-  DataModels
-} from 'loom-data';
+  Models
+} from 'lattice';
 
 import * as OrgsActionTypes from './OrganizationsActionTypes';
 
-const Organization = DataModels.Organization;
+const Organization = Models.Organization;
 
 export function fetchOrganizationRequest(orgId :UUID) :Object {
 

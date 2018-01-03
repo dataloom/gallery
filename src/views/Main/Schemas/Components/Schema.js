@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { SplitButton, MenuItem } from 'react-bootstrap';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 import { PropertyList } from './PropertyList';
 import FileConsts from '../../../../utils/Consts/FileConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';

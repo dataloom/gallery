@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import {
-  DataModels,
+  Models,
   Types
-} from 'loom-data';
+} from 'lattice';
 
 import LoadingSpinner from '../../../components/asynccontent/LoadingSpinner';
 import StyledFlexContainerStacked from '../../../components/flex/StyledFlexContainerStacked';
@@ -53,7 +53,7 @@ const {
   AceBuilder,
   Principal,
   PrincipalBuilder
-} = DataModels;
+} = Models;
 
 const {
   ActionTypes,

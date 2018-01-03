@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import Promise from 'bluebird';
 import Immutable from 'immutable';
-import { AuthorizationApi, EntityDataModelApi, DataApi } from 'loom-data';
+import { AuthorizationApi, EntityDataModelApi, DataApi } from 'lattice';
 
 import EdmConsts from '../../utils/Consts/EdmConsts';
 import VisualizationConsts from '../../utils/Consts/VisualizationConsts';

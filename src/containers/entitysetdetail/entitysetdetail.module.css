@@ -69,3 +69,10 @@
 .page {
   margin-bottom: 40px;
 }
+
+.numEntitiesLabel {
+  font-style: italic;
+  display: inline;
+  font-size: 15px;
+  margin-left: 8px;
+}

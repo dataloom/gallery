@@ -9,7 +9,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-bootstrap-date-picker';
 
-import { AuthorizationApi, DataApi } from 'loom-data';
+import { AuthorizationApi, DataApi } from 'lattice';
 import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
 
 import EdmConsts from '../../utils/Consts/EdmConsts';

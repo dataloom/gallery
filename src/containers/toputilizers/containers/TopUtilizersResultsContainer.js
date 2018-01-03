@@ -6,7 +6,7 @@ import Immutable from 'immutable';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { EntityDataModelApi } from 'loom-data';
+import { EntityDataModelApi } from 'lattice';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersTable from '../components/TopUtilizersTable';

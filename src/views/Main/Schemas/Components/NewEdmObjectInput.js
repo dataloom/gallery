@@ -11,10 +11,10 @@ import {
 
 import {
   EntityDataModelApi,
-  DataModels,
+  Models,
   SearchApi,
   Types
-} from 'loom-data';
+} from 'lattice';
 
 import StringConsts from '../../../../utils/Consts/StringConsts';
 import EdmConsts from '../../../../utils/Consts/EdmConsts';
@@ -193,7 +193,7 @@ export class NewEdmObjectInput extends React.Component {
   }
 
   createNewObjectForEdmType = () => {
-    const { FullyQualifiedName, EntityTypeBuilder, PropertyTypeBuilder } = DataModels;
+    const { FullyQualifiedName, EntityTypeBuilder, PropertyTypeBuilder } = Models;
     const fqn = new FullyQualifiedName({
       namespace: this.state[NAMESPACE_FIELD],
       name: this.state[NAME_FIELD]

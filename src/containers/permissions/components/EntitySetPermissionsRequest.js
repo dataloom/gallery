@@ -11,7 +11,7 @@ import FontAwesome from 'react-fontawesome';
 
 import groupBy from 'lodash/groupBy';
 
-import { DataModels, Types } from 'loom-data';
+import { Models, Types } from 'lattice';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -24,7 +24,7 @@ import { getDisplayName, getEmail } from '../../principals/PrincipalUtils';
 
 import styles from './permissions.module.css';
 
-const { RequestStatus } = DataModels;
+const { RequestStatus } = Models;
 const { RequestStateTypes } = Types;
 
 class EntitySetPermissionsRequest extends React.Component {

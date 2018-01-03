@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 import groupBy from 'lodash/groupBy';
 
-import { Types } from 'loom-data';
+import { Types } from 'lattice';
 import { connect } from 'react-redux';
 
 import AsyncContentListComponent from '../../async/components/AsyncContentListComponent';
