@@ -5,6 +5,7 @@
 import * as React from 'react';
 
 import Immutable from 'immutable';
+import moment from 'moment';
 import styled, { css } from 'styled-components';
 import { Models } from 'lattice';
 
@@ -26,6 +27,7 @@ const PersonCardOuter = styled.div`
 const PersonCardInner = styled.div`
   display: flex;
   padding: 10px;
+  width: 100%;
   &:hover {
     cursor: pointer;
     background-color: #f8f8f8;
@@ -36,21 +38,35 @@ const UserDetails = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 10px;
 `;
 
 const DetailItem = styled.div`
-  margin: 3px 0;
-  font-size: 15px;
+  margin: 4px 0;
+  font-size: 17px;
 `;
 
 const Picture = styled.img`
   max-height: 100px;
 `;
 
+const IndexItem = styled.div`
+  height: 100%;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #dfdfdf;
+  font-size: 14px;
+  font-weight: bold;
+  color: #393a3b;
+  min-width: 50px;
+  margin-right: 10px;
+`;
+
 type Props = {
   data :Map<string, any>,
-  onClick :Function
+  onClick :Function,
+  index :number
 };
 
 type State = {};
@@ -61,6 +77,10 @@ class PersonCard extends React.Component<Props, State> {
     data: Immutable.Map(),
     onClick: () => {}
   };
+
+  shouldCheckKey = (key :string) => {
+    return key !== 'id' && key !== 'count';
+  }
 
   formatValue = (rawValue :any) => {
 
@@ -83,7 +103,7 @@ class PersonCard extends React.Component<Props, State> {
 
     let firstNameValue;
     this.props.data.forEach((value, key) => {
-      if (key !== 'id') {
+      if (this.shouldCheckKey(key)) {
         try {
           const fqn = new FullyQualifiedName(key);
           if (FIRST_NAMES.includes(fqn.getName().toLowerCase())) {
@@ -106,7 +126,7 @@ class PersonCard extends React.Component<Props, State> {
 
     let lastNameValue;
     this.props.data.forEach((value, key) => {
-      if (key !== 'id') {
+      if (this.shouldCheckKey(key)) {
         try {
           const fqn = new FullyQualifiedName(key);
           if (LAST_NAMES.includes(fqn.getName().toLowerCase())) {
@@ -129,11 +149,14 @@ class PersonCard extends React.Component<Props, State> {
 
     let dobValue;
     this.props.data.forEach((value, key) => {
-      if (key !== 'id') {
+      if (this.shouldCheckKey(key)) {
         try {
           const fqn = new FullyQualifiedName(key);
           if (DOBS.includes(fqn.getName().toLowerCase())) {
-            dobValue = value;
+            dobValue = value.map((dateString) => {
+              const date = moment.utc(dateString);
+              return (date.isValid()) ? date.format('MMMM D, YYYY') : dateString;
+            });
             return false; // break out of loop
           }
         }
@@ -148,11 +171,32 @@ class PersonCard extends React.Component<Props, State> {
     return this.formatValue(dobValue.toJS());
   }
 
+  getCountVal = () => {
+
+    const countValue = this.props.data.get('count', Immutable.List());
+    return this.formatValue(countValue.toJS());
+
+  }
+
+  countPresent = () => {
+    return this.props.data.has
+
+    let showCountColumn = false;
+    this.state.searchResults.forEach((result) => {
+      if (result.has('count')) {
+        showCountColumn = true;
+      }
+    });
+
+    return showCountColumn;
+
+  }
+
   getPictureImgSrc = () => {
 
     let pictureValue;
     this.props.data.forEach((value, key) => {
-      if (key !== 'id') {
+      if (this.shouldCheckKey(key)) {
         try {
           const fqn = new FullyQualifiedName(key);
           const fqnName = fqn.getName().toLowerCase();
@@ -175,15 +219,19 @@ class PersonCard extends React.Component<Props, State> {
   }
 
   render() {
+    const { onClick, data, index } = this.props;
+    const topUtilizersView = data.has('count');
 
     return (
-      <PersonCardOuter onClick={this.props.onClick}>
+      <PersonCardOuter onClick={onClick}>
         <PersonCardInner>
+          { topUtilizersView && index ? <IndexItem>{index}</IndexItem> : null }
           <Picture src={this.getPictureImgSrc()} role="presentation" />
           <UserDetails>
             <DetailItem><b>First Name:</b> {this.getFirstNameVal()}</DetailItem>
             <DetailItem><b>Last Name:</b> {this.getLastNameVal()}</DetailItem>
             <DetailItem><b>Date of Birth:</b> {this.getDobVal()}</DetailItem>
+            { topUtilizersView ? <DetailItem><i><b>Count:</b> {this.getCountVal()}</i></DetailItem> : null }
           </UserDetails>
         </PersonCardInner>
       </PersonCardOuter>
