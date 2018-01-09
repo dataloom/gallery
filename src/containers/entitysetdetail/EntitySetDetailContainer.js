@@ -36,7 +36,7 @@ class EntitySetDetailContainer extends React.Component {
   componentDidMount() {
 
     this.props.actions.entitySetDetailRequest(this.props.entitySetId);
-    this.props.actions.getEntitySetSizeRequest(this.props.entitySetId);
+    // this.props.actions.getEntitySetSizeRequest(this.props.entitySetId);
     this.props.actions.getEntitySetsAuthorizations([this.props.entitySetId]);
 
     this.props.actions.fetchEntitySetProjectionRequest([{
