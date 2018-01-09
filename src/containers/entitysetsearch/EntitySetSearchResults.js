@@ -456,7 +456,7 @@ export default class EntitySetSearchResults extends React.Component {
     const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
 
     const personList = [];
-    this.state.searchResults.forEach((personResult :Map<string, any>) => {
+    this.state.searchResults.forEach((personResult :Map<string, any>, index :number) => {
 
       const onClick = () => {
         const selectedEntityId :UUID = personResult.getIn(['id', 0]);
@@ -468,7 +468,7 @@ export default class EntitySetSearchResults extends React.Component {
       };
 
       personList.push(
-        <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} />
+        <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} index={index + 1} />
       );
     });
 

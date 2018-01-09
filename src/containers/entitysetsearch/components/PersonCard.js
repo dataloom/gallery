@@ -27,6 +27,7 @@ const PersonCardOuter = styled.div`
 const PersonCardInner = styled.div`
   display: flex;
   padding: 10px;
+  width: 100%;
   &:hover {
     cursor: pointer;
     background-color: #f8f8f8;
@@ -37,7 +38,6 @@ const UserDetails = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 10px;
 `;
 
 const DetailItem = styled.div`
@@ -49,9 +49,24 @@ const Picture = styled.img`
   max-height: 100px;
 `;
 
+const IndexItem = styled.div`
+  height: 100%;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #dfdfdf;
+  font-size: 14px;
+  font-weight: bold;
+  color: #393a3b;
+  min-width: 50px;
+  margin-right: 10px;
+`;
+
 type Props = {
   data :Map<string, any>,
-  onClick :Function
+  onClick :Function,
+  index :number
 };
 
 type State = {};
@@ -204,16 +219,19 @@ class PersonCard extends React.Component<Props, State> {
   }
 
   render() {
+    const { onClick, data, index } = this.props;
+    const topUtilizersView = data.has('count');
 
     return (
-      <PersonCardOuter onClick={this.props.onClick}>
+      <PersonCardOuter onClick={onClick}>
         <PersonCardInner>
+          { topUtilizersView && index ? <IndexItem>{index}</IndexItem> : null }
           <Picture src={this.getPictureImgSrc()} role="presentation" />
           <UserDetails>
             <DetailItem><b>First Name:</b> {this.getFirstNameVal()}</DetailItem>
             <DetailItem><b>Last Name:</b> {this.getLastNameVal()}</DetailItem>
             <DetailItem><b>Date of Birth:</b> {this.getDobVal()}</DetailItem>
-            { this.props.data.has('count') ? <DetailItem><i><b>Count:</b> {this.getCountVal()}</i></DetailItem> : null }
+            { topUtilizersView ? <DetailItem><i><b>Count:</b> {this.getCountVal()}</i></DetailItem> : null }
           </UserDetails>
         </PersonCardInner>
       </PersonCardOuter>
