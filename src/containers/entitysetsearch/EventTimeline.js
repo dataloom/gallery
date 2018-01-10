@@ -298,6 +298,7 @@ export default class EventTimeline extends React.Component {
   getDistanceText = (dateStr1, dateStr2) => {
     const dateObj1 = dateStr1 ? moment.parseZone(dateStr1) : moment();
     const dateObj2 = moment.parseZone(dateStr2);
+    if (!dateObj1.isValid() || !dateObj2.isValid()) return 'unknown interval';
     const reverse = dateObj1.isBefore(dateObj2);
     const earlierDate = reverse ? dateObj1 : dateObj2;
     const laterDate = reverse ? dateObj2 : dateObj1;
