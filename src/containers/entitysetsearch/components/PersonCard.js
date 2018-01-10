@@ -154,7 +154,7 @@ class PersonCard extends React.Component<Props, State> {
           const fqn = new FullyQualifiedName(key);
           if (DOBS.includes(fqn.getName().toLowerCase())) {
             dobValue = value.map((dateString) => {
-              const date = moment.utc(dateString);
+              const date = moment.parseZone(dateString);
               return (date.isValid()) ? date.format('MMMM D, YYYY') : dateString;
             });
             return false; // break out of loop

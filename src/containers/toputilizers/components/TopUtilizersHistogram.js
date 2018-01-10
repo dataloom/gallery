@@ -90,7 +90,7 @@ export default class TopUtilizersHistogram extends React.Component {
     if (entityTypeId === this.props.entityType.id && utilizer[propertyTypeFqn]) {
       utilizer[propertyTypeFqn].forEach((value) => {
         if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-          values.push(this.formatDate(moment(value), dateGroup));
+          values.push(this.formatDate(moment.parseZone(value), dateGroup));
         }
         else values.push(value);
       });
@@ -101,7 +101,7 @@ export default class TopUtilizersHistogram extends React.Component {
         && neighbor.has('neighborDetails')) {
         neighbor.getIn(['neighborDetails', propertyTypeFqn], []).forEach((value) => {
           if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-            values.push(this.formatDate(moment(value), dateGroup));
+            values.push(this.formatDate(moment.parseZone(value), dateGroup));
           }
           else values.push(value);
         });

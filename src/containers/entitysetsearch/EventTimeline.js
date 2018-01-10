@@ -53,7 +53,7 @@ export default class EventTimeline extends React.Component {
     const dateFqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
     if (propertyValues[dateFqn]) {
       propertyValues[dateFqn].forEach((dateStr) => {
-        const date = moment(dateStr);
+        const date = moment.parseZone(dateStr);
         const body = { propertyType, row };
         const dateValues = (dateProps[date]) ? dateProps[date].concat(body) : [body];
         dateDetails[date] = dateValues;
@@ -253,7 +253,7 @@ export default class EventTimeline extends React.Component {
     const title = (dateDetails.row.src)
       ? `${associationEntitySet.title} ${neighborTitle}: ${propertyType.title}`
       : `${neighborTitle} ${associationEntitySet.title}: ${propertyType.title}`;
-    const dateObj = moment(date);
+    const dateObj = moment.parseZone(date);
     const formattedDate = dateObj.format('MMMM Do YYYY, h:mm:ss a');
     const neighbors = dateDetailsRows.map((obj) => {
       return obj.row;
@@ -272,7 +272,7 @@ export default class EventTimeline extends React.Component {
 
   renderTimelineEvents = (datesToProps) => {
     const orderedDates = Object.keys(datesToProps).sort((date1, date2) => {
-      const firstIsEarliest = moment(date1).isBefore(moment(date2));
+      const firstIsEarliest = moment.parseZone(date1).isBefore(moment.parseZone(date2));
       if ((firstIsEarliest && this.state.sortDesc) || (!firstIsEarliest && !this.state.sortDesc)) return 1;
       return -1;
     });
