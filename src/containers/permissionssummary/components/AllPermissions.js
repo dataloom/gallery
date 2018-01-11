@@ -68,26 +68,23 @@ class AllPermissions extends React.Component {
     const tables = [];
 
     propertyPermissions.keySeq().forEach((property) => {
-      if (propertyPermissions.hasIn([property, 'userPermissions'])
-          && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+      const propertyObj = propertyPermissions.get(property);
+      const rolePermissions = propertyObj.rolePermissions || Immutable.Map();
+      const userPermissions = propertyObj.userPermissions || Immutable.List();
 
-        const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
-        const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
+      const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
+      const roleTable = (<RolePermissionsTable
+          rolePermissions={rolePermissions}
+          headers={R_HEADERS}
+          key={`role-${property}`} />);
+      const userTable = (<UserPermissionsTable
+          property={property}
+          userPermissions={userPermissions}
+          rolePermissions={rolePermissions}
+          headers={U_HEADERS}
+          key={`user-${property}`} />);
 
-        const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
-        const roleTable = (<RolePermissionsTable
-            rolePermissions={rolePermissions}
-            headers={R_HEADERS}
-            key={`role-${property}`} />);
-        const userTable = (<UserPermissionsTable
-            property={property}
-            userPermissions={userPermissions}
-            rolePermissions={rolePermissions}
-            headers={U_HEADERS}
-            key={`user-${property}`} />);
-
-        tables.push(header, roleTable, userTable);
-      }
+      tables.push(header, roleTable, userTable);
     });
     return tables;
   }
@@ -141,6 +138,7 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
 
   const entitySetId :string = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
+  const propertyPermissions = permissionsSummary.get('propertyPermissions');
 
   return {
     entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map()),
