@@ -657,7 +657,11 @@ export default class EntitySetSearchResults extends React.Component {
             value: propertyType.get('title')
           }));
         });
-      neighborGroup.first().get('neighborPropertyTypes', Immutable.List())
+      let neighbor = neighborGroup.first().get('neighborPropertyTypes', Immutable.List());
+      if (neighbor === null || neighbor === undefined) {
+        neighbor = Immutable.List();
+      }
+      neighborGroup.first().get('neighborPropertyTypes', Immutable.List()) || Immutable.List()
         .forEach((propertyType :Map<string, any>) => {
           const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
           headers.push(Immutable.Map({
