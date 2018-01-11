@@ -327,8 +327,11 @@ export default class EventTimeline extends React.Component {
       }
     });
     if (!distanceText.length) return 'No time passed.';
-    if (!dateStr1) distanceText = distanceText.concat(' ago');
-    return distanceText;
+    let suffix = 'ago';
+    if (dateStr1) {
+      suffix = reverse ? 'later' : 'earlier';
+    }
+    return distanceText.concat(` ${suffix}`);
   }
 
   renderTimeDistance = (text, dateIndex) => {
@@ -341,7 +344,34 @@ export default class EventTimeline extends React.Component {
     );
   }
 
-  renderTimelineEvents = (datesToProps) => {
+  shouldRenderRow = (rowContainer) => {
+    const { selectedProps } = this.state;
+    const { row, propertyType } = rowContainer;
+    const { associationEntitySet, neighborEntitySet } = row;
+
+    const associationAclKey = this.getPropAclKeyAsString(associationEntitySet.id, propertyType.id);
+    const neighborAclKey = (neighborEntitySet) ?
+      this.getPropAclKeyAsString(neighborEntitySet.id, propertyType.id) : null;
+
+    if (selectedProps.has(associationAclKey) || (neighborEntitySet && selectedProps.has(neighborAclKey))) {
+      return true;
+    }
+    return false;
+  }
+
+  getDatesToPropsToShow = (allDatesToProps) => {
+    const result = {};
+    Object.keys(allDatesToProps).forEach((date) => {
+      const filteredProps = allDatesToProps[date].filter((row) => {
+        return this.shouldRenderRow(row);
+      });
+      if (filteredProps.length) result[date] = filteredProps;
+    });
+    return result;
+  }
+
+  renderTimelineEvents = (allDatesToProps) => {
+    const datesToProps = this.getDatesToPropsToShow(allDatesToProps);
     const orderedDates = Object.keys(datesToProps).sort((date1, date2) => {
       const firstIsEarliest = moment.parseZone(date1).isBefore(moment.parseZone(date2));
       if ((firstIsEarliest && this.state.sortDesc) || (!firstIsEarliest && !this.state.sortDesc)) return 1;
