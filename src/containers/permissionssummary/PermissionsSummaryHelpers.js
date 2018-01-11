@@ -20,13 +20,10 @@ export function getRolePermissions(action) {
   });
 
   rolePermissions[AUTHENTICATED_USER] = authenticatedUserPermissions.length === 0 ? [NONE] : authenticatedUserPermissions;
-  console.log('rolePermissions from helper fn:', rolePermissions);
   return rolePermissions;
 }
 
 export function getUserPermissions(action, allUsersById) {
-  console.log('getUserPermissions is getting called, action & allUsersById:', action, allUsersById);
-  // WTF DO all users get passed in, is there a better way to reference, e.g. a fn w/ clouser?
   const { userAcls, roleAcls, authenticatedUserPermissions } = action.data;
   const userPermissions = [];
   try {
@@ -90,7 +87,5 @@ export function getUserPermissions(action, allUsersById) {
     console.log('error:', e);
   }
   
-  console.log('userPermissions from helper fn:', userPermissions);
-
   return userPermissions;
 }
