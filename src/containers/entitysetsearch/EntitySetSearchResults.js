@@ -59,6 +59,10 @@ const ImageCellContainer = styled.div`
   display: flex;
 `;
 
+const ViewTab = styled.div`
+  margin-bottom: 10px;
+`;
+
 let keyCounter = 0;
 const getKeyCounter = () => {
   keyCounter += 1;
@@ -87,7 +91,9 @@ export default class EntitySetSearchResults extends React.Component {
     neighborResults :Map<string, Map<string, any>>,
     selectedEntity :Map<string, any>,
     selectedEntityId :UUID,
-    selectedEntitySet :Map<string, any>
+    selectedEntitySet :Map<string, any>,
+    personPropertiesExist :boolean,
+    renderPersonView :boolean
   }
 
   constructor(props :Object) {
@@ -104,16 +110,35 @@ export default class EntitySetSearchResults extends React.Component {
       neighborResults: Immutable.Map(),
       selectedEntity: Immutable.Map(),
       selectedEntityId: undefined,
-      selectedEntitySet: Immutable.Map()
+      selectedEntitySet: Immutable.Map(),
+      personPropertiesExist: false,
+      renderPersonView: undefined
     };
+  }
+
+  componentDidMount() {
+
+    const personPropertiesExist = this.personPropertiesExist(this.props.propertyTypes);
+    let { renderPersonView } = this.state;
+    if (renderPersonView === undefined && personPropertiesExist) renderPersonView = true;
+
+    this.setState({
+      personPropertiesExist,
+      renderPersonView
+    });
   }
 
   componentWillReceiveProps(nextProps :Object) {
 
     const searchResults :List<Map<string, any>> = Immutable.fromJS(nextProps.results);
+    const personPropertiesExist = this.personPropertiesExist(nextProps.propertyTypes);
+    let { renderPersonView } = this.state;
+    if (renderPersonView === undefined && personPropertiesExist) renderPersonView = true;
 
     this.setState({
-      searchResults
+      searchResults,
+      personPropertiesExist,
+      renderPersonView
     });
   }
 
@@ -172,32 +197,44 @@ export default class EntitySetSearchResults extends React.Component {
     };
   }
 
-  personPropertiesExist = (properties :any[]) => {
+  personPropertiesExist = (propertyTypes :Object) => {
 
-    if (!properties || properties.length === 0) {
-      return false;
-    }
-
-    let hasFirstName :boolean = false;
-    let hasLastName :boolean = false;
-    let hasPicture :boolean = false;
-
-    properties.forEach((property :string | FullyQualifiedName) => {
-      if (property) {
-        const value :string = (typeof property === 'string') ? property : property.getName();
-        if (FIRST_NAMES.includes(value.toLowerCase())) {
-          hasFirstName = true;
-        }
-        if (LAST_NAMES.includes(value.toLowerCase())) {
-          hasLastName = true;
-        }
-        if (value.toLowerCase() === 'mugshot' || value.toLowerCase() === 'picture') {
-          hasPicture = true;
-        }
+    const properties :FullyQualifiedName[] = propertyTypes.map((propertyType) => {
+      try {
+        return new FullyQualifiedName(propertyType.type);
+      }
+      catch (e) {
+        console.error('EntitySetSearchResults', e);
+        return '';
       }
     });
 
-    return hasFirstName && hasLastName && hasPicture;
+    if (properties && properties.length > 0) {
+
+      let hasFirstName :boolean = false;
+      let hasLastName :boolean = false;
+      let hasPicture :boolean = false;
+
+      properties.forEach((property :string | FullyQualifiedName) => {
+        if (property) {
+          const value :string = (typeof property === 'string') ? property : property.getName();
+          if (FIRST_NAMES.includes(value.toLowerCase())) {
+            hasFirstName = true;
+          }
+          if (LAST_NAMES.includes(value.toLowerCase())) {
+            hasLastName = true;
+          }
+          if (value.toLowerCase() === 'mugshot' || value.toLowerCase() === 'picture') {
+            hasPicture = true;
+          }
+        }
+      });
+
+      if (hasFirstName && hasLastName && hasPicture) {
+        return true;
+      }
+    }
+    return false;
   }
 
   onEntitySelect = (selectedEntityId :UUID, selectedEntitySetId :UUID, selectedEntity :Map<string, any>) => {
@@ -318,6 +355,30 @@ export default class EntitySetSearchResults extends React.Component {
     );
   }
 
+  renderViewTab = () => {
+    if (!this.state.personPropertiesExist) return null;
+    return (
+      <ViewTab className={styles.viewToolbar}>
+        <ButtonGroup>
+          <Button
+              onClick={() => {
+                this.setState({ renderPersonView: true });
+              }}
+              active={this.state.renderPersonView}>
+            Person View
+          </Button>
+          <Button
+              onClick={() => {
+                this.setState({ renderPersonView: false });
+              }}
+              active={!this.state.renderPersonView}>
+            Table View
+          </Button>
+        </ButtonGroup>
+      </ViewTab>
+    );
+  }
+
   renderNoResults = () => {
     return (
       <div>There are no results to display.</div>
@@ -395,7 +456,7 @@ export default class EntitySetSearchResults extends React.Component {
     const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
 
     const personList = [];
-    this.state.searchResults.forEach((personResult :Map<string, any>) => {
+    this.state.searchResults.forEach((personResult :Map<string, any>, index :number) => {
 
       const onClick = () => {
         const selectedEntityId :UUID = personResult.getIn(['id', 0]);
@@ -407,7 +468,7 @@ export default class EntitySetSearchResults extends React.Component {
       };
 
       personList.push(
-        <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} />
+        <PersonCard key={`person-${getKeyCounter()}`} data={personResult} onClick={onClick} index={index + 1} />
       );
     });
 
@@ -494,7 +555,7 @@ export default class EntitySetSearchResults extends React.Component {
     return (
       <div>
         {
-          (this.personPropertiesExist(headerIds))
+          (this.state.renderPersonView)
             ? <PersonCard data={this.state.selectedEntity.get('data')} />
             : null
         }
@@ -596,8 +657,11 @@ export default class EntitySetSearchResults extends React.Component {
             value: propertyType.get('title')
           }));
         });
-      neighborGroup.first().get('neighborPropertyTypes', Immutable.List())
-        .forEach((propertyType :Map<string, any>) => {
+      let neighbor = neighborGroup.first().get('neighborPropertyTypes', Immutable.List());
+      if (neighbor === null || neighbor === undefined) {
+        neighbor = Immutable.List();
+      }
+      neighbor.forEach((propertyType :Map<string, any>) => {
           const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
           headers.push(Immutable.Map({
             id: fqn.getFullyQualifiedName(),
@@ -673,10 +737,6 @@ export default class EntitySetSearchResults extends React.Component {
 
       associationGroup.forEach((neighborGroup :List<any>, neighborEntitySetId :UUID) => {
 
-        if (neighborEntitySetId === NEIGHBOR_ENTITY_SET_MISSING) {
-          console.log('no neighborEntitySetId')
-        }
-
         const neighborGroupData = this.getNeighborGroupData(neighborGroup);
         const neighborGroupHeaders = this.getNeighborGroupHeaders(neighborGroup);
         const neighborGroupDataTable = this.getNeighborGroupDataTable(
@@ -724,21 +784,12 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderSearchResultsContent = () => {
 
-    const properties :FullyQualifiedName[] = this.props.propertyTypes.map((propertyType) => {
-      try {
-        return new FullyQualifiedName(propertyType.type);
-      }
-      catch (e) {
-        console.error('EntitySetSearchResults', e);
-        return '';
-      }
-    });
-
     return (
       <div>
         {this.renderBreadcrumbs()}
+        {this.renderViewTab()}
         {
-          (this.personPropertiesExist(properties))
+          (this.state.renderPersonView)
             ? this.renderSearchResultsPersonList()
             : this.renderSearchResultsDataTable()
         }
