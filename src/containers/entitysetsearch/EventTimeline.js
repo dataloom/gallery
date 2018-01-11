@@ -359,7 +359,7 @@ export default class EventTimeline extends React.Component {
     return false;
   }
 
-  getDatesToPropsToShow = (allDatesToProps) => {
+  getSelectedDatesToProps = (allDatesToProps) => {
     const result = {};
     Object.keys(allDatesToProps).forEach((date) => {
       const filteredProps = allDatesToProps[date].filter((row) => {
@@ -371,7 +371,7 @@ export default class EventTimeline extends React.Component {
   }
 
   renderTimelineEvents = (allDatesToProps) => {
-    const datesToProps = this.getDatesToPropsToShow(allDatesToProps);
+    const datesToProps = this.getSelectedDatesToProps(allDatesToProps);
     const orderedDates = Object.keys(datesToProps).sort((date1, date2) => {
       const firstIsEarliest = moment.parseZone(date1).isBefore(moment.parseZone(date2));
       if ((firstIsEarliest && this.state.sortDesc) || (!firstIsEarliest && !this.state.sortDesc)) return 1;

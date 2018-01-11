@@ -661,8 +661,7 @@ export default class EntitySetSearchResults extends React.Component {
       if (neighbor === null || neighbor === undefined) {
         neighbor = Immutable.List();
       }
-      neighborGroup.first().get('neighborPropertyTypes', Immutable.List()) || Immutable.List()
-        .forEach((propertyType :Map<string, any>) => {
+      neighbor.forEach((propertyType :Map<string, any>) => {
           const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
           headers.push(Immutable.Map({
             id: fqn.getFullyQualifiedName(),
