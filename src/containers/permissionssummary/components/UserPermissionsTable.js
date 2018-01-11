@@ -154,23 +154,28 @@ class UserPermissionsTable extends React.Component {
       const permissions = user.get('permissions');
       if (permissions.size > 0) {
         permissions.forEach((permission, j) => {
-          if (this.props.authenticatedUserPermissions.indexOf(permission) === -1) {
+          if (
+            this.props.property
+              || !this.props.property
+              && this.props.authenticatedUserPermissions
+              && this.props.authenticatedUserPermissions.indexOf(permission) === -1
+          ) {
             rows.push(<UserGroupRow
                 user={user}
                 rolePermissions={rolePermissions}
                 key={getUniqueId()} />
             );
-            return;
           }
         });
       }
-
-      rows.push(<UserGroupRow
-          className={styles.hidden}
-          user={user}
-          rolePermissions={rolePermissions}
-          key={getUniqueId()} />
-        );
+      else {
+        rows.push(<UserGroupRow
+            className={styles.hidden}
+            user={user}
+            rolePermissions={rolePermissions}
+            key={getUniqueId()} />
+          );
+      }
     });
 
     return rows;
@@ -195,7 +200,7 @@ class UserPermissionsTable extends React.Component {
               {headers}
             </tr>
           </thead>
-          {this.getUserGroupRows()}
+          { this.getUserGroupRows() }
         </Table>
       </div>
     );
