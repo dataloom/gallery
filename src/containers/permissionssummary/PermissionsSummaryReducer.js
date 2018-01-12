@@ -10,7 +10,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allRolesList: [],
   entityUserPermissions: [],
   entityRolePermissions: {},
-  propertyPermissions: {},
+  propertyPermissions: Immutable.Map(),
   isGettingUsersRoles: true,
   isGettingAcls: false,
   isGettingPermissions: false
@@ -47,25 +47,35 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingPermissions', false);
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      const rolePermissions = Immutable.fromJS(getRolePermissions(action));
-      if (action.property) {
-        const rolePermissionsMerge = {
-          propertyPermissions: {
-            [action.property.title]: {
-              rolePermissions
+      const rolePermissions = getRolePermissions(action);
+
+      try {
+        if (action.property) {
+          const rolePermissionsMerge = {
+            propertyPermissions: {
+              [action.property.title]: {
+                rolePermissions
+              }
             }
-          }
-        };
-        return state.mergeDeep(rolePermissionsMerge);
+          };
+
+          const rolePermissionsMergeImmutable = Immutable.fromJS(rolePermissionsMerge);
+          const mergedState = state.mergeDeep(rolePermissionsMergeImmutable);
+          return mergedState;
+        }
+      }
+      catch(e) {
+        console.log('error:', e);
       }
       return state.mergeDeep({
-        entityRolePermissions: rolePermissions
+        entityRolePermissions: Immutable.fromJS(rolePermissions)
       });
     }
 
     case actionTypes.SET_USER_PERMISSIONS: {
       const allUsersById = state.get('allUsersById');
-      const userPermissions = Immutable.fromJS(getUserPermissions(action, allUsersById));
+      const userPermissions = getUserPermissions(action, allUsersById);
+
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {
@@ -74,11 +84,13 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
             }
           }
         };
-        return state.mergeDeep(userPermissionsMerge);
+        const userPermissionsMergeImmutable = Immutable.fromJS(userPermissionsMerge);
+        const mergedState = state.mergeDeep(userPermissionsMergeImmutable);
+        return mergedState;
       }
 
       return state.mergeDeep({
-        entityUserPermissions: userPermissions
+        entityUserPermissions: Immutable.fromJS(userPermissions)
       });
     }
 

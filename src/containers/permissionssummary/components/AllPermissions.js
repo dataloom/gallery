@@ -69,8 +69,8 @@ class AllPermissions extends React.Component {
 
     propertyPermissions.keySeq().forEach((property) => {
       const propertyObj = propertyPermissions.get(property);
-      const rolePermissions = propertyObj.rolePermissions || Immutable.Map();
-      const userPermissions = propertyObj.userPermissions || Immutable.List();
+      const rolePermissions = propertyObj.rolePermissions ? Immutable.fromJS(propertyObj.rolePermissions) : Immutable.Map();
+      const userPermissions = propertyObj.userPermissions ? Immutable.fromJS(propertyObj.userPermissions) : Immutable.List();
 
       const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
       const roleTable = (<RolePermissionsTable
