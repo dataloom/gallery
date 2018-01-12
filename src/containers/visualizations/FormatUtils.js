@@ -2,7 +2,7 @@ import moment from 'moment';
 import EdmConsts from '../../utils/Consts/EdmConsts';
 
 export function formatDate(date) {
-  const dateObj = moment(date);
+  const dateObj = moment.parseZone(date);
   return (dateObj.isValid()) ? dateObj.format('MM/DD/YYYY') : date;
 }
 

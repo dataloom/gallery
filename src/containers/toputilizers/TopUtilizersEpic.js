@@ -112,7 +112,7 @@ function downloadTopUtilizersEpic(action$) {
   return action$
     .ofType(actionTypes.DOWNLOAD_TOP_UTILIZERS_REQUEST)
     .mergeMap((action) => {
-      if (!action.topUtilizersDetails[0].associationTypeId) {
+      if (!action.topUtilizersDetails.size) {
         return Observable.of(
           actionFactory.submitTopUtilizersFailure('Top utilizers query cannot be empty.')
         );
