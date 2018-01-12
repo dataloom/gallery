@@ -1,7 +1,5 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-import { NONE } from '../../utils/Consts/PermissionsSummaryConsts';
-import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 
 
@@ -49,24 +47,20 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.SET_ROLE_PERMISSIONS: {
       const rolePermissions = getRolePermissions(action);
 
-      try {
-        if (action.property) {
-          const rolePermissionsMerge = {
-            propertyPermissions: {
-              [action.property.title]: {
-                rolePermissions
-              }
+      if (action.property) {
+        const rolePermissionsMerge = {
+          propertyPermissions: {
+            [action.property.title]: {
+              rolePermissions
             }
-          };
+          }
+        };
 
-          const rolePermissionsMergeImmutable = Immutable.fromJS(rolePermissionsMerge);
-          const mergedState = state.mergeDeep(rolePermissionsMergeImmutable);
-          return mergedState;
-        }
+        const rolePermissionsMergeImmutable = Immutable.fromJS(rolePermissionsMerge);
+        const mergedState = state.mergeDeep(rolePermissionsMergeImmutable);
+        return mergedState;
       }
-      catch(e) {
-        console.log('error:', e);
-      }
+
       return state.mergeDeep({
         entityRolePermissions: Immutable.fromJS(rolePermissions)
       });

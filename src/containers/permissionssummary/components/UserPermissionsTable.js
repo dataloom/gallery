@@ -149,16 +149,18 @@ class UserPermissionsTable extends React.Component {
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
     const rows = [];
-    userPermissions.forEach((user, i) => {
+    userPermissions.forEach((user) => {
       // Hide rows where user has same permissions as the default permissions for authenticated users
       const permissions = user.get('permissions');
       if (permissions.size > 0) {
-        permissions.forEach((permission, j) => {
+        permissions.forEach((permission) => {
           if (
             this.props.property
-              || !this.props.property
-              && this.props.authenticatedUserPermissions
-              && this.props.authenticatedUserPermissions.indexOf(permission) === -1
+              || (
+                !this.props.property
+                && this.props.authenticatedUserPermissions
+                && this.props.authenticatedUserPermissions.indexOf(permission) === -1
+              )
           ) {
             rows.push(<UserGroupRow
                 user={user}
