@@ -274,6 +274,7 @@ export class Link extends React.Component {
         <Select
             value={selectedEntitySetIds}
             options={entitySetOptions}
+            closeOnSelect={false}
             multi
             onChange={this.onSelectedEntitySetChange} />
         {this.renderLoadEntitySetsError()}

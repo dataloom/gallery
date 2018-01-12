@@ -69,6 +69,7 @@ const TopUtilizersSelectionRow = ({
           optionRenderer={optionRenderer}
           value={selectedEdgeValues}
           onChange={updateEdgeTypes}
+          closeOnSelect={false}
           placeholder="Neighbors"
           clearable={false}
           multi />
