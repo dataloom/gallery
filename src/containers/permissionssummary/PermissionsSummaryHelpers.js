@@ -84,7 +84,7 @@ export function getUserPermissions(action, allUsersById) {
     });
   }
   catch(e) {
-    console.log('error:', e);
+    console.error('error:', e);
   }
   
   return userPermissions;
