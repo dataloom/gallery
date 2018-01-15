@@ -68,26 +68,22 @@ class AllPermissions extends React.Component {
     const tables = [];
 
     propertyPermissions.keySeq().forEach((property) => {
-      if (propertyPermissions.hasIn([property, 'userPermissions'])
-          && propertyPermissions.hasIn([property, 'rolePermissions'])) {
+      const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
+      const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
 
-        const rolePermissions = propertyPermissions.getIn([property, 'rolePermissions'], Immutable.Map());
-        const userPermissions = propertyPermissions.getIn([property, 'userPermissions'], Immutable.List());
+      const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
+      const roleTable = (<RolePermissionsTable
+          rolePermissions={rolePermissions}
+          headers={R_HEADERS}
+          key={`role-${property}`} />);
+      const userTable = (<UserPermissionsTable
+          property={property}
+          userPermissions={userPermissions}
+          rolePermissions={rolePermissions}
+          headers={U_HEADERS}
+          key={`user-${property}`} />);
 
-        const header = <h3 key={`header-${property}`}>{property} Permissions</h3>;
-        const roleTable = (<RolePermissionsTable
-            rolePermissions={rolePermissions}
-            headers={R_HEADERS}
-            key={`role-${property}`} />);
-        const userTable = (<UserPermissionsTable
-            property={property}
-            userPermissions={userPermissions}
-            rolePermissions={rolePermissions}
-            headers={U_HEADERS}
-            key={`user-${property}`} />);
-
-        tables.push(header, roleTable, userTable);
-      }
+      tables.push(header, roleTable, userTable);
     });
     return tables;
   }
@@ -126,9 +122,16 @@ class AllPermissions extends React.Component {
         <Page.Body>
           {this.renderContent()}
           <div className={styles.asterix}>
-            <div>* Default permissions are effectively public permissions. They are granted to all authenticated OpenLattice users.
-            For readability, only people with permissions that are different than the default are displayed in the tables above.
-            To change default permissions, go to 'Manage Permissions' on the entity set detail view.</div>
+            <div>
+              {
+                `* Default permissions are effectively public permissions. 
+                  They are granted to all authenticated OpenLattice users.
+                  For readability, only people with permissions that are different 
+                  than the default are displayed in the tables above.
+                  To change default permissions, go to &#39;Manage Permissions&#39; 
+                  on the entity set detail view.`
+              }
+            </div>
           </div>
         </Page.Body>
       </div>

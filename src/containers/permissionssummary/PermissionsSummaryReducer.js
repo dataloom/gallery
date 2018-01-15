@@ -1,7 +1,5 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-import { NONE } from '../../utils/Consts/PermissionsSummaryConsts';
-import { AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
 
 
@@ -47,7 +45,8 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingPermissions', false);
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      const rolePermissions = Immutable.fromJS(getRolePermissions(action));
+      const rolePermissions = getRolePermissions(action);
+
       if (action.property) {
         const rolePermissionsMerge = {
           propertyPermissions: {
@@ -56,16 +55,21 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
             }
           }
         };
-        return state.mergeDeep(rolePermissionsMerge);
+
+        const rolePermissionsMergeImmutable = Immutable.fromJS(rolePermissionsMerge);
+        const mergedState = state.mergeDeep(rolePermissionsMergeImmutable);
+        return mergedState;
       }
+
       return state.mergeDeep({
-        entityRolePermissions: rolePermissions
+        entityRolePermissions: Immutable.fromJS(rolePermissions)
       });
     }
 
     case actionTypes.SET_USER_PERMISSIONS: {
       const allUsersById = state.get('allUsersById');
-      const userPermissions = Immutable.fromJS(getUserPermissions(action, allUsersById));
+      const userPermissions = getUserPermissions(action, allUsersById);
+
       if (action.property) {
         const userPermissionsMerge = {
           propertyPermissions: {
@@ -74,11 +78,13 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
             }
           }
         };
-        return state.mergeDeep(userPermissionsMerge);
+        const userPermissionsMergeImmutable = Immutable.fromJS(userPermissionsMerge);
+        const mergedState = state.mergeDeep(userPermissionsMergeImmutable);
+        return mergedState;
       }
 
       return state.mergeDeep({
-        entityUserPermissions: userPermissions
+        entityUserPermissions: Immutable.fromJS(userPermissions)
       });
     }
 

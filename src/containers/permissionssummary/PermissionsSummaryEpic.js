@@ -1,4 +1,3 @@
-import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import { PermissionsApi, PrincipalsApi, EntityDataModelApi } from 'lattice';
@@ -39,9 +38,11 @@ function configureAcls(aces) {
           });
         }
       } else if (ace.principal.type === USER) {
-        getPermission(ace.permissions).forEach((permission) => {
-          userAcls[permission].push(ace.principal.id);
-        });
+        getPermission(ace.permissions).forEach(
+          (permission) => {
+            userAcls[permission].push(ace.principal.id);
+          }
+        );
       }
     }
   });
@@ -103,7 +104,6 @@ function getAllUsersAndRolesEpic(action$) {
             );
         })
         .catch((e) => {
-          console.error(e);
           return Observable.of(
             actionFactory.getAllUsersAndRolesFailure()
           );
@@ -133,13 +133,11 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
       })
       .catch((e) => {
         // TODO: add real error handling
-        console.error(e);
         return { type: 'noop' };
       });
   })
   .catch((e) => {
     // TODO: add real error handling
-    console.error(e);
     return { type: 'noop' };
   });
 }
@@ -162,7 +160,6 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
           );
         })
         .catch((e) => {
-          console.error(e);
           return Observable.of(
             actionFactory.getUserRolePermissionsFailure()
           );
