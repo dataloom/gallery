@@ -7,6 +7,7 @@ import React from 'react';
 import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
+import { Button, Modal } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,6 +17,7 @@ import {
   Types
 } from 'lattice';
 
+import PermissionsPanel from '../../permissionspanel/PermissionsPanel';
 import InlineEditableControl from '../../../components/controls/InlineEditableControl';
 import StyledFlexContainer from '../../../components/flex/StyledFlexContainer';
 
@@ -60,6 +62,7 @@ const TitleSectionContainer = styled(StyledFlexContainer)`
 const VisibilityToggle = styled.div`
   border: 1px solid #ffffff;
   margin-left: 10px;
+  text-align: right;
   padding: 4px 8px;
   position: relative;
   color: ${(props :Object) => {
@@ -80,6 +83,18 @@ const VisibilityToggleText = styled.span`
 const VisibilityToggleIcon = styled.span`
   position: absolute;
   right: 8px;
+`;
+
+const ManagePermissionsButtonContainer = styled.div`
+  margin-left: 10px;
+  padding: 4px 8px 10px 8px;
+  position: relative;
+  display: block;
+`;
+
+const PermissionButtons = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 function mapDispatchToProps(dispatch :Function) {
@@ -106,6 +121,13 @@ class OrganizationTitleSectionComponent extends React.Component {
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      editingPermissions: false
+    };
   }
 
   updateOrganizationTitle = (title :string) => {
@@ -162,7 +184,7 @@ class OrganizationTitleSectionComponent extends React.Component {
     this.props.actions.updateAclRequest(aclData);
   }
 
-  renderVisibilityToggle =() => {
+  renderVisibilityToggle = () => {
 
     const orgId :boolean = this.props.organization.get('id');
     const isOwner :boolean = this.props.organization.get('isOwner', false);
@@ -186,6 +208,54 @@ class OrganizationTitleSectionComponent extends React.Component {
     );
   }
 
+  renderPermissionsPanel = () => {
+
+    const orgId :boolean = this.props.organization.get('id');
+    const orgTitle :string = this.props.organization.get('title');
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+
+    if (!isOwner || !isNonEmptyString(orgId)) {
+      return null;
+    }
+
+    return (
+      <Modal
+          show={this.state.editingPermissions}
+          onHide={() => {
+            this.setState({ editingPermissions: false });
+          }}>
+        <Modal.Header closeButton>
+          <Modal.Title>Manage permissions for organization: {orgTitle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PermissionsPanel entitySetId={orgId} aclKeysToUpdate={[[orgId]]} isOrganization />
+        </Modal.Body>
+      </Modal>
+    );
+  };
+
+  renderPermissions = () => {
+
+    const orgId :boolean = this.props.organization.get('id');
+    const isOwner :boolean = this.props.organization.get('isOwner', false);
+
+    if (!isOwner || !isNonEmptyString(orgId)) {
+      return null;
+    }
+
+    return (
+      <ManagePermissionsButtonContainer>
+        <Button
+            bsStyle="info"
+            onClick={() => {
+              this.setState({ editingPermissions: true });
+            }}>
+          Manage Permissions
+        </Button>
+      </ManagePermissionsButtonContainer>
+    );
+  }
+
   render() {
 
     const isOwner :boolean = this.props.organization.get('isOwner', false);
@@ -199,7 +269,11 @@ class OrganizationTitleSectionComponent extends React.Component {
             value={this.props.organization.get('title')}
             viewOnly={!isOwner}
             onChange={this.updateOrganizationTitle} />
-        { this.renderVisibilityToggle() }
+        <PermissionButtons>
+          { this.renderPermissions() }
+          { this.renderVisibilityToggle() }
+        </PermissionButtons>
+        { this.renderPermissionsPanel() }
       </TitleSectionContainer>
     );
   }
