@@ -54,15 +54,20 @@ class PermissionsPanel extends React.Component {
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     rolesById: PropTypes.instanceOf(Immutable.Map).isRequired,
     loadUsersError: PropTypes.string.isRequired,
-    loadRolesError: PropTypes.string.isRequired
+    loadRolesError: PropTypes.string.isRequired,
+    isOrganization: PropTypes.bool
+  }
+
+  static defaultProps = {
+    isOrganization: false
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      view: views.GLOBAL,
-      rolesView: Permission.WRITE.getFriendlyName(),
-      emailsView: Permission.WRITE.getFriendlyName(),
+      view: views.EMAILS,
+      rolesView: Permission.OWNER.getFriendlyName(),
+      emailsView: Permission.OWNER.getFriendlyName(),
       newRoleValue: '',
       newEmailValue: ''
     };
@@ -85,10 +90,10 @@ class PermissionsPanel extends React.Component {
   }
 
   loadAcls = (entitySetId, propertyTypeId) => {
-    const { actions } = this.props;
+    const { actions, isOrganization } = this.props;
 
     actions.getAllUsers();
-    actions.fetchOrganizationsRequest();
+    if (!isOrganization) actions.fetchOrganizationsRequest();
     const aclKey = propertyTypeId ? [entitySetId, propertyTypeId] : [entitySetId];
     actions.getAclRequest(aclKey);
   }
@@ -429,12 +434,14 @@ class PermissionsPanel extends React.Component {
   }
 
   render() {
+    const { isOrganization } = this.props;
+
     return (
       <div>
         <div className={styles.edmNavbarContainer}>
           <div className={styles.edmNavbar}>
-            {this.renderViewButton(views.GLOBAL, orders.FIRST)}
-            {this.renderViewButton(views.ROLES)}
+            { isOrganization ? null : this.renderViewButton(views.GLOBAL, orders.FIRST) }
+            { isOrganization ? null : this.renderViewButton(views.ROLES) }
             {this.renderViewButton(views.EMAILS, orders.LAST)}
           </div>
         </div>
