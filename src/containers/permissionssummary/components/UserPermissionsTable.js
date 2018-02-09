@@ -131,61 +131,27 @@ class SearchBar extends React.Component {
 
 // TODO: Separate components into different files
 class UserPermissionsTable extends React.Component {
+
   static propTypes = {
-    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
-    userPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
     headers: PropTypes.array.isRequired,
-    authenticatedUserPermissions: PropTypes.instanceOf(Immutable.List)
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      searchInput: ''
-    };
+    rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
+    userPermissions: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
   getUserGroupRows = () => {
     const { rolePermissions, userPermissions } = this.props;
     const rows = [];
+
     userPermissions.forEach((user) => {
-      // Hide rows where user has same permissions as the default permissions for authenticated users
-      const permissions = user.get('permissions');
-      if (permissions.size > 0) {
-        permissions.forEach((permission) => {
-          if (
-            this.props.property
-              || (
-                !this.props.property
-                && this.props.authenticatedUserPermissions
-                && this.props.authenticatedUserPermissions.indexOf(permission) === -1
-              )
-          ) {
-            rows.push(<UserGroupRow
-                user={user}
-                rolePermissions={rolePermissions}
-                key={getUniqueId()} />
-            );
-          }
-        });
-      }
-      else {
-        rows.push(<UserGroupRow
-            className={styles.hidden}
-            user={user}
-            rolePermissions={rolePermissions}
-            key={getUniqueId()} />
-          );
+      const permissions = user.get('permissions', Immutable.List());
+      if (!permissions.isEmpty()) {
+        rows.push(
+          <UserGroupRow key={user.get('id')} user={user} rolePermissions={rolePermissions} />
+        );
       }
     });
 
     return rows;
-  }
-
-  onSearchInput = (e) => {
-    e.preventDefault();
-    this.setState({ searchInput: e.target.value });
   }
 
   render() {
@@ -209,10 +175,4 @@ class UserPermissionsTable extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    authenticatedUserPermissions: ownProps.rolePermissions.get(AUTHENTICATED_USER)
-  };
-}
-
-export default connect(mapStateToProps)(UserPermissionsTable);
+export default connect()(UserPermissionsTable);

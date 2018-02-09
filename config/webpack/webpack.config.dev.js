@@ -13,7 +13,7 @@ import APP_PATHS from '../app.paths.js';
 
 import baseWebpackConfig from './webpack.config.base.js';
 
-const DEV_SERVER_PORT = 9000;
+const DEV_SERVER_PORT = 9090;
 
 // TODO - waiting on RHL v3
 const entry = [
