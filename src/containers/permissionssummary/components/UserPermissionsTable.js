@@ -97,6 +97,12 @@ class UserGroupRow extends React.Component {
   }
 
   render() {
+
+    const individualPermissions = this.props.user.get('individualPermissions', Immutable.List());
+    if (individualPermissions.isEmpty()) {
+      return null;
+    }
+
     return (
       <tbody className={this.props.className}>
         <UserRow user={this.props.user} key={this.props.user.get('id')} />
