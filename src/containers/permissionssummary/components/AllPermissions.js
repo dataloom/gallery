@@ -124,11 +124,11 @@ class AllPermissions extends React.Component {
           <div className={styles.asterix}>
             <div>
               {
-                `* Default permissions are effectively public permissions. 
+                `* Default permissions are effectively public permissions.
                   They are granted to all authenticated OpenLattice users.
-                  For readability, only people with permissions that are different 
+                  For readability, only people with permissions that are different
                   than the default are displayed in the tables above.
-                  To change default permissions, go to &#39;Manage Permissions&#39; 
+                  To change default permissions, go to "Manage Permissions"
                   on the entity set detail view.`
               }
             </div>
