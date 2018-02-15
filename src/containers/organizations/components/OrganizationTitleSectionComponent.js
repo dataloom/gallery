@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -41,9 +37,7 @@ const {
   AclDataBuilder,
   Ace,
   AceBuilder,
-  Organization,
   OrganizationBuilder,
-  Principal,
   PrincipalBuilder
 } = Models;
 
@@ -65,12 +59,12 @@ const VisibilityToggle = styled.div`
   text-align: right;
   padding: 4px 8px;
   position: relative;
-  color: ${(props :Object) => {
+  color: ${(props) => {
     return props.isPublic ? '#39de9d' : '#e91e63';
   }};
   &:hover {
     border: 1px solid #cfd8dc;
-    cursor: ${(props :Object) => {
+    cursor: ${(props) => {
       return props.isOwner ? 'pointer' : 'default';
     }};
   }
@@ -97,7 +91,7 @@ const PermissionButtons = styled.div`
   flex-direction: column;
 `;
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     createOrganizationRequest,
@@ -130,26 +124,26 @@ class OrganizationTitleSectionComponent extends React.Component {
     };
   }
 
-  updateOrganizationTitle = (title :string) => {
+  updateOrganizationTitle = (title) => {
 
-    const orgId :boolean = this.props.organization.get('id');
-    const orgBuilder :OrganizationBuilder = new OrganizationBuilder();
+    const orgId = this.props.organization.get('id');
+    const orgBuilder = new OrganizationBuilder();
 
-    const principal :Principal = (new PrincipalBuilder())
+    const principal = (new PrincipalBuilder())
       .setType(PrincipalTypes.ORGANIZATION)
       .setId(title.replace(/\W/g, ''))
       .build();
 
     if (!isNonEmptyString(orgId)) {
 
-      const org :Organization = orgBuilder
+      const org = orgBuilder
         .setTitle(title)
         .setPrincipal(principal)
         .build();
       this.props.actions.createOrganizationRequest(org);
     }
     else {
-      const org :Organization = orgBuilder
+      const org = orgBuilder
         .setId(orgId)
         .setTitle(title)
         .setPrincipal(principal)
@@ -160,7 +154,7 @@ class OrganizationTitleSectionComponent extends React.Component {
 
   togglePublicVisibility = () => {
 
-    const principal :Principal = (new PrincipalBuilder())
+    const principal = (new PrincipalBuilder())
       .setType(PrincipalTypes.ROLE)
       .setId(AUTHENTICATED_USER)
       .build();
@@ -175,7 +169,7 @@ class OrganizationTitleSectionComponent extends React.Component {
       .setAces([ace])
       .build();
 
-    const isPublic :boolean = this.props.organization.get('isPublic', false);
+    const isPublic = this.props.organization.get('isPublic', false);
     const aclData :AclData = (new AclDataBuilder())
       .setAction(isPublic ? ActionTypes.REMOVE : ActionTypes.SET)
       .setAcl(acl)
@@ -186,9 +180,9 @@ class OrganizationTitleSectionComponent extends React.Component {
 
   renderVisibilityToggle = () => {
 
-    const orgId :boolean = this.props.organization.get('id');
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
-    const isPublic :boolean = this.props.organization.get('isPublic', false);
+    const orgId = this.props.organization.get('id');
+    const isOwner = this.props.organization.get('isOwner', false);
+    const isPublic = this.props.organization.get('isPublic', false);
 
     if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
@@ -210,9 +204,9 @@ class OrganizationTitleSectionComponent extends React.Component {
 
   renderPermissionsPanel = () => {
 
-    const orgId :boolean = this.props.organization.get('id');
-    const orgTitle :string = this.props.organization.get('title');
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const orgId = this.props.organization.get('id');
+    const orgTitle = this.props.organization.get('title');
+    const isOwner = this.props.organization.get('isOwner', false);
 
     if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
@@ -236,8 +230,8 @@ class OrganizationTitleSectionComponent extends React.Component {
 
   renderPermissions = () => {
 
-    const orgId :boolean = this.props.organization.get('id');
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const orgId = this.props.organization.get('id');
+    const isOwner = this.props.organization.get('isOwner', false);
 
     if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
@@ -258,7 +252,7 @@ class OrganizationTitleSectionComponent extends React.Component {
 
   render() {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     return (
       <TitleSectionContainer>

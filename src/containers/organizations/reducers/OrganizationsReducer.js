@@ -14,11 +14,7 @@ import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
 
 const {
-  Ace,
-  Organization,
-  Principal,
   PrincipalBuilder,
-  Role,
   RoleBuilder
 } = Models;
 

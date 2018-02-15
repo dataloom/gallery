@@ -1,25 +1,13 @@
-import {
-  Models,
-  Types,
-  OrganizationsApi
-} from 'lattice';
+import { Models, OrganizationsApi } from 'lattice';
 
 import { push } from 'react-router-redux';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
 
-import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
 import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 import * as OrgActionFactory from '../actions/OrganizationActionFactory';
 
-const {
-  Organization,
-  OrganizationBuilder
-} = Models;
-
-const {
-  PrincipalTypes
-} = Types;
+const { OrganizationBuilder } = Models;
 
 function createNewOrganizationEpic(action$) {
 

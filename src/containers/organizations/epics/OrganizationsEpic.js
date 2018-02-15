@@ -1,5 +1,4 @@
 import {
-  Models,
   Types,
   AuthorizationApi,
   OrganizationsApi,
