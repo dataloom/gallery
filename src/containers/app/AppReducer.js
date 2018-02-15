@@ -1,17 +1,13 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import * as actionTypes from './AppActionTypes';
 
-export const INITIAL_STATE :Map<> = Immutable.fromJS({
+export const INITIAL_STATE = Immutable.fromJS({
   apps: Immutable.List(),
   errorMessage: ''
 });
 
-export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 

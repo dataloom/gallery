@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import FontAwesome from 'react-fontawesome';
@@ -73,29 +69,20 @@ const StyledSearchIcon = styled(StyledIcon)`
   padding: 0;
 `;
 
-export const AddButton = (props :Object) => {
+export const AddButton = ({ onClick }) => (
+  <StyledAddButton onClick={onClick}>
+    <FontAwesome name="plus" />
+  </StyledAddButton>
+);
 
-  return (
-    <StyledAddButton onClick={props.onClick}>
-      <FontAwesome name="plus" />
-    </StyledAddButton>
-  );
-};
+export const RemoveButton = ({ onClick }) => (
+  <StyledRemoveButton onClick={onClick}>
+    <FontAwesome name="minus" />
+  </StyledRemoveButton>
+);
 
-export const RemoveButton = (props :Object) => {
-
-  return (
-    <StyledRemoveButton onClick={props.onClick}>
-      <FontAwesome name="minus" />
-    </StyledRemoveButton>
-  );
-};
-
-export const SearchIcon = () => {
-
-  return (
-    <StyledSearchIcon>
-      <FontAwesome name="search" />
-    </StyledSearchIcon>
-  );
-};
+export const SearchIcon = () => (
+  <StyledSearchIcon>
+    <FontAwesome name="search" />
+  </StyledSearchIcon>
+);

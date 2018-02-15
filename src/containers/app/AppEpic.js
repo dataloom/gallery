@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 
@@ -31,7 +27,7 @@ function getAppsEpic(action$) {
 
 function installAppEpic(action$) {
   return action$.ofType(actionTypes.INSTALL_APP_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       const { appId, organizationId, prefix } = action;
       return Observable
         .from(AppApi.installApp(appId, organizationId, prefix))

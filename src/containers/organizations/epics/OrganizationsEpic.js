@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import {
   Models,
   Types,
@@ -18,21 +14,20 @@ import * as PermissionsActionFactory from '../../permissions/PermissionsActionFa
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as OrgsActionFactory from '../actions/OrganizationsActionFactory';
 
-const { Organization } = Models;
 const { PermissionTypes } = Types;
 
 /*
  * TODO: figure out how to set a timeout when loading takes too long, we terminate and dispatch fetchFailed actions
  */
 
-function fetchOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.getOrganization(action.orgId))
-        .mergeMap((organization :Organization) => {
+        .mergeMap((organization) => {
           return Observable.of(
             OrgsActionFactory.fetchOrganizationSuccess(organization),
             OrgsActionFactory.fetchOrganizationsAuthorizationsRequest([organization]),
@@ -48,14 +43,14 @@ function fetchOrganizationEpic(action$ :Observable<Action>) :Observable<Action> 
     });
 }
 
-function fetchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchOrganizationsEpic(action$) {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORGS_REQUEST)
     .mergeMap(() => {
       return Observable
         .from(OrganizationsApi.getAllOrganizations())
-        .mergeMap((organizations :Organization[]) => {
+        .mergeMap((organizations) => {
           return Observable.of(
             OrgsActionFactory.fetchOrganizationsSuccess(organizations),
             OrgsActionFactory.fetchOrganizationsAuthorizationsRequest(organizations)
@@ -69,12 +64,12 @@ function fetchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action>
     });
 }
 
-function fetchOrganizationsAuthorizationsEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchOrganizationsAuthorizationsEpic(action$) {
 
   return action$
     .ofType(OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_REQUEST)
-    .mergeMap((action :Action) => {
-      const accessChecks = action.organizations.map((org :Organization) => {
+    .mergeMap((action) => {
+      const accessChecks = action.organizations.map((org) => {
         return {
           aclKey: [org.id],
           permissions: Object.keys(PermissionTypes)
@@ -82,7 +77,7 @@ function fetchOrganizationsAuthorizationsEpic(action$ :Observable<Action>) :Obse
       });
       return Observable
         .from(AuthorizationApi.checkAuthorizations(accessChecks))
-        .mergeMap((authorizations :Authorization[]) => {
+        .mergeMap((authorizations) => {
           return Observable.of(
             OrgsActionFactory.fetchOrganizationsAuthorizationsSuccess(authorizations)
           );
@@ -95,11 +90,11 @@ function fetchOrganizationsAuthorizationsEpic(action$ :Observable<Action>) :Obse
     });
 }
 
-function searchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action> {
+function searchOrganizationsEpic(action$) {
 
   return action$
     .ofType(OrgsActionTypes.SEARCH_ORGS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       // TODO: add paging support for Organizations search results
       const searchOptions = {
         start: 0,
@@ -108,7 +103,7 @@ function searchOrganizationsEpic(action$ :Observable<Action>) :Observable<Action
       };
       return Observable
         .from(SearchApi.searchOrganizations(searchOptions))
-        .mergeMap((searchResults :Object[]) => {
+        .mergeMap((searchResults) => {
           // TODO: fetch any organizations from the search results that are not in the redux store
           return Observable.of(
             OrgsActionFactory.searchOrganizationsSuccess(searchResults)

@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import * as actionTypes from './CatalogActionTypes';
@@ -9,7 +5,7 @@ import * as actionTypes from './CatalogActionTypes';
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 // TODO: Switch to references
-export const INITIAL_STATE :Map<> = Immutable.fromJS({
+export const INITIAL_STATE = Immutable.fromJS({
   asyncState: Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
@@ -18,7 +14,7 @@ export const INITIAL_STATE :Map<> = Immutable.fromJS({
   numHits: 0
 });
 
-export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 

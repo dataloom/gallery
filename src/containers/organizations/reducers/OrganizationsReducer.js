@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import {
@@ -39,7 +35,7 @@ const {
  * the container that is dispatching them, and 2) we avoid having the reducer handle a generic action.
  */
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE = Immutable.fromJS({
   isCreatingOrg: false,
   isFetchingOrg: false,
   isFetchingOrgs: false,
@@ -51,7 +47,7 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   members: Immutable.List()
 });
 
-export default function organizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
+export default function organizationsReducer(state = INITIAL_STATE, action :Object) {
 
   switch (action.type) {
 
@@ -87,7 +83,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       // TODO: do merge if organization exists
 
-      const organization :Organization = action.organization;
+      const organization = action.organization;
       return state
         .setIn(['organizations', organization.id], Immutable.fromJS(organization))
         .set('isCreatingOrg', false)
@@ -102,12 +98,12 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         orgs[org.id].isOwner = false;
         orgs[org.id].isPublic = false;
         orgs[org.id].permissions = {};
-        Object.keys(PermissionTypes).forEach((permissionType :Permission) => {
+        Object.keys(PermissionTypes).forEach((permissionType) => {
           orgs[org.id].permissions[permissionType] = false;
         });
       });
 
-      const organizations :Immutable.Map = Immutable.fromJS(orgs);
+      const organizations = Immutable.fromJS(orgs);
 
       return state
         .set('organizations', organizations)
@@ -117,22 +113,22 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgsActionTypes.FETCH_ORGS_AUTHORIZATIONS_SUCCESS: {
 
-      let newState :Immutable.Map = state;
+      let newState = state;
 
-      action.authorizations.forEach((authorization :Authorization) => {
+      action.authorizations.forEach((authorization) => {
 
         if (!authorization.aclKey || authorization.aclKey.length !== 1) {
           return;
         }
 
-        const orgId :string = authorization.aclKey[0];
-        const organization :Immutable.Map = state.getIn(['organizations', orgId], Immutable.Map());
+        const orgId = authorization.aclKey[0];
+        const organization = state.getIn(['organizations', orgId], Immutable.Map());
 
         if (organization.isEmpty()) {
           return;
         }
 
-        const decoratedOrganization :Immutable.Map = organization
+        const decoratedOrganization = organization
           .set('isOwner', authorization.permissions[PermissionTypes.OWNER] === true)
           .set('permissions', Immutable.fromJS(authorization.permissions));
 
@@ -154,13 +150,13 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
        * creating an organization. as such, we set "isCreatingOrg" to false in the FETCH_ORG_SUCCESS case.
        */
 
-      const organization :Organization = action.organization;
+      const organization = action.organization;
       return state.setIn(['organizations', organization.id], Immutable.Map(organization));
     }
 
     case OrgActionTypes.DELETE_ORG_SUCCESS: {
 
-      const orgId :string = action.orgId;
+      const orgId = action.orgId;
       return state.deleteIn(['organizations', orgId]);
     }
 
@@ -171,18 +167,18 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgActionTypes.ADD_DOMAIN_TO_ORG_SUCCESS: {
 
-      const orgId :string = action.orgId;
-      const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
-      const updatedEmails :List<string> = currentEmails.push(action.emailDomain);
+      const orgId = action.orgId;
+      const currentEmails = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
+      const updatedEmails = currentEmails.push(action.emailDomain);
       return state.setIn(['organizations', orgId, 'emails'], updatedEmails);
     }
 
     case OrgActionTypes.REMOVE_DOMAIN_FROM_ORG_SUCCESS: {
 
-      const orgId :string = action.orgId;
-      const currentEmails :List<string> = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
+      const orgId = action.orgId;
+      const currentEmails = state.getIn(['organizations', orgId, 'emails'], Immutable.List());
 
-      const index :number = currentEmails.findIndex((email) => {
+      const index = currentEmails.findIndex((email) => {
         return email === action.emailDomain;
       });
 
@@ -190,31 +186,31 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const updatedEmails :List<string> = currentEmails.delete(index);
+      const updatedEmails = currentEmails.delete(index);
       return state.setIn(['organizations', orgId, 'emails'], updatedEmails);
     }
 
     case OrgActionTypes.ADD_ROLE_TO_ORG_SUCCESS: {
 
 
-      const newRole :Role = (new RoleBuilder())
+      const newRole = (new RoleBuilder())
         .setId(action.roleId)
         .setOrganizationId(action.role.organizationId)
         .setTitle(action.role.title)
         .setPrincipal(action.role.principal)
         .build();
 
-      const orgId :UUID = action.role.organizationId;
-      const currentRoles :List<Role> = state.getIn(['organizations', orgId, 'roles'], Immutable.List());
-      const updatedRoles :List<Role> = currentRoles.push(Immutable.Map(newRole));
+      const orgId = action.role.organizationId;
+      const currentRoles = state.getIn(['organizations', orgId, 'roles'], Immutable.List());
+      const updatedRoles = currentRoles.push(Immutable.Map(newRole));
       return state.setIn(['organizations', orgId, 'roles'], updatedRoles);
     }
 
     case OrgActionTypes.REMOVE_ROLE_FROM_ORG_SUCCESS: {
 
-      const currentRoles :List<Role> = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
+      const currentRoles = state.getIn(['organizations', action.orgId, 'roles'], Immutable.List());
 
-      const index :number = currentRoles.findIndex((role) => {
+      const index = currentRoles.findIndex((role) => {
         return role.get('id') === action.roleId;
       });
 
@@ -222,26 +218,26 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const updatedRoles :List<Role> = currentRoles.delete(index);
+      const updatedRoles = currentRoles.delete(index);
       return state.setIn(['organizations', action.orgId, 'roles'], updatedRoles);
     }
 
     case OrgActionTypes.ADD_MEMBER_TO_ORG_SUCCESS: {
 
-      const orgId :string = action.orgId;
-      const newMemberPrincipal :Principal = (new PrincipalBuilder())
+      const orgId = action.orgId;
+      const newMemberPrincipal = (new PrincipalBuilder())
         .setType(PrincipalTypes.USER)
         .setId(action.memberId)
         .build();
 
-      const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
-      const updatedMembers :List<Principal> = currentMembers.push(Immutable.Map(newMemberPrincipal));
+      const currentMembers = state.getIn(['organizations', orgId, 'members'], Immutable.List());
+      const updatedMembers = currentMembers.push(Immutable.Map(newMemberPrincipal));
 
       // update users search results to remove the member just added
-      const usersSearchResults :Immutable.Map = state.get('usersSearchResults');
-      let updatedUserSearchResults :Immutable.Map = usersSearchResults;
+      const usersSearchResults = state.get('usersSearchResults');
+      let updatedUserSearchResults = usersSearchResults;
       if (!usersSearchResults.isEmpty()) {
-        updatedUserSearchResults = usersSearchResults.filter((user :Immutable.Map) => {
+        updatedUserSearchResults = usersSearchResults.filter((user) => {
           return user.get('user_id') !== action.memberId;
         });
       }
@@ -253,10 +249,13 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgActionTypes.REMOVE_MEMBER_FROM_ORG_SUCCESS: {
 
-      const orgId :string = action.orgId;
-      const currentMembers :List<Principal> = state.getIn(['organizations', orgId, 'members'], Immutable.List());
+      const orgId = action.orgId;
+      const currentMembers = state.getIn(
+        ['organizations', orgId, 'members'],
+        Immutable.List()
+      );
 
-      const index :number = currentMembers.findIndex((member) => {
+      const index = currentMembers.findIndex((member) => {
         return member.get('id') === action.memberId;
       });
 
@@ -264,13 +263,13 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const updatedMembers :List<Principal> = currentMembers.delete(index);
+      const updatedMembers = currentMembers.delete(index);
       return state.setIn(['organizations', orgId, 'members'], updatedMembers);
     }
 
     case OrgsActionTypes.SHOW_ALL_ORGS: {
 
-      const organizations :Immutable.Map = state.get('organizations');
+      const organizations = state.get('organizations');
       return state.set('visibleOrganizationIds', Immutable.Set(organizations.keys()));
     }
 
@@ -281,8 +280,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
     case OrgsActionTypes.SEARCH_ORGS_SUCCESS: {
 
-      const orgIds :Immutable.Set = Immutable.Set().withMutations((set :Immutable.Set) => {
-        action.searchResults.hits.forEach((result :Object) => {
+      const orgIds = Immutable.Set().withMutations((set) => {
+        action.searchResults.hits.forEach((result) => {
           set.add(result.id);
         });
       });
@@ -325,8 +324,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const orgId :UUID = action.aclKey[0];
-      const organization :Immutable.Map = state.getIn(['organizations', orgId], Immutable.Map());
+      const orgId = action.aclKey[0];
+      const organization = state.getIn(['organizations', orgId], Immutable.Map());
 
       if (organization.isEmpty()) {
         return state;
@@ -334,10 +333,10 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
       // TODO: yuck!
-      let isPublic :boolean = false;
-      action.acl.aces.forEach((ace :Ace) => {
+      let isPublic= false;
+      action.acl.aces.forEach((ace) => {
         if (ace.principal.id === AUTHENTICATED_USER) {
-          ace.permissions.forEach((permission :string) => {
+          ace.permissions.forEach((permission) => {
             if (permission === PermissionTypes.READ) {
               isPublic = true;
             }
@@ -345,7 +344,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         }
       });
 
-      const decoratedOrganization :Immutable.Map = organization.set('isPublic', isPublic);
+      const decoratedOrganization = organization.set('isPublic', isPublic);
       return state.setIn(['organizations', orgId], decoratedOrganization);
     }
 
@@ -360,8 +359,8 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         return state;
       }
 
-      const orgId :UUID = action.aclData.acl.aclKey[0];
-      const organization :Immutable.Map = state.getIn(['organizations', orgId], Immutable.Map());
+      const orgId = action.aclData.acl.aclKey[0];
+      const organization = state.getIn(['organizations', orgId], Immutable.Map());
 
       if (organization.isEmpty()) {
         return state;
@@ -369,10 +368,10 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
 
       // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
       // TODO: yuck!
-      let isPublic :boolean = organization.get('isPublic');
-      action.aclData.acl.aces.forEach((ace :Ace) => {
+      let isPublic = organization.get('isPublic');
+      action.aclData.acl.aces.forEach((ace) => {
         if (ace.principal.id === AUTHENTICATED_USER) {
-          ace.permissions.forEach((permission :string) => {
+          ace.permissions.forEach((permission) => {
             if (permission === PermissionTypes.READ && action.aclData.action === ActionTypes.SET) {
               isPublic = true;
             }
@@ -383,7 +382,7 @@ export default function organizationsReducer(state :Immutable.Map = INITIAL_STAT
         }
       });
 
-      const decoratedOrganization :Immutable.Map = organization.set('isPublic', isPublic);
+      const decoratedOrganization = organization.set('isPublic', isPublic);
       return state.setIn(['organizations', orgId], decoratedOrganization);
     }
 

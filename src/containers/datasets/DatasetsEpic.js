@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import { AuthorizationApi } from 'lattice';
@@ -15,16 +11,16 @@ import { fetchEntitySetProjectionRequest } from '../edm/EdmActionFactory';
 function ownedDatasetsIdsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_OWNED_DATASETS_IDS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(AuthorizationApi.getAccessibleObjects('EntitySet', Permission.OWNER.name, action.pagingToken))
         .mergeMap((response) => {
 
-          const edmProjection :Object[] = [];
-          const ownedEntitySetIds :string[] = [];
+          const edmProjection = [];
+          const ownedEntitySetIds = [];
 
           response.authorizedObjects.forEach((aclKey) => {
-            const entitySetId :string = aclKey[0];
+            const entitySetId = aclKey[0];
             edmProjection.push({
               type: 'EntitySet',
               id: entitySetId,

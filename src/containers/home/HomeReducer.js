@@ -1,14 +1,10 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import * as HomeActionTypes from './HomeActionTypes';
 
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
-export const INITIAL_STATE :Map<> = Immutable.fromJS({
+export const INITIAL_STATE = Immutable.fromJS({
 
   // legacy
   asyncState: Immutable.fromJS({
@@ -19,7 +15,7 @@ export const INITIAL_STATE :Map<> = Immutable.fromJS({
   numHits: 0
 });
 
-export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 
