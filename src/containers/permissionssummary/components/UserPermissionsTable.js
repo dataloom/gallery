@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
 import { Table } from 'react-bootstrap';
-import { connect } from 'react-redux';
 
 import UserGroupRow from './UserGroupRow';
 import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
@@ -28,7 +27,6 @@ class UserPermissionsTable extends React.Component {
         let i = 0;
         let notUnique = true;
         const authenticatedPermissions = this.props.rolePermissions.get(AUTHENTICATED_USER);
-        console.log('authenticatedPermissions TEST', authenticatedPermissions.toJS());
 
         while (notUnique && i < permissions.size) {
           const permission = permissions.get(i);
