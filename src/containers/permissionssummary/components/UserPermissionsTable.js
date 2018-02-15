@@ -13,8 +13,7 @@ class UserPermissionsTable extends React.Component {
   static propTypes = {
     headers: PropTypes.array.isRequired,
     rolePermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
-    userPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
-    authenticatedUserPermissions: PropTypes.instanceOf(Immutable.List)
+    userPermissions: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
   getUserGroupRows = () => {
@@ -28,12 +27,14 @@ class UserPermissionsTable extends React.Component {
       if (!permissions.isEmpty()) {
         let i = 0;
         let notUnique = true;
+        const authenticatedPermissions = this.props.rolePermissions.get(AUTHENTICATED_USER);
+        console.log('authenticatedPermissions TEST', authenticatedPermissions.toJS());
 
         while (notUnique && i < permissions.size) {
           const permission = permissions.get(i);
           if (
-            this.props.authenticatedUserPermissions
-              && this.props.authenticatedUserPermissions.indexOf(permission) === -1
+            authenticatedPermissions
+              && authenticatedPermissions.indexOf(permission) === -1
           ) {
             rows.push(
               <UserGroupRow key={user.get('id')} rolePermissions={rolePermissions} user={user} />
@@ -70,10 +71,4 @@ class UserPermissionsTable extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    authenticatedUserPermissions: ownProps.rolePermissions.get(AUTHENTICATED_USER)
-  };
-}
-
-export default connect(mapStateToProps)(UserPermissionsTable);
+export default UserPermissionsTable;

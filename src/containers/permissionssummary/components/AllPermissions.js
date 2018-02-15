@@ -145,6 +145,9 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
   const entitySetId :string = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
 
+  const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
+  console.log('authenticatedUserPermissions:', authenticatedUserPermissions);
+
   return {
     entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map()),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
