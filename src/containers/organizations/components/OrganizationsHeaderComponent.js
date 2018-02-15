@@ -1,10 +1,5 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
-import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
 
@@ -64,16 +59,16 @@ const SearchInput = styled.input`
   }
 `;
 
-function mapStateToProps(state :Immutable.Map) {
+function mapStateToProps(state) {
 
-  const isSearchingOrgs :boolean = state.getIn(['organizations', 'isSearchingOrgs']);
+  const isSearchingOrgs = state.getIn(['organizations', 'isSearchingOrgs']);
 
   return {
     isSearchingOrgs
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     searchOrganizationsRequest,
@@ -96,10 +91,6 @@ class OrganizationsHeaderComponent extends React.Component {
     isSearchingOrgs: React.PropTypes.bool.isRequired
   };
 
-  state :{
-    searchInputValue :string
-  }
-
   constructor(props) {
 
     super(props);
@@ -115,7 +106,7 @@ class OrganizationsHeaderComponent extends React.Component {
     hashHistory.push('/orgs/new');
   }
 
-  search = (searchQuery :string) => {
+  search = (searchQuery) => {
 
     if (!searchQuery) {
       return;

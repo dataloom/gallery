@@ -1,9 +1,7 @@
-// @flow
-
 import { Enum } from 'enumify';
 
 export class Permission extends Enum {
-  static maxPermission(perm1:Permission, perm2:Permission) {
+  static maxPermission(perm1, perm2) {
     return perm1.ordinal > perm2.ordinal ? perm1 : perm2;
   }
 }
@@ -13,7 +11,7 @@ function enumFactory(friendlyName) {
     getFriendlyName() {
       return friendlyName;
     },
-    hasPermission(permission:Permission) {
+    hasPermission(permission) {
       return this.ordinal >= permission.ordinal;
     }
   };

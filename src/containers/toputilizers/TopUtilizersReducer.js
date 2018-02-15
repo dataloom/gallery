@@ -1,9 +1,8 @@
-/* @flow */
 import Immutable from 'immutable';
 
 import * as actionTypes from './TopUtilizersActionTypes';
 
-export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
+export const INITIAL_STATE = Immutable.fromJS({
   entitySet: {},
   topUtilizersDetailsList: Immutable.List(),
   topUtilizersResults: Immutable.List(),
@@ -13,7 +12,7 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   neighborTypes: Immutable.List()
 });
 
-export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
   switch (action.type) {
 
     case actionTypes.GET_ENTITY_SET_SUCCESS:

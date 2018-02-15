@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import classnames from 'classnames';
@@ -43,7 +39,7 @@ class PropertyTypeList extends React.Component {
     }
 
     const propertyTypes = [];
-    this.props.propertyTypeIds.forEach((propertyTypeId :string) => {
+    this.props.propertyTypeIds.forEach((propertyTypeId) => {
       propertyTypes.push(
         <PropertyType
             entitySetId={this.props.entitySetId}
@@ -90,7 +86,7 @@ function mapDispatchToProps(dispatch, ownProps) {
     //   return createAccessCheck([entitySetId, id]);
     // });
     const accessChecks = [];
-    propertyTypeIds.forEach((propertyTypeId :string) => {
+    propertyTypeIds.forEach((propertyTypeId) => {
       accessChecks.push(createAccessCheck([entitySetId, propertyTypeId]));
     });
     loadPermissions = () => {

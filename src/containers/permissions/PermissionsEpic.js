@@ -1,21 +1,6 @@
-/*
- * @flow
- */
-
-import {
-  AuthorizationApi,
-  PermissionsApi,
-  RequestsApi,
-  Models
-} from 'lattice';
-
-import {
-  Observable
-} from 'rxjs';
-
-import {
-  combineEpics
-} from 'redux-observable';
+import { AuthorizationApi, PermissionsApi, RequestsApi } from 'lattice';
+import { Observable } from 'rxjs';
+import { combineEpics } from 'redux-observable';
 
 import * as AsyncActionFactory from '../async/AsyncActionFactory';
 import * as PermissionsActionTypes from './PermissionsActionTypes';
@@ -31,15 +16,7 @@ import {
   createAuthnAsyncReference
 } from './PermissionsStorage';
 
-import type {
-  AccessCheck,
-  AuthNRequest,
-  AclKey
-} from './PermissionsStorage';
-
-const { Acl } = Models;
-
-function updateStatuses(statuses :RequestStatus[]) {
+function updateStatuses(statuses) {
   return Observable.from(RequestsApi.updateRequestStatuses(statuses))
     .mergeMapTo(statuses)
     .map(PermissionsActionFactory.updateStatusSuccess)
@@ -56,7 +33,7 @@ function updateStatusesEpic(action$) {
     .mergeMap(updateStatuses);
 }
 
-function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
+function loadStatuses(reqStatus, aclKeys) {
   const references = aclKeys.map(createStatusAsyncReference);
   return Observable.merge(
     Observable.from(references)
@@ -76,7 +53,7 @@ function loadStatuses(reqStatus :string, aclKeys :AclKey[]) {
 
       return references.map((reference) => {
         const status = statusByReferenceId[reference.id];
-        const value = status ? status : ASYNC_STATUS.NOT_FOUND;
+        const value = status || ASYNC_STATUS.NOT_FOUND;
         return AsyncActionFactory.updateAsyncReference(reference, value);
       });
     })
@@ -95,7 +72,7 @@ function loadStatusesEpic(action$) {
     });
 }
 
-function submitAuthnRequest(requests :AuthNRequest[]) :Observable<Action> {
+function submitAuthnRequest(requests) {
   return Observable
     .from(RequestsApi.submitRequests(requests))
     .mapTo(PermissionsActionFactory.requestPermissionsModalSuccess())
@@ -104,7 +81,7 @@ function submitAuthnRequest(requests :AuthNRequest[]) :Observable<Action> {
     });
 }
 
-function submitAuthnRequestEpic(action$ :Observable<Action>) :Observable<Action> {
+function submitAuthnRequestEpic(action$) {
   return action$
     .ofType(PermissionsActionTypes.SUBMIT_AUTHN_REQUEST)
     .pluck('requests')
@@ -112,7 +89,7 @@ function submitAuthnRequestEpic(action$ :Observable<Action>) :Observable<Action>
 }
 
 // TODO: Move entirely to async container and take *huge* advantage of caching
-function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
+function authorizationCheck(accessChecks) {
   const references = accessChecks.map((check) => {
     return createAuthnAsyncReference(check.aclKey);
   });
@@ -150,7 +127,7 @@ function authorizationCheck(accessChecks :AccessCheck[]) :Observable<Action> {
 }
 
 // TODO: Cancellation and Error handling
-function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action> {
+function authorizationCheckEpic(action$ )  {
 
   return action$
     .ofType(PermissionsActionTypes.CHECK_AUTHORIZATION_REQUEST)
@@ -164,14 +141,14 @@ function authorizationCheckEpic(action$ :Observable<Action>) :Observable<Action>
  * better understand how these references work to figure out whether or not to continue with that pattern.
  */
 
-function getAclEpic(action$ :Observable<Action>) :Observable<Action> {
+function getAclEpic(action$) {
 
   return action$
     .ofType(PermissionsActionTypes.GET_ACL_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(PermissionsApi.getAcl(action.aclKey))
-        .mergeMap((acl :Acl) => {
+        .mergeMap((acl) => {
           return Observable.of(
             PermissionsActionFactory.getAclSuccess(action.aclKey, acl)
           );
@@ -184,11 +161,11 @@ function getAclEpic(action$ :Observable<Action>) :Observable<Action> {
         });
     });
 }
-function updateAclEpic(action$ :Observable<Action>) :Observable<Action> {
+function updateAclEpic(action$) {
 
   return action$
     .ofType(PermissionsActionTypes.UPDATE_ACL_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(PermissionsApi.updateAcl(action.aclData))
         .mergeMap(() => {

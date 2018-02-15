@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import classnames from 'classnames';
@@ -133,7 +129,7 @@ class EntitySetDetailComponent extends React.Component {
 
       let shouldLoad = false;
       // TODO: consider another way of doing this to avoid forEach() and includes()
-      nextProps.propertyTypeIds.forEach((propertyTypeId :string) => {
+      nextProps.propertyTypeIds.forEach((propertyTypeId) => {
         if (!this.props.propertyTypeIds.includes(propertyTypeId)) {
           shouldLoad = true;
         }
@@ -146,7 +142,7 @@ class EntitySetDetailComponent extends React.Component {
   }
 
   // TODO: figure out how to implement this
-  // shouldComponentUpdate(nextProps :Object, nextState :Object) {
+  // shouldComponentUpdate(nextProps, nextState) {
   // }
 
   setEditingPermissions = () => {
@@ -261,11 +257,11 @@ class EntitySetDetailComponent extends React.Component {
     }
 
     const propertyTypeOptions = [];
-    this.props.ownedPropertyTypes.forEach((propertyType :Map) => {
+    this.props.ownedPropertyTypes.forEach((propertyType) => {
 
-      const propertyTypeId :string = propertyType.get('id');
-      const aclKey :string[] = [this.props.entitySet.get('id'), propertyTypeId];
-      const title :string = this.props.entitySetPropertyMetadata
+      const propertyTypeId = propertyType.get('id');
+      const aclKey = [this.props.entitySet.get('id'), propertyTypeId];
+      const title = this.props.entitySetPropertyMetadata
         .getIn([propertyTypeId, 'title'], propertyType.get('title'));
 
       propertyTypeOptions.push(
@@ -330,7 +326,7 @@ class EntitySetDetailComponent extends React.Component {
     if (aclKey.length === 1) {
       const aclKeysToUpdate = [aclKey];
       if (this.state.permissionsShouldUpdateAll) {
-        this.props.ownedPropertyTypes.forEach((propertyType :Map) => {
+        this.props.ownedPropertyTypes.forEach((propertyType) => {
           aclKeysToUpdate.push([this.props.entitySet.get('id'), propertyType.get('id')]);
         });
       }
@@ -582,14 +578,14 @@ class EntitySetDetailComponent extends React.Component {
   }
 }
 
-function mapStateToProps(state :Map, ownProps :Object) {
+function mapStateToProps(state, ownProps) {
 
 
   const permissions = state.get('permissions');
   const entitySetDetail = state.get('entitySetDetail');
 
-  const entitySetId :string = ownProps.params.id;
-  const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+  const entitySetId = ownProps.params.id;
+  const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
 
   let entitySetPermissions;
   if (!entitySet.isEmpty()) {
@@ -599,13 +595,13 @@ function mapStateToProps(state :Map, ownProps :Object) {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
-  const entityTypeId :string = entitySet.get('entityTypeId');
-  const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
-  const propertyTypeIds :List = entityType.get('properties', Immutable.List());
-  let ownedPropertyTypes :List = Immutable.List();
-  let propertyTypes :List = Immutable.List();
+  const entityTypeId = entitySet.get('entityTypeId');
+  const entityType = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
+  const propertyTypeIds = entityType.get('properties', Immutable.List());
+  let ownedPropertyTypes = Immutable.List();
+  let propertyTypes = Immutable.List();
   if (!propertyTypeIds.isEmpty()) {
-    propertyTypeIds.forEach((propertyTypeId :string) => {
+    propertyTypeIds.forEach((propertyTypeId) => {
       const pt = state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map());
       propertyTypes = propertyTypes.push(pt);
       if (getPermissions(permissions, [entitySetId, propertyTypeId]).OWNER) {
@@ -640,9 +636,9 @@ function mapDispatchToProps(dispatch, ownProps) {
     updateMetadata: (entitySetId, metadataUpdate) => {
       dispatch(edmActionFactories.updateEntitySetMetadataRequest(entitySetId, metadataUpdate));
     },
-    loadOwnedPropertyTypes: (entitySetId :string, propertyTypeIds :List<string>) => {
-      const accessChecks :Object[] = [];
-      propertyTypeIds.forEach((propertyTypeId :string) => {
+    loadOwnedPropertyTypes: (entitySetId, propertyTypeIds) => {
+      const accessChecks = [];
+      propertyTypeIds.forEach((propertyTypeId) => {
         accessChecks.push({
           aclKey: [entitySetId, propertyTypeId],
           permissions: [PERMISSIONS.OWNER]
@@ -650,10 +646,10 @@ function mapDispatchToProps(dispatch, ownProps) {
       });
       dispatch(PermissionsActionFactory.checkAuthorizationRequest(accessChecks));
     },
-    subscribeToEntitySetAclKeyRequest: (aclKey :UUID[]) => {
+    subscribeToEntitySetAclKeyRequest: (aclKey) => {
       dispatch(NeuronActionFactory.subscribeToAclKeyRequest(aclKey));
     },
-    unsubscribeFromEntitySetAclKeyRequest: (aclKey :UUID[]) => {
+    unsubscribeFromEntitySetAclKeyRequest: (aclKey) => {
       dispatch(NeuronActionFactory.unsubscribeFromAclKeyRequest(aclKey));
     },
     loadEntitySetPropertyMetadata: (entitySetId) => {

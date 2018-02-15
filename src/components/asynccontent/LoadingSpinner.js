@@ -1,12 +1,8 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import styles from './loading.spinner.module.css';
 
-export default function(props :Object) {
+export default function(props) {
 
   const size = props.size || 50;
 

@@ -1,14 +1,5 @@
-/*
- * @flow
- */
-
-import {
-  combineEpics
-} from 'redux-observable';
-
-import {
-  Observable
-} from 'rxjs';
+import { combineEpics } from 'redux-observable';
+import { Observable } from 'rxjs';
 
 import * as NeuronActionFactory from './NeuronActionFactory';
 import * as NeuronActionTypes from './NeuronActionTypes';
@@ -22,23 +13,23 @@ import {
   SERVER_COMMANDS
 } from './StompFrameCommands';
 
-const RETRY_DELAY :number = 1000; // in milliseconds
-const MAX_RETRY_DELAY :number = 10 * 1000; // in milliseconds
-const MAX_RETRY_COUNT :number = 10;
+const RETRY_DELAY = 1000; // in milliseconds
+const MAX_RETRY_DELAY = 10 * 1000; // in milliseconds
+const MAX_RETRY_COUNT = 10;
 
-const ERROR_STOMP_CLIENT_NOT_CONNECTED :string = 'ERROR_STOMP_CLIENT_NOT_CONNECTED';
-const ERROR_STOMP_CLIENT_NOT_INITIALIZED :string = 'ERROR_STOMP_CLIENT_NOT_INITIALIZED';
+const ERROR_STOMP_CLIENT_NOT_CONNECTED = 'ERROR_STOMP_CLIENT_NOT_CONNECTED';
+const ERROR_STOMP_CLIENT_NOT_INITIALIZED = 'ERROR_STOMP_CLIENT_NOT_INITIALIZED';
 
 // TODO: figure out how to handle no-op situations
-const NEURON_NO_OP :Object = {
+const NEURON_NO_OP = {
   type: 'NEURON_NO_OP'
 };
 
-let retryCount :number = 0;
+let retryCount = 0;
 
-function computeReconnectDelayTimeout() :number {
+function computeReconnectDelayTimeout() {
 
-  let delay :number = RETRY_DELAY * retryCount;
+  let delay = RETRY_DELAY * retryCount;
   if (delay >= MAX_RETRY_DELAY) {
     delay = MAX_RETRY_DELAY;
   }
@@ -46,16 +37,16 @@ function computeReconnectDelayTimeout() :number {
   return delay;
 }
 
-function neuronConnectRequestEpic(action$ :Observable<Action>, reduxStore :Object) :Observable<Action> {
+function neuronConnectRequestEpic(action$) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_CONNECT_REQUEST)
     .mergeMap(() => {
       return Observable
-        .create((observer :Observer) => {
+        .create((observer) => {
           initializeStompClient().connect(
             {},
-            (frame :Object) => {
+            (frame) => {
               observer.next(frame);
             },
             () => {
@@ -63,7 +54,7 @@ function neuronConnectRequestEpic(action$ :Observable<Action>, reduxStore :Objec
             }
           );
         })
-        .mergeMap((frame :Object) => {
+        .mergeMap((frame) => {
           switch (frame.command) {
             case SERVER_COMMANDS.CONNECTED:
               return Observable.of(
@@ -84,7 +75,7 @@ function neuronConnectRequestEpic(action$ :Observable<Action>, reduxStore :Objec
 
 }
 
-function neuronConnectSuccessEpic(action$ :Observable<Action>) :Observable<Action> {
+function neuronConnectSuccessEpic(action$) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_CONNECT_SUCCESS)
@@ -94,7 +85,7 @@ function neuronConnectSuccessEpic(action$ :Observable<Action>) :Observable<Actio
     });
 }
 
-function neuronConnectFailureEpic(action$ :Observable<Action>) :Observable<Action> {
+function neuronConnectFailureEpic(action$) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_CONNECT_FAILURE)
@@ -109,13 +100,13 @@ function neuronConnectFailureEpic(action$ :Observable<Action>) :Observable<Actio
     });
 }
 
-function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) :Observable<Action> {
+function neuronSubscribeRequestEpic(action$, store) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_SUBSCRIBE_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
-        .create((observer :Observer) => {
+        .create((observer) => {
           const stompClient = getStompClient();
           if (!stompClient) {
             observer.error(ERROR_STOMP_CLIENT_NOT_INITIALIZED);
@@ -124,13 +115,13 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) 
             observer.error(ERROR_STOMP_CLIENT_NOT_CONNECTED);
           }
           else {
-            const topic :string = action.topic;
-            const subId :string = store.getState().getIn(['neuron', 'topicToSubIdMap', topic]);
-            const subscriptions :Map = store.getState().getIn(['neuron', 'subscriptions']);
+            const topic = action.topic;
+            const subId = store.getState().getIn(['neuron', 'topicToSubIdMap', topic]);
+            const subscriptions = store.getState().getIn(['neuron', 'subscriptions']);
             if (subscriptions.has(subId)) {
               return;
             }
-            const subscription = stompClient.subscribe(topic, (frame :Object) => {
+            const subscription = stompClient.subscribe(topic, (frame) => {
               observer.next({
                 frame
               });
@@ -141,7 +132,7 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) 
             });
           }
         })
-        .mergeMap((message :any) => {
+        .mergeMap((message) => {
           if (message.subscription) {
             return Observable.of(
               NeuronActionFactory.neuronSubscribeSuccess(message.subscription, message.topic)
@@ -151,7 +142,7 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) 
             NeuronActionFactory.neuronOnMessage(message.frame)
           );
         })
-        .retryWhen((errors :Observable) => {
+        .retryWhen((errors) => {
           return errors.mergeMap((error) => {
             // if the error is that we're not connected, retry when we connect successfully
             if (error === ERROR_STOMP_CLIENT_NOT_CONNECTED) {
@@ -169,7 +160,7 @@ function neuronSubscribeRequestEpic(action$ :Observable<Action>, store :Object) 
     });
 }
 
-function neuronUnsubscribeRequestEpic(action$ :Observable<Action>, store :Object) :Observable<Action> {
+function neuronUnsubscribeRequestEpic(action$) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_SUBSCRIBE_REQUEST)
@@ -179,11 +170,11 @@ function neuronUnsubscribeRequestEpic(action$ :Observable<Action>, store :Object
     });
 }
 
-function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
+function neuronOnMessageEpic(action$) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_ON_MESSAGE)
-    .map((action :Action) => {
+    .map((action) => {
       try {
         // TODO: consider dispatch specific action based on signal.type
         const signal = JSON.parse(action.frame.body);
@@ -198,7 +189,7 @@ function neuronOnMessageEpic(action$ :Observable<Action>) :Observable<Action> {
 /*
  * TODO: not sure if I like exposing the initialization step here and in this way
  */
-export function initializeNeuron(reduxStore :any) {
+export function initializeNeuron(reduxStore) {
 
   reduxStore.dispatch(NeuronActionFactory.neuronConnectRequest());
 }

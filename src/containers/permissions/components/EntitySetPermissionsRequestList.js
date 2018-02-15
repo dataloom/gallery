@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import classnames from 'classnames';
@@ -42,7 +38,7 @@ class EntitySetPermissionsRequestList extends React.Component {
   componentDidMount() {
 
     const aclKeys = [];
-    this.props.propertyTypeIds.forEach((propertyTypeId :string) => {
+    this.props.propertyTypeIds.forEach((propertyTypeId) => {
       aclKeys.push([this.props.entitySetId, propertyTypeId]);
     });
 
@@ -110,7 +106,7 @@ function mapStateToProps(state, ownProps) {
   const { entitySetId, propertyTypeIds } = ownProps;
 
   const statusReferences = [];
-  propertyTypeIds.forEach((propertyTypeId :string) => {
+  propertyTypeIds.forEach((propertyTypeId) => {
     statusReferences.push(
       createStatusAsyncReference([entitySetId, propertyTypeId])
     );

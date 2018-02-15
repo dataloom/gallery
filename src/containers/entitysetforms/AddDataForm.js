@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -45,7 +41,7 @@ export default class AddDataForm extends React.Component {
   loadAuthorizedPropertyTypes = () => {
 
     const accessChecks = [];
-    this.props.propertyTypes.forEach((propertyType :Map) => {
+    this.props.propertyTypes.forEach((propertyType) => {
       accessChecks.push({
         aclKey: [this.props.entitySetId, propertyType.get('id')],
         permissions: [Permission.WRITE.name]
@@ -96,8 +92,8 @@ export default class AddDataForm extends React.Component {
   generateEntites = () => {
     const { propValues, authorizedPropertyTypes } = this.state;
     const formattedValues = {};
-    authorizedPropertyTypes.forEach((propertyType :Map) => {
-      const propertyTypeId :string = propertyType.get('id');
+    authorizedPropertyTypes.forEach((propertyType) => {
+      const propertyTypeId = propertyType.get('id');
       if (propValues[propertyTypeId]) {
         const filteredValues = propValues[propertyTypeId].filter((value) => {
           return (value.length);
@@ -126,7 +122,7 @@ export default class AddDataForm extends React.Component {
     DataApi.createEntityData(this.props.entitySetId, '', entities)
     .then(() => {
       const propValues = {};
-      this.state.authorizedPropertyTypes.forEach((propertyType :Map) => {
+      this.state.authorizedPropertyTypes.forEach((propertyType) => {
         propValues[propertyType.get('id')] = [''];
       });
       this.setState({
@@ -144,7 +140,7 @@ export default class AddDataForm extends React.Component {
 
   reset = () => {
     const propValues = {};
-    this.state.authorizedPropertyTypes.forEach((propertyType :Map) => {
+    this.state.authorizedPropertyTypes.forEach((propertyType) => {
       propValues[propertyType.get('id')] = [''];
     });
     this.setState({
@@ -161,7 +157,7 @@ export default class AddDataForm extends React.Component {
   }
 
   renderPropertyTypeInputs = () => {
-    return this.state.authorizedPropertyTypes.map((propertyType :Map) => {
+    return this.state.authorizedPropertyTypes.map((propertyType) => {
       const id = propertyType.get('id');
       let input = (<FormControl
           type="text"

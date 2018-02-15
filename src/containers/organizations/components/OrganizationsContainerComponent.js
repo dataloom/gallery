@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import ContentContainer from '../../../components/applayout/ContentContainer';

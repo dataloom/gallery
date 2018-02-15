@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -45,13 +41,9 @@ import {
 } from '../../principals/PrincipalsActionFactory';
 
 const {
-  Acl,
   AclBuilder,
-  AclData,
   AclDataBuilder,
-  Ace,
   AceBuilder,
-  Principal,
   PrincipalBuilder
 } = Models;
 
@@ -72,10 +64,10 @@ const SearchSpinner = styled(StyledElement)`
   flex: 0;
 `;
 
-function mapStateToProps(state :Immutable.Map) {
+function mapStateToProps(state) {
 
-  const isSearchingUsers :boolean = state.getIn(['organizations', 'isSearchingUsers']);
-  const usersSearchResults :Immutable.Map = state.getIn(['organizations', 'usersSearchResults'], Immutable.Map());
+  const isSearchingUsers = state.getIn(['organizations', 'isSearchingUsers']);
+  const usersSearchResults = state.getIn(['organizations', 'usersSearchResults'], Immutable.Map());
 
   return {
     isSearchingUsers,
@@ -83,7 +75,7 @@ function mapStateToProps(state :Immutable.Map) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     addMemberToOrganizationRequest,
@@ -113,11 +105,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     usersSearchResults: React.PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
-  state :{
-    searchInputValue :string
-  }
-
-  constructor(props :Object) {
+  constructor(props) {
 
     super(props);
 
@@ -126,7 +114,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     };
   }
 
-  search = (searchQuery :string) => {
+  search = (searchQuery) => {
 
     if (!searchQuery) {
       return;
@@ -183,7 +171,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     );
   }
 
-  handleOnClickAddMember = (userId :string) => {
+  handleOnClickAddMember = (userId) => {
 
     if (!userId) {
       // TODO: this shouldn't happen, how do we handle it?
@@ -195,22 +183,22 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       userId
     );
 
-    const principal :Principal = (new PrincipalBuilder())
+    const principal = (new PrincipalBuilder())
       .setType(PrincipalTypes.USER)
       .setId(userId)
       .build();
 
-    const ace :Ace = (new AceBuilder())
+    const ace = (new AceBuilder())
       .setPermissions([PermissionTypes.READ])
       .setPrincipal(principal)
       .build();
 
-    const acl :Acl = (new AclBuilder())
+    const acl = (new AclBuilder())
       .setAclKey([this.props.organization.get('id')])
       .setAces([ace])
       .build();
 
-    const aclData :AclData = (new AclDataBuilder())
+    const aclData = (new AclDataBuilder())
       .setAction(ActionTypes.ADD)
       .setAcl(acl)
       .build();
@@ -231,7 +219,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
 
     const users = [];
 
-    this.props.usersSearchResults.forEach((user :Immutable.Map) => {
+    this.props.usersSearchResults.forEach((user) => {
 
       const userId :string = user.get('user_id');
       const label = OrgsUtils.getUserNameLabelValue(user);
@@ -254,7 +242,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
 
   render() {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     if (!isOwner) {
       return null;

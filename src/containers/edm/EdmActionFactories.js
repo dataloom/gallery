@@ -1,10 +1,6 @@
-/*
- * @flow
- */
-
 import * as actionTypes from './EdmActionTypes';
 
-export function filteredEdmRequest(edmQuery :Object[]) {
+export function filteredEdmRequest(edmQuery) {
   return {
     type: actionTypes.FILTERED_EDM_REQUEST,
     edmQuery
@@ -31,7 +27,7 @@ export function allEntityTypesResolve(references) {
   };
 }
 
-export function allEntityTypesReject(errorMessage :string) {
+export function allEntityTypesReject(errorMessage) {
   return {
     type: actionTypes.ALL_ENTITY_TYPES_REJECT,
     errorMessage
@@ -51,14 +47,14 @@ export function allPropertyTypesResolve(references) {
   };
 }
 
-export function allPropertyTypesReject(errorMessage :string) {
+export function allPropertyTypesReject(errorMessage) {
   return {
     type: actionTypes.ALL_PROPERTY_TYPES_REJECT,
     errorMessage
   };
 }
 
-export function updateEntitySetMetadataRequest(entitySetId :string, metadataUpdate :Object) {
+export function updateEntitySetMetadataRequest(entitySetId, metadataUpdate) {
   return {
     type: actionTypes.UPDATE_ENTITY_SET_METADATA_REQUEST,
     entitySetId,
@@ -72,21 +68,21 @@ export function updateEntitySetMetadataResolve() {
   };
 }
 
-export function updateEntitySetMetadataReject(errorMessage :string) {
+export function updateEntitySetMetadataReject(errorMessage) {
   return {
     type: actionTypes.UPDATE_ENTITY_SET_METADATA_REJECT,
     errorMessage
   };
 }
 
-export function getAllEntitySetPropertyMetadataRequest(entitySetId :string) {
+export function getAllEntitySetPropertyMetadataRequest(entitySetId) {
   return {
     type: actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_REQUEST,
     entitySetId
   };
 }
 
-export function getAllEntitySetPropertyMetadataResolve(entitySetId :string, entitySetPropertyMetadata :Object) {
+export function getAllEntitySetPropertyMetadataResolve(entitySetId, entitySetPropertyMetadata) {
   return {
     type: actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_SUCCESS,
     entitySetId,
@@ -94,14 +90,14 @@ export function getAllEntitySetPropertyMetadataResolve(entitySetId :string, enti
   };
 }
 
-export function getAllEntitySetPropertyMetadataReject(errorMessage :string) {
+export function getAllEntitySetPropertyMetadataReject(errorMessage) {
   return {
     type: actionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_FAILURE,
     errorMessage
   };
 }
 
-export function updateEntitySetPropertyMetadataRequest(entitySetId :string, propertyTypeId :string, update :Object) {
+export function updateEntitySetPropertyMetadataRequest(entitySetId, propertyTypeId, update) {
   return {
     type: actionTypes.UPDATE_ENTITY_SET_PROPERTY_METADATA_REQUEST,
     entitySetId,
@@ -116,7 +112,7 @@ export function updateEntitySetPropertyMetadataResolve() {
   };
 }
 
-export function updateEntitySetPropertyMetadataReject(errorMessage :string) {
+export function updateEntitySetPropertyMetadataReject(errorMessage) {
   return {
     type: actionTypes.UPDATE_ENTITY_SET_PROPERTY_METADATA_FAILURE,
     errorMessage

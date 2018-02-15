@@ -1,10 +1,8 @@
-/* @flow */
-import Immutable, { Map, fromJS } from 'immutable';
+import Immutable, { fromJS } from 'immutable';
 
 import * as actionTypes from './DatasetsActionTypes';
-import * as EdmActionTypes from '../edm/EdmActionTypes';
 
-import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent'
+import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const LOADING_ERROR = Symbol('loading error');
 
@@ -15,7 +13,7 @@ export const LOADING_ERROR = Symbol('loading error');
  * token. Subsequent paging tokens will be strings, and if null is returned, you
  * have reached the last page.
  */
-const INITIAL_STATE:Map<*, *> = fromJS({
+const INITIAL_STATE = fromJS({
   asyncStatus: ASYNC_STATUS.PENDING,
   authorizedObjects: Immutable.List(),
   ownedEntitySetIds: Immutable.List(),
@@ -26,7 +24,7 @@ const INITIAL_STATE:Map<*, *> = fromJS({
   allPagingTokens: Immutable.List.of(null)
 });
 
-export default function reducer(state:Map<*, *> = INITIAL_STATE, action:Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
     case actionTypes.GET_OWNED_DATASETS_IDS_REQUEST:
@@ -40,7 +38,7 @@ export default function reducer(state:Map<*, *> = INITIAL_STATE, action:Object) 
 
     case actionTypes.GET_OWNED_DATASETS_IDS_RESOLVE: {
 
-      const newState :Map = state
+      const newState = state
         .set('pagingToken', action.pagingToken)
         .set('finishedLoading', !action.pagingToken)
         .set('ownedEntitySetIds', Immutable.fromJS(action.ownedEntitySetIds))
