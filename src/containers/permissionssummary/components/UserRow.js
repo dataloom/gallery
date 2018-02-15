@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
 
+import { NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
 import styles from '../styles.module.css';
 
 

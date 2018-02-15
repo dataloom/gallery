@@ -3,7 +3,7 @@ import Immutable from 'immutable';
 
 import UserRow from './UserRow';
 import RoleRow from './RoleRow';
-import styles from '../styles.module.css';
+import { INDIVIDUAL } from '../../../utils/Consts/PermissionsSummaryConsts';
 
 
 class UserGroupRow extends React.Component {
