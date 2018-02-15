@@ -3,74 +3,14 @@ import Immutable from 'immutable';
 import { Table } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
+// import UserGroupRow from './UserGroupRow';
+import UserRow from './UserRow';
+import RoleRow from './RoleRow';
+
 import { AUTHENTICATED_USER } from '../../../utils/Consts/UserRoleConsts';
 import { INDIVIDUAL, NONE } from '../../../utils/Consts/PermissionsSummaryConsts';
 import styles from '../styles.module.css';
 
-
-class UserRow extends React.Component {
-  static propTypes = {
-    user: PropTypes.instanceOf(Immutable.Map).isRequired
-  }
-
-  getUserCellData = () => {
-    const { user } = this.props;
-    if (user.get('nickname')) {
-      return `${user.get('nickname')} (${user.get('email')})`;
-    }
-
-    return user.get('email');
-  }
-
-  getPermissionsStr = () => {
-    const { user } = this.props;
-    let formattedPermissions;
-    if (user.get('permissions').size === 0) {
-      formattedPermissions = NONE;
-    }
-    else {
-      formattedPermissions = user.get('permissions').join(', ');
-    }
-
-    return formattedPermissions;
-  }
-
-  render() {
-    return (
-      <tr className={styles.mainRow}>
-        <td>{this.getUserCellData()}</td>
-        <td />
-        <td>{this.getPermissionsStr()}</td>
-      </tr>
-    );
-  }
-}
-
-class RoleRow extends React.Component {
-  static propTypes = {
-    permissions: PropTypes.instanceOf(Immutable.List),
-    role: PropTypes.string.isRequired
-  }
-
-  getPermissions = () => {
-    const { permissions } = this.props;
-    if (permissions && permissions.size > 0) {
-      return permissions.join(', ');
-    }
-    return NONE;
-  }
-
-  render() {
-    const { role } = this.props;
-    return (
-      <tr className={styles.subRow}>
-        <td />
-        <td>{role}</td>
-        <td>{this.getPermissions()}</td>
-      </tr>
-    );
-  }
-}
 
 class UserGroupRow extends React.Component {
 
@@ -115,7 +55,6 @@ class UserGroupRow extends React.Component {
   }
 }
 
-// TODO: Separate components into different files
 class UserPermissionsTable extends React.Component {
 
   static propTypes = {
