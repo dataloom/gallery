@@ -212,6 +212,9 @@ class OrganizationTitleSectionComponent extends React.Component {
       return null;
     }
 
+    const roleAclKeys = this.props.organization.get('roles').map(role => role.get('aclKey'));
+    const allAclKeys = roleAclKeys.push([orgId]).toJS();
+
     return (
       <Modal
           show={this.state.editingPermissions}
@@ -222,7 +225,7 @@ class OrganizationTitleSectionComponent extends React.Component {
           <Modal.Title>Manage permissions for organization: {orgTitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <PermissionsPanel entitySetId={orgId} aclKeysToUpdate={[[orgId]]} isOrganization />
+          <PermissionsPanel entitySetId={orgId} aclKeysToUpdate={allAclKeys} isOrganization />
         </Modal.Body>
       </Modal>
     );
