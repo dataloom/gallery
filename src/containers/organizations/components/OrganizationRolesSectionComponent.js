@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -23,9 +19,7 @@ import {
 } from '../actions/OrganizationActionFactory';
 
 const {
-  Principal,
   PrincipalBuilder,
-  Role,
   RoleBuilder
 } = Models;
 
@@ -37,11 +31,11 @@ const RolesListContainer = styled.div`
   width: 400px;
 `;
 
-function mapStateToProps(state :Immutable.Map, ownProps :Object) {
+function mapStateToProps(state, ownProps) {
 
-  const roleItems :List<Map<string, string>> = ownProps.organization
+  const roleItems = ownProps.organization
     .get('roles', Immutable.List())
-    .map((role :Map<string, any>) => {
+    .map((role) => {
       return Immutable.fromJS({
         id: role.get('id'),
         value: role.get('title'),
@@ -54,7 +48,7 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     addRoleToOrganizationRequest,
@@ -77,14 +71,14 @@ class OrganizationRolesSectionComponent extends React.Component {
     roleItems: PropTypes.instanceOf(Immutable.List).isRequired
   }
 
-  addRole = (roleTitle :string) => {
+  addRole = (roleTitle) => {
 
-    const principal :Principal = (new PrincipalBuilder())
+    const principal = (new PrincipalBuilder())
       .setType(PrincipalTypes.ROLE)
       .setId(roleTitle.replace(/\W/g, ''))
       .build();
 
-    const role :Role = (new RoleBuilder())
+    const role = (new RoleBuilder())
       .setOrganizationId(this.props.organization.get('id'))
       .setTitle(roleTitle)
       .setPrincipal(principal)
@@ -93,19 +87,19 @@ class OrganizationRolesSectionComponent extends React.Component {
     this.props.actions.addRoleToOrganizationRequest(role);
   }
 
-  removeRole = (roleId :UUID) => {
+  removeRole = (roleId) => {
 
     this.props.actions.removeRoleFromOrganizationRequest(this.props.organization.get('id'), roleId);
   }
 
-  isValidRole = (role :string) => {
+  isValidRole = (role) => {
 
     return !!role;
   }
 
   render() {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     let sectionContent;
     if (this.props.roleItems.isEmpty() && !isOwner) {

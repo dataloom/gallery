@@ -130,7 +130,6 @@ export function getPermissions(permissionsState :Map<string,*>, aclKey :AclKey) 
   if (permissions) {
     // TODO: Remove toJS() when components move to Immutable
     return permissions.toJS();
-  } else {
-    return DEFAULT_PERMISSIONS;
   }
+  return DEFAULT_PERMISSIONS;
 }

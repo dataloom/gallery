@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -95,7 +91,7 @@ class SecurableObjectSearch extends React.Component {
   getEntityTypeOptions() {
 
     const options = [];
-    this.props.entityTypes.forEach((entityType :Map) => {
+    this.props.entityTypes.forEach((entityType) => {
       if (!entityType.isEmpty()) {
         options.push({
           value: entityType.get('id'),
@@ -110,7 +106,7 @@ class SecurableObjectSearch extends React.Component {
   getPropertyTypeOptions() {
 
     const options = [];
-    this.props.propertyTypes.forEach((propertyType :Map) => {
+    this.props.propertyTypes.forEach((propertyType) => {
       if (!propertyType.isEmpty()) {
         options.push({
           value: propertyType.get('id'),
@@ -128,23 +124,21 @@ class SecurableObjectSearch extends React.Component {
         <FormGroup className={styles.searchTerm}>
           <ControlLabel>Search Term</ControlLabel>
           <InputGroup>
-            <InputGroup.Addon><FontAwesome name="search"/></InputGroup.Addon>
+            <InputGroup.Addon><FontAwesome name="search" /></InputGroup.Addon>
             <FormControl
-              value={this.state.searchTerm}
-              type="text"
-              onChange={this.onSearchTermChange}
-            />
+                value={this.state.searchTerm}
+                type="text"
+                onChange={this.onSearchTermChange} />
           </InputGroup>
         </FormGroup>
 
         <FormGroup className={styles.propertyTypes}>
           <ControlLabel>Property types</ControlLabel>
           <Select
-            value={this.state.propertyTypeIds}
-            options={this.getPropertyTypeOptions()}
-            onChange={this.onPropertyTypesChange}
-            multi={true}
-          />
+              value={this.state.propertyTypeIds}
+              options={this.getPropertyTypeOptions()}
+              onChange={this.onPropertyTypesChange}
+              multi />
         </FormGroup>
 
         <span className={styles.divider}>Or</span>
@@ -152,10 +146,9 @@ class SecurableObjectSearch extends React.Component {
         <FormGroup className={styles.entityType}>
           <ControlLabel>Entity type</ControlLabel>
           <Select
-            value={this.state.entityTypeId}
-            options={this.getEntityTypeOptions()}
-            onChange={this.onEntityTypeChange}
-          />
+              value={this.state.entityTypeId}
+              options={this.getEntityTypeOptions()}
+              onChange={this.onEntityTypeChange} />
         </FormGroup>
 
         <Button type="submit" bsStyle="primary" className={styles.submitButton}>Search</Button>
@@ -164,7 +157,7 @@ class SecurableObjectSearch extends React.Component {
   }
 }
 
-function mapStateToProps(state :Immutable.Map) :Object {
+function mapStateToProps(state) {
 
   return {
     entityTypes: state.getIn(['edm', 'entityTypes']),
@@ -172,7 +165,7 @@ function mapStateToProps(state :Immutable.Map) :Object {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     fetchAllEntityTypesRequest,

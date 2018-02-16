@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -141,7 +137,7 @@ class CreateEntitySet extends React.Component {
   getEntityTypeOptions() {
 
     const options = [];
-    this.props.entityTypes.forEach((entityType :Map) => {
+    this.props.entityTypes.forEach((entityType) => {
       if (!entityType.isEmpty()) {
         options.push({
           value: entityType.get('id'),
@@ -256,8 +252,8 @@ function mapStateToProps(state) {
   // const normalizedData = state.get('normalizedData').toJS(),
   const createEntitySetState = state.get('createEntitySet').toJS();
 
-  const entityTypes :Map = state.getIn(['edm', 'entityTypes'], Immutable.Map());
-  const entitySets :Map = state.getIn(['edm', 'entitySets'], Immutable.Map());
+  const entityTypes = state.getIn(['edm', 'entityTypes'], Immutable.Map());
+  const entitySets = state.getIn(['edm', 'entitySets'], Immutable.Map());
 
   let personEntityTypeId = '';
   entityTypes.valueSeq().forEach((entityType) => {
@@ -274,7 +270,7 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     fetchAllEntityTypesRequest,

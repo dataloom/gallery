@@ -1,39 +1,23 @@
-/*
- * @flow
- */
-
-import {
-  Models,
-  Types,
-  OrganizationsApi
-} from 'lattice';
+import { Models, OrganizationsApi } from 'lattice';
 
 import { push } from 'react-router-redux';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
 
-import * as PrincipalsActionFactory from '../../principals/PrincipalsActionFactory';
 import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 import * as OrgActionFactory from '../actions/OrganizationActionFactory';
 
-const {
-  Organization,
-  OrganizationBuilder
-} = Models;
+const { OrganizationBuilder } = Models;
 
-const {
-  PrincipalTypes
-} = Types;
-
-function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function createNewOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.CREATE_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.createOrganization(action.organization))
         .mergeMap((orgId) => {
-          const org :Organization = (new OrganizationBuilder())
+          const org = (new OrganizationBuilder())
             .setId(orgId)
             .setTitle(action.organization.title)
             .setPrincipal(action.organization.principal)
@@ -51,11 +35,11 @@ function createNewOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
     });
 }
 
-function deleteOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function deleteOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.DELETE_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.deleteOrganization(action.orgId))
         .mergeMap(() => {
@@ -72,11 +56,11 @@ function deleteOrganizationEpic(action$ :Observable<Action>) :Observable<Action>
     });
 }
 
-function updateOrganizationDescriptionEpic(action$ :Observable<Action>) :Observable<Action> {
+function updateOrganizationDescriptionEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.UPDATE_ORG_DESCRIPTION_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.updateDescription(action.organization.id, action.organization.description))
         .map(() => {
@@ -90,11 +74,11 @@ function updateOrganizationDescriptionEpic(action$ :Observable<Action>) :Observa
     });
 }
 
-function updateOrganizationTitleEpic(action$ :Observable<Action>) :Observable<Action> {
+function updateOrganizationTitleEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.UPDATE_ORG_TITLE_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.updateTitle(action.organization.id, action.organization.title))
         .map(() => {
@@ -109,11 +93,11 @@ function updateOrganizationTitleEpic(action$ :Observable<Action>) :Observable<Ac
 }
 
 
-function addDomainToOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function addDomainToOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.ADD_DOMAIN_TO_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.addAutoApprovedEmailDomain(action.orgId, action.emailDomain))
         .map(() => {
@@ -127,11 +111,11 @@ function addDomainToOrganizationEpic(action$ :Observable<Action>) :Observable<Ac
     });
 }
 
-function removeDomainFromOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function removeDomainFromOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.REMOVE_DOMAIN_FROM_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.removeAutoApprovedEmailDomain(action.orgId, action.emailDomain))
         .map(() => {
@@ -145,14 +129,14 @@ function removeDomainFromOrganizationEpic(action$ :Observable<Action>) :Observab
     });
 }
 
-function addRoleToOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function addRoleToOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.ADD_ROLE_TO_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.createRole(action.role))
-        .mergeMap((roleId :UUID) => {
+        .mergeMap((roleId) => {
           return Observable.of(
             OrgActionFactory.addRoleToOrganizationSuccess(action.role, roleId)
           );
@@ -165,11 +149,11 @@ function addRoleToOrganizationEpic(action$ :Observable<Action>) :Observable<Acti
     });
 }
 
-function removeRoleFromOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function removeRoleFromOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.REMOVE_ROLE_FROM_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.deleteRole(action.orgId, action.roleId))
         .mergeMap(() => {
@@ -185,11 +169,11 @@ function removeRoleFromOrganizationEpic(action$ :Observable<Action>) :Observable
     });
 }
 
-function addMemberToOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function addMemberToOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.ADD_MEMBER_TO_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.addMemberToOrganization(action.orgId, action.memberId))
         .mergeMap(() => {
@@ -206,11 +190,11 @@ function addMemberToOrganizationEpic(action$ :Observable<Action>) :Observable<Ac
     });
 }
 
-function removeMemberFromOrganizationEpic(action$ :Observable<Action>) :Observable<Action> {
+function removeMemberFromOrganizationEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.REMOVE_MEMBER_FROM_ORG_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.removeMemberFromOrganization(action.orgId, action.memberId))
         .mergeMap(() => {
@@ -227,11 +211,11 @@ function removeMemberFromOrganizationEpic(action$ :Observable<Action>) :Observab
     });
 }
 
-function addRoleToMemberEpic(action$ :Observable<Action>) :Observable<Action> {
+function addRoleToMemberEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.ADD_ROLE_TO_MEMBER_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.addRoleToMember(action.orgId, action.roleId, action.memberId))
         .mergeMap(() => {
@@ -248,11 +232,11 @@ function addRoleToMemberEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
-function removeRoleFromMemberEpic(action$ :Observable<Action>) :Observable<Action> {
+function removeRoleFromMemberEpic(action$) {
 
   return action$
     .ofType(OrgActionTypes.REMOVE_ROLE_FROM_MEMBER_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.removeRoleFromMember(action.orgId, action.roleId, action.memberId))
         .mergeMap(() => {
@@ -269,13 +253,13 @@ function removeRoleFromMemberEpic(action$ :Observable<Action>) :Observable<Actio
     });
 }
 
-function fetchMembersEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchMembersEpic(action$) {
   return action$
     .ofType(OrgActionTypes.FETCH_MEMBERS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(OrganizationsApi.getAllMembers(action.orgId))
-        .mergeMap((members :Object[]) => {
+        .mergeMap((members) => {
           return Observable.of(
             OrgActionFactory.fetchMembersSuccess(members)
           );

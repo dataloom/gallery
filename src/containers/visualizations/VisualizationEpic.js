@@ -1,8 +1,6 @@
-/* @flow */
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 import Promise from 'bluebird';
-import Immutable from 'immutable';
 import { AuthorizationApi, EntityDataModelApi, DataApi } from 'lattice';
 
 import EdmConsts from '../../utils/Consts/EdmConsts';
@@ -16,7 +14,7 @@ const MAX_POINTS_TO_DISPLAY = 1000;
 function loadEntitySetEpic(action$) {
   return action$
     .ofType(actionTypes.LOAD_ENTITY_SET_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(EntityDataModelApi.getEntitySet(action.id))
         .mergeMap((entitySet) => {
@@ -26,7 +24,7 @@ function loadEntitySetEpic(action$) {
           );
         })
         // Error Handling
-        .catch((error) => {
+        .catch(() => {
           return Observable.of(actionFactories.loadEntitySetFailure('Error loading entity set'));
         });
     });
@@ -35,7 +33,7 @@ function loadEntitySetEpic(action$) {
 function loadEntityTypeEpic(action$) {
   return action$
     .ofType(actionTypes.LOAD_ENTITY_TYPE_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(EntityDataModelApi.getEntityType(action.entityTypeId))
         .mergeMap((entityType) => {
@@ -54,7 +52,7 @@ function loadEntityTypeEpic(action$) {
         // Error Handling
         .catch((error) => {
           console.error(error);
-          return Observable.of(actionFactories.loadEntityTypeFailure('Error loading entity type'))
+          return Observable.of(actionFactories.loadEntityTypeFailure('Error loading entity type'));
         });
     });
 }
@@ -62,7 +60,7 @@ function loadEntityTypeEpic(action$) {
 function loadPropertyTypesEpic(action$) {
   return action$
     .ofType(actionTypes.LOAD_PROPERTY_TYPES_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(Promise.map(action.propertyTypeIds, (propertyId) => {
           return EntityDataModelApi.getPropertyType(propertyId);
@@ -113,7 +111,7 @@ function loadPropertyTypesEpic(action$) {
           );
         })
         // Error Handling
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           return Observable.of(actionFactories.loadPropertyTypesFailure('Error loading property types'))
         });
@@ -123,7 +121,7 @@ function loadPropertyTypesEpic(action$) {
 function checkAuthorizationsEpic(action$) {
   return action$
     .ofType(actionTypes.CHECK_AUTHORIZATIONS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(AuthorizationApi.checkAuthorizations(action.accessChecks))
         .mergeMap((response) => {
@@ -139,7 +137,9 @@ function checkAuthorizationsEpic(action$) {
         // Error Handling
         .catch((error) => {
           console.error(error);
-          return Observable.of(actionFactories.checkAuthorizationsFailure('Error loading owned property type authorizations'));
+          return Observable.of(
+            actionFactories.checkAuthorizationsFailure('Error loading owned property type authorizations')
+          );
         });
     });
 }
@@ -147,7 +147,7 @@ function checkAuthorizationsEpic(action$) {
 function getDataEpic(action$) {
   return action$
     .ofType(actionTypes.GET_DATA_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(DataApi.getEntitySetData(action.entitySetId, '', action.propertyTypeIds))
         .mergeMap((data) => {
@@ -165,7 +165,7 @@ function getDataEpic(action$) {
         // Error Handling
         .catch((error) => {
           console.error(error);
-          return Observable.of(actionFactories.getDataFailure('Error loading entity set data'))
+          return Observable.of(actionFactories.getDataFailure('Error loading entity set data'));
         });
     });
 }
@@ -173,7 +173,7 @@ function getDataEpic(action$) {
 function getAllEntitySetsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ALL_ENTITY_SETS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap(() => {
       return Observable
         .from(EntityDataModelApi.getAllEntitySets())
         .mergeMap((entitySetsRaw) => {
@@ -194,9 +194,9 @@ function getAllEntitySetsEpic(action$) {
 function getAllEntityTypesForSetsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ALL_ENTITY_TYPES_FOR_SETS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       const entityTypeIds = action.entitySets.map((entitySet) => {
-        return entitySet.entityTypeId
+        return entitySet.entityTypeId;
       });
       return Observable
         .from(Promise.map(entityTypeIds, (entityTypeId) => {
@@ -211,7 +211,9 @@ function getAllEntityTypesForSetsEpic(action$) {
         // Error Handling
         .catch((error) => {
           console.error(error);
-          return Observable.of(actionFactories.getAllEntityTypesForSetsFailure('Error loading entity types for entity sets'));
+          return Observable.of(
+            actionFactories.getAllEntityTypesForSetsFailure('Error loading entity types for entity sets')
+          );
         });
     });
 }
@@ -219,7 +221,7 @@ function getAllEntityTypesForSetsEpic(action$) {
 function getAllPropertyTypesForSetsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ALL_PROPERTY_TYPES_FOR_SETS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       const propertyTypeIds = new Set();
       action.entityTypes.forEach((entityType) => {
         entityType.properties.forEach((propertyId) => {
@@ -239,7 +241,9 @@ function getAllPropertyTypesForSetsEpic(action$) {
         // Error Handling
         .catch((error) => {
           console.error(error);
-          return Observable.of(actionFactories.getAllPropertyTypesForSetsFailure('Error loading property types for entity sets'));
+          return Observable.of(
+            actionFactories.getAllPropertyTypesForSetsFailure('Error loading property types for entity sets')
+          );
         });
     });
 }
@@ -247,7 +251,7 @@ function getAllPropertyTypesForSetsEpic(action$) {
 function getVisualizableEntitySetsEpic(action$) {
   return action$
     .ofType(actionTypes.GET_VISUALIZABLE_ENTITY_SETS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       const pidToDatatype = {};
       action.propertyTypes.forEach((propertyType) => {
         pidToDatatype[propertyType.id] = propertyType.datatype;
@@ -299,7 +303,9 @@ function getVisualizableEntitySetsEpic(action$) {
         // Error Handling
         .catch((error) => {
           console.error(error);
-          return Observable.of(actionFactories.getVisualizableEntitySetsFailure('Error loading visualizable entity sets'));
+          return Observable.of(
+            actionFactories.getVisualizableEntitySetsFailure('Error loading visualizable entity sets')
+          );
         });
     });
 }

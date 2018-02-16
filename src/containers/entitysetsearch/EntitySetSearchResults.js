@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -21,9 +17,6 @@ import { getTitleV2 } from '../../utils/EntityTypeTitles';
 
 import styles from './styles.module.css';
 
-type SetMultiMap = Map<string, Set<any>>;
-type ListSetMultiMap = List<SetMultiMap>;
-
 const {
   FullyQualifiedName
 } = Models;
@@ -38,10 +31,10 @@ const BreadcrumbsContainer = styled.div`
 `;
 
 const Breadcrumb = styled.span`
-  color: ${(props :Object) => {
+  color: ${(props) => {
     return props.link ? '#337ab7' : '#777777';
   }};
-  ${(props :Object) => {
+  ${(props) => {
     if (props.link) {
       return css`
         &:hover {
@@ -83,24 +76,11 @@ export default class EntitySetSearchResults extends React.Component {
     hidePaginationFn: () => {}
   }
 
-  state :{
-    breadcrumbs :Object[],
-    searchResults :List<Map<string, any>>,
-    neighborView :string,
-    neighborDateProps :Object,
-    neighborResults :Map<string, Map<string, any>>,
-    selectedEntity :Map<string, any>,
-    selectedEntityId :UUID,
-    selectedEntitySet :Map<string, any>,
-    personPropertiesExist :boolean,
-    renderPersonView :boolean
-  }
-
-  constructor(props :Object) {
+  constructor(props) {
 
     super(props);
 
-    const searchResults :List<Map<string, any>> = Immutable.fromJS(props.results);
+    const searchResults = Immutable.fromJS(props.results);
 
     this.state = {
       searchResults,
@@ -128,9 +108,9 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
-  componentWillReceiveProps(nextProps :Object) {
+  componentWillReceiveProps(nextProps) {
 
-    const searchResults :List<Map<string, any>> = Immutable.fromJS(nextProps.results);
+    const searchResults = Immutable.fromJS(nextProps.results);
     const personPropertiesExist = this.personPropertiesExist(nextProps.propertyTypes);
     let { renderPersonView } = this.state;
     if (renderPersonView === undefined && personPropertiesExist) renderPersonView = true;
@@ -142,17 +122,17 @@ export default class EntitySetSearchResults extends React.Component {
     });
   }
 
-  processNeighborResults = (neighbors :Object[]) => {
+  processNeighborResults = (neighbors) => {
 
     // TODO: dateProps logic is just copied over from RowNeighbors. consider redoing this.
     const dateProps = {};
     const organizedNeighbors = {};
 
-    neighbors.forEach((neighbor :Object) => {
+    neighbors.forEach((neighbor) => {
       if (!neighbor) {
         return;
       }
-      const associationEntitySetId :UUID = neighbor.associationEntitySet.id;
+      const associationEntitySetId = neighbor.associationEntitySet.id;
       if (associationEntitySetId) {
         if (!organizedNeighbors[associationEntitySetId]) {
           organizedNeighbors[associationEntitySetId] = {};
@@ -167,7 +147,7 @@ export default class EntitySetSearchResults extends React.Component {
             }
           });
         }
-        const neighborEntitySetId :UUID | string = (neighbor.neighborEntitySet)
+        const neighborEntitySetId = (neighbor.neighborEntitySet)
           ? neighbor.neighborEntitySet.id
           : NEIGHBOR_ENTITY_SET_MISSING;
         if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
@@ -197,9 +177,9 @@ export default class EntitySetSearchResults extends React.Component {
     };
   }
 
-  personPropertiesExist = (propertyTypes :Object) => {
+  personPropertiesExist = (propertyTypes) => {
 
-    const properties :FullyQualifiedName[] = propertyTypes.map((propertyType) => {
+    const properties = propertyTypes.map((propertyType) => {
       try {
         return new FullyQualifiedName(propertyType.type);
       }
@@ -211,13 +191,13 @@ export default class EntitySetSearchResults extends React.Component {
 
     if (properties && properties.length > 0) {
 
-      let hasFirstName :boolean = false;
-      let hasLastName :boolean = false;
-      let hasPicture :boolean = false;
+      let hasFirstName = false;
+      let hasLastName = false;
+      let hasPicture = false;
 
-      properties.forEach((property :string | FullyQualifiedName) => {
+      properties.forEach((property) => {
         if (property) {
-          const value :string = (typeof property === 'string') ? property : property.getName();
+          const value = (typeof property === 'string') ? property : property.getName();
           if (FIRST_NAMES.includes(value.toLowerCase())) {
             hasFirstName = true;
           }
@@ -237,7 +217,7 @@ export default class EntitySetSearchResults extends React.Component {
     return false;
   }
 
-  onEntitySelect = (selectedEntityId :UUID, selectedEntitySetId :UUID, selectedEntity :Map<string, any>) => {
+  onEntitySelect = (selectedEntityId, selectedEntitySetId, selectedEntity) => {
 
     if (selectedEntityId === this.state.selectedEntityId) {
       return;
@@ -288,7 +268,7 @@ export default class EntitySetSearchResults extends React.Component {
     this.props.hidePaginationFn(false);
   }
 
-  jumpToSelectedEntity = (index :number) => {
+  jumpToSelectedEntity = (index) => {
     const crumb = this.state.breadcrumbs[index];
     this.setState({
       breadcrumbs: this.state.breadcrumbs.slice(0, index + 1),
@@ -327,7 +307,7 @@ export default class EntitySetSearchResults extends React.Component {
       );
     }
 
-    this.state.breadcrumbs.forEach((crumb :Object, index :number) => {
+    this.state.breadcrumbs.forEach((crumb, index) => {
 
       breadcrumbs.push(<Breadcrumb key={`bc-${getKeyCounter()}`}>{' / '}</Breadcrumb>);
 
@@ -388,13 +368,13 @@ export default class EntitySetSearchResults extends React.Component {
   getSearchResultsDataTableHeaders = () => {
 
     // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
-    let headers = Immutable.List().withMutations((list :List<Map<string, string>>) => {
-      this.props.propertyTypes.forEach((propertyType :Object) => {
-        const title :string = (this.props.entitySetPropertyMetadata[propertyType.id])
+    let headers = Immutable.List().withMutations((list) => {
+      this.props.propertyTypes.forEach((propertyType) => {
+        const title = (this.props.entitySetPropertyMetadata[propertyType.id])
           ? this.props.entitySetPropertyMetadata[propertyType.id].title
           : propertyType.title;
         try {
-          const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.type);
+          const fqn = new FullyQualifiedName(propertyType.type);
           list.push(Immutable.fromJS({
             id: fqn.getFullyQualifiedName(),
             value: title
@@ -425,17 +405,17 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderSearchResultsDataTable = () => {
 
-    let headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
+    let headers = this.getSearchResultsDataTableHeaders();
 
     // it doesn't make sense to show pictures in the data table as they are base64 encoded strings
     // removing the picture column also helps with performance since the picture string is very large
-    headers = headers.filterNot((header :Map<string, string>) => {
-      const id :string = header.get('id', '').toLowerCase();
+    headers = headers.filterNot((header) => {
+      const id = header.get('id', '').toLowerCase();
       return id.includes('mugshot') || id.includes('picture');
     });
 
-    const onClick = (selectedRowIndex :number, selectedRowData) => {
-      const selectedEntityId :UUID = this.state.searchResults.getIn([selectedRowIndex, 'id', 0]);
+    const onClick = (selectedRowIndex, selectedRowData) => {
+      const selectedEntityId = this.state.searchResults.getIn([selectedRowIndex, 'id', 0]);
       const selectedEntity = Immutable.fromJS({
         headers,
         data: selectedRowData
@@ -453,13 +433,13 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderSearchResultsPersonList = () => {
 
-    const headers :List<Map<string, string>> = this.getSearchResultsDataTableHeaders();
+    const headers = this.getSearchResultsDataTableHeaders();
 
     const personList = [];
-    this.state.searchResults.forEach((personResult :Map<string, any>, index :number) => {
+    this.state.searchResults.forEach((personResult, index) => {
 
       const onClick = () => {
-        const selectedEntityId :UUID = personResult.getIn(['id', 0]);
+        const selectedEntityId = personResult.getIn(['id', 0]);
         const selectedEntity = Immutable.fromJS({
           headers,
           data: personResult
@@ -478,7 +458,7 @@ export default class EntitySetSearchResults extends React.Component {
 
   getImageCellData(data) {
 
-    const images = data.map((imgSrc :string) => {
+    const images = data.map((imgSrc) => {
       return <RowImage key={`img-${getKeyCounter()}`} imgSrc={imgSrc} />;
     });
 
@@ -491,9 +471,9 @@ export default class EntitySetSearchResults extends React.Component {
 
   renderSelectedEntityDataTable = () => {
 
-    const propertyHeader :string = 'Property';
-    const dataHeader :string = 'Data';
-    const headers :List<string> = Immutable.fromJS([
+    const propertyHeader = 'Property';
+    const dataHeader = 'Data';
+    const headers = Immutable.fromJS([
       { id: propertyHeader, value: propertyHeader },
       { id: dataHeader, value: dataHeader }
     ]);
@@ -518,21 +498,21 @@ export default class EntitySetSearchResults extends React.Component {
      *     { "Property": ["fqn.2"], "Data": ["some_more_data"] },
      *   ]
      */
-    const data :ListSetMultiMap = Immutable.List().withMutations((list :ListSetMultiMap) => {
-      this.state.selectedEntity.get('headers', []).forEach((header :Map<string, string>) => {
+    const data = Immutable.List().withMutations((list) => {
+      this.state.selectedEntity.get('headers', []).forEach((header) => {
 
-        const headerId :string = header.get('id', '');
+        const headerId = header.get('id', '');
         if (this.state.selectedEntity.hasIn(['data', headerId])) {
 
           let dataValue :any = this.state.selectedEntity.getIn(['data', headerId]);
 
           // HACK: for displaying images in the table
-          const headerIdLC :string = headerId.toLowerCase();
+          const headerIdLC = headerId.toLowerCase();
           if (headerIdLC.includes('mugshot') || headerIdLC.includes('picture')) {
             dataValue = getImageCellData(dataValue);
           }
 
-          const item :Map<string, any> = Immutable.Map()
+          const item = Immutable.Map()
             .set(propertyHeader, header.get('value'))
             .set(dataHeader, dataValue);
           list.push(item);
@@ -540,9 +520,9 @@ export default class EntitySetSearchResults extends React.Component {
       });
     });
 
-    const headerIds :FullyQualifiedName[] = this.state.selectedEntity
+    const headerIds = this.state.selectedEntity
       .get('headers', Immutable.List())
-      .map((header :Map<string, string>) => {
+      .map((header) => {
         try {
           return new FullyQualifiedName(header.get('id'));
         }
@@ -607,16 +587,16 @@ export default class EntitySetSearchResults extends React.Component {
     );
   }
 
-  getNeighborGroupDataTableTitle = (neighbor :Map<string, any>) => {
+  getNeighborGroupDataTableTitle = (neighbor) => {
 
-    let entitySetTitle :string = '';
+    let entitySetTitle = '';
     if (this.state.selectedEntitySet.has('title')) {
       entitySetTitle = this.state.selectedEntitySet.get('title');
     }
 
-    const neighborEntitySetId :UUID = neighbor.getIn(['neighborEntitySet', 'id']);
-    const neighborEntitySetTitle :UUID = neighbor.getIn(['neighborEntitySet', 'title']);
-    const associationEntitySetTitle :UUID = neighbor.getIn(['associationEntitySet', 'title']);
+    const neighborEntitySetId = neighbor.getIn(['neighborEntitySet', 'id']);
+    const neighborEntitySetTitle = neighbor.getIn(['neighborEntitySet', 'title']);
+    const associationEntitySetTitle = neighbor.getIn(['associationEntitySet', 'title']);
 
     const neighborTitle = (neighborEntitySetId === NEIGHBOR_ENTITY_SET_MISSING)
       ? (
@@ -645,13 +625,13 @@ export default class EntitySetSearchResults extends React.Component {
       );
   }
 
-  getNeighborGroupHeaders = (neighborGroup :List<any>) => {
+  getNeighborGroupHeaders = (neighborGroup) => {
 
-    return Immutable.List().withMutations((headers :List<Map<string, string>>) => {
+    return Immutable.List().withMutations((headers) => {
       // each neighbor in the neighbor group has identical PropertyTypes, so we only need one neighbor
       neighborGroup.first().get('associationPropertyTypes', Immutable.List())
-        .forEach((propertyType :Map<string, any>) => {
-          const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
+        .forEach((propertyType) => {
+          const fqn = new FullyQualifiedName(propertyType.get('type').toJS());
           headers.push(Immutable.Map({
             id: fqn.getFullyQualifiedName(),
             value: propertyType.get('title')
@@ -661,17 +641,17 @@ export default class EntitySetSearchResults extends React.Component {
       if (neighbor === null || neighbor === undefined) {
         neighbor = Immutable.List();
       }
-      neighbor.forEach((propertyType :Map<string, any>) => {
-          const fqn :FullyQualifiedName = new FullyQualifiedName(propertyType.get('type').toJS());
-          headers.push(Immutable.Map({
-            id: fqn.getFullyQualifiedName(),
-            value: propertyType.get('title')
-          }));
-        });
+      neighbor.forEach((propertyType) => {
+        const fqn = new FullyQualifiedName(propertyType.get('type').toJS());
+        headers.push(Immutable.Map({
+          id: fqn.getFullyQualifiedName(),
+          value: propertyType.get('title')
+        }));
+      });
     });
   }
 
-  removeDuplicates = (list1 :List<any>, list2 :List<any>) => {
+  removeDuplicates = (list1, list2) => {
     let valueSet = Immutable.Set();
     list1.concat(list2).forEach((val) => {
       valueSet = valueSet.add(val);
@@ -679,15 +659,15 @@ export default class EntitySetSearchResults extends React.Component {
     return valueSet.toList();
   }
 
-  getNeighborGroupData = (neighborGroup :List<any>) => {
+  getNeighborGroupData = (neighborGroup) => {
 
-    return neighborGroup.map((neighbor :Map<string, any>) => {
+    return neighborGroup.map((neighbor) => {
 
-      const associationDetails :Map<string, any> = neighbor.get('associationDetails', Immutable.Map());
-      const neighborDetails :Map<string, any> = neighbor.get('neighborDetails', Immutable.Map());
+      const associationDetails = neighbor.get('associationDetails', Immutable.Map());
+      const neighborDetails = neighbor.get('neighborDetails', Immutable.Map());
 
       // TODO: how do we handle duplicate keys with different values? is that even possible?
-      let mergedDetails :Map<string, any> = associationDetails.mergeWith(this.removeDuplicates, neighborDetails);
+      let mergedDetails = associationDetails.mergeWith(this.removeDuplicates, neighborDetails);
 
       if (neighbor.has('neighborId')) {
         mergedDetails = mergedDetails.set('id', neighbor.get('neighborId'));
@@ -699,12 +679,12 @@ export default class EntitySetSearchResults extends React.Component {
 
   getNeighborGroupDataTable = (neighborGroup, neighborGroupData, neighborGroupHeaders) => {
 
-    const firstNeighbor :Map<string, any> = neighborGroup.first();
-    const title :string = this.getNeighborGroupDataTableTitle(firstNeighbor);
-    const neighborEntitySetId :UUID = firstNeighbor.getIn(['neighborEntitySet', 'id']);
+    const firstNeighbor = neighborGroup.first();
+    const title = this.getNeighborGroupDataTableTitle(firstNeighbor);
+    const neighborEntitySetId = firstNeighbor.getIn(['neighborEntitySet', 'id']);
 
-    const onClick = (selectedRowIndex :number, selectedRowData) => {
-      const neighborEntityId :UUID = neighborGroup.getIn([selectedRowIndex, 'neighborId']);
+    const onClick = (selectedRowIndex, selectedRowData) => {
+      const neighborEntityId = neighborGroup.getIn([selectedRowIndex, 'neighborId']);
       const selectedEntity = Immutable.fromJS({
         data: selectedRowData,
         headers: neighborGroupHeaders
@@ -731,11 +711,11 @@ export default class EntitySetSearchResults extends React.Component {
 
     const associationGroupSection = [];
 
-    this.state.neighborResults.forEach((associationGroup :Map<UUID, List<any>>, associationEntitySetId :UUID) => {
+    this.state.neighborResults.forEach((associationGroup, associationEntitySetId) => {
 
       const neighborGroupSection = [];
 
-      associationGroup.forEach((neighborGroup :List<any>, neighborEntitySetId :UUID) => {
+      associationGroup.forEach((neighborGroup, neighborEntitySetId) => {
 
         const neighborGroupData = this.getNeighborGroupData(neighborGroup);
         const neighborGroupHeaders = this.getNeighborGroupHeaders(neighborGroup);
@@ -750,7 +730,7 @@ export default class EntitySetSearchResults extends React.Component {
         );
       }); // end associationGroup.forEach()
 
-      const title :string = associationGroup.first().first().getIn(['associationEntitySet', 'title']);
+      const title = associationGroup.first().first().getIn(['associationEntitySet', 'title']);
 
       associationGroupSection.push((
         <div key={`${associationEntitySetId}-${getKeyCounter()}`}>

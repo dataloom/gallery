@@ -1,4 +1,3 @@
-/* @flow */
 import Immutable from 'immutable';
 import isEmpty from 'lodash/isEmpty';
 
@@ -7,7 +6,7 @@ import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const LOADING_ERROR = Symbol('loading error');
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE = Immutable.fromJS({
   authorizations: {},
   requestPermissionsModal: {
     show: false,
@@ -18,7 +17,7 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   }
 });
 
-export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   let authorizations;
 

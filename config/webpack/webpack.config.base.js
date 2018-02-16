@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 /* eslint-disable no-underscore-dangle, import/no-extraneous-dependencies, import/extensions */
 
 import APP_PATHS from '../app.paths.js';

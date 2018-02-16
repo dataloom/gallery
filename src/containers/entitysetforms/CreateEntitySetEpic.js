@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { EntityDataModelApi, LinkingApi } from 'lattice';
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
@@ -48,7 +44,7 @@ function createEntitySetEpic(action$) {
 function createLinkedEntitySetEpic(action$) {
   return action$
   .ofType(actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST)
-  .mergeMap((action :Action) => {
+  .mergeMap((action) => {
     return Observable
       .from(LinkingApi.linkEntitySets(action.linkingRequest))
       .mergeMap(() => {

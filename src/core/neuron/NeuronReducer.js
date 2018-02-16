@@ -1,18 +1,14 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import * as NeuronActionTypes from './NeuronActionTypes';
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE = Immutable.fromJS({
   isConnected: false,
   subscriptions: {},
   topicToSubIdMap: {}
 });
 
-export default function neuronReducer(state :Map<*, *> = INITIAL_STATE, action :Object) :Map<*, *> {
+export default function neuronReducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 
@@ -27,7 +23,7 @@ export default function neuronReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case NeuronActionTypes.NEURON_SUBSCRIBE_SUCCESS: {
 
-      const subscription :Map = Immutable.fromJS(action.subscription);
+      const subscription = Immutable.fromJS(action.subscription);
       subscription.set('topic', action.topic);
 
       return state
@@ -37,7 +33,7 @@ export default function neuronReducer(state :Map<*, *> = INITIAL_STATE, action :
 
     case NeuronActionTypes.NEURON_UNSUBSCRIBE_SUCCESS: {
 
-      const subscriptionId :string = state.getIn(['topicToSubIdMap', action.topic]);
+      const subscriptionId = state.getIn(['topicToSubIdMap', action.topic]);
       return state
         .deleteIn(['topicToSubIdMap', action.topic])
         .deleteIn(['subscriptions', subscriptionId]);

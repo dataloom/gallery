@@ -1,14 +1,10 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import * as EdmActionTypes from './EdmActionTypes';
 
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
-export const INITIAL_STATE :Map<> = Immutable.fromJS({
+export const INITIAL_STATE = Immutable.fromJS({
 
   // legacy
   asyncState: Immutable.fromJS({
@@ -24,7 +20,7 @@ export const INITIAL_STATE :Map<> = Immutable.fromJS({
   entitySetPropertyMetadata: Immutable.Map()
 });
 
-export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 
@@ -38,8 +34,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
     case EdmActionTypes.FETCH_ALL_ENTITY_SETS_SUCCESS: {
 
-      const entitySets :Map = Immutable.Map().withMutations((map :Map) => {
-        action.entitySets.forEach((entitySet :Object) => {
+      const entitySets = Immutable.Map().withMutations((map) => {
+        action.entitySets.forEach((entitySet) => {
           if (entitySet) {
             map.set(entitySet.id, Immutable.fromJS(entitySet));
           }
@@ -72,8 +68,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
     case EdmActionTypes.FETCH_ALL_ENTITY_TYPES_SUCCESS: {
 
-      const entityTypes :Map = Immutable.Map().withMutations((map :Map) => {
-        action.entityTypes.forEach((entityType :Object) => {
+      const entityTypes = Immutable.Map().withMutations((map) => {
+        action.entityTypes.forEach((entityType) => {
           if (entityType) {
             map.set(entityType.id, Immutable.fromJS(entityType));
           }
@@ -107,8 +103,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
     case EdmActionTypes.FETCH_ALL_PROPERTY_TYPES_SUCCESS: {
 
-      const propertyTypes :Map = Immutable.Map().withMutations((map :Map) => {
-        action.propertyTypes.forEach((propertyType :Object) => {
+      const propertyTypes = Immutable.Map().withMutations((map) => {
+        action.propertyTypes.forEach((propertyType) => {
           if (propertyType) {
             map.set(propertyType.id, Immutable.fromJS(propertyType));
           }
@@ -139,8 +135,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
     case EdmActionTypes.FETCH_ENTITY_SET_PROJECTION_SUCCESS: {
 
-      const updatedEntitySets :Map = state.get('entitySets').withMutations((entitySets :Map) => {
-        Object.keys(action.edm.entitySets).forEach((entitySetId :string) => {
+      const updatedEntitySets = state.get('entitySets').withMutations((entitySets) => {
+        Object.keys(action.edm.entitySets).forEach((entitySetId) => {
           const entitySet = action.edm.entitySets[entitySetId];
           if (entitySet) {
             entitySets.set(entitySet.id, Immutable.fromJS(entitySet));
@@ -148,8 +144,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
         });
       });
 
-      const updatedEntityTypes :Map = state.get('entityTypes').withMutations((entityTypes :Map) => {
-        Object.keys(action.edm.entityTypes).forEach((entityTypeId :string) => {
+      const updatedEntityTypes = state.get('entityTypes').withMutations((entityTypes) => {
+        Object.keys(action.edm.entityTypes).forEach((entityTypeId) => {
           const entityType = action.edm.entityTypes[entityTypeId];
           if (entityType) {
             entityTypes.set(entityType.id, Immutable.fromJS(entityType));
@@ -157,8 +153,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
         });
       });
 
-      const updatedPropertyTypes :Map = state.get('propertyTypes').withMutations((entityTypes :Map) => {
-        Object.keys(action.edm.propertyTypes).forEach((propertyTypeId :string) => {
+      const updatedPropertyTypes = state.get('propertyTypes').withMutations((entityTypes) => {
+        Object.keys(action.edm.propertyTypes).forEach((propertyTypeId) => {
           const propertyType = action.edm.propertyTypes[propertyTypeId];
           if (propertyType) {
             entityTypes.set(propertyType.id, Immutable.fromJS(propertyType));
@@ -174,8 +170,8 @@ export default function reducer(state :Map<> = INITIAL_STATE, action :Object) {
 
     case EdmActionTypes.UPDATE_ENTITY_SETS: {
 
-      const updatedEntitySets :Map = state.get('entitySets').withMutations((entitySets :Map) => {
-        Object.keys(action.entitySets).forEach((entitySetId :string) => {
+      const updatedEntitySets = state.get('entitySets').withMutations((entitySets) => {
+        Object.keys(action.entitySets).forEach((entitySetId) => {
           const entitySet = action.entitySets[entitySetId];
           if (entitySet) {
             entitySets.set(entitySet.id, Immutable.fromJS(entitySet));

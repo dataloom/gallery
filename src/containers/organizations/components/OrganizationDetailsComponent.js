@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import DocumentTitle from 'react-document-title';
@@ -43,7 +39,7 @@ const MODES = {
   VIEW: 'VIEW'
 };
 
-function mapStateToProps(state :Immutable.Map, ownProps :Object) {
+function mapStateToProps(state, ownProps) {
 
   const isCreatingOrg = state.getIn(['organizations', 'isCreatingOrg']);
   const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
@@ -86,12 +82,12 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     deleteOrganizationRequest,
-    fetchOrganizationRequest,
-    fetchMembersRequest
+    fetchMembersRequest,
+    fetchOrganizationRequest
   };
 
   return {
@@ -104,6 +100,7 @@ class OrganizationDetailsComponent extends React.Component {
   static propTypes = {
     actions: React.PropTypes.shape({
       deleteOrganizationRequest: React.PropTypes.func.isRequired,
+      fetchMembersRequest: React.PropTypes.func.isRequired,
       fetchOrganizationRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isCreatingOrg: React.PropTypes.bool.isRequired,
@@ -200,7 +197,7 @@ class OrganizationDetailsComponent extends React.Component {
 
   renderOrganizationDeleteButton = () => {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     if (this.props.mode === MODES.CREATE || !isOwner) {
       return null;
@@ -226,7 +223,7 @@ class OrganizationDetailsComponent extends React.Component {
 
   render() {
 
-    const title :string = this.props.organization.get('title', 'Organizations');
+    const title = this.props.organization.get('title', 'Organizations');
 
     if (this.props.isCreatingOrg) {
       return (

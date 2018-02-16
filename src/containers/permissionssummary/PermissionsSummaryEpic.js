@@ -34,15 +34,18 @@ function configureAcls(aces) {
         }
         else {
           getPermission(ace.permissions).forEach((permission) => {
-            roleAcls[permission].push(ace.principal.id);
+            if (roleAcls[permission]) {
+              roleAcls[permission].push(ace.principal.id);
+            }
           });
         }
-      } else if (ace.principal.type === USER) {
-        getPermission(ace.permissions).forEach(
-          (permission) => {
+      }
+      else if (ace.principal.type === USER) {
+        getPermission(ace.permissions).forEach((permission) => {
+          if (userAcls[permission]) {
             userAcls[permission].push(ace.principal.id);
           }
-        );
+        });
       }
     }
   });

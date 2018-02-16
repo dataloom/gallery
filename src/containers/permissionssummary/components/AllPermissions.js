@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -124,11 +120,11 @@ class AllPermissions extends React.Component {
           <div className={styles.asterix}>
             <div>
               {
-                `* Default permissions are effectively public permissions. 
+                `* Default permissions are effectively public permissions.
                   They are granted to all authenticated OpenLattice users.
-                  For readability, only people with permissions that are different 
+                  For readability, only people with permissions that are different
                   than the default are displayed in the tables above.
-                  To change default permissions, go to &#39;Manage Permissions&#39; 
+                  To change default permissions, go to "Manage Permissions"
                   on the entity set detail view.`
               }
             </div>
@@ -140,9 +136,9 @@ class AllPermissions extends React.Component {
 }
 
 // TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
-function mapStateToProps(state :Map, ownProps :Object) :Object {
+function mapStateToProps(state, ownProps) {
 
-  const entitySetId :string = ownProps.params.id;
+  const entitySetId = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
 
   return {
@@ -156,7 +152,7 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
   };
 }
 
-export function mapDispatchToProps(dispatch :Function) :Object {
+export function mapDispatchToProps(dispatch) {
 
   const actions = {
     getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest

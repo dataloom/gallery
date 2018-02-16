@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import classnames from 'classnames';
@@ -65,7 +61,7 @@ class EntitySetPermissionsRequest extends React.Component {
       const updatedStatuses = [];
       const defaultStatus = statuses[0];
       selectedProperties.forEach((propertyTypeId) => {
-        const updatedStatus :Object[] = Immutable
+        const updatedStatus = Immutable
           .fromJS(defaultStatus)
           .set('status', requestStatus)
           .setIn(['request', 'aclKey', 1], propertyTypeId)
@@ -95,7 +91,7 @@ class EntitySetPermissionsRequest extends React.Component {
     this.setState({ selectedProperties });
   };
 
-  renderProperty(principalId, propertyType :Map, defaultChecked) {
+  renderProperty(principalId, propertyType, defaultChecked) {
     const propertyTypeId = propertyType.get('id');
     const title = this.props.customSettings.getIn([propertyTypeId, 'title'], propertyType.get('title'));
     return (
@@ -139,13 +135,13 @@ class EntitySetPermissionsRequest extends React.Component {
     });
 
     const content = [];
-    propertyTypes.forEach((propertyType :Map) => {
+    propertyTypes.forEach((propertyType) => {
       content.push(
         this.renderProperty(principal.id, propertyType, statusByPropertyTypeId[propertyType.get('id')])
       );
     });
 
-    const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`
+    const principalDisplayName = `${getDisplayName(principal)} (${getEmail(principal)})`;
 
     return (
       <div className={classnames({ [styles.open]: this.state.open })}>
@@ -205,18 +201,18 @@ class EntitySetPermissionsRequestWrapper extends React.Component {
 
 EntitySetPermissionsRequestWrapper.Async = createAsyncComponent(EntitySetPermissionsRequestWrapper);
 
-function mapStateToProps(state :Map, ownProps :Object) :Object {
+function mapStateToProps(state, ownProps) {
 
   const { entitySetId, principalId } = ownProps;
 
   const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
-  const entityTypeId :string = entitySet.get('entityTypeId');
-  const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
-  const propertyTypeIds :List = entityType.get('properties', Immutable.List());
+  const entityTypeId = entitySet.get('entityTypeId');
+  const entityType = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
+  const propertyTypeIds = entityType.get('properties', Immutable.List());
 
-  let propertyTypes :List = Immutable.List();
+  let propertyTypes = Immutable.List();
   if (!propertyTypeIds.isEmpty()) {
-    propertyTypeIds.forEach((propertyTypeId :string) => {
+    propertyTypeIds.forEach((propertyTypeId) => {
       propertyTypes = propertyTypes.push(
         state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map())
       );
