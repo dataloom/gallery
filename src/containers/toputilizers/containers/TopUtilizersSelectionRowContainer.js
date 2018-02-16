@@ -9,7 +9,7 @@ import TopUtilizersSelectionRow from '../components/TopUtilizersSelectionRow';
 
 class TopUtilizersSelectionRowContainer extends React.Component {
   static propTypes = {
-    neighborTypes: PropTypes.instanceOf(Immutable.List()).isRequired,
+    neighborTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     entitySetTitle: PropTypes.string.isRequired,
     updateEdgeTypes: PropTypes.func.isRequired,
     selectedEdges: PropTypes.instanceOf(Immutable.List).isRequired

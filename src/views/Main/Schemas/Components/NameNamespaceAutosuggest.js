@@ -140,6 +140,7 @@ export class NameNamespaceAutosuggest extends React.Component {
         namespaceSuggestions: suggestions.namespaces
       });
     });
+    return value;
   }
 
   onNameChange = (e) => {
@@ -165,6 +166,7 @@ export class NameNamespaceAutosuggest extends React.Component {
         namespaceSuggestions: suggestions.namespaces
       });
     });
+    return value;
   }
 
   onNamespaceChange = (e) => {
