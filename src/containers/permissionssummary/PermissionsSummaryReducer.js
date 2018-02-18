@@ -11,11 +11,22 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   propertyPermissions: {},
   isGettingUsersRoles: true,
   isGettingAcls: false,
-  isGettingPermissions: false
+  isGettingPermissions: false,
+  isGettingOrganizations: false
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
+
+    case actionTypes.GET_ALL_ORGANIZATIONS_REQUEST:
+    // debugger;
+      return state.set('isGettingOrganizations', true);
+
+    case actionTypes.GET_ALL_ORGANIZATIONS_SUCCESS:
+      return state.set('isGettingOrganizations', false);
+    
+    case actionTypes.GET_ALL_ORGANIZATIONS_FAILURE:
+      return state.set('isGettingOrganizations', false);
 
     case actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST:
       return state.set('isGettingUsersRoles', true);

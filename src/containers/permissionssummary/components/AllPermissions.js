@@ -19,6 +19,7 @@ import * as psActionFactory from '../PermissionsSummaryActionFactory';
 
 import styles from '../styles.module.css';
 
+
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 const R_HEADERS = ['Roles', 'Permissions'];
 
@@ -37,15 +38,17 @@ class AllPermissions extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.props.entitySet.isEmpty()) {
-      this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
-    }
+    this.props.actions.getAllOrganizationsRequest();
+
+    // if (!this.props.entitySet.isEmpty()) {
+    //   this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
+    // }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
-      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
-    }
+    // if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
+    //   this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
+    // }
   }
 
   renderEntityTables() {
@@ -146,7 +149,6 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
   const permissionsSummary = state.get('permissionsSummary');
 
   const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
-  console.log('authenticatedUserPermissions:', authenticatedUserPermissions);
 
   return {
     entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map()),
@@ -155,14 +157,16 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
     propertyPermissions: permissionsSummary.get('propertyPermissions'),
     isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles'),
     isGettingAcls: permissionsSummary.get('isGettingAcls'),
-    isGettingPermissions: permissionsSummary.get('isGettingPermissions')
+    isGettingPermissions: permissionsSummary.get('isGettingPermissions'),
+    isGettingOrganizations: permissionsSummary.get('isGettingOrganizations')
   };
 }
 
 export function mapDispatchToProps(dispatch :Function) :Object {
 
   const actions = {
-    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
+    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest,
+    getAllOrganizationsRequest: psActionFactory.getAllOrganizationsRequest
   };
 
   return {

@@ -83,3 +83,22 @@ export function resetPermissions() {
     type: actionTypes.RESET_PERMISSIONS
   };
 }
+
+export function getAllOrganizationsRequest() {
+  return {
+    type: actionTypes.GET_ALL_ORGANIZATIONS_REQUEST
+  };
+}
+
+export function getAllOrganizationsSuccess(data) {
+  return {
+    type: actionTypes.GET_ALL_ORGANIZATIONS_SUCCESS,
+    data
+  };
+}
+
+export function getAllOrganizationsFailure() {
+  return {
+    type: actionTypes.GET_ALL_ORGANIZATIONS_FAILURE
+  };
+}
