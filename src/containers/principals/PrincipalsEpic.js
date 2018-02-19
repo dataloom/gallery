@@ -1,9 +1,6 @@
-/* @flow */
 import Immutable from 'immutable';
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
-import values from 'lodash/values';
-
 import { PrincipalsApi } from 'lattice';
 
 import { createPrincipalReference } from './PrincipalsStorage';
@@ -12,7 +9,7 @@ import AsyncActionFactory from '../async/AsyncActionFactory';
 import * as PrincipalsActionTypes from './PrincipalsActionTypes';
 import * as PrincipalsActionFactory from './PrincipalsActionFactory';
 
-function loadPrincipal(id :string) {
+function loadPrincipal(id) {
   const reference = createPrincipalReference(id);
   return Observable.merge(
     Observable.of(AsyncActionFactory.asyncReferenceLoading(reference)),
@@ -36,14 +33,14 @@ function loadPrincipalEpic(action$) {
  * better understand how these references work to figure out whether or not to continue with that pattern.
  */
 
-function fetchAllUsersEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchAllUsersEpic(action$) {
 
   return action$
     .ofType(PrincipalsActionTypes.FETCH_ALL_USERS_REQUEST)
     .mergeMap(() => {
       return Observable
         .from(PrincipalsApi.getAllUsers())
-        .mergeMap((users :Object[]) => {
+        .mergeMap((users) => {
           return Observable.of(
             PrincipalsActionFactory.fetchAllUsersSuccess(users)
           );
@@ -56,7 +53,7 @@ function fetchAllUsersEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
-function fetchUsersEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchUsersEpic(action$) {
 
   /*
    * TODO: figure out how to utilize fetchUserEpic() instead of duplicating that work here
@@ -66,12 +63,12 @@ function fetchUsersEpic(action$ :Observable<Action>) :Observable<Action> {
    */
   return action$
     .ofType(PrincipalsActionTypes.FETCH_USERS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
 
       const requests = action.userIds.map((userId) => {
         return Observable
           .from(PrincipalsApi.getUser(userId))
-          .mergeMap((user :Object) => {
+          .mergeMap((user) => {
             return Observable.of(
               PrincipalsActionFactory.fetchUserSuccess(user)
             );
@@ -87,14 +84,14 @@ function fetchUsersEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
-function fetchUserEpic(action$ :Observable<Action>) :Observable<Action> {
+function fetchUserEpic(action$) {
 
   return action$
     .ofType(PrincipalsActionTypes.FETCH_USER_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(PrincipalsApi.getUser(action.userId))
-        .mergeMap((user :Object) => {
+        .mergeMap((user) => {
           return Observable.of(
             PrincipalsActionFactory.fetchUserSuccess(user)
           );
@@ -107,14 +104,14 @@ function fetchUserEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
-function searchAllUsersByEmailEpic(action$ :Observable<Action>) :Observable<Action> {
+function searchAllUsersByEmailEpic(action$) {
 
   return action$
     .ofType(PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(PrincipalsApi.searchAllUsersByEmail(action.searchQuery))
-        .mergeMap((searchResults :Object[]) => {
+        .mergeMap((searchResults) => {
           return Observable.of(
             PrincipalsActionFactory.searchAllUsersByEmailSuccess(searchResults)
           );

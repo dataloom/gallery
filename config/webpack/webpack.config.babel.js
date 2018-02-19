@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 /* eslint-disable import/extensions */
 
 import devWebpackConfig from './webpack.config.dev.js';

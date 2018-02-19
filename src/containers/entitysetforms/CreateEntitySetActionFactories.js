@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import * as actionTypes from './CreateEntitySetActionTypes';
 
 export function createEntitySetRequest(entitySet) {
@@ -11,7 +7,7 @@ export function createEntitySetRequest(entitySet) {
   };
 }
 
-export function createEntitySetReject(errorMessage :string) {
+export function createEntitySetReject(errorMessage) {
   return {
     type: actionTypes.CREATE_ENTITY_SET_REJECT,
     errorMessage
@@ -31,7 +27,7 @@ export function createEntitySetReset() {
   };
 }
 
-export function createLinkedEntitySetRequest(linkingRequest :Object) {
+export function createLinkedEntitySetRequest(linkingRequest) {
   return {
     type: actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST,
     linkingRequest
@@ -44,7 +40,7 @@ export function createLinkedEntitySetResolve() {
   };
 }
 
-export function createLinkedEntitySetReject(errorMessage :string) {
+export function createLinkedEntitySetReject(errorMessage) {
   return {
     type: actionTypes.CREATE_LINKED_ENTITY_SET_REJECT,
     errorMessage

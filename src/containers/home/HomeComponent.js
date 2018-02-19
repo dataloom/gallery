@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -136,9 +132,9 @@ class HomeComponent extends React.Component {
 
 function mapStateToProps(state) {
 
-  const entitySetIds :List<string> = state.getIn(['home', 'entitySetIds'], Immutable.List());
-  let entitySets :Map = Immutable.Map();
-  entitySetIds.forEach((entitySetId :string) => {
+  const entitySetIds = state.getIn(['home', 'entitySetIds'], Immutable.List());
+  let entitySets = Immutable.Map();
+  entitySetIds.forEach((entitySetId) => {
     entitySets = entitySets.set(
       entitySetId, state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map())
     );
@@ -151,7 +147,7 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+function mapDispatchToProps(dispatch) {
   return {
     actions: {
       loadEntitySetPage: (page) => {

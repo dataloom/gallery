@@ -1,13 +1,9 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 import * as VisualizationActionTypes from './VisualizationActionTypes';
 
-const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
+const INITIAL_STATE = Immutable.fromJS({
   visualizableEntitySets: Immutable.List(),
   entitySet: Immutable.Map(),
   numberProps: Immutable.List(),
@@ -20,7 +16,7 @@ const INITIAL_STATE :Map<*, *> = Immutable.fromJS({
   loadingVisualizableEntitySetsStatus: ASYNC_STATUS.PENDING
 });
 
-export default function visualizationsReducer(state :Immutable.Map = INITIAL_STATE, action :Object) :Immutable.Map {
+export default function visualizationsReducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 

@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -61,10 +57,10 @@ class EntitySetDetailContainer extends React.Component {
   }
 }
 
-function mapStateToProps(state :Map, ownProps :Object) :Object {
+function mapStateToProps(state, ownProps) {
 
-  const entitySetId :string = ownProps.params.id;
-  const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+  const entitySetId = ownProps.params.id;
+  const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
 
   return {
     entitySet,
@@ -72,7 +68,7 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) :Object {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     entitySetDetailRequest,

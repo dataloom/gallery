@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -47,13 +43,9 @@ import {
 } from '../actions/OrganizationActionFactory';
 
 const {
-  Acl,
   AclBuilder,
-  AclData,
   AclDataBuilder,
-  Ace,
   AceBuilder,
-  Principal,
   PrincipalBuilder
 } = Models;
 
@@ -76,10 +68,10 @@ const MemberRolesContainer = styled(StyledFlexContainerStacked)`
 `;
 
 const MemberListItem = styled(StyledListItem)`
-  background-color: ${(props :Object) => {
+  background-color: ${(props) => {
     return props.selected ? '#f5f5f5' : 'transparent';
   }};
-  ${(props :Object) => {
+  ${(props) => {
     if (props.isOwner) {
       return css`
         &:hover {
@@ -95,7 +87,7 @@ const MemberListItem = styled(StyledListItem)`
 const RoleBadge = styled(StyledBadge)`
   margin: 5px auto;
   width: 100%;
-  ${(props :Object) => {
+  ${(props) => {
     if (props.selected) {
       return css`
         background-color: #4203c5;
@@ -107,9 +99,9 @@ const RoleBadge = styled(StyledBadge)`
   }}
 `;
 
-function mapStateToProps(state :Immutable.Map, ownProps :Object) {
-  const members :Immutable.Map = Immutable.Map().withMutations((map :Immutable.Map) => {
-    ownProps.users.forEach((member :Immutable.Map) => {
+function mapStateToProps(state, ownProps) {
+  const members = Immutable.Map().withMutations((map) => {
+    ownProps.users.forEach((member) => {
       map.set(member.get('principal').get('principal').get('id'), member);
     });
   });
@@ -119,7 +111,7 @@ function mapStateToProps(state :Immutable.Map, ownProps :Object) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     addRoleToMemberRequest,
@@ -149,12 +141,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
-  state :{
-    selectedMemberId :string,
-    showMemberRoles :boolean
-  }
-
-  constructor(props :Object) {
+  constructor(props) {
 
     super(props);
 
@@ -164,7 +151,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     };
   }
 
-  handleOnClickRemoveMember = (userId :string) => {
+  handleOnClickRemoveMember = (userId) => {
 
     if (!userId) {
       // TODO: this shouldn't happen, how do we handle it?
@@ -176,22 +163,22 @@ class OrganizationMembersSectionComponent extends React.Component {
       userId
     );
 
-    const principal :Principal = (new PrincipalBuilder())
+    const principal = (new PrincipalBuilder())
       .setType(PrincipalTypes.USER)
       .setId(userId)
       .build();
 
-    const ace :Ace = (new AceBuilder())
+    const ace = (new AceBuilder())
       .setPermissions([PermissionTypes.READ])
       .setPrincipal(principal)
       .build();
 
-    const acl :Acl = (new AclBuilder())
+    const acl = (new AclBuilder())
       .setAclKey([this.props.organization.get('id')])
       .setAces([ace])
       .build();
 
-    const aclData :AclData = (new AclDataBuilder())
+    const aclData = (new AclDataBuilder())
       .setAction(ActionTypes.REMOVE)
       .setAcl(acl)
       .build();
@@ -206,7 +193,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     }
   }
 
-  handleOnClickShowMemberRoles = (userId :string) => {
+  handleOnClickShowMemberRoles = (userId) => {
 
     if (this.state.selectedMemberId === userId) {
       this.setState({
@@ -234,13 +221,13 @@ class OrganizationMembersSectionComponent extends React.Component {
 
   renderMemberList = () => {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     const memberList = [];
-    this.props.members.forEach((member :Immutable.Map) => {
+    this.props.members.forEach((member) => {
 
-      const memberId :string = member.get('principal').get('principal').get('id');
-      const label :string = OrgsUtils.getUserNameLabelValue(member);
+      const memberId = member.get('principal').get('principal').get('id');
+      const label = OrgsUtils.getUserNameLabelValue(member);
 
       const memberListItem = (
         <MemberListItem
@@ -276,7 +263,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     );
   }
 
-  addRoleToMember = (roleId :UUID, memberId :string) => {
+  addRoleToMember = (roleId, memberId) => {
 
     if (!roleId || !memberId) {
       // TODO: this shouldn't happen, how do we handle it?
@@ -286,7 +273,7 @@ class OrganizationMembersSectionComponent extends React.Component {
     this.props.actions.addRoleToMemberRequest(this.props.organization.get('id'), roleId, memberId);
   }
 
-  removeRoleFromMember = (roleId :UUID, memberId :string) => {
+  removeRoleFromMember = (roleId, memberId) => {
 
     if (!roleId || !memberId) {
       // TODO: this shouldn't happen, how do we handle it?
@@ -298,13 +285,13 @@ class OrganizationMembersSectionComponent extends React.Component {
 
   renderMemberRoles = () => {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     if (!isOwner || !this.state.showMemberRoles || !this.state.selectedMemberId) {
       return null;
     }
 
-    const orgRoles :Immutable.List<Role> = this.props.organization.get('roles', Immutable.List());
+    const orgRoles = this.props.organization.get('roles', Immutable.List());
     if (orgRoles.isEmpty()) {
       // TODO: we need a better UX to handle this case
       return (
@@ -314,7 +301,7 @@ class OrganizationMembersSectionComponent extends React.Component {
       );
     }
 
-    const memberRoles :Immutable.List<string> = this.props.members.getIn(
+    const memberRoles = this.props.members.getIn(
       [this.state.selectedMemberId, 'roles'],
       Immutable.List()
     ).map((role) => {
@@ -322,9 +309,9 @@ class OrganizationMembersSectionComponent extends React.Component {
     });
 
     // TODO: add "..." when role names are too long
-    const memberRolesElements = orgRoles.map((role :Immutable.Map<string, any>) => {
+    const memberRolesElements = orgRoles.map((role) => {
       const roleId = role.get('id');
-      const memberHasRole :boolean = memberRoles.includes(roleId);
+      const memberHasRole = memberRoles.includes(roleId);
       return (
         <RoleBadge
             key={roleId}

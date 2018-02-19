@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -40,12 +36,7 @@ export default class SimpleListGroup extends React.Component {
     onRemove: () => {}
   };
 
-  state :{
-    inputValue :string,
-    items :string[]
-  }
-
-  constructor(props :Object) {
+  constructor(props) {
 
     super(props);
 
@@ -74,19 +65,19 @@ export default class SimpleListGroup extends React.Component {
     });
   }
 
-  removeItem = (value :string) => {
+  removeItem = (value) => {
 
     this.props.onRemove(value);
   }
 
-  handleOnChange = (event :SyntheticInputEvent) => {
+  handleOnChange = (event) => {
 
     this.setState({
       inputValue: event.target.value
     });
   }
 
-  handleOnKeyDown = (event :SyntheticKeyboardEvent) => {
+  handleOnKeyDown = (event) => {
 
     switch (event.keyCode) {
       case 13: // 'Enter' key code
@@ -119,7 +110,7 @@ export default class SimpleListGroup extends React.Component {
 
   renderListItems = () => {
 
-    return this.props.items.map((item :Map<string, string>) => {
+    return this.props.items.map((item) => {
       return (
         <StyledListItem key={item.get('id')}>
           <StyledElement>{ item.get('value') }</StyledElement>

@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -143,9 +139,9 @@ class AllPermissions extends React.Component {
 }
 
 // TODO: Move EntitySet calculations to helper functions/epics & reuse in EntitySetDetailComponent
-function mapStateToProps(state :Map, ownProps :Object) :Object {
+function mapStateToProps(state, ownProps) {
 
-  const entitySetId :string = ownProps.params.id;
+  const entitySetId = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
 
   const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
@@ -162,7 +158,7 @@ function mapStateToProps(state :Map, ownProps :Object) :Object {
   };
 }
 
-export function mapDispatchToProps(dispatch :Function) :Object {
+export function mapDispatchToProps(dispatch) {
 
   const actions = {
     getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest,

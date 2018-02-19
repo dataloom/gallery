@@ -1,13 +1,6 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import FontAwesome from 'react-fontawesome';
-
-import {
-  Link
-} from 'react-router';
+import { Link } from 'react-router';
 
 import styles from './sidenav.module.css';
 
@@ -24,7 +17,7 @@ const SUPPORT_URL = 'https://support.openlattice.com/';
 
 
 class SideNav extends React.Component {
-  getSideNavItemLayout = (route :string, text :string, imgSrc :object) => {
+  getSideNavItemLayout = (route, text, imgSrc) => {
 
     return (
       <div className={styles.sideNavItem}>
@@ -40,7 +33,7 @@ class SideNav extends React.Component {
     );
   }
 
-  getSideNavHelpItemLayout = (route :string, text :string) => {
+  getSideNavHelpItemLayout = (route, text) => {
 
     return (
       <div className={styles.sideNavItem}>

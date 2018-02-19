@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import styled from 'styled-components';
 
 const BG_COLORS = {
@@ -58,7 +54,7 @@ const TEXT_COLORS = {
   }
 };
 
-function getColor(colors :Object, color :?string, effect :string) {
+function getColor(colors, color, effect) {
 
   if (color) {
     return colors[color][effect];

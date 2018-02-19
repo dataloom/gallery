@@ -1,5 +1,4 @@
-/* @flow */
-import Immutable, { Map, fromJS } from 'immutable';
+import Immutable from 'immutable';
 
 import * as actionTypes from './PermissionsPanelActionTypes';
 import * as permissionActionTypes from '../permissions/PermissionsActionTypes';
@@ -13,7 +12,7 @@ export const LOADING_ERROR = Symbol('loading error');
 
 const DEFAULT_ACLS = { DISCOVER: [], LINK: [], READ: [], WRITE: [], OWNER: [] };
 
-const INITIAL_STATE:Map<*, *> = fromJS({
+const INITIAL_STATE = Immutable.fromJS({
   users: Immutable.Map(),
   roles: Immutable.Map(),
   permissions: Immutable.Map(),
@@ -22,7 +21,7 @@ const INITIAL_STATE:Map<*, *> = fromJS({
   loadRolesError: ''
 });
 
-export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
     case actionTypes.GET_ALL_USERS_SUCCESS:
@@ -36,8 +35,8 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
         .set('loadRolesError', '');
 
     case permissionActionTypes.GET_ACL_SUCCESS: {
-      let userAcls = fromJS(DEFAULT_ACLS);
-      let roleAcls = fromJS(DEFAULT_ACLS);
+      let userAcls = Immutable.fromJS(DEFAULT_ACLS);
+      let roleAcls = Immutable.fromJS(DEFAULT_ACLS);
 
       action.acl.aces.forEach((ace) => {
         const id = ace.principal.id;
@@ -51,13 +50,11 @@ export default function reducer(state :Map<*, *> = INITIAL_STATE, action :Object
         });
       });
 
-      const newState = state
-         .set('permissions', state.get('permissions')
-           .set(Immutable.fromJS(action.aclKey), Immutable.fromJS(action.acl)))
-         .setIn(['aclKeyPermissions', Immutable.fromJS(action.aclKey), USER], userAcls)
-         .setIn(['aclKeyPermissions', Immutable.fromJS(action.aclKey), ROLE], roleAcls);
-
-      return newState;
+      return state
+        .set('permissions', state.get('permissions')
+        .set(Immutable.fromJS(action.aclKey), Immutable.fromJS(action.acl)))
+        .setIn(['aclKeyPermissions', Immutable.fromJS(action.aclKey), USER], userAcls)
+        .setIn(['aclKeyPermissions', Immutable.fromJS(action.aclKey), ROLE], roleAcls);
     }
 
     case actionTypes.GET_ALL_USERS_FAILURE:

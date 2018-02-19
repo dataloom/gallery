@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -158,11 +154,11 @@ function locationFromFilterParams(filterParams) {
   return {};
 }
 
-function mapStateToProps(state :Map<>, ownProps :Object) :Object {
+function mapStateToProps(state, ownProps) {
 
-  const entitySetIds :List<string> = state.getIn(['catalog', 'entitySetIds'], Immutable.List());
-  let entitySets :Map = Immutable.Map();
-  entitySetIds.forEach((entitySetId :string) => {
+  const entitySetIds = state.getIn(['catalog', 'entitySetIds'], Immutable.List());
+  let entitySets = Immutable.Map();
+  entitySetIds.forEach((entitySetId) => {
     entitySets = entitySets.set(
       entitySetId, state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map())
     );

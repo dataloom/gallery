@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -65,7 +61,7 @@ class AsyncContentComponent extends React.Component {
     return (<LoadingSpinner />);
   }
 
-  renderError(error :AsyncValue) {
+  renderError(error) {
     const { errorComponent } = this.props;
     return React.createElement(errorComponent, {
       error: error.value

@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -33,12 +29,12 @@ function getUniqueId() :string {
   return `${idCounter}`;
 }
 
-function mapStateToProps(state :Map, ownProps :Object) {
+function mapStateToProps(state, ownProps) {
 
-  const emailDomainItems :OrderedMap<> = Immutable.OrderedMap().withMutations((map :OrderedMap<>) => {
-    ownProps.organization.get('emails', Immutable.List()).forEach((email :string) => {
-      const id :string = getUniqueId();
-      const item :Map<> = Immutable.fromJS({
+  const emailDomainItems = Immutable.OrderedMap().withMutations((map) => {
+    ownProps.organization.get('emails', Immutable.List()).forEach((email) => {
+      const id = getUniqueId();
+      const item = Immutable.fromJS({
         id,
         value: email
       });
@@ -51,7 +47,7 @@ function mapStateToProps(state :Map, ownProps :Object) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     addDomainToOrganizationRequest,
@@ -75,25 +71,25 @@ class OrganizationDomainsSectionComponent extends React.Component {
   }
 
 
-  addDomain = (domain :string) => {
+  addDomain = (domain) => {
 
     this.props.actions.addDomainToOrganizationRequest(this.props.organization.get('id'), domain);
   }
 
-  removeDomain = (emailDomainId :string) => {
+  removeDomain = (emailDomainId) => {
 
-    const emailDomain :string = this.props.emailDomainItems.get(emailDomainId).get('value');
+    const emailDomain = this.props.emailDomainItems.get(emailDomainId).get('value');
     this.props.actions.removeDomainFromOrganizationRequest(this.props.organization.get('id'), emailDomain);
   }
 
-  isValidDomain = (domain :string) => {
+  isValidDomain = (domain) => {
 
     return Utils.isValidEmail(`test@${domain}`);
   }
 
   render() {
 
-    const isOwner :boolean = this.props.organization.get('isOwner', false);
+    const isOwner = this.props.organization.get('isOwner', false);
 
     let sectionContent;
     if (this.props.emailDomainItems.isEmpty() && !isOwner) {

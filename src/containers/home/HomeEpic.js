@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { SearchApi } from 'lattice';
 import { combineEpics } from 'redux-observable';
 import { Observable } from 'rxjs';
@@ -11,11 +7,11 @@ import * as actionFactories from './HomeActionFactories';
 
 import { updateEntitySets } from '../edm/EdmActionFactory';
 
-function loadHomeEntitySetsEpic(action$ :Observable<Action>) :Observable<Action> {
+function loadHomeEntitySetsEpic(action$) {
 
   return action$
     .ofType(actionTypes.HOME_ENTITY_SETS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       let numHits = 0;
       const searchOptions = {
         start: action.start,
@@ -30,8 +26,8 @@ function loadHomeEntitySetsEpic(action$ :Observable<Action>) :Observable<Action>
           });
         })
         .mergeMap((results) => {
-          const entitySetIds :string[] = [];
-          results.forEach((entitySet :Object) => {
+          const entitySetIds = [];
+          results.forEach((entitySet) => {
             if (entitySet) {
               entitySetIds.push(entitySet.id);
             }

@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -27,7 +23,7 @@ export default class EntitySetList extends React.Component {
     }
 
     const content = [];
-    this.props.entitySets.forEach((entitySet :Map) => {
+    this.props.entitySets.forEach((entitySet) => {
       if (!entitySet.isEmpty()) {
         content.push(
           <EntitySet key={entitySet.get('id')} entitySet={entitySet} />

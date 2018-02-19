@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import styled from 'styled-components';
 
 const StyledFlexContainerStackedCentered = styled.div`
