@@ -21,63 +21,6 @@ export function getAcls(entitySet) {
   };
 }
 
-export function getAllOrganizationsRequest() {
-  return {
-    type: actionTypes.GET_ALL_ORGANIZATIONS_REQUEST
-  };
-}
-
-export function getAllOrganizationsSuccess(data) {
-  return {
-    type: actionTypes.GET_ALL_ORGANIZATIONS_SUCCESS,
-    data
-  };
-}
-
-export function getAllOrganizationsFailure() {
-  return {
-    type: actionTypes.GET_ALL_ORGANIZATIONS_FAILURE
-  };
-}
-
-export function getAllRolesRequest() {
-  return {
-    type: actionTypes.GET_ALL_ROLES_REQUEST
-  };
-}
-
-export function getAllRolesSuccess(data) {
-  return {
-    type: actionTypes.GET_ALL_ROLES_SUCCESS,
-    data
-  };
-}
-
-export function getAllRolesFailure() {
-  return {
-    type: actionTypes.GET_ALL_ROLES_FAILURE
-  };
-}
-
-export function getAllMembersRequest() {
-  return {
-    type: actionTypes.GET_ALL_MEMBERS_REQUEST
-  };
-}
-
-export function getAllMembersSuccess(data) {
-  return {
-    type: actionTypes.GET_ALL_MEMBERS_SUCCESS,
-    data
-  };
-}
-
-export function getAllMembersFailure() {
-  return {
-    type: actionTypes.GET_ALL_MEMBERS_FAILURE
-  };
-}
-
 export function getUserRolePermissionsRequest(entitySetId, property) {
   return {
     type: actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST,

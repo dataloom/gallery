@@ -1,9 +1,12 @@
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
-import { PermissionsApi, PrincipalsApi, EntityDataModelApi } from 'lattice';
+import { PermissionsApi, PrincipalsApi, EntityDataModelApi, OrganizationsApi } from 'lattice';
 import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
+import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTypes';
+import * as orgsActionFactory from '../organizations/actions/OrganizationsActionFactory';
+import * as orgActionFactory from '../organizations/actions/OrganizationActionFactory';
 import { PERMISSIONS } from '../permissions/PermissionsStorage';
 
 
@@ -87,6 +90,29 @@ function createAclsObservables(entitySetId, properties) {
 
 
 /* EPICS */
+function getMembersAndRolesObservables(orgIds) {
+  const observables = orgIds.map(id => {
+    return Observable.of(orgActionFactory.fetchMembersRequest(id));
+  })
+  return observables;
+}
+
+function getAllMembersAndRolesEpic(action$, store) {
+  return action$
+    .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
+    .mergeMap((action) => {
+      const orgs = store.getState().getIn(['organizations', 'organizations']);
+      const orgIds = orgs.toArray().map(entry => entry[0]);
+      return getMembersAndRolesObservables(orgIds);
+    })
+    .mergeMap(observables => {
+      return observables;
+    })
+    .catch((e) => {
+      // return Observable.of(/*some failure action*/)
+    })
+}
+
 // TODO: Use spinner when loading, based on status ^
 function getAllUsersAndRolesEpic(action$) {
   let entitySet;
@@ -155,9 +181,7 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
           PermissionsApi.getAcl(aclKey)
         )
         .mergeMap((acl) => {
-          // console.log('acl:', acl);
           const configuredAcls = configureAcls(acl.aces);
-          // console.log('configured acls:', configuredAcls);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
             actionFactory.setRolePermissions(action.property, configuredAcls),
@@ -173,6 +197,7 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
 }
 
 export default combineEpics(
+  getAllMembersAndRolesEpic,
   getAclsEpic,
   getUserRolePermissionsEpic,
   getAllUsersAndRolesEpic

@@ -12,6 +12,7 @@ import RolePermissionsTable from './RolePermissionsTable';
 import UserPermissionsTable from './UserPermissionsTable';
 
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
+import * as orgsActionFactory from '../../organizations/actions/OrganizationsActionFactory';
 
 import styles from '../styles.module.css';
 
@@ -34,7 +35,7 @@ class AllPermissions extends React.Component {
   }
 
   componentDidMount() {
-    this.props.actions.getAllOrganizationsRequest();
+    this.props.actions.fetchOrganizationsRequest();
 
     // if (!this.props.entitySet.isEmpty()) {
     //   this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
@@ -42,6 +43,7 @@ class AllPermissions extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
     // if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
     //   this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
     // }
@@ -143,6 +145,7 @@ function mapStateToProps(state, ownProps) {
 
   const entitySetId = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
+  const organizationsState = state.get('organizations');
 
   const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
 
@@ -162,7 +165,7 @@ export function mapDispatchToProps(dispatch) {
 
   const actions = {
     getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest,
-    getAllOrganizationsRequest: psActionFactory.getAllOrganizationsRequest
+    fetchOrganizationsRequest: orgsActionFactory.fetchOrganizationsRequest
   };
 
   return {
