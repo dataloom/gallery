@@ -12,14 +12,15 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   isGettingUsersRoles: true,
   isGettingAcls: false,
   isGettingPermissions: false,
-  isGettingOrganizations: false
+  isGettingOrganizations: false,
+  isGettingRoles: false,
+  isGettingMembers: false
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
   switch (action.type) {
 
     case actionTypes.GET_ALL_ORGANIZATIONS_REQUEST:
-    // debugger;
       return state.set('isGettingOrganizations', true);
 
     case actionTypes.GET_ALL_ORGANIZATIONS_SUCCESS:
@@ -27,6 +28,24 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     
     case actionTypes.GET_ALL_ORGANIZATIONS_FAILURE:
       return state.set('isGettingOrganizations', false);
+
+    case actionTypes.GET_ALL_ROLES_REQUEST:
+      return state.set('isGettingRoles', true);
+
+    case actionTypes.GET_ALL_ROLES_SUCCESS:
+      return state.set('isGettingRoles', false);
+    
+    case actionTypes.GET_ALL_ROLES_FAILURE:
+      return state.set('isGettingRoles', false);
+
+    case actionTypes.GET_ALL_MEMBERS_REQUEST:
+      return state.set('isGettingMembers', true);
+
+    case actionTypes.GET_ALL_MEMBERS_SUCCESS:
+      return state.set('isGettingMembers', false);
+    
+    case actionTypes.GET_ALL_MEMBERS_FAILURE:
+      return state.set('isGettingMembers', false);
 
     case actionTypes.GET_ALL_USERS_AND_ROLES_REQUEST:
       return state.set('isGettingUsersRoles', true);

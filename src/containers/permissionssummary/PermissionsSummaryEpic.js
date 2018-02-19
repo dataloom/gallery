@@ -155,7 +155,9 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
           PermissionsApi.getAcl(aclKey)
         )
         .mergeMap((acl) => {
+          // console.log('acl:', acl);
           const configuredAcls = configureAcls(acl.aces);
+          // console.log('configured acls:', configuredAcls);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
             actionFactory.setRolePermissions(action.property, configuredAcls),
