@@ -272,6 +272,26 @@ function fetchMembersEpic(action$) {
     });
 }
 
+function fetchRolesEpic(action$) {
+  return action$
+    .ofType(OrgActionTypes.FETCH_ROLES_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(OrganizationsApi.getAllRoles(action.orgId))
+        .mergeMap((roles) => {
+          return Observable.of(
+            OrgActionFactory.fetchRolesSuccess(roles)
+          );
+        })
+        .catch((e) => {
+            console.error(e);
+          return Observable.of(
+            OrgActionFactory.fetchRolesFailure()
+          );
+        });
+    });
+}
+
 export default combineEpics(
   createNewOrganizationEpic,
   deleteOrganizationEpic,
@@ -285,5 +305,6 @@ export default combineEpics(
   removeMemberFromOrganizationEpic,
   addRoleToMemberEpic,
   removeRoleFromMemberEpic,
-  fetchMembersEpic
+  fetchMembersEpic,
+  fetchRolesEpic
 );

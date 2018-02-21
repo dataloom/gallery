@@ -91,9 +91,12 @@ function createAclsObservables(entitySetId, properties) {
 
 /* EPICS */
 function getMembersAndRolesObservables(orgIds) {
-  const observables = orgIds.map(id => {
-    return Observable.of(orgActionFactory.fetchMembersRequest(id));
-  })
+  let observables = [];
+  orgIds.forEach(id => {
+    observables.push(Observable.of(orgActionFactory.fetchMembersRequest(id)));
+    observables.push(Observable.of(orgActionFactory.fetchRolesRequest(id)));
+  });
+
   return observables;
 }
 
