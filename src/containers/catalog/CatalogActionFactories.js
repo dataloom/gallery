@@ -1,18 +1,14 @@
-/*
- * @flow
- */
-
 import * as actionTypes from './CatalogActionTypes';
 
-export function catalogSearchRequest(filterParams:Object) {
+export function catalogSearchRequest(filterParams) {
   return {
     type: actionTypes.CATALOG_SEARCH_REQUEST,
     filterParams
   };
 }
 
-//TODO: Replace with EdmObjectReferences
-export function catalogSearchResolve(entitySetIds :string[], numHits :number) {
+// TODO: Replace with EdmObjectReferences
+export function catalogSearchResolve(entitySetIds, numHits) {
   return {
     type: actionTypes.CATALOG_SEARCH_RESOLVE,
     entitySetIds,
@@ -20,7 +16,7 @@ export function catalogSearchResolve(entitySetIds :string[], numHits :number) {
   };
 }
 
-export function catalogSearchReject(errorMessage:string) {
+export function catalogSearchReject(errorMessage) {
   return {
     type: actionTypes.CATALOG_SEARCH_REJECT,
     errorMessage

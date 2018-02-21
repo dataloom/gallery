@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 
@@ -27,8 +23,8 @@ function searchCatalog(filterParams) {
       return rawResult.hits.map(convertSearchResult);
     })
     .mergeMap((results) => {
-      const entitySetIds :string[] = [];
-      results.forEach((entitySet :Object) => {
+      const entitySetIds = [];
+      results.forEach((entitySet) => {
         if (entitySet) {
           entitySetIds.push(entitySet.id);
         }

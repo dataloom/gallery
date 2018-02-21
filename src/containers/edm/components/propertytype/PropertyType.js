@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -105,7 +101,7 @@ class PropertyType extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
-  const async :Map = state.get('async');
+  const async = state.get('async');
   const permissionsState = state.get('permissions');
   const edm = state.get('edm');
 

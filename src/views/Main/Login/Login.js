@@ -1,10 +1,6 @@
-/*
- * @flow
- */
-
 import React from 'react';
 import { hashHistory } from 'react-router';
-import DocumentTitle from 'react-document-title'
+import DocumentTitle from 'react-document-title';
 
 import PageConsts from '../../../utils/Consts/PageConsts';
 import AuthService from '../../../utils/AuthService';

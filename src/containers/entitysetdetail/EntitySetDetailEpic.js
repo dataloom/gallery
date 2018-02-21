@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import { combineEpics } from 'redux-observable';
@@ -16,10 +12,10 @@ import * as actionFactory from './EntitySetDetailActionFactory';
 
 import { ALL_PERMISSIONS } from '../permissions/PermissionsStorage';
 
-function getEntitySetSizeEpic(action$ :Observable<Action>) :Observable<Action> {
+function getEntitySetSizeEpic(action$) {
   return action$
     .ofType(actionTypes.GET_ENTITY_SET_SIZE_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       return Observable
         .from(DataApi.getEntitySetSize(action.id))
         .mergeMap((size) => {
@@ -37,27 +33,27 @@ function getEntitySetSizeEpic(action$ :Observable<Action>) :Observable<Action> {
     });
 }
 
-function neuronSignalEntitySetPermissionRequestEpic(action$ :Observable<Action>, store :Object) :Observable<Action> {
+function neuronSignalEntitySetPermissionRequestEpic(action$, store) {
 
   return action$
     .ofType(NeuronActionTypes.NEURON_SIGNAL)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
 
-      const entitySetId :UUID = action.signal.aclKey[0];
+      const entitySetId = action.signal.aclKey[0];
 
-      const state :Map = store.getState();
-      const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+      const state = store.getState();
+      const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
 
       if (entitySet.isEmpty()) {
         // TODO - is there something else to be done here?
         return Observable.empty();
       }
 
-      const entityTypeId :UUID = entitySet.get('entityTypeId');
-      const entityType :Map = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
+      const entityTypeId = entitySet.get('entityTypeId');
+      const entityType = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
 
       // TODO - what happens to perf if the set of properties is really large?
-      const propertyTypes :List = entityType.get('properties', Immutable.List()).map((propertyTypeId :UUID) => {
+      const propertyTypes = entityType.get('properties', Immutable.List()).map((propertyTypeId) => {
         return state.getIn(['edm', 'propertyTypes', propertyTypeId], Immutable.Map());
       });
 
@@ -65,8 +61,8 @@ function neuronSignalEntitySetPermissionRequestEpic(action$ :Observable<Action>,
 
         case NeuronSignalTypes.PERMISSION_REQUEST_APPROVED: {
           if (entitySet.get('id') === entitySetId) {
-            const accessChecks :AccessCheck[] = [];
-            propertyTypes.forEach((propertyType :Object) => {
+            const accessChecks = [];
+            propertyTypes.forEach((propertyType) => {
               accessChecks.push({
                 aclKey: [entitySetId, propertyType.get('id')],
                 permissions: ALL_PERMISSIONS
@@ -83,8 +79,8 @@ function neuronSignalEntitySetPermissionRequestEpic(action$ :Observable<Action>,
 
         case NeuronSignalTypes.PERMISSION_REQUEST_SUBMITTED: {
           if (entitySet.get('id') === entitySetId) {
-            const aclKeys :AclKey[] = [];
-            propertyTypes.forEach((propertyType :Object) => {
+            const aclKeys = [];
+            propertyTypes.forEach((propertyType) => {
               aclKeys.push([entitySetId, propertyType.get('id')]);
             });
             if (aclKeys.length > 0) {

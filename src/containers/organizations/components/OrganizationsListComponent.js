@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import DocumentTitle from 'react-document-title';
@@ -23,13 +19,13 @@ const OrgOverviewCardCollection = styled(StyledFlexContainerStacked)`
   margin-bottom: 25px;
 `;
 
-function mapStateToProps(state :Immutable.Map) {
+function mapStateToProps(state) {
 
-  const isFetchingOrgs :boolean = state.getIn(['organizations', 'isFetchingOrgs']);
-  const isSearchingOrgs :boolean = state.getIn(['organizations', 'isSearchingOrgs']);
+  const isFetchingOrgs = state.getIn(['organizations', 'isFetchingOrgs']);
+  const isSearchingOrgs = state.getIn(['organizations', 'isSearchingOrgs']);
 
-  const organizations :Immutable.Map = state.getIn(['organizations', 'organizations'], Immutable.Map());
-  const visibleOrganizationIds :Immutable.Set = state.getIn(
+  const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map());
+  const visibleOrganizationIds = state.getIn(
     ['organizations', 'visibleOrganizationIds'],
     Immutable.Set()
   );
@@ -42,7 +38,7 @@ function mapStateToProps(state :Immutable.Map) {
   };
 }
 
-function mapDispatchToProps(dispatch :Function) {
+function mapDispatchToProps(dispatch) {
 
   const actions = {
     fetchOrganizationsRequest
@@ -71,7 +67,7 @@ class OrganizationsListComponent extends React.Component {
     this.props.actions.fetchOrganizationsRequest();
   }
 
-  renderOrganization = (organization :Immutable.Map) => {
+  renderOrganization = (organization) => {
 
     const viewOrgDetailsOnClick = () => {
       hashHistory.push(`/orgs/${organization.get('id')}`);

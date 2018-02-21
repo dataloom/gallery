@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import React from 'react';
 
 import Immutable from 'immutable';
@@ -169,7 +165,7 @@ function mapStateToProps(state, ownProps) {
 
   const { entitySetId } = ownProps;
 
-  const entitySet :Map = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
+  const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
   let entityTypeAsyncReference;
 
   if (!entitySet.isEmpty()) {

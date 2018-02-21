@@ -1,15 +1,14 @@
-/* @flow */
 import Immutable from 'immutable';
 
 import * as edmActionTypes from '../edm/EdmActionTypes';
 
-export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
+export const INITIAL_STATE = Immutable.fromJS({
   entityTypeReferences: [],
   // TODO: Add Async state for PropertyTypeReferences
   propertyTypeReferences: []
 });
 
-export default function reducer(state:Immutable.Map = INITIAL_STATE, action:Object) {
+export default function reducer(state = INITIAL_STATE, action) {
   // switch (action.type) {
   //   case edmActionTypes.ALL_ENTITY_TYPES_REQUEST:
   //     return state.merge({

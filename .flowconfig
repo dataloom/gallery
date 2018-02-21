@@ -1,5 +1,6 @@
 [ignore]
+.*/build/.*
 .*/node_modules/.*
 
 [libs]
-./node_modules/immutable/dist/immutable.js.flow
+./config/flow

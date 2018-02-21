@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import Immutable from 'immutable';
 
 import * as AsyncActionTypes from './AsyncActionTypes';
@@ -15,9 +11,9 @@ import type {
   AsyncContent
 } from './AsyncStorage';
 
-export const INITIAL_STATE :AsyncContent = Immutable.fromJS({});
+export const INITIAL_STATE = Immutable.fromJS({});
 
-export default function reducer(state :AsyncContent = INITIAL_STATE, action :Object) {
+export default function reducer(state = INITIAL_STATE, action) {
 
   switch (action.type) {
 
@@ -33,8 +29,8 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
 
     case AsyncActionTypes.UPDATE_ENTITY_SET_ASYNC_REFERENCES: {
 
-      let newState :Map = state;
-      action.entitySets.forEach((entitySet :Object) => {
+      let newState = state;
+      action.entitySets.forEach((entitySet) => {
         if (entitySet) {
           const reference = {
             id: entitySet.id,
@@ -49,8 +45,8 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
 
     case AsyncActionTypes.UPDATE_ENTITY_TYPE_ASYNC_REFERENCES: {
 
-      let newState :Map = state;
-      action.entityTypes.forEach((entityType :Object) => {
+      let newState = state;
+      action.entityTypes.forEach((entityType) => {
         if (entityType) {
           const reference = {
             id: entityType.id,
@@ -65,8 +61,8 @@ export default function reducer(state :AsyncContent = INITIAL_STATE, action :Obj
 
     case AsyncActionTypes.UPDATE_PROPERTY_TYPE_ASYNC_REFERENCES: {
 
-      let newState :Map = state;
-      action.propertyTypes.forEach((propertyType :Object) => {
+      let newState = state;
+      action.propertyTypes.forEach((propertyType) => {
         if (propertyType) {
           const reference = {
             id: propertyType.id,

@@ -21,7 +21,7 @@
     }
   },
   "rules": {
-    "arrow-body-style": ["error", "always"],
+    "arrow-body-style": ["warn", "as-needed"],
     "brace-style": ["error", "stroustrup"],
     "comma-dangle": ["error", "never"],
     "indent": [
@@ -30,7 +30,11 @@
       {
         "FunctionDeclaration": {
           "body": 1,
-          "parameters": 2
+          "parameters": 1
+        },
+        "FunctionExpression": {
+          "body": 1,
+          "parameters": 1
         },
         "SwitchCase": 1
       }
@@ -41,7 +45,9 @@
         "code": 120,
         "tabWidth": 2,
         "ignoreUrls": true,
-        "ignoreComments": false
+        "ignoreComments": false,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
       }
     ],
     "new-cap": [

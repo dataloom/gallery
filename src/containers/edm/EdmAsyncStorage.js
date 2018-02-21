@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 import { createReference } from '../async/AsyncStorage';
 
 export const COLLECTIONS = Object.freeze({
@@ -10,6 +6,6 @@ export const COLLECTIONS = Object.freeze({
   ENTITY_SET: 'entitySets'
 });
 
-export function createEntityTypeAsyncReference(id :string) {
+export function createEntityTypeAsyncReference(id) {
   return createReference(COLLECTIONS.ENTITY_TYPE, id);
 }

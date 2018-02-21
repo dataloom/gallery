@@ -1,7 +1,3 @@
-/*
- * @flow
- */
-
 /* eslint-disable import/no-extraneous-dependencies, import/extensions */
 
 import HtmlWebpackPlugin from 'html-webpack-plugin';
