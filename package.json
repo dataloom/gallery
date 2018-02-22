@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "main": "app.js",
   "dependencies": {
-    "auth0-lock": "^10.9.0",
+    "auth0-lock": "^11.2.3",
     "axios": "^0.15.3",
     "babel-polyfill": "^6.20.0",
     "bluebird": "^3.4.6",
