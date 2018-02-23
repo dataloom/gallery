@@ -45,7 +45,7 @@ export default class AuthService extends EventEmitter {
     // Saves the user token
     this.setToken(authResult.idToken);
     // Async loads the user profile data
-    this.lock.getProfile(authResult.accessToken, (error, profile) => {
+    this.lock.getUserInfo(authResult.accessToken, (error, profile) => {
       if (error) {
         this.emit('profileError');
       }
