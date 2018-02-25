@@ -120,6 +120,32 @@ function getOrgsMembersEpic(action$, store) {
     })
 }
 
+function getOrgsRolesEpic(action$, store) {
+  return action$
+    .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
+    .map((action) => {
+      const orgs = store.getState().getIn(['organizations', 'organizations']);
+      const orgIds = action.orgIds || orgs.toArray().map(entry => entry[0]);
+      return orgIds;
+    })
+    .mergeMap(val => val)
+    .mergeMap(orgId => {
+      return Observable.from(
+          OrganizationsApi.getAllRoles(orgId)
+        )
+    })
+    .mergeMap(roles => {
+      return Observable.of(
+        actionFactory.setOrgsRoles(roles)
+      )
+    })
+    .catch((e) => {
+      console.error('e:', e);
+      return Observable.of(setOrgsRolesFailure());
+    })
+}
+
+
 // TODO: Use spinner when loading, based on status ^
 function getAllUsersAndRolesEpic(action$) {
   let entitySet;
@@ -205,6 +231,7 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
 
 export default combineEpics(
   getOrgsMembersEpic,
+  getOrgsRolesEpic,
   getAclsEpic,
   getUserRolePermissionsEpic,
   getAllUsersAndRolesEpic
