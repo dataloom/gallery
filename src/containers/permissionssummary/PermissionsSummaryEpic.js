@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import { PermissionsApi, PrincipalsApi, EntityDataModelApi, OrganizationsApi } from 'lattice';
+import { Promise } from 'bluebird';
+
 import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
@@ -90,29 +92,31 @@ function createAclsObservables(entitySetId, properties) {
 
 
 /* EPICS */
-function getMembersAndRolesObservables(orgIds) {
-  let observables = [];
-  orgIds.forEach(id => {
-    observables.push(Observable.of(orgActionFactory.fetchMembersRequest(id)));
-    observables.push(Observable.of(orgActionFactory.fetchRolesRequest(id)));
-  });
-
-  return observables;
-}
-
-function getAllMembersAndRolesEpic(action$, store) {
+function getOrgsMembersEpic(action$, store) {
   return action$
     .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
-    .mergeMap((action) => {
+    .map((action) => {
       const orgs = store.getState().getIn(['organizations', 'organizations']);
-      const orgIds = orgs.toArray().map(entry => entry[0]);
-      return getMembersAndRolesObservables(orgIds);
+      const orgIds = action.orgIds || orgs.toArray().map(entry => entry[0]);
+      return orgIds;
     })
-    .mergeMap(observables => {
-      return observables;
+    .mergeMap(val => val)
+    .mergeMap(orgId => {
+      return Observable.from(
+          OrganizationsApi.getAllMembers(orgId)
+        )
+        .map(members => {
+          return Object.assign({}, { orgId, members });
+        })
+    })
+    .mergeMap(membersObj => {
+      return Observable.of(
+        actionFactory.setOrgsMembers(membersObj)
+      )
     })
     .catch((e) => {
-      // return Observable.of(/*some failure action*/)
+      console.error('e:', e);
+      return Observable.of(setOrgsMembersFailure());
     })
 }
 
@@ -200,7 +204,7 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
 }
 
 export default combineEpics(
-  getAllMembersAndRolesEpic,
+  getOrgsMembersEpic,
   getAclsEpic,
   getUserRolePermissionsEpic,
   getAllUsersAndRolesEpic

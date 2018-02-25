@@ -15,7 +15,8 @@ export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   isGettingPermissions: false,
   isGettingOrganizations: false,
   isGettingRoles: false,
-  isGettingMembers: false
+  isGettingMembers: false,
+  orgsMembers: {}
 });
 
 export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, action :Object) {
@@ -94,6 +95,17 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
 
     case actionTypes.RESET_PERMISSIONS:
       return INITIAL_STATE;
+
+    case actionTypes.SET_ORGS_MEMBERS:
+      const orgMembersMerge = {
+        orgsMembers: {
+          [action.members.orgId]: action.members.members
+        }
+      }
+      return state.mergeDeep(orgMembersMerge);
+
+    case actionTypes.SET_ORGS_MEMBERS_FAILURE:
+      return state;
 
     default:
       return state;
