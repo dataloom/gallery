@@ -5,6 +5,7 @@ import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConst
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
 import { PERMISSIONS } from '../permissions/PermissionsStorage';
+import { NONE } from '../../utils/Consts/PermissionsSummaryConsts';
 
 
 /* HELPER FUNCTIONS */
@@ -20,6 +21,28 @@ function getPermission(permissions) {
   if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(toCamelCase(PERMISSIONS.LINK));
   if (permissions.includes(PERMISSIONS.DISCOVER)) newPermissions.push(toCamelCase(PERMISSIONS.DISCOVER));
   return newPermissions;
+}
+
+function configureRolePermissions(aces) {
+  let rolePermissions = {
+    [AUTHENTICATED_USER]: []
+  };
+
+  aces.forEach(ace => {
+    if (ace.permissions.length > 0 && ace.principal.type === ROLE) {
+      if (ace.principal.id === AUTHENTICATED_USER) {
+          rolePermissions[AUTHENTICATED_USER] = getPermission(ace.permissions);
+      }
+
+      rolePermissions[ace.principal.id] = getPermission(ace.permissions);
+    }
+  });
+
+  if (rolePermissions[AUTHENTICATED_USER].length === 0) {
+    rolePermissions[AUTHENTICATED_USER] = [NONE];
+  }
+
+  return rolePermissions;
 }
 
 function configureAcls(aces) {
@@ -49,6 +72,7 @@ function configureAcls(aces) {
       }
     }
   });
+
   return {
     roleAcls,
     userAcls,
@@ -156,9 +180,10 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
         )
         .mergeMap((acl) => {
           const configuredAcls = configureAcls(acl.aces);
+          const rolePermissions = configureRolePermissions(acl.aces);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
-            actionFactory.setRolePermissions(action.property, configuredAcls),
+            actionFactory.setRolePermissions(action.property, rolePermissions),
             actionFactory.setUserPermissions(action.property, configuredAcls)
           );
         })
