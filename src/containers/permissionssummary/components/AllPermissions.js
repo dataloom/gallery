@@ -37,16 +37,16 @@ class AllPermissions extends React.Component {
   componentDidMount() {
     this.props.actions.fetchOrganizationsRequest();
 
-    // if (!this.props.entitySet.isEmpty()) {
-    //   this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
-    // }
+    if (!this.props.entitySet.isEmpty()) {
+      this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
+    }
   }
 
   componentWillReceiveProps(nextProps) {
 
-    // if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
-    //   this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
-    // }
+    if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
+      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
+    }
   }
 
   renderEntityTables() {

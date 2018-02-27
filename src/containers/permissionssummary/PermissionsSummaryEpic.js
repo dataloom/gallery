@@ -204,7 +204,7 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   });
 }
 
-function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
+function getUserRolePermissionsEpic(action$ :Observable<Action>, store) :Observable<Action> {
   return action$
     .ofType(actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST)
     .mergeMap((action :Action) => {
@@ -214,7 +214,12 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
           PermissionsApi.getAcl(aclKey)
         )
         .mergeMap((acl) => {
+          const orgsRoles = store.getState().getIn(['permissionsSummary', 'orgsRoles']);
+          const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
+
+          // TODO: Pass in orgs' members & roles details to either configureAcls or setRole/UserPermissions actions as needed
           const configuredAcls = configureAcls(acl.aces);
+
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
             actionFactory.setRolePermissions(action.property, configuredAcls),
