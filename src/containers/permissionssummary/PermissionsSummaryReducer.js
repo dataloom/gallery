@@ -1,7 +1,5 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-import { getUserPermissions } from './PermissionsSummaryHelpers';
-
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allUsersById: {},
@@ -67,8 +65,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_USER_PERMISSIONS: {
-      const allUsersById = state.get('allUsersById');
-      const userPermissions = getUserPermissions(action, allUsersById);
+      const userPermissions = action.data;
 
       if (action.property) {
         const userPermissionsMerge = {

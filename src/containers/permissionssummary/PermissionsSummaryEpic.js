@@ -23,26 +23,76 @@ function getPermission(permissions) {
   return newPermissions;
 }
 
-function configureRolePermissions(aces) {
+function configurePermissions(aces, allUsersById) {
+  const acesCopy = Array.prototype.slice(aces);
+
   let rolePermissions = {
     [AUTHENTICATED_USER]: []
   };
 
-  aces.forEach(ace => {
+  acesCopy.forEach(ace => {
     if (ace.permissions.length > 0 && ace.principal.type === ROLE) {
       if (ace.principal.id === AUTHENTICATED_USER) {
-          rolePermissions[AUTHENTICATED_USER] = getPermission(ace.permissions);
+        rolePermissions[AUTHENTICATED_USER] = getPermission(ace.permissions);
       }
 
       rolePermissions[ace.principal.id] = getPermission(ace.permissions);
     }
   });
 
-  if (rolePermissions[AUTHENTICATED_USER].length === 0) {
-    rolePermissions[AUTHENTICATED_USER] = [NONE];
+  const userPermissions = configureUserPermissions(aces, rolePermissions, allUsersById);
+
+  return {
+    rolePermissions,
+    userPermissions
+  };
+}
+
+function configureUserPermissions(aces, rolePermissions, allUsersById) {
+  let userPermissions = [];
+  try {
+    allUsersById.valueSeq().forEach(user => {
+      const userObj = {};
+  
+      if (user) {
+        userObj.id = user.user_id;
+        userObj.nickname = user.nickname;
+        userObj.email = user.email;
+        userObj.roles = [];
+        userObj.individualPermissions = [];
+        userObj.permissions = [];
+  
+        // Get individual permissions
+        aces.forEach(ace => {
+          // add logic for if ace matches user
+          if (ace.principal.id === user.user_id) {
+            userObj.individualPermissions = getPermission(ace.permissions);
+            userObj.permissions = getPermission(ace.permissions);
+          }
+        });
+  
+        // Add additional permissions based on user's roles, including AuthenticatedUser
+        user.roles.forEach(role => {
+          const permissions = rolePermissions[role];
+
+          if (permissions) {
+            permissions.forEach(permission => {
+              if (userObj.permissions.indexOf(permission) === -1) {
+                userObj.permissions.push(getPermission(permission));
+              }
+            });
+          }
+        });
+  
+        userPermissions.push(userObj);
+      }
+    });
+  }
+  catch(e) {
+    console.error(e);
   }
 
-  return rolePermissions;
+  return userPermissions;
 }
 
 function configureAcls(aces) {
@@ -169,7 +219,7 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   });
 }
 
-function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Action> {
+function getUserRolePermissionsEpic(action$ :Observable<Action>, store) :Observable<Action> {
   return action$
     .ofType(actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST)
     .mergeMap((action :Action) => {
@@ -180,11 +230,12 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>) :Observable<Act
         )
         .mergeMap((acl) => {
           const configuredAcls = configureAcls(acl.aces);
-          const rolePermissions = configureRolePermissions(acl.aces);
+          const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
+          const permissions = configurePermissions(acl.aces, allUsersById);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
-            actionFactory.setRolePermissions(action.property, rolePermissions),
-            actionFactory.setUserPermissions(action.property, configuredAcls)
+            actionFactory.setRolePermissions(action.property, permissions.rolePermissions),
+            actionFactory.setUserPermissions(action.property, permissions.userPermissions)
           );
         })
         .catch((e) => {
