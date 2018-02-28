@@ -1,17 +1,12 @@
 import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import { PermissionsApi, PrincipalsApi, EntityDataModelApi, OrganizationsApi } from 'lattice';
-import { Promise } from 'bluebird';
 
 import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
 import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTypes';
-import * as orgsActionFactory from '../organizations/actions/OrganizationsActionFactory';
-import * as orgActionFactory from '../organizations/actions/OrganizationActionFactory';
 import { PERMISSIONS } from '../permissions/PermissionsStorage';
-import { NONE } from '../../utils/Consts/PermissionsSummaryConsts';
-
 
 /* HELPER FUNCTIONS */
 function toCamelCase(s) {
@@ -29,13 +24,12 @@ function getPermission(permissions) {
 }
 
 function configurePermissions(aces, allUsersById) {
-  const acesCopy = Array.prototype.slice(aces);
 
-  let rolePermissions = {
+  const rolePermissions = {
     [AUTHENTICATED_USER]: []
   };
 
-  acesCopy.forEach(ace => {
+  aces.forEach((ace) => {
     if (ace.permissions.length > 0 && ace.principal.type === ROLE) {
       if (ace.principal.id === AUTHENTICATED_USER) {
         rolePermissions[AUTHENTICATED_USER] = getPermission(ace.permissions);
@@ -58,7 +52,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
   try {
     allUsersById.valueSeq().forEach(user => {
       const userObj = {};
-  
+
       if (user) {
         userObj.id = user.user_id;
         userObj.nickname = user.nickname;
@@ -66,7 +60,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
         userObj.roles = [];
         userObj.individualPermissions = [];
         userObj.permissions = [];
-  
+
         // Get individual permissions
         aces.forEach(ace => {
           // add logic for if ace matches user
@@ -75,7 +69,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
             userObj.permissions = getPermission(ace.permissions);
           }
         });
-  
+
         // Add additional permissions based on user's roles, including AuthenticatedUser
         user.roles.forEach(role => {
           const permissions = rolePermissions[role];
@@ -88,7 +82,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
             });
           }
         });
-  
+
         userPermissions.push(userObj);
       }
     });
