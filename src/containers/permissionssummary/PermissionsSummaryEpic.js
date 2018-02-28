@@ -10,6 +10,7 @@ import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTy
 import * as orgsActionFactory from '../organizations/actions/OrganizationsActionFactory';
 import * as orgActionFactory from '../organizations/actions/OrganizationActionFactory';
 import { PERMISSIONS } from '../permissions/PermissionsStorage';
+import { NONE } from '../../utils/Consts/PermissionsSummaryConsts';
 
 
 /* HELPER FUNCTIONS */
@@ -25,6 +26,78 @@ function getPermission(permissions) {
   if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(toCamelCase(PERMISSIONS.LINK));
   if (permissions.includes(PERMISSIONS.DISCOVER)) newPermissions.push(toCamelCase(PERMISSIONS.DISCOVER));
   return newPermissions;
+}
+
+function configurePermissions(aces, allUsersById) {
+  const acesCopy = Array.prototype.slice(aces);
+
+  let rolePermissions = {
+    [AUTHENTICATED_USER]: []
+  };
+
+  acesCopy.forEach(ace => {
+    if (ace.permissions.length > 0 && ace.principal.type === ROLE) {
+      if (ace.principal.id === AUTHENTICATED_USER) {
+        rolePermissions[AUTHENTICATED_USER] = getPermission(ace.permissions);
+      }
+
+      rolePermissions[ace.principal.id] = getPermission(ace.permissions);
+    }
+  });
+
+  const userPermissions = configureUserPermissions(aces, rolePermissions, allUsersById);
+
+  return {
+    rolePermissions,
+    userPermissions
+  };
+}
+
+function configureUserPermissions(aces, rolePermissions, allUsersById) {
+  let userPermissions = [];
+  try {
+    allUsersById.valueSeq().forEach(user => {
+      const userObj = {};
+  
+      if (user) {
+        userObj.id = user.user_id;
+        userObj.nickname = user.nickname;
+        userObj.email = user.email;
+        userObj.roles = [];
+        userObj.individualPermissions = [];
+        userObj.permissions = [];
+  
+        // Get individual permissions
+        aces.forEach(ace => {
+          // add logic for if ace matches user
+          if (ace.principal.id === user.user_id) {
+            userObj.individualPermissions = getPermission(ace.permissions);
+            userObj.permissions = getPermission(ace.permissions);
+          }
+        });
+  
+        // Add additional permissions based on user's roles, including AuthenticatedUser
+        user.roles.forEach(role => {
+          const permissions = rolePermissions[role];
+
+          if (permissions) {
+            permissions.forEach(permission => {
+              if (userObj.permissions.indexOf(permission) === -1) {
+                userObj.permissions.push(getPermission(permission));
+              }
+            });
+          }
+        });
+  
+        userPermissions.push(userObj);
+      }
+    });
+  }
+  catch(e) {
+    console.error(e);
+  }
+
+  return userPermissions;
 }
 
 function configureAcls(aces) {
@@ -54,6 +127,7 @@ function configureAcls(aces) {
       }
     }
   });
+
   return {
     roleAcls,
     userAcls,
@@ -219,11 +293,12 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>, store) :Observa
 
           // TODO: Pass in orgs' members & roles details to either configureAcls or setRole/UserPermissions actions as needed
           const configuredAcls = configureAcls(acl.aces);
-
+          const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
+          const permissions = configurePermissions(acl.aces, allUsersById);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
-            actionFactory.setRolePermissions(action.property, configuredAcls),
-            actionFactory.setUserPermissions(action.property, configuredAcls)
+            actionFactory.setRolePermissions(action.property, permissions.rolePermissions),
+            actionFactory.setUserPermissions(action.property, permissions.userPermissions)
           );
         })
         .catch((e) => {

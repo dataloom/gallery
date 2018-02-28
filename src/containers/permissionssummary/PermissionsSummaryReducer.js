@@ -1,8 +1,6 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTypes';
-import { getRolePermissions, getUserPermissions } from './PermissionsSummaryHelpers';
-
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allUsersById: {},
@@ -51,7 +49,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.set('isGettingPermissions', false);
 
     case actionTypes.SET_ROLE_PERMISSIONS: {
-      const rolePermissions = getRolePermissions(action);
+      const rolePermissions = action.data;
 
       if (action.property) {
         const rolePermissionsMerge = {
@@ -73,8 +71,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     }
 
     case actionTypes.SET_USER_PERMISSIONS: {
-      const allUsersById = state.get('allUsersById');
-      const userPermissions = getUserPermissions(action, allUsersById);
+      const userPermissions = action.data;
 
       if (action.property) {
         const userPermissionsMerge = {

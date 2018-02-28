@@ -28,7 +28,8 @@ export default class AuthService extends EventEmitter {
         params: {
           scope: 'openid email user_metadata app_metadata nickname roles user_id'
         }
-      }
+      },
+      rememberLastLogin: false
     });
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this.doAuthentication.bind(this));
@@ -44,7 +45,7 @@ export default class AuthService extends EventEmitter {
     // Saves the user token
     this.setToken(authResult.idToken);
     // Async loads the user profile data
-    this.lock.getProfile(authResult.idToken, (error, profile) => {
+    this.lock.getUserInfo(authResult.accessToken, (error, profile) => {
       if (error) {
         this.emit('profileError');
       }
