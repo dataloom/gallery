@@ -10,6 +10,7 @@ import styled, {
   css
 } from 'styled-components';
 
+import CreateApp from './CreateApp';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
 import * as actionFactory from './AppActionFactory';
@@ -69,6 +70,7 @@ const ErrorMessage = styled.div`
 
 class Apps extends React.Component {
   static propTypes = {
+    auth: PropTypes.object.isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -103,6 +105,7 @@ class Apps extends React.Component {
     this.setState({
       isModalOpen: true
     });
+    // FORMAT FOR WHEN READY TO HANDLE EVENT
     // this.props.actions.createEntitySetReset();
     // this.setState({
     //   isModalOpen: true
@@ -114,6 +117,15 @@ class Apps extends React.Component {
       isModalOpen: false
     });
   };
+
+  getDefaultContact = () => {
+    const profile = this.props.auth.getProfile();
+    let defaultContact = '';
+    if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
+    if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
+    if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
+    return defaultContact;
+  }
 
   renderApps = () => {
     return this.props.apps.map((app) => {
@@ -260,6 +272,7 @@ class Apps extends React.Component {
               <Modal.Title>Create an app</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+              <CreateApp defaultContact={this.getDefaultContact()} />
             </Modal.Body>
           </Modal>
           <Page.Body>
