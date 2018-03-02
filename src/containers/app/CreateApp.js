@@ -174,13 +174,10 @@ class CreateApp extends React.Component {
 
   render() {
     return (
-      <div>
-        <p>HI</p>
         <AsyncContent
             {...this.props.createAppAsyncState}
             pendingContent={this.renderPending()}
             content={this.renderSuccess} />
-      </div>
     );
   }
 
