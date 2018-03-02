@@ -13,6 +13,7 @@ import styled, {
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
 import * as actionFactory from './AppActionFactory';
+import styles from './app.module.css';
 
 const AppSectionContainer = styled.div`
   display: flex;
@@ -81,7 +82,8 @@ class Apps extends React.Component {
     this.state = {
       installing: null,
       prefix: '',
-      org: ''
+      org: '',
+      isModalOpen: false
     };
   }
 
@@ -92,9 +94,26 @@ class Apps extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.organizations.size && nextProps.organizations.size) {
-      this.setState({ org: nextProps.organizations.keySeq().get(0)});
+      this.setState({ org: nextProps.organizations.keySeq().get(0) });
     }
   }
+
+  onAddApp = () => {
+    console.log('Made it into the event handler');
+    this.setState({
+      isModalOpen: true
+    });
+    // this.props.actions.createEntitySetReset();
+    // this.setState({
+    //   isModalOpen: true
+    // });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isModalOpen: false
+    });
+  };
 
   renderApps = () => {
     return this.props.apps.map((app) => {
@@ -118,7 +137,7 @@ class Apps extends React.Component {
           <hr />
         </div>
       );
-    })
+    });
   }
 
   renderOrganizationSection = () => {
@@ -145,7 +164,7 @@ class Apps extends React.Component {
           {orgOptions}
         </DropdownButton>
       </OrganizationSelectionWrapper>
-    )
+    );
   }
 
   renderPrefixSection = () => {
@@ -225,12 +244,24 @@ class Apps extends React.Component {
   }
 
   render() {
+    const { isModalOpen } = this.state;
+
     return (
       <DocumentTitle title="Apps">
         <Page>
           <Page.Header>
             <Page.Title>Browse Apps</Page.Title>
+            <Button bsStyle="primary" className={styles.control} onClick={this.onAddApp}>
+              <FontAwesome name="plus-circle" size="lg" /> App
+            </Button>
           </Page.Header>
+          <Modal show={isModalOpen} onHide={this.closeModal} container={this}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create an app</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+            </Modal.Body>
+          </Modal>
           <Page.Body>
             {this.renderError()}
             {this.renderApps()}
