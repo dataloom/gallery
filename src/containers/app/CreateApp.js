@@ -21,7 +21,8 @@ const APP_TYPES = {
 class CreateApp extends React.Component {
 
   static propTypes = {
-    defaultContact: PropTypes.string
+    defaultContact: PropTypes.string,
+    createAppAsyncState: AsyncStatePropType.isRequired
   }
 
   constructor(props) {
@@ -41,9 +42,145 @@ class CreateApp extends React.Component {
     // this.props.actions.fetchAllEntityTypesRequest();
   }
 
+  onTypeChange = (option) => {
+    // const entityTypeId = (option.value === APP_TYPES.LINKED_ENTITY_SET) ? this.props.personEntityTypeId : null;
+    // this.setState({
+    //   type: option.value,
+    //   entityTypeId,
+    //   entitySetIds: []
+    // });
+  }
+
+  onTitleChange = (event) => {
+    this.setState({
+      title: event.target.value
+    });
+  };
+
+  onNameChange = (event) => {
+    this.setState({
+      name: event.target.value
+    });
+  };
+
+  onDescriptionChange = (event) => {
+    this.setState({
+      description: event.target.value
+    });
+  };
+
+  onContactChange = (event) => {
+    this.setState({
+      contact: event.target.value
+    });
+  }
+
+  onEntityTypeChange = (option) => {
+    const entityTypeId = (option) ? option.value : null;
+    this.setState({ entityTypeId });
+  };
+
+  onEntitySetsChange = (entitySetIds) => {
+    const entityTypeId = (entitySetIds.length) ? entitySetIds[0].entityTypeId : null;
+    this.setState({ entitySetIds, entityTypeId });
+  }
+
+  onSubmit = () => {
+    const { type, title, name, description, contact, entityTypeId, entitySetIds } = this.state;
+
+    const entitySet = {
+      title,
+      name,
+      description,
+      entityTypeId,
+      contacts: [contact]
+    };
+
+    if (type === ENTITY_SET_TYPES.ENTITY_SET) this.props.actions.onCreateEntitySet(entitySet);
+    else {
+      const propertyTypeIds = this.props.entityTypes.getIn([entityTypeId, 'properties'], Immutable.List()).toJS();
+      const linkingProperties = propertyTypeIds.map((propertyTypeId) => {
+        const linkMap = {};
+        entitySetIds.forEach((entitySetOption) => {
+          linkMap[entitySetOption.value] = propertyTypeId;
+        });
+        return linkMap;
+      });
+      const linkingEntitySet = { entitySet, linkingProperties };
+      this.props.actions.onCreateLinkedEntitySet({ linkingEntitySet, propertyTypeIds });
+    }
+  }
+  getTypeOptions = () => {
+
+    const options = [];
+
+    Object.values(APP_TYPES).forEach((type) => {
+      options.push({
+        value: type,
+        label: type
+      });
+    });
+
+    return options;
+  }
+
+  renderPending = () => {
+    return (
+      <form onSubmit={this.onSubmit}>
+        <FormGroup>
+          <ControlLabel>Type</ControlLabel>
+          <Select
+              value={this.state.type}
+              options={this.getTypeOptions()}
+              onChange={this.onTypeChange} />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Title</ControlLabel>
+          <FormControl type="text" onChange={this.onTitleChange} />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Name</ControlLabel>
+          <FormControl type="text" onChange={this.onNameChange} />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Description</ControlLabel>
+          <FormControl componentClass="textarea" onChange={this.onDescriptionChange} />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Contact</ControlLabel>
+          <FormControl
+              type="text"
+              value={this.state.contact}
+              onChange={this.onContactChange} />
+        </FormGroup>
+
+        {/*this.renderEntityTypeOrEntitySetSelection()*/}
+        <Button type="submit" bsStyle="primary">Create</Button>
+      </form>
+    );
+  };
+
+  renderSuccess = () => {
+    return (
+      <Alert bsStyle="success">
+        Successfully saved App
+      </Alert>
+    );
+  };
+
   render() {
     return (
-      <p>HI</p>
+      <div>
+        <p>HI</p>
+        <AsyncContent
+            {...this.props.createAppAsyncState}
+            pendingContent={this.renderPending()}
+            content={this.renderSuccess} />
+      </div>
     );
   }
 
