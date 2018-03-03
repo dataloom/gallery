@@ -9,18 +9,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-
-const APP_TYPES = {
-  ENTITY_SET: 'Entity Set',
-  LINKED_ENTITY_SET: 'Linked Entity Set'
-};
-
+// import { createAppRequest } from './CreateAppActionFactories';
 
 class CreateApp extends React.Component {
 
   static propTypes = {
-    defaultContact: PropTypes.string,
-    createAppAsyncState: AsyncStatePropType.isRequired
+    createAppAsyncState: AsyncStatePropType.isRequired,
+    actions: PropTypes.shape({
+      onCreateApp: PropTypes.func.isRequired
+    }).isRequired
   }
 
   constructor(props) {
@@ -80,42 +77,8 @@ class CreateApp extends React.Component {
       url
     };
     console.log(App);
-    // const { title, description, name, nentityTypeId } = this.state;
-    //
-    // const entitySet = {
-    //   title,
-    //   name,
-    //   description,
-    //   entityTypeId,
-    //   contacts: [contact]
-    // };
-    //
-    // if (type === ENTITY_SET_TYPES.ENTITY_SET) this.props.actions.onCreateEntitySet(entitySet);
-    // else {
-    //   const propertyTypeIds = this.props.entityTypes.getIn([entityTypeId, 'properties'], Immutable.List()).toJS();
-    //   const linkingProperties = propertyTypeIds.map((propertyTypeId) => {
-    //     const linkMap = {};
-    //     entitySetIds.forEach((entitySetOption) => {
-    //       linkMap[entitySetOption.value] = propertyTypeId;
-    //     });
-    //     return linkMap;
-    //   });
-    //   const linkingEntitySet = { entitySet, linkingProperties };
-    //   this.props.actions.onCreateLinkedEntitySet({ linkingEntitySet, propertyTypeIds });
-    // }
-  }
-  getTypeOptions = () => {
 
-    const options = [];
-
-    Object.values(APP_TYPES).forEach((type) => {
-      options.push({
-        value: type,
-        label: type
-      });
-    });
-
-    return options;
+    // this.props.actions.onCreateApp(App);
   }
 
   renderPending = () => {
@@ -169,6 +132,17 @@ class CreateApp extends React.Component {
     );
   }
 
+}
+
+function mapDispatchToProps(dispatch) {
+
+  const actions = {
+    onCreateApp: createAppRequest
+  };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
 }
 
 export default (CreateApp);

@@ -94,31 +94,6 @@ class CreateAppType extends React.Component {
     // };
     //
     // if (type === ENTITY_SET_TYPES.ENTITY_SET) this.props.actions.onCreateEntitySet(entitySet);
-    // else {
-    //   const propertyTypeIds = this.props.entityTypes.getIn([entityTypeId, 'properties'], Immutable.List()).toJS();
-    //   const linkingProperties = propertyTypeIds.map((propertyTypeId) => {
-    //     const linkMap = {};
-    //     entitySetIds.forEach((entitySetOption) => {
-    //       linkMap[entitySetOption.value] = propertyTypeId;
-    //     });
-    //     return linkMap;
-    //   });
-    //   const linkingEntitySet = { entitySet, linkingProperties };
-    //   this.props.actions.onCreateLinkedEntitySet({ linkingEntitySet, propertyTypeIds });
-    // }
-  }
-  getTypeOptions = () => {
-
-    const options = [];
-
-    Object.values(APP_TYPES).forEach((type) => {
-      options.push({
-        value: type,
-        label: type
-      });
-    });
-
-    return options;
   }
 
   renderPending = () => {
