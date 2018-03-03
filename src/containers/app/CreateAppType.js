@@ -18,7 +18,7 @@ const APP_TYPES = {
 };
 
 
-class CreateApp extends React.Component {
+class CreateAppType extends React.Component {
 
   static propTypes = {
     defaultContact: PropTypes.string,
@@ -183,4 +183,4 @@ class CreateApp extends React.Component {
 
 }
 
-export default (CreateApp);
+export default (CreateAppType);

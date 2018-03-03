@@ -11,6 +11,7 @@ import styled, {
 } from 'styled-components';
 
 import CreateApp from './CreateApp';
+import CreateAppType from './CreateAppType';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
 import * as actionFactory from './AppActionFactory';
@@ -85,7 +86,8 @@ class Apps extends React.Component {
       installing: null,
       prefix: '',
       org: '',
-      isModalOpen: false
+      isAppModalOpen: false,
+      isAppTypeModalOpen: false
     };
   }
 
@@ -101,9 +103,21 @@ class Apps extends React.Component {
   }
 
   onAddApp = () => {
-    console.log('Made it into the event handler');
+    console.log('Made it into the app event handler');
     this.setState({
-      isModalOpen: true
+      isAppModalOpen: true
+    });
+    // FORMAT FOR WHEN READY TO HANDLE EVENT
+    // this.props.actions.createEntitySetReset();
+    // this.setState({
+    //   isModalOpen: true
+    // });
+  };
+
+  onAddAppType = () => {
+    console.log('Made it into the apptype event handler');
+    this.setState({
+      isAppTypeModalOpen: true
     });
     // FORMAT FOR WHEN READY TO HANDLE EVENT
     // this.props.actions.createEntitySetReset();
@@ -114,7 +128,8 @@ class Apps extends React.Component {
 
   closeModal = () => {
     this.setState({
-      isModalOpen: false
+      isAppModalOpen: false,
+      isAppTypeModalOpen: false
     });
   };
 
@@ -256,7 +271,8 @@ class Apps extends React.Component {
   }
 
   render() {
-    const { isModalOpen } = this.state;
+    const { isAppModalOpen } = this.state;
+    const { isAppTypeModalOpen } = this.state;
 
     return (
       <DocumentTitle title="Apps">
@@ -266,13 +282,24 @@ class Apps extends React.Component {
             <Button bsStyle="primary" className={styles.control} onClick={this.onAddApp}>
               <FontAwesome name="plus-circle" size="lg" /> App
             </Button>
+            <Button bsStyle="primary" className={styles.control} onClick={this.onAddAppType}>
+              <FontAwesome name="plus-circle" size="lg" /> App Type
+            </Button>
           </Page.Header>
-          <Modal show={isModalOpen} onHide={this.closeModal} container={this}>
+          <Modal show={isAppModalOpen} onHide={this.closeModal} container={this}>
             <Modal.Header closeButton>
-              <Modal.Title>Create an app</Modal.Title>
+              <Modal.Title>Create an App</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <CreateApp defaultContact={this.getDefaultContact()} />
+            </Modal.Body>
+          </Modal>
+          <Modal show={isAppTypeModalOpen} onHide={this.closeModal} container={this}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create an App Type</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <CreateAppType defaultContact={this.getDefaultContact()} />
             </Modal.Body>
           </Modal>
           <Page.Body>
