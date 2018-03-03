@@ -9,8 +9,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-// import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
-// import { createEntitySetRequest, createLinkedEntitySetRequest } from './CreateEntitySetActionFactories';
 
 const APP_TYPES = {
   ENTITY_SET: 'Entity Set',
@@ -28,30 +26,17 @@ class CreateApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // type: APP_TYPES.ENTITY_SET,
       title: '',
       description: '',
       name: '',
-      apptypeids: [],
+      appTypeIds: [],
       url: ''
-      // contact: props.defaultContact,
-      // entityTypeId: null,
-      // entitySetIds: []
     };
   }
 
   componentDidMount() {
     // this.props.actions.fetchAllEntityTypesRequest();
   }
-
-  // onTypeChange = (option) => {
-  //   // const entityTypeId = (option.value === APP_TYPES.LINKED_ENTITY_SET) ? this.props.personEntityTypeId : null;
-  //   // this.setState({
-  //   //   type: option.value,
-  //   //   entityTypeId,
-  //   //   entitySetIds: []
-  //   // });
-  // }
 
   onTitleChange = (event) => {
     this.setState({
@@ -78,28 +63,24 @@ class CreateApp extends React.Component {
   };
   onAppTypeIdsChange = (event) => {
     this.setState({
-      apptypeids: event.target.value
+      appTypeIds: event.target.value
     });
   };
 
-  // onContactChange = (event) => {
-  //   this.setState({
-  //     contact: event.target.value
-  //   });
-  // }
-
-  // onEntityTypeChange = (option) => {
-  //   const entityTypeId = (option) ? option.value : null;
-  //   this.setState({ entityTypeId });
-  // };
-  //
-  // onEntitySetsChange = (entitySetIds) => {
-  //   const entityTypeId = (entitySetIds.length) ? entitySetIds[0].entityTypeId : null;
-  //   this.setState({ entitySetIds, entityTypeId });
-  // }
-
   onSubmit = () => {
-    // const { type, title, name, description, contact, entityTypeId, entitySetIds } = this.state;
+    const { title, description, name, appTypeIds, url } = this.state;
+
+    console.log('You clicked the Create App button');
+
+    const App = {
+      title,
+      description,
+      name,
+      appTypeIds,
+      url
+    };
+    console.log(App);
+    // const { title, description, name, nentityTypeId } = this.state;
     //
     // const entitySet = {
     //   title,
@@ -140,14 +121,6 @@ class CreateApp extends React.Component {
   renderPending = () => {
     return (
       <form onSubmit={this.onSubmit}>
-        {/*<FormGroup>
-          <ControlLabel>Type</ControlLabel>
-          <Select
-              value={this.state.type}
-              options={this.getTypeOptions()}
-              onChange={this.onTypeChange} />
-        </FormGroup>*/}
-
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
           <FormControl type="text" onChange={this.onNameChange} />
@@ -173,17 +146,8 @@ class CreateApp extends React.Component {
           <FormControl type="text" onChange={this.onUrlChange} />
         </FormGroup>
 
-        {/* <FormGroup>
-          <ControlLabel>Contact</ControlLabel>
-          <FormControl
-              type="text"
-              value={this.state.contact}
-              onChange={this.onContactChange} />
-        </FormGroup> */}
-
-        {/* this.renderEntityTypeOrEntitySetSelection() */}
         <br />
-        <Button type="submit" bsStyle="primary">Create</Button>
+        <Button type="submit" bsStyle="primary">Create App</Button>
       </form>
     );
   };

@@ -28,27 +28,16 @@ class CreateAppType extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      type: APP_TYPES.ENTITY_SET,
       title: '',
       description: '',
       name: '',
-      contact: props.defaultContact,
-      entityTypeId: null,
-      entitySetIds: []
+      namespace: '',
+      entityTypeId: null
     };
   }
 
   componentDidMount() {
     // this.props.actions.fetchAllEntityTypesRequest();
-  }
-
-  onTypeChange = (option) => {
-    // const entityTypeId = (option.value === APP_TYPES.LINKED_ENTITY_SET) ? this.props.personEntityTypeId : null;
-    // this.setState({
-    //   type: option.value,
-    //   entityTypeId,
-    //   entitySetIds: []
-    // });
   }
 
   onTitleChange = (event) => {
@@ -63,30 +52,38 @@ class CreateAppType extends React.Component {
     });
   };
 
+  onNamespaceChange = (event) => {
+    this.setState({
+      namespace: event.target.value
+    });
+  };
+
   onDescriptionChange = (event) => {
     this.setState({
       description: event.target.value
     });
   };
 
-  onContactChange = (event) => {
+  onEntityTypeIdChange = (event) => {
     this.setState({
-      contact: event.target.value
+      entityTypeId: event.target.value
     });
   }
 
-  // onEntityTypeChange = (option) => {
-  //   const entityTypeId = (option) ? option.value : null;
-  //   this.setState({ entityTypeId });
-  // };
-  //
-  // onEntitySetsChange = (entitySetIds) => {
-  //   const entityTypeId = (entitySetIds.length) ? entitySetIds[0].entityTypeId : null;
-  //   this.setState({ entitySetIds, entityTypeId });
-  // }
-
   onSubmit = () => {
-    // const { type, title, name, description, contact, entityTypeId, entitySetIds } = this.state;
+    const { title, description, name, namespace, entityTypeId } = this.state;
+
+    console.log('You clicked the Create App Type button');
+
+    const AppType = {
+      title,
+      description,
+      name,
+      namespace,
+      entityTypeId
+    };
+    console.log(AppType);
+    // const { title, description, name, nentityTypeId } = this.state;
     //
     // const entitySet = {
     //   title,
@@ -127,17 +124,9 @@ class CreateAppType extends React.Component {
   renderPending = () => {
     return (
       <form onSubmit={this.onSubmit}>
-        {/*<FormGroup>
-          <ControlLabel>Namespace</ControlLabel>
-          <Select
-              value={this.state.type}
-              options={this.getTypeOptions()}
-              onChange={this.onTypeChange} />
-        </FormGroup>*/}
-
         <FormGroup>
           <ControlLabel>Namespace</ControlLabel>
-          <FormControl type="text" onChange={this.onNameChange} />
+          <FormControl type="text" onChange={this.onNamespaceChange} />
         </FormGroup>
 
         <FormGroup>
@@ -155,20 +144,13 @@ class CreateAppType extends React.Component {
           <FormControl componentClass="textarea" onChange={this.onDescriptionChange} />
         </FormGroup>
 
-        {/*<FormGroup>
-          <ControlLabel>Contact</ControlLabel>
-          <FormControl
-              type="text"
-              value={this.state.contact}
-              onChange={this.onContactChange} />
-        </FormGroup>*/}
-
         <FormGroup>
           <ControlLabel>Entity Type Id</ControlLabel>
-          <FormControl type="text" onChange={this.onDescriptionChange} />
+          <FormControl type="text" onChange={this.onEntityTypeIdChange} />
         </FormGroup>
-        <br/>
-        <Button type="submit" bsStyle="primary">Create</Button>
+
+        <br />
+        <Button type="submit" bsStyle="primary">Create App Type</Button>
       </form>
     );
   };
