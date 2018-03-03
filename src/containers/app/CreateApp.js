@@ -28,13 +28,15 @@ class CreateApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      type: APP_TYPES.ENTITY_SET,
+      // type: APP_TYPES.ENTITY_SET,
       title: '',
       description: '',
       name: '',
-      contact: props.defaultContact,
-      entityTypeId: null,
-      entitySetIds: []
+      apptypeids: [],
+      url: ''
+      // contact: props.defaultContact,
+      // entityTypeId: null,
+      // entitySetIds: []
     };
   }
 
@@ -42,14 +44,14 @@ class CreateApp extends React.Component {
     // this.props.actions.fetchAllEntityTypesRequest();
   }
 
-  onTypeChange = (option) => {
-    // const entityTypeId = (option.value === APP_TYPES.LINKED_ENTITY_SET) ? this.props.personEntityTypeId : null;
-    // this.setState({
-    //   type: option.value,
-    //   entityTypeId,
-    //   entitySetIds: []
-    // });
-  }
+  // onTypeChange = (option) => {
+  //   // const entityTypeId = (option.value === APP_TYPES.LINKED_ENTITY_SET) ? this.props.personEntityTypeId : null;
+  //   // this.setState({
+  //   //   type: option.value,
+  //   //   entityTypeId,
+  //   //   entitySetIds: []
+  //   // });
+  // }
 
   onTitleChange = (event) => {
     this.setState({
@@ -69,11 +71,22 @@ class CreateApp extends React.Component {
     });
   };
 
-  onContactChange = (event) => {
+  onUrlChange = (event) => {
     this.setState({
-      contact: event.target.value
+      url: event.target.value
     });
-  }
+  };
+  onAppTypeIdsChange = (event) => {
+    this.setState({
+      apptypeids: event.target.value
+    });
+  };
+
+  // onContactChange = (event) => {
+  //   this.setState({
+  //     contact: event.target.value
+  //   });
+  // }
 
   // onEntityTypeChange = (option) => {
   //   const entityTypeId = (option) ? option.value : null;
@@ -127,12 +140,17 @@ class CreateApp extends React.Component {
   renderPending = () => {
     return (
       <form onSubmit={this.onSubmit}>
-        <FormGroup>
+        {/*<FormGroup>
           <ControlLabel>Type</ControlLabel>
           <Select
               value={this.state.type}
               options={this.getTypeOptions()}
               onChange={this.onTypeChange} />
+        </FormGroup>*/}
+
+        <FormGroup>
+          <ControlLabel>Name</ControlLabel>
+          <FormControl type="text" onChange={this.onNameChange} />
         </FormGroup>
 
         <FormGroup>
@@ -141,24 +159,30 @@ class CreateApp extends React.Component {
         </FormGroup>
 
         <FormGroup>
-          <ControlLabel>Name</ControlLabel>
-          <FormControl type="text" onChange={this.onNameChange} />
-        </FormGroup>
-
-        <FormGroup>
           <ControlLabel>Description</ControlLabel>
           <FormControl componentClass="textarea" onChange={this.onDescriptionChange} />
         </FormGroup>
 
         <FormGroup>
+          <ControlLabel>App Type Ids</ControlLabel>
+          <FormControl componentClass="textarea" onChange={this.onAppTypeIdsChange} />
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Url</ControlLabel>
+          <FormControl type="text" onChange={this.onUrlChange} />
+        </FormGroup>
+
+        {/* <FormGroup>
           <ControlLabel>Contact</ControlLabel>
           <FormControl
               type="text"
               value={this.state.contact}
               onChange={this.onContactChange} />
-        </FormGroup>
+        </FormGroup> */}
 
-        {/*this.renderEntityTypeOrEntitySetSelection()*/}
+        {/* this.renderEntityTypeOrEntitySetSelection() */}
+        <br />
         <Button type="submit" bsStyle="primary">Create</Button>
       </form>
     );

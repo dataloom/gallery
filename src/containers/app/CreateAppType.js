@@ -127,17 +127,17 @@ class CreateAppType extends React.Component {
   renderPending = () => {
     return (
       <form onSubmit={this.onSubmit}>
-        <FormGroup>
-          <ControlLabel>Type</ControlLabel>
+        {/*<FormGroup>
+          <ControlLabel>Namespace</ControlLabel>
           <Select
               value={this.state.type}
               options={this.getTypeOptions()}
               onChange={this.onTypeChange} />
-        </FormGroup>
+        </FormGroup>*/}
 
         <FormGroup>
-          <ControlLabel>Title</ControlLabel>
-          <FormControl type="text" onChange={this.onTitleChange} />
+          <ControlLabel>Namespace</ControlLabel>
+          <FormControl type="text" onChange={this.onNameChange} />
         </FormGroup>
 
         <FormGroup>
@@ -146,19 +146,28 @@ class CreateAppType extends React.Component {
         </FormGroup>
 
         <FormGroup>
+          <ControlLabel>Title</ControlLabel>
+          <FormControl type="text" onChange={this.onTitleChange} />
+        </FormGroup>
+
+        <FormGroup>
           <ControlLabel>Description</ControlLabel>
           <FormControl componentClass="textarea" onChange={this.onDescriptionChange} />
         </FormGroup>
 
-        <FormGroup>
+        {/*<FormGroup>
           <ControlLabel>Contact</ControlLabel>
           <FormControl
               type="text"
               value={this.state.contact}
               onChange={this.onContactChange} />
-        </FormGroup>
+        </FormGroup>*/}
 
-        {/*this.renderEntityTypeOrEntitySetSelection()*/}
+        <FormGroup>
+          <ControlLabel>Entity Type Id</ControlLabel>
+          <FormControl type="text" onChange={this.onDescriptionChange} />
+        </FormGroup>
+        <br/>
         <Button type="submit" bsStyle="primary">Create</Button>
       </form>
     );
