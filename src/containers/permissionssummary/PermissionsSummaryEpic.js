@@ -8,6 +8,7 @@ import * as actionFactory from './PermissionsSummaryActionFactory';
 import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTypes';
 import { PERMISSIONS } from '../permissions/PermissionsStorage';
 
+
 /* HELPER FUNCTIONS */
 function toCamelCase(s) {
   return s.charAt(0) + s.slice(1).toLowerCase();
@@ -23,8 +24,9 @@ function getPermission(permissions) {
   return newPermissions;
 }
 
-function configureUserPermissions(aces, rolePermissions, allUsersById) {
+function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembers) {
   const userPermissions = [];
+
   try {
     allUsersById.valueSeq().forEach((user) => {
       const userObj = {};
@@ -45,18 +47,33 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
           }
         });
 
-        // Add additional permissions based on user's roles, including AuthenticatedUser
-        user.roles.forEach((role) => {
-          const permissions = rolePermissions[role];
+        // Get permissions based on roles
+        const members = Object.values(orgsMembers.toJS()).reduce((a, c) => a.concat(c), []);
+        members.forEach((member) => {          
+          let match = false;
+          let i = 0;
+          while (!match && i < aces.length) {
+            if (member.profile.user_id === user.user_id) {
+              match = true;
 
-          if (permissions && permissions.length > 0) {
-            permissions.forEach((permission) => {
-              if (userObj.permissions.indexOf(permission) === -1) {
-                userObj.permissions.concat(getPermission([permission]));
-              }
-            });
+              member.roles.forEach((role) => {
+                userObj.roles.push(role.title);
+
+                const permissions = rolePermissions[role.principal.id];
+                if (permissions) {
+                  permissions.forEach((permission) => {
+                    if (userObj.permissions.indexOf(permission) === -1) {
+                      userObj.permissions.push(permission);
+                    }
+                  });
+                }
+              });
+            }
+
+            i += 1;
           }
         });
+
         userPermissions.push(userObj);
       }
     });
@@ -68,8 +85,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
   return userPermissions;
 }
 
-function configurePermissions(aces, allUsersById) {
-
+function configurePermissions(aces, allUsersById, orgsMembers) {  
   const rolePermissions = {
     [AUTHENTICATED_USER]: []
   };
@@ -84,7 +100,7 @@ function configurePermissions(aces, allUsersById) {
     }
   });
 
-  const userPermissions = configureUserPermissions(aces, rolePermissions, allUsersById);
+  const userPermissions = configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembers);
 
   return {
     rolePermissions,
@@ -241,13 +257,11 @@ function getUserRolePermissionsEpic(action$, store) {
           PermissionsApi.getAcl(aclKey)
         )
         .mergeMap((acl) => {
+          // TODO: Figure out if orgsRoles is necessary; Currently not used
           const orgsRoles = store.getState().getIn(['permissionsSummary', 'orgsRoles']);
           const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
-
-          // TODO: Pass in orgs' members & roles details to either configureAcls
-          // or setRole/UserPermissions actions as needed
           const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
-          const permissions = configurePermissions(acl.aces, allUsersById);
+          const permissions = configurePermissions(acl.aces, allUsersById, orgsMembers);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
             actionFactory.setRolePermissions(action.property, permissions.rolePermissions),
