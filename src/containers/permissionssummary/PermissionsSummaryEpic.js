@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { combineEpics } from 'redux-observable';
 import { PermissionsApi, PrincipalsApi, EntityDataModelApi, OrganizationsApi } from 'lattice';
 
-import { ROLE, USER, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
+import { ROLE, AUTHENTICATED_USER } from '../../utils/Consts/UserRoleConsts';
 import * as actionTypes from './PermissionsSummaryActionTypes';
 import * as actionFactory from './PermissionsSummaryActionFactory';
 import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTypes';
@@ -21,6 +21,51 @@ function getPermission(permissions) {
   if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(toCamelCase(PERMISSIONS.LINK));
   if (permissions.includes(PERMISSIONS.DISCOVER) || permissions.includes('Discover')) newPermissions.push(toCamelCase(PERMISSIONS.DISCOVER));
   return newPermissions;
+}
+
+function configureUserPermissions(aces, rolePermissions, allUsersById) {
+  const userPermissions = [];
+  try {
+    allUsersById.valueSeq().forEach((user) => {
+      const userObj = {};
+
+      if (user) {
+        userObj.id = user.user_id;
+        userObj.nickname = user.nickname;
+        userObj.email = user.email;
+        userObj.roles = [];
+        userObj.individualPermissions = [];
+        userObj.permissions = [];
+
+        // Get individual permissions
+        aces.forEach((ace) => {
+          if (ace.principal.id === user.user_id) {
+            userObj.individualPermissions = getPermission(ace.permissions);
+            userObj.permissions = getPermission(ace.permissions);
+          }
+        });
+
+        // Add additional permissions based on user's roles, including AuthenticatedUser
+        user.roles.forEach((role) => {
+          const permissions = rolePermissions[role];
+
+          if (permissions && permissions.length > 0) {
+            permissions.forEach((permission) => {
+              if (userObj.permissions.indexOf(permission) === -1) {
+                userObj.permissions.concat(getPermission([permission]));
+              }
+            });
+          }
+        });
+        userPermissions.push(userObj);
+      }
+    });
+  }
+  catch (e) {
+    console.error(e);
+  }
+
+  return userPermissions;
 }
 
 function configurePermissions(aces, allUsersById) {
@@ -47,86 +92,6 @@ function configurePermissions(aces, allUsersById) {
   };
 }
 
-function configureUserPermissions(aces, rolePermissions, allUsersById) {
-  let userPermissions = [];
-  try {
-    allUsersById.valueSeq().forEach(user => {
-      const userObj = {};
-
-      if (user) {
-        userObj.id = user.user_id;
-        userObj.nickname = user.nickname;
-        userObj.email = user.email;
-        userObj.roles = [];
-        userObj.individualPermissions = [];
-        userObj.permissions = [];
-
-        // Get individual permissions
-        aces.forEach(ace => {
-          if (ace.principal.id === user.user_id) {
-            userObj.individualPermissions = getPermission(ace.permissions);
-            userObj.permissions = getPermission(ace.permissions);
-          }
-        });
-
-        // Add additional permissions based on user's roles, including AuthenticatedUser
-        user.roles.forEach(role => {
-          const permissions = rolePermissions[role];
-
-          if (permissions && permissions.length > 0) {
-            permissions.forEach(permission => {
-              if (userObj.permissions.indexOf(permission) === -1) {
-                userObj.permissions.concat(getPermission([permission]));
-              }
-            });
-          }
-        });
-        userPermissions.push(userObj);
-      }
-    });
-  }
-  catch(e) {
-    console.error(e);
-  }
-
-  return userPermissions;
-}
-
-// function configureAcls(aces) {
-//   let authenticatedUserPermissions = [];
-//   const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-//   const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-//   aces.forEach((ace) => {
-//     if (ace.permissions.length > 0) {
-//       if (ace.principal.type === ROLE) {
-//         if (ace.principal.id === AUTHENTICATED_USER) {
-//           authenticatedUserPermissions = getPermission(ace.permissions);
-//         }
-//         else {
-//           getPermission(ace.permissions).forEach((permission) => {
-//             if (roleAcls[permission]) {
-//               roleAcls[permission].push(ace.principal.id);
-//             }
-//           });
-//         }
-//       }
-//       else if (ace.principal.type === USER) {
-//         getPermission(ace.permissions).forEach((permission) => {
-//           if (userAcls[permission]) {
-//             userAcls[permission].push(ace.principal.id);
-//           }
-//         });
-//       }
-//     }
-//   });
-
-//   return {
-//     roleAcls,
-//     userAcls,
-//     authenticatedUserPermissions
-//   };
-// }
-
 function getAclKey(action) {
   const property = action.property;
   const aclKey = [action.entitySetId];
@@ -149,9 +114,9 @@ function getUsersAndRoles(users) {
 }
 
 function createAclsObservables(entitySetId, properties) {
-  const loadAclsObservables = properties.map((property) => {
-    return Observable.of(actionFactory.getUserRolePermissionsRequest(entitySetId, property));
-  });
+  const loadAclsObservables = properties.map(property =>
+    Observable.of(actionFactory.getUserRolePermissionsRequest(entitySetId, property))
+  );
   loadAclsObservables.unshift(Observable.of(actionFactory.getUserRolePermissionsRequest(entitySetId)));
   return loadAclsObservables;
 }
@@ -161,54 +126,50 @@ function createAclsObservables(entitySetId, properties) {
 function getOrgsMembersEpic(action$, store) {
   return action$
     .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
-    .map((action) => {
+    .map(() => {
       const orgs = store.getState().getIn(['organizations', 'organizations']);
       const orgIds = orgs.keySeq().toJS();
       return orgIds;
     })
     .mergeMap(val => val)
-    .mergeMap(orgId => {
-      return Observable.from(
+    .mergeMap(orgId =>
+      Observable.from(
           OrganizationsApi.getAllMembers(orgId)
         )
-        .map(members => {
-          return Object.assign({}, { orgId, members });
-        })
-    })
-    .mergeMap(membersObj => {
-      return Observable.of(
+        .map(members => Object.assign({}, { orgId, members }))
+    )
+    .mergeMap(membersObj =>
+      Observable.of(
         actionFactory.setOrgsMembers(membersObj)
       )
-    })
-    .catch((e) => {
-      console.error('e:', e);
-      return Observable.of(setOrgsMembersFailure());
-    })
+    )
+    .catch(() =>
+      Observable.of(actionFactory.setOrgsMembersFailure())
+    );
 }
 
 function getOrgsRolesEpic(action$, store) {
   return action$
     .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
-    .map((action) => {
+    .map(() => {
       const orgs = store.getState().getIn(['organizations', 'organizations']);
       const orgIds = orgs.keySeq().toJS();
       return orgIds;
     })
     .mergeMap(val => val)
-    .mergeMap(orgId => {
-      return Observable.from(
+    .mergeMap(orgId =>
+      Observable.from(
           OrganizationsApi.getAllRoles(orgId)
         )
-    })
-    .mergeMap(roles => {
-      return Observable.of(
+    )
+    .mergeMap(roles =>
+      Observable.of(
         actionFactory.setOrgsRoles(roles)
       )
-    })
-    .catch((e) => {
-      console.error('e:', e);
-      return Observable.of(setOrgsRolesFailure());
-    })
+    )
+    .catch(() =>
+      Observable.of(actionFactory.setOrgsRolesFailure())
+    );
 }
 
 
@@ -231,19 +192,19 @@ function getAllUsersAndRolesEpic(action$) {
               actionFactory.getAcls(entitySet)
             );
         })
-        .catch((e) => {
-          return Observable.of(
+        .catch(() =>
+          Observable.of(
             actionFactory.getAllUsersAndRolesFailure()
-          );
-        });
+          )
+        );
     });
 }
 
 
-function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
+function getAclsEpic(action$) {
   return action$
   .ofType(actionTypes.GET_ACLS)
-  .mergeMap((action :Action) => {
+  .mergeMap((action) => {
     const edmQuery = [{
       type: 'EntitySet',
       id: action.entitySet.id,
@@ -253,21 +214,21 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
       .from(
         EntityDataModelApi.getEntityDataModelProjection(edmQuery)
       )
-      .mergeMap((edmDetails) => {
-        return createAclsObservables(action.entitySet.id, Object.values(edmDetails.propertyTypes));
-      })
-      .mergeMap((observables) => {
-        return observables;
-      })
-      .catch((e) => {
+      .mergeMap(edmDetails =>
+        createAclsObservables(action.entitySet.id, Object.values(edmDetails.propertyTypes))
+      )
+      .mergeMap(observables =>
+        observables
+      )
+      .catch(() =>
         // TODO: add real error handling
-        return { type: 'noop' };
-      });
+        ({ type: 'noop' })
+      );
   })
-  .catch((e) => {
+  .catch(() =>
     // TODO: add real error handling
-    return { type: 'noop' };
-  });
+    ({ type: 'noop' })
+  );
 }
 
 function getUserRolePermissionsEpic(action$, store) {
@@ -283,8 +244,8 @@ function getUserRolePermissionsEpic(action$, store) {
           const orgsRoles = store.getState().getIn(['permissionsSummary', 'orgsRoles']);
           const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
 
-          // TODO: Pass in orgs' members & roles details to either configureAcls or setRole/UserPermissions actions as needed
-          // const configuredAcls = configureAcls(acl.aces);
+          // TODO: Pass in orgs' members & roles details to either configureAcls
+          // or setRole/UserPermissions actions as needed
           const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
           const permissions = configurePermissions(acl.aces, allUsersById);
           return Observable.of(
@@ -293,11 +254,11 @@ function getUserRolePermissionsEpic(action$, store) {
             actionFactory.setUserPermissions(action.property, permissions.userPermissions)
           );
         })
-        .catch((e) => {
-          return Observable.of(
+        .catch(() =>
+          Observable.of(
             actionFactory.getUserRolePermissionsFailure()
-          );
-        });
+          )
+        );
     });
 }
 

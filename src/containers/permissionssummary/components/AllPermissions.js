@@ -32,7 +32,7 @@ class AllPermissions extends React.Component {
     propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
     isGettingAcls: PropTypes.bool.isRequired,
-    isGettingPermissions: PropTypes.bool.isRequired,
+    isGettingPermissions: PropTypes.bool.isRequired
   }
 
   componentDidMount() {
@@ -145,8 +145,6 @@ function mapStateToProps(state, ownProps) {
 
   const entitySetId = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
-
-  const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
 
   return {
     entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map()),

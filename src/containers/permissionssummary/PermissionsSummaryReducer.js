@@ -1,6 +1,5 @@
 import Immutable from 'immutable';
 import * as actionTypes from './PermissionsSummaryActionTypes';
-import * as orgsActionTypes from '../organizations/actions/OrganizationsActionTypes';
 
 export const INITIAL_STATE:Immutable.Map<*, *> = Immutable.fromJS({
   allUsersById: {},
@@ -94,22 +93,24 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
     case actionTypes.RESET_PERMISSIONS:
       return INITIAL_STATE;
 
-    case actionTypes.SET_ORGS_MEMBERS:
+    case actionTypes.SET_ORGS_MEMBERS: {
       const orgMembersMerge = {
         orgsMembers: {
           [action.members.orgId]: action.members.members
         }
-      }
+      };
       return state.mergeDeep(orgMembersMerge);
+    }
 
     case actionTypes.SET_ORGS_MEMBERS_FAILURE:
       return state.set('orgsMembers', Immutable.Map());
 
-    case actionTypes.SET_ORGS_ROLES:
+    case actionTypes.SET_ORGS_ROLES: {
       const orgRolesMerge = {
         orgsRoles: action.roles
-      }
+      };
       return state.mergeDeep(orgRolesMerge);
+    }
 
     case actionTypes.SET_ORGS_ROLES_FAILURE:
       return state.set('orgsRoles', Immutable.List());
