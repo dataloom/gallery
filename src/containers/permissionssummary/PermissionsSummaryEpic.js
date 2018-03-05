@@ -19,7 +19,7 @@ function getPermission(permissions) {
   if (permissions.includes(PERMISSIONS.WRITE)) newPermissions.push(toCamelCase(PERMISSIONS.WRITE));
   if (permissions.includes(PERMISSIONS.READ)) newPermissions.push(toCamelCase(PERMISSIONS.READ));
   if (permissions.includes(PERMISSIONS.LINK)) newPermissions.push(toCamelCase(PERMISSIONS.LINK));
-  if (permissions.includes(PERMISSIONS.DISCOVER)) newPermissions.push(toCamelCase(PERMISSIONS.DISCOVER));
+  if (permissions.includes(PERMISSIONS.DISCOVER) || permissions.includes('Discover')) newPermissions.push(toCamelCase(PERMISSIONS.DISCOVER));
   return newPermissions;
 }
 
@@ -63,7 +63,6 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
 
         // Get individual permissions
         aces.forEach(ace => {
-          // add logic for if ace matches user
           if (ace.principal.id === user.user_id) {
             userObj.individualPermissions = getPermission(ace.permissions);
             userObj.permissions = getPermission(ace.permissions);
@@ -74,15 +73,14 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
         user.roles.forEach(role => {
           const permissions = rolePermissions[role];
 
-          if (permissions) {
+          if (permissions && permissions.length > 0) {
             permissions.forEach(permission => {
               if (userObj.permissions.indexOf(permission) === -1) {
-                userObj.permissions.push(getPermission(permission));
+                userObj.permissions.concat(getPermission([permission]));
               }
             });
           }
         });
-
         userPermissions.push(userObj);
       }
     });
