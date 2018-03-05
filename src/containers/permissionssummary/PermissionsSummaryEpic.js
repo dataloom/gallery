@@ -92,40 +92,40 @@ function configureUserPermissions(aces, rolePermissions, allUsersById) {
   return userPermissions;
 }
 
-function configureAcls(aces) {
-  let authenticatedUserPermissions = [];
-  const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
-  const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
-  aces.forEach((ace) => {
-    if (ace.permissions.length > 0) {
-      if (ace.principal.type === ROLE) {
-        if (ace.principal.id === AUTHENTICATED_USER) {
-          authenticatedUserPermissions = getPermission(ace.permissions);
-        }
-        else {
-          getPermission(ace.permissions).forEach((permission) => {
-            if (roleAcls[permission]) {
-              roleAcls[permission].push(ace.principal.id);
-            }
-          });
-        }
-      }
-      else if (ace.principal.type === USER) {
-        getPermission(ace.permissions).forEach((permission) => {
-          if (userAcls[permission]) {
-            userAcls[permission].push(ace.principal.id);
-          }
-        });
-      }
-    }
-  });
+// function configureAcls(aces) {
+//   let authenticatedUserPermissions = [];
+//   const roleAcls = { Discover: [], Link: [], Read: [], Write: [] };
+//   const userAcls = { Discover: [], Link: [], Read: [], Write: [], Owner: [] };
+//   aces.forEach((ace) => {
+//     if (ace.permissions.length > 0) {
+//       if (ace.principal.type === ROLE) {
+//         if (ace.principal.id === AUTHENTICATED_USER) {
+//           authenticatedUserPermissions = getPermission(ace.permissions);
+//         }
+//         else {
+//           getPermission(ace.permissions).forEach((permission) => {
+//             if (roleAcls[permission]) {
+//               roleAcls[permission].push(ace.principal.id);
+//             }
+//           });
+//         }
+//       }
+//       else if (ace.principal.type === USER) {
+//         getPermission(ace.permissions).forEach((permission) => {
+//           if (userAcls[permission]) {
+//             userAcls[permission].push(ace.principal.id);
+//           }
+//         });
+//       }
+//     }
+//   });
 
-  return {
-    roleAcls,
-    userAcls,
-    authenticatedUserPermissions
-  };
-}
+//   return {
+//     roleAcls,
+//     userAcls,
+//     authenticatedUserPermissions
+//   };
+// }
 
 function getAclKey(action) {
   const property = action.property;
@@ -163,7 +163,7 @@ function getOrgsMembersEpic(action$, store) {
     .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
     .map((action) => {
       const orgs = store.getState().getIn(['organizations', 'organizations']);
-      const orgIds = action.orgIds || orgs.toArray().map(entry => entry[0]);
+      const orgIds = orgs.keySeq().toJS();
       return orgIds;
     })
     .mergeMap(val => val)
@@ -191,7 +191,7 @@ function getOrgsRolesEpic(action$, store) {
     .ofType(orgsActionTypes.FETCH_ORGS_SUCCESS)
     .map((action) => {
       const orgs = store.getState().getIn(['organizations', 'organizations']);
-      const orgIds = action.orgIds || orgs.toArray().map(entry => entry[0]);
+      const orgIds = orgs.keySeq().toJS();
       return orgIds;
     })
     .mergeMap(val => val)
@@ -270,10 +270,10 @@ function getAclsEpic(action$ :Observable<Action>) :Observable<Action> {
   });
 }
 
-function getUserRolePermissionsEpic(action$ :Observable<Action>, store) :Observable<Action> {
+function getUserRolePermissionsEpic(action$, store) {
   return action$
     .ofType(actionTypes.GET_USER_ROLE_PERMISSIONS_REQUEST)
-    .mergeMap((action :Action) => {
+    .mergeMap((action) => {
       const aclKey = getAclKey(action);
       return Observable
         .from(
@@ -284,7 +284,7 @@ function getUserRolePermissionsEpic(action$ :Observable<Action>, store) :Observa
           const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
 
           // TODO: Pass in orgs' members & roles details to either configureAcls or setRole/UserPermissions actions as needed
-          const configuredAcls = configureAcls(acl.aces);
+          // const configuredAcls = configureAcls(acl.aces);
           const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
           const permissions = configurePermissions(acl.aces, allUsersById);
           return Observable.of(

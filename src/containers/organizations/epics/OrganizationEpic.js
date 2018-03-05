@@ -284,7 +284,6 @@ function fetchRolesEpic(action$) {
           );
         })
         .catch((e) => {
-            console.error(e);
           return Observable.of(
             OrgActionFactory.fetchRolesFailure()
           );

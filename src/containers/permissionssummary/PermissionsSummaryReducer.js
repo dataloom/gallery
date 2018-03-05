@@ -103,7 +103,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.mergeDeep(orgMembersMerge);
 
     case actionTypes.SET_ORGS_MEMBERS_FAILURE:
-      return state;
+      return state.set('orgsMembers', Immutable.Map());
 
     case actionTypes.SET_ORGS_ROLES:
       const orgRolesMerge = {
@@ -112,7 +112,7 @@ export default function reducer(state :Immutable.Map<*, *> = INITIAL_STATE, acti
       return state.mergeDeep(orgRolesMerge);
 
     case actionTypes.SET_ORGS_ROLES_FAILURE:
-      return state;
+      return state.set('orgsRoles', Immutable.List());
 
     default:
       return state;

@@ -384,11 +384,9 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
     }
 
     case OrgActionTypes.FETCH_MEMBERS_SUCCESS:
-      console.log('members:', action.members);
       return state.set('members', Immutable.fromJS(action.members));
 
     case OrgActionTypes.FETCH_ROLES_SUCCESS:
-      console.log('roles:', action.roles);
       return state.set('roles', Immutable.fromJS(action.roles));
 
     default:

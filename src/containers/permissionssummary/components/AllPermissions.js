@@ -22,8 +22,9 @@ const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
   static propTypes = {
-    actions: React.PropTypes.shape({
-      getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
+    actions: PropTypes.shape({
+      getAllUsersAndRolesRequest: PropTypes.func.isRequired,
+      fetchOrganizationsRequest: PropTypes.func.isRequired
     }).isRequired,
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
     entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -31,7 +32,7 @@ class AllPermissions extends React.Component {
     propertyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     isGettingUsersRoles: PropTypes.bool.isRequired,
     isGettingAcls: PropTypes.bool.isRequired,
-    isGettingPermissions: PropTypes.bool.isRequired
+    isGettingPermissions: PropTypes.bool.isRequired,
   }
 
   componentDidMount() {
@@ -43,9 +44,8 @@ class AllPermissions extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
-      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
+      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS());
     }
   }
 
@@ -145,7 +145,6 @@ function mapStateToProps(state, ownProps) {
 
   const entitySetId = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
-  const organizationsState = state.get('organizations');
 
   const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
 
