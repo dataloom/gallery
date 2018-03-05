@@ -57,7 +57,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembe
               match = true;
 
               member.roles.forEach((role) => {
-                userObj.roles.push(role.title);
+                userObj.roles.push(role.principal.id);
 
                 const permissions = rolePermissions[role.principal.id];
                 if (permissions) {
