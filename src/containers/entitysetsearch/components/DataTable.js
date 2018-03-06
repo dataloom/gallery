@@ -319,7 +319,7 @@ class DataTable extends React.Component<Props, State> {
     );
   };
 
-  getGridRowHeight = (params :Object) :number => {
+  getGridRowHeight = () :number => {
     return ROW_MIN_HEIGHT; // TODO: implement more intelligently
   };
 

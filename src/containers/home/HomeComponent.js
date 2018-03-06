@@ -12,7 +12,6 @@ import EntitySetList from '../../components/entityset/EntitySetList';
 import Page from '../../components/page/Page';
 import joinImg from '../../images/icon-join.svg';
 import exploreImg from '../../images/icon-explore.svg';
-import visualizeImg from '../../images/icon-visualize.svg';
 import PageConsts from '../../utils/Consts/PageConsts';
 import WelcomeInstructionsBox from './WelcomeInstructionsBox';
 

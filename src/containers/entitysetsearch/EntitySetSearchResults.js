@@ -520,18 +520,6 @@ export default class EntitySetSearchResults extends React.Component {
       });
     });
 
-    const headerIds = this.state.selectedEntity
-      .get('headers', Immutable.List())
-      .map((header) => {
-        try {
-          return new FullyQualifiedName(header.get('id'));
-        }
-        catch (e) {
-          header.get('id');
-        }
-      })
-      .toJS();
-
     return (
       <div>
         {
@@ -715,7 +703,7 @@ export default class EntitySetSearchResults extends React.Component {
 
       const neighborGroupSection = [];
 
-      associationGroup.forEach((neighborGroup, neighborEntitySetId) => {
+      associationGroup.forEach((neighborGroup) => {
 
         const neighborGroupData = this.getNeighborGroupData(neighborGroup);
         const neighborGroupHeaders = this.getNeighborGroupHeaders(neighborGroup);

@@ -4,7 +4,6 @@ const HOME = 'home';
 const CATALOG = 'catalog';
 const LOGIN = 'login';
 const VISUALIZE = 'visualize';
-const DATA_MODEL = 'datamodel';
 const DATASETS = 'datasets';
 const LINK = 'link';
 const SEARCH = 'search';
@@ -21,7 +20,6 @@ export default {
   CATALOG,
   LOGIN,
   VISUALIZE,
-  DATA_MODEL,
   DATASETS,
   LINK,
   SEARCH,
