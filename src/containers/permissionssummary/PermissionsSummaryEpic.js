@@ -57,7 +57,12 @@ function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembe
               match = true;
 
               member.roles.forEach((role) => {
-                userObj.roles.push(role.principal.id);
+                userObj.roles.push(
+                  {
+                    id: role.principal.id,
+                    title: role.title
+                  }
+                );
 
                 const permissions = rolePermissions[role.principal.id];
                 if (permissions) {
@@ -258,7 +263,6 @@ function getUserRolePermissionsEpic(action$, store) {
         )
         .mergeMap((acl) => {
           // TODO: Figure out if orgsRoles is necessary; Currently not used
-          const orgsRoles = store.getState().getIn(['permissionsSummary', 'orgsRoles']);
           const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
           const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
           const permissions = configurePermissions(acl.aces, allUsersById, orgsMembers);
