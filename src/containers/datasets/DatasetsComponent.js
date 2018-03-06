@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { Button, Modal, Pager } from 'react-bootstrap';
 
 import Page from '../../components/page/Page';
-import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import CreateEntitySet from '../entitysetforms/CreateEntitySet';
 import { getOwnedDatasetsIdsRequest } from './DatasetsActionFactory';

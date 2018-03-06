@@ -6,9 +6,7 @@ import FontAwesome from 'react-fontawesome';
 import { Button, ControlLabel, DropdownButton, Modal, FormControl, FormGroup, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import styled, {
-  css
-} from 'styled-components';
+import styled from 'styled-components';
 
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
@@ -242,7 +240,7 @@ class Apps extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
 
