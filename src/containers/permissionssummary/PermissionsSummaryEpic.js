@@ -24,73 +24,7 @@ function getPermission(permissions) {
   return newPermissions;
 }
 
-function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembers) {
-  const userPermissions = [];
-
-  try {
-    allUsersById.valueSeq().forEach((user) => {
-      const userObj = {};
-
-      if (user) {
-        userObj.id = user.user_id;
-        userObj.nickname = user.nickname;
-        userObj.email = user.email;
-        userObj.roles = [];
-        userObj.individualPermissions = [];
-        userObj.permissions = [];
-
-        // Get individual permissions
-        aces.forEach((ace) => {
-          if (ace.principal.id === user.user_id) {
-            userObj.individualPermissions = getPermission(ace.permissions);
-            userObj.permissions = getPermission(ace.permissions);
-          }
-        });
-
-        // Get permissions based on roles
-        const members = Object.values(orgsMembers.toJS()).reduce((a, c) => a.concat(c), []);
-        members.forEach((member) => {   
-          let match = false;
-          let i = 0;
-          while (!match && i < aces.length) {
-            if (member.profile.user_id === user.user_id) {
-              match = true;
-
-              member.roles.forEach((role) => {
-                userObj.roles.push(
-                  {
-                    id: role.principal.id,
-                    title: role.title
-                  }
-                );
-
-                const permissions = rolePermissions[role.principal.id];
-                if (permissions) {
-                  permissions.forEach((permission) => {
-                    if (userObj.permissions.indexOf(permission) === -1) {
-                      userObj.permissions.push(permission);
-                    }
-                  });
-                }
-              });
-            }
-
-            i += 1;
-          }
-        });
-
-        userPermissions.push(userObj);
-      }
-    });
-  }
-  catch (e) {
-    console.error(e);
-  }
-
-  return userPermissions;
-}
-
-function configurePermissions(aces, allUsersById, orgsMembers) {
+function configureRolePermissions(aces) {
   const rolePermissions = {
     [AUTHENTICATED_USER]: []
   };
@@ -105,12 +39,81 @@ function configurePermissions(aces, allUsersById, orgsMembers) {
     }
   });
 
-  const userPermissions = configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembers);
+  return rolePermissions;
+}
 
-  return {
-    rolePermissions,
-    userPermissions
-  };
+function getUserIndividualPermissions(userObj, user, aces) {
+  let result = userObj;
+
+  aces.forEach((ace) => {
+    if (ace.principal.id === user.user_id) {
+      userObj.individualPermissions = getPermission(ace.permissions);
+      userObj.permissions = getPermission(ace.permissions);
+    }
+  });
+
+  return result;
+}
+
+function getUserRolePermissions(userObj, user, aces, rolePermissions, orgsMembers) {
+  let result = userObj;
+
+  const members = Object.values(orgsMembers.toJS()).reduce((a, c) => a.concat(c), []);
+  members.forEach((member) => {
+    let match = false;
+    let i = 0;
+    while (!match && i < aces.length) {
+      if (member.profile.user_id === user.user_id) {
+        match = true;
+
+        member.roles.forEach((role) => {
+          userObj.roles.push(
+            {
+              id: role.principal.id,
+              title: role.title
+            }
+          );
+
+          const permissions = rolePermissions[role.principal.id];
+          if (permissions) {
+            permissions.forEach((permission) => {
+              if (userObj.permissions.indexOf(permission) === -1) {
+                userObj.permissions.push(permission);
+              }
+            });
+          }
+        });
+      }
+
+      i += 1;
+    }
+  });
+
+  return result;
+}
+
+function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembers) {
+  const userPermissions = [];
+
+  allUsersById.valueSeq().forEach((user) => {
+    const userObj = {};
+
+    if (user) {
+      userObj.id = user.user_id;
+      userObj.nickname = user.nickname;
+      userObj.email = user.email;
+      userObj.roles = [];
+      userObj.individualPermissions = [];
+      userObj.permissions = [];
+
+      getUserIndividualPermissions(userObj, user, aces);
+      getUserRolePermissions(userObj, user, aces, rolePermissions, orgsMembers);
+
+      userPermissions.push(userObj);
+    }
+  });
+
+  return userPermissions;
 }
 
 function getAclKey(action) {
@@ -265,11 +268,12 @@ function getUserRolePermissionsEpic(action$, store) {
           // TODO: Figure out if orgsRoles is necessary; Currently not used
           const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
           const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
-          const permissions = configurePermissions(acl.aces, allUsersById, orgsMembers);
+          const rolePermissions = configureRolePermissions(acl.aces, allUsersById);
+          const userPermissions = configureUserPermissions(acl.aces, rolePermissions, allUsersById, orgsMembers)
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
-            actionFactory.setRolePermissions(action.property, permissions.rolePermissions),
-            actionFactory.setUserPermissions(action.property, permissions.userPermissions)
+            actionFactory.setRolePermissions(action.property, rolePermissions),
+            actionFactory.setUserPermissions(action.property, userPermissions)
           );
         })
         .catch(() =>
