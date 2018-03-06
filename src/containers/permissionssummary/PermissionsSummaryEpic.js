@@ -14,7 +14,7 @@ function toCamelCase(s) {
   return s.charAt(0) + s.slice(1).toLowerCase();
 }
 
-function getPermission(permissions) {
+function formatPermissions(permissions) {
   const newPermissions = [];
   if (permissions.includes(PERMISSIONS.OWNER)) return [toCamelCase(PERMISSIONS.OWNER)];
   if (permissions.includes(PERMISSIONS.WRITE)) newPermissions.push(toCamelCase(PERMISSIONS.WRITE));
@@ -32,10 +32,10 @@ function configureRolePermissions(aces) {
   aces.forEach((ace) => {
     if (ace.permissions.length > 0 && ace.principal.type === ROLE) {
       if (ace.principal.id === AUTHENTICATED_USER) {
-        rolePermissions[AUTHENTICATED_USER] = getPermission(ace.permissions);
+        rolePermissions[AUTHENTICATED_USER] = formatPermissions(ace.permissions);
       }
 
-      rolePermissions[ace.principal.id] = getPermission(ace.permissions);
+      rolePermissions[ace.principal.id] = formatPermissions(ace.permissions);
     }
   });
 
@@ -47,8 +47,8 @@ function getUserIndividualPermissions(userObj, user, aces) {
 
   aces.forEach((ace) => {
     if (ace.principal.id === user.user_id) {
-      userObj.individualPermissions = getPermission(ace.permissions);
-      userObj.permissions = getPermission(ace.permissions);
+      userObj.individualPermissions = formatPermissions(ace.permissions);
+      userObj.permissions = formatPermissions(ace.permissions);
     }
   });
 
