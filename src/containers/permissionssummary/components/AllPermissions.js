@@ -12,16 +12,19 @@ import RolePermissionsTable from './RolePermissionsTable';
 import UserPermissionsTable from './UserPermissionsTable';
 
 import * as psActionFactory from '../PermissionsSummaryActionFactory';
+import * as orgsActionFactory from '../../organizations/actions/OrganizationsActionFactory';
 
 import styles from '../styles.module.css';
+
 
 const U_HEADERS = ['Users', 'Roles', 'Permissions'];
 const R_HEADERS = ['Roles', 'Permissions'];
 
 class AllPermissions extends React.Component {
   static propTypes = {
-    actions: React.PropTypes.shape({
-      getAllUsersAndRolesRequest: React.PropTypes.func.isRequired
+    actions: PropTypes.shape({
+      getAllUsersAndRolesRequest: PropTypes.func.isRequired,
+      fetchOrganizationsRequest: PropTypes.func.isRequired
     }).isRequired,
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
     entityUserPermissions: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -33,6 +36,8 @@ class AllPermissions extends React.Component {
   }
 
   componentDidMount() {
+    this.props.actions.fetchOrganizationsRequest();
+
     if (!this.props.entitySet.isEmpty()) {
       this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
     }
@@ -40,7 +45,7 @@ class AllPermissions extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
-      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS()); // toJS() just for now
+      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS());
     }
   }
 
@@ -141,8 +146,6 @@ function mapStateToProps(state, ownProps) {
   const entitySetId = ownProps.params.id;
   const permissionsSummary = state.get('permissionsSummary');
 
-  const authenticatedUserPermissions = permissionsSummary.get('authenticatedUserPermissions');
-
   return {
     entitySet: state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map()),
     entityUserPermissions: permissionsSummary.get('entityUserPermissions'),
@@ -150,14 +153,16 @@ function mapStateToProps(state, ownProps) {
     propertyPermissions: permissionsSummary.get('propertyPermissions'),
     isGettingUsersRoles: permissionsSummary.get('isGettingUsersRoles'),
     isGettingAcls: permissionsSummary.get('isGettingAcls'),
-    isGettingPermissions: permissionsSummary.get('isGettingPermissions')
+    isGettingPermissions: permissionsSummary.get('isGettingPermissions'),
+    isGettingOrganizations: permissionsSummary.get('isGettingOrganizations')
   };
 }
 
 export function mapDispatchToProps(dispatch) {
 
   const actions = {
-    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest
+    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest,
+    fetchOrganizationsRequest: orgsActionFactory.fetchOrganizationsRequest
   };
 
   return {

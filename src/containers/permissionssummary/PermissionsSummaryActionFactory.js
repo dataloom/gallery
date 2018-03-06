@@ -83,3 +83,29 @@ export function resetPermissions() {
     type: actionTypes.RESET_PERMISSIONS
   };
 }
+
+export function setOrgsMembers(members) {
+  return {
+    type: actionTypes.SET_ORGS_MEMBERS,
+    members
+  };
+}
+
+export function setOrgsMembersFailure() {
+  return {
+    type: actionTypes.SET_ORGS_MEMBERS_FAILURE
+  };
+}
+
+export function setOrgsRoles(roles) {
+  return {
+    type: actionTypes.SET_ORGS_ROLES,
+    roles
+  };
+}
+
+export function setOrgsRolesFailure() {
+  return {
+    type: actionTypes.SET_ORGS_ROLES_FAILURE
+  };
+}
