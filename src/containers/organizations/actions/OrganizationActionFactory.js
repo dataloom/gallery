@@ -353,3 +353,26 @@ export function fetchMembersFailure() :Object {
     type: OrgActionTypes.FETCH_MEMBERS_FAILURE
   };
 }
+
+export function fetchRolesRequest(orgId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.FETCH_ROLES_REQUEST,
+    orgId
+  };
+}
+
+export function fetchRolesSuccess(roles :Object[]) :Object {
+
+  return {
+    type: OrgActionTypes.FETCH_ROLES_SUCCESS,
+    roles
+  };
+}
+
+export function fetchRolesFailure() :Object {
+
+  return {
+    type: OrgActionTypes.FETCH_ROLES_FAILURE
+  };
+}

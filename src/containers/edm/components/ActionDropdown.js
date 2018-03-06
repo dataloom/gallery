@@ -103,17 +103,6 @@ class ActionDropdown extends React.Component {
         <li role="presentation">
           <Link
               to={{
-                pathname: `/${PageConsts.VISUALIZE}`,
-                query: {
-                  setId: entitySetId
-                }
-              }}>
-            Visualize
-          </Link>
-        </li>
-        <li role="presentation">
-          <Link
-              to={{
                 pathname: `/${PageConsts.ENTITY_SETS}/${this.props.entitySetId}/toputilizers`
               }}>
             Find Top Utilizers
