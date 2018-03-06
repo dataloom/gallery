@@ -11,7 +11,6 @@ export default class WelcomeInstructionsBox extends React.Component {
   };
 
   render() {
-    const prop = this.props.propertyType;
     return (
       <Link className={styles.instructionsBox} to={`/${this.props.linkRoute}`}>
         <div className={styles.instructionsTitle}>{this.props.title}</div>

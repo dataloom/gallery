@@ -311,13 +311,12 @@ export default class EventTimeline extends React.Component {
     const formatInterval = (num, index) => {
       const intervalName = intervalText[index];
       return (num === 1) ? intervalName.substring(0, intervalName.length - 1) : intervalName;
-    }
+    };
 
     let distanceText = '';
     allIntervals.forEach((interval, index) => {
       if (!distanceText.length && interval > 0) {
         distanceText = distanceText.concat(`${interval} ${formatInterval(interval, index)}`);
-        const nextVal = allIntervals[index + 1];
         if (allIntervals[index + 1]) {
           const nextVal = laterDate.subtract(interval, intervalText[index]).diff(earlierDate, intervalText[index + 1]);
           if (nextVal > 0) {

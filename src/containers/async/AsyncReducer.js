@@ -7,10 +7,6 @@ import {
   createCompleteValue
 } from './AsyncStorage';
 
-import type {
-  AsyncContent
-} from './AsyncStorage';
-
 export const INITIAL_STATE = Immutable.fromJS({});
 
 export default function reducer(state = INITIAL_STATE, action) {

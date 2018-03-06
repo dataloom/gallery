@@ -9,7 +9,6 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import homeIcon from '../../images/icon-nav-home.svg';
 import catalogIcon from '../../images/icon-nav-catalog.svg';
 import datasetsIcon from '../../images/icon-nav-datasets.svg';
-import visualizeIcon from '../../images/icon-nav-visualize.svg';
 import organizationsIcon from '../../images/icon-nav-organizations.svg';
 
 const HELP_URL = 'https://help.openlattice.com/';
@@ -37,7 +36,7 @@ class SideNav extends React.Component {
 
     return (
       <div className={styles.sideNavItem}>
-        <a href={route} target="_blank">
+        <a href={route} target="_blank" rel="noopener noreferrer">
           <div className={styles.sideNavItemIcon}>
             <FontAwesome name="flag" size="2x" />
           </div>
@@ -54,7 +53,7 @@ class SideNav extends React.Component {
   getSupportLink = () => {
     return (
       <div className={styles.support}>
-        <a href={SUPPORT_URL} target="_blank">Report Issue</a>
+        <a href={SUPPORT_URL} target="_blank" rel="noopener noreferrer">Report Issue</a>
       </div>
     );
   }
@@ -65,8 +64,6 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.HOME, 'Home', homeIcon) }
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', catalogIcon) }
         { this.getSideNavItemLayout(PageConsts.DATASETS, 'Your Datasets', datasetsIcon) }
-        {/* Hiding the Data Model link for the demo */}
-        {/* { this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') } */}
         { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
         { this.getSideNavHelpItemLayout(HELP_URL, 'Help') }
         { this.getSpacer() }

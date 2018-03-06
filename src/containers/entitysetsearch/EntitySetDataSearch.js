@@ -10,9 +10,8 @@ import Page from '../../components/page/Page';
 import PropertyTypeFilter from './components/PropertyTypeFilter';
 import EntitySetSearchBox from './EntitySetSearchBox';
 import EntitySetSearchResults from './EntitySetSearchResults';
-import EntitySetUserSearchResults from './EntitySetUserSearchResults';
 import AsyncContent, { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
-import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../utils/Consts/StringConsts';
+import { FIRST_NAMES, LAST_NAMES } from '../../utils/Consts/StringConsts';
 import styles from './styles.module.css';
 
 const MAX_HITS = 12;
@@ -60,7 +59,7 @@ export default class EntitySetDataSearch extends React.Component {
 
   componentDidMount() {
     const searchTerm = (this.props.location.query.searchTerm) ? this.props.location.query.searchTerm : '';
-    const page = (this.props.location.query.page) ? this.props.location.query.page : 1
+    const page = (this.props.location.query.page) ? this.props.location.query.page : 1;
     this.loadPropertyTypeIds(searchTerm, page);
     this.loadEntitySetPropertyMetadata();
   }
@@ -68,7 +67,7 @@ export default class EntitySetDataSearch extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.location.key) {
       const searchTerm = (nextProps.location.query.searchTerm) ? nextProps.location.query.searchTerm : '';
-      const page = (nextProps.location.query.page) ? nextProps.location.query.page : 1
+      const page = (nextProps.location.query.page) ? nextProps.location.query.page : 1;
       this.setState({
         searchTerm,
         page,
@@ -328,6 +327,4 @@ export default class EntitySetDataSearch extends React.Component {
       </DocumentTitle>
     );
   }
-
-
 }

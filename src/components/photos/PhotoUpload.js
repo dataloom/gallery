@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Button } from 'react-bootstrap';
 
-import StyledFlexContainer from '../flex/StyledFlexContainer';
 import styles from './styles.module.css';
 
 const PhotoUpload = ({ header, content, onClick }) => {

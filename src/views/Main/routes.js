@@ -3,7 +3,6 @@ import { IndexRedirect, IndexRoute, Route } from 'react-router';
 import Lattice from 'lattice';
 import AuthService from '../../utils/AuthService';
 import Container from './Container';
-import { DataModel } from './Schemas/DataModel';
 import Login from './Login/Login';
 import HomeComponent from '../../containers/home/HomeComponent';
 import Visualize from '../../containers/visualizations/Visualize';
@@ -55,17 +54,11 @@ const isAdmin = () => {
   return (auth.loggedIn() && auth.getProfile().hasOwnProperty('roles') && auth.getProfile().roles.includes(ADMIN));
 };
 
-const requireAdmin = (nextState, replace) => {
-  requireAuth();
-  if (!isAdmin()) replace({ pathname: `/${PageConsts.HOME}` });
-};
-
 const getName = () => {
   if (auth.loggedIn()) {
     return getDisplayName(auth.getProfile());
-  } else {
-    return null;
   }
+  return null;
 };
 
 const getProfileStatus = () => {
@@ -90,7 +83,6 @@ export const makeMainRoutes = () => {
           <IndexRoute component={TopUtilizersFormContainer} />
         </Route>
       </Route>
-      <Route path={PageConsts.DATA_MODEL} component={DataModel} onEnter={requireAuth} />
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASETS} component={DatasetsComponent} onEnter={requireAuth} />
       <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
