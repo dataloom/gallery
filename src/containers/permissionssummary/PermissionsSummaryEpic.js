@@ -49,7 +49,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembe
 
         // Get permissions based on roles
         const members = Object.values(orgsMembers.toJS()).reduce((a, c) => a.concat(c), []);
-        members.forEach((member) => {          
+        members.forEach((member) => {   
           let match = false;
           let i = 0;
           while (!match && i < aces.length) {
@@ -90,7 +90,7 @@ function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembe
   return userPermissions;
 }
 
-function configurePermissions(aces, allUsersById, orgsMembers) {  
+function configurePermissions(aces, allUsersById, orgsMembers) {
   const rolePermissions = {
     [AUTHENTICATED_USER]: []
   };
