@@ -19,7 +19,7 @@ export default class RolePermissionsTable extends React.Component {
 
         let roleStr = role;
         if (role === AUTHENTICATED_USER) {
-          roleStr = 'Default for all users*';
+          roleStr = 'OpenLattice User Role - Default for all users*';
           permissionsStr = 'None';
         }
 
