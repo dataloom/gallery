@@ -43,8 +43,6 @@ function configureRolePermissions(aces) {
 }
 
 function getUserIndividualPermissions(userObj, user, aces) {
-  let result = userObj;
-
   aces.forEach((ace) => {
     if (ace.principal.id === user.user_id) {
       userObj.individualPermissions = formatPermissions(ace.permissions);
@@ -52,12 +50,10 @@ function getUserIndividualPermissions(userObj, user, aces) {
     }
   });
 
-  return result;
+  return userObj;
 }
 
 function getUserRolePermissions(userObj, user, aces, rolePermissions, orgsMembers) {
-  let result = userObj;
-
   const members = Object.values(orgsMembers.toJS()).reduce((a, c) => a.concat(c), []);
   members.forEach((member) => {
     let match = false;
@@ -89,7 +85,7 @@ function getUserRolePermissions(userObj, user, aces, rolePermissions, orgsMember
     }
   });
 
-  return result;
+  return userObj;
 }
 
 function configureUserPermissions(aces, rolePermissions, allUsersById, orgsMembers) {
@@ -265,11 +261,10 @@ function getUserRolePermissionsEpic(action$, store) {
           PermissionsApi.getAcl(aclKey)
         )
         .mergeMap((acl) => {
-          // TODO: Figure out if orgsRoles is necessary; Currently not used
           const orgsMembers = store.getState().getIn(['permissionsSummary', 'orgsMembers']);
           const allUsersById = store.getState().getIn(['permissionsSummary', 'allUsersById']);
           const rolePermissions = configureRolePermissions(acl.aces, allUsersById);
-          const userPermissions = configureUserPermissions(acl.aces, rolePermissions, allUsersById, orgsMembers)
+          const userPermissions = configureUserPermissions(acl.aces, rolePermissions, allUsersById, orgsMembers);
           return Observable.of(
             actionFactory.getUserRolePermissionsSuccess(),
             actionFactory.setRolePermissions(action.property, rolePermissions),
