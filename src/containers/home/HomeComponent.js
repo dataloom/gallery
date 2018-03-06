@@ -112,11 +112,6 @@ class HomeComponent extends React.Component {
                   description="See the data available to you and download Excel and .JSON files to analyze each property."
                   imgSrc={exploreImg}
                   linkRoute={PageConsts.CATALOG} />
-              <WelcomeInstructionsBox
-                  title="VISUALIZE"
-                  description="Use our visualization tools to easily organize, analyze, and share data with those who need it."
-                  imgSrc={visualizeImg}
-                  linkRoute={PageConsts.VISUALIZE} />
             </div>
           </Page.Header>
           <Page.Body>
