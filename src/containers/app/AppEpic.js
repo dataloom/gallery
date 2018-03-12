@@ -6,6 +6,71 @@ import { AppApi } from 'lattice';
 import * as actionTypes from './AppActionTypes';
 import * as actionFactory from './AppActionFactory';
 
+
+function createAppType(AppType) {
+  return Observable.from(AppApi.createAppType(AppType))
+    .map((response) => {
+      return Object.assign({}, AppType, {
+        id: response[AppType.name]
+      });
+    })
+    .mergeMap((savedAppType) => {
+      const reference = {
+        id: savedAppType.id
+      };
+      return Observable.of(
+        actionFactories.createAppTypeResolve(reference),
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        actionFactories.createAppTypeReject('Error saving app type')
+      );
+    });
+}
+
+
+// TODO: Cancellation and Error handling
+function createAppTypeEpic(action$) {
+  return action$.ofType(actionTypes.CREATE_APP_TYPE_REQUEST)
+  // Run search
+    .map(action => action.AppType)
+    .mergeMap(createAppType);
+}
+
+
+function createApp(App) {
+  return Observable.from(AppApi.createApp(App))
+    .map((response) => {
+      return Object.assign({}, App, {
+        id: response[App.name]
+      });
+    })
+    .mergeMap((savedApp) => {
+      const reference = {
+        id: savedApp.id
+      };
+      return Observable.of(
+        actionFactories.createAppResolve(reference),
+      );
+    })
+    .catch(() => {
+      return Observable.of(
+        actionFactories.createAppReject('Error saving app')
+      );
+    });
+}
+
+
+// TODO: Cancellation and Error handling
+function createAppEpic(action$) {
+  return action$.ofType(actionTypes.CREATE_APP_REQUEST)
+  // Run search
+    .map(action => action.App)
+    .mergeMap(createApp);
+}
+
+
 function getAppsEpic(action$) {
   return action$.ofType(actionTypes.GET_APPS_REQUEST)
     .mergeMap(() => {
@@ -47,5 +112,7 @@ function installAppEpic(action$) {
 
 export default combineEpics(
   getAppsEpic,
-  installAppEpic
+  installAppEpic,
+  createAppTypeEpic,
+  createAppEpic
 );

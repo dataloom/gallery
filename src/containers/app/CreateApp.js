@@ -125,19 +125,25 @@ class CreateApp extends React.Component {
 
   render() {
     return (
-        <AsyncContent
-            {...this.props.createAppAsyncState}
-            pendingContent={this.renderPending()}
-            content={this.renderSuccess} />
+      <AsyncContent
+          {...this.props.createAppAsyncState}
+          pendingContent={this.renderPending()}
+          content={this.renderSuccess} />
     );
   }
 
 }
 
+function mapStateToProps(state) {
+
+  return {
+  };
+}
+
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    onCreateApp: createAppRequest
+    // onCreateApp: createAppRequest
   };
 
   return {
@@ -145,4 +151,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default (CreateApp);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateApp);

@@ -133,14 +133,14 @@ class Apps extends React.Component {
     });
   };
 
-  getDefaultContact = () => {
-    const profile = this.props.auth.getProfile();
-    let defaultContact = '';
-    if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
-    if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
-    if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
-    return defaultContact;
-  }
+  // getDefaultContact = () => {
+  //   const profile = this.props.auth.getProfile();
+  //   let defaultContact = '';
+  //   if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
+  //   if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
+  //   if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
+  //   return defaultContact;
+  // }
 
   renderApps = () => {
     return this.props.apps.map((app) => {
@@ -220,7 +220,7 @@ class Apps extends React.Component {
     const organizationId = this.state.org;
     const prefix = this.state.prefix;
     this.props.install(appId, organizationId, prefix);
-    this.closeInstallModal()
+    this.closeInstallModal();
   }
 
   renderError = () => {
@@ -250,7 +250,7 @@ class Apps extends React.Component {
           <Button bsStyle="primary" onClick={this.install}>Install</Button>
         </InstallButtonWrapper>
       </ModalBodyContainer>
-    )
+    );
   }
 
   renderInstallModal = () => {
@@ -267,7 +267,7 @@ class Apps extends React.Component {
           {this.renderModalBody()}
         </Modal.Body>
       </Modal>
-    )
+    );
   }
 
   render() {
@@ -291,7 +291,7 @@ class Apps extends React.Component {
               <Modal.Title>Create an App</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <CreateApp defaultContact={this.getDefaultContact()} />
+              <CreateApp />
             </Modal.Body>
           </Modal>
           <Modal show={isAppTypeModalOpen} onHide={this.closeModal} container={this}>
@@ -299,7 +299,7 @@ class Apps extends React.Component {
               <Modal.Title>Create an App Type</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <CreateAppType defaultContact={this.getDefaultContact()} />
+              <CreateAppType />
             </Modal.Body>
           </Modal>
           <Page.Body>

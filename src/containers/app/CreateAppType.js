@@ -21,6 +21,9 @@ const APP_TYPES = {
 class CreateAppType extends React.Component {
 
   static propTypes = {
+    // actions:PropTypes.shape({
+    //   onCreateAppType: PropTypes.func.isRequired
+    //   }).isRequired,
     defaultContact: PropTypes.string,
     createAppAsyncState: AsyncStatePropType.isRequired
   }
@@ -83,17 +86,7 @@ class CreateAppType extends React.Component {
       entityTypeId
     };
     console.log(AppType);
-    // const { title, description, name, nentityTypeId } = this.state;
-    //
-    // const entitySet = {
-    //   title,
-    //   name,
-    //   description,
-    //   entityTypeId,
-    //   contacts: [contact]
-    // };
-    //
-    // if (type === ENTITY_SET_TYPES.ENTITY_SET) this.props.actions.onCreateEntitySet(entitySet);
+    // this.props.actions.onCreateAppType(AppType);
   }
 
   renderPending = () => {
@@ -149,4 +142,21 @@ class CreateAppType extends React.Component {
 
 }
 
-export default (CreateAppType);
+function mapStateToProps(state) {
+
+  return {
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+
+  const actions = {
+    // onCreateAppType: createAppTypeRequest
+  };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateAppType);
