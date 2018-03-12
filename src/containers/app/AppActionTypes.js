@@ -2,10 +2,21 @@
  * @flow
  */
 
-export const GET_APPS_REQUEST :string = 'GET_APPS_REQUEST';
-export const GET_APPS_SUCCESS :string = 'GET_APPS_SUCCESS';
-export const GET_APPS_FAILURE :string = 'GET_APPS_FAILURE';
+ export const CREATE_APP_REQUEST = 'CREATE_APP_REQUEST';
+ export const CREATE_APP_REJECT = 'CREATE_APP_REJECT';
+ export const CREATE_APP_RESOLVE = 'CREATE_APP_RESOLVE';
+ export const CREATE_APP_RESET = 'CREATE_APP_RESET';
 
-export const INSTALL_APP_REQUEST :string = 'INSTALL_APP_REQUEST';
-export const INSTALL_APP_SUCCESS :string = 'INSTALL_APP_SUCCESS';
-export const INSTALL_APP_FAILURE :string = 'INSTALL_APP_FAILURE';
+ export const CREATE_APP_TYPE_REQUEST = 'CREATE_APP_TYPE_REQUEST';
+ export const CREATE_APP_TYPE_REJECT = 'CREATE_APP_TYPE_REJECT';
+ export const CREATE_APP_TYPE_RESOLVE = 'CREATE_APP_TYPE_RESOLVE';
+ export const CREATE_APP_TYPE_RESET = 'CREATE_APP_TYPE_RESET';
+
+
+ export const GET_APPS_REQUEST :string = 'GET_APPS_REQUEST';
+ export const GET_APPS_SUCCESS :string = 'GET_APPS_SUCCESS';
+ export const GET_APPS_FAILURE :string = 'GET_APPS_FAILURE';
+
+ export const INSTALL_APP_REQUEST :string = 'INSTALL_APP_REQUEST';
+ export const INSTALL_APP_SUCCESS :string = 'INSTALL_APP_SUCCESS';
+ export const INSTALL_APP_FAILURE :string = 'INSTALL_APP_FAILURE';
