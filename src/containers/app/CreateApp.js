@@ -70,7 +70,8 @@ class CreateApp extends React.Component {
     console.log('You clicked the Create App button');
 
     // need to separate the appTypeIds string by comma, put in array
-    const splitAppTypeIds = appTypeIds.split(',');
+    const splitAppTypeIds = appTypeIds.split(', ');
+    console.log(splitAppTypeIds);
 
     const App = {
       'name': name,
@@ -82,7 +83,7 @@ class CreateApp extends React.Component {
 
     console.log(App);
 
-    this.props.actions.onCreateApp(App);
+    // this.props.actions.onCreateApp(App);
   }
 
   renderPending = () => {
@@ -105,7 +106,7 @@ class CreateApp extends React.Component {
 
         <FormGroup>
           <ControlLabel>App Type Ids</ControlLabel>
-          <FormControl componentClass="textarea" onChange={this.onAppTypeIdsChange} />
+          <FormControl componentClass="textarea" onChange={this.onAppTypeIdsChange} placeholder="idNumberOne, idNumberTwo, idNumberThree" />
         </FormGroup>
 
         <FormGroup>
