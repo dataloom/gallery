@@ -12,19 +12,12 @@ import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/
 // import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
 // import { createEntitySetRequest, createLinkedEntitySetRequest } from './CreateEntitySetActionFactories';
 
-const APP_TYPES = {
-  ENTITY_SET: 'Entity Set',
-  LINKED_ENTITY_SET: 'Linked Entity Set'
-};
-
-
 class CreateAppType extends React.Component {
 
   static propTypes = {
-    // actions:PropTypes.shape({
-    //   onCreateAppType: PropTypes.func.isRequired
-    //   }).isRequired,
-    defaultContact: PropTypes.string,
+    actions: PropTypes.shape({
+      onCreateAppType: PropTypes.func.isRequired
+    }).isRequired,
     createAppAsyncState: AsyncStatePropType.isRequired
   }
 
@@ -79,14 +72,18 @@ class CreateAppType extends React.Component {
     console.log('You clicked the Create App Type button');
 
     const AppType = {
-      title,
-      description,
-      name,
-      namespace,
-      entityTypeId
+      'type': {
+        'namespace': namespace,
+        'name': name
+      },
+      'title': title,
+      'description': description,
+      'entityTypeId': entityTypeId
     };
+
     console.log(AppType);
-    // this.props.actions.onCreateAppType(AppType);
+
+    this.props.actions.onCreateAppType(AppType);
   }
 
   renderPending = () => {

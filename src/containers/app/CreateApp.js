@@ -58,6 +58,7 @@ class CreateApp extends React.Component {
       url: event.target.value
     });
   };
+
   onAppTypeIdsChange = (event) => {
     this.setState({
       appTypeIds: event.target.value
@@ -66,19 +67,22 @@ class CreateApp extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, appTypeIds, url } = this.state;
-
     console.log('You clicked the Create App button');
 
+    // need to separate the appTypeIds string by comma, put in array
+    const splitAppTypeIds = appTypeIds.split(',');
+
     const App = {
-      title,
-      description,
-      name,
-      appTypeIds,
-      url
+      'name': name,
+      'title': title,
+      'description': description,
+      'appTypeIds': splitAppTypeIds,
+      'url': url
     };
+
     console.log(App);
 
-    // this.props.actions.onCreateApp(App);
+    this.props.actions.onCreateApp(App);
   }
 
   renderPending = () => {
