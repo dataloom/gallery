@@ -1,5 +1,59 @@
 import * as actionTypes from './AppActionTypes';
 
+export function createAppRequest(App) {
+  return {
+    type: actionTypes.CREATE_APP_REQUEST,
+    App
+  };
+}
+
+export function createAppReject(errorMessage) {
+  return {
+    type: actionTypes.CREATE_APP_REJECT,
+    errorMessage
+  };
+}
+
+export function createAppResolve(reference) {
+  return {
+    type: actionTypes.CREATE_APP_RESOLVE,
+    reference
+  };
+}
+
+export function createAppReset() {
+  return {
+    type: actionTypes.CREATE_APP_RESET
+  };
+}
+
+export function createAppTypeRequest(AppType) {
+  return {
+    type: actionTypes.CREATE_APP_TYPE_REQUEST,
+    AppType
+  };
+}
+
+export function createAppTypeReject(errorMessage) {
+  return {
+    type: actionTypes.CREATE_APP_TYPE_REJECT,
+    errorMessage
+  };
+}
+
+export function createAppTypeResolve(reference) {
+  return {
+    type: actionTypes.CREATE_APP_TYPE_RESOLVE,
+    reference
+  };
+}
+
+export function createAppTypeReset() {
+  return {
+    type: actionTypes.CREATE_APP_TYPE_RESET
+  };
+}
+
 export function getApps() {
   return {
     type: actionTypes.GET_APPS_REQUEST
