@@ -9,7 +9,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-// import { createAppRequest } from './CreateAppActionFactories';
+import { createAppRequest } from './AppActionFactory';
+
 
 class CreateApp extends React.Component {
 
@@ -32,7 +33,6 @@ class CreateApp extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.actions.fetchAllEntityTypesRequest();
   }
 
   onTitleChange = (event) => {
@@ -71,19 +71,18 @@ class CreateApp extends React.Component {
 
     // need to separate the appTypeIds string by comma, put in array
     const splitAppTypeIds = appTypeIds.split(', ');
-    console.log(splitAppTypeIds);
 
     const App = {
-      'name': name,
-      'title': title,
-      'description': description,
-      'appTypeIds': splitAppTypeIds,
-      'url': url
+      name,
+      title,
+      description,
+      appTypeIds: splitAppTypeIds,
+      url
     };
 
     console.log(App);
 
-    // this.props.actions.onCreateApp(App);
+    this.props.actions.onCreateApp(App);
   }
 
   renderPending = () => {
@@ -148,7 +147,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    // onCreateApp: createAppRequest
+    onCreateApp: createAppRequest
   };
 
   return {

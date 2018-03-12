@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
-// import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
-// import { createEntitySetRequest, createLinkedEntitySetRequest } from './CreateEntitySetActionFactories';
+import { createAppTypeRequest } from './AppActionFactory';
+
 
 class CreateAppType extends React.Component {
 
@@ -18,7 +18,7 @@ class CreateAppType extends React.Component {
     actions: PropTypes.shape({
       onCreateAppType: PropTypes.func.isRequired
     }).isRequired,
-    createAppAsyncState: AsyncStatePropType.isRequired
+    createAppTypeAsyncState: AsyncStatePropType.isRequired
   }
 
   constructor(props) {
@@ -33,7 +33,6 @@ class CreateAppType extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.actions.fetchAllEntityTypesRequest();
   }
 
   onTitleChange = (event) => {
@@ -72,13 +71,13 @@ class CreateAppType extends React.Component {
     console.log('You clicked the Create App Type button');
 
     const AppType = {
-      'type': {
-        'namespace': namespace,
-        'name': name
+      type: {
+        namespace,
+        name
       },
-      'title': title,
-      'description': description,
-      'entityTypeId': entityTypeId
+      title,
+      description,
+      entityTypeId
     };
 
     console.log(AppType);
@@ -130,10 +129,10 @@ class CreateAppType extends React.Component {
 
   render() {
     return (
-        <AsyncContent
-            {...this.props.createAppAsyncState}
-            pendingContent={this.renderPending()}
-            content={this.renderSuccess} />
+      <AsyncContent
+          {...this.props.createAppTypeAsyncState}
+          pendingContent={this.renderPending()}
+          content={this.renderSuccess} />
     );
   }
 
@@ -148,7 +147,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    // onCreateAppType: createAppTypeRequest
+    onCreateAppType: createAppTypeRequest
   };
 
   return {

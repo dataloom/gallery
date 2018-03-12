@@ -8,6 +8,10 @@ export const INITIAL_STATE = Immutable.fromJS({
   createAppAsyncState: {
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
+  },
+  createAppTypeAsyncState: {
+    status: ASYNC_STATUS.PENDING,
+    errorMessage: ''
   }
 });
 
@@ -29,7 +33,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       return state.set('errorMessage', action.errorMessage);
 
     case actionTypes.CREATE_APP_REQUEST:
-    case actionTypes.CREATE_APP_TYPE_REQUEST:
       return state.mergeDeep({
         createAppAsyncState: {
           status: ASYNC_STATUS.LOADING,
@@ -37,8 +40,15 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
+    case actionTypes.CREATE_APP_TYPE_REQUEST:
+      return state.mergeDeep({
+        createAppTypeAsyncState: {
+          status: ASYNC_STATUS.LOADING,
+          errorMessage: ''
+        }
+      });
+
     case actionTypes.CREATE_APP_REJECT:
-    case actionTypes.CREATE_APP_TYPE_REJECT:
       return state.mergeDeep({
         createAppAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -46,8 +56,15 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
+    case actionTypes.CREATE_APP_TYPE_REJECT:
+      return state.mergeDeep({
+        createAppTypeAsyncState: {
+          status: ASYNC_STATUS.ERROR,
+          errorMessage: action.errorMessage
+        }
+      });
+
     case actionTypes.CREATE_APP_RESOLVE:
-    case actionTypes.CREATE_APP_TYPE_RESOLVE:
       return state.mergeDeep({
         createAppAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
@@ -55,10 +72,25 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
+    case actionTypes.CREATE_APP_TYPE_RESOLVE:
+      return state.mergeDeep({
+        createAppTypeAsyncState: {
+          status: ASYNC_STATUS.SUCCESS,
+          errorMessage: ''
+        }
+      });
+
     case actionTypes.CREATE_APP_RESET:
-    case actionTypes.CREATE_APP_TYPE_RESET:
       return state.mergeDeep({
         createAppAsyncState: {
+          status: ASYNC_STATUS.PENDING,
+          errorMessage: ''
+        }
+      });
+
+    case actionTypes.CREATE_APP_TYPE_RESET:
+      return state.mergeDeep({
+        createAppTypeAsyncState: {
           status: ASYNC_STATUS.PENDING,
           errorMessage: ''
         }
