@@ -60,6 +60,27 @@ export function getApps() {
   };
 }
 
+export function getAppTypesForAppTypeIds(appTypeIds : UUID[]) {
+  return {
+    type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,
+    appTypeIds
+  };
+}
+
+export function getAppTypesForAppTypeIdsSuccess(appTypeIds :Object[]) {
+  return {
+    type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
+    appTypeIds
+  };
+}
+
+export function getAppTypesForAppTypeIdsFailure(errorMessage :string) {
+  return {
+    type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE,
+    errorMessage
+  };
+}
+
 export function getAppsSuccess(apps :Object[]) {
   return {
     type: actionTypes.GET_APPS_SUCCESS,

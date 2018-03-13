@@ -29,6 +29,16 @@ export default function reducer(state = INITIAL_STATE, action) {
         .set('apps', Immutable.List())
         .set('errorMessage', action.errorMessage);
 
+    case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS:
+      return state
+        .set('appTypeIds', Immutable.fromJS(action.appTypeIds))
+        .set('errorMessage', '');
+
+    case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE:
+      return state
+        .set('appTypeIds', Immutable.List())
+        .set('errorMessage', action.errorMessage);
+
     case actionTypes.INSTALL_APP_FAILURE:
       return state.set('errorMessage', action.errorMessage);
 

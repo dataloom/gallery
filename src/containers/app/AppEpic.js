@@ -43,6 +43,26 @@ function createAppEpic(action$) {
     });
 }
 
+function getAppTypesForAppTypeIdsEpic(action$) {
+  return action$
+    .ofType(actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(AppApi.getAppTypesForAppTypeIds(action.appTypeIds))
+        .mergeMap((appTypeIds) => {
+          return Observable.of(
+            actionFactory.getAppTypesForAppTypeIdsSuccess(appTypeIds)
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+          return Observable.of(
+            actionFactory.getAppTypesForAppTypeIdsFailure('Unable to load apps')
+          );
+        });
+    });
+}
+
 
 function getAppsEpic(action$) {
   return action$.ofType(actionTypes.GET_APPS_REQUEST)
@@ -51,7 +71,11 @@ function getAppsEpic(action$) {
         .from(AppApi.getApps())
         .mergeMap((apps) => {
           return Observable.of(
-            actionFactory.getAppsSuccess(apps)
+            actionFactory.getAppsSuccess(apps),
+            // apps is an array of app objects, so I need to collect the appTypeIds from each
+            // check for uniqueness
+            // fire off the getting of the App Types
+            actionFactory.getAppTypesForAppTypeIds()
           );
         })
         .catch((e) => {
@@ -85,6 +109,7 @@ function installAppEpic(action$) {
 
 export default combineEpics(
   getAppsEpic,
+  getAppTypesForAppTypeIdsEpic,
   installAppEpic,
   createAppTypeEpic,
   createAppEpic

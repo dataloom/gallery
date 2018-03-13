@@ -76,6 +76,7 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
+    getAppTypesForAppTypeIdsRequest: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
   }
@@ -94,6 +95,7 @@ class Apps extends React.Component {
   componentDidMount() {
     this.props.getAppsRequest();
     this.props.getOwnedOrganizations();
+    this.props.getAppTypesForAppTypeIdsRequest();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -144,6 +146,15 @@ class Apps extends React.Component {
 
   renderApps = () => {
     return this.props.apps.map((app) => {
+
+      // // get all the app types for the app, I'm assuming this is returning an array of objects
+      // const appTypes = AppApi.getAppTypesForAppTypeIds(app.get('appTypeIds'))
+
+      // // for each app, display its name
+      // for (i=0; i < appTypes.length; ++i) {
+      //   <div>{appTypes[i].name}</div>
+      // }
+
       return (
         <div key={app.get('name')}>
           <AppSectionContainer>
@@ -159,6 +170,7 @@ class Apps extends React.Component {
             <AppContainer>
               <AppTitle>{app.get('title')}</AppTitle>
               <div>{app.get('description')}</div>
+              <div>{app.get('appTypeIds')}</div>
             </AppContainer>
           </AppSectionContainer>
           <hr />
@@ -317,6 +329,7 @@ function mapStateToProps(state, ownProps) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
 
+  // const appTypes = state.getIn('appTypes')
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {
       return organization.get('isOwner');
@@ -329,6 +342,9 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     getAppsRequest: () => {
       dispatch(actionFactory.getApps());
+    },
+    getAppTypesForAppTypeIds: () => {
+      dispatch(actionFactory.getAppTypesForAppTypeIdsRequest());
     },
     getOwnedOrganizations: () => {
       dispatch(fetchOrganizationsRequest());
