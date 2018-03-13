@@ -70,12 +70,22 @@ function getAppsEpic(action$) {
       return Observable
         .from(AppApi.getApps())
         .mergeMap((apps) => {
+
+          const ids = new Set([]);
+          // collects all the unique appTypeIds from apps
+          for (let i = 0; i < apps.length; i += 1) {
+            for (let j = 0; j < apps[i].appTypeIds[j]; j += 1) {
+              ids.add(apps[i].appTypeIds[j]);
+            }
+          }
+          const appTypeIds = Array.from(ids);
+
           return Observable.of(
             actionFactory.getAppsSuccess(apps),
             // apps is an array of app objects, so I need to collect the appTypeIds from each
             // check for uniqueness
             // fire off the getting of the App Types
-            actionFactory.getAppTypesForAppTypeIds()
+            actionFactory.getAppTypesForAppTypeIds(appTypeIds)
           );
         })
         .catch((e) => {

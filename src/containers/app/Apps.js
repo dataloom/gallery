@@ -73,6 +73,7 @@ class Apps extends React.Component {
   static propTypes = {
     auth: PropTypes.object.isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
+    appTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
@@ -328,7 +329,7 @@ class Apps extends React.Component {
 function mapStateToProps(state, ownProps) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
-
+  // const appTypes = state.getIn([]);
   // const appTypes = state.getIn('appTypes')
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {

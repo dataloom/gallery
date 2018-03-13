@@ -67,6 +67,7 @@ export function getAppTypesForAppTypeIds(appTypeIds : UUID[]) {
   };
 }
 
+// is the type correct here? I am inputing an array of app objects
 export function getAppTypesForAppTypeIdsSuccess(appTypeIds :Object[]) {
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
