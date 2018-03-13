@@ -60,7 +60,7 @@ export function getApps() {
   };
 }
 
-export function getAppTypesForAppTypeIds(appTypeIds : UUID[]) {
+export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,
     appTypeIds

@@ -71,11 +71,15 @@ function getAppsEpic(action$) {
         .from(AppApi.getApps())
         .mergeMap((apps) => {
 
+          // MY CODE HERE IS BROKEN!!!!!! FIX ME!!!!!!
           const ids = new Set([]);
+          console.log(apps);
           // collects all the unique appTypeIds from apps
           for (let i = 0; i < apps.length; i += 1) {
+            console.log(apps[i]);
             for (let j = 0; j < apps[i].appTypeIds[j]; j += 1) {
-              ids.add(apps[i].appTypeIds[j]);
+              console.log(apps[i].appTypeIds[j]);
+              ids.add(apps[1].appTypeIds[j]);
             }
           }
           const appTypeIds = Array.from(ids);
@@ -85,7 +89,7 @@ function getAppsEpic(action$) {
             // apps is an array of app objects, so I need to collect the appTypeIds from each
             // check for uniqueness
             // fire off the getting of the App Types
-            actionFactory.getAppTypesForAppTypeIds(appTypeIds)
+            actionFactory.getAppTypesForAppTypeIdsRequest(appTypeIds)
           );
         })
         .catch((e) => {

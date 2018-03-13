@@ -77,7 +77,7 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
-    getAppTypesForAppTypeIdsRequest: PropTypes.func.isRequired,
+    getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
   }
@@ -96,7 +96,7 @@ class Apps extends React.Component {
   componentDidMount() {
     this.props.getAppsRequest();
     this.props.getOwnedOrganizations();
-    this.props.getAppTypesForAppTypeIdsRequest();
+    this.props.getAppTypesForAppTypeIds();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -145,16 +145,16 @@ class Apps extends React.Component {
   //   return defaultContact;
   // }
 
+  renderAppType = () => {
+    return this.props.appTypes.map((appType) => {
+      return (
+        <div>{appType.get('title')}</div>
+      );
+    });
+  }
+
   renderApps = () => {
     return this.props.apps.map((app) => {
-
-      // // get all the app types for the app, I'm assuming this is returning an array of objects
-      // const appTypes = AppApi.getAppTypesForAppTypeIds(app.get('appTypeIds'))
-
-      // // for each app, display its name
-      // for (i=0; i < appTypes.length; ++i) {
-      //   <div>{appTypes[i].name}</div>
-      // }
 
       return (
         <div key={app.get('name')}>
@@ -172,6 +172,7 @@ class Apps extends React.Component {
               <AppTitle>{app.get('title')}</AppTitle>
               <div>{app.get('description')}</div>
               <div>{app.get('appTypeIds')}</div>
+              {this.renderAppType()}
             </AppContainer>
           </AppSectionContainer>
           <hr />
@@ -329,14 +330,13 @@ class Apps extends React.Component {
 function mapStateToProps(state, ownProps) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
-  // const appTypes = state.getIn([]);
-  // const appTypes = state.getIn('appTypes')
+  const appTypes = state.getIn(['app', 'appTypes'], Immutable.List());
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {
       return organization.get('isOwner');
     });
 
-  return { apps, errorMessage, organizations };
+  return { apps, appTypes, errorMessage, organizations };
 }
 
 function mapDispatchToProps(dispatch) {
