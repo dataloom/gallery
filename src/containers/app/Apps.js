@@ -79,7 +79,7 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
-    // getAppTypesForAppTypeIds: PropTypes.func.isRequired,
+    getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
@@ -99,7 +99,7 @@ class Apps extends React.Component {
   componentDidMount() {
     this.props.getAppsRequest();
     this.props.getOwnedOrganizations();
-    // this.props.getAppTypesForAppTypeIds();
+    this.props.getAppTypesForAppTypeIds();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -141,14 +141,29 @@ class Apps extends React.Component {
   //   if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
   //   return defaultContact;
   // }
+  collectAppTypesFromApp = (app) => {
+    const appTypeIdsFromApp = app.get('appTypeIds');
+    const appTypesFromApp = [];
+
+    for (let i = 0; i < appTypeIdsFromApp.length; i += 1) {
+      appTypesFromApp.push(appTypeIdsFromApp[i]);
+    }
+
+    return appTypesFromApp;
+  }
 
   renderAppType = (app) => {
-    // console.log(app);
-    console.log('You have made it to the renderAppType method.');
-    console.log(this.props.appTypes);
-    // still getting an empty map
+    // get the appTypeIds for the app
+    // for each appTypeId lookup the appTypes
+    const appTypeList = this.collectAppTypesFromApp(app);
+    const appNames = [];
+
+    for (let i = 0; i < appTypeList.length; i += 1) {
+      appNames.push(this.props.appTypes.get(appTypeList[i]));
+    }
+
     return (
-      <div>App Type Name: {this.props.appTypes}</div>
+      <div>App Types: {appNames}</div>
     );
   }
 
