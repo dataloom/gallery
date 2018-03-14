@@ -54,13 +54,10 @@ export function createAppTypeReset() {
   };
 }
 
-export function getApps() {
-  return {
-    type: actionTypes.GET_APPS_REQUEST
-  };
-}
-
 export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
+  console.log('in the request action');
+  console.log(appTypeIds);
+
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,
     appTypeIds
@@ -69,6 +66,9 @@ export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
 
 // is the type correct here? I am inputing an array of app objects
 export function getAppTypesForAppTypeIdsSuccess(appTypeIds :Object[]) {
+  console.log('in the success action');
+  console.log(appTypeIds);
+
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
     appTypeIds
@@ -79,6 +79,12 @@ export function getAppTypesForAppTypeIdsFailure(errorMessage :string) {
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE,
     errorMessage
+  };
+}
+
+export function getApps() {
+  return {
+    type: actionTypes.GET_APPS_REQUEST
   };
 }
 

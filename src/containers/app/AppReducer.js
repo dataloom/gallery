@@ -4,6 +4,7 @@ import * as actionTypes from './AppActionTypes';
 
 export const INITIAL_STATE = Immutable.fromJS({
   apps: Immutable.List(),
+  appTypes: Immutable.Map(),
   errorMessage: '',
   createAppAsyncState: {
     status: ASYNC_STATUS.PENDING,
@@ -31,12 +32,12 @@ export default function reducer(state = INITIAL_STATE, action) {
 
     case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS:
       return state
-        .set('appTypes', Immutable.fromJS(action.appTypes))
+        .set('appTypes', Immutable.fromJS(action.appTypeIds))
         .set('errorMessage', '');
 
     case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE:
       return state
-        .set('appTypes', Immutable.List())
+        .set('appTypes', Immutable.Map())
         .set('errorMessage', action.errorMessage);
 
     case actionTypes.INSTALL_APP_FAILURE:

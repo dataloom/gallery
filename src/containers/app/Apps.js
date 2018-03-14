@@ -73,7 +73,7 @@ class Apps extends React.Component {
   static propTypes = {
     auth: PropTypes.object.isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
-    appTypes: PropTypes.instanceOf(Immutable.List).isRequired,
+    appTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
@@ -96,7 +96,7 @@ class Apps extends React.Component {
   componentDidMount() {
     this.props.getAppsRequest();
     this.props.getOwnedOrganizations();
-    this.props.getAppTypesForAppTypeIds();
+    // this.props.getAppTypesForAppTypeIds();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -106,7 +106,6 @@ class Apps extends React.Component {
   }
 
   onAddApp = () => {
-    console.log('Made it into the app event handler');
     this.setState({
       isAppModalOpen: true
     });
@@ -118,7 +117,6 @@ class Apps extends React.Component {
   };
 
   onAddAppType = () => {
-    console.log('Made it into the apptype event handler');
     this.setState({
       isAppTypeModalOpen: true
     });
@@ -146,11 +144,9 @@ class Apps extends React.Component {
   // }
 
   renderAppType = () => {
-    return this.props.appTypes.map((appType) => {
-      return (
-        <div>{appType.get('title')}</div>
-      );
-    });
+    return (
+      <div>App Type Name: Insert Name Here</div>
+    );
   }
 
   renderApps = () => {
@@ -330,7 +326,8 @@ class Apps extends React.Component {
 function mapStateToProps(state, ownProps) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
-  const appTypes = state.getIn(['app', 'appTypes'], Immutable.List());
+  // NOT SURE WHAT I AM DOING HERE
+  const appTypes = state.getIn(['appTypes', 'appTypes'], Immutable.Map());
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {
       return organization.get('isOwner');

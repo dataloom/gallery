@@ -50,6 +50,12 @@ function getAppTypesForAppTypeIdsEpic(action$) {
       return Observable
         .from(AppApi.getAppTypesForAppTypeIds(action.appTypeIds))
         .mergeMap((appTypeIds) => {
+          console.log('in the app type epic');
+          console.log(appTypeIds);
+          // prints {} with appTypeIds.size == undefined
+          // in other words the API is not returning a map... or the ID's do not exist locally
+          console.log(action.appTypeIds);
+
           return Observable.of(
             actionFactory.getAppTypesForAppTypeIdsSuccess(appTypeIds)
           );
@@ -70,25 +76,18 @@ function getAppsEpic(action$) {
       return Observable
         .from(AppApi.getApps())
         .mergeMap((apps) => {
-
-          // MY CODE HERE IS BROKEN!!!!!! FIX ME!!!!!!
+          console.log('in the app epic');
           const ids = new Set([]);
-          console.log(apps);
           // collects all the unique appTypeIds from apps
           for (let i = 0; i < apps.length; i += 1) {
-            console.log(apps[i]);
-            for (let j = 0; j < apps[i].appTypeIds[j]; j += 1) {
-              console.log(apps[i].appTypeIds[j]);
-              ids.add(apps[1].appTypeIds[j]);
+            for (let j = 0; j < apps[i].appTypeIds.length; j += 1) {
+              ids.add(apps[i].appTypeIds[j]);
             }
           }
           const appTypeIds = Array.from(ids);
-
+          console.log(appTypeIds);
           return Observable.of(
             actionFactory.getAppsSuccess(apps),
-            // apps is an array of app objects, so I need to collect the appTypeIds from each
-            // check for uniqueness
-            // fire off the getting of the App Types
             actionFactory.getAppTypesForAppTypeIdsRequest(appTypeIds)
           );
         })
