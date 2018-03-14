@@ -9,6 +9,8 @@ import { Link } from 'react-router';
 import styled, {
   css
 } from 'styled-components';
+import { AppApi } from 'lattice';
+
 
 import CreateApp from './CreateApp';
 import CreateAppType from './CreateAppType';
@@ -143,10 +145,19 @@ class Apps extends React.Component {
   //   return defaultContact;
   // }
 
-  renderAppType = () => {
+  collectAppType = () => {
+    const myApp = AppApi.getAppTypeByFqn('sample', 'apptype');
     return (
-      <div>App Type Name: Insert Name Here</div>
+      myApp
     );
+  }
+
+  renderAppType = () => {
+    return this.props.appTypes.map((appType) => {
+      return (
+        <div>App Type Name: {appType.get('title')}</div>
+      );
+    });
   }
 
   renderApps = () => {
