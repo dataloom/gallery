@@ -141,6 +141,13 @@ class Apps extends React.Component {
   //   if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
   //   return defaultContact;
   // }
+
+  getAppTypeIdByName = () => {
+    // for printing out an id for reference
+    const appTypeIdFromApi = AppApi.getAppTypeByFqn('another', 'apptype');
+    console.log(appTypeIdFromApi);
+    return appTypeIdFromApi;
+  }
   collectAppTypesFromApp = (app) => {
     const appTypeIdsFromApp = app.get('appTypeIds');
     const appTypesFromApp = [];
@@ -197,7 +204,6 @@ class Apps extends React.Component {
             <AppContainer>
               <AppTitle>{app.get('title')}</AppTitle>
               <div>{app.get('description')}</div>
-              <div>{app.get('id')}</div>
               <div>{app.get('appTypeIds')}</div>
               {this.renderAppType(app)}
             </AppContainer>
