@@ -79,6 +79,7 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
+    deleteAppRequest: PropTypes.func.isRequired,
     getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
@@ -118,6 +119,11 @@ class Apps extends React.Component {
     // });
   };
 
+  onDeleteApp = () => {
+    // collect App
+    this.props.deleteAppRequest(App);
+  };
+
   onAddAppType = () => {
     this.setState({
       isAppTypeModalOpen: true
@@ -145,13 +151,6 @@ class Apps extends React.Component {
   //   return defaultContact;
   // }
 
-  collectAppType = () => {
-    const myApp = AppApi.getAppTypeByFqn('sample', 'apptype');
-    return (
-      myApp
-    );
-  }
-
   renderAppType = () => {
     return this.props.appTypes.map((appType) => {
       return (
@@ -173,6 +172,13 @@ class Apps extends React.Component {
                     this.setState({ installing: app });
                   }}>
                 <FontAwesome name="plus" />
+              </Button>
+            </ButtonContainer>
+            <ButtonContainer>
+              <Button
+                  bsStyle="default"
+                  onClick={this.onDeleteApp}>
+                <FontAwesome name="minus" />
               </Button>
             </ButtonContainer>
             <AppContainer>
@@ -360,6 +366,9 @@ function mapDispatchToProps(dispatch) {
     },
     install: (appId, organizationId, prefix) => {
       dispatch(actionFactory.installAppRequest(appId, organizationId, prefix));
+    },
+    deleteAppRequest: () => {
+      dispatch(actionFactory.deleteAppRequest());
     }
   };
 

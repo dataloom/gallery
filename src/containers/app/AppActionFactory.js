@@ -1,5 +1,32 @@
 import * as actionTypes from './AppActionTypes';
 
+export function deleteAppRequest(App) {
+  return {
+    type: actionTypes.DELETE_APP_REQUEST,
+    App
+  };
+}
+
+export function deleteAppReject(errorMessage) {
+  return {
+    type: actionTypes.DELETE_APP_REJECT,
+    errorMessage
+  };
+}
+
+export function deleteAppResolve(reference) {
+  return {
+    type: actionTypes.DELETE_APP_RESOLVE,
+    reference
+  };
+}
+
+export function deleteAppReset() {
+  return {
+    type: actionTypes.DELETE_APP_RESET
+  };
+}
+
 export function createAppRequest(App) {
   return {
     type: actionTypes.CREATE_APP_REQUEST,
