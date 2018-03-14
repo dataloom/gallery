@@ -79,7 +79,7 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
-    getAppTypesForAppTypeIds: PropTypes.func.isRequired,
+    // getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
@@ -99,7 +99,7 @@ class Apps extends React.Component {
   componentDidMount() {
     this.props.getAppsRequest();
     this.props.getOwnedOrganizations();
-    this.props.getAppTypesForAppTypeIds();
+    // this.props.getAppTypesForAppTypeIds();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -145,10 +145,9 @@ class Apps extends React.Component {
     const appTypeIdsFromApp = app.get('appTypeIds');
     const appTypesFromApp = [];
 
-    for (let i = 0; i < appTypeIdsFromApp.length; i += 1) {
-      appTypesFromApp.push(appTypeIdsFromApp[i]);
+    for (let i = 0; i < appTypeIdsFromApp.size; i += 1) {
+      appTypesFromApp.push(appTypeIdsFromApp.get(i));
     }
-
     return appTypesFromApp;
   }
 
@@ -156,10 +155,14 @@ class Apps extends React.Component {
     // get the appTypeIds for the app
     // for each appTypeId lookup the appTypes
     const appTypeList = this.collectAppTypesFromApp(app);
+    const appTypes = this.props.appTypes;
     const appNames = [];
 
-    for (let i = 0; i < appTypeList.length; i += 1) {
-      appNames.push(this.props.appTypes.get(appTypeList[i]));
+    if (appTypes.get(appTypeList[0])) {
+      for (let i = 0; i < appTypeList.length; i += 1) {
+        const eachApp = appTypes.get(appTypeList[i]);
+        appNames.push(eachApp.get('title'));
+      }
     }
 
     return (
@@ -369,8 +372,8 @@ function mapDispatchToProps(dispatch) {
     getAppsRequest: () => {
       dispatch(actionFactory.getApps());
     },
-    getAppTypesForAppTypeIds: () => {
-      dispatch(actionFactory.getAppTypesForAppTypeIdsRequest());
+    getAppTypesForAppTypeIds: (appTypeIds) => {
+      dispatch(actionFactory.getAppTypesForAppTypeIdsRequest(appTypeIds));
     },
     getOwnedOrganizations: () => {
       dispatch(fetchOrganizationsRequest());

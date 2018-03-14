@@ -31,7 +31,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         .set('errorMessage', action.errorMessage);
 
     case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS:
-      console.log(action.appTypeIdMap);
       return state
         .set('appTypes', Immutable.fromJS(action.appTypeIdMap))
         .set('errorMessage', '');
