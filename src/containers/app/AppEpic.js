@@ -48,7 +48,7 @@ function deleteAppEpic(action$) {
     .ofType(actionTypes.DELETE_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
-        .from(AppApi.deleteApp(action.AppId))
+        .from(AppApi.deleteApp(action.App))
         .mergeMap(() => {
           return Observable.of(
             actionFactory.deleteAppResolve());
@@ -67,17 +67,18 @@ function getAppTypesForAppTypeIdsEpic(action$) {
     .mergeMap((action) => {
       return Observable
         .from(AppApi.getAppTypesForAppTypeIds(action.appTypeIds))
-        .mergeMap((appTypeIds) => {
-          // prints {} with appTypeIds.size == undefined
-          // in other words the API is not returning a map... or the ID's do not exist locally
+        .mergeMap((appTypeIdMap) => {
+          // console.log('i am in the epic');
+          // console.log(appTypeIdMap);
+          // I am getting the mapping {356c427a-0c29-4716-8ca3-90a04bba40ac: Object}
           return Observable.of(
-            actionFactory.getAppTypesForAppTypeIdsSuccess(appTypeIds)
+            actionFactory.getAppTypesForAppTypeIdsSuccess(appTypeIdMap)
           );
         })
         .catch((e) => {
           console.error(e);
           return Observable.of(
-            actionFactory.getAppTypesForAppTypeIdsFailure('Unable to load apps')
+            actionFactory.getAppTypesForAppTypeIdsFailure('Unable to load app types')
           );
         });
     });

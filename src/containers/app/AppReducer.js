@@ -31,8 +31,9 @@ export default function reducer(state = INITIAL_STATE, action) {
         .set('errorMessage', action.errorMessage);
 
     case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS:
+      console.log(action.appTypeIdMap);
       return state
-        .set('appTypes', Immutable.fromJS(action.appTypeIds))
+        .set('appTypes', Immutable.fromJS(action.appTypeIdMap))
         .set('errorMessage', '');
 
     case actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE:
@@ -41,7 +42,20 @@ export default function reducer(state = INITIAL_STATE, action) {
         .set('errorMessage', action.errorMessage);
 
     case actionTypes.INSTALL_APP_FAILURE:
-      return state.set('errorMessage', action.errorMessage);
+      return state
+        .set('errorMessage', action.errorMessage);
+
+    case actionTypes.DELETE_APP_REQUEST:
+      return state;
+
+    case actionTypes.DELETE_APP_REJECT:
+      return state;
+
+    case actionTypes.DELETE_APP_RESOLVE:
+      return state;
+
+    case actionTypes.DELETE_APP_RESET:
+      return state;
 
     case actionTypes.CREATE_APP_REQUEST:
       return state.mergeDeep({

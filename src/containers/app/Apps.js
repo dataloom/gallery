@@ -79,8 +79,8 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
+    // getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
-    getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
   }
@@ -112,27 +112,18 @@ class Apps extends React.Component {
     this.setState({
       isAppModalOpen: true
     });
-    // FORMAT FOR WHEN READY TO HANDLE EVENT
-    // this.props.actions.createEntitySetReset();
-    // this.setState({
-    //   isModalOpen: true
-    // });
   };
 
-  onDeleteApp = () => {
-    // collect App
-    this.props.deleteAppRequest(App);
+  onDeleteApp = (app) => {
+    console.log(app.get('id'));
+    console.log(typeof app.get('id'));
+    this.props.deleteAppRequest(app.get('id'));
   };
 
   onAddAppType = () => {
     this.setState({
       isAppTypeModalOpen: true
     });
-    // FORMAT FOR WHEN READY TO HANDLE EVENT
-    // this.props.actions.createEntitySetReset();
-    // this.setState({
-    //   isModalOpen: true
-    // });
   };
 
   closeModal = () => {
@@ -151,12 +142,14 @@ class Apps extends React.Component {
   //   return defaultContact;
   // }
 
-  renderAppType = () => {
-    return this.props.appTypes.map((appType) => {
-      return (
-        <div>App Type Name: {appType.get('title')}</div>
-      );
-    });
+  renderAppType = (app) => {
+    // console.log(app);
+    console.log('You have made it to the renderAppType method.');
+    console.log(this.props.appTypes);
+    // still getting an empty map
+    return (
+      <div>App Type Name: {this.props.appTypes}</div>
+    );
   }
 
   renderApps = () => {
@@ -177,15 +170,18 @@ class Apps extends React.Component {
             <ButtonContainer>
               <Button
                   bsStyle="default"
-                  onClick={this.onDeleteApp}>
+                  onClick={() => {
+                    this.onDeleteApp(app);
+                  }}>
                 <FontAwesome name="minus" />
               </Button>
             </ButtonContainer>
             <AppContainer>
               <AppTitle>{app.get('title')}</AppTitle>
               <div>{app.get('description')}</div>
+              <div>{app.get('id')}</div>
               <div>{app.get('appTypeIds')}</div>
-              {this.renderAppType()}
+              {this.renderAppType(app)}
             </AppContainer>
           </AppSectionContainer>
           <hr />
@@ -344,7 +340,7 @@ function mapStateToProps(state, ownProps) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
   // NOT SURE WHAT I AM DOING HERE
-  const appTypes = state.getIn(['appTypes', 'appTypes'], Immutable.Map());
+  const appTypes = state.getIn(['app', 'appTypes'], Immutable.Map());
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {
       return organization.get('isOwner');
@@ -367,11 +363,10 @@ function mapDispatchToProps(dispatch) {
     install: (appId, organizationId, prefix) => {
       dispatch(actionFactory.installAppRequest(appId, organizationId, prefix));
     },
-    deleteAppRequest: () => {
-      dispatch(actionFactory.deleteAppRequest());
+    deleteAppRequest: (App) => {
+      dispatch(actionFactory.deleteAppRequest(App));
     }
   };
-
   return actions;
 }
 

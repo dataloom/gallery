@@ -1,6 +1,6 @@
 import * as actionTypes from './AppActionTypes';
 
-export function deleteAppRequest(App) {
+export function deleteAppRequest(App: UUID) {
   return {
     type: actionTypes.DELETE_APP_REQUEST,
     App
@@ -89,10 +89,12 @@ export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
 }
 
 // is the type correct here? I am inputing an array of app objects
-export function getAppTypesForAppTypeIdsSuccess(appTypeIds :Object[]) {
+export function getAppTypesForAppTypeIdsSuccess(appTypeIdMap :Map) {
+  // console.log('in the action');
+  // console.log(appTypeIdMap);
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
-    appTypeIds
+    appTypeIdMap
   };
 }
 
