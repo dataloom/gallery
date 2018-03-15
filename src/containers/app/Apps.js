@@ -98,6 +98,7 @@ class Apps extends React.Component {
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
       addAppTypeAppId: '',
+      addAppTypeAppTitle: '',
       addAppTypeAppTypeId: '',
       isAddAppTypeToAppModalOpen: false
     };
@@ -136,7 +137,7 @@ class Apps extends React.Component {
     });
   }
 
-  renderAddAppForm = (appId) => {
+  renderAddAppForm = () => {
     return (
       <form onSubmit={() => {
         AppApi.addAppTypeToApp(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
@@ -171,14 +172,14 @@ class Apps extends React.Component {
   getAppTypeIdByName = () => {
     // REFERENCE ONLY
     // for printing out an id for reference
-    const appTypeIdFromApi = AppApi.getAppTypeByFqn('fifth', 'apptype');
+    const appTypeIdFromApi = AppApi.getAppTypeByFqn('sixth', 'apptype');
     console.log(appTypeIdFromApi);
     return appTypeIdFromApi;
   }
 
   collectAppTypesFromApp = (app) => {
     // REMOVE THE FOLLOWING LINE WHEN DONE!
-    this.getAppTypeIdByName();
+    // this.getAppTypeIdByName();
     const appTypeIdsFromApp = app.get('appTypeIds');
     const appTypesFromApp = [];
 
@@ -259,7 +260,10 @@ class Apps extends React.Component {
                       bsSize="xsmall"
                       onClick={() => {
                         this.onAddAppTypeToApp(app.get('id'));
-                        this.setState({ addAppTypeAppId: app.get('id') });
+                        this.setState({
+                          addAppTypeAppId: app.get('id'),
+                          addAppTypeAppTitle: app.get('title')
+                        });
                       }}>
                     <FontAwesome name="plus" />
                   </Button>
@@ -270,10 +274,10 @@ class Apps extends React.Component {
               </AppSectionContainer>
               <Modal show={isAddAppTypeToAppModalOpen} onHide={this.closeModal} container={this}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Add an App Type to this app</Modal.Title>
+                  <Modal.Title>Add an App Type to {this.state.addAppTypeAppTitle} app</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  {this.renderAddAppForm(app.get('id'))}
+                  {this.renderAddAppForm()}
                 </Modal.Body>
               </Modal>
               {this.renderAppType(app)}

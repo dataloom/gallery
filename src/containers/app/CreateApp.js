@@ -15,10 +15,10 @@ import { createAppRequest } from './AppActionFactory';
 class CreateApp extends React.Component {
 
   static propTypes = {
-    createAppAsyncState: AsyncStatePropType.isRequired,
     actions: PropTypes.shape({
       onCreateApp: PropTypes.func.isRequired
-    }).isRequired
+    }).isRequired,
+    createAppAsyncState: AsyncStatePropType.isRequired
   }
 
   constructor(props) {

@@ -122,7 +122,7 @@ class CreateAppType extends React.Component {
   renderSuccess = () => {
     return (
       <Alert bsStyle="success">
-        Successfully saved App
+        Successfully saved App Type
       </Alert>
     );
   };
