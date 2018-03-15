@@ -6,9 +6,7 @@ import FontAwesome from 'react-fontawesome';
 import { Button, ControlLabel, DropdownButton, Modal, FormControl, FormGroup, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import styled, {
-  css
-} from 'styled-components';
+import styled from 'styled-components';
 import { AppApi } from 'lattice';
 
 
@@ -77,7 +75,7 @@ const ErrorMessage = styled.div`
 
 class Apps extends React.Component {
   static propTypes = {
-    auth: PropTypes.object.isRequired,
+    // auth: PropTypes.object.isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
     appTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     errorMessage: PropTypes.string.isRequired,
@@ -130,8 +128,7 @@ class Apps extends React.Component {
     AppApi.removeAppTypeFromApp(appId, appTypeId);
   }
 
-  onAddAppTypeToApp = (appId) => {
-    console.log(appId);
+  onAddAppTypeToApp = () => {
     this.setState({
       isAddAppTypeToAppModalOpen: true
     });
@@ -259,7 +256,7 @@ class Apps extends React.Component {
                       bsStyle="default"
                       bsSize="xsmall"
                       onClick={() => {
-                        this.onAddAppTypeToApp(app.get('id'));
+                        this.onAddAppTypeToApp();
                         this.setState({
                           addAppTypeAppId: app.get('id'),
                           addAppTypeAppTitle: app.get('title')
@@ -321,11 +318,11 @@ class Apps extends React.Component {
       <FormGroup>
         <ControlLabel>Choose a unique prefix for the datasets that will be used for this app.</ControlLabel>
         <FormControl
-          type="text"
-          value={this.state.prefix}
-          onChange={(e) => {
-            this.setState({ prefix: e.target.value });
-          }} />
+            type="text"
+            value={this.state.prefix}
+            onChange={(e) => {
+              this.setState({ prefix: e.target.value });
+            }} />
       </FormGroup>
     );
   }
@@ -360,7 +357,7 @@ class Apps extends React.Component {
       return (
         <ModalBodyContainer>
           <NoOrganizationsText>You must be an owner of an organization to install an app.</NoOrganizationsText>
-          <Link to='orgs/new'>Create an organization</Link>
+          <Link to="orgs/new">Create an organization</Link>
         </ModalBodyContainer>
       );
     }
@@ -435,7 +432,7 @@ class Apps extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
   const appTypes = state.getIn(['app', 'appTypes'], Immutable.Map());
