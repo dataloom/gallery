@@ -233,7 +233,7 @@ class Apps extends React.Component {
                   onClick={() => {
                     this.setState({ installing: app });
                   }}>
-                <FontAwesome name="plus" />
+                install
               </Button>
             </ButtonContainer>
             <ButtonContainer>
@@ -242,7 +242,7 @@ class Apps extends React.Component {
                   onClick={() => {
                     this.onDeleteApp(app);
                   }}>
-                <FontAwesome name="minus" />
+                delete
               </Button>
             </ButtonContainer>
             <AppContainer>
