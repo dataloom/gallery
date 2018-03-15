@@ -114,7 +114,7 @@ class Apps extends React.Component {
     }
   }
 
-  onAddApp = () => {
+  onCreateApp = () => {
     this.setState({
       isAppModalOpen: true
     });
@@ -152,7 +152,7 @@ class Apps extends React.Component {
     );
   }
 
-  onAddAppType = () => {
+  onCreateAppType = () => {
     this.setState({
       isAppTypeModalOpen: true
     });
@@ -398,10 +398,10 @@ class Apps extends React.Component {
         <Page>
           <Page.Header>
             <Page.Title>Browse Apps</Page.Title>
-            <Button bsStyle="primary" className={styles.control} onClick={this.onAddApp}>
+            <Button bsStyle="primary" className={styles.control} onClick={this.onCreateApp}>
               <FontAwesome name="plus-circle" size="lg" /> App
             </Button>
-            <Button bsStyle="primary" className={styles.control} onClick={this.onAddAppType}>
+            <Button bsStyle="primary" className={styles.control} onClick={this.onCreateAppType}>
               <FontAwesome name="plus-circle" size="lg" /> App Type
             </Button>
           </Page.Header>
