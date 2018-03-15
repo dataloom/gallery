@@ -96,7 +96,9 @@ class Apps extends React.Component {
       prefix: '',
       org: '',
       isAppModalOpen: false,
-      isAppTypeModalOpen: false
+      isAppTypeModalOpen: false,
+      addApp: '',
+      isAddAppTypeToAppModalOpen: false
     };
   }
 
@@ -123,11 +125,34 @@ class Apps extends React.Component {
   };
 
   onDeleteAppTypeFromApp = (appId, appTypeId) => {
-    console.log('Inside the delete app type method.');
-    // can an app have no app types???
-    console.log(appId);
-    console.log(appTypeId);
     AppApi.removeAppTypeFromApp(appId, appTypeId);
+  }
+
+  onAddAppTypeToApp = (appId) => {
+    this.setState({
+      isAddAppTypeToAppModalOpen: true
+    });
+    // AppApi.addAppTypeToApp(appId, this.state.addApp);
+  }
+
+  renderAddAppForm = () => {
+    // if (this.state.isAddAppTypeToAppModalOpen) {
+    //   return (
+    //     <form>
+    //       <FormGroup>
+    //         <ControlLabel>Enter an App Type Id</ControlLabel>
+    //         <FormControl
+    //             type="text"
+    //             value={this.state.addApp}
+    //             onChange={(e) => {
+    //               this.setState({ addApp: e.target.value });
+    //             }} />
+    //       </FormGroup>
+    //       <Button type="submit">Submit</Button>
+    //     </form>
+    //   );
+    // }
+    return (<div>Hello There!</div>);
   }
 
   onAddAppType = () => {
@@ -139,7 +164,8 @@ class Apps extends React.Component {
   closeModal = () => {
     this.setState({
       isAppModalOpen: false,
-      isAppTypeModalOpen: false
+      isAppTypeModalOpen: false,
+      isAddAppTypeToAppModalOpen: false,
     });
   };
 
@@ -199,6 +225,8 @@ class Apps extends React.Component {
   renderApps = () => {
     return this.props.apps.map((app) => {
 
+      const { isAddAppTypeToAppModalOpen } = this.state;
+
       return (
         <div key={app.get('name')}>
           <AppSectionContainer>
@@ -225,7 +253,29 @@ class Apps extends React.Component {
               <div>{app.get('description')}</div>
               <div>Id: {app.get('id')}</div>
               <br />
-              <div>App Types:</div>
+              <AppSectionContainer>
+                <ButtonContainer>
+                  <Button
+                      bsStyle="default"
+                      bsSize="xsmall"
+                      onClick={() => {
+                        this.onAddAppTypeToApp(app.get('id'));
+                      }}>
+                    <FontAwesome name="plus" />
+                  </Button>
+                </ButtonContainer>
+                <AppSubSectionContainer>
+                  <div>App Types:</div>
+                </AppSubSectionContainer>
+              </AppSectionContainer>
+              <Modal show={isAddAppTypeToAppModalOpen} onHide={this.closeModal} container={this}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Add an App Type to this app</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {this.renderAddAppForm()}
+                </Modal.Body>
+              </Modal>
               {this.renderAppType(app)}
             </AppContainer>
           </AppSectionContainer>
