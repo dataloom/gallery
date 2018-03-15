@@ -84,6 +84,7 @@ class Apps extends React.Component {
     // getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
     deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
+    addAppTypeToAppRequest: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
   }
@@ -138,7 +139,7 @@ class Apps extends React.Component {
   renderAddAppForm = () => {
     return (
       <form onSubmit={() => {
-        AppApi.addAppTypeToApp(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
+        this.props.addAppTypeToAppRequest(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
         this.closeModal();
       }}>
         <FormGroup>
@@ -464,6 +465,9 @@ function mapDispatchToProps(dispatch) {
     },
     deleteAppTypeFromAppRequest: (appId, appTypeId) => {
       dispatch(actionFactory.deleteAppTypeFromAppRequest(appId, appTypeId));
+    },
+    addAppTypeToAppRequest: (appId, appTypeId) => {
+      dispatch(actionFactory.addAppTypeToAppRequest(appId, appTypeId));
     }
   };
   return actions;
