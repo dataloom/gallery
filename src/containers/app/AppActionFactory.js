@@ -7,17 +7,17 @@ export function deleteAppRequest(App: UUID) {
   };
 }
 
-export function deleteAppReject(errorMessage) {
-  return {
-    type: actionTypes.DELETE_APP_REJECT,
-    errorMessage
-  };
-}
-
 export function deleteAppResolve(reference) {
   return {
     type: actionTypes.DELETE_APP_RESOLVE,
     reference
+  };
+}
+
+export function deleteAppReject(errorMessage) {
+  return {
+    type: actionTypes.DELETE_APP_REJECT,
+    errorMessage
   };
 }
 

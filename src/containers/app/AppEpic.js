@@ -51,7 +51,8 @@ function deleteAppEpic(action$) {
         .from(AppApi.deleteApp(action.App))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.deleteAppResolve());
+            actionFactory.deleteAppResolve(),
+            actionFactory.getApps());
         })
         .catch(() => {
           return Observable.of(
