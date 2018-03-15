@@ -197,7 +197,7 @@ class Apps extends React.Component {
       for (let i = 0; i < appTypeList.length; i += 1) {
         const eachApp = appTypes.get(appTypeList[i]);
         appNames.push(
-          <AppSectionContainer>
+          <AppSectionContainer key={eachApp.get('title')}>
             <ButtonContainer>
               <Button
                   bsStyle="default"
