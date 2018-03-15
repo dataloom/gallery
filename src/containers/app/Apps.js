@@ -168,12 +168,25 @@ class Apps extends React.Component {
     if (appTypes.get(appTypeList[0])) {
       for (let i = 0; i < appTypeList.length; i += 1) {
         const eachApp = appTypes.get(appTypeList[i]);
-        appNames.push(eachApp.get('title'));
+        appNames.push(
+          <AppSectionContainer>
+            <ButtonContainer>
+              <Button
+                  bsStyle="default"
+                  bsSize="xsmall"
+                  onClick={() => {
+                    this.onDeleteAppTypeFromApp(app);
+                  }}>
+                <FontAwesome name="minus" />
+              </Button>
+            </ButtonContainer>
+            <div>{eachApp.get('title')}</div>
+          </AppSectionContainer>);
       }
     }
-
+    console.log(appTypes);
     return (
-      <div>App Types: {appNames.join(', ')}</div>
+      appNames
     );
   }
 
@@ -205,6 +218,8 @@ class Apps extends React.Component {
               <AppTitle>{app.get('title')}</AppTitle>
               <div>{app.get('description')}</div>
               <div>{app.get('appTypeIds')}</div>
+              <br />
+              <div>App Types:</div>
               {this.renderAppType(app)}
             </AppContainer>
           </AppSectionContainer>
