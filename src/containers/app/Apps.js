@@ -97,7 +97,8 @@ class Apps extends React.Component {
       org: '',
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
-      addApp: '',
+      addAppTypeAppId: '',
+      addAppTypeAppTypeId: '',
       isAddAppTypeToAppModalOpen: false
     };
   }
@@ -129,30 +130,27 @@ class Apps extends React.Component {
   }
 
   onAddAppTypeToApp = (appId) => {
+    console.log(appId);
     this.setState({
       isAddAppTypeToAppModalOpen: true
     });
-    // AppApi.addAppTypeToApp(appId, this.state.addApp);
   }
 
-  renderAddAppForm = () => {
-    // if (this.state.isAddAppTypeToAppModalOpen) {
-    //   return (
-    //     <form>
-    //       <FormGroup>
-    //         <ControlLabel>Enter an App Type Id</ControlLabel>
-    //         <FormControl
-    //             type="text"
-    //             value={this.state.addApp}
-    //             onChange={(e) => {
-    //               this.setState({ addApp: e.target.value });
-    //             }} />
-    //       </FormGroup>
-    //       <Button type="submit">Submit</Button>
-    //     </form>
-    //   );
-    // }
-    return (<div>Hello There!</div>);
+  renderAddAppForm = (appId) => {
+    return (
+      <form onSubmit={() => {
+        AppApi.addAppTypeToApp(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
+      }}>
+        <FormGroup>
+          <ControlLabel>Enter an App Type Id</ControlLabel>
+          <FormControl type="text" onChange={(e) => {
+            this.setState({ addAppTypeAppTypeId: e.target.value });
+          }} />
+        </FormGroup>
+        <br />
+        <Button type="submit" bsStyle="primary">Submit</Button>
+      </form>
+    );
   }
 
   onAddAppType = () => {
@@ -260,6 +258,7 @@ class Apps extends React.Component {
                       bsSize="xsmall"
                       onClick={() => {
                         this.onAddAppTypeToApp(app.get('id'));
+                        this.setState({ addAppTypeAppId: app.get('id') });
                       }}>
                     <FontAwesome name="plus" />
                   </Button>
@@ -273,7 +272,7 @@ class Apps extends React.Component {
                   <Modal.Title>Add an App Type to this app</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  {this.renderAddAppForm()}
+                  {this.renderAddAppForm(app.get('id'))}
                 </Modal.Body>
               </Modal>
               {this.renderAppType(app)}
