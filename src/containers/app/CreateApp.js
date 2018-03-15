@@ -67,8 +67,6 @@ class CreateApp extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, appTypeIds, url } = this.state;
-    console.log('You clicked the Create App button');
-
     // need to separate the appTypeIds string by comma, put in array
     const splitAppTypeIds = appTypeIds.split(', ');
 
@@ -79,8 +77,6 @@ class CreateApp extends React.Component {
       appTypeIds: splitAppTypeIds,
       url
     };
-
-    console.log(App);
 
     this.props.actions.onCreateApp(App);
   }
@@ -139,8 +135,10 @@ class CreateApp extends React.Component {
 }
 
 function mapStateToProps(state) {
+  const createAppState = state.get('createApp').toJS();
 
   return {
+    createAppAsyncState: createAppState.createAppAsyncState
   };
 }
 

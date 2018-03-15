@@ -140,6 +140,7 @@ class Apps extends React.Component {
     return (
       <form onSubmit={() => {
         AppApi.addAppTypeToApp(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
+        this.closeModal();
       }}>
         <FormGroup>
           <ControlLabel>Enter an App Type Id</ControlLabel>
@@ -163,21 +164,21 @@ class Apps extends React.Component {
     this.setState({
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
-      isAddAppTypeToAppModalOpen: false,
+      isAddAppTypeToAppModalOpen: false
     });
   };
 
   getAppTypeIdByName = () => {
     // REFERENCE ONLY
     // for printing out an id for reference
-    const appTypeIdFromApi = AppApi.getAppTypeByFqn('fourth', 'apptype');
+    const appTypeIdFromApi = AppApi.getAppTypeByFqn('fifth', 'apptype');
     console.log(appTypeIdFromApi);
     return appTypeIdFromApi;
   }
 
   collectAppTypesFromApp = (app) => {
     // REMOVE THE FOLLOWING LINE WHEN DONE!
-    // this.getAppTypeIdByName();
+    this.getAppTypeIdByName();
     const appTypeIdsFromApp = app.get('appTypeIds');
     const appTypesFromApp = [];
 

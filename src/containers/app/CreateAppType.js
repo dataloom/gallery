@@ -139,8 +139,10 @@ class CreateAppType extends React.Component {
 }
 
 function mapStateToProps(state) {
+  const createAppTypeState = state.get('createAppType').toJS();
 
   return {
+    createAppTypeAsyncState: createAppTypeState.createAppTypeAsyncState
   };
 }
 
