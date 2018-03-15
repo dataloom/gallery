@@ -173,7 +173,7 @@ class Apps extends React.Component {
     }
 
     return (
-      <div>App Types: {appNames}</div>
+      <div>App Types: {appNames.join(', ')}</div>
     );
   }
 
