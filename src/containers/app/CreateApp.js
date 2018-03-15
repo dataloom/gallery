@@ -1,8 +1,5 @@
 import React from 'react';
-
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';

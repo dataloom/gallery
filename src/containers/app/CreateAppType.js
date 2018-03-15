@@ -1,8 +1,5 @@
 import React from 'react';
-
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
-import Select from 'react-select';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -67,9 +64,6 @@ class CreateAppType extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, namespace, entityTypeId } = this.state;
-
-    console.log('You clicked the Create App Type button');
-
     const AppType = {
       type: {
         namespace,
@@ -79,8 +73,6 @@ class CreateAppType extends React.Component {
       description,
       entityTypeId
     };
-
-    console.log(AppType);
 
     this.props.actions.onCreateAppType(AppType);
   }

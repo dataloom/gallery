@@ -15,7 +15,8 @@ function createAppTypeEpic(action$) {
         .from(AppApi.createAppType(action.AppType))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.createAppTypeResolve());
+            actionFactory.createAppTypeResolve(),
+            actionFactory.getApps());
         })
         .catch(() => {
           return Observable.of(
@@ -33,7 +34,8 @@ function createAppEpic(action$) {
         .from(AppApi.createApp(action.App))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.createAppResolve());
+            actionFactory.createAppResolve(),
+            actionFactory.getApps());
         })
         .catch(() => {
           return Observable.of(
