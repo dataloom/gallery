@@ -1,5 +1,13 @@
 import * as actionTypes from './AppActionTypes';
 
+export function deleteAppTypeFromAppRequest(appId: UUID, appTypeId: UUID) {
+  return {
+    type: actionTypes.DELETE_APP_TYPE_FROM_APP_REQUEST,
+    appId,
+    appTypeId
+  };
+}
+
 export function deleteAppRequest(App: UUID) {
   return {
     type: actionTypes.DELETE_APP_REQUEST,

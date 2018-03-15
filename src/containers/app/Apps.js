@@ -83,6 +83,7 @@ class Apps extends React.Component {
     getAppsRequest: PropTypes.func.isRequired,
     // getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
+    deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
     getOwnedOrganizations: PropTypes.func.isRequired,
     install: PropTypes.func.isRequired
   }
@@ -125,7 +126,7 @@ class Apps extends React.Component {
   };
 
   onDeleteAppTypeFromApp = (appId, appTypeId) => {
-    AppApi.removeAppTypeFromApp(appId, appTypeId);
+    this.props.deleteAppTypeFromAppRequest(appId, appTypeId);
   }
 
   onAddAppTypeToApp = () => {
@@ -460,6 +461,9 @@ function mapDispatchToProps(dispatch) {
     },
     deleteAppRequest: (App) => {
       dispatch(actionFactory.deleteAppRequest(App));
+    },
+    deleteAppTypeFromAppRequest: (appId, appTypeId) => {
+      dispatch(actionFactory.deleteAppTypeFromAppRequest(appId, appTypeId));
     }
   };
   return actions;

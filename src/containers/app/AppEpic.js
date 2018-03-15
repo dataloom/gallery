@@ -45,6 +45,25 @@ function createAppEpic(action$) {
     });
 }
 
+function deleteAppTypeFromAppEpic(action$) {
+  return action$
+    .ofType(actionTypes.DELETE_APP_TYPE_FROM_APP_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(AppApi.removeAppTypeFromApp(action.appId, action.appTypeId))
+        .mergeMap(() => {
+          return Observable.of(
+            // actionFactory.deleteAppResolve(),
+            actionFactory.getApps());
+        })
+        .catch(() => {
+          return Observable.of(
+            // actionFactory.deleteAppReject()
+          );
+        });
+    });
+}
+
 function deleteAppEpic(action$) {
   return action$
     .ofType(actionTypes.DELETE_APP_REQUEST)
@@ -142,5 +161,6 @@ export default combineEpics(
   installAppEpic,
   createAppTypeEpic,
   createAppEpic,
-  deleteAppEpic
+  deleteAppEpic,
+  deleteAppTypeFromAppEpic
 );
