@@ -119,10 +119,16 @@ class Apps extends React.Component {
   };
 
   onDeleteApp = (app) => {
-    console.log(app.get('id'));
-    console.log(typeof app.get('id'));
     this.props.deleteAppRequest(app.get('id'));
   };
+
+  onDeleteAppTypeFromApp = (appId, appTypeId) => {
+    console.log('Inside the delete app type method.');
+    // can an app have no app types???
+    console.log(appId);
+    console.log(appTypeId);
+    AppApi.removeAppTypeFromApp(appId, appTypeId);
+  }
 
   onAddAppType = () => {
     this.setState({
@@ -137,22 +143,17 @@ class Apps extends React.Component {
     });
   };
 
-  // getDefaultContact = () => {
-  //   const profile = this.props.auth.getProfile();
-  //   let defaultContact = '';
-  //   if (profile.given_name) defaultContact = defaultContact.concat(`${profile.given_name} `);
-  //   if (profile.family_name) defaultContact = defaultContact.concat(`${profile.family_name} `);
-  //   if (profile.email) defaultContact = defaultContact.concat(`<${profile.email}>`);
-  //   return defaultContact;
-  // }
-
   getAppTypeIdByName = () => {
+    // REFERENCE ONLY
     // for printing out an id for reference
-    const appTypeIdFromApi = AppApi.getAppTypeByFqn('another', 'apptype');
+    const appTypeIdFromApi = AppApi.getAppTypeByFqn('fourth', 'apptype');
     console.log(appTypeIdFromApi);
     return appTypeIdFromApi;
   }
+
   collectAppTypesFromApp = (app) => {
+    // REMOVE THE FOLLOWING LINE WHEN DONE!
+    // this.getAppTypeIdByName();
     const appTypeIdsFromApp = app.get('appTypeIds');
     const appTypesFromApp = [];
 
@@ -179,18 +180,17 @@ class Apps extends React.Component {
                   bsStyle="default"
                   bsSize="xsmall"
                   onClick={() => {
-                    this.onDeleteAppTypeFromApp(app);
+                    this.onDeleteAppTypeFromApp(app.get('id'), eachApp.get('id'));
                   }}>
                 <FontAwesome name="minus" />
               </Button>
             </ButtonContainer>
             <AppSubSectionContainer>
-              <div>{eachApp.get('title')}</div>
+              <div> {eachApp.get('title')}, {eachApp.get('id')} </div>
             </AppSubSectionContainer>
           </AppSectionContainer>);
       }
     }
-    console.log(appTypes);
     return (
       appNames
     );
@@ -223,7 +223,7 @@ class Apps extends React.Component {
             <AppContainer>
               <AppTitle>{app.get('title')}</AppTitle>
               <div>{app.get('description')}</div>
-              <div>{app.get('appTypeIds')}</div>
+              <div>Id: {app.get('id')}</div>
               <br />
               <div>App Types:</div>
               {this.renderAppType(app)}
@@ -384,7 +384,6 @@ class Apps extends React.Component {
 function mapStateToProps(state, ownProps) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
-  // NOT SURE WHAT I AM DOING HERE
   const appTypes = state.getIn(['app', 'appTypes'], Immutable.Map());
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {
