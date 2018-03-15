@@ -34,6 +34,10 @@ const AppContainer = styled.div`
   margin-left: 10px;
 `;
 
+const AppSubSectionContainer = styled.div`
+  margin-left: 10px;
+  `;
+
 const AppTitle = styled.div`
   font-size: 16px;
   font-weight: bold;
@@ -180,7 +184,9 @@ class Apps extends React.Component {
                 <FontAwesome name="minus" />
               </Button>
             </ButtonContainer>
-            <div>{eachApp.get('title')}</div>
+            <AppSubSectionContainer>
+              <div>{eachApp.get('title')}</div>
+            </AppSubSectionContainer>
           </AppSectionContainer>);
       }
     }
