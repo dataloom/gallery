@@ -1,8 +1,8 @@
-.datasets {
+.apps {
     position: relative;
 }
 
-.datasets :global .modal, .datasets :global .modal-backdrop {
+.apps :global .modal, .apps :global .modal-backdrop {
     position: absolute;
 }
 
@@ -21,4 +21,8 @@
 
 .continueButtonContainer {
   text-align: center;
+}
+
+.consecutiveButtons {
+  margin-right: 5px;
 }

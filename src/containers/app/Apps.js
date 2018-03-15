@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import DocumentTitle from 'react-document-title';
 import FontAwesome from 'react-fontawesome';
-import { Button, ControlLabel, DropdownButton, Modal, FormControl, FormGroup, MenuItem } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, ControlLabel, DropdownButton, Modal, FormControl, FormGroup, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import styled from 'styled-components';
@@ -230,22 +230,22 @@ class Apps extends React.Component {
         <div key={app.get('name')}>
           <AppSectionContainer>
             <ButtonContainer>
-              <Button
-                  bsStyle="default"
-                  onClick={() => {
-                    this.setState({ installing: app });
-                  }}>
-                install
-              </Button>
-            </ButtonContainer>
-            <ButtonContainer>
-              <Button
-                  bsStyle="default"
-                  onClick={() => {
-                    this.onDeleteApp(app);
-                  }}>
-                delete
-              </Button>
+              <ButtonToolbar>
+                <Button
+                    bsStyle="default"
+                    onClick={() => {
+                      this.setState({ installing: app });
+                    }}>
+                  install
+                </Button>
+                <Button
+                    bsStyle="default"
+                    onClick={() => {
+                      this.onDeleteApp(app);
+                    }}>
+                  delete
+                </Button>
+              </ButtonToolbar>
             </ButtonContainer>
             <AppContainer>
               <AppTitle>{app.get('title')}</AppTitle>
@@ -397,15 +397,23 @@ class Apps extends React.Component {
 
     return (
       <DocumentTitle title="Apps">
-        <Page>
-          <Page.Header>
-            <Page.Title>Browse Apps</Page.Title>
-            <Button bsStyle="primary" className={styles.control} onClick={this.onCreateApp}>
-              <FontAwesome name="plus-circle" size="lg" /> App
-            </Button>
-            <Button bsStyle="primary" className={styles.control} onClick={this.onCreateAppType}>
-              <FontAwesome name="plus-circle" size="lg" /> App Type
-            </Button>
+        <Page className={styles.apps}>
+          <Page.Header className={styles.pageHeader}>
+            <Page.Title className={styles.pageTitle}>Browse Apps</Page.Title>
+            <ButtonContainer>
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <Button bsStyle="primary" className={styles.control} onClick={this.onCreateApp}>
+                    <FontAwesome name="plus-circle" size="lg" /> App
+                  </Button>
+                </ButtonGroup>
+                <ButtonGroup>
+                  <Button bsStyle="primary" className={styles.control} onClick={this.onCreateAppType}>
+                    <FontAwesome name="plus-circle" size="lg" /> App Type
+                  </Button>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </ButtonContainer>
           </Page.Header>
           <Modal show={isAppModalOpen} onHide={this.closeModal} container={this}>
             <Modal.Header closeButton>
