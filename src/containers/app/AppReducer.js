@@ -47,10 +47,10 @@ export default function reducer(state = INITIAL_STATE, action) {
     case actionTypes.DELETE_APP_REQUEST:
       return state;
 
-    case actionTypes.DELETE_APP_REJECT:
+    case actionTypes.DELETE_APP_RESOLVE:
       return state;
 
-    case actionTypes.DELETE_APP_RESOLVE:
+    case actionTypes.DELETE_APP_REJECT:
       return state;
 
     case actionTypes.DELETE_APP_RESET:
@@ -64,10 +64,10 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionTypes.CREATE_APP_TYPE_REQUEST:
+    case actionTypes.CREATE_APP_RESOLVE:
       return state.mergeDeep({
-        createAppTypeAsyncState: {
-          status: ASYNC_STATUS.LOADING,
+        createAppAsyncState: {
+          status: ASYNC_STATUS.SUCCESS,
           errorMessage: ''
         }
       });
@@ -80,22 +80,21 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionTypes.CREATE_APP_TYPE_REJECT:
-      return state.mergeDeep({
-        createAppTypeAsyncState: {
-          status: ASYNC_STATUS.ERROR,
-          errorMessage: action.errorMessage
-        }
-      });
-
-    case actionTypes.CREATE_APP_RESOLVE:
+    case actionTypes.CREATE_APP_RESET:
       return state.mergeDeep({
         createAppAsyncState: {
-          status: ASYNC_STATUS.SUCCESS,
+          status: ASYNC_STATUS.PENDING,
           errorMessage: ''
         }
       });
 
+    case actionTypes.CREATE_APP_TYPE_REQUEST:
+      return state.mergeDeep({
+        createAppTypeAsyncState: {
+          status: ASYNC_STATUS.LOADING,
+          errorMessage: ''
+        }
+      });
     case actionTypes.CREATE_APP_TYPE_RESOLVE:
       return state.mergeDeep({
         createAppTypeAsyncState: {
@@ -104,11 +103,11 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionTypes.CREATE_APP_RESET:
+    case actionTypes.CREATE_APP_TYPE_REJECT:
       return state.mergeDeep({
-        createAppAsyncState: {
-          status: ASYNC_STATUS.PENDING,
-          errorMessage: ''
+        createAppTypeAsyncState: {
+          status: ASYNC_STATUS.ERROR,
+          errorMessage: action.errorMessage
         }
       });
 
