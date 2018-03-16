@@ -97,6 +97,7 @@ class Apps extends React.Component {
       org: '',
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
+      isEditAppModalOpen: false,
       addAppTypeAppId: '',
       addAppTypeAppTitle: '',
       addAppTypeAppTypeId: '',
@@ -164,7 +165,8 @@ class Apps extends React.Component {
     this.setState({
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
-      isAddAppTypeToAppModalOpen: false
+      isAddAppTypeToAppModalOpen: false,
+      isEditAppModalOpen: false
     });
   };
 
@@ -225,6 +227,7 @@ class Apps extends React.Component {
     return this.props.apps.map((app) => {
 
       const { isAddAppTypeToAppModalOpen } = this.state;
+      const { isEditAppModalOpen } = this.state;
 
       return (
         <div key={app.get('name')}>
@@ -282,20 +285,26 @@ class Apps extends React.Component {
                 {this.renderAppType(app)}
               </AppContainer>
             </AppSectionContainer>
-            <ButtonContainer>
-              <Button
-                  bsStyle="default"
-                  bsSize="small"
-                  onClick={() => {
-                    this.onAddAppTypeToApp();
-                    this.setState({
-                      addAppTypeAppId: app.get('id'),
-                      addAppTypeAppTitle: app.get('title')
-                    });
-                  }}>
-                  Edit App Metadata
-              </Button>
-            </ButtonContainer>
+            <AppSubSectionContainer>
+              <ButtonContainer>
+                <Button
+                    bsStyle="default"
+                    bsSize="small"
+                    onClick={() => {
+                      this.setState({ isEditAppModalOpen: true });
+                    }}>
+                    Edit App Metadata
+                </Button>
+              </ButtonContainer>
+              <Modal show={isEditAppModalOpen} onHide={this.closeModal} container={this}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Edit App Metadata</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Nothing to show you yet!
+                </Modal.Body>
+              </Modal>
+            </AppSubSectionContainer>
           </AppSectionContainer>
           <hr />
         </div>
