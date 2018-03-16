@@ -108,7 +108,11 @@ class Apps extends React.Component {
       addAppTypeAppTitle: '',
       addAppTypeAppTypeId: '',
       isAddAppTypeToAppModalOpen: false,
-      editAppId: ''
+      editAppId: '',
+      editAppTitle: '',
+      editAppName: '',
+      editAppDescription: '',
+      editAppUrl: ''
     };
   }
 
@@ -261,7 +265,6 @@ class Apps extends React.Component {
               <AppContainer>
                 <AppTitle>{app.get('title')}</AppTitle>
                 <div>{app.get('description')}</div>
-                <div>{app.get('id')}</div>
                 <AppSectionContainer>
                   <ButtonContainer>
                     <Button
@@ -283,7 +286,7 @@ class Apps extends React.Component {
                 </AppSectionContainer>
                 <Modal show={isAddAppTypeToAppModalOpen} onHide={this.closeModal} container={this}>
                   <Modal.Header closeButton>
-                    <Modal.Title>Add an App Type to {this.state.addAppTypeAppTitle} app</Modal.Title>
+                    <Modal.Title>Add an App Type to {this.state.addAppTypeAppTitle}</Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     {this.renderAddAppForm()}
@@ -292,7 +295,7 @@ class Apps extends React.Component {
                 {this.renderAppType(app)}
               </AppContainer>
             </AppSectionContainer>
-            <AppSubSectionContainer className={styles.appIndividualContainer}>
+            <AppSubSectionContainer>
               <ButtonContainer>
                 <Button
                     bsStyle="default"
@@ -300,24 +303,27 @@ class Apps extends React.Component {
                     onClick={() => {
                       this.setState({ isEditAppModalOpen: true });
                       this.setState({ editAppId: app.get('id') });
+                      this.setState({ editAppTitle: app.get('title') });
+                      this.setState({ editAppName: app.get('name') });
+                      this.setState({ editAppDescription: app.get('description') });
+                      this.setState({ editAppUrl: app.get('url') });
                     }}>
-                    Edit App Metadata
+                    Edit Metadata
                 </Button>
               </ButtonContainer>
               <Modal show={isEditAppModalOpen} onHide={this.closeModal} container={this}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Edit App Metadata</Modal.Title>
+                  <Modal.Title>Edit {this.state.editAppTitle} Metadata</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <EditApp id={this.state.editAppId} />
+                  <EditApp
+                      id={this.state.editAppId}
+                      name={this.state.editAppName}
+                      title={this.state.editAppTitle}
+                      description={this.state.editAppDescription}
+                      url={this.state.editAppUrl} />
                 </Modal.Body>
               </Modal>
-              <AppDetails >
-                <div>{app.get('title')}</div>
-                <div>Description: {app.get('description')}</div>
-                <div>Url: {app.get('url')}</div>
-                <div>App Type Ids: {app.get('appTypeIds')}</div>
-              </AppDetails>
             </AppSubSectionContainer>
           </AppSectionContainer>
           <hr />

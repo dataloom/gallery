@@ -16,7 +16,11 @@ class EditApp extends React.Component {
       onEditApp: PropTypes.func.isRequired
     }).isRequired,
     editAppAsyncState: AsyncStatePropType.isRequired,
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired
   }
 
   constructor(props) {
@@ -81,22 +85,22 @@ class EditApp extends React.Component {
       <form onSubmit={this.onSubmit}>
         <FormGroup>
           <ControlLabel>Name</ControlLabel>
-          <FormControl type="text" onChange={this.onNameChange} />
+          <FormControl type="text" onChange={this.onNameChange} placeholder={this.props.name} />
         </FormGroup>
 
         <FormGroup>
           <ControlLabel>Title</ControlLabel>
-          <FormControl type="text" onChange={this.onTitleChange} />
+          <FormControl type="text" onChange={this.onTitleChange} placeholder={this.props.title} />
         </FormGroup>
 
         <FormGroup>
           <ControlLabel>Description</ControlLabel>
-          <FormControl componentClass="textarea" onChange={this.onDescriptionChange} />
+          <FormControl componentClass="textarea" onChange={this.onDescriptionChange} placeholder={this.props.description} />
         </FormGroup>
 
         <FormGroup>
           <ControlLabel>Url</ControlLabel>
-          <FormControl type="text" onChange={this.onUrlChange} />
+          <FormControl type="text" onChange={this.onUrlChange} placeholder={this.props.url} />
         </FormGroup>
 
         <br />
