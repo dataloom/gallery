@@ -228,59 +228,74 @@ class Apps extends React.Component {
 
       return (
         <div key={app.get('name')}>
-          <AppSectionContainer>
-            <ButtonContainer>
-              <ButtonToolbar>
-                <Button
-                    bsStyle="default"
-                    onClick={() => {
-                      this.setState({ installing: app });
-                    }}>
-                  install
-                </Button>
-                <Button
-                    bsStyle="default"
-                    onClick={() => {
-                      this.onDeleteApp(app);
-                    }}>
-                  delete
-                </Button>
-              </ButtonToolbar>
-            </ButtonContainer>
-            <AppContainer>
-              <AppTitle>{app.get('title')}</AppTitle>
-              <div>{app.get('description')}</div>
-              <div>Id: {app.get('id')}</div>
-              <br />
-              <AppSectionContainer>
-                <ButtonContainer>
+          <AppSectionContainer className={styles.appContainer}>
+            <AppSectionContainer>
+              <ButtonContainer>
+                <ButtonToolbar>
                   <Button
                       bsStyle="default"
-                      bsSize="xsmall"
                       onClick={() => {
-                        this.onAddAppTypeToApp();
-                        this.setState({
-                          addAppTypeAppId: app.get('id'),
-                          addAppTypeAppTitle: app.get('title')
-                        });
+                        this.setState({ installing: app });
                       }}>
-                    <FontAwesome name="plus" />
+                    install
                   </Button>
-                </ButtonContainer>
-                <AppSubSectionContainer>
-                  <div>App Types:</div>
-                </AppSubSectionContainer>
-              </AppSectionContainer>
-              <Modal show={isAddAppTypeToAppModalOpen} onHide={this.closeModal} container={this}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Add an App Type to {this.state.addAppTypeAppTitle} app</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  {this.renderAddAppForm()}
-                </Modal.Body>
-              </Modal>
-              {this.renderAppType(app)}
-            </AppContainer>
+                  <Button
+                      bsStyle="default"
+                      onClick={() => {
+                        this.onDeleteApp(app);
+                      }}>
+                    delete
+                  </Button>
+                </ButtonToolbar>
+              </ButtonContainer>
+              <AppContainer>
+                <AppTitle>{app.get('title')}</AppTitle>
+                <div>{app.get('description')}</div>
+                <div>Id: {app.get('id')}</div>
+                <AppSectionContainer>
+                  <ButtonContainer>
+                    <Button
+                        bsStyle="default"
+                        bsSize="xsmall"
+                        onClick={() => {
+                          this.onAddAppTypeToApp();
+                          this.setState({
+                            addAppTypeAppId: app.get('id'),
+                            addAppTypeAppTitle: app.get('title')
+                          });
+                        }}>
+                      <FontAwesome name="plus" />
+                    </Button>
+                  </ButtonContainer>
+                  <AppSubSectionContainer>
+                    <div>App Types:</div>
+                  </AppSubSectionContainer>
+                </AppSectionContainer>
+                <Modal show={isAddAppTypeToAppModalOpen} onHide={this.closeModal} container={this}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Add an App Type to {this.state.addAppTypeAppTitle} app</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    {this.renderAddAppForm()}
+                  </Modal.Body>
+                </Modal>
+                {this.renderAppType(app)}
+              </AppContainer>
+            </AppSectionContainer>
+            <ButtonContainer>
+              <Button
+                  bsStyle="default"
+                  bsSize="small"
+                  onClick={() => {
+                    this.onAddAppTypeToApp();
+                    this.setState({
+                      addAppTypeAppId: app.get('id'),
+                      addAppTypeAppTitle: app.get('title')
+                    });
+                  }}>
+                  Edit App Metadata
+              </Button>
+            </ButtonContainer>
           </AppSectionContainer>
           <hr />
         </div>

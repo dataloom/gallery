@@ -23,6 +23,7 @@
   text-align: center;
 }
 
-.consecutiveButtons {
-  margin-right: 5px;
+.appContainer {
+    display: flex;
+    justify-content: space-between;
 }
