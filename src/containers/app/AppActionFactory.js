@@ -97,6 +97,34 @@ export function createAppTypeReset() {
   };
 }
 
+export function editAppRequest(appId, appData) {
+  return {
+    type: actionTypes.EDIT_APP_REQUEST,
+    appId,
+    appData
+  };
+}
+
+export function editAppReject(errorMessage) {
+  return {
+    type: actionTypes.EDIT_APP_REJECT,
+    errorMessage
+  };
+}
+
+export function editAppResolve(reference) {
+  return {
+    type: actionTypes.EDIT_APP_RESOLVE,
+    reference
+  };
+}
+
+export function editAppReset() {
+  return {
+    type: actionTypes.EDIT_APP_RESET
+  };
+}
+
 export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,

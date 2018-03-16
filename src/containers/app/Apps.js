@@ -11,6 +11,7 @@ import { AppApi } from 'lattice';
 
 
 import CreateApp from './CreateApp';
+import EditApp from './EditApp';
 import CreateAppType from './CreateAppType';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
@@ -259,7 +260,6 @@ class Apps extends React.Component {
               <AppContainer>
                 <AppTitle>{app.get('title')}</AppTitle>
                 <div>{app.get('description')}</div>
-                <div>Id: {app.get('id')}</div>
                 <AppSectionContainer>
                   <ButtonContainer>
                     <Button
@@ -306,7 +306,7 @@ class Apps extends React.Component {
                   <Modal.Title>Edit App Metadata</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  Nothing to show you yet!
+                  <EditApp />
                 </Modal.Body>
               </Modal>
               <AppDetails >

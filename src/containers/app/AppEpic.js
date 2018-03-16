@@ -45,6 +45,25 @@ function createAppEpic(action$) {
     });
 }
 
+function editAppEpic(action$) {
+  return action$
+    .ofType(actionTypes.EDIT_APP_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(AppApi.updateAppTypeMetadata(action.appId, action.appData))
+        .mergeMap(() => {
+          return Observable.of(
+            actionFactory.editAppResolve(),
+            actionFactory.getApps());
+        })
+        .catch(() => {
+          return Observable.of(
+            actionFactory.editAppReject()
+          );
+        });
+    });
+}
+
 function addAppTypeToAppEpic(action$) {
   return action$
     .ofType(actionTypes.ADD_APP_TYPE_TO_APP_REQUEST)
@@ -182,5 +201,6 @@ export default combineEpics(
   createAppEpic,
   deleteAppEpic,
   deleteAppTypeFromAppEpic,
-  addAppTypeToAppEpic
+  addAppTypeToAppEpic,
+  editAppEpic
 );

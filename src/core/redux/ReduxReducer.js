@@ -29,6 +29,7 @@ export default function reduxReducer() {
   return combineReducers({
     app: appReducer,
     createApp: appReducer,
+    editApp: appReducer,
     createAppType: appReducer,
     async: asyncReducer,
     catalog: catalogReducer,
