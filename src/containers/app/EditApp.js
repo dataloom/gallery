@@ -67,15 +67,13 @@ class EditApp extends React.Component {
     const appData = {};
 
     for (const item of keys) {
-      if (item !== '') {
+      if (tempMap.get(item) !== '') {
         appData[item] = tempMap.get(item);
       }
     }
 
     const appId = this.props.id;
-    console.log(appId);
-    console.log(appData);
-    // this.props.actions.onEditApp(appId, appData);
+    this.props.actions.onEditApp(appId, appData);
   }
 
   renderPending = () => {

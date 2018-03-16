@@ -261,6 +261,7 @@ class Apps extends React.Component {
               <AppContainer>
                 <AppTitle>{app.get('title')}</AppTitle>
                 <div>{app.get('description')}</div>
+                <div>{app.get('id')}</div>
                 <AppSectionContainer>
                   <ButtonContainer>
                     <Button
