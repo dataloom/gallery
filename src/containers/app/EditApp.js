@@ -22,11 +22,10 @@ class EditApp extends React.Component {
     super(props);
     this.state = {
       appId: '',
-      title: null,
-      description: null,
-      name: null,
-      appTypeIds: null,
-      url: null
+      title: '',
+      description: '',
+      name: '',
+      url: ''
     };
   }
 
@@ -57,21 +56,19 @@ class EditApp extends React.Component {
     });
   };
 
-  onAppTypeIdsChange = (event) => {
-    this.setState({
-      appTypeIds: event.target.value
-    });
-  };
+  returnChangedItems = () => {
+    //
+  }
 
   onSubmit = () => {
-    const { title, description, name, appTypeIds, url } = this.state;
-    const splitAppTypeIds = appTypeIds.split(', ');
+    const { title, description, name, url } = this.state;
+    // We need to collect only items that have been changed. AKA NOT an empty string.
     const appId = this.state.appId;
+
     const appData = {
       name,
       title,
       description,
-      appTypeIds: splitAppTypeIds,
       url
     };
 
@@ -97,17 +94,12 @@ class EditApp extends React.Component {
         </FormGroup>
 
         <FormGroup>
-          <ControlLabel>App Type Ids</ControlLabel>
-          <FormControl componentClass="textarea" onChange={this.onAppTypeIdsChange} placeholder="idNumberOne, idNumberTwo, idNumberThree" />
-        </FormGroup>
-
-        <FormGroup>
           <ControlLabel>Url</ControlLabel>
           <FormControl type="text" onChange={this.onUrlChange} />
         </FormGroup>
 
         <br />
-        <Button type="submit" bsStyle="primary">Create App</Button>
+        <Button type="submit" bsStyle="primary">Update App</Button>
       </form>
     );
   };
