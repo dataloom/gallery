@@ -290,7 +290,7 @@ class Apps extends React.Component {
                 {this.renderAppType(app)}
               </AppContainer>
             </AppSectionContainer>
-            <AppSubSectionContainer>
+            <AppSubSectionContainer className={styles.appIndividualContainer}>
               <ButtonContainer>
                 <Button
                     bsStyle="default"
@@ -309,7 +309,7 @@ class Apps extends React.Component {
                   Nothing to show you yet!
                 </Modal.Body>
               </Modal>
-              <AppDetails>
+              <AppDetails >
                 <div>{app.get('title')}</div>
                 <div>Description: {app.get('description')}</div>
                 <div>Url: {app.get('url')}</div>
