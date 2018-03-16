@@ -15,13 +15,13 @@ class EditApp extends React.Component {
     actions: PropTypes.shape({
       onEditApp: PropTypes.func.isRequired
     }).isRequired,
-    editAppAsyncState: AsyncStatePropType.isRequired
+    editAppAsyncState: AsyncStatePropType.isRequired,
+    id: PropTypes.string.isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      appId: '',
       title: '',
       description: '',
       name: '',
@@ -56,23 +56,26 @@ class EditApp extends React.Component {
     });
   };
 
-  returnChangedItems = () => {
-    //
-  }
-
   onSubmit = () => {
     const { title, description, name, url } = this.state;
+
     // We need to collect only items that have been changed. AKA NOT an empty string.
-    const appId = this.state.appId;
+    // Having issues with this because of js and iterables.
+    // Collect the items, check each for change, add changed to appData object.
+    const tempMap = new Map([['title', title], ['description', description], ['name', name], ['url', url]]);
+    const keys = tempMap.keys();
+    const appData = {};
 
-    const appData = {
-      name,
-      title,
-      description,
-      url
-    };
+    for (const item of keys) {
+      if (item !== '') {
+        appData[item] = tempMap.get(item);
+      }
+    }
 
-    this.props.actions.onEditApp(appId, appData);
+    const appId = this.props.id;
+    console.log(appId);
+    console.log(appData);
+    // this.props.actions.onEditApp(appId, appData);
   }
 
   renderPending = () => {

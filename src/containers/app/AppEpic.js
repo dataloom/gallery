@@ -50,7 +50,7 @@ function editAppEpic(action$) {
     .ofType(actionTypes.EDIT_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
-        .from(AppApi.updateAppTypeMetadata(action.appId, action.appData))
+        .from(AppApi.updateAppMetadata(action.appId, action.appData))
         .mergeMap(() => {
           return Observable.of(
             actionFactory.editAppResolve(),

@@ -107,7 +107,8 @@ class Apps extends React.Component {
       addAppTypeAppId: '',
       addAppTypeAppTitle: '',
       addAppTypeAppTypeId: '',
-      isAddAppTypeToAppModalOpen: false
+      isAddAppTypeToAppModalOpen: false,
+      editAppId: ''
     };
   }
 
@@ -297,6 +298,7 @@ class Apps extends React.Component {
                     bsSize="small"
                     onClick={() => {
                       this.setState({ isEditAppModalOpen: true });
+                      this.setState({ editAppId: app.get('id') });
                     }}>
                     Edit App Metadata
                 </Button>
@@ -306,7 +308,7 @@ class Apps extends React.Component {
                   <Modal.Title>Edit App Metadata</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <EditApp />
+                  <EditApp id={this.state.editAppId} />
                 </Modal.Body>
               </Modal>
               <AppDetails >
