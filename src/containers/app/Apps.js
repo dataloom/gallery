@@ -32,6 +32,11 @@ const AppContainer = styled.div`
   margin-left: 10px;
 `;
 
+const AppDetails = styled.div`
+  display: inline;
+  margin-left: 10px;
+`;
+
 const AppSubSectionContainer = styled.div`
   margin-left: 10px;
   `;
@@ -304,6 +309,12 @@ class Apps extends React.Component {
                   Nothing to show you yet!
                 </Modal.Body>
               </Modal>
+              <AppDetails>
+                <div>{app.get('title')}</div>
+                <div>Description: {app.get('description')}</div>
+                <div>Url: {app.get('url')}</div>
+                <div>App Type Ids: {app.get('appTypeIds')}</div>
+              </AppDetails>
             </AppSubSectionContainer>
           </AppSectionContainer>
           <hr />
