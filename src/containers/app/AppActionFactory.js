@@ -125,6 +125,34 @@ export function editAppReset() {
   };
 }
 
+export function editAppTypeRequest(appTypeId, appTypeData) {
+  return {
+    type: actionTypes.EDIT_APP_TYPE_REQUEST,
+    appTypeId,
+    appTypeData
+  };
+}
+
+export function editAppTypeReject(errorMessage) {
+  return {
+    type: actionTypes.EDIT_APP_TYPE_REJECT,
+    errorMessage
+  };
+}
+
+export function editAppTypeResolve(reference) {
+  return {
+    type: actionTypes.EDIT_APP_TYPE_RESOLVE,
+    reference
+  };
+}
+
+export function editAppTypeReset() {
+  return {
+    type: actionTypes.EDIT_APP_TYPE_RESET
+  };
+}
+
 export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
   return {
     type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,

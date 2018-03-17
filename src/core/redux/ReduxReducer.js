@@ -30,6 +30,7 @@ export default function reduxReducer() {
     app: appReducer,
     createApp: appReducer,
     editApp: appReducer,
+    editAppType: appReducer,
     createAppType: appReducer,
     async: asyncReducer,
     catalog: catalogReducer,

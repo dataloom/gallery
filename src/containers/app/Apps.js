@@ -12,6 +12,7 @@ import { AppApi } from 'lattice';
 
 import CreateApp from './CreateApp';
 import EditApp from './EditApp';
+import EditAppType from './EditAppType';
 import CreateAppType from './CreateAppType';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
@@ -104,6 +105,7 @@ class Apps extends React.Component {
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
       isEditAppModalOpen: false,
+      isEditAppTypeModalOpen: false,
       addAppTypeAppId: '',
       addAppTypeAppTitle: '',
       addAppTypeAppTypeId: '',
@@ -112,7 +114,13 @@ class Apps extends React.Component {
       editAppTitle: '',
       editAppName: '',
       editAppDescription: '',
-      editAppUrl: ''
+      editAppUrl: '',
+      editAppTypeId: '',
+      editAppTypeName: '',
+      editAppTypeTitle: '',
+      editAppTypeNamespace: '',
+      editAppTypeEntityTypeId: '',
+      editAppTypeDescription: ''
     };
   }
 
@@ -177,7 +185,8 @@ class Apps extends React.Component {
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
       isAddAppTypeToAppModalOpen: false,
-      isEditAppModalOpen: false
+      isEditAppModalOpen: false,
+      isEditAppTypeModalOpen: false
     });
   };
 
@@ -207,6 +216,7 @@ class Apps extends React.Component {
     const appTypeList = this.collectAppTypesFromApp(app);
     const appTypes = this.props.appTypes;
     const appNames = [];
+    const { isEditAppTypeModalOpen } = this.state;
 
     if (appTypes.get(appTypeList[0])) {
       for (let i = 0; i < appTypeList.length; i += 1) {
@@ -224,7 +234,41 @@ class Apps extends React.Component {
               </Button>
             </ButtonContainer>
             <AppSubSectionContainer>
-              <div> {eachApp.get('title')}, {eachApp.get('id')} </div>
+              <div>
+                {eachApp.get('title')}
+                &nbsp;
+                &nbsp;
+                <ButtonContainer>
+                  <Button
+                      bsStyle="default"
+                      bsSize="small"
+                      onClick={() => {
+                        this.setState({ isEditAppTypeModalOpen: true });
+                        this.setState({ editAppTypeId: eachApp.get('id') });
+                        this.setState({ editAppTypeTitle: eachApp.get('title') });
+                        this.setState({ editAppTypeName: eachApp.get('type').get('name') });
+                        this.setState({ editAppTypeDescription: eachApp.get('description') });
+                        this.setState({ editAppTypeNamespace: eachApp.get('type').get('namespace') });
+                        this.setState({ editAppTypeEntityTypeId: eachApp.get('entityTypeId') });
+                      }}>
+                      Edit Metadata
+                  </Button>
+                </ButtonContainer>
+              </div>
+              <Modal show={isEditAppTypeModalOpen} onHide={this.closeModal} container={this}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Edit {this.state.editAppTypeTitle} Metadata</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <EditAppType
+                      id={this.state.editAppTypeId}
+                      name={this.state.editAppTypeName}
+                      namespace={this.state.editAppTypeNamespace}
+                      title={this.state.editAppTypeTitle}
+                      description={this.state.editAppTypeDescription}
+                      entityTypeId={this.state.editAppTypeEntityTypeId} />
+                </Modal.Body>
+              </Modal>
             </AppSubSectionContainer>
           </AppSectionContainer>);
       }
