@@ -83,6 +83,10 @@ const ErrorMessage = styled.div`
 class Apps extends React.Component {
   static propTypes = {
     // auth: PropTypes.object.isRequired,
+    createAppReset: PropTypes.func.isRequired,
+    createAppTypeReset: PropTypes.func.isRequired,
+    editAppReset: PropTypes.func.isRequired,
+    editAppTypeReset: PropTypes.func.isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
     appTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     errorMessage: PropTypes.string.isRequired,
@@ -137,6 +141,7 @@ class Apps extends React.Component {
   }
 
   onCreateApp = () => {
+    this.props.createAppReset();
     this.setState({
       isAppModalOpen: true
     });
@@ -175,6 +180,7 @@ class Apps extends React.Component {
   }
 
   onCreateAppType = () => {
+    this.props.createAppTypeReset();
     this.setState({
       isAppTypeModalOpen: true
     });
@@ -244,6 +250,7 @@ class Apps extends React.Component {
                       bsStyle="default"
                       bsSize="small"
                       onClick={() => {
+                        this.props.editAppTypeReset();
                         this.setState({ isEditAppTypeModalOpen: true });
                         this.setState({ editAppTypeId: eachApp.get('id') });
                         this.setState({ editAppTypeTitle: eachApp.get('title') });
@@ -346,6 +353,7 @@ class Apps extends React.Component {
                     bsStyle="default"
                     bsSize="small"
                     onClick={() => {
+                      this.props.editAppReset();
                       this.setState({ isEditAppModalOpen: true });
                       this.setState({ editAppId: app.get('id') });
                       this.setState({ editAppTitle: app.get('title') });
@@ -545,6 +553,18 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   const actions = {
+    createAppReset: () => {
+      dispatch(actionFactory.createAppReset());
+    },
+    editAppReset: () => {
+      dispatch(actionFactory.editAppReset());
+    },
+    createAppTypeReset: () => {
+      dispatch(actionFactory.createAppTypeReset());
+    },
+    editAppTypeReset: () => {
+      dispatch(actionFactory.editAppTypeReset());
+    },
     getAppsRequest: () => {
       dispatch(actionFactory.getApps());
     },
