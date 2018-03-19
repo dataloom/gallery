@@ -3,11 +3,7 @@ import React from 'react';
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 
-import ExpandableText from '../../../../components/utils/ExpandableText';
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
-
-
-const MAX_DESCRIPTION_LENGTH = 300;
 
 export default class PropertyTypeDescription extends React.Component {
 

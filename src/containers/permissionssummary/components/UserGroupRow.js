@@ -18,18 +18,23 @@ class UserGroupRow extends React.Component {
     const roleRows = [];
     const userRoles = user.get('roles');
     const userId = user.get('id');
+
     if (user && userRoles.size > 0 && rolePermissions && rolePermissions.size > 0) {
       userRoles.forEach((role) => {
+        const id = role.get('id');
+        const title = role.get('title');
         roleRows.push(
-          <RoleRow key={`${role}_${userId}`} permissions={rolePermissions.get(role)} role={role} />
+          <RoleRow key={`${id}_${userId}`} permissions={rolePermissions.get(id)} role={title} />
         );
       });
     }
+
     roleRows.push(
       <RoleRow key={`${INDIVIDUAL}_${userId}`} permissions={user.get('individualPermissions')} role={INDIVIDUAL} />
     );
-
+    
     return roleRows;
+
   }
 
   render() {

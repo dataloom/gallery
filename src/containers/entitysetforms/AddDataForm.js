@@ -99,9 +99,11 @@ export default class AddDataForm extends React.Component {
           return (value.length);
         });
         if (filteredValues.length) {
-          if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.get('datatype'))) {
+          const datatype = propertyType.get('datatype');
+          if (EdmConsts.EDM_DATE_TYPES.includes(datatype)) {
             const formattedDates = filteredValues.map((value) => {
-              return moment(value).format('YYYY-MM-DDThh:mm:ss');
+              const val = moment(value);
+              return datatype === 'Date' ? val.format('YYYY-MM-DD') : val.toISOString();
             });
             formattedValues[propertyTypeId] = formattedDates;
           }

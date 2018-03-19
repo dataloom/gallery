@@ -118,7 +118,7 @@ class EntitySetPermissionsRequest extends React.Component {
 
   render() {
 
-    const { statuses, entitySet, principal, propertyTypes } = this.props;
+    const { statuses, principal, propertyTypes } = this.props;
 
     const reasonList = new Set();
     statuses.forEach((status) => {

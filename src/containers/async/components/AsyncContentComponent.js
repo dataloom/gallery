@@ -1,6 +1,4 @@
 import React from 'react';
-
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 
 import map from 'lodash/map';
@@ -20,8 +18,7 @@ import {
   isEmptyValue,
   isLoadingValue,
   isErrorValue,
-  referenceOrValuePropType,
-  AsyncValue
+  referenceOrValuePropType
 } from '../AsyncStorage';
 
 

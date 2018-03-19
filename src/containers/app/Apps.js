@@ -9,7 +9,6 @@ import { Link } from 'react-router';
 import styled from 'styled-components';
 import { AppApi } from 'lattice';
 
-
 import CreateApp from './CreateApp';
 import EditApp from './EditApp';
 import EditAppType from './EditAppType';

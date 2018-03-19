@@ -36,7 +36,7 @@ class SideNav extends React.Component {
 
     return (
       <div className={styles.sideNavItem}>
-        <a href={route} target="_blank">
+        <a href={route} target="_blank" rel="noopener noreferrer">
           <div className={styles.sideNavItemIcon}>
             <FontAwesome name="flag" size="2x" />
           </div>
@@ -53,7 +53,7 @@ class SideNav extends React.Component {
   getSupportLink = () => {
     return (
       <div className={styles.support}>
-        <a href={SUPPORT_URL} target="_blank">Report Issue</a>
+        <a href={SUPPORT_URL} target="_blank" rel="noopener noreferrer">Report Issue</a>
       </div>
     );
   }
@@ -64,9 +64,7 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.HOME, 'Home', homeIcon) }
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', catalogIcon) }
         { this.getSideNavItemLayout(PageConsts.DATASETS, 'Your Datasets', datasetsIcon) }
-        { this.getSideNavItemLayout(PageConsts.APP, 'Apps') }
-        {/* Hiding the Data Model link for the demo */}
-        {/* { this.getSideNavItemLayout(PageConsts.DATA_MODEL, 'Data Model', 'circle') } */}
+        { this.getSideNavItemLayout(PageConsts.APP, 'Apps')
         { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
         { this.getSideNavHelpItemLayout(HELP_URL, 'Help') }
         { this.getSpacer() }

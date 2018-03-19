@@ -8,7 +8,6 @@ import { Modal, Alert } from 'react-bootstrap';
 
 import AsyncContent from '../../../components/asynccontent/AsyncContent';
 import * as actionFactory from '../PermissionsActionFactory';
-import { EntitySetPropType } from '../../edm/EdmModel';
 import RequestPermissionsForm from './RequestPermissionsForm';
 
 class RequestPermissionsModal extends React.Component {
