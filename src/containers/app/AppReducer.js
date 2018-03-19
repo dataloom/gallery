@@ -21,6 +21,10 @@ export const INITIAL_STATE = Immutable.fromJS({
   editAppTypeAsyncState: {
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
+  },
+  deleteAppAsyncState: {
+    status: ASYNC_STATUS.PENDING,
+    errorMessage: ''
   }
 });
 
@@ -53,16 +57,36 @@ export default function reducer(state = INITIAL_STATE, action) {
         .set('errorMessage', action.errorMessage);
 
     case actionTypes.DELETE_APP_REQUEST:
-      return state;
+      return state.mergeDeep({
+        deleteAppAsyncState: {
+          status: ASYNC_STATUS.LOADING,
+          errorMessage: ''
+        }
+      });
 
     case actionTypes.DELETE_APP_RESOLVE:
-      return state;
+      return state.mergeDeep({
+        deleteAppAsyncState: {
+          status: ASYNC_STATUS.SUCCESS,
+          errorMessage: ''
+        }
+      });
 
     case actionTypes.DELETE_APP_REJECT:
-      return state;
+      return state.mergeDeep({
+        deleteAppAsyncState: {
+          status: ASYNC_STATUS.ERROR,
+          errorMessage: action.errorMessage
+        }
+      });
 
     case actionTypes.DELETE_APP_RESET:
-      return state;
+      return state.mergeDeep({
+        deleteAppAsyncState: {
+          status: ASYNC_STATUS.PENDING,
+          errorMessage: ''
+        }
+      });
 
     case actionTypes.CREATE_APP_REQUEST:
       return state.mergeDeep({

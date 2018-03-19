@@ -188,6 +188,7 @@ class Apps extends React.Component {
       isEditAppModalOpen: false,
       isEditAppTypeModalOpen: false
     });
+    // FIGURE OUT HOW TO RESET THE MODAL STATE
   };
 
   getAppTypeIdByName = () => {

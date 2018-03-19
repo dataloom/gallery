@@ -20,7 +20,7 @@ function createAppTypeEpic(action$) {
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.createAppTypeReject()
+            actionFactory.createAppTypeReject('unable to create app type')
           );
         });
     });
@@ -39,7 +39,7 @@ function createAppEpic(action$) {
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.createAppReject()
+            actionFactory.createAppReject('unable to create app')
           );
         });
     });
@@ -58,7 +58,7 @@ function editAppEpic(action$) {
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.editAppReject()
+            actionFactory.editAppReject('unable to edit app')
           );
         });
     });
@@ -77,7 +77,7 @@ function editAppTypeEpic(action$) {
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.editAppTypeReject()
+            actionFactory.editAppTypeReject('unable to edit app type')
           );
         });
     });
@@ -91,12 +91,12 @@ function addAppTypeToAppEpic(action$) {
         .from(AppApi.addAppTypeToApp(action.appId, action.appTypeId))
         .mergeMap(() => {
           return Observable.of(
-            // actionFactory.deleteAppResolve(),
+            actionFactory.deleteAppResolve(),
             actionFactory.getApps());
         })
         .catch(() => {
           return Observable.of(
-            // actionFactory.deleteAppReject()
+            actionFactory.deleteAppReject('unable to add app type')
           );
         });
     });
@@ -110,12 +110,12 @@ function deleteAppTypeFromAppEpic(action$) {
         .from(AppApi.removeAppTypeFromApp(action.appId, action.appTypeId))
         .mergeMap(() => {
           return Observable.of(
-            // actionFactory.deleteAppResolve(),
+            actionFactory.deleteAppResolve(),
             actionFactory.getApps());
         })
         .catch(() => {
           return Observable.of(
-            // actionFactory.deleteAppReject()
+            actionFactory.deleteAppReject('unable to delete app type')
           );
         });
     });
@@ -134,7 +134,7 @@ function deleteAppEpic(action$) {
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.deleteAppReject()
+            actionFactory.deleteAppReject('unable to delete app')
           );
         });
     });
@@ -154,8 +154,7 @@ function getAppTypesForAppTypeIdsEpic(action$) {
             actionFactory.getAppTypesForAppTypeIdsSuccess(appTypeIdMap)
           );
         })
-        .catch((e) => {
-          console.error(e);
+        .catch(() => {
           return Observable.of(
             actionFactory.getAppTypesForAppTypeIdsFailure('Unable to load app types')
           );
@@ -183,8 +182,7 @@ function getAppsEpic(action$) {
             actionFactory.getAppTypesForAppTypeIdsRequest(appTypeIds)
           );
         })
-        .catch((e) => {
-          console.error(e);
+        .catch(() => {
           return Observable.of(
             actionFactory.getAppsFailure('Unable to load apps')
           );
@@ -203,8 +201,7 @@ function installAppEpic(action$) {
             actionFactory.installAppSuccess()
           );
         })
-        .catch((e) => {
-          console.error(e);
+        .catch(() => {
           return Observable.of(
             actionFactory.installAppFailure('Unable to install app')
           );
