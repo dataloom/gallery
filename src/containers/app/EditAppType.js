@@ -85,7 +85,29 @@ class EditAppType extends React.Component {
     }
 
     const appTypeId = this.props.id;
-    // this.props.actions.onEditAppType(appTypeId, appTypeData);
+    // Now i need to detect if name or namespace was changed
+    if (appTypeData.name && appTypeData.namespace) {
+      appTypeData.type = {
+        'namespace': appTypeData.namespace,
+        'name': appTypeData.name
+      };
+      delete appTypeData.name;
+      delete appTypeData.namespace;
+    } else if (appTypeData.name) {
+      appTypeData.type = {
+        'namespace': this.props.namespace,
+        'name': appTypeData.name
+      };
+      delete appTypeData.name;
+    } else if (appTypeData.namespace) {
+      appTypeData.type = {
+        'namespace': appTypeData.namespace,
+        'name': this.props.name
+      };
+      delete appTypeData.namespace;
+    }
+
+    this.props.actions.onEditAppType(appTypeId, appTypeData);
   }
 
   renderPending = () => {
