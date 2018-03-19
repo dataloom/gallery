@@ -46,7 +46,7 @@
     "prop-types": "^15.5.8",
     "react": "^15.4.0",
     "react-addons-shallow-compare": "^15.6.0",
-    "react-bootstrap": "^0.30.7",
+    "react-bootstrap": "^0.31.5",
     "react-bootstrap-date-picker": "^4.0.0",
     "react-copy-to-clipboard": "^5.0.0",
     "react-document-title": "^2.0.2",
