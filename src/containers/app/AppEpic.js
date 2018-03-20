@@ -3,24 +3,23 @@ import { combineEpics } from 'redux-observable';
 
 import { AppApi } from 'lattice';
 
-import * as actionTypes from './AppActionTypes';
 import * as actionFactory from './AppActionFactory';
 
 
 function createAppTypeEpic(action$) {
   return action$
-    .ofType(actionTypes.CREATE_APP_TYPE_REQUEST)
+    .ofType(actionFactory.CREATE_APP_TYPE_REQUEST)
     .mergeMap((action) => {
       return Observable
-        .from(AppApi.createAppType(action.AppType))
+        .from(AppApi.createAppType(action.appType))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.createAppTypeResolve(),
-            actionFactory.getApps());
+            actionFactory.createAppTypeSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.createAppTypeReject('unable to create app type')
+            actionFactory.createAppTypeFailure('unable to create app type')
           );
         });
     });
@@ -28,18 +27,18 @@ function createAppTypeEpic(action$) {
 
 function createAppEpic(action$) {
   return action$
-    .ofType(actionTypes.CREATE_APP_REQUEST)
+    .ofType(actionFactory.CREATE_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
-        .from(AppApi.createApp(action.App))
+        .from(AppApi.createApp(action.app))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.createAppResolve(),
-            actionFactory.getApps());
+            actionFactory.createAppSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.createAppReject('unable to create app')
+            actionFactory.createAppFailure('unable to create app')
           );
         });
     });
@@ -47,18 +46,18 @@ function createAppEpic(action$) {
 
 function editAppEpic(action$) {
   return action$
-    .ofType(actionTypes.EDIT_APP_REQUEST)
+    .ofType(actionFactory.EDIT_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
         .from(AppApi.updateAppMetadata(action.appId, action.appData))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.editAppResolve(),
-            actionFactory.getApps());
+            actionFactory.editAppSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.editAppReject('unable to edit app')
+            actionFactory.editAppFailure('unable to edit app')
           );
         });
     });
@@ -66,18 +65,18 @@ function editAppEpic(action$) {
 
 function editAppTypeEpic(action$) {
   return action$
-    .ofType(actionTypes.EDIT_APP_TYPE_REQUEST)
+    .ofType(actionFactory.EDIT_APP_TYPE_REQUEST)
     .mergeMap((action) => {
       return Observable
         .from(AppApi.updateAppTypeMetadata(action.appTypeId, action.appTypeData))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.editAppTypeResolve(),
-            actionFactory.getApps());
+            actionFactory.editAppTypeSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.editAppTypeReject('unable to edit app type')
+            actionFactory.editAppTypeFailure('unable to edit app type')
           );
         });
     });
@@ -85,18 +84,18 @@ function editAppTypeEpic(action$) {
 
 function addAppTypeToAppEpic(action$) {
   return action$
-    .ofType(actionTypes.ADD_APP_TYPE_TO_APP_REQUEST)
+    .ofType(actionFactory.ADD_APP_TYPE_TO_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
         .from(AppApi.addAppTypeToApp(action.appId, action.appTypeId))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.deleteAppResolve(),
-            actionFactory.getApps());
+            actionFactory.addAppTypeToAppSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.deleteAppReject('unable to add app type')
+            actionFactory.addAppTypeToAppFailure('unable to add app type')
           );
         });
     });
@@ -104,18 +103,18 @@ function addAppTypeToAppEpic(action$) {
 
 function deleteAppTypeFromAppEpic(action$) {
   return action$
-    .ofType(actionTypes.DELETE_APP_TYPE_FROM_APP_REQUEST)
+    .ofType(actionFactory.DELETE_APP_TYPE_FROM_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
         .from(AppApi.removeAppTypeFromApp(action.appId, action.appTypeId))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.deleteAppResolve(),
-            actionFactory.getApps());
+            actionFactory.deleteAppTypeFromAppSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.deleteAppReject('unable to delete app type')
+            actionFactory.deleteAppTypeFromAppFailure('unable to delete app type')
           );
         });
     });
@@ -123,18 +122,18 @@ function deleteAppTypeFromAppEpic(action$) {
 
 function deleteAppEpic(action$) {
   return action$
-    .ofType(actionTypes.DELETE_APP_REQUEST)
+    .ofType(actionFactory.DELETE_APP_REQUEST)
     .mergeMap((action) => {
       return Observable
-        .from(AppApi.deleteApp(action.App))
+        .from(AppApi.deleteApp(action.app))
         .mergeMap(() => {
           return Observable.of(
-            actionFactory.deleteAppResolve(),
-            actionFactory.getApps());
+            actionFactory.deleteAppSuccess(),
+            actionFactory.getAppsRequest());
         })
         .catch(() => {
           return Observable.of(
-            actionFactory.deleteAppReject('unable to delete app')
+            actionFactory.deleteAppFailure('unable to delete app')
           );
         });
     });
@@ -142,7 +141,7 @@ function deleteAppEpic(action$) {
 
 function getAppTypesForAppTypeIdsEpic(action$) {
   return action$
-    .ofType(actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST)
+    .ofType(actionFactory.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST)
     .mergeMap((action) => {
       return Observable
         .from(AppApi.getAppTypesForAppTypeIds(action.appTypeIds))
@@ -163,8 +162,8 @@ function getAppTypesForAppTypeIdsEpic(action$) {
 }
 
 
-function getAppsEpic(action$) {
-  return action$.ofType(actionTypes.GET_APPS_REQUEST)
+function getAppsRequestEpic(action$) {
+  return action$.ofType(actionFactory.GET_APPS_REQUEST)
     .mergeMap(() => {
       return Observable
         .from(AppApi.getApps())
@@ -191,7 +190,7 @@ function getAppsEpic(action$) {
 }
 
 function installAppEpic(action$) {
-  return action$.ofType(actionTypes.INSTALL_APP_REQUEST)
+  return action$.ofType(actionFactory.INSTALL_APP_REQUEST)
     .mergeMap((action) => {
       const { appId, organizationId, prefix } = action;
       return Observable
@@ -210,7 +209,7 @@ function installAppEpic(action$) {
 }
 
 export default combineEpics(
-  getAppsEpic,
+  getAppsRequestEpic,
   getAppTypesForAppTypeIdsEpic,
   installAppEpic,
   createAppTypeEpic,

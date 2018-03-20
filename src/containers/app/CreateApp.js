@@ -67,7 +67,7 @@ class CreateApp extends React.Component {
     // need to separate the appTypeIds string by comma, put in array
     const splitAppTypeIds = appTypeIds.split(', ');
 
-    const App = {
+    const app = {
       name,
       title,
       description,
@@ -75,7 +75,7 @@ class CreateApp extends React.Component {
       url
     };
 
-    this.props.actions.onCreateApp(App);
+    this.props.actions.onCreateApp(app);
   }
 
   renderPending = () => {

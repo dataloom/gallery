@@ -33,14 +33,9 @@ const AppContainer = styled.div`
   margin-left: 10px;
 `;
 
-const AppDetails = styled.div`
-  display: inline;
-  margin-left: 10px;
-`;
-
 const AppSubSectionContainer = styled.div`
   margin-left: 10px;
-  `;
+`;
 
 const AppTitle = styled.div`
   font-size: 16px;
@@ -565,7 +560,7 @@ function mapDispatchToProps(dispatch) {
       dispatch(actionFactory.editAppTypeReset());
     },
     getAppsRequest: () => {
-      dispatch(actionFactory.getApps());
+      dispatch(actionFactory.getAppsRequest());
     },
     getAppTypesForAppTypeIds: (appTypeIds) => {
       dispatch(actionFactory.getAppTypesForAppTypeIdsRequest(appTypeIds));
@@ -576,8 +571,8 @@ function mapDispatchToProps(dispatch) {
     install: (appId, organizationId, prefix) => {
       dispatch(actionFactory.installAppRequest(appId, organizationId, prefix));
     },
-    deleteAppRequest: (App) => {
-      dispatch(actionFactory.deleteAppRequest(App));
+    deleteAppRequest: (app) => {
+      dispatch(actionFactory.deleteAppRequest(app));
     },
     deleteAppTypeFromAppRequest: (appId, appTypeId) => {
       dispatch(actionFactory.deleteAppTypeFromAppRequest(appId, appTypeId));

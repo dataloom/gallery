@@ -1,205 +1,290 @@
-import * as actionTypes from './AppActionTypes';
+export const CREATE_APP_REQUEST = 'CREATE_APP_REQUEST';
+export const CREATE_APP_FAILURE = 'CREATE_APP_FAILURE';
+export const CREATE_APP_SUCCESS = 'CREATE_APP_SUCCESS';
+export const CREATE_APP_RESET = 'CREATE_APP_RESET';
 
-export function addAppTypeToAppRequest(appId: UUID, appTypeId: UUID) {
+export const EDIT_APP_REQUEST = 'EDIT_APP_REQUEST';
+export const EDIT_APP_FAILURE = 'EDIT_APP_FAILURE';
+export const EDIT_APP_SUCCESS = 'EDIT_APP_SUCCESS';
+export const EDIT_APP_RESET = 'EDIT_APP_RESET';
+
+export const EDIT_APP_TYPE_REQUEST = 'EDIT_APP_TYPE_REQUEST';
+export const EDIT_APP_TYPE_FAILURE = 'EDIT_APP_TYPE_FAILURE';
+export const EDIT_APP_TYPE_SUCCESS = 'EDIT_APP_TYPE_SUCCESS';
+export const EDIT_APP_TYPE_RESET = 'EDIT_APP_TYPE_RESET';
+
+export const DELETE_APP_TYPE_FROM_APP_REQUEST = 'DELETE_APP_TYPE_FROM_APP_REQUEST';
+export const DELETE_APP_TYPE_FROM_APP_FAILURE = 'DELETE_APP_TYPE_FROM_APP_FAILURE';
+export const DELETE_APP_TYPE_FROM_APP_SUCCESS = 'DELETE_APP_TYPE_FROM_APP_SUCCESS';
+export const DELETE_APP_TYPE_FROM_APP_RESET = 'DELETE_APP_TYPE_FROM_APP_RESET';
+
+export const ADD_APP_TYPE_TO_APP_REQUEST = 'ADD_APP_TYPE_TO_APP_REQUEST';
+export const ADD_APP_TYPE_TO_APP_FAILURE = 'ADD_APP_TYPE_TO_APP_FAILURE';
+export const ADD_APP_TYPE_TO_APP_SUCCESS = 'ADD_APP_TYPE_TO_APP_SUCCESS';
+export const ADD_APP_TYPE_TO_APP_RESET = 'ADD_APP_TYPE_TO_APP_RESET';
+
+export const DELETE_APP_REQUEST = 'DELETE_APP_REQUEST';
+export const DELETE_APP_FAILURE = 'DELETE_APP_FAILURE';
+export const DELETE_APP_SUCCESS = 'DELETE_APP_SUCCESS';
+export const DELETE_APP_RESET = 'DELETE_APP_RESET';
+
+export const CREATE_APP_TYPE_REQUEST = 'CREATE_APP_TYPE_REQUEST';
+export const CREATE_APP_TYPE_FAILURE = 'CREATE_APP_TYPE_FAILURE';
+export const CREATE_APP_TYPE_SUCCESS = 'CREATE_APP_TYPE_SUCCESS';
+export const CREATE_APP_TYPE_RESET = 'CREATE_APP_TYPE_RESET';
+
+export const GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST = 'GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST';
+export const GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE = 'GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE';
+export const GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS = 'GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS';
+
+export const GET_APPS_REQUEST = 'GET_APPS_REQUEST';
+export const GET_APPS_FAILURE = 'GET_APPS_FAILURE';
+export const GET_APPS_SUCCESS = 'GET_APPS_SUCCESS';
+
+export const INSTALL_APP_REQUEST = 'INSTALL_APP_REQUEST';
+export const INSTALL_APP_FAILURE = 'INSTALL_APP_FAILURE';
+export const INSTALL_APP_SUCCESS = 'INSTALL_APP_SUCCESS';
+
+export function addAppTypeToAppRequest(appId, appTypeId) {
   return {
-    type: actionTypes.ADD_APP_TYPE_TO_APP_REQUEST,
+    type: ADD_APP_TYPE_TO_APP_REQUEST,
     appId,
     appTypeId
   };
 }
 
-export function deleteAppTypeFromAppRequest(appId: UUID, appTypeId: UUID) {
+export function addAppTypeToAppSuccess(reference) {
   return {
-    type: actionTypes.DELETE_APP_TYPE_FROM_APP_REQUEST,
-    appId,
-    appTypeId
-  };
-}
-
-export function deleteAppRequest(App: UUID) {
-  return {
-    type: actionTypes.DELETE_APP_REQUEST,
-    App
-  };
-}
-
-export function deleteAppResolve(reference) {
-  return {
-    type: actionTypes.DELETE_APP_RESOLVE,
+    type: ADD_APP_TYPE_TO_APP_SUCCESS,
     reference
   };
 }
 
-export function deleteAppReject(errorMessage) {
+export function addAppTypeToAppFailure(errorMessage) {
   return {
-    type: actionTypes.DELETE_APP_REJECT,
+    type: ADD_APP_TYPE_TO_APP_FAILURE,
+    errorMessage
+  };
+}
+
+export function addAppTypeToAppReset() {
+  return {
+    type: ADD_APP_TYPE_TO_APP_RESET
+  };
+}
+
+export function deleteAppTypeFromAppRequest(appId, appTypeId) {
+  return {
+    type: DELETE_APP_TYPE_FROM_APP_REQUEST,
+    appId,
+    appTypeId
+  };
+}
+
+export function deleteAppTypeFromAppSuccess(reference) {
+  return {
+    type: DELETE_APP_TYPE_FROM_APP_SUCCESS,
+    reference
+  };
+}
+
+export function deleteAppTypeFromAppFailure(errorMessage) {
+  return {
+    type: DELETE_APP_TYPE_FROM_APP_FAILURE,
+    errorMessage
+  };
+}
+
+export function deleteAppTypeFromAppReset() {
+  return {
+    type: DELETE_APP_TYPE_FROM_APP_RESET
+  };
+}
+
+export function deleteAppRequest(app) {
+  return {
+    type: DELETE_APP_REQUEST,
+    app
+  };
+}
+
+export function deleteAppSuccess(reference) {
+  return {
+    type: DELETE_APP_SUCCESS,
+    reference
+  };
+}
+
+export function deleteAppFailure(errorMessage) {
+  return {
+    type: DELETE_APP_FAILURE,
     errorMessage
   };
 }
 
 export function deleteAppReset() {
   return {
-    type: actionTypes.DELETE_APP_RESET
+    type: DELETE_APP_RESET
   };
 }
 
-export function createAppRequest(App) {
+export function createAppRequest(app) {
   return {
-    type: actionTypes.CREATE_APP_REQUEST,
-    App
+    type: CREATE_APP_REQUEST,
+    app
   };
 }
 
-export function createAppReject(errorMessage) {
+export function createAppFailure(errorMessage) {
   return {
-    type: actionTypes.CREATE_APP_REJECT,
+    type: CREATE_APP_FAILURE,
     errorMessage
   };
 }
 
-export function createAppResolve(reference) {
+export function createAppSuccess(reference) {
   return {
-    type: actionTypes.CREATE_APP_RESOLVE,
+    type: CREATE_APP_SUCCESS,
     reference
   };
 }
 
 export function createAppReset() {
   return {
-    type: actionTypes.CREATE_APP_RESET
+    type: CREATE_APP_RESET
   };
 }
 
-export function createAppTypeRequest(AppType) {
+export function createAppTypeRequest(appType) {
   return {
-    type: actionTypes.CREATE_APP_TYPE_REQUEST,
-    AppType
+    type: CREATE_APP_TYPE_REQUEST,
+    appType
   };
 }
 
-export function createAppTypeReject(errorMessage) {
+export function createAppTypeFailure(errorMessage) {
   return {
-    type: actionTypes.CREATE_APP_TYPE_REJECT,
+    type: CREATE_APP_TYPE_FAILURE,
     errorMessage
   };
 }
 
-export function createAppTypeResolve(reference) {
+export function createAppTypeSuccess(reference) {
   return {
-    type: actionTypes.CREATE_APP_TYPE_RESOLVE,
+    type: CREATE_APP_TYPE_SUCCESS,
     reference
   };
 }
 
 export function createAppTypeReset() {
   return {
-    type: actionTypes.CREATE_APP_TYPE_RESET
+    type: CREATE_APP_TYPE_RESET
   };
 }
 
 export function editAppRequest(appId, appData) {
   return {
-    type: actionTypes.EDIT_APP_REQUEST,
+    type: EDIT_APP_REQUEST,
     appId,
     appData
   };
 }
 
-export function editAppReject(errorMessage) {
+export function editAppFailure(errorMessage) {
   return {
-    type: actionTypes.EDIT_APP_REJECT,
+    type: EDIT_APP_FAILURE,
     errorMessage
   };
 }
 
-export function editAppResolve(reference) {
+export function editAppSuccess(reference) {
   return {
-    type: actionTypes.EDIT_APP_RESOLVE,
+    type: EDIT_APP_SUCCESS,
     reference
   };
 }
 
 export function editAppReset() {
   return {
-    type: actionTypes.EDIT_APP_RESET
+    type: EDIT_APP_RESET
   };
 }
 
 export function editAppTypeRequest(appTypeId, appTypeData) {
   return {
-    type: actionTypes.EDIT_APP_TYPE_REQUEST,
+    type: EDIT_APP_TYPE_REQUEST,
     appTypeId,
     appTypeData
   };
 }
 
-export function editAppTypeReject(errorMessage) {
+export function editAppTypeFailure(errorMessage) {
   return {
-    type: actionTypes.EDIT_APP_TYPE_REJECT,
+    type: EDIT_APP_TYPE_FAILURE,
     errorMessage
   };
 }
 
-export function editAppTypeResolve(reference) {
+export function editAppTypeSuccess(reference) {
   return {
-    type: actionTypes.EDIT_APP_TYPE_RESOLVE,
+    type: EDIT_APP_TYPE_SUCCESS,
     reference
   };
 }
 
 export function editAppTypeReset() {
   return {
-    type: actionTypes.EDIT_APP_TYPE_RESET
+    type: EDIT_APP_TYPE_RESET
   };
 }
 
-export function getAppTypesForAppTypeIdsRequest(appTypeIds : UUID[]) {
+export function getAppTypesForAppTypeIdsRequest(appTypeIds) {
   return {
-    type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,
+    type: GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST,
     appTypeIds
   };
 }
 
 // is the type correct here? I am inputing an array of app objects
-export function getAppTypesForAppTypeIdsSuccess(appTypeIdMap :Map) {
+export function getAppTypesForAppTypeIdsSuccess(appTypeIdMap) {
   // console.log('in the action');
   // console.log(appTypeIdMap);
   return {
-    type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
+    type: GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
     appTypeIdMap
   };
 }
 
-export function getAppTypesForAppTypeIdsFailure(errorMessage :string) {
+export function getAppTypesForAppTypeIdsFailure(errorMessage) {
   return {
-    type: actionTypes.GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE,
+    type: GET_APP_TYPES_FOR_APP_TYPE_IDS_FAILURE,
     errorMessage
   };
 }
 
-export function getApps() {
+export function getAppsRequest() {
   return {
-    type: actionTypes.GET_APPS_REQUEST
+    type: GET_APPS_REQUEST
   };
 }
 
-export function getAppsSuccess(apps :Object[]) {
+export function getAppsSuccess(apps) {
   return {
-    type: actionTypes.GET_APPS_SUCCESS,
+    type: GET_APPS_SUCCESS,
     apps
   };
 }
 
-export function getAppsFailure(errorMessage :string) {
+export function getAppsFailure(errorMessage) {
   return {
-    type: actionTypes.GET_APPS_FAILURE,
+    type: GET_APPS_FAILURE,
     errorMessage
   };
 }
 
-export function installAppRequest(appId :UUID, organizationId :UUID, prefix :string) {
+export function installAppRequest(appId, organizationId, prefix) {
   return {
-    type: actionTypes.INSTALL_APP_REQUEST,
+    type: INSTALL_APP_REQUEST,
     appId,
     organizationId,
     prefix
@@ -208,13 +293,13 @@ export function installAppRequest(appId :UUID, organizationId :UUID, prefix :str
 
 export function installAppSuccess() {
   return {
-    type: actionTypes.INSTALL_APP_SUCCESS
+    type: INSTALL_APP_SUCCESS
   };
 }
 
-export function installAppFailure(errorMessage :string) {
+export function installAppFailure(errorMessage) {
   return {
-    type: actionTypes.INSTALL_APP_FAILURE,
+    type: INSTALL_APP_FAILURE,
     errorMessage
   };
 }

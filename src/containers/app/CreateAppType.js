@@ -64,7 +64,7 @@ class CreateAppType extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, namespace, entityTypeId } = this.state;
-    const AppType = {
+    const appType = {
       type: {
         namespace,
         name
@@ -74,7 +74,7 @@ class CreateAppType extends React.Component {
       entityTypeId
     };
 
-    this.props.actions.onCreateAppType(AppType);
+    this.props.actions.onCreateAppType(appType);
   }
 
   renderPending = () => {
