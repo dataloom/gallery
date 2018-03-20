@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
+import Select from 'react-select';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
+import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import { createAppTypeRequest } from './AppActionFactory';
 
@@ -14,8 +15,10 @@ class CreateAppType extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      createAppTypeRequest: PropTypes.func.isRequired
+      createAppTypeRequest: PropTypes.func.isRequired,
+      fetchAllEntityTypesRequest: PropTypes.func.isRequired
     }).isRequired,
+    entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     createAppTypeAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
@@ -29,6 +32,25 @@ class CreateAppType extends React.Component {
       entityTypeId: null,
       isError: false
     };
+  }
+
+  componentDidMount() {
+    this.props.actions.fetchAllEntityTypesRequest();
+  }
+
+  getEntityTypeOptions() {
+
+    const options = [];
+    this.props.entityTypes.forEach((entityType) => {
+      if (!entityType.isEmpty()) {
+        options.push({
+          value: entityType.get('id'),
+          label: entityType.get('title')
+        });
+      }
+    });
+
+    return options;
   }
 
   onTitleChange = (event) => {
@@ -55,10 +77,9 @@ class CreateAppType extends React.Component {
     });
   };
 
-  onEntityTypeIdChange = (event) => {
-    this.setState({
-      entityTypeId: event.target.value
-    });
+  onEntityTypeIdChange = (option) => {
+    const entityTypeId = (option) ? option.value : null;
+    this.setState({ entityTypeId });
   }
 
   onSubmit = () => {
@@ -110,7 +131,10 @@ class CreateAppType extends React.Component {
 
         <FormGroup>
           <ControlLabel>Entity Type Id</ControlLabel>
-          <FormControl type="text" onChange={this.onEntityTypeIdChange} />
+          <Select
+              value={this.state.entityTypeId}
+              options={this.getEntityTypeOptions()}
+              onChange={this.onEntityTypeIdChange} />
         </FormGroup>
 
         <br />
@@ -146,16 +170,19 @@ class CreateAppType extends React.Component {
 
 function mapStateToProps(state) {
   const createAppTypeAsyncState = state.getIn(['app', 'createAppTypeAsyncState']);
+  const entityTypes = state.getIn(['edm', 'entityTypes'], Immutable.Map());
 
   return {
-    createAppTypeAsyncState
+    createAppTypeAsyncState,
+    entityTypes
   };
 }
 
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    createAppTypeRequest
+    createAppTypeRequest,
+    fetchAllEntityTypesRequest
   };
 
   return {
