@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
 import { createAppRequest } from './AppActionFactory';
 
 
@@ -15,7 +16,7 @@ class CreateApp extends React.Component {
     actions: PropTypes.shape({
       createAppRequest: PropTypes.func.isRequired
     }).isRequired,
-    createAppAsyncState: AsyncStatePropType.isRequired
+    createAppAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {

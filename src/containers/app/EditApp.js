@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Immutable from 'immutable';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
+import AsyncContent from '../../components/asynccontent/AsyncContent';
 import { editAppRequest } from './AppActionFactory';
 
 
@@ -15,7 +16,7 @@ class EditApp extends React.Component {
     actions: PropTypes.shape({
       editAppRequest: PropTypes.func.isRequired
     }).isRequired,
-    editAppAsyncState: AsyncStatePropType.isRequired,
+    editAppAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
