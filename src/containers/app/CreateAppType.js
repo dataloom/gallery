@@ -115,9 +115,11 @@ class CreateAppType extends React.Component {
 
         <br />
         <Button type="submit" bsStyle="primary">Create App Type</Button>
-        { isError ? (<p style={{ color: 'red' }} >
+
+        { isError ? (<div style={{ color: 'red' }} >
+          <br />
           Please check your inputs
-        </p>) : null}
+        </div>) : null}
       </form>
     );
   };

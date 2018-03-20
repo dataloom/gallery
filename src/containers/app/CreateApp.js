@@ -26,7 +26,8 @@ class CreateApp extends React.Component {
       description: '',
       name: '',
       appTypeIds: [],
-      url: ''
+      url: '',
+      isError: false
     };
   }
 
@@ -63,8 +64,14 @@ class CreateApp extends React.Component {
   onSubmit = () => {
     const { title, description, name, appTypeIds, url } = this.state;
     // need to separate the appTypeIds string by comma, put in array
+    if (!title || !description || !name || !appTypeIds || !url) {
+      // Alert! Prevent form submission
+      this.setState({
+        isError: true
+      });
+      return;
+    }
     const splitAppTypeIds = appTypeIds.split(', ');
-
     const app = {
       name,
       title,
@@ -77,6 +84,7 @@ class CreateApp extends React.Component {
   }
 
   renderPending = () => {
+    const { isError } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
         <FormGroup>
@@ -106,6 +114,11 @@ class CreateApp extends React.Component {
 
         <br />
         <Button type="submit" bsStyle="primary">Create App</Button>
+
+        { isError ? (<div style={{ color: 'red' }} >
+          <br />
+          Please check your inputs
+        </div>) : null}
       </form>
     );
   };
