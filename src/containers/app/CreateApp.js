@@ -71,7 +71,10 @@ class CreateApp extends React.Component {
       });
       return;
     }
-    const splitAppTypeIds = appTypeIds.split(', ');
+    const splitAppTypeIds = appTypeIds
+      .split(',')
+      .map(id => id.trim())
+      .filter(id => !!id);
     const app = {
       name,
       title,
