@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import styled from 'styled-components';
 import { AppApi } from 'lattice';
+import { bindActionCreators } from 'redux';
 
 import CreateApp from './CreateApp';
 import EditApp from './EditApp';
@@ -15,7 +16,17 @@ import EditAppType from './EditAppType';
 import CreateAppType from './CreateAppType';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
-import * as actionFactory from './AppActionFactory';
+import {
+  createAppReset,
+  editAppReset,
+  createAppTypeReset,
+  editAppTypeReset,
+  getAppsRequest,
+  installAppRequest,
+  deleteAppRequest,
+  deleteAppTypeFromAppRequest,
+  addAppTypeToAppRequest
+} from './AppActionFactory';
 import styles from './app.module.css';
 
 const AppSectionContainer = styled.div`
@@ -76,20 +87,22 @@ const ErrorMessage = styled.div`
 
 class Apps extends React.Component {
   static propTypes = {
+    actions: PropTypes.shape({
+      createAppReset: PropTypes.func.isRequired,
+      createAppTypeReset: PropTypes.func.isRequired,
+      editAppReset: PropTypes.func.isRequired,
+      editAppTypeReset: PropTypes.func.isRequired,
+      getAppsRequest: PropTypes.func.isRequired,
+      deleteAppRequest: PropTypes.func.isRequired,
+      deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
+      addAppTypeToAppRequest: PropTypes.func.isRequired,
+      fetchOrganizationsRequest: PropTypes.func.isRequired,
+      installAppRequest: PropTypes.func.isRequired
+    }).isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
     appTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     errorMessage: PropTypes.string.isRequired,
-    organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
-    createAppReset: PropTypes.func.isRequired,
-    createAppTypeReset: PropTypes.func.isRequired,
-    editAppReset: PropTypes.func.isRequired,
-    editAppTypeReset: PropTypes.func.isRequired,
-    getAppsRequest: PropTypes.func.isRequired,
-    deleteAppRequest: PropTypes.func.isRequired,
-    deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
-    addAppTypeToAppRequest: PropTypes.func.isRequired,
-    fetchOrganizationsRequest: PropTypes.func.isRequired,
-    installAppRequest: PropTypes.func.isRequired
+    organizations: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -121,8 +134,8 @@ class Apps extends React.Component {
   }
 
   componentDidMount() {
-    this.props.getAppsRequest();
-    this.props.fetchOrganizationsRequest();
+    this.props.actions.getAppsRequest();
+    this.props.actions.fetchOrganizationsRequest();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -132,18 +145,18 @@ class Apps extends React.Component {
   }
 
   onCreateApp = () => {
-    this.props.createAppReset();
+    this.props.actions.createAppReset();
     this.setState({
       isAppModalOpen: true
     });
   };
 
   onDeleteApp = (app) => {
-    this.props.deleteAppRequest(app.get('id'));
+    this.props.actions.deleteAppRequest(app.get('id'));
   };
 
   onDeleteAppTypeFromApp = (appId, appTypeId) => {
-    this.props.deleteAppTypeFromAppRequest(appId, appTypeId);
+    this.props.actions.deleteAppTypeFromAppRequest(appId, appTypeId);
   }
 
   onAddAppTypeToApp = () => {
@@ -155,7 +168,7 @@ class Apps extends React.Component {
   renderAddAppForm = () => {
     return (
       <form onSubmit={() => {
-        this.props.addAppTypeToAppRequest(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
+        this.props.actions.addAppTypeToAppRequest(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
         this.closeModal();
       }}>
         <FormGroup>
@@ -171,7 +184,7 @@ class Apps extends React.Component {
   }
 
   onCreateAppType = () => {
-    this.props.createAppTypeReset();
+    this.props.actions.createAppTypeReset();
     this.setState({
       isAppTypeModalOpen: true
     });
@@ -241,7 +254,7 @@ class Apps extends React.Component {
                       bsStyle="default"
                       bsSize="small"
                       onClick={() => {
-                        this.props.editAppTypeReset();
+                        this.props.actions.editAppTypeReset();
                         this.setState({ isEditAppTypeModalOpen: true });
                         this.setState({ editAppTypeId: eachApp.get('id') });
                         this.setState({ editAppTypeTitle: eachApp.get('title') });
@@ -344,7 +357,7 @@ class Apps extends React.Component {
                     bsStyle="default"
                     bsSize="small"
                     onClick={() => {
-                      this.props.editAppReset();
+                      this.props.actions.editAppReset();
                       this.setState({ isEditAppModalOpen: true });
                       this.setState({ editAppId: app.get('id') });
                       this.setState({ editAppTitle: app.get('title') });
@@ -428,7 +441,7 @@ class Apps extends React.Component {
     const appId = this.state.installing.get('id');
     const organizationId = this.state.org;
     const prefix = this.state.prefix;
-    this.props.installAppRequest(appId, organizationId, prefix);
+    this.props.actions.installAppRequest(appId, organizationId, prefix);
     this.closeInstallModal();
   }
 
@@ -544,38 +557,20 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    createAppReset: () => {
-      dispatch(actionFactory.createAppReset());
-    },
-    editAppReset: () => {
-      dispatch(actionFactory.editAppReset());
-    },
-    createAppTypeReset: () => {
-      dispatch(actionFactory.createAppTypeReset());
-    },
-    editAppTypeReset: () => {
-      dispatch(actionFactory.editAppTypeReset());
-    },
-    getAppsRequest: () => {
-      dispatch(actionFactory.getAppsRequest());
-    },
-    fetchOrganizationsRequest: () => {
-      dispatch(fetchOrganizationsRequest());
-    },
-    installAppRequest: (appId, organizationId, prefix) => {
-      dispatch(actionFactory.installAppRequest(appId, organizationId, prefix));
-    },
-    deleteAppRequest: (app) => {
-      dispatch(actionFactory.deleteAppRequest(app));
-    },
-    deleteAppTypeFromAppRequest: (appId, appTypeId) => {
-      dispatch(actionFactory.deleteAppTypeFromAppRequest(appId, appTypeId));
-    },
-    addAppTypeToAppRequest: (appId, appTypeId) => {
-      dispatch(actionFactory.addAppTypeToAppRequest(appId, appTypeId));
-    }
+    createAppReset,
+    editAppReset,
+    createAppTypeReset,
+    editAppTypeReset,
+    getAppsRequest,
+    fetchOrganizationsRequest,
+    installAppRequest,
+    deleteAppRequest,
+    deleteAppTypeFromAppRequest,
+    addAppTypeToAppRequest
   };
-  return actions;
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Apps);
