@@ -13,7 +13,7 @@ class CreateApp extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      onCreateApp: PropTypes.func.isRequired
+      createAppRequest: PropTypes.func.isRequired
     }).isRequired,
     createAppAsyncState: AsyncStatePropType.isRequired
   }
@@ -75,7 +75,7 @@ class CreateApp extends React.Component {
       url
     };
 
-    this.props.actions.onCreateApp(app);
+    this.props.actions.createAppRequest(app);
   }
 
   renderPending = () => {
@@ -142,7 +142,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    onCreateApp: createAppRequest
+    createAppRequest
   };
 
   return {
