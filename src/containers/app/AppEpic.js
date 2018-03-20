@@ -146,9 +146,6 @@ function getAppTypesForAppTypeIdsEpic(action$) {
       return Observable
         .from(AppApi.getAppTypesForAppTypeIds(action.appTypeIds))
         .mergeMap((appTypeIdMap) => {
-          // console.log('i am in the epic');
-          // console.log(appTypeIdMap);
-          // I am getting the mapping {356c427a-0c29-4716-8ca3-90a04bba40ac: Object}
           return Observable.of(
             actionFactory.getAppTypesForAppTypeIdsSuccess(appTypeIdMap)
           );

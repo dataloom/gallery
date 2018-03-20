@@ -218,7 +218,6 @@ class Apps extends React.Component {
     // REFERENCE ONLY
     // for printing out an id for reference
     const appTypeIdFromApi = AppApi.getAppTypeByFqn('sixth', 'apptype');
-    console.log(appTypeIdFromApi);
     return appTypeIdFromApi;
   }
 

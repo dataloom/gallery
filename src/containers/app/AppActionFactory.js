@@ -245,10 +245,7 @@ export function getAppTypesForAppTypeIdsRequest(appTypeIds) {
   };
 }
 
-// is the type correct here? I am inputing an array of app objects
 export function getAppTypesForAppTypeIdsSuccess(appTypeIdMap) {
-  // console.log('in the action');
-  // console.log(appTypeIdMap);
   return {
     type: GET_APP_TYPES_FOR_APP_TYPE_IDS_SUCCESS,
     appTypeIdMap
