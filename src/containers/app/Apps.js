@@ -221,29 +221,17 @@ class Apps extends React.Component {
     return appTypeIdFromApi;
   }
 
-  collectAppTypesFromApp = (app) => {
-    // REMOVE THE FOLLOWING LINE WHEN DONE!
-    // this.getAppTypeIdByName();
-    const appTypeIdsFromApp = app.get('appTypeIds');
-    const appTypesFromApp = [];
-
-    for (let i = 0; i < appTypeIdsFromApp.size; i += 1) {
-      appTypesFromApp.push(appTypeIdsFromApp.get(i));
-    }
-    return appTypesFromApp;
-  }
-
   renderAppType = (app) => {
     // get the appTypeIds for the app
     // for each appTypeId lookup the appTypes
-    const appTypeList = this.collectAppTypesFromApp(app);
+    const appTypeList = app.get('appTypeIds');
     const appTypes = this.props.appTypes;
     const appNames = [];
     const { isEditAppTypeModalOpen } = this.state;
 
-    if (appTypes.get(appTypeList[0])) {
-      for (let i = 0; i < appTypeList.length; i += 1) {
-        const eachApp = appTypes.get(appTypeList[i]);
+    if (appTypes.get(appTypeList.get(0))) {
+      for (let i = 0; i < appTypeList.size; i += 1) {
+        const eachApp = appTypes.get(appTypeList.get(i));
         appNames.push(
           <AppSectionContainer key={eachApp.get('title')}>
             <ButtonContainer>
