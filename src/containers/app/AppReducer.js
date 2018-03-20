@@ -64,7 +64,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.DELETE_APP_RESOLVE:
+    case actionFactory.DELETE_APP_SUCCESS:
       return state.mergeDeep({
         deleteAppAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
@@ -72,7 +72,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.DELETE_APP_REJECT:
+    case actionFactory.DELETE_APP_FAILURE:
       return state.mergeDeep({
         deleteAppAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -96,7 +96,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.CREATE_APP_RESOLVE:
+    case actionFactory.CREATE_APP_SUCCESS:
       return state.mergeDeep({
         createAppAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
@@ -104,7 +104,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.CREATE_APP_REJECT:
+    case actionFactory.CREATE_APP_FAILURE:
       return state.mergeDeep({
         createAppAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -127,7 +127,7 @@ export default function reducer(state = INITIAL_STATE, action) {
           errorMessage: ''
         }
       });
-    case actionFactory.CREATE_APP_TYPE_RESOLVE:
+    case actionFactory.CREATE_APP_TYPE_SUCCESS:
       return state.mergeDeep({
         createAppTypeAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
@@ -135,7 +135,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.CREATE_APP_TYPE_REJECT:
+    case actionFactory.CREATE_APP_TYPE_FAILURE:
       return state.mergeDeep({
         createAppTypeAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -158,7 +158,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.EDIT_APP_RESOLVE:
+    case actionFactory.EDIT_APP_SUCCESS:
       return state.mergeDeep({
         editAppAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
@@ -166,7 +166,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.EDIT_APP_REJECT:
+    case actionFactory.EDIT_APP_FAILURE:
       return state.mergeDeep({
         editAppAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -190,7 +190,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.EDIT_APP_TYPE_RESOLVE:
+    case actionFactory.EDIT_APP_TYPE_SUCCESS:
       return state.mergeDeep({
         editAppTypeAsyncState: {
           status: ASYNC_STATUS.SUCCESS,
@@ -198,7 +198,7 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
 
-    case actionFactory.EDIT_APP_TYPE_REJECT:
+    case actionFactory.EDIT_APP_TYPE_FAILURE:
       return state.mergeDeep({
         editAppTypeAsyncState: {
           status: ASYNC_STATUS.ERROR,

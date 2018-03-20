@@ -13,7 +13,7 @@ class CreateAppType extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      createAppTypeRequest: PropTypes.func.isRequired
+      onCreateAppType: PropTypes.func.isRequired
     }).isRequired,
     createAppTypeAsyncState: AsyncStatePropType.isRequired
   }
@@ -74,7 +74,7 @@ class CreateAppType extends React.Component {
       entityTypeId
     };
 
-    this.props.actions.createAppTypeRequest(appType);
+    this.props.actions.onCreateAppType(appType);
   }
 
   renderPending = () => {
@@ -141,7 +141,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    createAppTypeRequest
+    onCreateAppType: createAppTypeRequest
   };
 
   return {
