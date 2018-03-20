@@ -60,18 +60,20 @@ class EditApp extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, url } = this.state;
-
-    // We need to collect only items that have been changed. AKA NOT an empty string.
-    // Having issues with this because of js and iterables.
-    // Collect the items, check each for change, add changed to appData object.
-    const tempMap = new Map([['title', title], ['description', description], ['name', name], ['url', url]]);
-    const keys = tempMap.keys();
     const appData = {};
 
-    for (const item of keys) {
-      if (tempMap.get(item) !== '') {
-        appData[item] = tempMap.get(item);
-      }
+    // Collect only items that have been changed. AKA NOT an empty string.
+    if (title && title.length > 0) {
+      appData['title'] = title;
+    }
+    if (description && description.length > 0) {
+      appData['description'] = description;
+    }
+    if (name && name.length > 0) {
+      appData['name'] = name;
+    }
+    if (url && url.length > 0) {
+      appData['url'] = url;
     }
 
     const appId = this.props.id;
