@@ -117,7 +117,8 @@ class EditApp extends React.Component {
   render() {
     return (
       <AsyncContent
-          {...this.props.editAppAsyncState}
+          status={this.props.editAppAsyncState.get('status')}
+          errorMessage={this.props.editAppAsyncState.get('errorMessage')}
           pendingContent={this.renderPending()}
           content={this.renderSuccess} />
     );
@@ -126,10 +127,10 @@ class EditApp extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const editAppState = state.get('editApp').toJS();
+  const editAppAsyncState = state.getIn(['app', 'editAppAsyncState']);
 
   return {
-    editAppAsyncState: editAppState.editAppAsyncState
+    editAppAsyncState
   };
 }
 
