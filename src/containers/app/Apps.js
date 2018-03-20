@@ -86,12 +86,11 @@ class Apps extends React.Component {
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     getAppsRequest: PropTypes.func.isRequired,
-    // getAppTypesForAppTypeIds: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
     deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
     addAppTypeToAppRequest: PropTypes.func.isRequired,
-    getOwnedOrganizations: PropTypes.func.isRequired,
-    install: PropTypes.func.isRequired
+    fetchOrganizationsRequest: PropTypes.func.isRequired,
+    installAppRequest: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -124,8 +123,7 @@ class Apps extends React.Component {
 
   componentDidMount() {
     this.props.getAppsRequest();
-    this.props.getOwnedOrganizations();
-    // this.props.getAppTypesForAppTypeIds();
+    this.props.fetchOrganizationsRequest();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -431,7 +429,7 @@ class Apps extends React.Component {
     const appId = this.state.installing.get('id');
     const organizationId = this.state.org;
     const prefix = this.state.prefix;
-    this.props.install(appId, organizationId, prefix);
+    this.props.installAppRequest(appId, organizationId, prefix);
     this.closeInstallModal();
   }
 
@@ -562,13 +560,10 @@ function mapDispatchToProps(dispatch) {
     getAppsRequest: () => {
       dispatch(actionFactory.getAppsRequest());
     },
-    getAppTypesForAppTypeIds: (appTypeIds) => {
-      dispatch(actionFactory.getAppTypesForAppTypeIdsRequest(appTypeIds));
-    },
-    getOwnedOrganizations: () => {
+    fetchOrganizationsRequest: () => {
       dispatch(fetchOrganizationsRequest());
     },
-    install: (appId, organizationId, prefix) => {
+    installAppRequest: (appId, organizationId, prefix) => {
       dispatch(actionFactory.installAppRequest(appId, organizationId, prefix));
     },
     deleteAppRequest: (app) => {
