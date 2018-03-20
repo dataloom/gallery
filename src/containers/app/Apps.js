@@ -76,15 +76,14 @@ const ErrorMessage = styled.div`
 
 class Apps extends React.Component {
   static propTypes = {
-    // auth: PropTypes.object.isRequired,
-    createAppReset: PropTypes.func.isRequired,
-    createAppTypeReset: PropTypes.func.isRequired,
-    editAppReset: PropTypes.func.isRequired,
-    editAppTypeReset: PropTypes.func.isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
     appTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     errorMessage: PropTypes.string.isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
+    createAppReset: PropTypes.func.isRequired,
+    createAppTypeReset: PropTypes.func.isRequired,
+    editAppReset: PropTypes.func.isRequired,
+    editAppTypeReset: PropTypes.func.isRequired,
     getAppsRequest: PropTypes.func.isRequired,
     deleteAppRequest: PropTypes.func.isRequired,
     deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
