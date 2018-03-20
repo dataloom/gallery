@@ -119,7 +119,8 @@ class CreateAppType extends React.Component {
   render() {
     return (
       <AsyncContent
-          {...this.props.createAppTypeAsyncState}
+          status={this.props.createAppTypeAsyncState.get('status')}
+          errorMessage={this.props.createAppTypeAsyncState.get('errorMessage')}
           pendingContent={this.renderPending()}
           content={this.renderSuccess} />
     );
@@ -128,10 +129,10 @@ class CreateAppType extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const createAppTypeState = state.get('createAppType').toJS();
+  const createAppTypeAsyncState = state.getIn(['app', 'createAppTypeAsyncState']);
 
   return {
-    createAppTypeAsyncState: createAppTypeState.createAppTypeAsyncState
+    createAppTypeAsyncState
   };
 }
 
