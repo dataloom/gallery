@@ -29,9 +29,6 @@ class CreateAppType extends React.Component {
     };
   }
 
-  componentDidMount() {
-  }
-
   onTitleChange = (event) => {
     this.setState({
       title: event.target.value
