@@ -62,6 +62,7 @@ class CreateApp extends React.Component {
   };
 
   onSubmit = () => {
+    // TODO: Utilize Models and Model Builders
     const { title, description, name, appTypeIds, url } = this.state;
     // need to separate the appTypeIds string by comma, put in array
     if (!title || !description || !name || !appTypeIds || !url) {

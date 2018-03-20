@@ -59,6 +59,7 @@ class EditApp extends React.Component {
   };
 
   onSubmit = () => {
+    // TODO: Utilize Models and Model Builders
     const { title, description, name, url } = this.state;
     const appData = {};
     const appId = this.props.id;
