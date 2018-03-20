@@ -129,7 +129,8 @@ class Apps extends React.Component {
       editAppTypeTitle: '',
       editAppTypeNamespace: '',
       editAppTypeEntityTypeId: '',
-      editAppTypeDescription: ''
+      editAppTypeDescription: '',
+      isError: false
     };
   }
 
@@ -166,8 +167,16 @@ class Apps extends React.Component {
   }
 
   renderAddAppForm = () => {
+    const { isError } = this.state;
     return (
       <form onSubmit={() => {
+        if (!this.state.addAppTypeAppTypeId) {
+          // Alert! Prevent form submission
+          this.setState({
+            isError: true
+          });
+          return;
+        }
         this.props.actions.addAppTypeToAppRequest(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
         this.closeModal();
       }}>
@@ -179,6 +188,10 @@ class Apps extends React.Component {
         </FormGroup>
         <br />
         <Button type="submit" bsStyle="primary">Submit</Button>
+        { isError ? (<div style={{ color: 'red' }} >
+          <br />
+          Please check your inputs
+        </div>) : null}
       </form>
     );
   }
