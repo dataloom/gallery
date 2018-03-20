@@ -26,7 +26,8 @@ class CreateAppType extends React.Component {
       description: '',
       name: '',
       namespace: '',
-      entityTypeId: null
+      entityTypeId: null,
+      isError: false
     };
   }
 
@@ -62,6 +63,14 @@ class CreateAppType extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, namespace, entityTypeId } = this.state;
+    // Checks to make sure that required fields are not empty.
+    if (!title || !description || !name || !namespace || !entityTypeId) {
+      // Alert! Prevent form submission
+      this.setState({
+        isError: true
+      });
+      return;
+    }
     const appType = {
       type: {
         namespace,
@@ -76,6 +85,7 @@ class CreateAppType extends React.Component {
   }
 
   renderPending = () => {
+    const { isError } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
         <FormGroup>
@@ -105,6 +115,9 @@ class CreateAppType extends React.Component {
 
         <br />
         <Button type="submit" bsStyle="primary">Create App Type</Button>
+        { isError ? (<p style={{ color: 'red' }} >
+          Please check your inputs
+        </p>) : null}
       </form>
     );
   };
