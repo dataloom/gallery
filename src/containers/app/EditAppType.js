@@ -13,7 +13,7 @@ class EditAppType extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      onEditAppType: PropTypes.func.isRequired
+      editAppTypeRequest: PropTypes.func.isRequired
     }).isRequired,
     editAppTypeAsyncState: AsyncStatePropType.isRequired,
     id: PropTypes.string.isRequired,
@@ -107,7 +107,7 @@ class EditAppType extends React.Component {
       delete appTypeData.namespace;
     }
 
-    this.props.actions.onEditAppType(appTypeId, appTypeData);
+    this.props.actions.editAppTypeRequest(appTypeId, appTypeData);
   }
 
   renderPending = () => {
@@ -174,7 +174,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    onEditAppType: editAppTypeRequest
+    editAppTypeRequest
   };
 
   return {

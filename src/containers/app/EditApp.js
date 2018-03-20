@@ -13,7 +13,7 @@ class EditApp extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
-      onEditApp: PropTypes.func.isRequired
+      editAppRequest: PropTypes.func.isRequired
     }).isRequired,
     editAppAsyncState: AsyncStatePropType.isRequired,
     id: PropTypes.string.isRequired,
@@ -77,7 +77,7 @@ class EditApp extends React.Component {
     }
 
     const appId = this.props.id;
-    this.props.actions.onEditApp(appId, appData);
+    this.props.actions.editAppRequest(appId, appData);
   }
 
   renderPending = () => {
@@ -139,7 +139,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    onEditApp: editAppRequest
+    editAppRequest
   };
 
   return {
