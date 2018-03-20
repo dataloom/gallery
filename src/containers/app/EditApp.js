@@ -61,6 +61,7 @@ class EditApp extends React.Component {
   onSubmit = () => {
     const { title, description, name, url } = this.state;
     const appData = {};
+    const appId = this.props.id;
 
     // Collect only items that have been changed. AKA NOT an empty string.
     if (title && title.length > 0) {
@@ -76,7 +77,6 @@ class EditApp extends React.Component {
       appData['url'] = url;
     }
 
-    const appId = this.props.id;
     this.props.actions.editAppRequest(appId, appData);
   }
 

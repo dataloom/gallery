@@ -68,41 +68,36 @@ class EditAppType extends React.Component {
 
   onSubmit = () => {
     const { title, description, name, namespace, entityTypeId } = this.state;
-
-    // We need to collect only items that have been changed. AKA NOT an empty string.
-    // Having issues with this because of js and iterables.
-    // Collect the items, check each for change, add changed to appData object.
-    const tempMap = new Map([['title', title], ['description', description], ['name', name], ['namespace', namespace], ['entityTypeId', entityTypeId]]);
-    const keys = tempMap.keys();
     const appTypeData = {};
-
-    for (const item of keys) {
-      if (tempMap.get(item) !== '') {
-        appTypeData[item] = tempMap.get(item);
-      }
-    }
-
     const appTypeId = this.props.id;
-    // Now i need to detect if name or namespace was changed
-    if (appTypeData.name && appTypeData.namespace) {
+
+    // Collect only items that have been changed. AKA NOT an empty string.
+    if (title && title.length > 0) {
+      appTypeData['title'] = title;
+    }
+    if (description && description.length > 0) {
+      appTypeData['description'] = description;
+    }
+    if (name && name.length > 0 && namespace && namespace.length > 0) {
       appTypeData.type = {
-        'namespace': appTypeData.namespace,
-        'name': appTypeData.name
+        'namespace': namespace,
+        'name': name
       };
-      delete appTypeData.name;
-      delete appTypeData.namespace;
-    } else if (appTypeData.name) {
+    }
+    if (name && name.length > 0 && (!namespace || !namespace.length > 0)) {
       appTypeData.type = {
         'namespace': this.props.namespace,
-        'name': appTypeData.name
+        'name': name
       };
-      delete appTypeData.name;
-    } else if (appTypeData.namespace) {
+    }
+    if (namespace && namespace.length > 0 && (!name || !name.length > 0)) {
       appTypeData.type = {
-        'namespace': appTypeData.namespace,
+        'namespace': namespace,
         'name': this.props.name
       };
-      delete appTypeData.namespace;
+    }
+    if (entityTypeId && entityTypeId.length > 0) {
+      appTypeData['entityTypeId'] = entityTypeId;
     }
 
     this.props.actions.editAppTypeRequest(appTypeId, appTypeData);
