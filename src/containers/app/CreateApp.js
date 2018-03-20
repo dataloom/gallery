@@ -88,6 +88,7 @@ class CreateApp extends React.Component {
   }
 
   renderPending = () => {
+    // TODO: Change text area for Id inputs into a Multiple Select once endpoint is available
     const { isError } = this.state;
     return (
       <form onSubmit={this.onSubmit}>
