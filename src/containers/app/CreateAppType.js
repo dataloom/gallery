@@ -55,25 +55,25 @@ class CreateAppType extends React.Component {
 
   onTitleChange = (event) => {
     this.setState({
-      title: event.target.value
+      title: event.target.value.trim()
     });
   };
 
   onNameChange = (event) => {
     this.setState({
-      name: event.target.value
+      name: event.target.value.trim()
     });
   };
 
   onNamespaceChange = (event) => {
     this.setState({
-      namespace: event.target.value
+      namespace: event.target.value.trim()
     });
   };
 
   onDescriptionChange = (event) => {
     this.setState({
-      description: event.target.value
+      description: event.target.value.trim()
     });
   };
 

@@ -183,7 +183,7 @@ class Apps extends React.Component {
         <FormGroup>
           <ControlLabel>Enter an App Type Id</ControlLabel>
           <FormControl type="text" onChange={(e) => {
-            this.setState({ addAppTypeAppTypeId: e.target.value });
+            this.setState({ addAppTypeAppTypeId: e.target.value.trim() });
           }} />
         </FormGroup>
         <br />

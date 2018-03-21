@@ -33,25 +33,25 @@ class CreateApp extends React.Component {
 
   onTitleChange = (event) => {
     this.setState({
-      title: event.target.value
+      title: event.target.value.trim()
     });
   };
 
   onNameChange = (event) => {
     this.setState({
-      name: event.target.value
+      name: event.target.value.trim()
     });
   };
 
   onDescriptionChange = (event) => {
     this.setState({
-      description: event.target.value
+      description: event.target.value.trim()
     });
   };
 
   onUrlChange = (event) => {
     this.setState({
-      url: event.target.value
+      url: event.target.value.trim()
     });
   };
 
