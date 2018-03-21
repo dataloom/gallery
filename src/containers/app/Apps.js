@@ -399,8 +399,8 @@ class Apps extends React.Component {
       const title = organization.get('title');
       return (
         <MenuItem
-            key={id}
             eventKey={id}
+            key={id}
             onClick={() => {
               this.setState({ org: id });
             }}>
@@ -561,16 +561,16 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   const actions = {
+    addAppTypeToAppRequest,
     createAppReset,
-    editAppReset,
     createAppTypeReset,
-    editAppTypeReset,
-    getAppsRequest,
-    fetchOrganizationsRequest,
-    installAppRequest,
     deleteAppRequest,
     deleteAppTypeFromAppRequest,
-    addAppTypeToAppRequest
+    editAppReset,
+    editAppTypeReset,
+    fetchOrganizationsRequest,
+    getAppsRequest,
+    installAppRequest
   };
   return {
     actions: bindActionCreators(actions, dispatch)

@@ -16,20 +16,20 @@ class EditApp extends React.Component {
     actions: PropTypes.shape({
       editAppRequest: PropTypes.func.isRequired
     }).isRequired,
+    description: PropTypes.string.isRequired,
     editAppAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      title: '',
       description: '',
       name: '',
+      title: '',
       url: ''
     };
   }
@@ -121,10 +121,10 @@ class EditApp extends React.Component {
   render() {
     return (
       <AsyncContent
-          status={this.props.editAppAsyncState.get('status')}
+          content={this.renderSuccess}
           errorMessage={this.props.editAppAsyncState.get('errorMessage')}
           pendingContent={this.renderPending()}
-          content={this.renderSuccess} />
+          status={this.props.editAppAsyncState.get('status')} />
     );
   }
 

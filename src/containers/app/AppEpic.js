@@ -206,14 +206,14 @@ function installAppEpic(action$) {
 }
 
 export default combineEpics(
-  getAppsRequestEpic,
-  getAppTypesForAppTypeIdsEpic,
-  installAppEpic,
-  createAppTypeEpic,
+  addAppTypeToAppEpic,
   createAppEpic,
+  createAppTypeEpic,
   deleteAppEpic,
   deleteAppTypeFromAppEpic,
-  addAppTypeToAppEpic,
   editAppEpic,
-  editAppTypeEpic
+  editAppTypeEpic,
+  getAppsRequestEpic,
+  getAppTypesForAppTypeIdsEpic,
+  installAppEpic
 );

@@ -94,13 +94,13 @@ class CreateAppType extends React.Component {
       return;
     }
     const appType = {
+      description,
+      entityTypeId,
+      title,
       type: {
         namespace,
         name
-      },
-      title,
-      description,
-      entityTypeId
+      }
     };
 
     this.props.actions.createAppTypeRequest(appType);
@@ -160,10 +160,10 @@ class CreateAppType extends React.Component {
   render() {
     return (
       <AsyncContent
-          status={this.props.createAppTypeAsyncState.get('status')}
+          content={this.renderSuccess}
           errorMessage={this.props.createAppTypeAsyncState.get('errorMessage')}
           pendingContent={this.renderPending()}
-          content={this.renderSuccess} />
+          status={this.props.createAppTypeAsyncState.get('status')} />
     );
   }
 

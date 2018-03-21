@@ -17,22 +17,22 @@ class EditAppType extends React.Component {
       editAppTypeRequest: PropTypes.func.isRequired
     }).isRequired,
     editAppTypeAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entityTypeId: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     namespace: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    entityTypeId: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      title: '',
       description: '',
+      entityTypeId: '',
       name: '',
       namespace: '',
-      entityTypeId: ''
+      title: ''
     };
   }
 
@@ -149,10 +149,10 @@ class EditAppType extends React.Component {
   render() {
     return (
       <AsyncContent
-          status={this.props.editAppTypeAsyncState.get('status')}
+          content={this.renderSuccess}
           errorMessage={this.props.editAppTypeAsyncState.get('errorMessage')}
           pendingContent={this.renderPending()}
-          content={this.renderSuccess} />
+          status={this.props.editAppTypeAsyncState.get('status')} />
     );
   }
 

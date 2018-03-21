@@ -140,10 +140,10 @@ class CreateApp extends React.Component {
   render() {
     return (
       <AsyncContent
-          status={this.props.createAppAsyncState.get('status')}
+          content={this.renderSuccess}
           errorMessage={this.props.createAppAsyncState.get('errorMessage')}
           pendingContent={this.renderPending()}
-          content={this.renderSuccess} />
+          status={this.props.createAppAsyncState.get('status')} />
     );
   }
 
