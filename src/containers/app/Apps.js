@@ -171,7 +171,6 @@ class Apps extends React.Component {
     return (
       <form onSubmit={() => {
         if (!this.state.addAppTypeAppTypeId) {
-          // Alert! Prevent form submission
           this.setState({
             isError: true
           });
@@ -211,7 +210,6 @@ class Apps extends React.Component {
       isEditAppModalOpen: false,
       isEditAppTypeModalOpen: false
     });
-    // FIGURE OUT HOW TO RESET THE MODAL STATE
   };
 
   getAppTypeIdByName = () => {
@@ -223,7 +221,7 @@ class Apps extends React.Component {
 
   renderAppType = (app) => {
     // get the appTypeIds for the app
-    // for each appTypeId lookup the appTypes
+    // for each appTypeId lookup the app type in the appTypes map
     const appTypeIds = app.get('appTypeIds');
     const appTypes = this.props.appTypes;
     const appTypeElements = [];
