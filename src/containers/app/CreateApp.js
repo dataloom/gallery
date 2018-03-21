@@ -22,12 +22,12 @@ class CreateApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: '',
-      description: '',
-      name: '',
       appTypeIds: [],
-      url: '',
-      isError: false
+      description: '',
+      isError: false,
+      name: '',
+      title: '',
+      url: ''
     };
   }
 
@@ -76,12 +76,13 @@ class CreateApp extends React.Component {
       .split(',')
       .map(id => id.trim())
       .filter(id => !!id);
+
     const app = {
+      description,
       name,
       title,
-      description,
-      appTypeIds: splitAppTypeIds,
-      url
+      url,
+      appTypeIds: splitAppTypeIds
     };
 
     this.props.actions.createAppRequest(app);

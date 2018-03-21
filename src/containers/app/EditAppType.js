@@ -74,31 +74,31 @@ class EditAppType extends React.Component {
 
     // Collect only items that have been changed. AKA NOT an empty string.
     if (title && title.length > 0) {
-      appTypeData['title'] = title;
+      appTypeData.title = title;
     }
     if (description && description.length > 0) {
-      appTypeData['description'] = description;
+      appTypeData.description = description;
     }
     if (name && name.length > 0 && namespace && namespace.length > 0) {
       appTypeData.type = {
-        'namespace': namespace,
-        'name': name
+        namespace,
+        name
       };
     }
     if (name && name.length > 0 && (!namespace || !namespace.length > 0)) {
       appTypeData.type = {
         'namespace': this.props.namespace,
-        'name': name
+        name
       };
     }
     if (namespace && namespace.length > 0 && (!name || !name.length > 0)) {
       appTypeData.type = {
-        'namespace': namespace,
+        namespace,
         'name': this.props.name
       };
     }
     if (entityTypeId && entityTypeId.length > 0) {
-      appTypeData['entityTypeId'] = entityTypeId;
+      appTypeData.entityTypeId = entityTypeId;
     }
 
     this.props.actions.editAppTypeRequest(appTypeId, appTypeData);

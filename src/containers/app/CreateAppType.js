@@ -18,19 +18,19 @@ class CreateAppType extends React.Component {
       createAppTypeRequest: PropTypes.func.isRequired,
       fetchAllEntityTypesRequest: PropTypes.func.isRequired
     }).isRequired,
+    createAppTypeAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
     entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
-    createAppTypeAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      title: '',
       description: '',
+      entityTypeId: null,
+      isError: false,
       name: '',
       namespace: '',
-      entityTypeId: null,
-      isError: false
+      title: ''
     };
   }
 

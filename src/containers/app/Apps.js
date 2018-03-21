@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import DocumentTitle from 'react-document-title';
 import FontAwesome from 'react-fontawesome';
-import { Button, ButtonGroup, ButtonToolbar, ControlLabel, DropdownButton, Modal, FormControl, FormGroup, MenuItem } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, ControlLabel, DropdownButton, FormControl, FormGroup, MenuItem, Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import styled from 'styled-components';
@@ -17,15 +17,15 @@ import CreateAppType from './CreateAppType';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
 import {
+  addAppTypeToAppRequest,
   createAppReset,
-  editAppReset,
   createAppTypeReset,
-  editAppTypeReset,
-  getAppsRequest,
-  installAppRequest,
   deleteAppRequest,
   deleteAppTypeFromAppRequest,
-  addAppTypeToAppRequest
+  editAppReset,
+  editAppTypeReset,
+  getAppsRequest,
+  installAppRequest
 } from './AppActionFactory';
 import styles from './app.module.css';
 
@@ -88,15 +88,15 @@ const ErrorMessage = styled.div`
 class Apps extends React.Component {
   static propTypes = {
     actions: PropTypes.shape({
+      addAppTypeToAppRequest: PropTypes.func.isRequired,
       createAppReset: PropTypes.func.isRequired,
       createAppTypeReset: PropTypes.func.isRequired,
-      editAppReset: PropTypes.func.isRequired,
-      editAppTypeReset: PropTypes.func.isRequired,
-      getAppsRequest: PropTypes.func.isRequired,
       deleteAppRequest: PropTypes.func.isRequired,
       deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
-      addAppTypeToAppRequest: PropTypes.func.isRequired,
+      editAppReset: PropTypes.func.isRequired,
+      editAppTypeReset: PropTypes.func.isRequired,
       fetchOrganizationsRequest: PropTypes.func.isRequired,
+      getAppsRequest: PropTypes.func.isRequired,
       installAppRequest: PropTypes.func.isRequired
     }).isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -108,29 +108,29 @@ class Apps extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      addAppTypeAppId: '',
+      addAppTypeAppTitle: '',
+      addAppTypeAppTypeId: '',
+      editAppDescription: '',
+      editAppId: '',
+      editAppName: '',
+      editAppTitle: '',
+      editAppTypeDescription: '',
+      editAppTypeEntityTypeId: '',
+      editAppTypeId: '',
+      editAppTypeName: '',
+      editAppTypeNamespace: '',
+      editAppTypeTitle: '',
+      editAppUrl: '',
       installing: null,
-      prefix: '',
-      org: '',
+      isAddAppTypeToAppModalOpen: false,
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
       isEditAppModalOpen: false,
       isEditAppTypeModalOpen: false,
-      addAppTypeAppId: '',
-      addAppTypeAppTitle: '',
-      addAppTypeAppTypeId: '',
-      isAddAppTypeToAppModalOpen: false,
-      editAppId: '',
-      editAppTitle: '',
-      editAppName: '',
-      editAppDescription: '',
-      editAppUrl: '',
-      editAppTypeId: '',
-      editAppTypeName: '',
-      editAppTypeTitle: '',
-      editAppTypeNamespace: '',
-      editAppTypeEntityTypeId: '',
-      editAppTypeDescription: '',
-      isError: false
+      isError: false,
+      org: '',
+      prefix: ''
     };
   }
 
@@ -205,9 +205,9 @@ class Apps extends React.Component {
 
   closeModal = () => {
     this.setState({
+      isAddAppTypeToAppModalOpen: false,
       isAppModalOpen: false,
       isAppTypeModalOpen: false,
-      isAddAppTypeToAppModalOpen: false,
       isEditAppModalOpen: false,
       isEditAppTypeModalOpen: false
     });
@@ -255,13 +255,15 @@ class Apps extends React.Component {
                       bsSize="small"
                       onClick={() => {
                         this.props.actions.editAppTypeReset();
-                        this.setState({ isEditAppTypeModalOpen: true });
-                        this.setState({ editAppTypeId: eachApp.get('id') });
-                        this.setState({ editAppTypeTitle: eachApp.get('title') });
-                        this.setState({ editAppTypeName: eachApp.get('type').get('name') });
-                        this.setState({ editAppTypeDescription: eachApp.get('description') });
-                        this.setState({ editAppTypeNamespace: eachApp.get('type').get('namespace') });
-                        this.setState({ editAppTypeEntityTypeId: eachApp.get('entityTypeId') });
+                        this.setState({
+                          editAppTypeDescription: eachApp.get('description'),
+                          editAppTypeEntityTypeId: eachApp.get('entityTypeId'),
+                          editAppTypeId: eachApp.get('id'),
+                          editAppTypeName: eachApp.get('type').get('name'),
+                          editAppTypeNamespace: eachApp.get('type').get('namespace'),
+                          editAppTypeTitle: eachApp.get('title'),
+                          isEditAppTypeModalOpen: true
+                        });
                       }}>
                       Edit Metadata
                   </Button>
@@ -273,12 +275,12 @@ class Apps extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                   <EditAppType
+                      description={this.state.editAppTypeDescription}
+                      entityTypeId={this.state.editAppTypeEntityTypeId}
                       id={this.state.editAppTypeId}
                       name={this.state.editAppTypeName}
                       namespace={this.state.editAppTypeNamespace}
-                      title={this.state.editAppTypeTitle}
-                      description={this.state.editAppTypeDescription}
-                      entityTypeId={this.state.editAppTypeEntityTypeId} />
+                      title={this.state.editAppTypeTitle} />
                 </Modal.Body>
               </Modal>
             </AppSubSectionContainer>
@@ -358,12 +360,14 @@ class Apps extends React.Component {
                     bsSize="small"
                     onClick={() => {
                       this.props.actions.editAppReset();
-                      this.setState({ isEditAppModalOpen: true });
-                      this.setState({ editAppId: app.get('id') });
-                      this.setState({ editAppTitle: app.get('title') });
-                      this.setState({ editAppName: app.get('name') });
-                      this.setState({ editAppDescription: app.get('description') });
-                      this.setState({ editAppUrl: app.get('url') });
+                      this.setState({
+                        editAppDescription: app.get('description'),
+                        editAppId: app.get('id'),
+                        editAppName: app.get('name'),
+                        editAppTitle: app.get('title'),
+                        editAppUrl: app.get('url'),
+                        isEditAppModalOpen: true
+                      });
                     }}>
                     Edit Metadata
                 </Button>
@@ -374,10 +378,10 @@ class Apps extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                   <EditApp
+                      description={this.state.editAppDescription}
                       id={this.state.editAppId}
                       name={this.state.editAppName}
                       title={this.state.editAppTitle}
-                      description={this.state.editAppDescription}
                       url={this.state.editAppUrl} />
                 </Modal.Body>
               </Modal>
