@@ -59,7 +59,8 @@ const EDM_GEOGRAPHY_TYPES = [
 ];
 
 const EDM_DATE_TYPES = [
-  'Date'
+  'Date',
+  'DateTimeOffset'
 ];
 
 const ANALYZERS = {
