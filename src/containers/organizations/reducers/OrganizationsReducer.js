@@ -330,7 +330,7 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
 
       // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
       // TODO: yuck!
-      let isPublic= false;
+      let isPublic = false;
       action.acl.aces.forEach((ace) => {
         if (ace.principal.id === AUTHENTICATED_USER) {
           ace.permissions.forEach((permission) => {
