@@ -37,8 +37,7 @@ import {
 } from '../../permissions/PermissionsActionFactory';
 
 import {
-  searchAllUsersRequest,
-  searchAllUsersByEmailRequest
+  searchAllUsersRequest
 } from '../../principals/PrincipalsActionFactory';
 
 const {
@@ -83,7 +82,6 @@ function mapDispatchToProps(dispatch) {
     clearUserSearchResults,
     removeMemberFromOrganizationRequest,
     searchAllUsersRequest,
-    searchAllUsersByEmailRequest,
     updateAclRequest
   };
 
@@ -100,7 +98,6 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       clearUserSearchResults: React.PropTypes.func.isRequired,
       removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
       searchAllUsersRequest: React.PropTypes.func.isRequired,
-      searchAllUsersByEmailRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
     isSearchingUsers: React.PropTypes.bool.isRequired,

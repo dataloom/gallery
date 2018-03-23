@@ -313,31 +313,6 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
         .set('isSearchingUsers', false);
     }
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST:
-      return state
-        .set('isSearchingUsers', true)
-        .set('usersSearchResults', Immutable.Map());
-
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_FAILURE:
-      return state
-        .set('isSearchingUsers', false)
-        .set('usersSearchResults', Immutable.Map());
-
-    // TODO: probably need to break this out into its own reducer, along with the organizations earch
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS: {
-
-      // only update state if the users search request was dispatched by us
-      if (state.get('isSearchingUsers') === false) {
-        return state;
-      }
-
-      // TODO: filter out search results that include members already part of the organization being viewed
-
-      return state
-        .set('usersSearchResults', Immutable.fromJS(action.searchResults))
-        .set('isSearchingUsers', false);
-    }
-
     // it is possible to dispatch GET_ACL_REQUEST from anywhere in the app
     // TODO: consider refactoring, as it is very similar to the PermissionsActionTypes.UPDATE_ACL_SUCCESS case
     case PermissionsActionTypes.GET_ACL_SUCCESS: {

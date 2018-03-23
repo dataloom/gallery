@@ -124,31 +124,10 @@ function searchAllUsersEpic(action$) {
     });
 }
 
-function searchAllUsersByEmailEpic(action$) {
-
-  return action$
-    .ofType(PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST)
-    .mergeMap((action) => {
-      return Observable
-        .from(PrincipalsApi.searchAllUsersByEmail(action.searchQuery))
-        .mergeMap((searchResults) => {
-          return Observable.of(
-            PrincipalsActionFactory.searchAllUsersByEmailSuccess(searchResults)
-          );
-        })
-        .catch(() => {
-          return Observable.of(
-            PrincipalsActionFactory.searchAllUsersByEmailFailure()
-          );
-        });
-    });
-}
-
 export default combineEpics(
   loadPrincipalEpic,
   fetchAllUsersEpic,
   fetchUsersEpic,
   fetchUserEpic,
-  searchAllUsersEpic,
-  searchAllUsersByEmailEpic
+  searchAllUsersEpic
 );

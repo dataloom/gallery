@@ -104,26 +104,3 @@ export function searchAllUsersFailure() :Object {
     type: PrincipalsActionTypes.SEARCH_ALL_USERS_FAILURE
   };
 }
-
-export function searchAllUsersByEmailRequest(searchQuery :string) :Object {
-
-  return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST,
-    searchQuery
-  };
-}
-
-export function searchAllUsersByEmailSuccess(searchResults :Object[]) :Object {
-
-  return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS,
-    searchResults
-  };
-}
-
-export function searchAllUsersByEmailFailure() :Object {
-
-  return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_FAILURE
-  };
-}
