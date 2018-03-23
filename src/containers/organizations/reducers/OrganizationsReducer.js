@@ -288,18 +288,18 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
         .set('isSearchingOrgs', false);
     }
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST:
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_REQUEST:
       return state
         .set('isSearchingUsers', true)
         .set('usersSearchResults', Immutable.Map());
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_FAILURE:
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_FAILURE:
       return state
         .set('isSearchingUsers', false)
         .set('usersSearchResults', Immutable.Map());
 
     // TODO: probably need to break this out into its own reducer, along with the organizations earch
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS: {
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_SUCCESS: {
 
       // only update state if the users search request was dispatched by us
       if (state.get('isSearchingUsers') === false) {
@@ -330,7 +330,7 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
 
       // an Organization is considered to be public if it has READ permissions for AUTHENTICATED_USER principals
       // TODO: yuck!
-      let isPublic= false;
+      let isPublic = false;
       action.acl.aces.forEach((ace) => {
         if (ace.principal.id === AUTHENTICATED_USER) {
           ace.permissions.forEach((permission) => {
