@@ -101,7 +101,7 @@ export function searchAllUsersSuccess(searchResults :Object[]) :Object {
 export function searchAllUsersFailure() :Object {
 
   return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_FAILURE
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_FAILURE
   };
 }
 
