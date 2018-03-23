@@ -16,7 +16,7 @@ export default function principalsReducer(state = INITIAL_STATE, action) {
       return state.setIn(['users', fetchedUser.get('user_id')], fetchedUser);
     }
 
-    case PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS: {
+    case PrincipalsActionTypes.SEARCH_ALL_USERS_SUCCESS: {
 
       const usersSearchResults = Immutable.Map().withMutations((map) => {
         Immutable.fromJS(action.searchResults).forEach((user) => {
@@ -27,7 +27,6 @@ export default function principalsReducer(state = INITIAL_STATE, action) {
       const currentUsers = state.get('users');
       // TODO: is mergeDeep() the right operation to do here?
       const updatedUsers = currentUsers.mergeDeep(usersSearchResults);
-
       return state.set('users', updatedUsers);
     }
 

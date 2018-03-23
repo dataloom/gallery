@@ -82,6 +82,29 @@ export function fetchUserFailure(userId :string) :Object {
   };
 }
 
+export function searchAllUsersRequest(searchQuery :string) :Object {
+
+  return {
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_REQUEST,
+    searchQuery
+  };
+}
+
+export function searchAllUsersSuccess(searchResults :Object[]) :Object {
+
+  return {
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_SUCCESS,
+    searchResults
+  };
+}
+
+export function searchAllUsersFailure() :Object {
+
+  return {
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_FAILURE
+  };
+}
+
 export function searchAllUsersByEmailRequest(searchQuery :string) :Object {
 
   return {

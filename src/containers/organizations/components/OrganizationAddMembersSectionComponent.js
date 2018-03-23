@@ -37,6 +37,7 @@ import {
 } from '../../permissions/PermissionsActionFactory';
 
 import {
+  searchAllUsersRequest,
   searchAllUsersByEmailRequest
 } from '../../principals/PrincipalsActionFactory';
 
@@ -81,6 +82,7 @@ function mapDispatchToProps(dispatch) {
     addMemberToOrganizationRequest,
     clearUserSearchResults,
     removeMemberFromOrganizationRequest,
+    searchAllUsersRequest,
     searchAllUsersByEmailRequest,
     updateAclRequest
   };
@@ -97,6 +99,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       addMemberToOrganizationRequest: React.PropTypes.func.isRequired,
       clearUserSearchResults: React.PropTypes.func.isRequired,
       removeMemberFromOrganizationRequest: React.PropTypes.func.isRequired,
+      searchAllUsersRequest: React.PropTypes.func.isRequired,
       searchAllUsersByEmailRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
@@ -120,7 +123,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       return;
     }
 
-    this.props.actions.searchAllUsersByEmailRequest(searchQuery);
+    this.props.actions.searchAllUsersRequest(searchQuery);
   }
 
   handleOnChangeSearchInput = (event) => {
@@ -158,7 +161,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
         <SearchIcon />
         <StyledInput
             type="text"
-            placeholder="Search users by email..."
+            placeholder="Search users by name..."
             onKeyDown={this.handleOnKeyDownSearchInput} />
         {
           this.props.isSearchingUsers && (

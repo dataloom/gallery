@@ -104,6 +104,26 @@ function fetchUserEpic(action$) {
     });
 }
 
+function searchAllUsersEpic(action$) {
+
+  return action$
+    .ofType(PrincipalsActionTypes.SEARCH_ALL_USERS_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(PrincipalsApi.searchAllUsers(action.searchQuery))
+        .mergeMap((searchResults) => {
+          return Observable.of(
+            PrincipalsActionFactory.searchAllUsersSuccess(searchResults)
+          );
+        })
+        .catch(() => {
+          return Observable.of(
+            PrincipalsActionFactory.searchAllUsersFailure()
+          );
+        });
+    });
+}
+
 function searchAllUsersByEmailEpic(action$) {
 
   return action$
@@ -129,5 +149,6 @@ export default combineEpics(
   fetchAllUsersEpic,
   fetchUsersEpic,
   fetchUserEpic,
+  searchAllUsersEpic,
   searchAllUsersByEmailEpic
 );
