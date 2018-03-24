@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
+import { Models } from 'lattice';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -9,6 +10,9 @@ import { bindActionCreators } from 'redux';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import { createAppRequest } from './AppActionFactory';
 
+const {
+  AppBuilder
+} = Models;
 
 class CreateApp extends React.Component {
 
@@ -76,13 +80,13 @@ class CreateApp extends React.Component {
       .map(id => id.trim())
       .filter(id => !!id);
 
-    const app = {
-      description,
-      name,
-      title,
-      url,
-      appTypeIds: splitAppTypeIds
-    };
+    const app = (new AppBuilder())
+      .setDescription(description)
+      .setName(name)
+      .setTitle(title)
+      .setUrl(url)
+      .setAppTypeIds(splitAppTypeIds)
+      .build();
 
     this.props.actions.createAppRequest(app);
   }
