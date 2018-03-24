@@ -82,25 +82,25 @@ export function fetchUserFailure(userId :string) :Object {
   };
 }
 
-export function searchAllUsersByEmailRequest(searchQuery :string) :Object {
+export function searchAllUsersRequest(searchQuery :string) :Object {
 
   return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_REQUEST,
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_REQUEST,
     searchQuery
   };
 }
 
-export function searchAllUsersByEmailSuccess(searchResults :Object[]) :Object {
+export function searchAllUsersSuccess(searchResults :Object[]) :Object {
 
   return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_SUCCESS,
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_SUCCESS,
     searchResults
   };
 }
 
-export function searchAllUsersByEmailFailure() :Object {
+export function searchAllUsersFailure() :Object {
 
   return {
-    type: PrincipalsActionTypes.SEARCH_ALL_USERS_BY_EMAIL_FAILURE
+    type: PrincipalsActionTypes.SEARCH_ALL_USERS_FAILURE
   };
 }
