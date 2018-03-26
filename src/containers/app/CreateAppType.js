@@ -87,7 +87,6 @@ class CreateAppType extends React.Component {
   }
 
   onSubmit = () => {
-    // TODO: Utilize Models and Model Builders
     const { title, description, name, namespace, entityTypeId } = this.state;
 
     if (!title || !description || !name || !namespace || !entityTypeId) {
