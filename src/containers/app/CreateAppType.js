@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import Select from 'react-select';
+import { Models } from 'lattice';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -10,6 +11,9 @@ import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import { createAppTypeRequest } from './AppActionFactory';
 
+const {
+  AppTypeBuilder
+} = Models;
 
 class CreateAppType extends React.Component {
 
@@ -19,7 +23,7 @@ class CreateAppType extends React.Component {
       fetchAllEntityTypesRequest: PropTypes.func.isRequired
     }).isRequired,
     createAppTypeAsyncState: PropTypes.instanceOf(Immutable.Map).isRequired,
-    entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
+    entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
@@ -92,15 +96,13 @@ class CreateAppType extends React.Component {
       });
       return;
     }
-    const appType = {
-      description,
-      entityTypeId,
-      title,
-      type: {
-        namespace,
-        name
-      }
-    };
+
+    const appType = (new AppTypeBuilder())
+      .setDescription(description)
+      .setEntityTypeId(entityTypeId)
+      .setTitle(title)
+      .setType({ namespace, name })
+      .build();
 
     this.props.actions.createAppTypeRequest(appType);
   }
