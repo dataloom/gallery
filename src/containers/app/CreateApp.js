@@ -68,26 +68,27 @@ class CreateApp extends React.Component {
   onSubmit = () => {
     const { title, description, name, appTypeIds, url } = this.state;
 
-    if (!title || !description || !name || !appTypeIds || !url) {
-      this.setState({
-        isError: true
-      });
-      return;
+    try {
+      const splitAppTypeIds = appTypeIds
+        .split(',')
+        .map(id => id.trim())
+        .filter(id => !!id);
+
+      const app = (new AppBuilder())
+        .setDescription(description)
+        .setName(name)
+        .setTitle(title)
+        .setUrl(url)
+        .setAppTypeIds(splitAppTypeIds)
+        .build();
+
+      this.props.actions.createAppRequest(app);
     }
-    const splitAppTypeIds = appTypeIds
-      .split(',')
-      .map(id => id.trim())
-      .filter(id => !!id);
-
-    const app = (new AppBuilder())
-      .setDescription(description)
-      .setName(name)
-      .setTitle(title)
-      .setUrl(url)
-      .setAppTypeIds(splitAppTypeIds)
-      .build();
-
-    this.props.actions.createAppRequest(app);
+    catch (e) {
+      this.setState({ isError: true });
+      // Requires return statement still? Not tested yet becuase backend down.
+      // return;
+    }
   }
 
   renderPending = () => {

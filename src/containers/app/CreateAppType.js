@@ -89,21 +89,21 @@ class CreateAppType extends React.Component {
   onSubmit = () => {
     const { title, description, name, namespace, entityTypeId } = this.state;
 
-    if (!title || !description || !name || !namespace || !entityTypeId) {
-      this.setState({
-        isError: true
-      });
-      return;
+    try {
+      const appType = (new AppTypeBuilder())
+        .setDescription(description)
+        .setEntityTypeId(entityTypeId)
+        .setTitle(title)
+        .setType({ namespace, name })
+        .build();
+
+      this.props.actions.createAppTypeRequest(appType);
     }
-
-    const appType = (new AppTypeBuilder())
-      .setDescription(description)
-      .setEntityTypeId(entityTypeId)
-      .setTitle(title)
-      .setType({ namespace, name })
-      .build();
-
-    this.props.actions.createAppTypeRequest(appType);
+    catch (e) {
+      this.setState({ isError: true });
+      // Requires return statement still? Not tested yet becuase backend down.
+      // return;
+    }
   }
 
   renderPending = () => {
