@@ -215,7 +215,7 @@ class Apps extends React.Component {
   getAppTypeIdByName = () => {
     // REFERENCE ONLY
     // for printing out an id for reference
-    const appTypeIdFromApi = AppApi.getAppTypeByFqn('sixth', 'apptype');
+    const appTypeIdFromApi = AppApi.getAppTypeByFqn({ namespace: 'sample', name: 'apptype' });
     return appTypeIdFromApi;
   }
 
