@@ -1,0 +1,29 @@
+.apps {
+    position: relative;
+}
+
+.apps :global .modal, .apps :global .modal-backdrop {
+    position: absolute;
+}
+
+.pageHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pageTitle {
+    margin-bottom: 0px;
+}
+
+.control {
+    height: 36px;
+}
+
+.continueButtonContainer {
+  text-align: center;
+}
+
+.appContainer {
+    display: flex;
+    justify-content: space-between;
+}
