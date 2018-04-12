@@ -3,14 +3,31 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import DocumentTitle from 'react-document-title';
 import FontAwesome from 'react-fontawesome';
-import { Button, ControlLabel, DropdownButton, Modal, FormControl, FormGroup, MenuItem } from 'react-bootstrap';
+import { Button, ButtonGroup, ButtonToolbar, ControlLabel, DropdownButton, FormControl, FormGroup, MenuItem, Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import styled from 'styled-components';
+import { AppApi } from 'lattice';
+import { bindActionCreators } from 'redux';
 
+import CreateApp from './CreateApp';
+import EditApp from './EditApp';
+import EditAppType from './EditAppType';
+import CreateAppType from './CreateAppType';
 import Page from '../../components/page/Page';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
-import * as actionFactory from './AppActionFactory';
+import {
+  addAppTypeToAppRequest,
+  createAppReset,
+  createAppTypeReset,
+  deleteAppRequest,
+  deleteAppTypeFromAppRequest,
+  editAppReset,
+  editAppTypeReset,
+  getAppsRequest,
+  installAppRequest
+} from './AppActionFactory';
+import styles from './app.module.css';
 
 const AppSectionContainer = styled.div`
   display: flex;
@@ -24,6 +41,10 @@ const ButtonContainer = styled.div`
 
 const AppContainer = styled.div`
   display: inline;
+  margin-left: 10px;
+`;
+
+const AppSubSectionContainer = styled.div`
   margin-left: 10px;
 `;
 
@@ -66,57 +87,308 @@ const ErrorMessage = styled.div`
 
 class Apps extends React.Component {
   static propTypes = {
+    actions: PropTypes.shape({
+      addAppTypeToAppRequest: PropTypes.func.isRequired,
+      createAppReset: PropTypes.func.isRequired,
+      createAppTypeReset: PropTypes.func.isRequired,
+      deleteAppRequest: PropTypes.func.isRequired,
+      deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
+      editAppReset: PropTypes.func.isRequired,
+      editAppTypeReset: PropTypes.func.isRequired,
+      fetchOrganizationsRequest: PropTypes.func.isRequired,
+      getAppsRequest: PropTypes.func.isRequired,
+      installAppRequest: PropTypes.func.isRequired
+    }).isRequired,
     apps: PropTypes.instanceOf(Immutable.List).isRequired,
+    appTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     errorMessage: PropTypes.string.isRequired,
-    organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
-    getAppsRequest: PropTypes.func.isRequired,
-    getOwnedOrganizations: PropTypes.func.isRequired,
-    install: PropTypes.func.isRequired
+    organizations: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
   constructor(props) {
     super(props);
     this.state = {
+      addAppTypeAppId: '',
+      addAppTypeAppTitle: '',
+      addAppTypeAppTypeId: '',
+      editAppDescription: '',
+      editAppId: '',
+      editAppName: '',
+      editAppTitle: '',
+      editAppTypeDescription: '',
+      editAppTypeEntityTypeId: '',
+      editAppTypeId: '',
+      editAppTypeName: '',
+      editAppTypeNamespace: '',
+      editAppTypeTitle: '',
+      editAppUrl: '',
       installing: null,
-      prefix: '',
-      org: ''
+      isAddAppTypeToAppModalOpen: false,
+      isAppModalOpen: false,
+      isAppTypeModalOpen: false,
+      isEditAppModalOpen: false,
+      isEditAppTypeModalOpen: false,
+      isError: false,
+      org: '',
+      prefix: ''
     };
   }
 
   componentDidMount() {
-    this.props.getAppsRequest();
-    this.props.getOwnedOrganizations();
+    this.props.actions.getAppsRequest();
+    this.props.actions.fetchOrganizationsRequest();
   }
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.organizations.size && nextProps.organizations.size) {
-      this.setState({ org: nextProps.organizations.keySeq().get(0)});
+      this.setState({ org: nextProps.organizations.keySeq().get(0) });
     }
+  }
+
+  onCreateApp = () => {
+    this.props.actions.createAppReset();
+    this.setState({
+      isAppModalOpen: true
+    });
+  };
+
+  onDeleteApp = (app) => {
+    this.props.actions.deleteAppRequest(app.get('id'));
+  };
+
+  onDeleteAppTypeFromApp = (appId, appTypeId) => {
+    this.props.actions.deleteAppTypeFromAppRequest(appId, appTypeId);
+  }
+
+  onAddAppTypeToApp = () => {
+    this.setState({
+      isAddAppTypeToAppModalOpen: true
+    });
+  }
+
+  renderAddAppForm = () => {
+    const { isError } = this.state;
+    return (
+      <form onSubmit={() => {
+        if (!this.state.addAppTypeAppTypeId) {
+          this.setState({
+            isError: true
+          });
+          return;
+        }
+        this.props.actions.addAppTypeToAppRequest(this.state.addAppTypeAppId, this.state.addAppTypeAppTypeId);
+        this.closeModal();
+      }}>
+        <FormGroup>
+          <ControlLabel>Enter an App Type Id</ControlLabel>
+          <FormControl type="text" onChange={(e) => {
+            this.setState({ addAppTypeAppTypeId: e.target.value.trim() });
+          }} />
+        </FormGroup>
+        <br />
+        <Button type="submit" bsStyle="primary">Submit</Button>
+        { isError ? (<div style={{ color: 'red' }} >
+          <br />
+          Please check your inputs
+        </div>) : null}
+      </form>
+    );
+  }
+
+  onCreateAppType = () => {
+    this.props.actions.createAppTypeReset();
+    this.setState({
+      isAppTypeModalOpen: true
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isAddAppTypeToAppModalOpen: false,
+      isAppModalOpen: false,
+      isAppTypeModalOpen: false,
+      isEditAppModalOpen: false,
+      isEditAppTypeModalOpen: false
+    });
+  };
+
+  getAppTypeIdByName = () => {
+    // REFERENCE ONLY
+    // for printing out an id for reference
+    const appTypeIdFromApi = AppApi.getAppTypeByFqn({ namespace: 'sample', name: 'apptype' });
+    return appTypeIdFromApi;
+  }
+
+  renderAppType = (app) => {
+    // get the appTypeIds for the app
+    // for each appTypeId lookup the app type in the appTypes map
+    const appTypeIds = app.get('appTypeIds');
+    const appTypes = this.props.appTypes;
+    const appTypeElements = [];
+    const { isEditAppTypeModalOpen } = this.state;
+
+    if (!appTypes.isEmpty()) {
+      for (let i = 0; i < appTypeIds.size; i += 1) {
+        const eachApp = appTypes.get(appTypeIds.get(i));
+        appTypeElements.push(
+          <AppSectionContainer key={eachApp.get('title')}>
+            <ButtonContainer>
+              <Button
+                  bsStyle="default"
+                  bsSize="xsmall"
+                  onClick={() => {
+                    this.onDeleteAppTypeFromApp(app.get('id'), eachApp.get('id'));
+                  }}>
+                <FontAwesome name="minus" />
+              </Button>
+            </ButtonContainer>
+            <AppSubSectionContainer>
+              <div>
+                {eachApp.get('title')}
+                &nbsp;
+                &nbsp;
+                <ButtonContainer>
+                  <Button
+                      bsStyle="default"
+                      bsSize="small"
+                      onClick={() => {
+                        this.props.actions.editAppTypeReset();
+                        this.setState({
+                          editAppTypeDescription: eachApp.get('description'),
+                          editAppTypeEntityTypeId: eachApp.get('entityTypeId'),
+                          editAppTypeId: eachApp.get('id'),
+                          editAppTypeName: eachApp.get('type').get('name'),
+                          editAppTypeNamespace: eachApp.get('type').get('namespace'),
+                          editAppTypeTitle: eachApp.get('title'),
+                          isEditAppTypeModalOpen: true
+                        });
+                      }}>
+                      Edit Metadata
+                  </Button>
+                </ButtonContainer>
+              </div>
+              <Modal show={isEditAppTypeModalOpen} onHide={this.closeModal} container={this}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Edit {this.state.editAppTypeTitle} Metadata</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <EditAppType
+                      description={this.state.editAppTypeDescription}
+                      entityTypeId={this.state.editAppTypeEntityTypeId}
+                      id={this.state.editAppTypeId}
+                      name={this.state.editAppTypeName}
+                      namespace={this.state.editAppTypeNamespace}
+                      title={this.state.editAppTypeTitle} />
+                </Modal.Body>
+              </Modal>
+            </AppSubSectionContainer>
+          </AppSectionContainer>);
+      }
+    }
+    return (
+      appTypeElements
+    );
   }
 
   renderApps = () => {
     return this.props.apps.map((app) => {
+
+      const { isAddAppTypeToAppModalOpen } = this.state;
+      const { isEditAppModalOpen } = this.state;
+
       return (
         <div key={app.get('name')}>
-          <AppSectionContainer>
-            <ButtonContainer>
-              <Button
-                  bsStyle="default"
-                  onClick={() => {
-                    this.setState({ installing: app });
-                  }}>
-                <FontAwesome name="plus" />
-              </Button>
-            </ButtonContainer>
-            <AppContainer>
-              <AppTitle>{app.get('title')}</AppTitle>
-              <div>{app.get('description')}</div>
-            </AppContainer>
+          <AppSectionContainer className={styles.appContainer}>
+            <AppSectionContainer>
+              <ButtonContainer>
+                <ButtonToolbar>
+                  <Button
+                      bsStyle="default"
+                      onClick={() => {
+                        this.setState({ installing: app });
+                      }}>
+                    install
+                  </Button>
+                  <Button
+                      bsStyle="default"
+                      onClick={() => {
+                        this.onDeleteApp(app);
+                      }}>
+                    delete
+                  </Button>
+                </ButtonToolbar>
+              </ButtonContainer>
+              <AppContainer>
+                <AppTitle>{app.get('title')}</AppTitle>
+                <div>{app.get('description')}</div>
+                <AppSectionContainer>
+                  <ButtonContainer>
+                    <Button
+                        bsStyle="default"
+                        bsSize="xsmall"
+                        onClick={() => {
+                          this.onAddAppTypeToApp();
+                          this.setState({
+                            addAppTypeAppId: app.get('id'),
+                            addAppTypeAppTitle: app.get('title')
+                          });
+                        }}>
+                      <FontAwesome name="plus" />
+                    </Button>
+                  </ButtonContainer>
+                  <AppSubSectionContainer>
+                    <div>App Types:</div>
+                  </AppSubSectionContainer>
+                </AppSectionContainer>
+                <Modal show={isAddAppTypeToAppModalOpen} onHide={this.closeModal} container={this}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Add an App Type to {this.state.addAppTypeAppTitle}</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    {this.renderAddAppForm()}
+                  </Modal.Body>
+                </Modal>
+                {this.renderAppType(app)}
+              </AppContainer>
+            </AppSectionContainer>
+            <AppSubSectionContainer>
+              <ButtonContainer>
+                <Button
+                    bsStyle="default"
+                    bsSize="small"
+                    onClick={() => {
+                      this.props.actions.editAppReset();
+                      this.setState({
+                        editAppDescription: app.get('description'),
+                        editAppId: app.get('id'),
+                        editAppName: app.get('name'),
+                        editAppTitle: app.get('title'),
+                        editAppUrl: app.get('url'),
+                        isEditAppModalOpen: true
+                      });
+                    }}>
+                    Edit Metadata
+                </Button>
+              </ButtonContainer>
+              <Modal show={isEditAppModalOpen} onHide={this.closeModal} container={this}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Edit {this.state.editAppTitle} Metadata</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <EditApp
+                      description={this.state.editAppDescription}
+                      id={this.state.editAppId}
+                      name={this.state.editAppName}
+                      title={this.state.editAppTitle}
+                      url={this.state.editAppUrl} />
+                </Modal.Body>
+              </Modal>
+            </AppSubSectionContainer>
           </AppSectionContainer>
           <hr />
         </div>
       );
-    })
+    });
   }
 
   renderOrganizationSection = () => {
@@ -125,8 +397,8 @@ class Apps extends React.Component {
       const title = organization.get('title');
       return (
         <MenuItem
-            key={id}
             eventKey={id}
+            key={id}
             onClick={() => {
               this.setState({ org: id });
             }}>
@@ -143,7 +415,7 @@ class Apps extends React.Component {
           {orgOptions}
         </DropdownButton>
       </OrganizationSelectionWrapper>
-    )
+    );
   }
 
   renderPrefixSection = () => {
@@ -151,11 +423,11 @@ class Apps extends React.Component {
       <FormGroup>
         <ControlLabel>Choose a unique prefix for the datasets that will be used for this app.</ControlLabel>
         <FormControl
-          type="text"
-          value={this.state.prefix}
-          onChange={(e) => {
-            this.setState({ prefix: e.target.value });
-          }} />
+            type="text"
+            value={this.state.prefix}
+            onChange={(e) => {
+              this.setState({ prefix: e.target.value });
+            }} />
       </FormGroup>
     );
   }
@@ -171,8 +443,8 @@ class Apps extends React.Component {
     const appId = this.state.installing.get('id');
     const organizationId = this.state.org;
     const prefix = this.state.prefix;
-    this.props.install(appId, organizationId, prefix);
-    this.closeInstallModal()
+    this.props.actions.installAppRequest(appId, organizationId, prefix);
+    this.closeInstallModal();
   }
 
   renderError = () => {
@@ -190,7 +462,7 @@ class Apps extends React.Component {
       return (
         <ModalBodyContainer>
           <NoOrganizationsText>You must be an owner of an organization to install an app.</NoOrganizationsText>
-          <Link to='orgs/new'>Create an organization</Link>
+          <Link to="orgs/new">Create an organization</Link>
         </ModalBodyContainer>
       );
     }
@@ -202,7 +474,7 @@ class Apps extends React.Component {
           <Button bsStyle="primary" onClick={this.install}>Install</Button>
         </InstallButtonWrapper>
       </ModalBodyContainer>
-    )
+    );
   }
 
   renderInstallModal = () => {
@@ -219,16 +491,49 @@ class Apps extends React.Component {
           {this.renderModalBody()}
         </Modal.Body>
       </Modal>
-    )
+    );
   }
 
   render() {
+    const { isAppModalOpen } = this.state;
+    const { isAppTypeModalOpen } = this.state;
+
     return (
       <DocumentTitle title="Apps">
-        <Page>
-          <Page.Header>
-            <Page.Title>Browse Apps</Page.Title>
+        <Page className={styles.apps}>
+          <Page.Header className={styles.pageHeader}>
+            <Page.Title className={styles.pageTitle}>Browse Apps</Page.Title>
+            <ButtonContainer>
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <Button bsStyle="primary" className={styles.control} onClick={this.onCreateApp}>
+                    <FontAwesome name="plus-circle" size="lg" /> App
+                  </Button>
+                </ButtonGroup>
+                <ButtonGroup>
+                  <Button bsStyle="primary" className={styles.control} onClick={this.onCreateAppType}>
+                    <FontAwesome name="plus-circle" size="lg" /> App Type
+                  </Button>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </ButtonContainer>
           </Page.Header>
+          <Modal show={isAppModalOpen} onHide={this.closeModal} container={this}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create an App</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <CreateApp />
+            </Modal.Body>
+          </Modal>
+          <Modal show={isAppTypeModalOpen} onHide={this.closeModal} container={this}>
+            <Modal.Header closeButton>
+              <Modal.Title>Create an App Type</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <CreateAppType />
+            </Modal.Body>
+          </Modal>
           <Page.Body>
             {this.renderError()}
             {this.renderApps()}
@@ -243,29 +548,31 @@ class Apps extends React.Component {
 function mapStateToProps(state) {
   const apps = state.getIn(['app', 'apps'], Immutable.List());
   const errorMessage = state.getIn(['app', 'errorMessage'], '');
-
+  const appTypes = state.getIn(['app', 'appTypes'], Immutable.Map());
   const organizations = state.getIn(['organizations', 'organizations'], Immutable.Map())
     .filter((organization) => {
       return organization.get('isOwner');
     });
 
-  return { apps, errorMessage, organizations };
+  return { apps, appTypes, errorMessage, organizations };
 }
 
 function mapDispatchToProps(dispatch) {
   const actions = {
-    getAppsRequest: () => {
-      dispatch(actionFactory.getApps());
-    },
-    getOwnedOrganizations: () => {
-      dispatch(fetchOrganizationsRequest());
-    },
-    install: (appId, organizationId, prefix) => {
-      dispatch(actionFactory.installAppRequest(appId, organizationId, prefix));
-    }
+    addAppTypeToAppRequest,
+    createAppReset,
+    createAppTypeReset,
+    deleteAppRequest,
+    deleteAppTypeFromAppRequest,
+    editAppReset,
+    editAppTypeReset,
+    fetchOrganizationsRequest,
+    getAppsRequest,
+    installAppRequest
   };
-
-  return actions;
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Apps);
