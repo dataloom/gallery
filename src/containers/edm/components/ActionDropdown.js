@@ -94,11 +94,8 @@ class ActionDropdown extends React.Component {
           id="action-dropdown"
           className={classnames(this.props.className)}
           onClick={this.goToViewDetails}>
-        {this.renderViewDetails()}
-        {this.renderRequestPermissions()}
-        <MenuItem header>Download</MenuItem>
-        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.CSV)}>CSV</MenuItem>
-        <MenuItem href={DataApi.getEntitySetDataFileUrl(entitySetId, FileConsts.JSON)}>JSON</MenuItem>
+        { this.renderViewDetails() }
+        { this.renderRequestPermissions() }
         <MenuItem divider />
         <li role="presentation">
           <Link
