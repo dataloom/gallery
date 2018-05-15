@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { Models } from 'lattice';
 
 import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../../utils/Consts/StringConsts';
+import { IMAGE_HEADER } from '../../../utils/Consts/FileConsts';
 
 import defaultUserIcon from '../../../images/user-profile-icon.png';
 
@@ -200,7 +201,7 @@ class PersonCard extends React.Component<Props, State> {
         try {
           const fqn = new FullyQualifiedName(key);
           const fqnName = fqn.getName().toLowerCase();
-          if (fqnName === 'mugshot' || fqnName === 'picture') {
+          if (fqnName === 'mugshot' || fqnName === 'picture' || fqnName === 'signature') {
             pictureValue = value;
             return false; // break out of loop
           }
@@ -211,8 +212,10 @@ class PersonCard extends React.Component<Props, State> {
 
     let imgSrc = defaultUserIcon;
     if (pictureValue && !pictureValue.isEmpty()) {
-      const pictureSrc = pictureValue.get(0);
-      imgSrc = `data:image/png;base64,${pictureSrc}`;
+      imgSrc = pictureValue.get(0, '');
+      if (!imgSrc.startsWith(IMAGE_HEADER)) {
+        imgSrc = `${IMAGE_HEADER}${imgSrc}`;
+      }
     }
 
     return imgSrc;

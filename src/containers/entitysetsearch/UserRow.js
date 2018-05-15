@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import EntityRow from './EntityRow';
 import userProfileImg from '../../images/user-profile-icon.png';
 import styles from './styles.module.css';
+import { IMAGE_HEADER } from '../../utils/Consts/FileConsts';
 
 export default class UserRow extends React.Component {
 
@@ -40,7 +41,12 @@ export default class UserRow extends React.Component {
     if (this.props.mugshot) {
       const fqn = `${this.props.mugshot.type.namespace}.${this.props.mugshot.type.name}`;
       const mugshotList = this.props.row[fqn] || [];
-      if (mugshotList.length > 0 && mugshotList[0].length > 0) imgSrc = `data:image/png;base64,${mugshotList[0]}`;
+      if (mugshotList.length > 0 && mugshotList[0].length > 0) {
+        imgSrc = mugshotList[0];
+        if (!imgSrc.startsWith(IMAGE_HEADER)) {
+          imgSrc = `${IMAGE_HEADER}${imgSrc}`;
+        }
+      }
     }
     return <img src={imgSrc} className={styles.userIcon} role="presentation" />;
   }
