@@ -41,7 +41,8 @@ class TopUtilizersResultsContainer extends React.Component {
       propertyTypes: [],
       display: DISPLAYS.TABLE,
       neighborEntityTypes: [],
-      neighborPropertyTypes: {}
+      neighborPropertyTypes: {},
+      edgeTypeCounts: {}
     };
   }
 
@@ -53,6 +54,42 @@ class TopUtilizersResultsContainer extends React.Component {
         neighborTypeIds.add(id);
       });
     });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.isGettingNeighbors && !nextProps.isGettingNeighbors) {
+      this.countEdgeTypesPerEntity(nextProps);
+    }
+  }
+
+  // each element in 'neighbor' is an array that contains associations that belong to search parameters.
+  // maintain a count of each association type within each neighbor object and display that on the table.
+  countEdgeTypesPerEntity = (nextProps) => {
+    console.log('this.props.results', this.props.results);
+    console.log('nextprops.neighbors', nextProps.neighbors);
+    const countsByEdgeTypePerEntity = {};
+    this.props.results.forEach((result) => {
+      const elementId = result.id[0];
+      const neighborList = nextProps.neighbors.get(elementId);
+      // console.log(neighborList);
+      const neighborCount = new Map();
+      
+      neighborList.forEach((edge) => {
+        const associationEntitySetId = edge.getIn(['associationEntitySet', 'entityTypeId']);
+        const neighborEntitySetId = edge.getIn(['neighborEntitySet', 'entityTypeId']);
+        const edgeId = `${associationEntitySetId} ${neighborEntitySetId}`;
+        if (neighborCount.has(edgeId)) {
+          neighborCount.set(edgeId, neighborCount.get(edgeId) + 1);
+        }
+        else {
+          neighborCount.set(edgeId, 1);
+        }
+      });
+
+      countsByEdgeTypePerEntity[elementId] = neighborCount;
+      // result.test = 'lulz'; // this causes invalid FQN namespace must be non-empty string error
+    });
+    console.log(countsByEdgeTypePerEntity);
   }
 
   loadEntitySet = () => {
