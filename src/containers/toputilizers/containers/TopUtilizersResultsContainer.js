@@ -31,6 +31,7 @@ class TopUtilizersResultsContainer extends React.Component {
     downloadResults: PropTypes.func.isRequired,
     topUtilizersDetails: PropTypes.instanceOf(Immutable.List).isRequired,
     neighbors: PropTypes.instanceOf(Immutable.Map).isRequired,
+    neighborTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
@@ -59,6 +60,7 @@ class TopUtilizersResultsContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isGettingNeighbors && !nextProps.isGettingNeighbors) {
       this.countEdgeTypesPerEntity(nextProps);
+      
     }
   }
 
@@ -67,30 +69,74 @@ class TopUtilizersResultsContainer extends React.Component {
   countEdgeTypesPerEntity = (nextProps) => {
     console.log('this.props.results', this.props.results);
     console.log('nextprops.neighbors', nextProps.neighbors);
-    const countsByEdgeTypePerEntity = {};
+    console.log(this.props.results.first());
+    const countHeaders = this.createHeadersForEdgeTypes();
     this.props.results.forEach((result) => {
-      const elementId = result.id[0];
-      const neighborList = nextProps.neighbors.get(elementId);
-      // console.log(neighborList);
-      const neighborCount = new Map();
-      
+      const entityId = result.id[0];
+      // Get List of neighbors for specific entity
+      const neighborList = nextProps.neighbors.get(entityId);
+      const neighborCount = {};
+
+      // For each edge in the list of neighbors, count occurances for each unique assoc -> neighbor
       neighborList.forEach((edge) => {
-        const associationEntitySetId = edge.getIn(['associationEntitySet', 'entityTypeId']);
-        const neighborEntitySetId = edge.getIn(['neighborEntitySet', 'entityTypeId']);
-        const edgeId = `${associationEntitySetId} ${neighborEntitySetId}`;
-        if (neighborCount.has(edgeId)) {
-          neighborCount.set(edgeId, neighborCount.get(edgeId) + 1);
+        const associationEntityId = edge.getIn(['associationEntitySet', 'entityTypeId']);
+        const neighborEntityId = edge.getIn(['neighborEntitySet', 'entityTypeId']);
+        const isSrc = edge.get('src');
+
+        const edgeId = this.getEdgeId(associationEntityId, neighborEntityId, isSrc);
+        const edgeFqn = `count.${edgeId}`;
+        if (neighborCount[edgeFqn] !== undefined) {
+          neighborCount[edgeFqn] += 1;
         }
         else {
-          neighborCount.set(edgeId, 1);
+          neighborCount[edgeFqn] = 1;
         }
       });
 
-      countsByEdgeTypePerEntity[elementId] = neighborCount;
-      // result.test = 'lulz'; // this causes invalid FQN namespace must be non-empty string error
+      // Assign neighborCount to current result element
+      Object.assign(result, neighborCount, { countHeaders });
     });
-    console.log(countsByEdgeTypePerEntity);
+
   }
+
+  createHeadersForEdgeTypes = () => {
+    // Must match ids from neighborTypes to topUtilizersDetails as it does not include necessary 'type' property
+    // Tried modifying topUtilizersDetails but the exact object is used to make a strict request
+    const countHeaders = [];
+    this.props.topUtilizersDetails.forEach((selectedEdge) => {
+
+      const selectedAssocTypeId = selectedEdge.get('associationTypeId');
+      const selectedNeighborTypeId = selectedEdge.getIn(['neighborTypeIds', 0]);
+      const selectedIsSrc = selectedEdge.get('utilizerIsSrc');
+
+      const indexOfNeighborType = this.props.neighborTypes.findIndex((neighborType) => {
+        const associationMatch = neighborType.getIn(['associationEntityType', 'id']) === selectedAssocTypeId;
+        const neighborMatch = neighborType.getIn(['neighborEntityType', 'id']) === selectedNeighborTypeId;
+
+        return associationMatch && neighborMatch;
+      });
+
+      const associationTypeTitle = this.props.neighborTypes.getIn([indexOfNeighborType, 'associationEntityType', 'title']);
+      const neighborTypeTitle = this.props.neighborTypes.getIn([indexOfNeighborType, 'neighborEntityType', 'title']);
+
+      const headerId = this.getEdgeId(selectedAssocTypeId, selectedNeighborTypeId, selectedIsSrc);
+      const headerValue = this.getEdgeValue(associationTypeTitle, neighborTypeTitle, selectedIsSrc);
+
+      countHeaders.push({
+        id: `count.${headerId}`,
+        value: `${headerValue}`
+      });
+    });
+    return countHeaders;
+  }
+
+  getEdgeId = (associationTypeId, neighborTypeId, src) => {
+    return (src ? [associationTypeId, neighborTypeId] : [associationTypeId, neighborTypeId]).join('|');
+  };
+
+  getEdgeValue = (associationTypeTitle, neighborTypeTitle, src) => {
+    return (src ? [associationTypeTitle, neighborTypeTitle] : [neighborTypeTitle, associationTypeTitle]).join(' ');
+  };
 
   loadEntitySet = () => {
     EntityDataModelApi.getEntityType(this.props.entitySet.entityTypeId)
@@ -264,6 +310,7 @@ function mapStateToProps(state, ownProps) {
     associations: topUtilizers.get('associations'),
     topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList'),
     neighbors: topUtilizers.get('neighbors'),
+    neighborTypes: topUtilizers.get('neighborTypes'),
     entitySetPropertyMetadata
   };
 }
