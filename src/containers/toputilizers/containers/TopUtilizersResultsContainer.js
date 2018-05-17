@@ -60,16 +60,12 @@ class TopUtilizersResultsContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isGettingNeighbors && !nextProps.isGettingNeighbors) {
       this.countEdgeTypesPerEntity(nextProps);
-      
     }
   }
 
   // each element in 'neighbor' is an array that contains associations that belong to search parameters.
   // maintain a count of each association type within each neighbor object and display that on the table.
   countEdgeTypesPerEntity = (nextProps) => {
-    console.log('this.props.results', this.props.results);
-    console.log('nextprops.neighbors', nextProps.neighbors);
-    console.log(this.props.results.first());
     const countHeaders = this.createHeadersForEdgeTypes();
     this.props.results.forEach((result) => {
       const entityId = result.id[0];
@@ -86,10 +82,10 @@ class TopUtilizersResultsContainer extends React.Component {
         const edgeId = this.getEdgeId(associationEntityId, neighborEntityId, isSrc);
         const edgeFqn = `count.${edgeId}`;
         if (neighborCount[edgeFqn] !== undefined) {
-          neighborCount[edgeFqn] += 1;
+          neighborCount[edgeFqn][0] += 1;
         }
         else {
-          neighborCount[edgeFqn] = 1;
+          neighborCount[edgeFqn] = [1];
         }
       });
 

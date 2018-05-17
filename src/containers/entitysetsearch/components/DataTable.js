@@ -362,7 +362,6 @@ class DataTable extends React.Component<Props, State> {
     if (sortOrder === 0) {
 
       const sortedData = this.state.data.sort((row1, row2) => {
-        // debugger;
         const cellValue1 :string = getCellValueInRow(row1, columnIndex);
         const cellValue2 :string = getCellValueInRow(row2, columnIndex);
         if (cellValue1.length === 0) {

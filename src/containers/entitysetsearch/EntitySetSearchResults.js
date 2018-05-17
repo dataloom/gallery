@@ -402,8 +402,6 @@ export default class EntitySetSearchResults extends React.Component {
       }
 
       if (hasCustomHeaders) {
-        const firstEle = this.state.searchResults.first();
-        console.log('firstEle', firstEle);
         this.state.searchResults.first().get('count.Headers').forEach((countHeader) => {
           const newId = countHeader.get('id');
           const newValue = countHeader.get('value');
