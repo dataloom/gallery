@@ -94,7 +94,7 @@ class TopUtilizersResultsContainer extends React.Component {
       });
 
       // Assign neighborCount to current result element
-      Object.assign(result, neighborCount, { countHeaders });
+      Object.assign(result, neighborCount, { 'count.Headers': countHeaders });
     });
 
   }

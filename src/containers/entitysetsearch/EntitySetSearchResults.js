@@ -366,7 +366,16 @@ export default class EntitySetSearchResults extends React.Component {
   }
 
   getSearchResultsDataTableHeaders = () => {
-
+    let showCountColumn = false;
+    let hasCustomHeaders = false;
+    this.state.searchResults.forEach((result) => {
+      if (result.has('count')) {
+        showCountColumn = true;
+      }
+      if (result.has('count.Headers')) {
+        hasCustomHeaders = true;
+      }
+    });
     // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
     let headers = Immutable.List().withMutations((list) => {
       this.props.propertyTypes.forEach((propertyType) => {
@@ -384,21 +393,27 @@ export default class EntitySetSearchResults extends React.Component {
           console.error('EntitySetSearchResults', e);
         }
       });
-    });
 
-    let showCountColumn = false;
-    this.state.searchResults.forEach((result) => {
-      if (result.has('count')) {
-        showCountColumn = true;
+      if (showCountColumn) {
+        list.unshift(Immutable.fromJS({
+          id: 'count',
+          value: 'Count'
+        }));
+      }
+
+      if (hasCustomHeaders) {
+        const firstEle = this.state.searchResults.first();
+        console.log('firstEle', firstEle);
+        this.state.searchResults.first().get('count.Headers').forEach((countHeader) => {
+          const newId = countHeader.get('id');
+          const newValue = countHeader.get('value');
+          list.push(Immutable.fromJS({
+            id: newId,
+            value: newValue
+          }));
+        });
       }
     });
-
-    if (showCountColumn) {
-      headers = headers.unshift(Immutable.fromJS({
-        id: 'count',
-        value: 'Count'
-      }));
-    }
 
     return headers;
   }
