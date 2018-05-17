@@ -377,7 +377,7 @@ export default class EntitySetSearchResults extends React.Component {
       }
     });
     // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
-    let headers = Immutable.List().withMutations((list) => {
+    const headers = Immutable.List().withMutations((list) => {
       this.props.propertyTypes.forEach((propertyType) => {
         const title = (this.props.entitySetPropertyMetadata[propertyType.id])
           ? this.props.entitySetPropertyMetadata[propertyType.id].title
