@@ -252,7 +252,7 @@ class OrganizationAddMembersSectionComponent extends React.Component {
       <StyledFlexContainerStacked>
         <StyledSectionHeading>
           <h3>Add Members</h3>
-          <h5>To add members to this organization, search for users by specifying their exact email.</h5>
+          <h5>To add members to this organization, search for users in the system.</h5>
         </StyledSectionHeading>
         <SearchContainer>
           { this.renderSearchBox() }
