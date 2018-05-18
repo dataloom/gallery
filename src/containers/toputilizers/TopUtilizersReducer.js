@@ -29,7 +29,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case actionTypes.SUBMIT_TOP_UTILIZERS_SUCCESS: {
       const newState = {
         isGettingResults: false,
-        topUtilizersResults: action.data
+        topUtilizersResults: Immutable.fromJS(action.data)
       };
       return state.mergeDeep(newState);
     }

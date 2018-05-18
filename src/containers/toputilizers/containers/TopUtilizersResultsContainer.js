@@ -73,7 +73,7 @@ class TopUtilizersResultsContainer extends React.Component {
   countEdgeTypesPerEntity = (nextProps) => {
     const countHeaders = this.createHeadersForEdgeTypes();
     const newResultsWithCounts = this.state.resultsWithCounts.map((result) => {
-      const entityId = result.id[0];
+      const entityId = result.getIn(['id', 0]);
       // Get List of neighbors for specific entity
       const neighborList = nextProps.neighbors.get(entityId);
       const neighborCount = {};
@@ -94,8 +94,8 @@ class TopUtilizersResultsContainer extends React.Component {
         }
       });
 
-      // Assign neighborCount to current result element
-      return Object.assign({}, result, neighborCount, { 'count.Headers': countHeaders });
+      // Mertge neighborCount to current result element
+      return result.merge(Immutable.fromJS(neighborCount), Immutable.fromJS({ 'count.Headers': countHeaders }));
     });
     this.setState({
       resultsWithCounts: newResultsWithCounts
