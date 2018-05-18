@@ -378,22 +378,6 @@ export default class EntitySetSearchResults extends React.Component {
     });
     // TODO: make this more standard. headers is a list of objects, where each object has an id and a value
     const headers = Immutable.List().withMutations((list) => {
-      this.props.propertyTypes.forEach((propertyType) => {
-        const title = (this.props.entitySetPropertyMetadata[propertyType.id])
-          ? this.props.entitySetPropertyMetadata[propertyType.id].title
-          : propertyType.title;
-        try {
-          const fqn = new FullyQualifiedName(propertyType.type);
-          list.push(Immutable.fromJS({
-            id: fqn.getFullyQualifiedName(),
-            value: title
-          }));
-        }
-        catch (e) {
-          console.error('EntitySetSearchResults', e);
-        }
-      });
-
       if (showCountColumn) {
         list.unshift(Immutable.fromJS({
           id: 'count',
@@ -411,6 +395,22 @@ export default class EntitySetSearchResults extends React.Component {
           }));
         });
       }
+
+      this.props.propertyTypes.forEach((propertyType) => {
+        const title = (this.props.entitySetPropertyMetadata[propertyType.id])
+          ? this.props.entitySetPropertyMetadata[propertyType.id].title
+          : propertyType.title;
+        try {
+          const fqn = new FullyQualifiedName(propertyType.type);
+          list.push(Immutable.fromJS({
+            id: fqn.getFullyQualifiedName(),
+            value: title
+          }));
+        }
+        catch (e) {
+          console.error('EntitySetSearchResults', e);
+        }
+      });
     });
 
     return headers;
