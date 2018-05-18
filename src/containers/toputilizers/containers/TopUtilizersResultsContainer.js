@@ -23,7 +23,7 @@ const DISPLAYS = {
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
-    results: PropTypes.object.isRequired,
+    results: PropTypes.instanceOf(Immutable.List).isRequired,
     isGettingResults: PropTypes.bool.isRequired,
     isGettingNeighbors: PropTypes.bool.isRequired,
     entitySet: PropTypes.object.isRequired,
@@ -43,7 +43,7 @@ class TopUtilizersResultsContainer extends React.Component {
       display: DISPLAYS.TABLE,
       neighborEntityTypes: [],
       neighborPropertyTypes: {},
-      edgeTypeCounts: {}
+      resultsWithCounts: Immutable.Map()
     };
   }
 
@@ -58,6 +58,11 @@ class TopUtilizersResultsContainer extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.results.size !== this.state.resultsWithCounts.size) {
+      this.setState({
+        resultsWithCounts: nextProps.results
+      });
+    }
     if (this.props.isGettingNeighbors && !nextProps.isGettingNeighbors) {
       this.countEdgeTypesPerEntity(nextProps);
     }
@@ -67,7 +72,7 @@ class TopUtilizersResultsContainer extends React.Component {
   // maintain a count of each association type within each neighbor object and display that on the table.
   countEdgeTypesPerEntity = (nextProps) => {
     const countHeaders = this.createHeadersForEdgeTypes();
-    this.props.results.forEach((result) => {
+    const newResultsWithCounts = this.state.resultsWithCounts.map((result) => {
       const entityId = result.id[0];
       // Get List of neighbors for specific entity
       const neighborList = nextProps.neighbors.get(entityId);
@@ -90,9 +95,11 @@ class TopUtilizersResultsContainer extends React.Component {
       });
 
       // Assign neighborCount to current result element
-      Object.assign(result, neighborCount, { 'count.Headers': countHeaders });
+      return Object.assign({}, result, neighborCount, { 'count.Headers': countHeaders });
     });
-
+    this.setState({
+      resultsWithCounts: newResultsWithCounts
+    });
   }
 
   createHeadersForEdgeTypes = () => {
@@ -270,7 +277,7 @@ class TopUtilizersResultsContainer extends React.Component {
   renderResults = () => {
     if (this.state.display === DISPLAYS.TABLE) {
       return (<TopUtilizersTable
-          results={this.props.results.toJS()}
+          results={this.state.resultsWithCounts.toJS()}
           propertyTypes={this.props.propertyTypes}
           entitySetId={this.props.entitySet.id}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />);
