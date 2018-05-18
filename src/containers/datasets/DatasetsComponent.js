@@ -37,7 +37,8 @@ class DatasetsComponent extends React.Component {
     finishedLoading: PropTypes.bool.isRequired,
     errorMessage: PropTypes.string.isRequired,
     allPagingTokens: PropTypes.instanceOf(Immutable.List).isRequired,
-    page: PropTypes.number.isRequired
+    page: PropTypes.number.isRequired,
+    profileFn: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -117,7 +118,9 @@ class DatasetsComponent extends React.Component {
   }
 
   render() {
+
     const { isModalOpen } = this.state;
+    const isAdmin = this.props.profileFn().isAdmin === true;
 
     return (
       <DocumentTitle title="Datasets">
@@ -134,7 +137,7 @@ class DatasetsComponent extends React.Component {
               <Modal.Title>Create a dataset</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <CreateEntitySet defaultContact={this.getDefaultContact()} />
+              <CreateEntitySet defaultContact={this.getDefaultContact()} isAdmin={isAdmin} />
             </Modal.Body>
           </Modal>
 
