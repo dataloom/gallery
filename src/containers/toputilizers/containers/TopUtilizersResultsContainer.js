@@ -127,7 +127,7 @@ class TopUtilizersResultsContainer extends React.Component {
 
       countHeaders.push({
         id: `count.${headerId}`,
-        value: `${headerValue}`
+        value: headerValue
       });
     });
     return countHeaders;
