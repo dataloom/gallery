@@ -23,7 +23,7 @@ const DISPLAYS = {
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
-    results: PropTypes.object.isRequired,
+    results: PropTypes.instanceOf(Immutable.List).isRequired,
     isGettingResults: PropTypes.bool.isRequired,
     isGettingNeighbors: PropTypes.bool.isRequired,
     entitySet: PropTypes.object.isRequired,
@@ -31,6 +31,7 @@ class TopUtilizersResultsContainer extends React.Component {
     downloadResults: PropTypes.func.isRequired,
     topUtilizersDetails: PropTypes.instanceOf(Immutable.List).isRequired,
     neighbors: PropTypes.instanceOf(Immutable.Map).isRequired,
+    neighborTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
@@ -41,7 +42,8 @@ class TopUtilizersResultsContainer extends React.Component {
       propertyTypes: [],
       display: DISPLAYS.TABLE,
       neighborEntityTypes: [],
-      neighborPropertyTypes: {}
+      neighborPropertyTypes: {},
+      resultsWithCounts: Immutable.Map()
     };
   }
 
@@ -54,6 +56,90 @@ class TopUtilizersResultsContainer extends React.Component {
       });
     });
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.results.size !== this.state.resultsWithCounts.size) {
+      this.setState({
+        resultsWithCounts: nextProps.results
+      });
+    }
+    if (this.props.isGettingNeighbors && !nextProps.isGettingNeighbors) {
+      this.countEdgeTypesPerEntity(nextProps);
+    }
+  }
+
+  // each element in 'neighbor' is an array that contains associations that belong to search parameters.
+  // maintain a count of each association type within each neighbor object and display that on the table.
+  countEdgeTypesPerEntity = (nextProps) => {
+    const countHeaders = this.createHeadersForEdgeTypes();
+    const newResultsWithCounts = this.state.resultsWithCounts.map((result) => {
+      const entityId = result.getIn(['id', 0]);
+      // Get List of neighbors for specific entity
+      const neighborList = nextProps.neighbors.get(entityId);
+      const neighborCount = {};
+
+      // For each edge in the list of neighbors, count occurances for each unique assoc -> neighbor
+      neighborList.forEach((edge) => {
+        const associationEntityId = edge.getIn(['associationEntitySet', 'entityTypeId']);
+        const neighborEntityId = edge.getIn(['neighborEntitySet', 'entityTypeId']);
+        const isSrc = edge.get('src');
+
+        const edgeId = this.getEdgeId(associationEntityId, neighborEntityId, isSrc);
+        const edgeFqn = `count.${edgeId}`;
+        if (neighborCount[edgeFqn] !== undefined) {
+          neighborCount[edgeFqn][0] += 1;
+        }
+        else {
+          neighborCount[edgeFqn] = [1];
+        }
+      });
+
+      // Mertge neighborCount to current result element
+      return result.merge(Immutable.fromJS(neighborCount), Immutable.fromJS({ 'count.Headers': countHeaders }));
+    });
+    this.setState({
+      resultsWithCounts: newResultsWithCounts
+    });
+  }
+
+  createHeadersForEdgeTypes = () => {
+    // Must match ids from neighborTypes to topUtilizersDetails as it does not include necessary 'type' property
+    // Tried modifying topUtilizersDetails but the exact object is used to make a strict request
+    const countHeaders = [];
+    this.props.topUtilizersDetails.forEach((selectedEdge) => {
+
+      const selectedAssocTypeId = selectedEdge.get('associationTypeId');
+      const selectedNeighborTypeId = selectedEdge.getIn(['neighborTypeIds', 0]);
+      const selectedIsSrc = selectedEdge.get('utilizerIsSrc');
+
+      const indexOfNeighborType = this.props.neighborTypes.findIndex((neighborType) => {
+        const associationMatch = neighborType.getIn(['associationEntityType', 'id']) === selectedAssocTypeId;
+        const neighborMatch = neighborType.getIn(['neighborEntityType', 'id']) === selectedNeighborTypeId;
+
+        return associationMatch && neighborMatch;
+      });
+
+      const associationTypeTitle = this.props.neighborTypes.getIn([indexOfNeighborType, 'associationEntityType', 'title']);
+      const neighborTypeTitle = this.props.neighborTypes.getIn([indexOfNeighborType, 'neighborEntityType', 'title']);
+
+      const headerId = this.getEdgeId(selectedAssocTypeId, selectedNeighborTypeId, selectedIsSrc);
+      const headerValue = this.getEdgeValue(associationTypeTitle, neighborTypeTitle, selectedIsSrc);
+
+      countHeaders.push({
+        id: `count.${headerId}`,
+        value: headerValue
+      });
+    });
+    return countHeaders;
+  }
+
+  getEdgeId = (associationTypeId, neighborTypeId, src) => {
+    return (src ? [associationTypeId, neighborTypeId] : [associationTypeId, neighborTypeId]).join('|');
+  };
+
+  getEdgeValue = (associationTypeTitle, neighborTypeTitle, src) => {
+    return (src ? [associationTypeTitle, neighborTypeTitle] : [neighborTypeTitle, associationTypeTitle]).join(' ');
+  };
 
   loadEntitySet = () => {
     EntityDataModelApi.getEntityType(this.props.entitySet.entityTypeId)
@@ -191,7 +277,7 @@ class TopUtilizersResultsContainer extends React.Component {
   renderResults = () => {
     if (this.state.display === DISPLAYS.TABLE) {
       return (<TopUtilizersTable
-          results={this.props.results.toJS()}
+          results={this.state.resultsWithCounts.toJS()}
           propertyTypes={this.props.propertyTypes}
           entitySetId={this.props.entitySet.id}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />);
@@ -227,6 +313,7 @@ function mapStateToProps(state, ownProps) {
     associations: topUtilizers.get('associations'),
     topUtilizersDetails: topUtilizers.get('topUtilizersDetailsList'),
     neighbors: topUtilizers.get('neighbors'),
+    neighborTypes: topUtilizers.get('neighborTypes'),
     entitySetPropertyMetadata
   };
 }
