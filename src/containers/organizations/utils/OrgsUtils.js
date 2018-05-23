@@ -10,7 +10,7 @@ export function getUserNameLabelValue(member :Immutable.Map) :string {
     return '';
   }
 
-  const profile = member.get('profile', member);
+  const profile = member.get('profile', member) || member;
 
   // https://auth0.com/docs/api/authentication#user-profile
   const memberId :string = profile.get('user_id');

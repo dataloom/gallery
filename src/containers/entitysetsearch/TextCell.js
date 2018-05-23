@@ -42,7 +42,8 @@ export default class TextCell extends React.Component {
     let counter = 0;
     const images = value.map((imgSrc) => {
       counter += 1;
-      return <RowImage key={`${field}-${counter}`} imgSrc={imgSrc} />;
+      const key = `${field}-${counter}`;
+      return <RowImage key={key} tooltipId={key} imgSrc={imgSrc} />;
     });
     return <div className={styles.imgDataContainer}>{images}</div>;
   }

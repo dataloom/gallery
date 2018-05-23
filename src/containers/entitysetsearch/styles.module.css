@@ -311,3 +311,7 @@
 :global .public_fixedDataTableRow_odd:hover .public_fixedDataTableCell_main {
   background-color: #eeeff0;
 }
+
+:global .imgtooltip > .tooltip-inner {
+  background-color: #fff;
+}

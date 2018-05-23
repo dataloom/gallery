@@ -424,7 +424,7 @@ export default class EntitySetSearchResults extends React.Component {
     // removing the picture column also helps with performance since the picture string is very large
     headers = headers.filterNot((header) => {
       const id = header.get('id', '').toLowerCase();
-      return id.includes('mugshot') || id.includes('picture');
+      return id.includes('mugshot') || id.includes('picture') || id.endsWith('.signature');
     });
 
     const onClick = (selectedRowIndex, selectedRowData) => {
@@ -470,9 +470,9 @@ export default class EntitySetSearchResults extends React.Component {
 
 
   getImageCellData(data) {
-
     const images = data.map((imgSrc) => {
-      return <RowImage key={`img-${getKeyCounter()}`} imgSrc={imgSrc} />;
+      const key = `img-${getKeyCounter()}`;
+      return <RowImage key={key} tooltipId={key} imgSrc={imgSrc} />;
     });
 
     return (
@@ -521,7 +521,7 @@ export default class EntitySetSearchResults extends React.Component {
 
           // HACK: for displaying images in the table
           const headerIdLC = headerId.toLowerCase();
-          if (headerIdLC.includes('mugshot') || headerIdLC.includes('picture')) {
+          if (headerIdLC.includes('mugshot') || headerIdLC.includes('picture') || headerIdLC.endsWith('.signature')) {
             dataValue = getImageCellData(dataValue);
           }
 

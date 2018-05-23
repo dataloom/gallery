@@ -132,7 +132,8 @@ export default class EntityRow extends React.Component {
     let counter = 0;
     const images = this.props.row[propertyFqn].map((imgSrc) => {
       counter += 1;
-      return <RowImage key={`${propertyFqn}-${counter}`} imgSrc={imgSrc} />;
+      const key = `${propertyFqn}-${counter}`;
+      return <RowImage key={key} tooltipId={key} imgSrc={imgSrc} />;
     });
     return <div className={styles.imgDataContainer}>{images}</div>;
   }
