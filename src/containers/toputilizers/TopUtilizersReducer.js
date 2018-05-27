@@ -29,7 +29,7 @@ export default function reducer(state = INITIAL_STATE, action) {
     case actionTypes.SUBMIT_TOP_UTILIZERS_SUCCESS: {
       const newState = {
         isGettingResults: false,
-        topUtilizersResults: action.data
+        topUtilizersResults: Immutable.fromJS(action.data)
       };
       return state.mergeDeep(newState);
     }
@@ -41,6 +41,8 @@ export default function reducer(state = INITIAL_STATE, action) {
       return state.set('isGettingNeighbors', true);
 
     case actionTypes.GET_TOP_UTILIZERS_NEIGHBORS_SUCCESS:
+      // Turns out this action is reduced properly. But because it's so large, it causes
+      // Redux DevTools to crash and no longer log future actions.
       return state.set('neighbors', Immutable.fromJS(action.neighbors))
         .set('isGettingNeighbors', false);
 

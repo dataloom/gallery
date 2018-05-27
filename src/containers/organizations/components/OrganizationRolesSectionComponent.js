@@ -84,6 +84,8 @@ class OrganizationRolesSectionComponent extends React.Component {
       .setPrincipal(principal)
       .build();
 
+    role['@class'] = 'com.openlattice.organization.roles.Role';
+
     this.props.actions.addRoleToOrganizationRequest(role);
   }
 
