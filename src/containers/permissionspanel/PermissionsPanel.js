@@ -68,15 +68,16 @@ class PermissionsPanel extends React.Component {
     super(props);
     this.state = {
       view: views.EMAILS,
-      rolesView: Permission.OWNER.getFriendlyName(),
       newRoleValue: '',
       newEmailValue: '',
-      selectedPermissionForEmailsView: Permission.OWNER.getFriendlyName()
+      selectedPermissionForEmailsView: Permission.OWNER.getFriendlyName(),
+      selectedPermissionForRolesView: Permission.OWNER.getFriendlyName()
     };
   }
 
   componentDidMount() {
 
+    // this is super heavy, but... move fast, break things
     this.loadAllAcls(this.props.aclKeysToUpdate);
   }
 
@@ -208,9 +209,11 @@ class PermissionsPanel extends React.Component {
     );
   }
 
-  changeRolesView = (rolesView) => {
-    const newRoleValue = '';
-    this.setState({ rolesView, newRoleValue });
+  changeRolesView = (permission) => {
+    this.setState({
+      newRoleValue: '',
+      selectedPermissionForRolesView: permission
+    });
   }
 
   updateRoles = (action, role, view) => {
@@ -275,25 +278,48 @@ class PermissionsPanel extends React.Component {
   }
 
   getRolesView = () => {
-    const { rolesView, newRoleValue } = this.state;
-    const { aclKeyPermissions, rolesById } = this.props;
+    const { newRoleValue, selectedPermissionForRolesView } = this.state;
+    const { aclKeyPermissions, aclKeysToUpdate, allSelected, rolesById } = this.props;
 
-    const roleList = aclKeyPermissions
-      .getIn([this.getAclKey(), ROLE, permissionsByLabel[rolesView]], List())
-      .filter((roleId) => {
-        return (roleId !== ADMIN && roleId !== AUTHENTICATED_USER);
+    const filterRolesForAclKeyForSelectedPermission = (aclKey, selectedPermission) => {
+      const selectedPermissionLabel = permissionsByLabel[selectedPermission];
+      return aclKeyPermissions
+        .getIn([aclKey, ROLE, selectedPermissionLabel], List())
+        .filter(roleId => (roleId !== ADMIN && roleId !== AUTHENTICATED_USER));
+    };
+
+    let roleIdList;
+    const selectedAclKey = this.getAclKey();
+
+    if (selectedAclKey.size === 1 && allSelected) {
+      const roleIdToCountMap = {};
+      aclKeysToUpdate.forEach((aclKey) => {
+        const iAclKey = fromJS(aclKey); // because keys in aclKeyPermissions are Immutable objects
+        const roleIds = filterRolesForAclKeyForSelectedPermission(iAclKey, selectedPermissionForRolesView);
+        roleIds.forEach((roleId) => {
+          const count = roleIdToCountMap[roleId];
+          roleIdToCountMap[roleId] = (typeof count === 'number' && count > 0) ? (count + 1) : 1;
+        });
       });
+      roleIdList = fromJS(roleIdToCountMap)
+        .filter(count => count === aclKeysToUpdate.length)
+        .keySeq()
+        .toList();
+    }
+    else {
+      roleIdList = filterRolesForAclKeyForSelectedPermission(selectedAclKey, selectedPermissionForRolesView);
+    }
 
-    const roleOptions = this.getRoleOptions(roleList);
-    const hiddenBody = roleList.map((roleId) => {
+    const roleOptions = this.getRoleOptions(roleIdList);
+    const hiddenBody = roleIdList.map((roleId) => {
       const role = rolesById.get(roleId);
       const roleTitle = this.formatRoleTitle(roleId, role.get('organizationId'));
       return (
-        <div className={styles.tableRows} key={roleList.indexOf(roleId)}>
+        <div className={styles.tableRows} key={roleIdList.indexOf(roleId)}>
           <div className={styles.inline}>
             <DeleteButton
                 onClick={() => {
-                  this.updateRoles(ActionConsts.REMOVE, roleId, rolesView);
+                  this.updateRoles(ActionConsts.REMOVE, roleId, selectedPermissionForRolesView);
                 }} />
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{roleTitle}</div>
@@ -306,9 +332,9 @@ class PermissionsPanel extends React.Component {
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.renderPermissionButtons(
-            [Permission.WRITE, Permission.READ, Permission.LINK, Permission.DISCOVER],
+            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.LINK, Permission.DISCOVER],
             this.changeRolesView,
-            rolesView
+            selectedPermissionForRolesView
           )}
         </div>
         <div className={styles.permissionsBodyContainer}>
@@ -325,7 +351,7 @@ class PermissionsPanel extends React.Component {
               className={`${styles.spacerMargin}`}
               disabled={this.state.newRoleValue.length === 0}
               onClick={() => {
-                this.updateRoles(ActionConsts.ADD, newRoleValue, rolesView);
+                this.updateRoles(ActionConsts.ADD, newRoleValue, selectedPermissionForRolesView);
               }}>Add</Button>
         </div>
       </div>
@@ -376,7 +402,7 @@ class PermissionsPanel extends React.Component {
     const { newEmailValue, selectedPermissionForEmailsView } = this.state;
     const { aclKeyPermissions, aclKeysToUpdate, allSelected } = this.props;
 
-    const getUserWithPermissions = (aclKey, selectedPermission) => {
+    const filterUsersForAclKeyForSelectedPermission = (aclKey, selectedPermission) => {
       const selectedPermissionLabel = permissionsByLabel[selectedPermission];
       return aclKeyPermissions
         .getIn([aclKey, USER, selectedPermissionLabel], List())
@@ -398,7 +424,7 @@ class PermissionsPanel extends React.Component {
       const userIdToCountMap = {};
       aclKeysToUpdate.forEach((aclKey) => {
         const iAclKey = fromJS(aclKey); // because keys in aclKeyPermissions are Immutable objects
-        const userIds = getUserWithPermissions(iAclKey, selectedPermissionForEmailsView);
+        const userIds = filterUsersForAclKeyForSelectedPermission(iAclKey, selectedPermissionForEmailsView);
         userIds.forEach((userId) => {
           const count = userIdToCountMap[userId];
           userIdToCountMap[userId] = (typeof count === 'number' && count > 0) ? (count + 1) : 1;
@@ -410,7 +436,7 @@ class PermissionsPanel extends React.Component {
         .toList();
     }
     else {
-      userIdList = getUserWithPermissions(selectedAclKey, selectedPermissionForEmailsView);
+      userIdList = filterUsersForAclKeyForSelectedPermission(selectedAclKey, selectedPermissionForEmailsView);
     }
 
     const emailOptions = this.getEmailOptions(userIdList);
