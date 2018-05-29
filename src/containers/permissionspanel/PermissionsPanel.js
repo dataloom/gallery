@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import Immutable from 'immutable';
+import Immutable, { List, Map, fromJS } from 'immutable';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -40,6 +40,7 @@ const permissionsByLabel = {
 
 class PermissionsPanel extends React.Component {
   static propTypes = {
+    allSelected: PropTypes.bool,
     entitySetId: PropTypes.string,
     propertyTypeId: PropTypes.string,
     aclKeysToUpdate: PropTypes.array,
@@ -59,6 +60,7 @@ class PermissionsPanel extends React.Component {
   }
 
   static defaultProps = {
+    allSelected: false,
     isOrganization: false
   }
 
@@ -67,35 +69,44 @@ class PermissionsPanel extends React.Component {
     this.state = {
       view: views.EMAILS,
       rolesView: Permission.OWNER.getFriendlyName(),
-      emailsView: Permission.OWNER.getFriendlyName(),
       newRoleValue: '',
-      newEmailValue: ''
+      newEmailValue: '',
+      selectedPermissionForEmailsView: Permission.OWNER.getFriendlyName()
     };
   }
 
   componentDidMount() {
-    this.loadAcls(this.props.entitySetId, this.props.propertyTypeId);
+
+    this.loadAllAcls(this.props.aclKeysToUpdate);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.propertyTypeId !== this.props.propertyTypeId || nextProps.entitySetId !== this.props.entitySetId) {
-      this.loadAcls(nextProps.entitySetId, nextProps.propertyTypeId);
+
+    // this feels hacky
+    const prevAclKeys = fromJS(this.props.aclKeysToUpdate);
+    const nextAclKeys = fromJS(nextProps.aclKeysToUpdate);
+    if (!prevAclKeys.equals(nextAclKeys)) {
+      this.loadAllAcls(nextProps.aclKeysToUpdate);
     }
   }
 
   getAclKey = () => {
     const { entitySetId, propertyTypeId } = this.props;
     const aclKey = propertyTypeId ? [entitySetId, propertyTypeId] : [entitySetId];
-    return Immutable.fromJS(aclKey);
+    return fromJS(aclKey);
   }
 
-  loadAcls = (entitySetId, propertyTypeId) => {
-    const { actions, isOrganization } = this.props;
+  loadAllAcls = (aclKeys) => {
 
-    actions.getAllUsers();
-    if (!isOrganization) actions.fetchOrganizationsRequest();
-    const aclKey = propertyTypeId ? [entitySetId, propertyTypeId] : [entitySetId];
-    actions.getAclRequest(aclKey);
+    this.props.actions.getAllUsers();
+
+    if (!this.props.isOrganization) {
+      this.props.actions.fetchOrganizationsRequest();
+    }
+
+    aclKeys.forEach((aclKey) => {
+      this.props.actions.getAclRequest(aclKey);
+    });
   }
 
   switchView = (view) => {
@@ -163,7 +174,7 @@ class PermissionsPanel extends React.Component {
 
   getGlobalView = () => {
     const { aclKeyPermissions } = this.props;
-    const rolePermissions = aclKeyPermissions.getIn([this.getAclKey(), ROLE], Immutable.Map());
+    const rolePermissions = aclKeyPermissions.getIn([this.getAclKey(), ROLE], Map());
     const selectedGlobalValues = rolePermissions.keySeq().filter((permission) => {
       return rolePermissions.get(permission).includes(AUTHENTICATED_USER);
     });
@@ -220,25 +231,25 @@ class PermissionsPanel extends React.Component {
     this.setState({ newRoleValue });
   }
 
-  viewPermissionTypeButton = (permission, fn, currView, order) => {
+  viewPermissionTypeButton = (permission, fn, currentlySelectedPermission, order) => {
     return (
       <button
           key={permission}
           onClick={() => {
             fn(permission);
           }}
-          className={this.buttonStyle(permission, currView, order)}>
+          className={this.buttonStyle(permission, currentlySelectedPermission, order)}>
         <div className={styles.edmNavItemText}>{permission}</div>
       </button>
     );
   }
 
-  renderPermissionButtons = (permissions, fn, currView) => {
+  renderPermissionButtons = (permissions, fn, currentlySelectedPermission) => {
     return permissions.map((permission, index) => {
       let order;
       if (index === 0) order = orders.FIRST;
       else if (index === permissions.length - 1) order = orders.LAST;
-      return this.viewPermissionTypeButton(permission.getFriendlyName(), fn, currView, order);
+      return this.viewPermissionTypeButton(permission.getFriendlyName(), fn, currentlySelectedPermission, order);
     });
   }
 
@@ -268,7 +279,7 @@ class PermissionsPanel extends React.Component {
     const { aclKeyPermissions, rolesById } = this.props;
 
     const roleList = aclKeyPermissions
-      .getIn([this.getAclKey(), ROLE, permissionsByLabel[rolesView]], Immutable.List())
+      .getIn([this.getAclKey(), ROLE, permissionsByLabel[rolesView]], List())
       .filter((roleId) => {
         return (roleId !== ADMIN && roleId !== AUTHENTICATED_USER);
       });
@@ -321,9 +332,11 @@ class PermissionsPanel extends React.Component {
     );
   }
 
-  changeEmailsView = (emailsView) => {
-    const newEmailValue = '';
-    this.setState({ emailsView, newEmailValue });
+  changeEmailsView = (permission) => {
+    this.setState({
+      newEmailValue: '',
+      selectedPermissionForEmailsView: permission
+    });
   }
 
   updateEmails = (action, userId, view) => {
@@ -359,17 +372,46 @@ class PermissionsPanel extends React.Component {
   }
 
   getEmailsView = () => {
-    const { emailsView, newEmailValue } = this.state;
-    const { aclKeyPermissions } = this.props;
-    const userIdList = aclKeyPermissions
-      .getIn([this.getAclKey(), USER, permissionsByLabel[emailsView]], Immutable.List())
-      .filter((userId) => {
-        const ownerName = Permission.OWNER.getFriendlyName();
-        if (emailsView !== ownerName && aclKeyPermissions
-          .getIn([this.getAclKey(), USER, Permission.OWNER.name], Immutable.List()).includes(userId)) return false;
-        const user = this.props.users.get(userId);
-        return (!!user && !!user.get('email'));
+
+    const { newEmailValue, selectedPermissionForEmailsView } = this.state;
+    const { aclKeyPermissions, aclKeysToUpdate, allSelected } = this.props;
+
+    const getUserWithPermissions = (aclKey, selectedPermission) => {
+      const selectedPermissionLabel = permissionsByLabel[selectedPermission];
+      return aclKeyPermissions
+        .getIn([aclKey, USER, selectedPermissionLabel], List())
+        .filter((userId) => {
+          // filter out user ids with OWNER permissions, since OWNER implies having all other permissions
+          const owners = aclKeyPermissions.getIn([aclKey, USER, Permission.OWNER.name], List());
+          if (selectedPermission !== Permission.OWNER.getFriendlyName() && owners.includes(userId)) {
+            return false;
+          }
+          const user = this.props.users.get(userId);
+          return (!!user && !!user.get('email'));
+        });
+    };
+
+    let userIdList;
+    const selectedAclKey = this.getAclKey();
+
+    if (selectedAclKey.size === 1 && allSelected) {
+      const userIdToCountMap = {};
+      aclKeysToUpdate.forEach((aclKey) => {
+        const iAclKey = fromJS(aclKey); // because keys in aclKeyPermissions are Immutable objects
+        const userIds = getUserWithPermissions(iAclKey, selectedPermissionForEmailsView);
+        userIds.forEach((userId) => {
+          const count = userIdToCountMap[userId];
+          userIdToCountMap[userId] = (typeof count === 'number' && count > 0) ? (count + 1) : 1;
+        });
       });
+      userIdList = fromJS(userIdToCountMap)
+        .filter(count => count === aclKeysToUpdate.length)
+        .keySeq()
+        .toList();
+    }
+    else {
+      userIdList = getUserWithPermissions(selectedAclKey, selectedPermissionForEmailsView);
+    }
 
     const emailOptions = this.getEmailOptions(userIdList);
     const emailListBody = userIdList.map((userId) => {
@@ -378,7 +420,7 @@ class PermissionsPanel extends React.Component {
           <div className={styles.inline}>
             <DeleteButton
                 onClick={() => {
-                  this.updateEmails(ActionConsts.REMOVE, userId, emailsView);
+                  this.updateEmails(ActionConsts.REMOVE, userId, selectedPermissionForEmailsView);
                 }} />
           </div>
           <div className={`${styles.inline} ${styles.padLeft}`}>{this.props.users.getIn([userId, 'email'], '')}</div>
@@ -394,7 +436,7 @@ class PermissionsPanel extends React.Component {
           {this.renderPermissionButtons(
             [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.LINK, Permission.DISCOVER],
             this.changeEmailsView,
-            emailsView
+            selectedPermissionForEmailsView
           )}
         </div>
         <div className={styles.permissionsBodyContainer}>
@@ -411,7 +453,7 @@ class PermissionsPanel extends React.Component {
               className={`${styles.spacerMargin}`}
               disabled={this.state.newEmailValue.length === 0}
               onClick={() => {
-                this.updateEmails(ActionConsts.ADD, newEmailValue, emailsView);
+                this.updateEmails(ActionConsts.ADD, newEmailValue, selectedPermissionForEmailsView);
               }}>Add</Button>
         </div>
       </div>
@@ -455,20 +497,20 @@ function mapStateToProps(state) {
   const permissions = state.get('permissionsPanel');
   const myId = JSON.parse(localStorage.profile).user_id;
 
-  let rolesById = Immutable.Map();
-  state.getIn(['organizations', 'organizations'], Immutable.Map()).valueSeq().forEach((org) => {
+  let rolesById = Map();
+  state.getIn(['organizations', 'organizations'], Map()).valueSeq().forEach((org) => {
     org.get('roles').forEach((role) => {
       rolesById = rolesById.set(role.getIn(['principal', 'id'], ''), role);
     });
   });
 
   return {
-    users: permissions.get('users', Immutable.Map()).delete(myId),
+    users: permissions.get('users', Map()).delete(myId),
     rolesById,
-    aclKeyPermissions: permissions.get('aclKeyPermissions', Immutable.Map()),
+    aclKeyPermissions: permissions.get('aclKeyPermissions', Map()),
     loadUsersError: permissions.get('loadUsersError'),
     loadRolesError: permissions.get('loadRolesError'),
-    organizations: state.getIn(['organizations', 'organizations'], Immutable.Map())
+    organizations: state.getIn(['organizations', 'organizations'], Map())
   };
 }
 
