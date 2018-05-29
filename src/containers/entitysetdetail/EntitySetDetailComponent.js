@@ -330,7 +330,12 @@ class EntitySetDetailComponent extends React.Component {
           aclKeysToUpdate.push([this.props.entitySet.get('id'), propertyType.get('id')]);
         });
       }
-      panel = <PermissionsPanel entitySetId={aclKey[0]} aclKeysToUpdate={aclKeysToUpdate} />;
+      panel = (
+        <PermissionsPanel
+            entitySetId={aclKey[0]}
+            aclKeysToUpdate={aclKeysToUpdate}
+            allSelected={this.state.permissionsShouldUpdateAll} />
+      );
     }
     else if (aclKey.length === 2) {
       panel = <PermissionsPanel entitySetId={aclKey[0]} propertyTypeId={aclKey[1]} aclKeysToUpdate={[aclKey]} />;
