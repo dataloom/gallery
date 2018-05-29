@@ -281,7 +281,7 @@ class PermissionsPanel extends React.Component {
     const { newRoleValue, selectedPermissionForRolesView } = this.state;
     const { aclKeyPermissions, aclKeysToUpdate, allSelected, rolesById } = this.props;
 
-    const getRolesWithPermissions = (aclKey, selectedPermission) => {
+    const filterRolesForAclKeyForSelectedPermission = (aclKey, selectedPermission) => {
       const selectedPermissionLabel = permissionsByLabel[selectedPermission];
       return aclKeyPermissions
         .getIn([aclKey, ROLE, selectedPermissionLabel], List())
@@ -295,7 +295,7 @@ class PermissionsPanel extends React.Component {
       const roleIdToCountMap = {};
       aclKeysToUpdate.forEach((aclKey) => {
         const iAclKey = fromJS(aclKey); // because keys in aclKeyPermissions are Immutable objects
-        const roleIds = getRolesWithPermissions(iAclKey, selectedPermissionForRolesView);
+        const roleIds = filterRolesForAclKeyForSelectedPermission(iAclKey, selectedPermissionForRolesView);
         roleIds.forEach((roleId) => {
           const count = roleIdToCountMap[roleId];
           roleIdToCountMap[roleId] = (typeof count === 'number' && count > 0) ? (count + 1) : 1;
@@ -307,7 +307,7 @@ class PermissionsPanel extends React.Component {
         .toList();
     }
     else {
-      roleIdList = getRolesWithPermissions(selectedAclKey, selectedPermissionForRolesView);
+      roleIdList = filterRolesForAclKeyForSelectedPermission(selectedAclKey, selectedPermissionForRolesView);
     }
 
     const roleOptions = this.getRoleOptions(roleIdList);
@@ -402,7 +402,7 @@ class PermissionsPanel extends React.Component {
     const { newEmailValue, selectedPermissionForEmailsView } = this.state;
     const { aclKeyPermissions, aclKeysToUpdate, allSelected } = this.props;
 
-    const getUsersWithPermissions = (aclKey, selectedPermission) => {
+    const filterUsersForAclKeyForSelectedPermission = (aclKey, selectedPermission) => {
       const selectedPermissionLabel = permissionsByLabel[selectedPermission];
       return aclKeyPermissions
         .getIn([aclKey, USER, selectedPermissionLabel], List())
@@ -424,7 +424,7 @@ class PermissionsPanel extends React.Component {
       const userIdToCountMap = {};
       aclKeysToUpdate.forEach((aclKey) => {
         const iAclKey = fromJS(aclKey); // because keys in aclKeyPermissions are Immutable objects
-        const userIds = getUsersWithPermissions(iAclKey, selectedPermissionForEmailsView);
+        const userIds = filterUsersForAclKeyForSelectedPermission(iAclKey, selectedPermissionForEmailsView);
         userIds.forEach((userId) => {
           const count = userIdToCountMap[userId];
           userIdToCountMap[userId] = (typeof count === 'number' && count > 0) ? (count + 1) : 1;
@@ -436,7 +436,7 @@ class PermissionsPanel extends React.Component {
         .toList();
     }
     else {
-      userIdList = getUsersWithPermissions(selectedAclKey, selectedPermissionForEmailsView);
+      userIdList = filterUsersForAclKeyForSelectedPermission(selectedAclKey, selectedPermissionForEmailsView);
     }
 
     const emailOptions = this.getEmailOptions(userIdList);
