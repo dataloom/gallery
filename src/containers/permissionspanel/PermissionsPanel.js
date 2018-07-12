@@ -216,16 +216,21 @@ class PermissionsPanel extends React.Component {
     });
   }
 
-  updateRoles = (action, role, view) => {
-    const principal = {
-      type: ROLE,
-      id: role
-    };
+  getPermissionsForView = (view, action) => {
+    const permission = permissionsByLabel[view];
+    return (permission === Permission.OWNER.name && action === ActionConsts.ADD)
+      ? [permission, Permission.WRITE.name, Permission.READ.name, Permission.LINK.name, Permission.DISCOVER.name]
+      : [permission];
+  }
 
+  updateRoles = (action, role, view) => {
     // Only if changes were made, save changes
     if (role) {
-      const permissions = [permissionsByLabel[view]];
-      this.updatePermissions(action, principal, permissions);
+      const principal = {
+        type: ROLE,
+        id: role
+      };
+      this.updatePermissions(action, principal, this.getPermissionsForView(view, action));
     }
   }
 
@@ -370,11 +375,7 @@ class PermissionsPanel extends React.Component {
       type: USER,
       id: userId
     };
-    const permission = permissionsByLabel[view];
-    const permissions = (permission === Permission.OWNER.name && action === ActionConsts.ADD)
-      ? [permission, Permission.WRITE.name, Permission.READ.name, Permission.LINK.name, Permission.DISCOVER.name]
-      : [permission];
-    this.updatePermissions(action, principal, permissions);
+    this.updatePermissions(action, principal, this.getPermissionsForView(view, action));
   }
 
   handleNewEmailChange = (e) => {
