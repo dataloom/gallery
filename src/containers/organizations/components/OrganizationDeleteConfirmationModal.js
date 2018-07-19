@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Modal, Alert, Button } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 
 const OrganizationDeleteConfirmationModal = ({
   isConfirmingDeletion,
@@ -19,5 +19,11 @@ const OrganizationDeleteConfirmationModal = ({
     </Modal.Footer>
   </Modal>
 );
+
+OrganizationDeleteConfirmationModal.propTypes = {
+  isConfirmingDeletion: PropTypes.bool.isRequired,
+  handleCancelDelete: PropTypes.func.isRequired,
+  handleConfirmDelete: PropTypes.func.isRequired
+}
 
 export default OrganizationDeleteConfirmationModal;

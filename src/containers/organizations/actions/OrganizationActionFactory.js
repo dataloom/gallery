@@ -26,14 +26,14 @@ export function displayDeleteModal() :Object {
 
   return {
     type: OrgActionTypes.DISPLAY_DELETE_MODAL
-  }
+  };
 }
 
 export function hideDeleteModal() :Object {
 
   return {
     type: OrgActionTypes.HIDE_DELETE_MODAL
-  }
+  };
 }
 
 /*
