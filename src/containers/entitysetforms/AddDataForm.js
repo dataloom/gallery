@@ -121,7 +121,7 @@ export default class AddDataForm extends React.Component {
   onSubmit = (e) => {
     e.preventDefault();
     const entities = this.generateEntites();
-    DataApi.createEntityData(this.props.entitySetId, '', entities)
+    DataApi.createOrMergeEntityData(this.props.entitySetId, entities)
     .then(() => {
       const propValues = {};
       this.state.authorizedPropertyTypes.forEach((propertyType) => {

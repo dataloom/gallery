@@ -149,7 +149,7 @@ function getDataEpic(action$) {
     .ofType(actionTypes.GET_DATA_REQUEST)
     .mergeMap((action) => {
       return Observable
-        .from(DataApi.getEntitySetData(action.entitySetId, '', action.propertyTypeIds))
+        .from(DataApi.getEntitySetData(action.entitySetId, action.propertyTypeIds))
         .mergeMap((data) => {
           let filteredData = data;
           if (data.length > MAX_POINTS_TO_DISPLAY) {
