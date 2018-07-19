@@ -7,6 +7,8 @@
  */
 
 export const CLEAR_USER_SEARCH_RESULTS :string = 'CLEAR_USER_SEARCH_RESULTS';
+export const DISPLAY_DELETE_MODAL :string = 'DISPLAY_DELETE_MODAL';
+export const HIDE_DELETE_MODAL :string = 'HIDE_DELETE_MODAL';
 
 /*
  * HTTP request actions
