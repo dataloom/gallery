@@ -4,14 +4,12 @@ import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { DataApi } from 'lattice';
 import { SplitButton, MenuItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Link, hashHistory } from 'react-router';
 import { bindActionCreators } from 'redux';
 
 import DropdownSearchBox from '../../../containers/entitysetsearch/DropdownSearchBox';
-import FileConsts from '../../../utils/Consts/FileConsts';
 import PageConsts from '../../../utils/Consts/PageConsts';
 
 import * as PermissionsActionFactory from '../../permissions/PermissionsActionFactory';
