@@ -24,7 +24,7 @@ import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 import {
   deleteOrganizationRequest,
   fetchMembersRequest,
-  displayDeleteModal,
+  showDeleteModal,
   hideDeleteModal
 } from '../actions/OrganizationActionFactory';
 
@@ -94,7 +94,7 @@ function mapDispatchToProps(dispatch) {
     deleteOrganizationRequest,
     fetchMembersRequest,
     fetchOrganizationRequest,
-    displayDeleteModal,
+    showDeleteModal,
     hideDeleteModal
   };
 
@@ -110,7 +110,7 @@ class OrganizationDetailsComponent extends React.Component {
       deleteOrganizationRequest: React.PropTypes.func.isRequired,
       fetchMembersRequest: React.PropTypes.func.isRequired,
       fetchOrganizationRequest: React.PropTypes.func.isRequired,
-      displayDeleteModal: React.PropTypes.func.isRequired,
+      showDeleteModal: React.PropTypes.func.isRequired,
       hideDeleteModal: React.PropTypes.func.isRequired
     }).isRequired,
     isCreatingOrg: React.PropTypes.bool.isRequired,
@@ -202,7 +202,7 @@ class OrganizationDetailsComponent extends React.Component {
   }
 
   handleOnClickDeleteButton = () => {
-    this.props.actions.displayDeleteModal();
+    this.props.actions.showDeleteModal();
   }
 
   handleCancelDelete = () => {

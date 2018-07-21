@@ -155,7 +155,9 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
     case OrgActionTypes.DELETE_ORG_SUCCESS: {
 
       const orgId = action.orgId;
-      return state.deleteIn(['organizations', orgId]);
+      return state
+        .set('isConfirmingDeletion', false)
+        .deleteIn(['organizations', orgId]);
     }
 
     case OrgActionTypes.UPDATE_ORG_TITLE_SUCCESS: {
@@ -390,7 +392,7 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
     case OrgActionTypes.FETCH_ROLES_SUCCESS:
       return state.set('roles', Immutable.fromJS(action.roles));
 
-    case OrgActionTypes.DISPLAY_DELETE_MODAL:
+    case OrgActionTypes.SHOW_DELETE_MODAL:
       return state.set('isConfirmingDeletion', true);
 
     case OrgActionTypes.HIDE_DELETE_MODAL:
