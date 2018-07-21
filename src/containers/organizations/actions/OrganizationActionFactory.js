@@ -22,10 +22,10 @@ export function clearUserSearchResults() :Object {
   };
 }
 
-export function displayDeleteModal() :Object {
+export function showDeleteModal() :Object {
 
   return {
-    type: OrgActionTypes.DISPLAY_DELETE_MODAL
+    type: OrgActionTypes.SHOW_DELETE_MODAL
   };
 }
 

@@ -390,7 +390,7 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
     case OrgActionTypes.FETCH_ROLES_SUCCESS:
       return state.set('roles', Immutable.fromJS(action.roles));
 
-    case OrgActionTypes.DISPLAY_DELETE_MODAL:
+    case OrgActionTypes.SHOW_DELETE_MODAL:
       return state.set('isConfirmingDeletion', true);
 
     case OrgActionTypes.HIDE_DELETE_MODAL:
