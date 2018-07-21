@@ -155,7 +155,9 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
     case OrgActionTypes.DELETE_ORG_SUCCESS: {
 
       const orgId = action.orgId;
-      return state.deleteIn(['organizations', orgId]);
+      return state
+        .set('isConfirmingDeletion', false)
+        .deleteIn(['organizations', orgId]);
     }
 
     case OrgActionTypes.UPDATE_ORG_TITLE_SUCCESS: {
