@@ -65,7 +65,7 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', catalogIcon) }
         { this.getSideNavItemLayout(PageConsts.DATASETS, 'Your Datasets', datasetsIcon) }
         {/* this.getSideNavItemLayout(PageConsts.APP, 'Apps') */}
-        {/* { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) } */}
+        { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
         { this.getSideNavHelpItemLayout(HELP_URL, 'Help') }
         { this.getSpacer() }
         { this.getSupportLink() }
