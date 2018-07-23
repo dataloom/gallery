@@ -17,12 +17,15 @@ import OrganizationDomainsSectionComponent from './OrganizationDomainsSectionCom
 import OrganizationMembersSectionComponent from './OrganizationMembersSectionComponent';
 import OrganizationRolesSectionComponent from './OrganizationRolesSectionComponent';
 import OrganizationTitleSectionComponent from './OrganizationTitleSectionComponent';
+import OrganizationDeleteConfirmationModal from './OrganizationDeleteConfirmationModal';
 
 import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 
 import {
   deleteOrganizationRequest,
-  fetchMembersRequest
+  fetchMembersRequest,
+  showDeleteModal,
+  hideDeleteModal
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -43,12 +46,14 @@ function mapStateToProps(state, ownProps) {
 
   const isCreatingOrg = state.getIn(['organizations', 'isCreatingOrg']);
   const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
+  const isConfirmingDeletion = state.getIn(['organizations', 'isConfirmingDeletion']);
 
   // TODO: checking if orgId === 'new' feels wrong. there's probably a better pattern for this use case.
   if (isDefined(ownProps.params) && ownProps.params.orgId === 'new') {
     return {
       isCreatingOrg,
       isFetchingOrg: false,
+      isConfirmingDeletion,
       mode: MODES.CREATE,
       organization: Immutable.fromJS({
         isOwner: true
@@ -75,6 +80,7 @@ function mapStateToProps(state, ownProps) {
   return {
     isCreatingOrg,
     isFetchingOrg,
+    isConfirmingDeletion,
     mode,
     organization,
     organizationId,
@@ -87,7 +93,9 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     deleteOrganizationRequest,
     fetchMembersRequest,
-    fetchOrganizationRequest
+    fetchOrganizationRequest,
+    showDeleteModal,
+    hideDeleteModal
   };
 
   return {
@@ -101,10 +109,13 @@ class OrganizationDetailsComponent extends React.Component {
     actions: React.PropTypes.shape({
       deleteOrganizationRequest: React.PropTypes.func.isRequired,
       fetchMembersRequest: React.PropTypes.func.isRequired,
-      fetchOrganizationRequest: React.PropTypes.func.isRequired
+      fetchOrganizationRequest: React.PropTypes.func.isRequired,
+      showDeleteModal: React.PropTypes.func.isRequired,
+      hideDeleteModal: React.PropTypes.func.isRequired
     }).isRequired,
     isCreatingOrg: React.PropTypes.bool.isRequired,
     isFetchingOrg: React.PropTypes.bool.isRequired,
+    isConfirmingDeletion: React.PropTypes.bool.isRequired,
     mode: React.PropTypes.string.isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     organizationId: React.PropTypes.string.isRequired
@@ -191,7 +202,14 @@ class OrganizationDetailsComponent extends React.Component {
   }
 
   handleOnClickDeleteButton = () => {
+    this.props.actions.showDeleteModal();
+  }
 
+  handleCancelDelete = () => {
+    this.props.actions.hideDeleteModal();
+  }
+
+  handleConfirmDelete = () => {
     this.props.actions.deleteOrganizationRequest(this.props.organizationId);
   }
 
@@ -224,6 +242,7 @@ class OrganizationDetailsComponent extends React.Component {
   render() {
 
     const title = this.props.organization.get('title', 'Organizations');
+    const { isConfirmingDeletion } = this.props;
 
     if (this.props.isCreatingOrg) {
       return (
@@ -255,6 +274,10 @@ class OrganizationDetailsComponent extends React.Component {
           { this.renderOrganizationMembersSection() }
           { this.renderOrganizationAddMembersSection() }
           { this.renderOrganizationDeleteButton() }
+          <OrganizationDeleteConfirmationModal
+              isConfirmingDeletion={isConfirmingDeletion}
+              handleCancelDelete={this.handleCancelDelete}
+              handleConfirmDelete={this.handleConfirmDelete} />
         </StyledFlexContainerStacked>
       </DocumentTitle>
     );
