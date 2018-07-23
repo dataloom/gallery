@@ -73,13 +73,17 @@ class OrganizationRolesSectionComponent extends React.Component {
 
   addRole = (roleTitle) => {
 
+    const orgId = this.props.organization.get('id');
+    const roleTitleClean = roleTitle.replace(/\W/g, '');
+    const principalId = `${orgId}|${roleTitleClean}`;
+
     const principal = (new PrincipalBuilder())
       .setType(PrincipalTypes.ROLE)
-      .setId(roleTitle.replace(/\W/g, ''))
+      .setId(principalId)
       .build();
 
     const role = (new RoleBuilder())
-      .setOrganizationId(this.props.organization.get('id'))
+      .setOrganizationId(orgId)
       .setTitle(roleTitle)
       .setPrincipal(principal)
       .build();
