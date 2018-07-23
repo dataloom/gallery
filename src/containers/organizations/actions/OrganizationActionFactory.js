@@ -22,6 +22,20 @@ export function clearUserSearchResults() :Object {
   };
 }
 
+export function showDeleteModal() :Object {
+
+  return {
+    type: OrgActionTypes.SHOW_DELETE_MODAL
+  };
+}
+
+export function hideDeleteModal() :Object {
+
+  return {
+    type: OrgActionTypes.HIDE_DELETE_MODAL
+  };
+}
+
 /*
  * HTTP request actions
  */

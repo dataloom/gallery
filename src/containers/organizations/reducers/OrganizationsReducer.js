@@ -37,6 +37,7 @@ const INITIAL_STATE = Immutable.fromJS({
   isFetchingOrgs: false,
   isSearchingOrgs: false,
   isSearchingUsers: false,
+  isConfirmingDeletion: false,
   organizations: Immutable.Map(),
   visibleOrganizationIds: Immutable.Set(),
   usersSearchResults: Immutable.Map(),
@@ -154,7 +155,9 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
     case OrgActionTypes.DELETE_ORG_SUCCESS: {
 
       const orgId = action.orgId;
-      return state.deleteIn(['organizations', orgId]);
+      return state
+        .set('isConfirmingDeletion', false)
+        .deleteIn(['organizations', orgId]);
     }
 
     case OrgActionTypes.UPDATE_ORG_TITLE_SUCCESS: {
@@ -388,6 +391,12 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
 
     case OrgActionTypes.FETCH_ROLES_SUCCESS:
       return state.set('roles', Immutable.fromJS(action.roles));
+
+    case OrgActionTypes.SHOW_DELETE_MODAL:
+      return state.set('isConfirmingDeletion', true);
+
+    case OrgActionTypes.HIDE_DELETE_MODAL:
+      return state.set('isConfirmingDeletion', false);
 
     default:
       return state;
