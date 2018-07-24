@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import { List, Map } from 'immutable';
 
 import styled, {
   css
@@ -100,9 +100,9 @@ const RoleBadge = styled(StyledBadge)`
 `;
 
 function mapStateToProps(state, ownProps) {
-  const members = Immutable.Map().withMutations((map) => {
+  const members = Map().withMutations((map) => {
     ownProps.users.forEach((member) => {
-      map.set(member.get('principal').get('principal').get('id'), member);
+      map.set(member.get('principal', Map()).get('principal', Map()).get('id'), member);
     });
   });
 
@@ -136,9 +136,9 @@ class OrganizationMembersSectionComponent extends React.Component {
       removeRoleFromMemberRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
-    users: React.PropTypes.instanceOf(Immutable.List).isRequired,
-    members: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
+    users: React.PropTypes.instanceOf(List).isRequired,
+    members: React.PropTypes.instanceOf(Map).isRequired,
+    organization: React.PropTypes.instanceOf(Map).isRequired
   }
 
   constructor(props) {
@@ -291,7 +291,7 @@ class OrganizationMembersSectionComponent extends React.Component {
       return null;
     }
 
-    const orgRoles = this.props.organization.get('roles', Immutable.List());
+    const orgRoles = this.props.organization.get('roles', List());
     if (orgRoles.isEmpty()) {
       // TODO: we need a better UX to handle this case
       return (
@@ -303,7 +303,7 @@ class OrganizationMembersSectionComponent extends React.Component {
 
     const memberRoles = this.props.members.getIn(
       [this.state.selectedMemberId, 'roles'],
-      Immutable.List()
+      List()
     ).map((role) => {
       return role.get('id');
     });
