@@ -2,9 +2,11 @@
  * @flow
  */
 
-import Immutable from 'immutable';
+import { List, Map } from 'immutable';
+import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
 
-export function getUserNameLabelValue(member :Immutable.Map) :string {
+export function getUserNameLabelValue(member :Map) :string {
 
   if (!member || member.isEmpty()) {
     return '';
@@ -24,14 +26,16 @@ export function getUserNameLabelValue(member :Immutable.Map) :string {
     label = `${label} - ${email}`;
   }
 
-  if (memberId.startsWith('auth0')) {
-    label = `${label} - Auth0`;
-  }
-  else if (memberId.startsWith('facebook')) {
-    label = `${label} - Facebook`;
-  }
-  else if (memberId.startsWith('google')) {
-    label = `${label} - Google`;
+  if (isString(memberId) && !isEmpty(memberId)) {
+    if (memberId.startsWith('auth0')) {
+      label = `${label} - Auth0`;
+    }
+    else if (memberId.startsWith('facebook')) {
+      label = `${label} - Facebook`;
+    }
+    else if (memberId.startsWith('google')) {
+      label = `${label} - Google`;
+    }
   }
 
   return label;
@@ -47,10 +51,10 @@ export function sortOrganizations(visibleOrgIds, organizations, auth) {
 
   visibleOrgIds.forEach((orgId :UUID) => {
 
-    const organization :Immutable.Map = organizations.get(orgId, Immutable.Map());
+    const organization :Map = organizations.get(orgId, Map());
 
     let isMemberOfOrg :boolean = false;
-    organization.get('members', Immutable.List()).forEach((memberObj :Object) => {
+    organization.get('members', List()).forEach((memberObj :Object) => {
       if (memberObj.get('id') === currentUserId) {
         isMemberOfOrg = true;
       }
