@@ -6,7 +6,7 @@ import Immutable from 'immutable';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { EntityDataModelApi } from 'lattice';
+import { EntityDataModelApi, Constants } from 'lattice';
 
 import * as actionFactory from '../TopUtilizersActionFactory';
 import TopUtilizersTable from '../components/TopUtilizersTable';
@@ -20,6 +20,8 @@ const DISPLAYS = {
   HISTOGRAM: 'histogram',
   MULTI_HISTOGRAM: 'multi_histogram'
 };
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 class TopUtilizersResultsContainer extends React.Component {
   static propTypes = {
@@ -73,9 +75,9 @@ class TopUtilizersResultsContainer extends React.Component {
   countEdgeTypesPerEntity = (nextProps) => {
     const countHeaders = this.createHeadersForEdgeTypes();
     const newResultsWithCounts = this.state.resultsWithCounts.map((result) => {
-      const entityId = result.getIn(['id', 0]);
+      const entityId = result.getIn([OPENLATTICE_ID_FQN, 0]);
       // Get List of neighbors for specific entity
-      const neighborList = nextProps.neighbors.get(entityId);
+      const neighborList = nextProps.neighbors.get(entityId, Immutable.List());
       const neighborCount = {};
 
       // For each edge in the list of neighbors, count occurances for each unique assoc -> neighbor

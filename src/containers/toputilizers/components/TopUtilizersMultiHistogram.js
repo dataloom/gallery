@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Immutable from 'immutable';
+import { Constants } from 'lattice';
+
 import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
+import { COUNT_FQN } from '../../../utils/Consts/StringConsts';
 import styles from '../styles.module.css';
 
-const COUNT_FIELD = 'count';
+const { OPENLATTICE_ID_FQN } = Constants;
+
 
 export default class TopUtilizersMultiHistogram extends React.Component {
   static propTypes = {
@@ -58,7 +62,7 @@ export default class TopUtilizersMultiHistogram extends React.Component {
         Object.entries(propertyTypeEntry[1]).forEach((barEntry) => {
           histogramValuesList.push({
             name: barEntry[0],
-            count: barEntry[1]
+            [COUNT_FQN]: barEntry[1]
           });
         });
         histogramData[histogramId] = histogramValuesList;
@@ -88,12 +92,12 @@ export default class TopUtilizersMultiHistogram extends React.Component {
 
 
     this.props.results.forEach((utilizer) => {
-      const entityId = utilizer.id[0];
+      const entityId = utilizer[OPENLATTICE_ID_FQN][0];
       utilizerIdToCounts[entityId] = { [utilizerEntityType.id]: {} };
 
       Object.entries(utilizer).forEach((entry) => {
         const propertyTypeFqn = entry[0];
-        if (propertyTypeFqn !== 'count' && propertyTypeFqn !== 'id') {
+        if (propertyTypeFqn !== OPENLATTICE_ID_FQN && propertyTypeFqn !== 'id' && propertyTypeFqn !== COUNT_FQN) {
           const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
           utilizerIdToCounts[entityId][utilizerEntityType.id][propertyTypeId] = {};
           entry[1].forEach((value) => {
@@ -116,7 +120,10 @@ export default class TopUtilizersMultiHistogram extends React.Component {
               utilizerIdToCounts[entityId][entityTypeId] = {};
             }
 
-            neighbor.get('neighborDetails').entrySeq().forEach((entry) => {
+            neighbor.get('neighborDetails')
+            .entrySeq()
+            .filter(entry => entry[0] !== OPENLATTICE_ID_FQN && entry[0] !== COUNT_FQN)
+            .forEach((entry) => {
               const propertyTypeFqn = entry[0];
               const propertyTypeId = fqnToPropertyType[propertyTypeFqn].id;
               if (!utilizerIdToCounts[entityId][entityTypeId][propertyTypeId]) {
@@ -261,7 +268,7 @@ export default class TopUtilizersMultiHistogram extends React.Component {
         <h2>{title}</h2>
         <HistogramVisualization
             counts={counts}
-            fields={[COUNT_FIELD]}
+            fields={[COUNT_FQN]}
             height={225}
             width={450}
             filters={propertyFilters}

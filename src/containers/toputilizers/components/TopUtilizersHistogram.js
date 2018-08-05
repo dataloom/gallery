@@ -3,9 +3,14 @@ import PropTypes from 'prop-types';
 import Immutable from 'immutable';
 import moment from 'moment';
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
-import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
+import { Constants } from 'lattice';
+
 import EdmConsts from '../../../utils/Consts/EdmConsts';
 import styles from '../styles.module.css';
+import { HistogramVisualization } from '../../visualizations/HistogramVisualization';
+import { COUNT_FQN } from '../../../utils/Consts/StringConsts';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 const DEFAULT_SELECTED_ENTITY_TYPE = {
   title: 'Select an entity type',
@@ -129,9 +134,9 @@ export default class TopUtilizersHistogram extends React.Component {
     const selectedDrillDownPropertyTypeDateGroup =
       optionalSelectedDrillDownPropertyTypeDateGroup || this.state.selectedDrillDownPropertyTypeDateGroup;
     const isSimple = (!drillDown || !selectedDrillDownEntityType.id || !selectedDrillDownPropertyType.id);
-    if (isSimple) fields.add('count');
+    if (isSimple) fields.add(COUNT_FQN);
     this.props.results.forEach((utilizer) => {
-      const entityId = utilizer.id[0];
+      const entityId = utilizer[OPENLATTICE_ID_FQN][0];
       const primaryValues = (neighbors.get(entityId)) ? this.getFieldValues(
         utilizer,
         neighbors.get(entityId),
@@ -140,7 +145,7 @@ export default class TopUtilizersHistogram extends React.Component {
         selectedPropertyTypeDateGroup) : [];
       primaryValues.forEach((primaryValue) => {
         if (!counts[primaryValue]) counts[primaryValue] = {};
-        const fieldNames = (isSimple) ? ['count'] : this.getFieldValues(
+        const fieldNames = (isSimple) ? [COUNT_FQN] : this.getFieldValues(
           utilizer,
           neighbors.get(entityId),
           selectedDrillDownEntityType.id,
