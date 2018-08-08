@@ -3,13 +3,16 @@ import { combineEpics } from 'redux-observable';
 import {
   AnalysisApi,
   EntityDataModelApi,
-  SearchApi
+  SearchApi,
+  Constants
 } from 'lattice';
 
 import * as actionTypes from './TopUtilizersActionTypes';
 import * as actionFactory from './TopUtilizersActionFactory';
 import FileService from '../../utils/FileService';
 import FileConsts from '../../utils/Consts/FileConsts';
+
+const { OPENLATTICE_ID_FQN } = Constants;
 
 function getEntitySetEpic(action$) {
   return action$
@@ -92,7 +95,7 @@ function submitQueryEpic(action$) {
         )
         .mergeMap((results) => {
           const entityIds = results.map((result) => {
-            return result.id[0];
+            return result[OPENLATTICE_ID_FQN][0];
           });
           return Observable
             .of(

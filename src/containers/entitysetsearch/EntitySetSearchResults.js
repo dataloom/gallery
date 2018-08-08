@@ -3,7 +3,7 @@ import React from 'react';
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import { EntityDataModelApi, SearchApi, Models } from 'lattice';
+import { Constants, EntityDataModelApi, SearchApi, Models } from 'lattice';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import { Link } from 'react-router';
 
@@ -12,7 +12,7 @@ import PersonCard from './components/PersonCard';
 import RowImage from './components/RowImage';
 import EventTimeline from './EventTimeline';
 import EdmConsts from '../../utils/Consts/EdmConsts';
-import { FIRST_NAMES, LAST_NAMES } from '../../utils/Consts/StringConsts';
+import { COUNT_FQN, FIRST_NAMES, LAST_NAMES } from '../../utils/Consts/StringConsts';
 import { getTitleV2 } from '../../utils/EntityTypeTitles';
 
 import styles from './styles.module.css';
@@ -20,6 +20,10 @@ import styles from './styles.module.css';
 const {
   FullyQualifiedName
 } = Models;
+
+const {
+  OPENLATTICE_ID_FQN
+} = Constants;
 
 // TODO: REMOVE
 const NEIGHBOR_ENTITY_SET_MISSING = 'NEIGHBOR_ENTITY_SET_MISSING';
@@ -369,7 +373,7 @@ export default class EntitySetSearchResults extends React.Component {
     let showCountColumn = false;
     let hasCustomHeaders = false;
     this.state.searchResults.forEach((result) => {
-      if (result.has('count')) {
+      if (result.has(COUNT_FQN)) {
         showCountColumn = true;
       }
       if (result.has('count.Headers')) {
@@ -380,7 +384,7 @@ export default class EntitySetSearchResults extends React.Component {
     const headers = Immutable.List().withMutations((list) => {
       if (showCountColumn) {
         list.unshift(Immutable.fromJS({
-          id: 'count',
+          id: COUNT_FQN,
           value: 'Count'
         }));
       }
@@ -428,7 +432,7 @@ export default class EntitySetSearchResults extends React.Component {
     });
 
     const onClick = (selectedRowIndex, selectedRowData) => {
-      const selectedEntityId = this.state.searchResults.getIn([selectedRowIndex, 'id', 0]);
+      const selectedEntityId = this.state.searchResults.getIn([selectedRowIndex, OPENLATTICE_ID_FQN, 0]);
       const selectedEntity = Immutable.fromJS({
         headers,
         data: selectedRowData
@@ -452,7 +456,7 @@ export default class EntitySetSearchResults extends React.Component {
     this.state.searchResults.forEach((personResult, index) => {
 
       const onClick = () => {
-        const selectedEntityId = personResult.getIn(['id', 0]);
+        const selectedEntityId = personResult.getIn([OPENLATTICE_ID_FQN, 0]);
         const selectedEntity = Immutable.fromJS({
           headers,
           data: personResult
