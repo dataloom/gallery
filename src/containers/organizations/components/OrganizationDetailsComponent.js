@@ -123,7 +123,7 @@ class OrganizationDetailsComponent extends React.Component {
 
   componentDidMount() {
 
-    if ((this.props.mode === MODES.VIEW || this.props.mode === MODES.EDIT)) {
+    if (this.props.mode === MODES.VIEW || this.props.mode === MODES.EDIT) {
       this.props.actions.fetchOrganizationRequest(this.props.organizationId);
       this.props.actions.fetchMembersRequest(this.props.organizationId);
     }
@@ -131,9 +131,10 @@ class OrganizationDetailsComponent extends React.Component {
 
   componentWillReceiveProps(nextProps :Object) {
 
-    if ((nextProps.mode === MODES.VIEW || nextProps.mode === MODES.EDIT)) {
+    if (nextProps.mode === MODES.VIEW || nextProps.mode === MODES.EDIT) {
       if (this.props.organizationId !== nextProps.organizationId) {
         this.props.actions.fetchOrganizationRequest(nextProps.organizationId);
+        this.props.actions.fetchMembersRequest(nextProps.organizationId);
       }
     }
   }
