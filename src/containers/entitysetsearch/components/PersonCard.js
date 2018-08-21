@@ -179,20 +179,6 @@ class PersonCard extends React.Component<Props, State> {
 
   }
 
-  countPresent = () => {
-    return this.props.data.has
-
-    let showCountColumn = false;
-    this.state.searchResults.forEach((result) => {
-      if (result.has(COUNT_FQN)) {
-        showCountColumn = true;
-      }
-    });
-
-    return showCountColumn;
-
-  }
-
   getPictureImgSrc = () => {
 
     let pictureValue;
