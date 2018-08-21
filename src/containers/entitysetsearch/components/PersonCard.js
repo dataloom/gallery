@@ -7,7 +7,7 @@ import * as React from 'react';
 import Immutable from 'immutable';
 import moment from 'moment';
 import styled from 'styled-components';
-import { Models} from 'lattice';
+import { Models } from 'lattice';
 
 import { FIRST_NAMES, LAST_NAMES, DOBS, COUNT_FQN } from '../../../utils/Consts/StringConsts';
 import { IMAGE_HEADER } from '../../../utils/Consts/FileConsts';
@@ -176,20 +176,6 @@ class PersonCard extends React.Component<Props, State> {
 
     const countValue = this.props.data.get(COUNT_FQN, Immutable.List());
     return this.formatValue(countValue.toJS());
-
-  }
-
-  countPresent = () => {
-    return this.props.data.has
-
-    let showCountColumn = false;
-    this.state.searchResults.forEach((result) => {
-      if (result.has(COUNT_FQN)) {
-        showCountColumn = true;
-      }
-    });
-
-    return showCountColumn;
 
   }
 
