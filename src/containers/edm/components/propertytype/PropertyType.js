@@ -1,16 +1,15 @@
 import React from 'react';
 
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
-
+import { Map, fromJS } from 'immutable';
 import { connect } from 'react-redux';
 
-import { PermissionsPropType, getPermissions } from '../../../permissions/PermissionsStorage';
 import PropertyTypePermissions from './PropertyTypePermissions';
 import PropertyTypeTitle from './PropertyTypeTitle';
 import PropertyTypeDescription from './PropertyTypeDescription';
 import PropertyTypeDatatype from './PropertyTypeDatatype';
 import PropertyTypeDefaultShow from './PropertyTypeDefaultShow';
+import { PermissionsPropType, getPermissions } from '../../../permissions/PermissionsStorage';
 
 // Default styles
 import '../propertype.module.css';
@@ -32,7 +31,7 @@ class PropertyType extends React.Component {
     // Permissions are per-EntitySet. Passing entitySetId implies display permissions
     entitySetId: PropTypes.string,
     // Async Properties
-    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyType: PropTypes.instanceOf(Map).isRequired,
     permissions: PermissionsPropType,
     // TODO: Move display logic to CSS
     requestingPermissions: PropTypes.bool,
@@ -44,6 +43,21 @@ class PropertyType extends React.Component {
   static defaultProps = {
     editing: DEFAULT_EDITING
   };
+
+  shouldComponentUpdate(nextProps) {
+
+    const shouldUpdate = (
+      nextProps.entitySetId !== this.props.entitySetId
+      || nextProps.isOwner !== this.props.isOwner
+      || nextProps.requestingPermissions !== this.props.requestingPermissions
+      || !nextProps.propertyType.equals(this.props.propertyType)
+      || !nextProps.customSettings.equals(this.props.customSettings)
+      || !fromJS(nextProps.editing).equals(fromJS(this.props.editing))
+      || !fromJS(nextProps.permissions).equals(fromJS(this.props.permissions))
+    );
+
+    return shouldUpdate;
+  }
 
   renderDatatype = () => {
     if (this.props.requestingPermissions) return null;
@@ -116,10 +130,10 @@ function mapStateToProps(state, ownProps) {
   let propertyType;
   if (async.hasIn(['propertyTypes', propertyTypeId])) {
     // TODO: fromJS() should happen in a reducer, not here
-    propertyType = Immutable.fromJS(async.getIn(['propertyTypes', propertyTypeId]).value);
+    propertyType = fromJS(async.getIn(['propertyTypes', propertyTypeId]).value);
   }
 
-  const customSettings = edm.getIn(['entitySetPropertyMetadata', entitySetId, propertyTypeId], Immutable.Map());
+  const customSettings = edm.getIn(['entitySetPropertyMetadata', entitySetId, propertyTypeId], Map());
 
   return {
     propertyType,
