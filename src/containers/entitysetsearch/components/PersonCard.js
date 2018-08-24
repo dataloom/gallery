@@ -9,7 +9,7 @@ import moment from 'moment';
 import styled from 'styled-components';
 import { Models } from 'lattice';
 
-import { FIRST_NAMES, LAST_NAMES, DOBS } from '../../../utils/Consts/StringConsts';
+import { FIRST_NAMES, LAST_NAMES, DOBS, COUNT_FQN } from '../../../utils/Consts/StringConsts';
 import { IMAGE_HEADER } from '../../../utils/Consts/FileConsts';
 
 import defaultUserIcon from '../../../images/user-profile-icon.png';
@@ -80,7 +80,7 @@ class PersonCard extends React.Component<Props, State> {
   };
 
   shouldCheckKey = (key :string) => {
-    return key !== 'id' && key !== 'count';
+    return key !== 'id' && key !== COUNT_FQN;
   }
 
   formatValue = (rawValue :any) => {
@@ -174,22 +174,8 @@ class PersonCard extends React.Component<Props, State> {
 
   getCountVal = () => {
 
-    const countValue = this.props.data.get('count', Immutable.List());
+    const countValue = this.props.data.get(COUNT_FQN, Immutable.List());
     return this.formatValue(countValue.toJS());
-
-  }
-
-  countPresent = () => {
-    return this.props.data.has
-
-    let showCountColumn = false;
-    this.state.searchResults.forEach((result) => {
-      if (result.has('count')) {
-        showCountColumn = true;
-      }
-    });
-
-    return showCountColumn;
 
   }
 
@@ -223,7 +209,7 @@ class PersonCard extends React.Component<Props, State> {
 
   render() {
     const { onClick, data, index } = this.props;
-    const topUtilizersView = data.has('count');
+    const topUtilizersView = data.has(COUNT_FQN);
 
     return (
       <PersonCardOuter onClick={onClick}>
