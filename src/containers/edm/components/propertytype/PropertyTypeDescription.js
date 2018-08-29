@@ -1,18 +1,29 @@
 import React from 'react';
 
-import Immutable from 'immutable';
 import PropTypes from 'prop-types';
+import { Map } from 'immutable';
 
 import InlineEditableControl from '../../../../components/controls/InlineEditableControl';
 
 export default class PropertyTypeDescription extends React.Component {
 
   static propTypes = {
-    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
-    customSettings: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyType: PropTypes.instanceOf(Map).isRequired,
+    customSettings: PropTypes.instanceOf(Map).isRequired,
     isOwner: PropTypes.bool,
     updateDescription: PropTypes.func
   };
+
+  shouldComponentUpdate(nextProps) {
+
+    const shouldUpdate = (
+      nextProps.isOwner !== this.props.isOwner
+      || nextProps.customSettings.get('description') !== this.props.customSettings.get('description')
+      || !nextProps.propertyType.equals(this.props.propertyType)
+    );
+
+    return shouldUpdate;
+  }
 
   render() {
     const { customSettings, propertyType, isOwner, updateDescription } = this.props;
