@@ -53,7 +53,8 @@ export default class EntitySetDataSearch extends React.Component {
       loadError: false,
       hidePagination: false,
       personViewProps: [],
-      searchView: ''
+      searchView: '',
+      propertyTypesByFqn: {}
     };
   }
 
@@ -62,6 +63,20 @@ export default class EntitySetDataSearch extends React.Component {
     const page = (this.props.location.query.page) ? this.props.location.query.page : 1;
     this.loadPropertyTypeIds(searchTerm, page);
     this.loadEntitySetPropertyMetadata();
+    this.loadPropertyTypesByFqn();
+  }
+
+  loadPropertyTypesByFqn = () => {
+    EntityDataModelApi.getAllPropertyTypes().then((propertyTypes) => {
+      const propertyTypesByFqn = {};
+      propertyTypes.forEach((propertyType) => {
+        const { type } = propertyType;
+        const { namespace, name } = type;
+        propertyTypesByFqn[`${namespace}.${name}`] = propertyType;
+      });
+
+      this.setState({ propertyTypesByFqn });
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -284,6 +299,7 @@ export default class EntitySetDataSearch extends React.Component {
           results={this.state.searchResults}
           entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.selectedPropertyTypes}
+          propertyTypesByFqn={this.state.propertyTypesByFqn}
           entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
           hidePaginationFn={this.hidePagination} />
     );

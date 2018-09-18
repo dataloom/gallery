@@ -45,6 +45,7 @@ class TopUtilizersResultsContainer extends React.Component {
       display: DISPLAYS.TABLE,
       neighborEntityTypes: [],
       neighborPropertyTypes: {},
+      propertyTypesByFqn: {},
       resultsWithCounts: Immutable.Map()
     };
   }
@@ -156,29 +157,27 @@ class TopUtilizersResultsContainer extends React.Component {
   }
 
   loadNeighborTypes = () => {
-    const neighborTypeIds = new Set();
-    this.props.topUtilizersDetails.forEach((detailsObj) => {
-      detailsObj.get('neighborTypeIds', []).forEach((id) => {
-        neighborTypeIds.add(id);
+    EntityDataModelApi.getAllEntityTypes().then((entityTypes) => {
+      const neighborEntityTypes = {};
+      entityTypes.forEach((entityType) => {
+        const { id } = entityType;
+        neighborEntityTypes[id] = entityType;
       });
+
+      this.setState({ neighborEntityTypes });
     });
-    Promise.map(neighborTypeIds, (entityTypeId) => {
-      return EntityDataModelApi.getEntityType(entityTypeId);
-    }).then((neighborEntityTypes) => {
+
+    EntityDataModelApi.getAllPropertyTypes().then((propertyTypes) => {
       const neighborPropertyTypes = {};
-      neighborEntityTypes.forEach((entityType) => {
-        entityType.properties.forEach((propertyTypeId) => {
-          neighborPropertyTypes[propertyTypeId] = {};
-        });
+      const propertyTypesByFqn = {};
+      propertyTypes.forEach((propertyType) => {
+        const { id, type } = propertyType;
+        const { namespace, name } = type;
+        neighborPropertyTypes[id] = propertyType;
+        propertyTypesByFqn[`${namespace}.${name}`] = propertyType;
       });
-      Promise.map(Object.keys(neighborPropertyTypes), (propertyTypeId) => {
-        return EntityDataModelApi.getPropertyType(propertyTypeId);
-      }).then((propertyTypes) => {
-        propertyTypes.forEach((propertyType) => {
-          neighborPropertyTypes[propertyType.id] = propertyType;
-        });
-        this.setState({ neighborEntityTypes, neighborPropertyTypes });
-      });
+
+      this.setState({ neighborPropertyTypes, propertyTypesByFqn });
     });
   }
 
@@ -281,6 +280,7 @@ class TopUtilizersResultsContainer extends React.Component {
       return (<TopUtilizersTable
           results={this.state.resultsWithCounts.toJS()}
           propertyTypes={this.props.propertyTypes}
+          propertyTypesByFqn={this.state.propertyTypesByFqn}
           entitySetId={this.props.entitySet.id}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata} />);
     }
