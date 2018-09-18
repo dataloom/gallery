@@ -76,19 +76,6 @@ export default class AddDataForm extends React.Component {
     });
   }
 
-  getEntityId = (primaryKeyIds, formattedValues) => {
-    const pKeyVals = [];
-    primaryKeyIds.forEach((pKey) => {
-      const rawValues = formattedValues[pKey] || [];
-      const encodedValues = [];
-      rawValues.forEach((value) => {
-        encodedValues.push(btoa(value));
-      });
-      pKeyVals.push(btoa(encodeURI(encodedValues.join(','))));
-    });
-    return pKeyVals.join(',');
-  }
-
   generateEntites = () => {
     const { propValues, authorizedPropertyTypes } = this.state;
     const formattedValues = {};
@@ -113,9 +100,7 @@ export default class AddDataForm extends React.Component {
         }
       }
     });
-
-    const entityId = this.getEntityId(this.props.primaryKey, formattedValues);
-    return { [entityId]: formattedValues };
+    return [formattedValues];
   }
 
   onSubmit = (e) => {

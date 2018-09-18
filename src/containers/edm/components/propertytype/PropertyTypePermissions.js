@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import { Map, fromJS } from 'immutable';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
 
@@ -31,7 +31,7 @@ export class PropertyTypeEditPermissions extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     // Async Properties
-    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyType: PropTypes.instanceOf(Map).isRequired,
     permissions: PermissionsPropType
   };
 
@@ -79,7 +79,7 @@ export default class PropertyTypePermissions extends React.Component {
       }
     },
     // Async Properties
-    propertyType: PropTypes.instanceOf(Immutable.Map).isRequired,
+    propertyType: PropTypes.instanceOf(Map).isRequired,
     permissions: PermissionsPropType
   };
 
@@ -87,6 +87,17 @@ export default class PropertyTypePermissions extends React.Component {
     onChange: () => {},
     editing: false
   };
+
+  shouldComponentUpdate(nextProps) {
+
+    const shouldUpdate = (
+      nextProps.editing !== this.props.editing
+      || !nextProps.propertyType.equals(this.props.propertyType)
+      || !fromJS(nextProps.permissions).equals(fromJS(this.props.permissions))
+    );
+
+    return shouldUpdate;
+  }
 
   render() {
     const { permissions, editing } = this.props;

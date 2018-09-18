@@ -13,6 +13,11 @@ export default class PropertyTypeDatatype extends React.Component {
     propertyType: PropTypes.instanceOf(Immutable.Map).isRequired
   };
 
+  shouldComponentUpdate(nextProps) {
+
+    return !nextProps.propertyType.equals(this.props.propertyType);
+  }
+
   render() {
 
     let datatype = (<em>No datatype</em>);
