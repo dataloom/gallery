@@ -38,13 +38,31 @@ export default class AdvancedDataSearch extends React.Component {
       entitySetPropertyMetadata: {},
       loadError: false,
       hidePagination: false,
-      searches: {}
+      searches: {},
+      propertyTypesById: {},
+      propertyTypesByFqn: {}
     };
   }
 
   componentDidMount() {
     this.loadPropertyIds();
     this.loadEntitySetPropertyMetadata();
+    this.loadPropertyTypesById();
+  }
+
+  loadPropertyTypesById = () => {
+    EntityDataModelApi.getAllPropertyTypes().then((propertyTypes) => {
+      const propertyTypesById = {};
+      const propertyTypesByFqn = {};
+      propertyTypes.forEach((propertyType) => {
+        const { id, type } = propertyType;
+        const { namespace, name } = type;
+        propertyTypesById[id] = propertyType;
+        propertyTypesByFqn[`${namespace}.${name}`] = propertyType;
+      });
+
+      this.setState({ propertyTypesById, propertyTypesByFqn });
+    });
   }
 
   loadEntitySetPropertyMetadata = () => {
@@ -207,6 +225,8 @@ export default class AdvancedDataSearch extends React.Component {
             results={this.state.searchResults}
             entitySetId={this.props.params.entitySetId}
             propertyTypes={this.state.propertyTypes}
+            propertyTypesById={this.state.propertyTypesById}
+            propertyTypesByFqn={this.state.propertyTypesByFqn}
             entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
             firstName={firstName}
             lastName={lastName}
@@ -220,6 +240,7 @@ export default class AdvancedDataSearch extends React.Component {
           results={this.state.searchResults}
           entitySetId={this.props.params.entitySetId}
           propertyTypes={this.state.propertyTypes}
+          propertyTypesByFqn={this.state.propertyTypesByFqn}
           entitySetPropertyMetadata={this.state.entitySetPropertyMetadata}
           formatValueFn={this.formatValue} />
     );
