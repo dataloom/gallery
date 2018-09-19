@@ -72,6 +72,7 @@ export default class EntitySetSearchResults extends React.Component {
     results: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    propertyTypesByFqn: PropTypes.object.isRequired,
     entitySetPropertyMetadata: PropTypes.object.isRequired,
     hidePaginationFn: PropTypes.func.isRequired
   }
@@ -140,13 +141,16 @@ export default class EntitySetSearchResults extends React.Component {
       if (associationEntitySetId) {
         if (!organizedNeighbors[associationEntitySetId]) {
           organizedNeighbors[associationEntitySetId] = {};
-          neighbor.associationPropertyTypes.forEach((propertyType) => {
-            if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-              if (dateProps[associationEntitySetId]) {
-                dateProps[associationEntitySetId].push(propertyType.id);
-              }
-              else {
-                dateProps[associationEntitySetId] = [propertyType.id];
+          Object.keys(neighbor.associationDetails).forEach((fqn) => {
+            const propertyType = this.props.propertyTypesByFqn[fqn];
+            if (propertyType) {
+              if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+                if (dateProps[associationEntitySetId]) {
+                  dateProps[associationEntitySetId].push(propertyType.id);
+                }
+                else {
+                  dateProps[associationEntitySetId] = [propertyType.id];
+                }
               }
             }
           });
@@ -156,14 +160,17 @@ export default class EntitySetSearchResults extends React.Component {
           : NEIGHBOR_ENTITY_SET_MISSING;
         if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
           organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
-          if (neighbor.neighborPropertyTypes) {
-            neighbor.neighborPropertyTypes.forEach((propertyType) => {
-              if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
-                if (dateProps[neighborEntitySetId]) {
-                  dateProps[neighborEntitySetId].push(propertyType.id);
-                }
-                else {
-                  dateProps[neighborEntitySetId] = [propertyType.id];
+          if (neighbor.neighborDetails) {
+            Object.keys(neighbor.neighborDetails).forEach((fqn) => {
+              const propertyType = this.props.propertyTypesByFqn[fqn];
+              if (propertyType) {
+                if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
+                  if (dateProps[neighborEntitySetId]) {
+                    dateProps[neighborEntitySetId].push(propertyType.id);
+                  }
+                  else {
+                    dateProps[neighborEntitySetId] = [propertyType.id];
+                  }
                 }
               }
             });
@@ -634,24 +641,28 @@ export default class EntitySetSearchResults extends React.Component {
 
     return Immutable.List().withMutations((headers) => {
       // each neighbor in the neighbor group has identical PropertyTypes, so we only need one neighbor
-      neighborGroup.first().get('associationPropertyTypes', Immutable.List())
-        .forEach((propertyType) => {
-          const fqn = new FullyQualifiedName(propertyType.get('type').toJS());
-          headers.push(Immutable.Map({
-            id: fqn.getFullyQualifiedName(),
-            value: propertyType.get('title')
-          }));
+      neighborGroup.first().get('associationDetails', Immutable.Map()).keySeq()
+        .forEach((fqn) => {
+          const propertyType = this.props.propertyTypesByFqn[fqn];
+          if (propertyType) {
+            headers.push(Immutable.Map({
+              id: fqn,
+              value: propertyType.title
+            }));
+          }
         });
-      let neighbor = neighborGroup.first().get('neighborPropertyTypes', Immutable.List());
+      let neighbor = neighborGroup.first().get('neighborDetails', Immutable.Map()).keySeq();
       if (neighbor === null || neighbor === undefined) {
         neighbor = Immutable.List();
       }
-      neighbor.forEach((propertyType) => {
-        const fqn = new FullyQualifiedName(propertyType.get('type').toJS());
-        headers.push(Immutable.Map({
-          id: fqn.getFullyQualifiedName(),
-          value: propertyType.get('title')
-        }));
+      neighbor.forEach((fqn) => {
+        const propertyType = this.props.propertyTypesByFqn[fqn];
+        if (propertyType) {
+          headers.push(Immutable.Map({
+            id: fqn,
+            value: propertyType.title
+          }));
+        }
       });
     });
   }

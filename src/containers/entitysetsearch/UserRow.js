@@ -99,6 +99,7 @@ export default class UserRow extends React.Component {
           entitySet={this.props.entitySet}
           formatValueFn={this.props.formatValueFn}
           propertyTypes={this.props.propertyTypes}
+          propertyTypesByFqn={this.props.propertyTypesByFqn}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
           onClick={this.props.onClick}
           jumpFn={this.props.jumpFn}
@@ -121,6 +122,7 @@ export default class UserRow extends React.Component {
     entitySetId: PropTypes.string,
     entitySet: PropTypes.object,
     propertyTypes: PropTypes.array.isRequired,
+    propertyTypesByFqn: PropTypes.object.isRequired,
     entitySetPropertyMetadata: PropTypes.object.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,

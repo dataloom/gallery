@@ -7,6 +7,7 @@ export default class TopUtilizersTable extends React.Component {
   static propTypes = {
     results: PropTypes.array.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    propertyTypesByFqn: PropTypes.object.isRequired,
     entitySetId: PropTypes.string.isRequired,
     entitySetPropertyMetadata: PropTypes.instanceOf(Immutable.Map).isRequired
   }
@@ -31,6 +32,7 @@ export default class TopUtilizersTable extends React.Component {
       <SearchResultsTable
           results={this.props.results}
           propertyTypes={this.props.propertyTypes}
+          propertyTypesByFqn={this.props.propertyTypesByFqn}
           formatValueFn={this.formatValue}
           entitySetId={this.props.entitySetId}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata.toJS()}

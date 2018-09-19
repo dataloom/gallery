@@ -9,6 +9,8 @@ export default class EntitySetUserSearchResults extends React.Component {
     results: PropTypes.array.isRequired,
     entitySetId: PropTypes.string.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    propertyTypesById: PropTypes.object.isRequired,
+    propertyTypesByFqn: PropTypes.object.isRequired,
     entitySetPropertyMetadata: PropTypes.object.isRequired,
     firstName: PropTypes.object.isRequired,
     lastName: PropTypes.object.isRequired,
@@ -95,6 +97,7 @@ export default class EntitySetUserSearchResults extends React.Component {
               row={row}
               entitySetId={this.props.entitySetId}
               propertyTypes={this.props.propertyTypes}
+              propertyTypesByFqn={this.props.propertyTypesByFqn}
               entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
               firstName={this.props.firstName}
               lastName={this.props.lastName}
@@ -118,6 +121,7 @@ export default class EntitySetUserSearchResults extends React.Component {
           entityId={this.state.selectedId}
           entitySet={this.state.selectedEntitySet}
           propertyTypes={this.state.selectedPropertyTypes}
+          propertyTypesByFqn={this.props.propertyTypesByFqn}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
           firstName={this.props.firstName}
           lastName={this.props.lastName}
@@ -141,6 +145,7 @@ export default class EntitySetUserSearchResults extends React.Component {
           entityId={this.state.selectedId}
           entitySet={this.state.selectedEntitySet}
           propertyTypes={this.state.selectedPropertyTypes}
+          propertyTypesByFqn={this.props.propertyTypesByFqn}
           entitySetPropertyMetadata={this.props.entitySetPropertyMetadata}
           backFn={this.onUserDeselect}
           formatValueFn={this.props.formatValueFn}
