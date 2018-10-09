@@ -23,6 +23,7 @@ export default class RowNeighbors extends React.Component {
 
   static propTypes = {
     neighbors: PropTypes.array.isRequired,
+    propertyTypesByFqn: PropTypes.object.isRequired,
     onClick: PropTypes.func.isRequired,
     formatValueFn: PropTypes.func.isRequired,
     entitySetTitle: PropTypes.string
@@ -51,7 +52,8 @@ export default class RowNeighbors extends React.Component {
 
       if (!organizedNeighbors[associationEntitySetId]) {
         organizedNeighbors[associationEntitySetId] = {};
-        neighbor.associationPropertyTypes.forEach((propertyType) => {
+        Object.keys(neighbor.associationDetails).forEach((fqn) => {
+          const propertyType = this.props.propertyTypesByFqn[fqn];
           if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
             if (dateProps[associationEntitySetId]) {
               dateProps[associationEntitySetId].push(propertyType.id);
@@ -65,8 +67,9 @@ export default class RowNeighbors extends React.Component {
       if (!organizedNeighbors[associationEntitySetId][neighborEntitySetId]) {
         organizedNeighbors[associationEntitySetId][neighborEntitySetId] = [neighbor];
 
-        if (neighbor.neighborPropertyTypes) {
-          neighbor.neighborPropertyTypes.forEach((propertyType) => {
+        if (neighbor.neighborDetails) {
+          Object.keys(neighbor.neighborDetails).forEach((fqn) => {
+            const propertyType = this.props.propertyTypesByFqn[fqn];
             if (EdmConsts.EDM_DATE_TYPES.includes(propertyType.datatype)) {
               if (dateProps[neighborEntitySetId]) {
                 dateProps[neighborEntitySetId].push(propertyType.id);
@@ -96,13 +99,11 @@ export default class RowNeighbors extends React.Component {
 
   getColumnNamesToShow = (neighborGroup, noNeighbor, rowValues) => {
     const columnNamesToShow = [];
-    neighborGroup.associationPropertyTypes.forEach((propertyType) => {
-      const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+    Object.keys(neighborGroup.associationDetails).forEach((fqn) => {
       if (!this.columnIsEmpty(fqn, rowValues)) columnNamesToShow.push(fqn);
     });
     if (!noNeighbor) {
-      neighborGroup.neighborPropertyTypes.forEach((propertyType) => {
-        const fqn = `${propertyType.type.namespace}.${propertyType.type.name}`;
+      Object.keys(neighborGroup.neighborDetails).forEach((fqn) => {
         if (!this.columnIsEmpty(fqn, rowValues)) columnNamesToShow.push(fqn);
       });
     }
@@ -113,13 +114,17 @@ export default class RowNeighbors extends React.Component {
     const entitySetId = (noNeighbor) ? null : neighborGroup.neighborEntitySet.id;
     const columnNamesToShow = this.getColumnNamesToShow(neighborGroup, noNeighbor, rowValues);
     const numColumns = columnNamesToShow.length;
-    const propertyTypes = (renderingAssociation) ?
-      neighborGroup.associationPropertyTypes : neighborGroup.neighborPropertyTypes;
+    const propertyTypeFqns = (renderingAssociation) ?
+      Object.keys(neighborGroup.associationDetails) : Object.key(neighborGroup.neighborDetails);
 
     const columnWidth = (TABLE_WIDTH - 1) / numColumns;
     const allColumns = [];
-    propertyTypes.forEach((propertyType) => {
-      const field = `${propertyType.type.namespace}.${propertyType.type.name}`;
+    propertyTypeFqns.forEach((fqn) => {
+      const propertyType = this.props.propertyTypesByFqn[fqn];
+      const field = fqn;
+      const neighborPropertyTypes = neighborGroup.neighborDetails
+        ? Object.keys(neighborGroup.neighborDetails).map(ptfqn => this.props.propertyTypesByFqn[ptfqn])
+        : null;
       if (columnNamesToShow.includes(field)) {
         const renderImage = (propertyType.type.name === 'mugshot'
           || propertyType.type.name === 'scars'
@@ -136,7 +141,7 @@ export default class RowNeighbors extends React.Component {
                     onClick={this.props.onClick}
                     width={columnWidth}
                     entitySetId={entitySetId}
-                    propertyTypes={neighborGroup.neighborPropertyTypes}
+                    propertyTypes={neighborPropertyTypes}
                     renderImage={renderImage} />
               }
               width={columnWidth} />

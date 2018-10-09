@@ -19,6 +19,7 @@ export default class EntityRow extends React.Component {
     row: PropTypes.object.isRequired,
     entitySet: PropTypes.object.isRequired,
     propertyTypes: PropTypes.array.isRequired,
+    propertyTypesByFqn: PropTypes.object.isRequired,
     entitySetPropertyMetadata: PropTypes.object.isRequired,
     backFn: PropTypes.func,
     formatValueFn: PropTypes.func,
@@ -159,6 +160,7 @@ export default class EntityRow extends React.Component {
     if (this.state.neighbors.length === 0) return null;
     return (
       <RowNeighbors
+          propertyTypesByFqn={this.props.propertyTypesByFqn}
           neighbors={this.state.neighbors}
           onClick={this.props.onClick}
           formatValueFn={this.props.formatValueFn}
