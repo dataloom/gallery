@@ -43,7 +43,6 @@ export default function reducer(state = INITIAL_STATE, action) {
       });
 
     case actionTypes.CREATE_ENTITY_SET_REQUEST:
-    case actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST:
       return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.LOADING,
@@ -51,7 +50,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
     case actionTypes.CREATE_ENTITY_SET_REJECT:
-    case actionTypes.CREATE_LINKED_ENTITY_SET_REJECT:
       return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.ERROR,
@@ -59,7 +57,6 @@ export default function reducer(state = INITIAL_STATE, action) {
         }
       });
     case actionTypes.CREATE_ENTITY_SET_RESOLVE:
-    case actionTypes.CREATE_LINKED_ENTITY_SET_RESOLVE:
       return state.mergeDeep({
         createEntitySetAsyncState: {
           status: ASYNC_STATUS.SUCCESS,

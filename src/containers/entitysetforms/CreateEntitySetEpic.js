@@ -41,23 +41,6 @@ function createEntitySetEpic(action$) {
     .mergeMap(createEntitySet);
 }
 
-function createLinkedEntitySetEpic(action$) {
-  return action$
-  .ofType(actionTypes.CREATE_LINKED_ENTITY_SET_REQUEST)
-  .mergeMap((action) => {
-    return Observable
-      .from(LinkingApi.linkEntitySets(action.linkingRequest))
-      .mergeMap(() => {
-        return Observable.of(actionFactories.createLinkedEntitySetResolve());
-      })
-      .catch((e) => {
-        console.error(e);
-        return Observable.of(actionFactories.createLinkedEntitySetReject('Error creating linked entity set'));
-      });
-  });
-}
-
 export default combineEpics(
-  createEntitySetEpic,
-  createLinkedEntitySetEpic
+  createEntitySetEpic
 );
