@@ -122,7 +122,8 @@ class OrganizationRolesSectionComponent extends React.Component {
               isValid={this.isValidRole}
               viewOnly={!isOwner}
               onAdd={this.addRole}
-              onRemove={this.removeRole} />
+              onRemove={this.removeRole}
+              noDelete />
         </RolesListContainer>
       );
     }
