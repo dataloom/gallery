@@ -24,6 +24,7 @@ export default class SimpleListGroup extends React.Component {
     items: PropTypes.instanceOf(Immutable.List).isRequired,
     isValid: PropTypes.func,
     viewOnly: PropTypes.bool,
+    noDelete: PropTypes.bool,
     onAdd: PropTypes.func,
     onRemove: PropTypes.func
   };
@@ -31,6 +32,7 @@ export default class SimpleListGroup extends React.Component {
   static defaultProps = {
     placeholder: '',
     viewOnly: false,
+    noDelete: false,
     isValid: () => {},
     onAdd: () => {},
     onRemove: () => {}
@@ -115,7 +117,7 @@ export default class SimpleListGroup extends React.Component {
         <StyledListItem key={item.get('id')}>
           <StyledElement>{ item.get('value') }</StyledElement>
           {
-            this.props.viewOnly
+            this.props.viewOnly || this.props.noDelete
               ? null
               : (
                 <RemoveButton
