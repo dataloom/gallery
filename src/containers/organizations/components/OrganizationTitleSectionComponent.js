@@ -89,6 +89,8 @@ const ManagePermissionsButtonContainer = styled.div`
 const PermissionButtons = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: fit-content;
+  align-items: flex-end;
 `;
 
 function mapDispatchToProps(dispatch) {
@@ -184,13 +186,15 @@ class OrganizationTitleSectionComponent extends React.Component {
     const isOwner = this.props.organization.get('isOwner', false);
     const isPublic = this.props.organization.get('isPublic', false);
 
+    const publicListingText = `ORGANIZATION ${isPublic ? '' : 'NOT '}LISTED PUBLICLY`;
+
     if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
     }
 
     return (
       <VisibilityToggle isOwner={isOwner} isPublic={isPublic} onClick={this.togglePublicVisibility}>
-        <VisibilityToggleText>PUBLIC</VisibilityToggleText>
+        <VisibilityToggleText>{publicListingText}</VisibilityToggleText>
         <VisibilityToggleIcon>
           {
             isPublic

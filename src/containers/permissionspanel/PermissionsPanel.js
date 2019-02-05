@@ -316,7 +316,7 @@ class PermissionsPanel extends React.Component {
     }
 
     const roleOptions = this.getRoleOptions(roleIdList);
-    const hiddenBody = roleIdList.map((roleId) => {
+    const hiddenBody = roleIdList.filter(roleId => rolesById.has(roleId)).map((roleId) => {
       const role = rolesById.get(roleId);
       const roleTitle = this.formatRoleTitle(roleId, role.get('organizationId'));
       return (
