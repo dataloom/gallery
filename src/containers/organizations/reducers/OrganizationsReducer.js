@@ -42,7 +42,8 @@ const INITIAL_STATE = Immutable.fromJS({
   visibleOrganizationIds: Immutable.Set(),
   usersSearchResults: Immutable.Map(),
   members: Immutable.List(),
-  roles: Immutable.List()
+  roles: Immutable.List(),
+  trustedOrganizations: Immutable.List()
 });
 
 export default function organizationsReducer(state = INITIAL_STATE, action :Object) {
@@ -385,6 +386,13 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
       const decoratedOrganization = organization.set('isPublic', isPublic);
       return state.setIn(['organizations', orgId], decoratedOrganization);
     }
+
+    case OrgActionTypes.LOAD_TRUSTED_ORGS_REQUEST:
+    case OrgActionTypes.LOAD_TRUSTED_ORGS_FAILURE:
+      return state.set('trustedOrganizations', Immutable.List());
+
+    case OrgActionTypes.LOAD_TRUSTED_ORGS_SUCCESS:
+      return state.set('trustedOrganizations', Immutable.fromJS(action.organizations));
 
     case OrgActionTypes.FETCH_MEMBERS_SUCCESS:
       return state.set('members', Immutable.fromJS(action.members));

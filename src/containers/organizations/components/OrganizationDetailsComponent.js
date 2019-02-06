@@ -17,6 +17,7 @@ import OrganizationDomainsSectionComponent from './OrganizationDomainsSectionCom
 import OrganizationMembersSectionComponent from './OrganizationMembersSectionComponent';
 import OrganizationRolesSectionComponent from './OrganizationRolesSectionComponent';
 import OrganizationTitleSectionComponent from './OrganizationTitleSectionComponent';
+import OrganizationTrustedOrgsSectionComponent from './OrganizationTrustedOrgsSectionComponent';
 import OrganizationDeleteConfirmationModal from './OrganizationDeleteConfirmationModal';
 
 import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
@@ -24,12 +25,14 @@ import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 import {
   deleteOrganizationRequest,
   fetchMembersRequest,
+  loadTrustedOrganizationsRequest,
   showDeleteModal,
   hideDeleteModal
 } from '../actions/OrganizationActionFactory';
 
 import {
-  fetchOrganizationRequest
+  fetchOrganizationRequest,
+  fetchOrganizationsRequest
 } from '../actions/OrganizationsActionFactory';
 
 const LoadingSpinnerWrapper = styled.div`
@@ -93,7 +96,9 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     deleteOrganizationRequest,
     fetchMembersRequest,
+    loadTrustedOrganizationsRequest,
     fetchOrganizationRequest,
+    fetchOrganizationsRequest,
     showDeleteModal,
     hideDeleteModal
   };
@@ -123,18 +128,30 @@ class OrganizationDetailsComponent extends React.Component {
 
   componentDidMount() {
 
-    if (this.props.mode === MODES.VIEW || this.props.mode === MODES.EDIT) {
-      this.props.actions.fetchOrganizationRequest(this.props.organizationId);
-      this.props.actions.fetchMembersRequest(this.props.organizationId);
+    const { actions, mode, organization, organizationId } = this.props;
+
+    if (mode === MODES.VIEW || mode === MODES.EDIT) {
+      actions.fetchOrganizationRequest(organizationId);
+      actions.fetchMembersRequest(organizationId);
+      actions.fetchOrganizationsRequest();
+
+      if (organization.get('isOwner')) {
+        actions.loadTrustedOrganizationsRequest(organizationId);
+      }
     }
   }
 
   componentWillReceiveProps(nextProps :Object) {
+    const { actions, organizationId, organization } = this.props;
 
     if (nextProps.mode === MODES.VIEW || nextProps.mode === MODES.EDIT) {
-      if (this.props.organizationId !== nextProps.organizationId) {
-        this.props.actions.fetchOrganizationRequest(nextProps.organizationId);
-        this.props.actions.fetchMembersRequest(nextProps.organizationId);
+      if (organizationId !== nextProps.organizationId) {
+        actions.fetchOrganizationRequest(nextProps.organizationId);
+        actions.fetchMembersRequest(nextProps.organizationId);
+      }
+
+      if (organization !== nextProps.organization && nextProps.organization.get('isOwner')) {
+        actions.loadTrustedOrganizationsRequest(organizationId);
       }
     }
   }
@@ -178,6 +195,19 @@ class OrganizationDetailsComponent extends React.Component {
     return (
       <OrganizationRolesSectionComponent organization={this.props.organization} />
     );
+  }
+
+  renderOrganizationTrustedOrgsSection = () => {
+
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    if (this.props.organization.get('isOwner')) {
+      return <OrganizationTrustedOrgsSectionComponent organization={this.props.organization} />
+    }
+
+    return null;
   }
 
   renderOrganizationMembersSection = () => {
@@ -272,6 +302,7 @@ class OrganizationDetailsComponent extends React.Component {
           { this.renderOrganizationDescriptionSection() }
           { this.renderOrganizationDomainsSection() }
           { this.renderOrganizationRolesSection() }
+          { this.renderOrganizationTrustedOrgsSection() }
           { this.renderOrganizationMembersSection() }
           { this.renderOrganizationAddMembersSection() }
           { this.renderOrganizationDeleteButton() }

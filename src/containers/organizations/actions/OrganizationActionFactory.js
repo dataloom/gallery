@@ -390,3 +390,50 @@ export function fetchRolesFailure() :Object {
     type: OrgActionTypes.FETCH_ROLES_FAILURE
   };
 }
+
+export function loadTrustedOrganizationsRequest(organizationId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.LOAD_TRUSTED_ORGS_REQUEST,
+    organizationId
+  };
+}
+
+export function loadTrustedOrganizationsSuccess(organizations :Object[]) :Object {
+
+  return {
+    type: OrgActionTypes.LOAD_TRUSTED_ORGS_SUCCESS,
+    organizations
+  };
+}
+
+export function loadTrustedOrganizationsFailure() :Object {
+
+  return {
+    type: OrgActionTypes.LOAD_TRUSTED_ORGS_FAILURE
+  };
+}
+
+export function trustOrganizationRequest(organizationId :UUID, trustedOrganizationPrincipal :Object, isTrusted :boolean) :Object {
+
+  return {
+    type: OrgActionTypes.TRUST_ORG_REQUEST,
+    organizationId,
+    trustedOrganizationPrincipal,
+    isTrusted
+  };
+}
+
+export function trustOrganizationSuccess() :Object {
+
+  return {
+    type: OrgActionTypes.TRUST_ORG_SUCCESS
+  };
+}
+
+export function trustOrganizationFailure() :Object {
+
+  return {
+    type: OrgActionTypes.TRUST_ORG_FAILURE
+  };
+}
