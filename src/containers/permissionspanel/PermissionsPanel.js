@@ -33,6 +33,7 @@ const orders = {
 const permissionsByLabel = {
   Discover: Permission.DISCOVER.name,
   Link: Permission.LINK.name,
+  Materialize: Permission.MATERIALIZE.name,
   Read: Permission.READ.name,
   Write: Permission.WRITE.name,
   Owner: Permission.OWNER.name
@@ -219,7 +220,7 @@ class PermissionsPanel extends React.Component {
   getPermissionsForView = (view, action) => {
     const permission = permissionsByLabel[view];
     return (permission === Permission.OWNER.name && action === ActionConsts.ADD)
-      ? [permission, Permission.WRITE.name, Permission.READ.name, Permission.LINK.name, Permission.DISCOVER.name]
+      ? [permission, Permission.WRITE.name, Permission.READ.name, Permission.MATERIALIZE.name, Permission.LINK.name, Permission.DISCOVER.name]
       : [permission];
   }
 
@@ -337,7 +338,7 @@ class PermissionsPanel extends React.Component {
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.renderPermissionButtons(
-            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.LINK, Permission.DISCOVER],
+            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.MATERIALIZE, Permission.LINK, Permission.DISCOVER],
             this.changeRolesView,
             selectedPermissionForRolesView
           )}
@@ -461,7 +462,7 @@ class PermissionsPanel extends React.Component {
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
           {this.renderPermissionButtons(
-            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.LINK, Permission.DISCOVER],
+            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.MATERIALIZE, Permission.LINK, Permission.DISCOVER],
             this.changeEmailsView,
             selectedPermissionForEmailsView
           )}
