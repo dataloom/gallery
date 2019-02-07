@@ -102,7 +102,7 @@ function* loadOrganizationEntitySetsWorker(action :Object) :Generator<*, *, *> {
   try {
     yield put(loadOrganizationEntitySets.request(action.id));
 
-    const allOrganizationEntitySets = yield call(OrganizationsApi.getOrganizationEntitySets, action.value); // TODO
+    const allOrganizationEntitySets = yield call(OrganizationsApi.getOrganizationEntitySets, action.value);
 
     const entitySetIds = Object.keys(allOrganizationEntitySets);
 

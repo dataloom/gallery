@@ -164,7 +164,7 @@ class EntitySetDetailComponent extends React.Component {
     this.props.loadEntitySetPropertyMetadata(this.props.entitySetId);
     this.props.fetchWritableOrganizations();
 
-    const organizationId = entitySet.get('organization');
+    const organizationId = entitySet.get('organizationId');
     if (organizationId) {
       this.props.fetchOrganization(organizationId);
     }
@@ -186,8 +186,13 @@ class EntitySetDetailComponent extends React.Component {
         });
       }
 
-      if (!this.props.entitySet || this.props.entitySet.get('organization') !== nextProps.entitySet.get('organization')) {
-        this.props.fetchOrganization(nextProps.entitySet.get('organization'));
+
+      const nextOrganizationId = nextProps.entitySet.get('organizationId');
+
+      if (!this.props.entitySet || this.props.entitySet.get('organizationId') !== nextOrganizationId) {
+        if (nextOrganizationId && nextProps.organization.get('id') !== nextOrganizationId) {
+          this.props.fetchOrganization(nextOrganizationId);
+        }
       }
 
       let shouldLoad = false;
@@ -242,8 +247,8 @@ class EntitySetDetailComponent extends React.Component {
     if (contacts) this.props.updateMetadata(this.props.entitySet.get('id'), { contacts: [contacts] });
   }
 
-  updateEntitySetOrganization = (organization) => {
-    if (organization) this.props.updateMetadata(this.props.entitySet.get('id'), { organization });
+  updateEntitySetOrganization = (organizationId) => {
+    if (organizationId) this.props.updateMetadata(this.props.entitySet.get('id'), { organizationId });
     this.setState({ editingOrganization: false })
   }
 
@@ -352,7 +357,7 @@ class EntitySetDetailComponent extends React.Component {
               {this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}
             </span>
             <div className={`${styles.descriptionTitle} ${styles.organizationSection}`}>Organization</div>
-            {this.renderOrganization(entitySet.get('organization'), entitySetPermissions.OWNER)}
+            {this.renderOrganization(entitySet.get('organizationId'), entitySetPermissions.OWNER)}
           </div>
 
           <ControlsContainer>
@@ -732,7 +737,6 @@ function mapStateToProps(state, ownProps) {
   const entitySetId = ownProps.params.id;
   const entitySet = state.getIn(['edm', 'entitySets', entitySetId], Immutable.Map());
 
-
   let entitySetPermissions;
   if (!entitySet.isEmpty()) {
     entitySetPermissions = getPermissions(permissions, [entitySet.get('id')]);
@@ -741,7 +745,7 @@ function mapStateToProps(state, ownProps) {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
-  const organization = state.getIn(['organizations', entitySet.get('organization')], Immutable.Map());
+  const organization = state.getIn(['organizations', 'organizations', entitySet.get('organizationId')], Immutable.Map());
   const writableOrganizations = state.getIn(['organizations', 'writableOrganizations'], Immutable.List());
 
   const entityTypeId = entitySet.get('entityTypeId');

@@ -135,7 +135,7 @@ class CreateEntitySet extends React.Component {
       description,
       linking,
       entityTypeId,
-      organization: organizationId,
+      organizationId,
       contacts: [contact],
       linkedEntitySets: linking ? entitySetIds.map(({ value }) => value) : []
     };
