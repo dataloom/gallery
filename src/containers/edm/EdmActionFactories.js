@@ -1,3 +1,5 @@
+import { newRequestSequence } from 'redux-reqseq';
+
 import * as actionTypes from './EdmActionTypes';
 
 export function filteredEdmRequest(edmQuery) {
@@ -118,3 +120,6 @@ export function updateEntitySetPropertyMetadataReject(errorMessage) {
     errorMessage
   };
 }
+
+export const LOAD_ENTITY_SET :string = 'LOAD_ENTITY_SET';
+export const loadEntitySet :RequestSequence = newRequestSequence(LOAD_ENTITY_SET);

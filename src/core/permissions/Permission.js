@@ -20,6 +20,7 @@ Permission.initEnum({
   HIDDEN: enumFactory('Hidden'),
   DISCOVER: enumFactory('Discover'),
   LINK: enumFactory('Link'),
+  MATERIALIZE: enumFactory('Materialize'),
   READ: enumFactory('Read'),
   WRITE: enumFactory('Write'),
   OWNER: enumFactory('Owner')

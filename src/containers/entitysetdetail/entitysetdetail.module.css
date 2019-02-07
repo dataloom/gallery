@@ -57,9 +57,17 @@
   margin-left: 5px;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .contacts {
   margin-top: 15px;
   font-style: italic;
+}
+
+.organizationSection {
+  margin-top: 30px;
 }
 
 .link {

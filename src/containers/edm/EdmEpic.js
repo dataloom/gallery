@@ -6,6 +6,7 @@ import * as AsyncActionFactory from '../async/AsyncActionFactory';
 import * as actionTypes from './EdmActionTypes';
 import * as actionFactories from './EdmActionFactories';
 import * as EdmActionFactory from './EdmActionFactory';
+import { entitySetDetailRequest } from '../entitysetdetail/EntitySetDetailActionFactory';
 
 function loadEdmEpic(action$) {
   // Filter on Action
@@ -42,7 +43,8 @@ function updateMetadataEpic(action$) {
         .from(EntityDataModelApi.updateEntitySetMetaData(action.entitySetId, action.metadataUpdate))
         .mergeMap(() => {
           return Observable.of(
-            actionFactories.updateEntitySetMetadataResolve()
+            actionFactories.updateEntitySetMetadataResolve(),
+            actionFactories.loadEntitySet(action.entitySetId)
           );
         })
         .catch(() => {

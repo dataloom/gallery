@@ -1,0 +1,7 @@
+.trustedOrgSelect {
+  width: 100%;
+}
+
+.trustedOrgSelect :global .Select-control {
+  border: none;
+}

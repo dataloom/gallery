@@ -9,7 +9,7 @@
 .permissionsBodyContainer {
   margin: 0 auto;
   height: 200px;
-  width: 300px;
+  width: 372px;
   overflow: scroll;
   text-align: left;
   padding-top: 5px;
@@ -57,7 +57,7 @@
 }
 
 .permissionInputWidth {
-  width: 300px;
+  width: 372px;
 }
 
 .label {

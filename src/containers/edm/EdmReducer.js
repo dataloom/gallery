@@ -2,6 +2,8 @@ import Immutable from 'immutable';
 
 import * as EdmActionTypes from './EdmActionTypes';
 
+import { loadEntitySet } from './EdmActionFactories'
+
 import { ASYNC_STATUS } from '../../components/asynccontent/AsyncContent';
 
 export const INITIAL_STATE = Immutable.fromJS({
@@ -185,6 +187,12 @@ export default function reducer(state = INITIAL_STATE, action) {
     case EdmActionTypes.GET_ALL_ENTITY_SET_PROPERTY_METADATA_SUCCESS: {
       return state
         .setIn(['entitySetPropertyMetadata', action.entitySetId], Immutable.fromJS(action.entitySetPropertyMetadata));
+    }
+
+    case loadEntitySet.case(action.type): {
+      return loadEntitySet.reducer(state, action, {
+        SUCCESS: () => state.setIn(['entitySets', action.value.id], Immutable.fromJS(action.value))
+      });
     }
 
     default:
