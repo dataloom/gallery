@@ -179,9 +179,9 @@ function* assembleEntitySetsWorker(action :Object) :Generator<*, *, *> {
     const { organizationId, entitySetIds } = action.value;
     yield put(assembleEntitySets.request(action.id))
 
-    yield call(OrganizationsApi.assembleEntitySets, organizationId, entitySetIds);
+    const organizationEntitySets = yield call(OrganizationsApi.assembleEntitySets, organizationId, entitySetIds);
 
-    yield put(assembleEntitySets.success(action.id));
+    yield put(assembleEntitySets.success(action.id, organizationEntitySets));
 
     yield put(loadOrganizationEntitySets(organizationId));
   }

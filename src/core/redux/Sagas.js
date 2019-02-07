@@ -2,6 +2,7 @@
  * @flow
  */
 
+import * as EdmSagas from '../../containers/edm/EdmSagas';
 import * as OrganizationSagas from '../../containers/organizations/sagas/OrganizationSagas';
 import * as ProfileSagas from '../../containers/profile/ProfileSagas';
 
@@ -18,6 +19,9 @@ export default function* sagas() :Generator<*, *, *> {
     fork(OrganizationSagas.assembleEntitySetsWatcher),
 
     // ProfileSagas
-    fork(ProfileSagas.getDbAccessCredentialWatcher)
+    fork(ProfileSagas.getDbAccessCredentialWatcher),
+
+    // EdmSagas
+    fork(EdmSagas.loadEntitySetWatcher)
   ];
 }

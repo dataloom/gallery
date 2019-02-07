@@ -6,7 +6,8 @@ import {
 } from 'lattice';
 
 import {
-  loadOrganizationEntitySets
+  loadOrganizationEntitySets,
+  assembleEntitySets
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -96,6 +97,7 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
       // TODO: do merge if organization exists
 
       const organization = action.organization;
+
       return state
         .setIn(['organizations', organization.id], Immutable.fromJS(organization))
         .set('isCreatingOrg', false)
@@ -441,6 +443,22 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
       return fetchWritableOrganizations.reducer(state, action, {
         SUCCESS: () => state.set('writableOrganizations', Immutable.fromJS(action.value)),
         FAILURE: () => state.set('writableOrganizations', Immutable.List())
+      })
+    }
+
+    case assembleEntitySets.case(action.type): {
+      return assembleEntitySets.reducer(state, action, {
+        SUCCESS: () => {
+          const updatedOrganizationEntitySets = action.value;
+          let organizationEntitySets = state.get('organizationEntitySets');
+          Object.entries(updatedOrganizationEntitySets).forEach(([entitySetId, flags]) => {
+            if (organizationEntitySets.has(entitySetId)) {
+              organizationEntitySets = organizationEntitySets.set(entitySetId, Immutable.fromJS(flags));
+            }
+          });
+
+          return state.set('organizationEntitySets', organizationEntitySets);
+        }
       })
     }
 
