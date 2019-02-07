@@ -74,6 +74,24 @@ function updateOrganizationDescriptionEpic(action$) {
     });
 }
 
+function updateOrganizationNameEpic(action$) {
+
+  return action$
+    .ofType(OrgActionTypes.UPDATE_ORG_NAME_REQUEST)
+    .mergeMap((action) => {
+      return Observable
+        .from(OrganizationsApi.updateName(action.organization.id, action.organization.name)) // TODO
+        .map(() => {
+          return OrgActionFactory.updateOrganizationNameSuccess();
+        })
+        .catch(() => {
+          return Observable.of(
+            OrgActionFactory.updateOrganizationNameFailure()
+          );
+        });
+    });
+}
+
 function updateOrganizationTitleEpic(action$) {
 
   return action$
@@ -296,6 +314,7 @@ export default combineEpics(
   deleteOrganizationEpic,
   updateOrganizationDescriptionEpic,
   updateOrganizationTitleEpic,
+  updateOrganizationNameEpic,
   addDomainToOrganizationEpic,
   removeDomainFromOrganizationEpic,
   addRoleToOrganizationEpic,

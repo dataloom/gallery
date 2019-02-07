@@ -5,6 +5,15 @@ import {
   Types
 } from 'lattice';
 
+import {
+  loadOrganizationEntitySets,
+  assembleEntitySets
+} from '../actions/OrganizationActionFactory';
+
+import {
+  fetchWritableOrganizations
+} from '../actions/OrganizationsActionFactory';
+
 import * as PermissionsActionTypes from '../../permissions/PermissionsActionTypes';
 import * as PrincipalsActionTypes from '../../principals/PrincipalsActionTypes';
 
@@ -42,7 +51,13 @@ const INITIAL_STATE = Immutable.fromJS({
   visibleOrganizationIds: Immutable.Set(),
   usersSearchResults: Immutable.Map(),
   members: Immutable.List(),
-  roles: Immutable.List()
+  roles: Immutable.List(),
+  trustedOrganizations: Immutable.List(),
+  entitySetsById: Immutable.Map(),
+  entityTypesById: Immutable.Map(),
+  organizationEntitySets: Immutable.Map(),
+  materializableEntitySetIds: Immutable.Set(),
+  writableOrganizations: Immutable.List()
 });
 
 export default function organizationsReducer(state = INITIAL_STATE, action :Object) {
@@ -82,6 +97,7 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
       // TODO: do merge if organization exists
 
       const organization = action.organization;
+
       return state
         .setIn(['organizations', organization.id], Immutable.fromJS(organization))
         .set('isCreatingOrg', false)
@@ -386,6 +402,13 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
       return state.setIn(['organizations', orgId], decoratedOrganization);
     }
 
+    case OrgActionTypes.LOAD_TRUSTED_ORGS_REQUEST:
+    case OrgActionTypes.LOAD_TRUSTED_ORGS_FAILURE:
+      return state.set('trustedOrganizations', Immutable.List());
+
+    case OrgActionTypes.LOAD_TRUSTED_ORGS_SUCCESS:
+      return state.set('trustedOrganizations', Immutable.fromJS(action.organizations));
+
     case OrgActionTypes.FETCH_MEMBERS_SUCCESS:
       return state.set('members', Immutable.fromJS(action.members));
 
@@ -397,6 +420,47 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
 
     case OrgActionTypes.HIDE_DELETE_MODAL:
       return state.set('isConfirmingDeletion', false);
+
+    case loadOrganizationEntitySets.case(action.type): {
+      return loadOrganizationEntitySets.reducer(state, action, {
+        SUCCESS: () => {
+          const {
+            entitySetsById,
+            entityTypesById,
+            organizationEntitySets,
+            materializableEntitySetIds
+          } = action.value;
+          return state
+            .set('entitySetsById', entitySetsById)
+            .set('organizationEntitySets', organizationEntitySets)
+            .set('materializableEntitySetIds', materializableEntitySetIds)
+            .set('entityTypesById', entityTypesById);
+        }
+      });
+    }
+
+    case fetchWritableOrganizations.case(action.type): {
+      return fetchWritableOrganizations.reducer(state, action, {
+        SUCCESS: () => state.set('writableOrganizations', Immutable.fromJS(action.value)),
+        FAILURE: () => state.set('writableOrganizations', Immutable.List())
+      })
+    }
+
+    case assembleEntitySets.case(action.type): {
+      return assembleEntitySets.reducer(state, action, {
+        SUCCESS: () => {
+          const updatedOrganizationEntitySets = action.value;
+          let organizationEntitySets = state.get('organizationEntitySets');
+          Object.entries(updatedOrganizationEntitySets).forEach(([entitySetId, flags]) => {
+            if (organizationEntitySets.has(entitySetId)) {
+              organizationEntitySets = organizationEntitySets.set(entitySetId, Immutable.fromJS(flags));
+            }
+          });
+
+          return state.set('organizationEntitySets', organizationEntitySets);
+        }
+      })
+    }
 
     default:
       return state;

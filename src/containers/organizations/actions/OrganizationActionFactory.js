@@ -3,6 +3,7 @@
  */
 
 import { Models } from 'lattice';
+import { newRequestSequence } from 'redux-reqseq';
 
 import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 
@@ -106,6 +107,28 @@ export function updateOrganizationDescriptionFailure() :Object {
 
   return {
     type: OrgActionTypes.UPDATE_ORG_DESCRIPTION_FAILURE
+  };
+}
+
+export function updateOrganizationNameRequest(organization :Organization) :Object {
+
+  return {
+    type: OrgActionTypes.UPDATE_ORG_NAME_REQUEST,
+    organization
+  };
+}
+
+export function updateOrganizationNameSuccess() :Object {
+
+  return {
+    type: OrgActionTypes.UPDATE_ORG_NAME_SUCCESS
+  };
+}
+
+export function updateOrganizationNameFailure() :Object {
+
+  return {
+    type: OrgActionTypes.UPDATE_ORG_NAME_FAILURE
   };
 }
 
@@ -390,3 +413,56 @@ export function fetchRolesFailure() :Object {
     type: OrgActionTypes.FETCH_ROLES_FAILURE
   };
 }
+
+export function loadTrustedOrganizationsRequest(organizationId :UUID) :Object {
+
+  return {
+    type: OrgActionTypes.LOAD_TRUSTED_ORGS_REQUEST,
+    organizationId
+  };
+}
+
+export function loadTrustedOrganizationsSuccess(organizations :Object[]) :Object {
+
+  return {
+    type: OrgActionTypes.LOAD_TRUSTED_ORGS_SUCCESS,
+    organizations
+  };
+}
+
+export function loadTrustedOrganizationsFailure() :Object {
+
+  return {
+    type: OrgActionTypes.LOAD_TRUSTED_ORGS_FAILURE
+  };
+}
+
+export function trustOrganizationRequest(organizationId :UUID, trustedOrganizationPrincipal :Object, isTrusted :boolean) :Object {
+
+  return {
+    type: OrgActionTypes.TRUST_ORG_REQUEST,
+    organizationId,
+    trustedOrganizationPrincipal,
+    isTrusted
+  };
+}
+
+export function trustOrganizationSuccess() :Object {
+
+  return {
+    type: OrgActionTypes.TRUST_ORG_SUCCESS
+  };
+}
+
+export function trustOrganizationFailure() :Object {
+
+  return {
+    type: OrgActionTypes.TRUST_ORG_FAILURE
+  };
+}
+
+export const ASSEMBLE_ENTITY_SETS :string = 'ASSEMBLE_ENTITY_SETS';
+export const assembleEntitySets :RequestSequence = newRequestSequence(ASSEMBLE_ENTITY_SETS);
+
+export const LOAD_ORGANIZATION_ENTITY_SETS :string = 'LOAD_ORGANIZATION_ENTITY_SETS';
+export const loadOrganizationEntitySets :RequestSequence = newRequestSequence(LOAD_ORGANIZATION_ENTITY_SETS);
