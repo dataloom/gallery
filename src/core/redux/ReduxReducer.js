@@ -17,6 +17,7 @@ import permissionsPanelReducer from '../../containers/permissionspanel/Permissio
 import permissionReducer from '../../containers/permissions/PermissionsReducer';
 import permissionsSummaryReducer from '../../containers/permissionssummary/PermissionsSummaryReducer';
 import principalsReducer from '../../containers/principals/PrincipalsReducer';
+import profileReducer from '../../containers/profile/ProfileReducer';
 // import securableObjectReducer from '../../containers/securableobject/SecurableObjectReducer';
 import topUtilizersReducer from '../../containers/toputilizers/TopUtilizersReducer';
 import visualizationReducer from '../../containers/visualizations/VisualizationReducer';
@@ -41,6 +42,7 @@ export default function reduxReducer() {
     permissions: permissionReducer,
     permissionsSummary: permissionsSummaryReducer,
     principals: principalsReducer,
+    profile: profileReducer,
     router: routerReducer,
     // securableObject: securableObjectReducer,
     topUtilizers: topUtilizersReducer,

@@ -13,6 +13,8 @@ import StyledFlexContainerStacked from '../../../components/flex/StyledFlexConta
 
 import OrganizationAddMembersSectionComponent from './OrganizationAddMembersSectionComponent';
 import OrganizationDescriptionSectionComponent from './OrganizationDescriptionSectionComponent';
+import OrganizationEntitySetsSectionComponent from './OrganizationEntitySetsSectionComponent';
+import OrganizationNameSectionComponent from './OrganizationNameSectionComponent';
 import OrganizationDomainsSectionComponent from './OrganizationDomainsSectionComponent';
 import OrganizationMembersSectionComponent from './OrganizationMembersSectionComponent';
 import OrganizationRolesSectionComponent from './OrganizationRolesSectionComponent';
@@ -26,6 +28,7 @@ import {
   deleteOrganizationRequest,
   fetchMembersRequest,
   loadTrustedOrganizationsRequest,
+  loadOrganizationEntitySets,
   showDeleteModal,
   hideDeleteModal
 } from '../actions/OrganizationActionFactory';
@@ -99,6 +102,7 @@ function mapDispatchToProps(dispatch) {
     loadTrustedOrganizationsRequest,
     fetchOrganizationRequest,
     fetchOrganizationsRequest,
+    loadOrganizationEntitySets,
     showDeleteModal,
     hideDeleteModal
   };
@@ -115,6 +119,8 @@ class OrganizationDetailsComponent extends React.Component {
       deleteOrganizationRequest: React.PropTypes.func.isRequired,
       fetchMembersRequest: React.PropTypes.func.isRequired,
       fetchOrganizationRequest: React.PropTypes.func.isRequired,
+      loadTrustedOrganizationsRequest: React.PropTypes.func.isRequired,
+      loadOrganizationEntitySets: React.PropTypes.func.isRequired,
       showDeleteModal: React.PropTypes.func.isRequired,
       hideDeleteModal: React.PropTypes.func.isRequired
     }).isRequired,
@@ -134,6 +140,7 @@ class OrganizationDetailsComponent extends React.Component {
       actions.fetchOrganizationRequest(organizationId);
       actions.fetchMembersRequest(organizationId);
       actions.fetchOrganizationsRequest();
+      actions.loadOrganizationEntitySets(organizationId);
 
       if (organization.get('isOwner')) {
         actions.loadTrustedOrganizationsRequest(organizationId);
@@ -148,6 +155,7 @@ class OrganizationDetailsComponent extends React.Component {
       if (organizationId !== nextProps.organizationId) {
         actions.fetchOrganizationRequest(nextProps.organizationId);
         actions.fetchMembersRequest(nextProps.organizationId);
+        actions.loadOrganizationEntitySets(nextProps.organizationId);
       }
 
       if (organization !== nextProps.organization && nextProps.organization.get('isOwner')) {
@@ -172,6 +180,18 @@ class OrganizationDetailsComponent extends React.Component {
 
     return (
       <OrganizationDescriptionSectionComponent organization={this.props.organization} />
+    );
+  }
+
+  renderOrganizationNameSection = () => {
+
+    // hide in create mode
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    return (
+      <OrganizationNameSectionComponent organization={this.props.organization} />
     );
   }
 
@@ -229,6 +249,17 @@ class OrganizationDetailsComponent extends React.Component {
 
     return (
       <OrganizationAddMembersSectionComponent organization={this.props.organization} />
+    );
+  }
+
+  renderOrganizationEntitySetsSection = () => {
+
+    if (this.props.mode === MODES.CREATE) {
+      return null;
+    }
+
+    return (
+      <OrganizationEntitySetsSectionComponent organization={this.props.organization} />
     );
   }
 
@@ -300,11 +331,13 @@ class OrganizationDetailsComponent extends React.Component {
         <StyledFlexContainerStacked>
           { this.renderOrganizationTitleSection() }
           { this.renderOrganizationDescriptionSection() }
+          { this.renderOrganizationNameSection() }
           { this.renderOrganizationDomainsSection() }
           { this.renderOrganizationRolesSection() }
           { this.renderOrganizationTrustedOrgsSection() }
           { this.renderOrganizationMembersSection() }
           { this.renderOrganizationAddMembersSection() }
+          { this.renderOrganizationEntitySetsSection() }
           { this.renderOrganizationDeleteButton() }
           <OrganizationDeleteConfirmationModal
               isConfirmingDeletion={isConfirmingDeletion}

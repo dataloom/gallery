@@ -3,6 +3,7 @@ import React from 'react';
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
+import styled from 'styled-components';
 
 import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -11,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
 import { createEntitySetRequest } from './CreateEntitySetActionFactories';
+import { fetchWritableOrganizations } from '../organizations/actions/OrganizationsActionFactory';
 
 const ENTITY_SET_TYPES = {
   ENTITY_SET: 'Entity Set',
@@ -19,19 +21,25 @@ const ENTITY_SET_TYPES = {
 
 const PERSON_TYPE_FQN = 'general.person';
 
+const SubmitButton = styled(Button)`
+  margin-top: 10px;
+`;
+
 class CreateEntitySet extends React.Component {
 
   static propTypes = {
     actions: PropTypes.shape({
       onCreateEntitySet: PropTypes.func.isRequired,
-      fetchAllEntityTypesRequest: PropTypes.func.isRequired
+      fetchAllEntityTypesRequest: PropTypes.func.isRequired,
+      fetchWritableOrganizations: PropTypes.func.isRequired
     }).isRequired,
     createEntitySetAsyncState: AsyncStatePropType.isRequired,
     defaultContact: PropTypes.string,
     entityTypes: PropTypes.instanceOf(Immutable.Map).isRequired,
     entitySets: PropTypes.instanceOf(Immutable.Map).isRequired,
     isAdmin: PropTypes.bool.isRequired,
-    personEntityTypeId: PropTypes.string.isRequired
+    personEntityTypeId: PropTypes.string.isRequired,
+    writableOrganizations: PropTypes.instanceOf(Immutable.List).isRequired
   };
 
   constructor(props) {
@@ -45,12 +53,14 @@ class CreateEntitySet extends React.Component {
       name: '',
       contact: props.defaultContact,
       entityTypeId: null,
+      organizationId: null,
       entitySetIds: []
     };
   }
 
   componentDidMount() {
     this.props.actions.fetchAllEntityTypesRequest();
+    this.props.actions.fetchWritableOrganizations();
   }
 
   onTypeChange = (option) => {
@@ -93,6 +103,11 @@ class CreateEntitySet extends React.Component {
     this.setState({ entityTypeId });
   };
 
+  onOrganizationChange = (option) => {
+    const organizationId = (option) ? option.value : null;
+    this.setState({ organizationId });
+  };
+
   onEntitySetsChange = (entitySetIds) => {
     const entityTypeId = (entitySetIds.length) ? entitySetIds[0].entityTypeId : null;
     this.setState({ entitySetIds, entityTypeId });
@@ -107,6 +122,7 @@ class CreateEntitySet extends React.Component {
       description,
       contact,
       entityTypeId,
+      organizationId,
       entitySetIds,
       personEntityTypeId
     } = this.state;
@@ -119,6 +135,7 @@ class CreateEntitySet extends React.Component {
       description,
       linking,
       entityTypeId,
+      organization: organizationId,
       contacts: [contact],
       linkedEntitySets: linking ? entitySetIds.map(({ value }) => value) : []
     };
@@ -148,6 +165,21 @@ class CreateEntitySet extends React.Component {
         options.push({
           value: entityType.get('id'),
           label: entityType.get('title')
+        });
+      }
+    });
+
+    return options;
+  }
+
+  getOrganizationOptions() {
+
+    const options = [];
+    this.props.writableOrganizations.forEach((organization) => {
+      if (!organization.isEmpty()) {
+        options.push({
+          value: organization.get('id'),
+          label: organization.get('title')
         });
       }
     });
@@ -238,7 +270,15 @@ class CreateEntitySet extends React.Component {
 
         { this.renderEntityTypeOrEntitySetSelection() }
 
-        <Button type="submit" bsStyle="primary">Create</Button>
+        <FormGroup>
+          <ControlLabel>Organization</ControlLabel>
+          <Select
+              value={this.state.organizationId}
+              options={this.getOrganizationOptions()}
+              onChange={this.onOrganizationChange} />
+        </FormGroup>
+
+        <SubmitButton type="submit" bsStyle="primary">Create</SubmitButton>
       </form>
     );
   };
@@ -252,6 +292,7 @@ class CreateEntitySet extends React.Component {
   };
 
   render() {
+
     return (
       <AsyncContent
           {...this.props.createEntitySetAsyncState}
@@ -266,6 +307,7 @@ function mapStateToProps(state) {
   const createEntitySetState = state.get('createEntitySet').toJS();
   const entityTypes = state.getIn(['edm', 'entityTypes'], Immutable.Map());
   const entitySets = state.getIn(['edm', 'entitySets'], Immutable.Map());
+  const writableOrganizations = state.getIn(['organizations', 'writableOrganizations'], Immutable.List());
 
   let personEntityTypeId = '';
   entityTypes.valueSeq().forEach((entityType) => {
@@ -278,6 +320,7 @@ function mapStateToProps(state) {
     entityTypes,
     entitySets,
     personEntityTypeId,
+    writableOrganizations,
     createEntitySetAsyncState: createEntitySetState.createEntitySetAsyncState
   };
 }
@@ -286,6 +329,7 @@ function mapDispatchToProps(dispatch) {
 
   const actions = {
     fetchAllEntityTypesRequest,
+    fetchWritableOrganizations,
     onCreateEntitySet: createEntitySetRequest
   };
 

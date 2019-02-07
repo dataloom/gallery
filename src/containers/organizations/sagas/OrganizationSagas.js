@@ -1,4 +1,10 @@
-import { OrganizationsApi, PermissionsApi, PrincipalsApi } from 'lattice';
+import {
+  AuthorizationApi,
+  EntityDataModelApi,
+  OrganizationsApi,
+  PermissionsApi,
+  PrincipalsApi
+} from 'lattice';
 
 import {
   all,
@@ -7,9 +13,23 @@ import {
   takeEvery
 } from 'redux-saga/effects';
 
+import { Map, Set, fromJS } from  'immutable'
+
 import * as OrgActionTypes from '../actions/OrganizationActionTypes';
 import * as OrgActionFactory from '../actions/OrganizationActionFactory';
 import { Permission } from '../../../core/permissions/Permission';
+
+import {
+  ASSEMBLE_ENTITY_SETS,
+  LOAD_ORGANIZATION_ENTITY_SETS,
+  assembleEntitySets,
+  loadOrganizationEntitySets
+} from '../actions/OrganizationActionFactory';
+
+import {
+  FETCH_WRITABLE_ORGANIZATIONS,
+  fetchWritableOrganizations
+} from '../actions/OrganizationsActionFactory';
 
 function* loadTrustedOrganizationsWorker(action :Object) :Generator<*, *, *> {
   const { organizationId } = action;
@@ -76,4 +96,139 @@ function* trustOrganizationWorker( action :Object) :Generator<*, *, *> {
 
 export function* trustOrganizationWatcher() :Generator<*, *, *> {
   yield takeEvery(OrgActionTypes.TRUST_ORG_REQUEST, trustOrganizationWorker);
+}
+
+function* loadOrganizationEntitySetsWorker(action :Object) :Generator<*, *, *> {
+  try {
+    yield put(loadOrganizationEntitySets.request(action.id));
+
+    const allOrganizationEntitySets = yield call(OrganizationsApi.getOrganizationEntitySets, action.value); // TODO
+
+    const entitySetIds = Object.keys(allOrganizationEntitySets);
+
+    const accessChecks = entitySetIds.map((entitySetId) => ({
+      aclKey: [entitySetId],
+      permissions: [Permission.READ.name, Permission.MATERIALIZE.name]
+    }));
+
+
+    let entitySetsById = Map();
+    let entityTypesById = Map();
+    let organizationEntitySets = Map();
+    let materializableEntitySetIds = Set();
+
+    const authorizations = yield call(AuthorizationApi.checkAuthorizations, accessChecks);
+
+    const entitySetProjections = [];
+    authorizations.forEach((authorization) => {
+      const { aclKey, permissions } = authorization;
+      const [entitySetId] = aclKey;
+
+      if (permissions[Permission.READ.name]) {
+        entitySetProjections.push({
+          type: 'EntitySet',
+          id: entitySetId,
+          include: ['EntitySet', 'EntityType']
+        });
+      }
+
+      if (permissions[Permission.MATERIALIZE.name]) {
+        materializableEntitySetIds = materializableEntitySetIds.add(entitySetId);
+      }
+    });
+
+    if (entitySetProjections.length) {
+      const { entitySets, entityTypes } = yield call(EntityDataModelApi.getEntityDataModelProjection, entitySetProjections);
+
+      Object.values(entitySets).forEach((entitySet) => {
+        if (entitySet) {
+          const { id } = entitySet;
+          entitySetsById = entitySetsById.set(id, fromJS(entitySet));
+          organizationEntitySets = organizationEntitySets.set(id, fromJS(allOrganizationEntitySets[id]));
+        }
+      });
+
+      Object.values(entityTypes).forEach((entityType) => {
+        const { id } = entityType;
+        entityTypesById = entityTypesById.set(id, fromJS(entityType));
+      });
+    }
+
+    yield put(loadOrganizationEntitySets.success(action.id, {
+      entitySetsById,
+      entityTypesById,
+      organizationEntitySets,
+      materializableEntitySetIds
+    }));
+  }
+  catch (error) {
+    console.error(error);
+    yield put(loadOrganizationEntitySets.failure(action.id, error));
+  }
+  finally {
+    yield put(loadOrganizationEntitySets.finally(action.id));
+  }
+}
+
+export function* loadOrganizationEntitySetsWatcher() :Generator<*, *, *> {
+  yield takeEvery(LOAD_ORGANIZATION_ENTITY_SETS, loadOrganizationEntitySetsWorker);
+}
+
+function* assembleEntitySetsWorker(action :Object) :Generator<*, *, *> {
+  try {
+    const { organizationId, entitySetIds } = action.value;
+    yield put(assembleEntitySets.request(action.id))
+
+    yield call(OrganizationsApi.assembleEntitySets, organizationId, entitySetIds);
+
+    yield put(assembleEntitySets.success(action.id));
+
+    yield put(loadOrganizationEntitySets(organizationId));
+  }
+  catch (error) {
+    console.error(error);
+    yield put(assembleEntitySets.failure(action.id, error));
+  }
+  finally {
+    yield put(assembleEntitySets.finally(action.id));
+  }
+}
+
+export function* assembleEntitySetsWatcher() :Generator<*, *, *> {
+  yield takeEvery(ASSEMBLE_ENTITY_SETS, assembleEntitySetsWorker);
+}
+
+function* fetchWritableOrganizationsWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(fetchWritableOrganizations.request(action.id));
+
+    const allOrgs = yield call(OrganizationsApi.getAllOrganizations);
+
+    const accessChecks = allOrgs.map(({ id }) => ({
+      aclKey: [id],
+      permissions: [Permission.WRITE.name]
+    }));
+
+    const authorizations = yield call(AuthorizationApi.checkAuthorizations, accessChecks);
+
+    const writableOrganizationIds = authorizations
+      .filter(({ permissions }) => permissions[Permission.WRITE.name])
+      .map(({ aclKey }) => aclKey[0]);
+
+    const writableOrganizations = allOrgs.filter(({ id }) => writableOrganizationIds.includes(id));
+
+    yield put(fetchWritableOrganizations.success(action.id, writableOrganizations));
+
+  }
+  catch (error) {
+    console.error(error)
+    yield put(fetchWritableOrganizations.failure(action.id, error));
+  }
+  finally {
+    yield put(fetchWritableOrganizations.finally(action.id));
+  }
+}
+
+export function* fetchWritableOrganizationsWatcher() :Generator<*, *, *> {
+  yield takeEvery(FETCH_WRITABLE_ORGANIZATIONS, fetchWritableOrganizationsWorker);
 }
