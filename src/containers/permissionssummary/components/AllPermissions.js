@@ -23,7 +23,7 @@ const R_HEADERS = ['Roles', 'Permissions'];
 class AllPermissions extends React.Component {
   static propTypes = {
     actions: PropTypes.shape({
-      getAllUsersAndRolesRequest: PropTypes.func.isRequired,
+      getRolesForUsers: PropTypes.func.isRequired,
       fetchOrganizationsRequest: PropTypes.func.isRequired
     }).isRequired,
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -39,20 +39,20 @@ class AllPermissions extends React.Component {
     this.props.actions.fetchOrganizationsRequest();
 
     if (!this.props.entitySet.isEmpty()) {
-      this.props.actions.getAllUsersAndRolesRequest(this.props.entitySet.toJS());
+      this.props.actions.getRolesForUsers(this.props.entitySet.toJS());
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entitySet.isEmpty() && !nextProps.entitySet.isEmpty()) {
-      this.props.actions.getAllUsersAndRolesRequest(nextProps.entitySet.toJS());
+      this.props.actions.getRolesForUsers(nextProps.entitySet.toJS());
     }
   }
 
   renderEntityTables() {
     return (
       <div>
-        <h3>Entity Permissions</h3>
+        <h3>Entity Set Permissions</h3>
         <RolePermissionsTable
             rolePermissions={this.props.entityRolePermissions}
             headers={R_HEADERS} />
@@ -161,7 +161,7 @@ function mapStateToProps(state, ownProps) {
 export function mapDispatchToProps(dispatch) {
 
   const actions = {
-    getAllUsersAndRolesRequest: psActionFactory.getAllUsersAndRolesRequest,
+    getRolesForUsers: psActionFactory.getRolesForUsers,
     fetchOrganizationsRequest: orgsActionFactory.fetchOrganizationsRequest
   };
 
