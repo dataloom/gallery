@@ -16,6 +16,7 @@ import OrganizationDescriptionSectionComponent from './OrganizationDescriptionSe
 import OrganizationEntitySetsSectionComponent from './OrganizationEntitySetsSectionComponent';
 import OrganizationNameSectionComponent from './OrganizationNameSectionComponent';
 import OrganizationDomainsSectionComponent from './OrganizationDomainsSectionComponent';
+import OrganizationIntegrationDetailsSectionComponent from './OrganizationIntegrationDetailsSectionComponent';
 import OrganizationMembersSectionComponent from './OrganizationMembersSectionComponent';
 import OrganizationRolesSectionComponent from './OrganizationRolesSectionComponent';
 import OrganizationTitleSectionComponent from './OrganizationTitleSectionComponent';
@@ -26,6 +27,7 @@ import { isDefined, isNonEmptyString } from '../../../utils/LangUtils';
 
 import {
   deleteOrganizationRequest,
+  getOrganizationIntegrationAccount,
   fetchMembersRequest,
   loadTrustedOrganizationsRequest,
   loadOrganizationEntitySets,
@@ -99,6 +101,7 @@ function mapDispatchToProps(dispatch) {
   const actions = {
     deleteOrganizationRequest,
     fetchMembersRequest,
+    getOrganizationIntegrationAccount,
     loadTrustedOrganizationsRequest,
     fetchOrganizationRequest,
     fetchOrganizationsRequest,
@@ -144,6 +147,7 @@ class OrganizationDetailsComponent extends React.Component {
 
       if (organization.get('isOwner')) {
         actions.loadTrustedOrganizationsRequest(organizationId);
+        actions.getOrganizationIntegrationAccount(organizationId);
       }
     }
   }
@@ -160,6 +164,7 @@ class OrganizationDetailsComponent extends React.Component {
 
       if (organization !== nextProps.organization && nextProps.organization.get('isOwner')) {
         actions.loadTrustedOrganizationsRequest(organizationId);
+        actions.getOrganizationIntegrationAccount(organizationId);
       }
     }
   }
@@ -192,6 +197,20 @@ class OrganizationDetailsComponent extends React.Component {
 
     return (
       <OrganizationNameSectionComponent organization={this.props.organization} />
+    );
+
+
+  }
+
+  renderOrganizationIntegrationAccountSection = () => {
+
+    // hide in create mode or if user is not an organization owner
+    if (this.props.mode === MODES.CREATE || !this.props.organization.get('isOwner')) {
+      return null;
+    }
+
+    return (
+      <OrganizationIntegrationDetailsSectionComponent organization={this.props.organization} />
     );
   }
 
@@ -332,6 +351,7 @@ class OrganizationDetailsComponent extends React.Component {
           { this.renderOrganizationTitleSection() }
           { this.renderOrganizationDescriptionSection() }
           { this.renderOrganizationNameSection() }
+          { this.renderOrganizationIntegrationAccountSection() }
           { this.renderOrganizationDomainsSection() }
           { this.renderOrganizationRolesSection() }
           { this.renderOrganizationTrustedOrgsSection() }
