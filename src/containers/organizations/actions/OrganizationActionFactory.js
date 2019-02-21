@@ -466,3 +466,6 @@ export const assembleEntitySets :RequestSequence = newRequestSequence(ASSEMBLE_E
 
 export const LOAD_ORGANIZATION_ENTITY_SETS :string = 'LOAD_ORGANIZATION_ENTITY_SETS';
 export const loadOrganizationEntitySets :RequestSequence = newRequestSequence(LOAD_ORGANIZATION_ENTITY_SETS);
+
+export const GET_ORGANIZATION_INTEGRATION_ACCOUNT :string = 'GET_ORGANIZATION_INTEGRATION_ACCOUNT';
+export const getOrganizationIntegrationAccount :RequestSequence = newRequestSequence(GET_ORGANIZATION_INTEGRATION_ACCOUNT);

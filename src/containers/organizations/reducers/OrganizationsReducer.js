@@ -6,8 +6,9 @@ import {
 } from 'lattice';
 
 import {
-  loadOrganizationEntitySets,
-  assembleEntitySets
+  assembleEntitySets,
+  getOrganizationIntegrationAccount,
+  loadOrganizationEntitySets
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -48,6 +49,7 @@ const INITIAL_STATE = Immutable.fromJS({
   isSearchingUsers: false,
   isConfirmingDeletion: false,
   organizations: Immutable.Map(),
+  organizationIntegrationAccount: Immutable.Map(),
   visibleOrganizationIds: Immutable.Set(),
   usersSearchResults: Immutable.Map(),
   members: Immutable.List(),
@@ -437,6 +439,14 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
             .set('entityTypesById', entityTypesById);
         }
       });
+    }
+
+    case getOrganizationIntegrationAccount.case(action.type): {
+      return getOrganizationIntegrationAccount.reducer(state, action, {
+        REQUEST: () => state.set('organizationIntegrationAccount', Immutable.Map()),
+        SUCCESS: () => state.set('organizationIntegrationAccount', Immutable.fromJS(action.value)),
+        FAILURE: () => state.set('organizationIntegrationAccount', Immutable.Map())
+      })
     }
 
     case fetchWritableOrganizations.case(action.type): {

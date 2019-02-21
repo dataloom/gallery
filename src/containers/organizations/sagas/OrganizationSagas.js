@@ -21,8 +21,10 @@ import { Permission } from '../../../core/permissions/Permission';
 
 import {
   ASSEMBLE_ENTITY_SETS,
+  GET_ORGANIZATION_INTEGRATION_ACCOUNT,
   LOAD_ORGANIZATION_ENTITY_SETS,
   assembleEntitySets,
+  getOrganizationIntegrationAccount,
   loadOrganizationEntitySets
 } from '../actions/OrganizationActionFactory';
 
@@ -231,4 +233,26 @@ function* fetchWritableOrganizationsWorker(action :SequenceAction) :Generator<*,
 
 export function* fetchWritableOrganizationsWatcher() :Generator<*, *, *> {
   yield takeEvery(FETCH_WRITABLE_ORGANIZATIONS, fetchWritableOrganizationsWorker);
+}
+
+function* getOrganizationIntegrationAccountWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(getOrganizationIntegrationAccount.request(action.id));
+
+    const account = yield call(OrganizationsApi.getOrganizationIntegrationAccount, action.value);
+
+    yield put(getOrganizationIntegrationAccount.success(action.id, account));
+
+  }
+  catch (error) {
+    console.error(error)
+    yield put(getOrganizationIntegrationAccount.failure(action.id, error));
+  }
+  finally {
+    yield put(getOrganizationIntegrationAccount.finally(action.id));
+  }
+}
+
+export function* getOrganizationIntegrationAccountWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_ORGANIZATION_INTEGRATION_ACCOUNT, getOrganizationIntegrationAccountWorker);
 }
