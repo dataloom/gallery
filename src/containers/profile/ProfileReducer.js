@@ -19,7 +19,7 @@ export default function profileReducer(state = INITIAL_STATE, action :Object) {
 
     case getDbAccessCredential.case(action.type): {
       return getDbAccessCredential.reducer(state, action, {
-        SUCCESS: () => state.set('dbAccessCredential', action.value),
+        SUCCESS: () => state.set('dbAccessCredential', action.value.credential),
         FAILURE: () => state.set('dbAccessCredential', '')
       });
     }
