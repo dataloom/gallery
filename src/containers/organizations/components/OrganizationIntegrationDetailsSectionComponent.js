@@ -67,6 +67,10 @@ class OrganizationIntegrationDetailsSectionComponent extends React.Component {
       <StyledSectionHeading>
         <Header>Integration Account Details</Header>
         <AccountRow>
+          <h1>JDBC URL</h1>
+          <div>{`jdbc:postgresql://localhost:5432/${organization.get('id').replace(/\-/g, '')}`}</div>
+        </AccountRow>
+        <AccountRow>
           <h1>User</h1>
           <div>{organizationIntegrationAccount.get('user')}</div>
         </AccountRow>
