@@ -10,6 +10,7 @@ import {
 } from './ProfileActionFactory';
 
 const INITIAL_STATE = Immutable.fromJS({
+  dbAccessUsername: '',
   dbAccessCredential: ''
 });
 
@@ -19,7 +20,9 @@ export default function profileReducer(state = INITIAL_STATE, action :Object) {
 
     case getDbAccessCredential.case(action.type): {
       return getDbAccessCredential.reducer(state, action, {
-        SUCCESS: () => state.set('dbAccessCredential', action.value.credential),
+        SUCCESS: () => state
+          .set('dbAccessUsername', action.value.username)
+          .set('dbAccessCredential', action.value.credential),
         FAILURE: () => state.set('dbAccessCredential', '')
       });
     }

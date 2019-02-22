@@ -17,7 +17,12 @@ class AccountInfoForm extends React.Component {
   }
 
   getContent = () => {
-    const { dbAccessCredential, userId, jwtToken } = this.props;
+    const {
+      dbAccessUsername,
+      dbAccessCredential,
+      userId,
+      jwtToken
+    } = this.props;
     const accountId = {
       key: 'accountId',
       value: userId,
@@ -31,6 +36,12 @@ class AccountInfoForm extends React.Component {
       secure: true
     };
 
+    const dbUsername = {
+      key: 'dbUsername',
+      value: dbAccessUsername,
+      label: 'DB Access Username'
+    };
+
     const dbCreds = {
       key: 'dbCreds',
       value: dbAccessCredential,
@@ -38,7 +49,7 @@ class AccountInfoForm extends React.Component {
       secure: true
     }
 
-    return [accountId, jwt, dbCreds];
+    return [accountId, jwt, dbUsername, dbCreds];
   }
 
   render() {
@@ -56,6 +67,7 @@ function mapStateToProps(state) {
   return {
     userId: profile.user_id,
     jwtToken: window.localStorage.id_token,
+    dbAccessUsername: state.getIn(['profile', 'dbAccessUsername']),
     dbAccessCredential: state.getIn(['profile', 'dbAccessCredential'])
   };
 }
