@@ -9,6 +9,7 @@ import { FormControl, FormGroup, ControlLabel, Button, Alert } from 'react-boots
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import StyledCheckbox from '../../components/controls/StyledCheckbox';
 import AsyncContent, { AsyncStatePropType } from '../../components/asynccontent/AsyncContent';
 import { fetchAllEntityTypesRequest } from '../edm/EdmActionFactory';
 import { createEntitySetRequest } from './CreateEntitySetActionFactories';
@@ -22,6 +23,10 @@ const ENTITY_SET_TYPES = {
 const PERSON_TYPE_FQN = 'general.person';
 
 const SubmitButton = styled(Button)`
+  margin-top: 10px;
+`;
+
+const FormGroupMarginTop = styled(FormGroup)`
   margin-top: 10px;
 `;
 
@@ -54,7 +59,8 @@ class CreateEntitySet extends React.Component {
       contact: props.defaultContact,
       entityTypeId: null,
       organizationId: null,
-      entitySetIds: []
+      entitySetIds: [],
+      external: true
     };
   }
 
@@ -124,20 +130,29 @@ class CreateEntitySet extends React.Component {
       entityTypeId,
       organizationId,
       entitySetIds,
-      personEntityTypeId
+      personEntityTypeId,
+      external
     } = this.state;
 
-    const linking = type === ENTITY_SET_TYPES.LINKED_ENTITY_SET;
+    const isLinking = type === ENTITY_SET_TYPES.LINKED_ENTITY_SET;
+
+    const flags = [];
+    if (isLinking) {
+      flags.push('LINKING');
+    }
+    if (external) {
+      flags.push('EXTERNAL');
+    }
 
     const entitySet = {
       title,
       name,
       description,
-      linking,
       entityTypeId,
       organizationId,
       contacts: [contact],
-      linkedEntitySets: linking ? entitySetIds.map(({ value }) => value) : []
+      linkedEntitySets: isLinking ? entitySetIds.map(({ value }) => value) : [],
+      flags
     };
 
     this.props.actions.onCreateEntitySet(entitySet);
@@ -277,6 +292,14 @@ class CreateEntitySet extends React.Component {
               options={this.getOrganizationOptions()}
               onChange={this.onOrganizationChange} />
         </FormGroup>
+
+        <FormGroupMarginTop>
+          <StyledCheckbox
+              name="external"
+              label="External"
+              checked={this.state.external}
+              onChange={({ target }) => this.setState({ external: target.checked })} />
+        </FormGroupMarginTop>
 
         <SubmitButton type="submit" bsStyle="primary">Create</SubmitButton>
       </form>
