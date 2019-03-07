@@ -7,6 +7,7 @@ import type { AsyncReference } from '../async/AsyncStorage';
 export const PERMISSIONS = Object.freeze({
   DISCOVER: 'DISCOVER',
   LINK: 'LINK',
+  MATERIALIZE: 'MATERIALIZE',
   READ: 'READ',
   WRITE: 'WRITE',
   OWNER: 'OWNER'
@@ -26,6 +27,7 @@ export const DEFAULT_PERMISSIONS = ((permissions) => {
 export type Permissions = {
   DISCOVER :boolean,
   LINK :boolean,
+  MATERIALIZE :boolean,
   READ :boolean,
   WRITE :boolean,
   OWNER :boolean
