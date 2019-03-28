@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Immutable from 'immutable';
+import Immutable, { List } from 'immutable';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import styled from 'styled-components';
@@ -206,7 +206,7 @@ class CreateEntitySet extends React.Component {
 
     const options = [];
 
-    this.props.entitySets.valueSeq().filter(entitySet => !entitySet.get('linking')).forEach((entitySet) => {
+    this.props.entitySets.valueSeq().filter(entitySet => !entitySet.get('flags', List()).includes('LINKING')).forEach((entitySet) => {
       if (!this.state.entityTypeId || this.state.entityTypeId === entitySet.get('entityTypeId')) {
         options.push({
           value: entitySet.get('id'),
