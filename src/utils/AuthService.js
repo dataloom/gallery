@@ -6,7 +6,7 @@ import Auth0Lock from 'auth0-lock';
 import * as Cookies from 'js-cookie';
 
 import { isTokenExpired } from './jwtHelper';
-import img from '../images/logo.png';
+import logo from '../images/ol_logo_v2.png';
 import PageConsts from './Consts/PageConsts';
 
 // injected by Webpack.DefinePlugin
@@ -19,7 +19,7 @@ export default class AuthService extends EventEmitter {
     this.lock = new Auth0Lock(clientId, domain, {
       closable: false,
       theme: {
-        logo: img
+        logo
       },
       languageDictionary: {
         title: 'OpenLattice'
