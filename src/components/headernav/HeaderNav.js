@@ -6,7 +6,7 @@ import { hashHistory } from 'react-router';
 import AccountMenu from './AccountMenu';
 import AuthService from '../../utils/AuthService';
 import PageConsts from '../../utils/Consts/PageConsts';
-import logoImg from '../../images/logo.png';
+import logo from '../../images/ol_logo_v2.png';
 import styles from './headernav.module.css';
 
 class HeaderNav extends React.Component {
@@ -27,7 +27,7 @@ class HeaderNav extends React.Component {
         <nav className={styles.headerNav}>
 
           <div className={styles.headerNavLeft}>
-            <img className={styles.logo} src={logoImg} role="presentation" />
+            <img className={styles.logo} src={logo} alt="OpenLattice Logo" />
             <div className={styles.openLattice}>OPENLATTICE</div>
           </div>
 
