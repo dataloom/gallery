@@ -25,7 +25,7 @@ const plugins = [
   new HtmlWebpackPlugin({
     inject: true,
     template: `${APP_PATHS.ABS.SOURCE}/${APP_CONFIG.APP_INDEX_HTML}`,
-    favicon: `${APP_PATHS.ABS.SOURCE}/images/favicon.png`
+    favicon: `${APP_PATHS.ABS.SOURCE}/images/ol_favicon.png`
   }),
   new Webpack.optimize.UglifyJsPlugin(),
   ...baseWebpackConfig.plugins
