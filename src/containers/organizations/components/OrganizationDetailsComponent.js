@@ -44,6 +44,13 @@ const LoadingSpinnerWrapper = styled.div`
   width: 100%;
 `;
 
+const DeleteButtonSection = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+`;
+
 const MODES = {
   CREATE: 'CREATE',
   EDIT: 'EDIT',
@@ -303,11 +310,11 @@ class OrganizationDetailsComponent extends React.Component {
     }
 
     return (
-      <div>
+      <DeleteButtonSection>
         <Button scStyle="red" onClick={this.handleOnClickDeleteButton}>
           Delete Organization
         </Button>
-      </div>
+      </DeleteButtonSection>
     );
   }
 
