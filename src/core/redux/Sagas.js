@@ -23,6 +23,7 @@ export default function* sagas() :Generator<*, *, *> {
     fork(OrganizationSagas.loadOrganizationEntitySetsWatcher),
     fork(OrganizationSagas.assembleEntitySetsWatcher),
     fork(OrganizationSagas.getOrganizationIntegrationAccountWatcher),
+    fork(OrganizationSagas.getOwnedRolesWatcher),
 
     // PermissionsSummarySagas
     fork(PermissionsSummarySagas.getRolesForUsersWatcher),

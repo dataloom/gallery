@@ -62,6 +62,7 @@ function mapStateToProps(state, ownProps) {
   const isCreatingOrg = state.getIn(['organizations', 'isCreatingOrg']);
   const isFetchingOrg = state.getIn(['organizations', 'isFetchingOrg']);
   const isConfirmingDeletion = state.getIn(['organizations', 'isConfirmingDeletion']);
+  const ownedRoles = state.getIn(['organizations', 'ownedRoles']);
 
   // TODO: checking if orgId === 'new' feels wrong. there's probably a better pattern for this use case.
   if (isDefined(ownProps.params) && ownProps.params.orgId === 'new') {
@@ -74,6 +75,7 @@ function mapStateToProps(state, ownProps) {
         isOwner: true
       }),
       organizationId: '',
+      ownedRoles,
       members: Immutable.List()
     };
   }
@@ -99,6 +101,7 @@ function mapStateToProps(state, ownProps) {
     mode,
     organization,
     organizationId,
+    ownedRoles,
     members
   };
 }
@@ -139,7 +142,8 @@ class OrganizationDetailsComponent extends React.Component {
     isConfirmingDeletion: React.PropTypes.bool.isRequired,
     mode: React.PropTypes.string.isRequired,
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    organizationId: React.PropTypes.string.isRequired
+    organizationId: React.PropTypes.string.isRequired,
+    ownedRoles: React.PropTypes.instanceOf(Immutable.Set).isRequired
   }
 
   componentDidMount() {
@@ -177,9 +181,10 @@ class OrganizationDetailsComponent extends React.Component {
   }
 
   renderOrganizationTitleSection = () => {
+    const { organization, ownedRoles } = this.props;
 
     return (
-      <OrganizationTitleSectionComponent organization={this.props.organization} />
+      <OrganizationTitleSectionComponent organization={organization} ownedRoles={ownedRoles} />
     );
   }
 

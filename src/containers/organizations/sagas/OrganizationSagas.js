@@ -22,9 +22,11 @@ import { Permission } from '../../../core/permissions/Permission';
 import {
   ASSEMBLE_ENTITY_SETS,
   GET_ORGANIZATION_INTEGRATION_ACCOUNT,
+  GET_OWNED_ROLES,
   LOAD_ORGANIZATION_ENTITY_SETS,
   assembleEntitySets,
   getOrganizationIntegrationAccount,
+  getOwnedRoles,
   loadOrganizationEntitySets
 } from '../actions/OrganizationActionFactory';
 
@@ -255,4 +257,39 @@ function* getOrganizationIntegrationAccountWorker(action :SequenceAction) :Gener
 
 export function* getOrganizationIntegrationAccountWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_ORGANIZATION_INTEGRATION_ACCOUNT, getOrganizationIntegrationAccountWorker);
+}
+
+function* getOwnedRolesWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(getOwnedRoles.request(action.id));
+
+    const aclKeys = action.value;
+
+    const accessChecks = aclKeys.map((aclKey) => {
+      return {
+        aclKey,
+        permissions: [Permission.OWNER.name]
+      };
+    });
+
+    const authorizations = yield call(AuthorizationApi.checkAuthorizations, accessChecks);
+
+    const ownedRoles = authorizations
+      .filter(({ permissions }) => permissions[Permission.OWNER.name])
+      .map(({ aclKey }) => aclKey);
+
+    yield put(getOwnedRoles.success(action.id, ownedRoles));
+
+  }
+  catch (error) {
+    console.error(error)
+    yield put(getOwnedRoles.failure(action.id, error));
+  }
+  finally {
+    yield put(getOwnedRoles.finally(action.id));
+  }
+}
+
+export function* getOwnedRolesWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_OWNED_ROLES, getOwnedRolesWorker);
 }

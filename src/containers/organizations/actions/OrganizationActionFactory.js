@@ -469,3 +469,6 @@ export const loadOrganizationEntitySets :RequestSequence = newRequestSequence(LO
 
 export const GET_ORGANIZATION_INTEGRATION_ACCOUNT :string = 'GET_ORGANIZATION_INTEGRATION_ACCOUNT';
 export const getOrganizationIntegrationAccount :RequestSequence = newRequestSequence(GET_ORGANIZATION_INTEGRATION_ACCOUNT);
+
+export const GET_OWNED_ROLES :string = 'GET_OWNED_ROLES';
+export const getOwnedRoles :RequestSequence = newRequestSequence(GET_OWNED_ROLES);

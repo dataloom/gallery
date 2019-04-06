@@ -8,6 +8,7 @@ import {
 import {
   assembleEntitySets,
   getOrganizationIntegrationAccount,
+  getOwnedRoles,
   loadOrganizationEntitySets
 } from '../actions/OrganizationActionFactory';
 
@@ -54,6 +55,7 @@ const INITIAL_STATE = Immutable.fromJS({
   usersSearchResults: Immutable.Map(),
   members: Immutable.List(),
   roles: Immutable.List(),
+  ownedRoles: Immutable.Set(),
   trustedOrganizations: Immutable.List(),
   entitySetsById: Immutable.Map(),
   entityTypesById: Immutable.Map(),
@@ -470,6 +472,19 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
           return state.set('organizationEntitySets', organizationEntitySets);
         }
       })
+    }
+
+    case getOwnedRoles.case(action.type): {
+      return getOwnedRoles.reducer(state, action, {
+        SUCCESS: () => {
+          let ownedRoles = state.get('ownedRoles', Immutable.Set());
+          Immutable.fromJS(action.value).forEach((ownedRoleAclKey) => {
+            ownedRoles = ownedRoles.add(ownedRoleAclKey);
+          });
+
+          return state.set('ownedRoles', ownedRoles);
+        }
+      });
     }
 
     default:
