@@ -9,7 +9,9 @@ import {
   assembleEntitySets,
   getOrganizationIntegrationAccount,
   getOwnedRoles,
-  loadOrganizationEntitySets
+  loadOrganizationEntitySets,
+  synchronizeDataChanges,
+  synchronizeEdmChanges
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -61,7 +63,8 @@ const INITIAL_STATE = Immutable.fromJS({
   entityTypesById: Immutable.Map(),
   organizationEntitySets: Immutable.Map(),
   materializableEntitySetIds: Immutable.Set(),
-  writableOrganizations: Immutable.List()
+  writableOrganizations: Immutable.List(),
+  entitySetIdsUpdating: Immutable.Set()
 });
 
 export default function organizationsReducer(state = INITIAL_STATE, action :Object) {
@@ -484,6 +487,20 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
 
           return state.set('ownedRoles', ownedRoles);
         }
+      });
+    }
+
+    case synchronizeDataChanges.case(action.type): {
+      return synchronizeDataChanges.reducer(state, action, {
+        REQUEST: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').add(action.value.entitySetId)),
+        FINALLY: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').delete(action.value.entitySetId))
+      });
+    }
+
+    case synchronizeEdmChanges.case(action.type): {
+      return synchronizeEdmChanges.reducer(state, action, {
+        REQUEST: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').add(action.value.entitySetId)),
+        FINALLY: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').delete(action.value.entitySetId))
       });
     }
 

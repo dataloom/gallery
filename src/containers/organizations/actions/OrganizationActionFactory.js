@@ -472,3 +472,9 @@ export const getOrganizationIntegrationAccount :RequestSequence = newRequestSequ
 
 export const GET_OWNED_ROLES :string = 'GET_OWNED_ROLES';
 export const getOwnedRoles :RequestSequence = newRequestSequence(GET_OWNED_ROLES);
+
+export const SYNCHRONIZE_DATA_CHANGES :string = 'SYNCHRONIZE_DATA_CHANGES';
+export const synchronizeDataChanges :RequestSequence = newRequestSequence(SYNCHRONIZE_DATA_CHANGES);
+
+export const SYNCHRONIZE_EDM_CHANGES :string = 'SYNCHRONIZE_EDM_CHANGES';
+export const synchronizeEdmChanges :RequestSequence = newRequestSequence(SYNCHRONIZE_EDM_CHANGES);
