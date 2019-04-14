@@ -114,6 +114,11 @@ class OrganizationAddMembersSectionComponent extends React.Component {
     };
   }
 
+  componentWillUnmount() {
+    const { actions } = this.props;
+    actions.clearUserSearchResults();
+  }
+
   search = (searchQuery) => {
 
     if (!searchQuery) {

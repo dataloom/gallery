@@ -24,7 +24,7 @@ import {
   StyledListItem
 } from './StyledListGroupComponents';
 
-import { assembleEntitySets } from '../actions/OrganizationActionFactory';
+import { assembleEntitySets, synchronizeDataChanges, synchronizeEdmChanges } from '../actions/OrganizationActionFactory';
 
 const RowContainer = styled.div`
   display: flex;
@@ -85,11 +85,18 @@ const EntitySetCard = styled.div`
   }
 `;
 
+const ButtonRow = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
 const MaterializeButton = styled(BasicButton)`
   width: fit-content;
   height: 29px;
   font-size: 11px;
   padding: 0 10px;
+  margin: 0 10px;
   align-self: center;
 `;
 
@@ -101,6 +108,8 @@ const NoEntitySetsMessage = styled.div`
 const INTERNAL = 'INTERNAL';
 const EXTERNAL = 'EXTERNAL';
 const MATERIALIZED = 'MATERIALIZED';
+const EDM_UNSYNCHRONIZED = 'EDM_UNSYNCHRONIZED';
+const DATA_UNSYNCHRONIZED = 'DATA_UNSYNCHRONIZED';
 
 function mapStateToProps(state, ownProps) {
 
@@ -108,14 +117,17 @@ function mapStateToProps(state, ownProps) {
     entitySetsById: state.getIn(['organizations', 'entitySetsById']),
     entityTypesById: state.getIn(['organizations', 'entityTypesById']),
     organizationEntitySets: state.getIn(['organizations', 'organizationEntitySets']),
-    materializableEntitySetIds: state.getIn(['organizations', 'materializableEntitySetIds'])
+    materializableEntitySetIds: state.getIn(['organizations', 'materializableEntitySetIds']),
+    entitySetIdsUpdating: state.getIn(['organizations', 'entitySetIdsUpdating'])
   };
 }
 
 function mapDispatchToProps(dispatch) {
 
   const actions = {
-    assembleEntitySets
+    assembleEntitySets,
+    synchronizeDataChanges,
+    synchronizeEdmChanges
   };
 
   return {
@@ -127,13 +139,16 @@ class OrganizationEntitySetsSectionComponent extends React.Component {
 
   static propTypes = {
     actions: React.PropTypes.shape({
-      assembleEntitySets: React.PropTypes.func.isRequired
+      assembleEntitySets: React.PropTypes.func.isRequired,
+      synchronizeDataChanges: React.PropTypes.func.isRequired,
+      synchronizeEdmChanges: React.PropTypes.func.isRequired
     }).isRequired,
     organization: React.PropTypes.instanceOf(Map).isRequired,
     entitySetsById: React.PropTypes.instanceOf(Map).isRequired,
     organizationEntitySets: React.PropTypes.instanceOf(Map).isRequired,
     entityTypesById: React.PropTypes.instanceOf(Map).isRequired,
-    materializableEntitySetIds: React.PropTypes.instanceOf(Set).isRequired
+    materializableEntitySetIds: React.PropTypes.instanceOf(Set).isRequired,
+    entitySetIdsUpdating: React.PropTypes.instanceOf(Set).isRequired
   }
 
   constructor(props) {
@@ -205,21 +220,58 @@ class OrganizationEntitySetsSectionComponent extends React.Component {
     actions.assembleEntitySets({ organizationId, entitySetIds });
   }
 
+  syncEDM = (entitySetId) => {
+    const { actions, organization } = this.props;
+
+    const organizationId = organization.get('id');
+    actions.synchronizeEdmChanges({ organizationId, entitySetId });
+  }
+
+  syncData = (entitySetId) => {
+    const { actions, organization } = this.props;
+
+    const organizationId = organization.get('id');
+    actions.synchronizeDataChanges({ organizationId, entitySetId });
+  }
+
+  hasTag = (entitySetId, tag) => {
+    const { organizationEntitySets } = this.props;
+    return organizationEntitySets.get(entitySetId, List()).contains(tag);
+  }
+
+
   renderEntitySet = (entitySet) => {
-    const { history, organizationEntitySets, materializableEntitySetIds } = this.props;
+    const {
+      history,
+      entitySetIdsUpdating,
+      organizationEntitySets,
+      materializableEntitySetIds
+    } = this.props;
 
     const entitySetId = entitySet.get('id');
 
-    const canMaterialize = !organizationEntitySets.get(entitySetId, List()).contains(MATERIALIZED)
-      && materializableEntitySetIds.has(entitySetId);
+    const isMaterialized = this.hasTag(entitySetId, MATERIALIZED);
+    const isUpdating = entitySetIdsUpdating.has(entitySetId);
+
+    const canMaterialize = !isMaterialized && materializableEntitySetIds.has(entitySetId);
+    const edmOutOfSync = isMaterialized && this.hasTag(entitySetId, EDM_UNSYNCHRONIZED);
+    const dataOutOfSync = isMaterialized && this.hasTag(entitySetId, DATA_UNSYNCHRONIZED);
 
     return (
       <EntitySetCard key={entitySetId}>
         <Link to={`/entitysets/${entitySetId}`}>{entitySet.get('title')}</Link>
         <span>{entitySet.get('name')}</span>
-        {canMaterialize
-          ? <MaterializeButton onClick={() => this.materialize(entitySetId)}>Materialize Entity Set</MaterializeButton>
-          : null}
+        <ButtonRow>
+          {canMaterialize
+            ? <MaterializeButton onClick={() => this.materialize(entitySetId)}>Materialize Entity Set</MaterializeButton>
+            : null}
+          {edmOutOfSync
+            ? <MaterializeButton onClick={() => this.syncEDM(entitySetId)} disabled={isUpdating}>Synchronize EDM</MaterializeButton>
+            : null}
+          {dataOutOfSync
+            ? <MaterializeButton onClick={() => this.syncData(entitySetId)} disabled={isUpdating}>Synchronize Data</MaterializeButton>
+            : null}
+        </ButtonRow>
       </EntitySetCard>
     );
 

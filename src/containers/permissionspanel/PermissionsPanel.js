@@ -13,7 +13,7 @@ import DeleteButton from '../../components/buttons/DeleteButton';
 import styles from './styles.module.css';
 
 import { Permission } from '../../core/permissions/Permission';
-import { USER, ROLE, AUTHENTICATED_USER, ADMIN } from '../../utils/Consts/UserRoleConsts';
+import { ORGANIZATION, USER, ROLE, AUTHENTICATED_USER, ADMIN } from '../../utils/Consts/UserRoleConsts';
 import { getAllUsers } from './PermissionsPanelActionFactory';
 import { getAclRequest, updateAclRequest } from '../permissions/PermissionsActionFactory';
 import { fetchOrganizationsRequest } from '../organizations/actions/OrganizationsActionFactory';
@@ -21,6 +21,7 @@ import { fetchOrganizationsRequest } from '../organizations/actions/Organization
 
 const views = {
   GLOBAL: 'Everyone',
+  ORGANIZATIONS: 'Organizations',
   ROLES: 'Roles',
   EMAILS: 'Emails'
 };
@@ -39,6 +40,26 @@ const permissionsByLabel = {
   Owner: Permission.OWNER.name
 };
 
+const PERMISSIONS_BY_VIEW = {
+  [views.ORGANIZATIONS]: [
+    Permission.MATERIALIZE
+  ],
+  [views.ROLES]: [
+    Permission.OWNER,
+    Permission.WRITE,
+    Permission.READ,
+    Permission.LINK,
+    Permission.DISCOVER
+  ],
+  [views.EMAILS]: [
+    Permission.OWNER,
+    Permission.WRITE,
+    Permission.READ,
+    Permission.LINK,
+    Permission.DISCOVER
+  ]
+}
+
 class PermissionsPanel extends React.Component {
   static propTypes = {
     allSelected: PropTypes.bool,
@@ -55,6 +76,7 @@ class PermissionsPanel extends React.Component {
     aclKeyPermissions: PropTypes.instanceOf(Immutable.Map).isRequired,
     organizations: PropTypes.instanceOf(Immutable.Map).isRequired,
     rolesById: PropTypes.instanceOf(Immutable.Map).isRequired,
+    orgsById: PropTypes.instanceOf(Immutable.Map).isRequired,
     loadUsersError: PropTypes.string.isRequired,
     loadRolesError: PropTypes.string.isRequired,
     isOrganization: PropTypes.bool
@@ -71,8 +93,10 @@ class PermissionsPanel extends React.Component {
       view: views.EMAILS,
       newRoleValue: '',
       newEmailValue: '',
+      newOrganizationValue: '',
       selectedPermissionForEmailsView: Permission.OWNER.getFriendlyName(),
-      selectedPermissionForRolesView: Permission.OWNER.getFriendlyName()
+      selectedPermissionForRolesView: Permission.OWNER.getFriendlyName(),
+      selectedPermissionForOrganizationsView: Permission.MATERIALIZE.getFriendlyName()
     };
   }
 
@@ -133,6 +157,8 @@ class PermissionsPanel extends React.Component {
 
   getPanelViewContents = () => {
     switch (this.state.view) {
+      case views.ORGANIZATIONS:
+        return this.getOrganizationsView();
       case views.ROLES:
         return this.getRolesView();
       case views.EMAILS:
@@ -220,7 +246,7 @@ class PermissionsPanel extends React.Component {
   getPermissionsForView = (view, action) => {
     const permission = permissionsByLabel[view];
     return (permission === Permission.OWNER.name && action === ActionConsts.ADD)
-      ? [permission, Permission.WRITE.name, Permission.READ.name, Permission.MATERIALIZE.name, Permission.LINK.name, Permission.DISCOVER.name]
+      ? [permission, Permission.WRITE.name, Permission.READ.name, Permission.LINK.name, Permission.DISCOVER.name]
       : [permission];
   }
 
@@ -338,7 +364,7 @@ class PermissionsPanel extends React.Component {
         <div>Choose default permissions for specific roles.</div>
         <div className={`${styles.inline} ${styles.padTop}`}>
           {this.renderPermissionButtons(
-            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.MATERIALIZE, Permission.LINK, Permission.DISCOVER],
+            PERMISSIONS_BY_VIEW[views.ROLES],
             this.changeRolesView,
             selectedPermissionForRolesView
           )}
@@ -462,7 +488,7 @@ class PermissionsPanel extends React.Component {
         <div>Choose permissions for specific users.</div>
         <div className={`${styles.padTop} ${styles.inline}`}>
           {this.renderPermissionButtons(
-            [Permission.OWNER, Permission.WRITE, Permission.READ, Permission.MATERIALIZE, Permission.LINK, Permission.DISCOVER],
+            PERMISSIONS_BY_VIEW[views.EMAILS],
             this.changeEmailsView,
             selectedPermissionForEmailsView
           )}
@@ -482,6 +508,114 @@ class PermissionsPanel extends React.Component {
               disabled={this.state.newEmailValue.length === 0}
               onClick={() => {
                 this.updateEmails(ActionConsts.ADD, newEmailValue, selectedPermissionForEmailsView);
+              }}>Add</Button>
+        </div>
+      </div>
+    );
+  }
+
+
+  updateOrganizations = (action, orgId, view) => {
+    const principal = {
+      type: ORGANIZATION,
+      id: orgId
+    };
+    this.updatePermissions(action, principal, this.getPermissionsForView(view, action));
+  }
+
+  handleNewOrganizationChange = (e) => {
+    const newOrganizationValue = (e && e !== undefined) ? e.value : StringConsts.EMPTY;
+    this.setState({ newOrganizationValue });
+  }
+
+  getOrganizationOptions = (orgList) => {
+    const { organizations } = this.props;
+
+    const orgOptions = [];
+    organizations.forEach((organization) => {
+      const orgId = organization.getIn(['principal', 'id'], '');
+      const label = organization.get('title', '');
+
+      if (!orgList.includes(orgId)) {
+        orgOptions.push({ value: orgId, label });
+      }
+    });
+    return orgOptions;
+  }
+
+  getOrganizationsView = () => {
+
+    const { newOrganizationValue, selectedPermissionForOrganizationsView } = this.state;
+    const { aclKeyPermissions, aclKeysToUpdate, allSelected, orgsById } = this.props;
+
+    const filterOrganizationsForAclKeyForSelectedPermission = (aclKey, selectedPermission) => {
+      const selectedPermissionLabel = permissionsByLabel[selectedPermission];
+      return aclKeyPermissions.getIn([aclKey, ORGANIZATION, selectedPermissionLabel], List());
+    };
+
+    let orgIdList;
+    const selectedAclKey = this.getAclKey();
+
+    if (selectedAclKey.size === 1 && allSelected) {
+      const userIdToCountMap = {};
+      aclKeysToUpdate.forEach((aclKey) => {
+        const iAclKey = fromJS(aclKey); // because keys in aclKeyPermissions are Immutable objects
+        const userIds = filterOrganizationsForAclKeyForSelectedPermission(iAclKey, selectedPermissionForOrganizationsView);
+        userIds.forEach((userId) => {
+          const count = userIdToCountMap[userId];
+          userIdToCountMap[userId] = (typeof count === 'number' && count > 0) ? (count + 1) : 1;
+        });
+      });
+      orgIdList = fromJS(userIdToCountMap)
+        .filter(count => count === aclKeysToUpdate.length)
+        .keySeq()
+        .toList();
+    }
+    else {
+      orgIdList = filterOrganizationsForAclKeyForSelectedPermission(selectedAclKey, selectedPermissionForOrganizationsView);
+    }
+
+    const orgOptions = this.getOrganizationOptions(orgIdList);
+    const orgListBody = orgIdList.map((orgId) => {
+      return (
+        <div className={styles.tableRows} key={orgId}>
+          <div className={styles.inline}>
+            <DeleteButton
+                onClick={() => {
+                  this.updateOrganizations(ActionConsts.REMOVE, orgId, selectedPermissionForOrganizationsView);
+                }} />
+          </div>
+          <div className={`${styles.inline} ${styles.padLeft}`}>{orgsById.getIn([orgId, 'title'], '<Unknown Organization>')}</div>
+        </div>
+      );
+    });
+
+    return (
+      <div>
+        {this.renderError(this.props.loadUsersError)}
+        <div>Choose which organizations can materialize this entity set.</div>
+        <div className={`${styles.padTop} ${styles.inline}`}>
+          {this.renderPermissionButtons(
+            PERMISSIONS_BY_VIEW[views.ORGANIZATIONS],
+            () => {},
+            selectedPermissionForOrganizationsView
+          )}
+        </div>
+        <div className={styles.permissionsBodyContainer}>
+          {orgListBody}
+        </div>
+        <div className={styles.inline}>
+          <Select
+              value={newOrganizationValue}
+              options={orgOptions}
+              onChange={this.handleNewOrganizationChange}
+              className={`${styles.inputBox} ${styles.permissionInputWidth}`} />
+          <Button
+              bsStyle="primary"
+              className={`${styles.spacerMargin}`}
+              disabled={this.state.newOrganizationValue.length === 0}
+              onClick={() => {
+                this.updateOrganizations(ActionConsts.ADD, newOrganizationValue, selectedPermissionForOrganizationsView);
               }}>Add</Button>
         </div>
       </div>
@@ -511,6 +645,7 @@ class PermissionsPanel extends React.Component {
         <div className={styles.edmNavbarContainer}>
           <div className={styles.edmNavbar}>
             { isOrganization ? null : this.renderViewButton(views.GLOBAL, orders.FIRST) }
+            { isOrganization ? null : this.renderViewButton(views.ORGANIZATIONS) }
             { isOrganization ? null : this.renderViewButton(views.ROLES) }
             {this.renderViewButton(views.EMAILS, orders.LAST)}
           </div>
@@ -526,15 +661,19 @@ function mapStateToProps(state) {
   const myId = JSON.parse(localStorage.profile).user_id;
 
   let rolesById = Map();
+  let orgsById = Map();
   state.getIn(['organizations', 'organizations'], Map()).valueSeq().forEach((org) => {
     org.get('roles').forEach((role) => {
       rolesById = rolesById.set(role.getIn(['principal', 'id'], ''), role);
     });
+
+    orgsById = orgsById.set(org.getIn(['principal', 'id']), org);
   });
 
   return {
     users: permissions.get('users', Map()).delete(myId),
     rolesById,
+    orgsById,
     aclKeyPermissions: permissions.get('aclKeyPermissions', Map()),
     loadUsersError: permissions.get('loadUsersError'),
     loadRolesError: permissions.get('loadRolesError'),
