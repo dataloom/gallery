@@ -3,7 +3,7 @@ import React from 'react';
 import Immutable from 'immutable';
 import FontAwesome from 'react-fontawesome';
 import styled from 'styled-components';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, SplitButton, MenuItem } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -89,6 +89,8 @@ const ManagePermissionsButtonContainer = styled.div`
 const PermissionButtons = styled.div`
   display: flex;
   flex-direction: column;
+  min-width: fit-content;
+  align-items: flex-end;
 `;
 
 function mapDispatchToProps(dispatch) {
@@ -114,13 +116,32 @@ class OrganizationTitleSectionComponent extends React.Component {
       getAclRequest: React.PropTypes.func.isRequired,
       updateAclRequest: React.PropTypes.func.isRequired
     }).isRequired,
-    organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
+    organization: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    ownedRoles: React.PropTypes.instanceOf(Immutable.Set).isRequired
   }
 
   constructor(props) {
     super(props);
+
+    const { organization } = this.props;
+
+    let modalAclKey = [];
+    const orgId = organization.get('id');
+    if (orgId) {
+      modalAclKey = [orgId];
+    }
+
+    let modalTitle = '';
+    const orgTitle = organization.get('title');
+    if (orgTitle) {
+      modalTitle = this.getPermissionModalTitle(orgTitle, false);
+    }
+
     this.state = {
-      editingPermissions: false
+      editingPermissions: false,
+      permissionsModalTitle: modalTitle,
+      permissionsModalAclKey: modalAclKey,
+      permissionsShouldUpdateAll: false
     };
   }
 
@@ -184,13 +205,15 @@ class OrganizationTitleSectionComponent extends React.Component {
     const isOwner = this.props.organization.get('isOwner', false);
     const isPublic = this.props.organization.get('isPublic', false);
 
+    const publicListingText = `ORGANIZATION ${isPublic ? '' : 'NOT '}LISTED PUBLICLY`;
+
     if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
     }
 
     return (
       <VisibilityToggle isOwner={isOwner} isPublic={isPublic} onClick={this.togglePublicVisibility}>
-        <VisibilityToggleText>PUBLIC</VisibilityToggleText>
+        <VisibilityToggleText>{publicListingText}</VisibilityToggleText>
         <VisibilityToggleIcon>
           {
             isPublic
@@ -202,18 +225,129 @@ class OrganizationTitleSectionComponent extends React.Component {
     );
   }
 
-  renderPermissionsPanel = () => {
+  getPermissionModalTitle = (title, shouldUpdateRoles) => {
+    return (shouldUpdateRoles) ? `${title} (organization and all owned roles)` : `${title} (organization only)`;
+  }
 
-    const orgId = this.props.organization.get('id');
-    const orgTitle = this.props.organization.get('title');
-    const isOwner = this.props.organization.get('isOwner', false);
+  updateModalView = (newViewTitle, newViewAclKey, shouldUpdateAll) => {
+    this.setState({
+      permissionsModalTitle: newViewTitle,
+      permissionsModalAclKey: newViewAclKey,
+      permissionsShouldUpdateAll: shouldUpdateAll
+    });
+  }
+
+  getPermissionsManagementOptions = () => {
+    const { organization, ownedRoles } = this.props;
+
+    const isOwner = organization.get('isOwner', false);
+    const orgTitle = organization.get('title');
+    const orgId = organization.get('id');
+
+    if (!isOwner) {
+      return null;
+    }
+
+    const roleOptions = [];
+    organization.get('roles').forEach((role) => {
+      let aclKey = role.get('aclKey');
+
+      if (ownedRoles.has(aclKey)) {
+        aclKey = aclKey.toJS();
+        const title = role.get('title');
+
+        roleOptions.push(
+          <MenuItem
+              eventKey={aclKey}
+              key={aclKey}
+              onClick={() => {
+                this.updateModalView(title, aclKey);
+              }}>
+            {title}
+          </MenuItem>
+        );
+      }
+    });
+
+    const orgAllTitle = this.getPermissionModalTitle(orgTitle, true);
+    const orgOnlyTitle = this.getPermissionModalTitle(orgTitle, false);
+
+    return (
+      <SplitButton bsStyle="default" title={this.state.permissionsModalTitle} id="permissions-select">
+        <MenuItem header>Organization</MenuItem>
+        <MenuItem
+            onClick={() => {
+              this.updateModalView(orgOnlyTitle, [orgId]);
+            }}
+            eventKey={orgOnlyTitle}>
+          {orgOnlyTitle}
+        </MenuItem>
+        <MenuItem
+            onClick={() => {
+              this.updateModalView(orgAllTitle, [orgId], true);
+            }}
+            eventKey={orgAllTitle}>
+          {orgAllTitle}
+        </MenuItem>
+        <MenuItem divider />
+        <MenuItem header>Roles</MenuItem>
+        {roleOptions}
+      </SplitButton>
+    );
+  }
+
+  renderPermissionsPanel = () => {
+    const {
+      organization,
+      ownedRoles
+    } = this.props;
+    const {
+      permissionsModalAclKey: aclKey,
+      permissionsShouldUpdateAll
+    } = this.state;
+
+    const orgId = organization.get('id');
+    const orgTitle = organization.get('title');
+    const isOwner = organization.get('isOwner', false);
 
     if (!isOwner || !isNonEmptyString(orgId)) {
       return null;
     }
 
-    const roleAclKeys = this.props.organization.get('roles').map(role => role.get('aclKey'));
+    const roleAclKeys = organization
+      .get('roles')
+      .map(role => role.get('aclKey'))
+      .filter(aclKey => ownedRoles.has(aclKey))
+      .map(aclKey => aclKey.toJS());
     const allAclKeys = roleAclKeys.push([orgId]).toJS();
+
+    let panel = null;
+
+    if (aclKey.length === 1) {
+
+      const aclKeysToUpdate = [aclKey];
+      if (permissionsShouldUpdateAll) {
+        roleAclKeys.forEach((roleAclKey) => {
+          aclKeysToUpdate.push(roleAclKey);
+        });
+      }
+      panel = (
+        <PermissionsPanel
+            entitySetId={aclKey[0]}
+            aclKeysToUpdate={aclKeysToUpdate}
+            allSelected={permissionsShouldUpdateAll}
+            isOrganization />
+      );
+    }
+    else if (aclKey.length === 2) {
+      panel = (
+        <PermissionsPanel
+            entitySetId={aclKey[0]}
+            propertyTypeId={aclKey[1]}
+            aclKeysToUpdate={[aclKey]}
+            isOrganization />
+      );
+    }
 
     return (
       <Modal
@@ -222,10 +356,10 @@ class OrganizationTitleSectionComponent extends React.Component {
             this.setState({ editingPermissions: false });
           }}>
         <Modal.Header closeButton>
-          <Modal.Title>Manage permissions for organization: {orgTitle}</Modal.Title>
+          <Modal.Title>Manage permissions for {this.getPermissionsManagementOptions()}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <PermissionsPanel entitySetId={orgId} aclKeysToUpdate={allAclKeys} isOrganization />
+          {panel}
         </Modal.Body>
       </Modal>
     );

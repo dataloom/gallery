@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome';
+import Select from 'react-select';
 import styled from 'styled-components';
 
 import { EntityDataModelApi } from 'lattice';
@@ -23,10 +24,13 @@ import ActionDropdown from '../edm/components/ActionDropdown';
 import AddDataForm from '../entitysetforms/AddDataForm';
 import EntitySetPermissionsRequestList from '../permissions/components/EntitySetPermissionsRequestList';
 import IntegrationDetailsModal from './IntegrationDetailsModal';
+import BasicButton from '../../components/buttons/BasicButton';
+import InfoButton from '../../components/buttons/InfoButton';
 
 import * as NeuronActionFactory from '../../core/neuron/NeuronActionFactory';
 import * as edmActionFactories from '../edm/EdmActionFactories';
 import * as PermissionsActionFactory from '../permissions/PermissionsActionFactory';
+import * as OrganizationsActionFactory from '../organizations/actions/OrganizationsActionFactory';
 import * as psActionFactories from '../permissionssummary/PermissionsSummaryActionFactory';
 
 import {
@@ -47,6 +51,47 @@ const ControlsContainer = styled(StyledFlexContainerStacked)`
   flex: 1 0 auto;
 `;
 
+const SelectWrapper = styled.div`
+  min-width: 300px;
+`;
+
+const SaveButton = styled(InfoButton)`
+  width: 100px;
+  height: 38px;
+  margin-left: 15px;
+`;
+
+const CancelButton = styled(BasicButton)`
+  width: 100px;
+  height: 38px;
+  margin-left: 15px;
+  padding: 0;
+`;
+
+const EditIcon = styled.div`
+  border-style: solid;
+  border-width: 1px;
+  height: 32px;
+  width: 32px;
+  margin-left: 10px;
+  font-size: 14px;
+  padding: 0;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-color: #cfd8dc;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const StyledOrganizationContainer = styled(StyledFlexContainer)`
+  align-items: center;
+`;
+
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
@@ -64,6 +109,8 @@ class EntitySetDetailComponent extends React.Component {
     entitySet: PropTypes.instanceOf(Immutable.Map).isRequired,
     entitySetId: PropTypes.string.isRequired,
     entityType: PropTypes.instanceOf(Immutable.Map).isRequired,
+    organization: PropTypes.instanceOf(Immutable.Map).isRequired,
+    writableOrganizations: PropTypes.instanceOf(Immutable.List).isRequired,
     propertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
     propertyTypeIds: PropTypes.instanceOf(Immutable.List).isRequired,
     ownedPropertyTypes: PropTypes.instanceOf(Immutable.List).isRequired,
@@ -72,6 +119,8 @@ class EntitySetDetailComponent extends React.Component {
     unsubscribeFromEntitySetAclKeyRequest: PropTypes.func.isRequired,
     loadEntitySetPropertyMetadata: PropTypes.func.isRequired,
     updateEntitySetPropertyMetadata: PropTypes.func.isRequired,
+    fetchOrganization: PropTypes.func.isRequired,
+    fetchWritableOrganizations: PropTypes.func.isRequired,
     size: PropTypes.number
   };
 
@@ -93,23 +142,32 @@ class EntitySetDetailComponent extends React.Component {
 
     this.state = {
       editingPermissions: false,
+      editingOrganization: false,
       confirmingDelete: false,
       addingData: false,
       deleteError: false,
       isIntegrationDetailsOpen: false,
       permissionsModalTitle: modalTitle,
       permissionsModalAclKey: modalAclKey,
-      permissionsShouldUpdateAll: false
+      permissionsShouldUpdateAll: false,
+      newOrganizationId: null
     };
   }
 
   componentDidMount() {
+    const { entitySet } = this.props;
 
     this.props.resetPermissions();
     // this.props.loadEntitySet();
 
     this.props.subscribeToEntitySetAclKeyRequest([this.props.entitySetId]);
     this.props.loadEntitySetPropertyMetadata(this.props.entitySetId);
+    this.props.fetchWritableOrganizations();
+
+    const organizationId = entitySet.get('organizationId');
+    if (organizationId) {
+      this.props.fetchOrganization(organizationId);
+    }
 
   }
 
@@ -120,11 +178,21 @@ class EntitySetDetailComponent extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.entitySet) {
+
       if (!this.props.entitySet || this.props.entitySet.get('id') !== nextProps.entitySet.get('id')) {
         this.setState({
           permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.get('title'), false),
           permissionsModalAclKey: [nextProps.entitySet.get('id')]
         });
+      }
+
+
+      const nextOrganizationId = nextProps.entitySet.get('organizationId');
+
+      if (!this.props.entitySet || this.props.entitySet.get('organizationId') !== nextOrganizationId) {
+        if (nextOrganizationId && nextProps.organization.get('id') !== nextOrganizationId) {
+          this.props.fetchOrganization(nextOrganizationId);
+        }
       }
 
       let shouldLoad = false;
@@ -145,6 +213,22 @@ class EntitySetDetailComponent extends React.Component {
   // shouldComponentUpdate(nextProps, nextState) {
   // }
 
+  getOrganizationOptions() {
+    const { writableOrganizations } = this.props;
+
+    const options = [];
+    writableOrganizations.forEach((organization) => {
+      if (!organization.isEmpty()) {
+        options.push({
+          value: organization.get('id'),
+          label: organization.get('title')
+        });
+      }
+    });
+
+    return options;
+  }
+
   setEditingPermissions = () => {
     this.setState({ editingPermissions: true });
   };
@@ -162,6 +246,16 @@ class EntitySetDetailComponent extends React.Component {
   updateEntitySetContacts = (contacts) => {
     if (contacts) this.props.updateMetadata(this.props.entitySet.get('id'), { contacts: [contacts] });
   }
+
+  updateEntitySetOrganization = (organizationId) => {
+    if (organizationId) this.props.updateMetadata(this.props.entitySet.get('id'), { organizationId });
+    this.setState({ editingOrganization: false })
+  }
+
+  onOrganizationChange = (option) => {
+    const newOrganizationId = (option) ? option.value : null;
+    this.setState({ newOrganizationId });
+  };
 
   renderTitle = (title, isOwner) => {
     return (<InlineEditableControl
@@ -193,6 +287,55 @@ class EntitySetDetailComponent extends React.Component {
         onChange={this.updateEntitySetContacts} />);
   }
 
+  renderOrganization = (organizationId, isOwner) => {
+    const { editingOrganization, newOrganizationId } = this.state;
+    const { organization } = this.props;
+
+    const organizationTitle = organization.get('title');
+
+    const defaultContent = organizationTitle
+      ? <div>{organizationTitle}</div>
+      : <div className={styles.italic}>Cannot load organization</div>;
+
+    return (
+      <StyledOrganizationContainer>
+        {
+          isOwner && editingOrganization ? (
+            <StyledFlexContainer>
+              <SelectWrapper>
+                <Select
+                    value={newOrganizationId}
+                    options={this.getOrganizationOptions()}
+                    onChange={this.onOrganizationChange} />
+              </SelectWrapper>
+              <SaveButton disabled={!newOrganizationId} onClick={() => this.updateEntitySetOrganization(newOrganizationId)}>
+                Save
+              </SaveButton>
+              <CancelButton onClick={() => this.setState({ editingOrganization: false, newOrganizationId: null })}>
+                Cancel
+              </CancelButton>
+            </StyledFlexContainer>
+          ) : defaultContent
+        }
+        {
+          isOwner && !editingOrganization ? (
+            <EditIcon className="icon" onClick={() => this.setState({ editingOrganization: true })}>
+              <FontAwesome name="pencil" />
+            </EditIcon>
+          ) : null
+        }
+      </StyledOrganizationContainer>
+    )
+
+    if (!isOwner) {
+      return organizationTitle ? <div>{organizationTitle}</div> : <div className={styles.italic}>Cannot load organization</div>;
+    }
+
+    return (
+      <div>organization goes here.</div>
+    );
+  }
+
   renderHeaderContent = () => {
 
     const { entitySet, entitySetPermissions } = this.props;
@@ -213,6 +356,8 @@ class EntitySetDetailComponent extends React.Component {
             <span className={styles.contacts}>
               {this.renderEntitySetContacts(contactValue, entitySetPermissions.OWNER)}
             </span>
+            <div className={`${styles.descriptionTitle} ${styles.organizationSection}`}>Organization</div>
+            {this.renderOrganization(entitySet.get('organizationId'), entitySetPermissions.OWNER)}
           </div>
 
           <ControlsContainer>
@@ -600,6 +745,9 @@ function mapStateToProps(state, ownProps) {
     entitySetPermissions = DEFAULT_PERMISSIONS;
   }
 
+  const organization = state.getIn(['organizations', 'organizations', entitySet.get('organizationId')], Immutable.Map());
+  const writableOrganizations = state.getIn(['organizations', 'writableOrganizations'], Immutable.List());
+
   const entityTypeId = entitySet.get('entityTypeId');
   const entityType = state.getIn(['edm', 'entityTypes', entityTypeId], Immutable.Map());
   const propertyTypeIds = entityType.get('properties', Immutable.List());
@@ -628,7 +776,9 @@ function mapStateToProps(state, ownProps) {
     ownedPropertyTypes,
     propertyTypeIds,
     entitySetPropertyMetadata,
-    size
+    size,
+    organization,
+    writableOrganizations
   };
 }
 
@@ -662,7 +812,9 @@ function mapDispatchToProps(dispatch) {
     },
     updateEntitySetPropertyMetadata: (entitySetId, propertyTypeId, metadataUpdate) => {
       dispatch(edmActionFactories.updateEntitySetPropertyMetadataRequest(entitySetId, propertyTypeId, metadataUpdate));
-    }
+    },
+    fetchOrganization: (organizationId) => dispatch(OrganizationsActionFactory.fetchOrganizationRequest(organizationId)),
+    fetchWritableOrganizations: () => dispatch(OrganizationsActionFactory.fetchWritableOrganizations())
   };
 }
 

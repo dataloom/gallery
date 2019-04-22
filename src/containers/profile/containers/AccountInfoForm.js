@@ -1,15 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import ProfileForm from '../../../components/profile/ProfileForm';
+
+import { getDbAccessCredential } from '../ProfileActionFactory';
 
 class AccountInfoForm extends React.Component {
   static propTypes = {
 
   }
 
+  componentDidMount() {
+    const { actions } = this.props;
+    actions.getDbAccessCredential();
+  }
+
   getContent = () => {
-    const { userId, jwtToken } = this.props;
+    const {
+      dbAccessUsername,
+      dbAccessCredential,
+      userId,
+      jwtToken
+    } = this.props;
     const accountId = {
       key: 'accountId',
       value: userId,
@@ -23,7 +36,20 @@ class AccountInfoForm extends React.Component {
       secure: true
     };
 
-    return [accountId, jwt];
+    const dbUsername = {
+      key: 'dbUsername',
+      value: dbAccessUsername,
+      label: 'DB Access Username'
+    };
+
+    const dbCreds = {
+      key: 'dbCreds',
+      value: dbAccessCredential,
+      label: 'DB Access Credential',
+      secure: true
+    }
+
+    return [accountId, jwt, dbUsername, dbCreds];
   }
 
   render() {
@@ -35,13 +61,23 @@ class AccountInfoForm extends React.Component {
   }
 }
 
-function mapStateToProps() {
+function mapStateToProps(state) {
   const profile = JSON.parse(window.localStorage.getItem('profile'));
 
   return {
     userId: profile.user_id,
-    jwtToken: window.localStorage.id_token
+    jwtToken: window.localStorage.id_token,
+    dbAccessUsername: state.getIn(['profile', 'dbAccessUsername']),
+    dbAccessCredential: state.getIn(['profile', 'dbAccessCredential'])
   };
 }
 
-export default connect(mapStateToProps)(AccountInfoForm);
+function mapDispatchToProps(dispatch :Function) :Object {
+  const actions :{ [string] :Function } = { getDbAccessCredential };
+
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountInfoForm);

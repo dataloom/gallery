@@ -12,6 +12,7 @@ import * as PermissionsActionFactory from '../../permissions/PermissionsActionFa
 
 import * as OrgsActionTypes from '../actions/OrganizationsActionTypes';
 import * as OrgsActionFactory from '../actions/OrganizationsActionFactory';
+import * as OrgActionFactory from '../actions/OrganizationActionFactory';
 
 const { PermissionTypes } = Types;
 
@@ -27,10 +28,14 @@ function fetchOrganizationEpic(action$) {
       return Observable
         .from(OrganizationsApi.getOrganization(action.orgId))
         .mergeMap((organization) => {
+          const { roles } = organization;
+          const roleAclKeys = roles.map(({ aclKey }) => aclKey);
+
           return Observable.of(
             OrgsActionFactory.fetchOrganizationSuccess(organization),
             OrgsActionFactory.fetchOrganizationsAuthorizationsRequest([organization]),
-            PermissionsActionFactory.getAclRequest([action.orgId])
+            PermissionsActionFactory.getAclRequest([action.orgId]),
+            OrgActionFactory.getOwnedRoles(roleAclKeys)
           );
         })
         .catch(() => {

@@ -24,7 +24,7 @@ class UserGroupRow extends React.Component {
         const id = role.get('id');
         const title = role.get('title');
         roleRows.push(
-          <RoleRow key={`${id}_${userId}`} permissions={rolePermissions.get(id)} role={title} />
+          <RoleRow key={`${id}_${userId}`} permissions={rolePermissions.get(title)} role={title} />
         );
       });
     }
@@ -32,14 +32,14 @@ class UserGroupRow extends React.Component {
     roleRows.push(
       <RoleRow key={`${INDIVIDUAL}_${userId}`} permissions={user.get('individualPermissions')} role={INDIVIDUAL} />
     );
-    
+
     return roleRows;
 
   }
 
   render() {
-    const individualPermissions = this.props.user.get('individualPermissions', Immutable.List());
-    if (individualPermissions.isEmpty()) {
+    const permissions = this.props.user.get('permissions', Immutable.List());
+    if (permissions.isEmpty()) {
       return null;
     }
 

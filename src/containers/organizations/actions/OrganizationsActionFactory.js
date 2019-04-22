@@ -1,6 +1,7 @@
 /*
  * @flow
  */
+import { newRequestSequence } from 'redux-reqseq';
 
 import {
   Models
@@ -131,3 +132,6 @@ export function showAllOrganizations() :Object {
     type: OrgsActionTypes.SHOW_ALL_ORGS
   };
 }
+
+export const FETCH_WRITABLE_ORGANIZATIONS :string = 'FETCH_WRITABLE_ORGANIZATIONS';
+export const fetchWritableOrganizations :RequestSequence = newRequestSequence(FETCH_WRITABLE_ORGANIZATIONS);
