@@ -1,10 +1,44 @@
 import { Observable } from 'rxjs';
 import { combineEpics } from 'redux-observable';
 
-import { AppApi } from 'lattice';
+// import { AppApi } from 'lattice';
+import { AppApi, configure } from 'lattice';
 
 import * as actionFactory from './AppActionFactory';
 
+
+export const importApp = () => {
+  const APP_NAME = 'BehavioralHealthReport';
+
+  const PROD_JWT = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNvbG9tb25Ab3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJvcmdhbml6YXRpb25zIjpbIjAwMDAwMDAwLTAwMDAtMDAwMS0wMDAwLTAwMDAwMDAwMDAwMCJdfSwibmlja25hbWUiOiJzb2xvbW9uIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTEyMTc5MDU3MjkxODczNzg3MzQiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMTIxNzkwNTcyOTE4NzM3ODczNCIsImF1ZCI6Im84WTJVMnpiNUl3bzAxamR4TU4xVzJhaU44UHh3VmpoIiwiaWF0IjoxNTU2NzMxODM4LCJleHAiOjE1NTY3Njc4Mzh9.qvtDbiXkjNkSU_xT7fzYJwX1g0L2zzDQ6VCfbGI2PZ8';
+  const LOCAL_JWT = localStorage.id_token;
+
+  configure({ baseUrl: 'production', authToken: PROD_JWT });
+
+  AppApi.getAppByName(APP_NAME).then((app) => {
+    delete app.category;
+
+    const { appTypeIds } = app;
+    configure({ baseUrl: 'production', authToken: PROD_JWT });
+    AppApi.getAppTypesForAppTypeIds(appTypeIds).then((appTypesMap) => {
+      const appTypes = Object.values(appTypesMap);
+      appTypes.forEach((appType) => {
+        delete appType.category;
+      });
+      return appTypes;
+    })
+    .then((appTypes) => {
+      configure({ baseUrl: 'localhost', authToken: LOCAL_JWT });
+      Promise.all(appTypes.map(AppApi.createAppType)).then(() => {
+        AppApi.createApp(app).then(() => {
+          console.log('done');
+        });
+      });
+    });
+  });
+};
+
+// importApp();
 
 function createAppTypeEpic(action$) {
   return action$
