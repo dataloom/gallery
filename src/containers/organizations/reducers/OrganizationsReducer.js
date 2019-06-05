@@ -8,7 +8,10 @@ import {
 import {
   assembleEntitySets,
   getOrganizationIntegrationAccount,
-  loadOrganizationEntitySets
+  getOwnedRoles,
+  loadOrganizationEntitySets,
+  synchronizeDataChanges,
+  synchronizeEdmChanges
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -54,12 +57,14 @@ const INITIAL_STATE = Immutable.fromJS({
   usersSearchResults: Immutable.Map(),
   members: Immutable.List(),
   roles: Immutable.List(),
+  ownedRoles: Immutable.Set(),
   trustedOrganizations: Immutable.List(),
   entitySetsById: Immutable.Map(),
   entityTypesById: Immutable.Map(),
   organizationEntitySets: Immutable.Map(),
   materializableEntitySetIds: Immutable.Set(),
-  writableOrganizations: Immutable.List()
+  writableOrganizations: Immutable.List(),
+  entitySetIdsUpdating: Immutable.Set()
 });
 
 export default function organizationsReducer(state = INITIAL_STATE, action :Object) {
@@ -470,6 +475,33 @@ export default function organizationsReducer(state = INITIAL_STATE, action :Obje
           return state.set('organizationEntitySets', organizationEntitySets);
         }
       })
+    }
+
+    case getOwnedRoles.case(action.type): {
+      return getOwnedRoles.reducer(state, action, {
+        SUCCESS: () => {
+          let ownedRoles = state.get('ownedRoles', Immutable.Set());
+          Immutable.fromJS(action.value).forEach((ownedRoleAclKey) => {
+            ownedRoles = ownedRoles.add(ownedRoleAclKey);
+          });
+
+          return state.set('ownedRoles', ownedRoles);
+        }
+      });
+    }
+
+    case synchronizeDataChanges.case(action.type): {
+      return synchronizeDataChanges.reducer(state, action, {
+        REQUEST: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').add(action.value.entitySetId)),
+        FINALLY: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').delete(action.value.entitySetId))
+      });
+    }
+
+    case synchronizeEdmChanges.case(action.type): {
+      return synchronizeEdmChanges.reducer(state, action, {
+        REQUEST: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').add(action.value.entitySetId)),
+        FINALLY: () => state.set('entitySetIdsUpdating', state.get('entitySetIdsUpdating').delete(action.value.entitySetId))
+      });
     }
 
     default:

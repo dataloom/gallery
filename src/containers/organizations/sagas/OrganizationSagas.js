@@ -22,10 +22,16 @@ import { Permission } from '../../../core/permissions/Permission';
 import {
   ASSEMBLE_ENTITY_SETS,
   GET_ORGANIZATION_INTEGRATION_ACCOUNT,
+  GET_OWNED_ROLES,
   LOAD_ORGANIZATION_ENTITY_SETS,
+  SYNCHRONIZE_DATA_CHANGES,
+  SYNCHRONIZE_EDM_CHANGES,
   assembleEntitySets,
   getOrganizationIntegrationAccount,
-  loadOrganizationEntitySets
+  getOwnedRoles,
+  loadOrganizationEntitySets,
+  synchronizeDataChanges,
+  synchronizeEdmChanges
 } from '../actions/OrganizationActionFactory';
 
 import {
@@ -255,4 +261,89 @@ function* getOrganizationIntegrationAccountWorker(action :SequenceAction) :Gener
 
 export function* getOrganizationIntegrationAccountWatcher() :Generator<*, *, *> {
   yield takeEvery(GET_ORGANIZATION_INTEGRATION_ACCOUNT, getOrganizationIntegrationAccountWorker);
+}
+
+function* getOwnedRolesWorker(action :SequenceAction) :Generator<*, *, *> {
+  try {
+    yield put(getOwnedRoles.request(action.id));
+
+    const aclKeys = action.value;
+
+    const accessChecks = aclKeys.map((aclKey) => {
+      return {
+        aclKey,
+        permissions: [Permission.OWNER.name]
+      };
+    });
+
+    const authorizations = yield call(AuthorizationApi.checkAuthorizations, accessChecks);
+
+    const ownedRoles = authorizations
+      .filter(({ permissions }) => permissions[Permission.OWNER.name])
+      .map(({ aclKey }) => aclKey);
+
+    yield put(getOwnedRoles.success(action.id, ownedRoles));
+
+  }
+  catch (error) {
+    console.error(error)
+    yield put(getOwnedRoles.failure(action.id, error));
+  }
+  finally {
+    yield put(getOwnedRoles.finally(action.id));
+  }
+}
+
+export function* getOwnedRolesWatcher() :Generator<*, *, *> {
+  yield takeEvery(GET_OWNED_ROLES, getOwnedRolesWorker);
+}
+
+function* synchronizeDataChangesWorker(action :SequenceAction) :Generator<*, *, *> {
+  const { entitySetId, organizationId } = action.value;
+
+  try {
+    yield put(synchronizeDataChanges.request(action.id, { entitySetId }));
+
+    yield call(OrganizationsApi.synchronizeDataChanges, organizationId, entitySetId);
+
+    yield put(synchronizeDataChanges.success(action.id));
+    yield put(loadOrganizationEntitySets(organizationId));
+
+  }
+  catch (error) {
+    console.error(error)
+    yield put(synchronizeDataChanges.failure(action.id, error));
+  }
+  finally {
+    yield put(synchronizeDataChanges.finally(action.id, { entitySetId }));
+  }
+}
+
+export function* synchronizeDataChangesWatcher() :Generator<*, *, *> {
+  yield takeEvery(SYNCHRONIZE_DATA_CHANGES, synchronizeDataChangesWorker);
+}
+
+function* synchronizeEdmChangesWorker(action :SequenceAction) :Generator<*, *, *> {
+  const { entitySetId, organizationId } = action.value;
+
+  try {
+    yield put(synchronizeEdmChanges.request(action.id, { entitySetId }));
+
+    yield call(OrganizationsApi.synchronizeEdmChanges, organizationId, entitySetId);
+
+    yield put(synchronizeEdmChanges.success(action.id));
+    yield put(loadOrganizationEntitySets(organizationId));
+
+  }
+  catch (error) {
+    console.error(error)
+    yield put(synchronizeEdmChanges.failure(action.id, error));
+  }
+  finally {
+    yield put(synchronizeEdmChanges.finally(action.id, { entitySetId }));
+  }
+}
+
+export function* synchronizeEdmChangesWatcher() :Generator<*, *, *> {
+  yield takeEvery(SYNCHRONIZE_EDM_CHANGES, synchronizeEdmChangesWorker);
 }

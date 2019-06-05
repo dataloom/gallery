@@ -23,6 +23,9 @@ export default function* sagas() :Generator<*, *, *> {
     fork(OrganizationSagas.loadOrganizationEntitySetsWatcher),
     fork(OrganizationSagas.assembleEntitySetsWatcher),
     fork(OrganizationSagas.getOrganizationIntegrationAccountWatcher),
+    fork(OrganizationSagas.getOwnedRolesWatcher),
+    fork(OrganizationSagas.synchronizeDataChangesWatcher),
+    fork(OrganizationSagas.synchronizeEdmChangesWatcher),
 
     // PermissionsSummarySagas
     fork(PermissionsSummarySagas.getRolesForUsersWatcher),
