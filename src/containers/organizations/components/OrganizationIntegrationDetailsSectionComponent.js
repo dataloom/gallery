@@ -1,14 +1,17 @@
 import React from 'react';
 
 import Immutable, { Map } from 'immutable';
+import { Modal } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Models } from 'lattice';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import InfoButton from '../../../components/buttons/InfoButton';
 import InlineEditableControl from '../../../components/controls/InlineEditableControl';
 import StyledSectionHeading from './StyledSectionHeading';
 import SecureFieldView from '../../../components/profile/SecureFieldView';
+import IntegrationConfigGenerator from './IntegrationConfigGenerator';
 import { isNonEmptyString } from '../../../utils/LangUtils';
 import { updateOrganizationNameRequest } from '../actions/OrganizationActionFactory';
 
@@ -52,9 +55,17 @@ class OrganizationIntegrationDetailsSectionComponent extends React.Component {
     organization: React.PropTypes.instanceOf(Immutable.Map).isRequired
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isGeneratingConfig: false
+    }
+  }
+
   render() {
 
     const { organization, organizationIntegrationAccount } = this.props;
+    const { isGeneratingConfig } = this.state;
 
     const isOwner = organization.get('isOwner', false);
 
@@ -78,6 +89,27 @@ class OrganizationIntegrationDetailsSectionComponent extends React.Component {
           <h1>Credential</h1>
           <SecureFieldView content={{ value: organizationIntegrationAccount.get('credential') }} />
         </AccountRow>
+        <AccountRow>
+          <InfoButton onClick={() => this.setState({ isGeneratingConfig: true })}>
+            Generate Integration Configuration File
+          </InfoButton>
+        </AccountRow>
+        {
+          <Modal
+              show={isGeneratingConfig}
+              onHide={() => this.setState({ isGeneratingConfig: false })}>
+            <Modal.Header closeButton>
+              <Modal.Title>Generate Integration Configuration File</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <IntegrationConfigGenerator
+                  orgId={organization.get('id')}
+                  orgName={organization.get('title')}
+                  orgUsername={organizationIntegrationAccount.get('user')}
+                  orgPassword={organizationIntegrationAccount.get('credential')} />
+            </Modal.Body>
+          </Modal>
+        }
       </StyledSectionHeading>
     );
   }
