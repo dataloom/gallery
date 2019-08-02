@@ -20,8 +20,6 @@ import {
   addAppTypeToAppRequest,
   createAppReset,
   createAppTypeReset,
-  deleteAppRequest,
-  deleteAppTypeFromAppRequest,
   editAppReset,
   editAppTypeReset,
   getAppsRequest,
@@ -91,8 +89,6 @@ class Apps extends React.Component {
       addAppTypeToAppRequest: PropTypes.func.isRequired,
       createAppReset: PropTypes.func.isRequired,
       createAppTypeReset: PropTypes.func.isRequired,
-      deleteAppRequest: PropTypes.func.isRequired,
-      deleteAppTypeFromAppRequest: PropTypes.func.isRequired,
       editAppReset: PropTypes.func.isRequired,
       editAppTypeReset: PropTypes.func.isRequired,
       fetchOrganizationsRequest: PropTypes.func.isRequired,
@@ -151,14 +147,6 @@ class Apps extends React.Component {
       isAppModalOpen: true
     });
   };
-
-  onDeleteApp = (app) => {
-    this.props.actions.deleteAppRequest(app.get('id'));
-  };
-
-  onDeleteAppTypeFromApp = (appId, appTypeId) => {
-    this.props.actions.deleteAppTypeFromAppRequest(appId, appTypeId);
-  }
 
   onAddAppTypeToApp = () => {
     this.setState({
@@ -232,16 +220,6 @@ class Apps extends React.Component {
         const eachApp = appTypes.get(appTypeIds.get(i));
         appTypeElements.push(
           <AppSectionContainer key={eachApp.get('title')}>
-            <ButtonContainer>
-              <Button
-                  bsStyle="default"
-                  bsSize="xsmall"
-                  onClick={() => {
-                    this.onDeleteAppTypeFromApp(app.get('id'), eachApp.get('id'));
-                  }}>
-                <FontAwesome name="minus" />
-              </Button>
-            </ButtonContainer>
             <AppSubSectionContainer>
               <div>
                 {eachApp.get('title')}
@@ -308,13 +286,6 @@ class Apps extends React.Component {
                         this.setState({ installing: app });
                       }}>
                     install
-                  </Button>
-                  <Button
-                      bsStyle="default"
-                      onClick={() => {
-                        this.onDeleteApp(app);
-                      }}>
-                    delete
                   </Button>
                 </ButtonToolbar>
               </ButtonContainer>
@@ -562,8 +533,6 @@ function mapDispatchToProps(dispatch) {
     addAppTypeToAppRequest,
     createAppReset,
     createAppTypeReset,
-    deleteAppRequest,
-    deleteAppTypeFromAppRequest,
     editAppReset,
     editAppTypeReset,
     fetchOrganizationsRequest,
