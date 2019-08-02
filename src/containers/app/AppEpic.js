@@ -101,44 +101,6 @@ function addAppTypeToAppEpic(action$) {
     });
 }
 
-function deleteAppTypeFromAppEpic(action$) {
-  return action$
-    .ofType(actionFactory.DELETE_APP_TYPE_FROM_APP_REQUEST)
-    .mergeMap((action) => {
-      return Observable
-        .from(AppApi.removeAppTypeFromApp(action.appId, action.appTypeId))
-        .mergeMap(() => {
-          return Observable.of(
-            actionFactory.deleteAppTypeFromAppSuccess(),
-            actionFactory.getAppsRequest());
-        })
-        .catch(() => {
-          return Observable.of(
-            actionFactory.deleteAppTypeFromAppFailure('unable to delete app type')
-          );
-        });
-    });
-}
-
-function deleteAppEpic(action$) {
-  return action$
-    .ofType(actionFactory.DELETE_APP_REQUEST)
-    .mergeMap((action) => {
-      return Observable
-        .from(AppApi.deleteApp(action.app))
-        .mergeMap(() => {
-          return Observable.of(
-            actionFactory.deleteAppSuccess(),
-            actionFactory.getAppsRequest());
-        })
-        .catch(() => {
-          return Observable.of(
-            actionFactory.deleteAppFailure('unable to delete app')
-          );
-        });
-    });
-}
-
 function getAppTypesForAppTypeIdsEpic(action$) {
   return action$
     .ofType(actionFactory.GET_APP_TYPES_FOR_APP_TYPE_IDS_REQUEST)
@@ -209,8 +171,6 @@ export default combineEpics(
   addAppTypeToAppEpic,
   createAppEpic,
   createAppTypeEpic,
-  deleteAppEpic,
-  deleteAppTypeFromAppEpic,
   editAppEpic,
   editAppTypeEpic,
   getAppsRequestEpic,
