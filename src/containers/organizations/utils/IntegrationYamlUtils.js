@@ -5,99 +5,123 @@ import { TEMPLATE, TEMPLATE_CONSTANTS } from './IntegrationYamlTemplate';
 export const DATA_SQL_TYPES = {
   'Pervasive SQL': {
     driver: 'com.pervasive.jdbc.v2.Driver',
-    connectionString: 'pervasive'
+    connectionString: 'pervasive',
+    tablesSql: '( SELECT * FROM MasterNameVitals ) dh'
   },
   'IBM DB2': {
     driver: 'COM.ibm.db2.jdbc.app.DB2Driver',
-    connectionString: 'db2'
+    connectionString: 'db2',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'JDBC-ODBC Bridge': {
     driver: 'sun.jdbc.odbc.JdbcOdbcDriver',
-    connectionString: 'odbc'
+    connectionString: 'odbc',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Microsoft SQL Server': {
     driver: 'weblogic.jdbc.mssqlserver4.Driver',
-    connectionString: 'weblogic'
+    connectionString: 'weblogic',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'PointBase Embedded Server': {
     driver: 'com.pointbase.jdbc.jdbcUniversalDriver',
-    connectionString: 'pointbase'
+    connectionString: 'pointbase',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Cloudscape': {
     driver: 'COM.cloudscape.core.JDBCDriver',
-    connectionString: 'cloudscape'
+    connectionString: 'cloudscape',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Cloudscape RMI': {
     driver: 'RmiJdbc.RJDriver',
-    connectionString: 'rmi'
+    connectionString: 'rmi',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Firebird (JCA/JDBC Driver)': {
     driver: 'org.firebirdsql.jdbc.FBDriver',
-    connectionString: 'firebirdsql'
+    connectionString: 'firebirdsql',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'IDS Server': {
     driver: 'ids.sql.IDSDriver',
-    connectionString: 'ids'
+    connectionString: 'ids',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Informix Dynamic Server': {
     driver: 'com.informix.jdbc.IfxDriver',
-    connectionString: 'informix-sqli'
+    connectionString: 'informix-sqli',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'InstantDB (v3.13 and earlier)': {
     driver: 'jdbc.idbDriver',
-    connectionString: 'idb'
+    connectionString: 'idb',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'InstantDB (v3.14 and later)': {
     driver: 'org.enhydra.instantdb.jdbc.idbDriver',
-    connectionString: 'idb'
+    connectionString: 'idb',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Interbase (InterClient Driver)': {
     driver: 'interbase.interclient.Driver',
-    connectionString: 'interbase'
+    connectionString: 'interbase',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Hypersonic SQL (v1.2 and earlier)': {
     driver: 'hSql.hDriver',
-    connectionString: 'HypersonicSQL'
+    connectionString: 'HypersonicSQL',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Hypersonic SQL (v1.3 and later)': {
     driver: 'org.hsql.jdbcDriver',
-    connectionString: 'HypersonicSQL'
+    connectionString: 'HypersonicSQL',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Microsoft SQL Server (JTurbo Driver)': {
     driver: 'com.ashna.jturbo.driver.Driver',
-    connectionString: 'JTurbo'
+    connectionString: 'JTurbo',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Microsoft SQL Server (Sprinta Driver)': {
     driver: 'com.inet.tds.TdsDriver',
-    connectionString: 'inetdae'
+    connectionString: 'inetdae',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Microsoft SQL Server 2000 (Microsoft Driver)': {
     driver: 'com.microsoft.jdbc.sqlserver.SQLServerDriver',
-    connectionString: 'microsoft'
+    connectionString: 'microsoft',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'MySQL (MM.MySQL Driver)': {
     driver: 'org.gjt.mm.mysql.Driver',
-    connectionString: 'mysql'
+    connectionString: 'mysql',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   Oracle: {
     driver: 'oracle.jdbc.driver.OracleDriver',
-    connectionString: 'oracle'
+    connectionString: 'oracle',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'PostgreSQL (v6.5 and earlier)': {
     driver: 'postgresql.Driver',
-    connectionString: 'postgresql'
+    connectionString: 'postgresql',
+    tablesSql: '( SELECT * FROM pg_catalog.pg_tables ) dh'
   },
   'PostgreSQL (v7.0 and later)': {
     driver: 'org.postgresql.Driver',
-    connectionString: 'postgresql'
+    connectionString: 'postgresql',
+    tablesSql: '( SELECT * FROM pg_catalog.pg_tables ) dh'
   },
   'Sybase (jConnect 4.2 and earlier)': {
     driver: 'com.sybase.jdbc.SybDriver',
-    connectionString: 'sybase'
+    connectionString: 'sybase',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   },
   'Sybase (jConnect 5.2)': {
     driver: 'com.sybase.jdbc2.jdbc.SybDriver',
-    connectionString: 'sybase'
+    connectionString: 'sybase',
+    tablesSql: '( SELECT * FROM <metaTableGoesHere> ) dh'
   }
 };
 
@@ -118,6 +142,7 @@ export const exportTemplate = ({
   const fieldMappings = {
     [TEMPLATE_CONSTANTS.DATA_SQL_TYPE]: connectionString,
     [TEMPLATE_CONSTANTS.SQL_DRIVER_STRING]: driver,
+    [TEMPLATE_CONSTANTS.TABLE_LISTING_SQL]: tablesSql,
     [TEMPLATE_CONSTANTS.TARGET_SERVER]: server,
     [TEMPLATE_CONSTANTS.TARGET_PORT]: port,
     [TEMPLATE_CONSTANTS.TARGET_DB_NAME]: dbName,

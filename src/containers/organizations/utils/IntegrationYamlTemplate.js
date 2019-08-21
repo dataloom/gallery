@@ -8,6 +8,7 @@ const TEMPLATE_CONSTANTS = {
 
   // computed based on DATA_SQL_TYPE
   SQL_DRIVER_STRING: '<sqlDriverString>',
+  TABLE_LISTING_SQL: ''
 
   // computed based on organization
   ORG_ID: '<orgID>',
@@ -36,7 +37,7 @@ destinations:
 integrations:
   pdSQLDB:
     openLatticeDB:
-      - source: "<INSERT_SELECT_TABLES_STATEMENT_HERE>"
+      - source: "${TEMPLATE_CONSTANTS.TABLE_LISTING_SQL}"
         destination: ${TEMPLATE_CONSTANTS.ORG_NAME_SHORT}_data_Tables
         description: "${TEMPLATE_CONSTANTS.ORG_NAME_SHORT} table listing"
       - source: "select '( select * from ' || "TABLE_NAME" || ' ) ' || 'tbl_' || "TABLE_NAME" as query, "TABLE_NAME" as destination, 'gluttony'  as description from ${TEMPLATE_CONSTANTS.ORG_NAME_SHORT}_data_Tables;"
