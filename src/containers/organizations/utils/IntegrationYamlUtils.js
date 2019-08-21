@@ -135,7 +135,7 @@ export const exportTemplate = ({
   orgUsername,
   orgPassword
 }) => {
-  const { driver, connectionString } = DATA_SQL_TYPES[dataSqlType];
+  const { driver, connectionString, tablesSql } = DATA_SQL_TYPES[dataSqlType];
   const orgIdShort = `org_${orgId.replace(/-/g, '')}`;
   const orgNameShort = orgName.replace(/[^a-zA-Z0-9]/g, '');
 

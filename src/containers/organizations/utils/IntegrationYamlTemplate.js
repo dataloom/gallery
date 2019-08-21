@@ -8,7 +8,7 @@ const TEMPLATE_CONSTANTS = {
 
   // computed based on DATA_SQL_TYPE
   SQL_DRIVER_STRING: '<sqlDriverString>',
-  TABLE_LISTING_SQL: ''
+  TABLE_LISTING_SQL: '<sqlTableString>',
 
   // computed based on organization
   ORG_ID: '<orgID>',
