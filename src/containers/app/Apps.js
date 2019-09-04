@@ -7,7 +7,7 @@ import { Button, ButtonGroup, ButtonToolbar, ControlLabel, DropdownButton, FormC
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import styled from 'styled-components';
-import { AppApi } from 'lattice';
+import { AppApi, configure } from 'lattice';
 import { bindActionCreators } from 'redux';
 
 import CreateApp from './CreateApp';
@@ -28,6 +28,37 @@ import {
   installAppRequest
 } from './AppActionFactory';
 import styles from './app.module.css';
+
+export const importApp = () => {
+  const APP_NAME = 'BehavioralHealthReport';
+
+  const PROD_JWT = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InNvbG9tb25Ab3BlbmxhdHRpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInVzZXJfbWV0YWRhdGEiOnt9LCJhcHBfbWV0YWRhdGEiOnsicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJvcmdhbml6YXRpb25zIjpbIjAwMDAwMDAwLTAwMDAtMDAwMS0wMDAwLTAwMDAwMDAwMDAwMCJdfSwibmlja25hbWUiOiJzb2xvbW9uIiwicm9sZXMiOlsiQXV0aGVudGljYXRlZFVzZXIiLCJhZG1pbiJdLCJ1c2VyX2lkIjoiZ29vZ2xlLW9hdXRoMnwxMTEyMTc5MDU3MjkxODczNzg3MzQiLCJpc3MiOiJodHRwczovL29wZW5sYXR0aWNlLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExMTIxNzkwNTcyOTE4NzM3ODczNCIsImF1ZCI6Im84WTJVMnpiNUl3bzAxamR4TU4xVzJhaU44UHh3VmpoIiwiaWF0IjoxNTY3NjIzMjU0LCJleHAiOjE1Njc2NTkyNTR9.Dcq8myP7WWoWxrB-oJgxQdThZ18X2SbHXz7bQ8E6BwY';
+  const LOCAL_JWT = localStorage.id_token;
+
+  configure({ baseUrl: 'production', authToken: PROD_JWT });
+
+  console.log('AppApi.getAppByName: ', AppApi.getAppByName(APP_NAME));
+  AppApi.getAppByName(APP_NAME).then((app) => {
+    delete app.category;
+
+    const { appTypeIds } = app;
+    AppApi.getAppTypesForAppTypeIds(appTypeIds).then((appTypesMap) => {
+      const appTypes = Object.values(appTypesMap);
+      console.log('appTypes: ', appTypes);
+      appTypes.forEach((appType) => {
+        delete appType.category;
+      });
+
+      configure({ baseUrl: 'localhost', authToken: LOCAL_JWT });
+
+      Promise.all(appTypes.map(AppApi.createAppType)).then(() => {
+        AppApi.createApp(app).then(() => {
+          console.log('done');
+        });
+      });
+    });
+  });
+};
 
 const AppSectionContainer = styled.div`
   display: flex;
@@ -137,6 +168,8 @@ class Apps extends React.Component {
   componentDidMount() {
     this.props.actions.getAppsRequest();
     this.props.actions.fetchOrganizationsRequest();
+
+    // importApp();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -227,62 +260,68 @@ class Apps extends React.Component {
     const appTypeElements = [];
     const { isEditAppTypeModalOpen } = this.state;
 
+
     if (!appTypes.isEmpty()) {
       for (let i = 0; i < appTypeIds.size; i += 1) {
         const eachApp = appTypes.get(appTypeIds.get(i));
-        appTypeElements.push(
-          <AppSectionContainer key={eachApp.get('title')}>
-            <ButtonContainer>
-              <Button
-                  bsStyle="default"
-                  bsSize="xsmall"
-                  onClick={() => {
-                    this.onDeleteAppTypeFromApp(app.get('id'), eachApp.get('id'));
-                  }}>
-                <FontAwesome name="minus" />
-              </Button>
-            </ButtonContainer>
-            <AppSubSectionContainer>
-              <div>
-                {eachApp.get('title')}
-                &nbsp;
-                &nbsp;
-                <ButtonContainer>
-                  <Button
-                      bsStyle="default"
-                      bsSize="small"
-                      onClick={() => {
-                        this.props.actions.editAppTypeReset();
-                        this.setState({
-                          editAppTypeDescription: eachApp.get('description'),
-                          editAppTypeEntityTypeId: eachApp.get('entityTypeId'),
-                          editAppTypeId: eachApp.get('id'),
-                          editAppTypeName: eachApp.get('type').get('name'),
-                          editAppTypeNamespace: eachApp.get('type').get('namespace'),
-                          editAppTypeTitle: eachApp.get('title'),
-                          isEditAppTypeModalOpen: true
-                        });
-                      }}>
-                      Edit Metadata
-                  </Button>
-                </ButtonContainer>
-              </div>
-              <Modal show={isEditAppTypeModalOpen} onHide={this.closeModal} container={this}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Edit {this.state.editAppTypeTitle} Metadata</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <EditAppType
-                      description={this.state.editAppTypeDescription}
-                      entityTypeId={this.state.editAppTypeEntityTypeId}
-                      id={this.state.editAppTypeId}
-                      name={this.state.editAppTypeName}
-                      namespace={this.state.editAppTypeNamespace}
-                      title={this.state.editAppTypeTitle} />
-                </Modal.Body>
-              </Modal>
-            </AppSubSectionContainer>
-          </AppSectionContainer>);
+        if (eachApp) {
+          appTypeElements.push(
+            <AppSectionContainer key={eachApp.get('title')}>
+              <ButtonContainer>
+                <Button
+                    bsStyle="default"
+                    bsSize="xsmall"
+                    onClick={() => {
+                      this.onDeleteAppTypeFromApp(app.get('id'), eachApp.get('id'));
+                    }}>
+                  <FontAwesome name="minus" />
+                </Button>
+              </ButtonContainer>
+              <AppSubSectionContainer>
+                <div>
+                  {eachApp.get('title')}
+                  &nbsp;
+                  &nbsp;
+                  <ButtonContainer>
+                    <Button
+                        bsStyle="default"
+                        bsSize="small"
+                        onClick={() => {
+                          this.props.actions.editAppTypeReset();
+                          this.setState({
+                            editAppTypeDescription: eachApp.get('description'),
+                            editAppTypeEntityTypeId: eachApp.get('entityTypeId'),
+                            editAppTypeId: eachApp.get('id'),
+                            editAppTypeName: eachApp.get('type').get('name'),
+                            editAppTypeNamespace: eachApp.get('type').get('namespace'),
+                            editAppTypeTitle: eachApp.get('title'),
+                            isEditAppTypeModalOpen: true
+                          });
+                        }}>
+                        Edit Metadata
+                    </Button>
+                  </ButtonContainer>
+                </div>
+                <Modal show={isEditAppTypeModalOpen} onHide={this.closeModal} container={this}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Edit {this.state.editAppTypeTitle} Metadata</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <EditAppType
+                        description={this.state.editAppTypeDescription}
+                        entityTypeId={this.state.editAppTypeEntityTypeId}
+                        id={this.state.editAppTypeId}
+                        name={this.state.editAppTypeName}
+                        namespace={this.state.editAppTypeNamespace}
+                        title={this.state.editAppTypeTitle} />
+                  </Modal.Body>
+                </Modal>
+              </AppSubSectionContainer>
+            </AppSectionContainer>);
+        }
+        else {
+          console.warn('could not find app type', appTypeIds.get(i));
+        }
       }
     }
     return (
@@ -514,6 +553,7 @@ class Apps extends React.Component {
                   <Button bsStyle="primary" className={styles.control} onClick={this.onCreateAppType}>
                     <FontAwesome name="plus-circle" size="lg" /> App Type
                   </Button>
+                  <Button bsStyle="primary" className={styles.control} onClick={importApp}>Import Apps</Button>
                 </ButtonGroup>
               </ButtonToolbar>
             </ButtonContainer>
