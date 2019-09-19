@@ -3,12 +3,12 @@ import FileSaver from 'file-saver';
 import { TEMPLATE, TEMPLATE_CONSTANTS } from './IntegrationYamlTemplate';
 
 export const DATA_SQL_TYPES = {
-  'Pervasive SQL': {
+  'IMC/Pervasive SQL': {
     driver: 'com.pervasive.jdbc.v2.Driver',
     connectionString: 'pervasive',
-    connectionSuffixString: '',
+    connectionSuffixString: '?transport=tcp',
     tablesSql: 'SELECT * FROM MasterNameVitals',
-    defaultPort: 0
+    defaultPort: 1583
   },
   'IBM DB2': {
     driver: 'COM.ibm.db2.jdbc.app.DB2Driver',
@@ -66,7 +66,7 @@ export const DATA_SQL_TYPES = {
     tablesSql: 'SELECT * FROM <metaTableGoesHere>',
     defaultPort: 0
   },
-  'Informix Dynamic Server': {
+  'QED/Informix Dynamic Server': {
     driver: 'com.informix.jdbc.IfxDriver',
     connectionString: 'informix-sqli',
     connectionSuffixString: ':informixserver=<serverNameHere>;DELIMIDENT=Y',
