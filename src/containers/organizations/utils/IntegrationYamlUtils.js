@@ -71,7 +71,7 @@ export const DATA_SQL_TYPES = {
     connectionString: 'informix-sqli',
     connectionSuffixString: ':informixserver=<serverNameHere>;DELIMIDENT=Y',
     tablesSql: 'INFO TABLES',
-    defaultPort: 0
+    defaultPort: 9088
   },
   'InstantDB (v3.13 and earlier)': {
     driver: 'jdbc.idbDriver',
@@ -157,19 +157,61 @@ export const DATA_SQL_TYPES = {
     tablesSql: 'SELECT * FROM pg_catalog.pg_tables',
     defaultPort: 5432
   },
+  SnappyData: {
+    driver: 'com.pivotal.gemfirexd.jdbc.ClientDriver',
+    connectionString: 'snappydata',
+    connectionSuffixString: '',
+    tablesSql: 'SELECT * FROM <metaTableGoesHere>',
+    defaultPort: 0
+  },
+  SqlBase: {
+    driver: 'jdbc.gupta.sqlbase.SqlbaseDriver',
+    connectionString: 'sqlbase',
+    connectionSuffixString: '',
+    tablesSql: 'SELECT * FROM <metaTableGoesHere>',
+    defaultPort: 0
+  },
   'Sybase (jConnect 4.2 and earlier)': {
     driver: 'com.sybase.jdbc.SybDriver',
     connectionString: 'sybase',
     connectionSuffixString: '',
     tablesSql: 'SELECT * FROM <metaTableGoesHere>',
-    defaultPort: 0
+    defaultPort: 5000
   },
   'Sybase (jConnect 5.2)': {
     driver: 'com.sybase.jdbc2.jdbc.SybDriver',
     connectionString: 'sybase',
     connectionSuffixString: '',
     tablesSql: 'SELECT * FROM <metaTableGoesHere>',
+    defaultPort: 5000
+  },
+  'Sybase ASE': {
+    driver: 'net.sourceforge.jtds.jdbc.Driver',
+    connectionString: 'sybase:Tds',
+    connectionSuffixString: '',
+    tablesSql: 'SELECT * FROM <metaTableGoesHere>',
+    defaultPort: 5000
+  },
+  'Sybase SqlAnywhere': {
+    driver: 'com.sybase.jdbc3.jdbc.SybDriver',
+    connectionString: 'sybase:Tds',
+    connectionSuffixString: '',
+    tablesSql: 'SELECT * FROM <metaTableGoesHere>',
+    defaultPort: 5000
+  },
+  Transbase: {
+    driver: 'transbase.jdbc.Driver',
+    connectionString: 'transbase',
+    connectionSuffixString: '',
+    tablesSql: 'SELECT * FROM <metaTableGoesHere>',
     defaultPort: 0
+  },
+  Vertica: {
+    driver: 'com.vertica.jdbc.Driver',
+    connectionString: 'vertica',
+    connectionSuffixString: '',
+    tablesSql: 'SELECT * FROM <metaTableGoesHere>',
+    defaultPort: 5433
   }
 };
 
