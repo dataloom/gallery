@@ -8,6 +8,9 @@ const TEMPLATE_CONSTANTS = {
 
   // computed based on DATA_SQL_TYPE
   SQL_DRIVER_STRING: '<sqlDriverString>',
+  CONNECTION_SUFFIX_STRING: '<sqlConnSuffixString>',
+  TABLE_LISTING_SQL: '<sqlTableString>',
+  DEFAULT_PORT: '<defaultPort>',
 
   // computed based on organization
   ORG_ID: '<orgID>',
@@ -22,7 +25,7 @@ const TEMPLATE =
 description: "Copying over data from ${TEMPLATE_CONSTANTS.ORG_NAME} into OpenLattice server"
 datasources:
 - name: pdSQLDB
-  url: "jdbc:${TEMPLATE_CONSTANTS.DATA_SQL_TYPE}://${TEMPLATE_CONSTANTS.TARGET_SERVER}:${TEMPLATE_CONSTANTS.TARGET_PORT}/${TEMPLATE_CONSTANTS.TARGET_DB_NAME}"
+  url: "jdbc:${TEMPLATE_CONSTANTS.DATA_SQL_TYPE}://${TEMPLATE_CONSTANTS.TARGET_SERVER}:${TEMPLATE_CONSTANTS.TARGET_PORT}/${TEMPLATE_CONSTANTS.TARGET_DB_NAME}${TEMPLATE_CONSTANTS.CONNECTION_SUFFIX_STRING}"
   username: "<INSERT_USERNAME_HERE>"
   password: "<INSERT_PASSWORD_HERE>"
   driver: ${TEMPLATE_CONSTANTS.SQL_DRIVER_STRING}
@@ -36,10 +39,10 @@ destinations:
 integrations:
   pdSQLDB:
     openLatticeDB:
-      - source: "<INSERT_SELECT_TABLES_STATEMENT_HERE>"
+      - source: " ( ${TEMPLATE_CONSTANTS.TABLE_LISTING_SQL} ) dh "
         destination: ${TEMPLATE_CONSTANTS.ORG_NAME_SHORT}_data_Tables
         description: "${TEMPLATE_CONSTANTS.ORG_NAME_SHORT} table listing"
-      - source: "select '( select * from ' || "TABLE_NAME" || ' ) ' || 'tbl_' || "TABLE_NAME" as query, "TABLE_NAME" as destination, 'gluttony'  as description from ${TEMPLATE_CONSTANTS.ORG_NAME_SHORT}_data_Tables;"
+      - source: "select '( select * from ' || \\"TABLE_NAME\\" || ' ) ' || 'tbl_' || \\"TABLE_NAME\\" as query, \\"TABLE_NAME\\" as destination, 'gluttony'  as description from ${TEMPLATE_CONSTANTS.ORG_NAME_SHORT}_data_Tables;"
         destination: "dst"
         description: "gluttony"
         gluttony: true
