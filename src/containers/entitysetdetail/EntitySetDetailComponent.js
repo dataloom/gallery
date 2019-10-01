@@ -92,6 +92,12 @@ const StyledOrganizationContainer = styled(StyledFlexContainer)`
   align-items: center;
 `;
 
+const UpdateTypes = {
+  ES_ONLY: 0,
+  ALL: 1,
+  NON_PII: 2
+};
+
 class EntitySetDetailComponent extends React.Component {
   static propTypes = {
     asyncState: AsyncStatePropType.isRequired,
@@ -137,7 +143,7 @@ class EntitySetDetailComponent extends React.Component {
     let modalTitle = '';
     const entitySetTitle = this.props.entitySet.get('title');
     if (entitySetTitle) {
-      modalTitle = this.loadESPermissionsTitle(entitySetTitle, false);
+      modalTitle = this.getPermissionsModalTitle(entitySetTitle, UpdateTypes.ES_ONLY);
     }
 
     this.state = {
@@ -149,7 +155,7 @@ class EntitySetDetailComponent extends React.Component {
       isIntegrationDetailsOpen: false,
       permissionsModalTitle: modalTitle,
       permissionsModalAclKey: modalAclKey,
-      permissionsShouldUpdateAll: false,
+      permissionsUpdateType: UpdateTypes.ES_ONLY,
       newOrganizationId: null
     };
   }
@@ -181,7 +187,7 @@ class EntitySetDetailComponent extends React.Component {
 
       if (!this.props.entitySet || this.props.entitySet.get('id') !== nextProps.entitySet.get('id')) {
         this.setState({
-          permissionsModalTitle: this.loadESPermissionsTitle(nextProps.entitySet.get('title'), false),
+          permissionsModalTitle: this.getPermissionsModalTitle(nextProps.entitySet.get('title'), UpdateTypes.ES_ONLY),
           permissionsModalAclKey: [nextProps.entitySet.get('id')]
         });
       }
@@ -308,7 +314,9 @@ class EntitySetDetailComponent extends React.Component {
                     options={this.getOrganizationOptions()}
                     onChange={this.onOrganizationChange} />
               </SelectWrapper>
-              <SaveButton disabled={!newOrganizationId} onClick={() => this.updateEntitySetOrganization(newOrganizationId)}>
+              <SaveButton
+                  disabled={!newOrganizationId}
+                  onClick={() => this.updateEntitySetOrganization(newOrganizationId)}>
                 Save
               </SaveButton>
               <CancelButton onClick={() => this.setState({ editingOrganization: false, newOrganizationId: null })}>
@@ -325,14 +333,6 @@ class EntitySetDetailComponent extends React.Component {
           ) : null
         }
       </StyledOrganizationContainer>
-    )
-
-    if (!isOwner) {
-      return organizationTitle ? <div>{organizationTitle}</div> : <div className={styles.italic}>Cannot load organization</div>;
-    }
-
-    return (
-      <div>organization goes here.</div>
     );
   }
 
@@ -382,17 +382,25 @@ class EntitySetDetailComponent extends React.Component {
     );
   };
 
-  updateModalView = (newViewTitle, newViewAclKey, shouldUpdateAll) => {
+  updateModalView = (newViewTitle, newViewAclKey, updateType) => {
     this.setState({
       permissionsModalTitle: newViewTitle,
       permissionsModalAclKey: newViewAclKey,
-      permissionsShouldUpdateAll: shouldUpdateAll
+      permissionsUpdateType: updateType
     });
   }
 
-  // TODO - why is "shouldUpdatePropertyTypes" necessary...?
-  loadESPermissionsTitle = (title, shouldUpdatePropertyTypes) => {
-    return (shouldUpdatePropertyTypes) ? `${title} (dataset and all owned properties)` : `${title} (dataset only)`;
+  getPermissionsModalTitle = (title, updateType) => {
+    switch (updateType) {
+      case UpdateTypes.ES_ONLY:
+        return `${title} (dataset only)`;
+      case UpdateTypes.ALL:
+        return `${title} (dataset and all owned properties)`;
+      case UpdateTypes.NON_PII:
+        return `${title} (dataset and all non-pii properties)`;
+      default:
+        return `${title} (dataset only)`;
+    }
   }
 
   getPermissionsManagementOptions = () => {
@@ -421,25 +429,34 @@ class EntitySetDetailComponent extends React.Component {
       );
     });
 
-    const esAllTitle = this.loadESPermissionsTitle(this.props.entitySet.get('title'), true);
-    const esOnlyTitle = this.loadESPermissionsTitle(this.props.entitySet.get('title'), false);
+    const esTitle = this.props.entitySet.get('title');
+    const esOnlyTitle = this.getPermissionsModalTitle(esTitle, UpdateTypes.ES_ONLY);
+    const esAllTitle = this.getPermissionsModalTitle(esTitle, UpdateTypes.ALL);
+    const esNonPiiTitle = this.getPermissionsModalTitle(esTitle, UpdateTypes.NON_PII);
 
     return (
       <SplitButton bsStyle="default" title={this.state.permissionsModalTitle} id="permissions-select">
         <MenuItem header>Dataset</MenuItem>
         <MenuItem
             onClick={() => {
-              this.updateModalView(esOnlyTitle, [this.props.entitySet.get('id')]);
+              this.updateModalView(esOnlyTitle, [this.props.entitySet.get('id')], UpdateTypes.ES_ONLY);
             }}
             eventKey={esOnlyTitle}>
           {esOnlyTitle}
         </MenuItem>
         <MenuItem
             onClick={() => {
-              this.updateModalView(esAllTitle, [this.props.entitySet.get('id')], true);
+              this.updateModalView(esAllTitle, [this.props.entitySet.get('id')], UpdateTypes.ALL);
             }}
             eventKey={esAllTitle}>
           {esAllTitle}
+        </MenuItem>
+        <MenuItem
+            onClick={() => {
+              this.updateModalView(esNonPiiTitle, [this.props.entitySet.get('id')], UpdateTypes.NON_PII);
+            }}
+            eventKey={esNonPiiTitle}>
+          {esNonPiiTitle}
         </MenuItem>
         <MenuItem divider />
         <MenuItem header>Property Types</MenuItem>
@@ -470,10 +487,17 @@ class EntitySetDetailComponent extends React.Component {
     let panel = null;
     if (aclKey.length === 1) {
       const aclKeysToUpdate = [aclKey];
-      if (this.state.permissionsShouldUpdateAll) {
+      if (this.state.permissionsUpdateType === UpdateTypes.ALL) {
         this.props.ownedPropertyTypes.forEach((propertyType) => {
           aclKeysToUpdate.push([this.props.entitySet.get('id'), propertyType.get('id')]);
         });
+      }
+      else if (this.state.permissionsUpdateType === UpdateTypes.NON_PII) {
+        this.props.ownedPropertyTypes
+          .filter(propertyType => propertyType.get('pii') === false)
+          .forEach((propertyType) => {
+            aclKeysToUpdate.push([this.props.entitySet.get('id'), propertyType.get('id')]);
+          });
       }
       panel = (
         <PermissionsPanel

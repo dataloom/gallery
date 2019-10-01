@@ -22,10 +22,6 @@ export const INITIAL_STATE = Immutable.fromJS({
     status: ASYNC_STATUS.PENDING,
     errorMessage: ''
   },
-  deleteAppAsyncState: {
-    status: ASYNC_STATUS.PENDING,
-    errorMessage: ''
-  }
 });
 
 export default function reducer(state = INITIAL_STATE, action) {
@@ -55,38 +51,6 @@ export default function reducer(state = INITIAL_STATE, action) {
     case actionFactory.INSTALL_APP_FAILURE:
       return state
         .set('errorMessage', action.errorMessage);
-
-    case actionFactory.DELETE_APP_REQUEST:
-      return state.mergeDeep({
-        deleteAppAsyncState: {
-          status: ASYNC_STATUS.LOADING,
-          errorMessage: ''
-        }
-      });
-
-    case actionFactory.DELETE_APP_SUCCESS:
-      return state.mergeDeep({
-        deleteAppAsyncState: {
-          status: ASYNC_STATUS.SUCCESS,
-          errorMessage: ''
-        }
-      });
-
-    case actionFactory.DELETE_APP_FAILURE:
-      return state.mergeDeep({
-        deleteAppAsyncState: {
-          status: ASYNC_STATUS.ERROR,
-          errorMessage: action.errorMessage
-        }
-      });
-
-    case actionFactory.DELETE_APP_RESET:
-      return state.mergeDeep({
-        deleteAppAsyncState: {
-          status: ASYNC_STATUS.PENDING,
-          errorMessage: ''
-        }
-      });
 
     case actionFactory.CREATE_APP_REQUEST:
       return state.mergeDeep({

@@ -13,16 +13,6 @@ export const CREATE_APP_TYPE_FAILURE = 'CREATE_APP_TYPE_FAILURE';
 export const CREATE_APP_TYPE_SUCCESS = 'CREATE_APP_TYPE_SUCCESS';
 export const CREATE_APP_TYPE_RESET = 'CREATE_APP_TYPE_RESET';
 
-export const DELETE_APP_REQUEST = 'DELETE_APP_REQUEST';
-export const DELETE_APP_FAILURE = 'DELETE_APP_FAILURE';
-export const DELETE_APP_SUCCESS = 'DELETE_APP_SUCCESS';
-export const DELETE_APP_RESET = 'DELETE_APP_RESET';
-
-export const DELETE_APP_TYPE_FROM_APP_REQUEST = 'DELETE_APP_TYPE_FROM_APP_REQUEST';
-export const DELETE_APP_TYPE_FROM_APP_FAILURE = 'DELETE_APP_TYPE_FROM_APP_FAILURE';
-export const DELETE_APP_TYPE_FROM_APP_SUCCESS = 'DELETE_APP_TYPE_FROM_APP_SUCCESS';
-export const DELETE_APP_TYPE_FROM_APP_RESET = 'DELETE_APP_TYPE_FROM_APP_RESET';
-
 export const EDIT_APP_REQUEST = 'EDIT_APP_REQUEST';
 export const EDIT_APP_FAILURE = 'EDIT_APP_FAILURE';
 export const EDIT_APP_SUCCESS = 'EDIT_APP_SUCCESS';
@@ -70,61 +60,6 @@ export function addAppTypeToAppFailure(errorMessage) {
 export function addAppTypeToAppReset() {
   return {
     type: ADD_APP_TYPE_TO_APP_RESET
-  };
-}
-
-export function deleteAppTypeFromAppRequest(appId, appTypeId) {
-  return {
-    type: DELETE_APP_TYPE_FROM_APP_REQUEST,
-    appId,
-    appTypeId
-  };
-}
-
-export function deleteAppTypeFromAppSuccess(reference) {
-  return {
-    type: DELETE_APP_TYPE_FROM_APP_SUCCESS,
-    reference
-  };
-}
-
-export function deleteAppTypeFromAppFailure(errorMessage) {
-  return {
-    type: DELETE_APP_TYPE_FROM_APP_FAILURE,
-    errorMessage
-  };
-}
-
-export function deleteAppTypeFromAppReset() {
-  return {
-    type: DELETE_APP_TYPE_FROM_APP_RESET
-  };
-}
-
-export function deleteAppRequest(app) {
-  return {
-    type: DELETE_APP_REQUEST,
-    app
-  };
-}
-
-export function deleteAppSuccess(reference) {
-  return {
-    type: DELETE_APP_SUCCESS,
-    reference
-  };
-}
-
-export function deleteAppFailure(errorMessage) {
-  return {
-    type: DELETE_APP_FAILURE,
-    errorMessage
-  };
-}
-
-export function deleteAppReset() {
-  return {
-    type: DELETE_APP_RESET
   };
 }
 

@@ -185,9 +185,14 @@ export function* loadOrganizationEntitySetsWatcher() :Generator<*, *, *> {
 function* assembleEntitySetsWorker(action :Object) :Generator<*, *, *> {
   try {
     const { organizationId, entitySetIds } = action.value;
-    yield put(assembleEntitySets.request(action.id))
+    yield put(assembleEntitySets.request(action.id));
 
-    const organizationEntitySets = yield call(OrganizationsApi.assembleEntitySets, organizationId, entitySetIds);
+    const refreshRates = {};
+    entitySetIds.forEach((entitySetId) => {
+      Object.assign(refreshRates, { [entitySetId]: null });
+    });
+
+    const organizationEntitySets = yield call(OrganizationsApi.assembleEntitySets, organizationId, refreshRates);
 
     yield put(assembleEntitySets.success(action.id, organizationEntitySets));
 
