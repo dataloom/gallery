@@ -9,7 +9,6 @@ import PageConsts from '../../utils/Consts/PageConsts';
 import homeIcon from '../../images/icon-nav-home.svg';
 import catalogIcon from '../../images/icon-nav-catalog.svg';
 import datasetsIcon from '../../images/icon-nav-datasets.svg';
-import organizationsIcon from '../../images/icon-nav-organizations.svg';
 
 const HELP_URL = 'https://help.openlattice.com/';
 const SUPPORT_URL = 'https://support.openlattice.com/';
@@ -64,8 +63,6 @@ class SideNav extends React.Component {
         { this.getSideNavItemLayout(PageConsts.HOME, 'Home', homeIcon) }
         { this.getSideNavItemLayout(PageConsts.CATALOG, 'Catalog', catalogIcon) }
         { this.getSideNavItemLayout(PageConsts.DATASETS, 'Your Datasets', datasetsIcon) }
-        {/* this.getSideNavItemLayout(PageConsts.APP, 'Apps') */}
-        { this.getSideNavItemLayout('orgs', 'Organizations', organizationsIcon) }
         { this.getSideNavHelpItemLayout(HELP_URL, 'Help') }
         { this.getSpacer() }
         { this.getSupportLink() }
