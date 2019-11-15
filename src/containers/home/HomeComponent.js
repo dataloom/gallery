@@ -10,6 +10,7 @@ import { Pager } from 'react-bootstrap';
 import AsyncContent from '../../components/asynccontent/AsyncContent';
 import EntitySetList from '../../components/entityset/EntitySetList';
 import Page from '../../components/page/Page';
+import joinImg from '../../images/icon-join.svg';
 import exploreImg from '../../images/icon-explore.svg';
 import PageConsts from '../../utils/Consts/PageConsts';
 import WelcomeInstructionsBox from './WelcomeInstructionsBox';
@@ -100,6 +101,11 @@ class HomeComponent extends React.Component {
           <Page.Header>
             <Page.Title>Welcome!</Page.Title>
             <div className={styles.welcomeInstructionsContainer}>
+              <WelcomeInstructionsBox
+                  title="JOIN"
+                  description="Find the organizations to which you belong or with the data you need and request access."
+                  imgSrc={joinImg}
+                  linkRoute={PageConsts.ORGS} />
               <WelcomeInstructionsBox
                   title="EXPLORE"
                   description="See the data available to you and download Excel and .JSON files to analyze each property."
