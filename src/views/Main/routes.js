@@ -23,6 +23,10 @@ import EditProfile from '../../containers/profile/containers/EditProfileContaine
 import TopUtilizersContainer from '../../containers/toputilizers/components/TopUtilizersPage';
 import TopUtilizersFormContainer from '../../containers/toputilizers/containers/TopUtilizersFormContainer';
 
+import OrganizationsContainerComponent from '../../containers/organizations/components/OrganizationsContainerComponent';
+import OrganizationDetailsComponent from '../../containers/organizations/components/OrganizationDetailsComponent';
+import OrganizationsListComponent from '../../containers/organizations/components/OrganizationsListComponent';
+
 import FlightGenerator from '../../containers/flightgenerator/FlightGenerator';
 
 // injected by Webpack.DefinePlugin
@@ -81,6 +85,10 @@ export const makeMainRoutes = () => {
       </Route>
       <Route path={PageConsts.VISUALIZE} component={Visualize} onEnter={requireAuth} />
       <Route path={PageConsts.DATASETS} component={DatasetsComponent} onEnter={requireAuth} />
+      <Route path={'orgs'} component={OrganizationsContainerComponent} onEnter={requireAuth}>
+        <IndexRoute component={OrganizationsListComponent} />
+        <Route path=":orgId" component={OrganizationDetailsComponent} onEnter={requireAuth} />
+      </Route>
       <Route path={PageConsts.LOGIN} component={Login} />
       <Route path={'access_token=:token'} component={Login} /> {/* to prevent router errors */}
       <Route path={PageConsts.LINK} component={Link} onEnter={requireAuth} />
